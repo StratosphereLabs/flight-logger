@@ -16,8 +16,11 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.json",
+    "sourceType": "module"
   },
   "plugins": ["@typescript-eslint", "react"],
-  "rules": {}
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  }
 }

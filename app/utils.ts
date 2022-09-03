@@ -1,3 +1,4 @@
+import type { ErrorRequestHandler } from 'express';
 import type { HttpError } from 'http-errors';
 
 export const normalizePort = (val: string): string | number | undefined => {
@@ -12,25 +13,14 @@ export const normalizePort = (val: string): string | number | undefined => {
   }
 };
 
-export const onError = (error: HttpError): void => {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+export const errorRequestHandler: ErrorRequestHandler = (
+  err: HttpError,
+  req,
+  res,
+) => {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  const port = normalizePort(process.env.PORT ?? '3000');
-
-  const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port ?? ''}`;
-
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+  res.status(err.status ?? 500);
+  res.render('error');
 };
