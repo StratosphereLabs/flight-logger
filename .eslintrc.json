@@ -5,13 +5,14 @@
     "node": true
   },
   "extends": [
-    "plugin:react/recommended",
     "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "standard-with-typescript",
     "prettier"
   ],
+  "ignorePatterns": ["public", "node_modules"],
   "overrides": [],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -22,5 +23,10 @@
   "plugins": ["@typescript-eslint", "react"],
   "rules": {
     "react/react-in-jsx-scope": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }

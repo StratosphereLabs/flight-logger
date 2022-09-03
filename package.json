@@ -12,7 +12,7 @@
     "test:watch": "vitest --watch",
     "coverage": "vitest --coverage",
     "preview": "vite preview",
-    "format": "prettier --config ./.prettierrc -w app routes resources"
+    "format": "prettier --config ./.prettierrc -w app routes resources vite.config.ts"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
