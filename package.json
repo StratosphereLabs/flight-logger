@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "vite-node app/server.ts",
+    "dev": "concurrently 'npm run dev:server' 'npm run dev:client'",
     "dev:server": "nodemon --watch app --watch routes --exec 'npm start'",
     "dev:client": "vite",
     "build": "rm -rf public && vite build --outDir public",
