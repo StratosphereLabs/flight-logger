@@ -1,17 +1,18 @@
 {
   "name": "flight-logger-reboot",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node ./bin/www",
-    "dev:server": "nodemon --watch server.ts --watch routes --exec 'ts-node server.ts'",
+    "start": "vite-node app/server.ts",
+    "dev:server": "nodemon --watch app --watch routes --exec 'npm start'",
     "dev:client": "vite",
+    "build": "rm -rf public && vite build --outDir public",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "coverage": "vitest --coverage",
-    "build": "tsc && vite build",
     "preview": "vite preview",
-    "format": "prettier --config ./.prettierrc -w app.ts server.ts routes resources"
+    "format": "prettier --config ./.prettierrc -w app routes resources"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -46,9 +47,9 @@
     "jsdom": "^20.0.0",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
-    "ts-node": "^10.9.1",
     "typescript": "^4.8.2",
     "vite": "^3.0.7",
+    "vite-node": "^0.22.1",
     "vitest": "^0.22.1"
   }
 }
