@@ -16,5 +16,12 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["app", "resources", "routes", "vite.config.ts"]
+  "include": [
+    "app",
+    "postcss.config.cjs",
+    "resources",
+    "routes",
+    "tailwind.config.cjs",
+    "vite.config.ts"
+  ]
 }
