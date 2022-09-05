@@ -3,21 +3,201 @@
 exports[`renders app 1`] = `
 <div>
   <div
-    class="flex h-screen"
+    class="pb-40 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans"
   >
     <div
-      class="m-auto"
+      aria-label="Navbar"
+      class="navbar"
+      role="navigation"
     >
       <div
-        class="text-6xl text-red-600"
+        class="flex-1 navbar-start"
       >
-        1
+        <div
+          class="dropdown"
+          role="listbox"
+        >
+          <label
+            tabindex="0"
+          >
+            <button
+              class="btn lg:hidden btn-ghost"
+              tabindex="0"
+            >
+              <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 6h16M4 12h8m-8 6h16"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                />
+              </svg>
+            </button>
+            <ul
+              class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 menu-compact mt-3"
+              tabindex="0"
+            >
+              <li>
+                <a>
+                  Item 1
+                </a>
+              </li>
+              <li
+                tabindex="0"
+              >
+                <a
+                  class="justify-between"
+                >
+                  Parent
+                  <svg
+                    class="fill-current"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"
+                    />
+                  </svg>
+                </a>
+                <ul
+                  class="p-2 bg-base-100"
+                >
+                  <li>
+                    <a>
+                      Submenu 1
+                    </a>
+                  </li>
+                  <li>
+                    <a>
+                      Submenu 2
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a>
+                  Item 3
+                </a>
+              </li>
+            </ul>
+          </label>
+          <ul
+            class="dropdown-content"
+          />
+        </div>
+        <a
+          class="btn btn-ghost normal-case text-xl"
+        >
+          FlightLogger
+        </a>
       </div>
-      <button
-        class="btn btn-primary"
+      <div
+        class="hidden lg:flex navbar-center"
       >
-        Click me!
-      </button>
+        <ul
+          class="menu p-0 menu-horizontal"
+          role="menu"
+        >
+          <li
+            class=""
+            role="menuitem"
+          >
+            <a>
+              Home
+            </a>
+          </li>
+          <li
+            class=""
+            role="menuitem"
+          >
+            <a>
+              My Flights
+            </a>
+          </li>
+          <li
+            class=""
+            role="menuitem"
+            tabindex="0"
+          >
+            <a>
+              Data
+              <svg
+                class="fill-current"
+                height="20"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
+                />
+              </svg>
+            </a>
+            <ul
+              class="menu p-2 bg-base-100"
+              role="menu"
+            >
+              <li
+                class=""
+                role="menuitem"
+              >
+                <a>
+                  Aircraft
+                </a>
+              </li>
+              <li
+                class=""
+                role="menuitem"
+              >
+                <a>
+                  Airlines
+                </a>
+              </li>
+              <li
+                class=""
+                role="menuitem"
+              >
+                <a>
+                  Airports
+                </a>
+              </li>
+              <li
+                class=""
+                role="menuitem"
+              >
+                <a>
+                  Countries
+                </a>
+              </li>
+              <li
+                class=""
+                role="menuitem"
+              >
+                <a>
+                  Regions
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div
+        class="flex-1 navbar-end"
+      >
+        <button
+          class="btn"
+        >
+          Add Flight
+        </button>
+      </div>
     </div>
   </div>
 </div>
