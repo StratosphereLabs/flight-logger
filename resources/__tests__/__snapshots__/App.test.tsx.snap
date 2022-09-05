@@ -7,7 +7,7 @@ exports[`renders app 1`] = `
   >
     <div
       aria-label="Navbar"
-      class="navbar"
+      class="navbar bg-base-100 shadow-xl rounded-box"
       role="navigation"
     >
       <div
@@ -43,50 +43,33 @@ exports[`renders app 1`] = `
               class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 menu-compact mt-3"
               tabindex="0"
             >
-              <li>
-                <a>
-                  Item 1
-                </a>
-              </li>
-              <li
-                tabindex="0"
+              <a
+                href="/"
               >
-                <a
-                  class="justify-between"
-                >
-                  Parent
-                  <svg
-                    class="fill-current"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"
-                    />
-                  </svg>
-                </a>
-                <ul
-                  class="p-2 bg-base-100"
-                >
-                  <li>
-                    <a>
-                      Submenu 1
-                    </a>
-                  </li>
-                  <li>
-                    <a>
-                      Submenu 2
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <a>
-                  Item 3
-                </a>
-              </li>
+                <li>
+                  <a>
+                    Home
+                  </a>
+                </li>
+              </a>
+              <a
+                href="/flights"
+              >
+                <li>
+                  <a>
+                    My Flights
+                  </a>
+                </li>
+              </a>
+              <a
+                href="/data"
+              >
+                <li>
+                  <a>
+                    Data
+                  </a>
+                </li>
+              </a>
             </ul>
           </label>
           <ul
@@ -95,6 +78,7 @@ exports[`renders app 1`] = `
         </div>
         <a
           class="btn btn-ghost normal-case text-xl"
+          href="/"
         >
           FlightLogger
         </a>
@@ -110,7 +94,11 @@ exports[`renders app 1`] = `
             class=""
             role="menuitem"
           >
-            <a>
+            <a
+              aria-current="page"
+              class="active"
+              href="/"
+            >
               Home
             </a>
           </li>
@@ -118,85 +106,35 @@ exports[`renders app 1`] = `
             class=""
             role="menuitem"
           >
-            <a>
+            <a
+              class=""
+              href="/flights"
+            >
               My Flights
             </a>
           </li>
           <li
             class=""
             role="menuitem"
-            tabindex="0"
           >
-            <a>
-              Data
-              <svg
-                class="fill-current"
-                height="20"
-                viewBox="0 0 24 24"
-                width="20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"
-                />
-              </svg>
-            </a>
-            <ul
-              class="menu p-2 bg-base-100"
-              role="menu"
+            <a
+              class=""
+              href="/data"
             >
-              <li
-                class=""
-                role="menuitem"
-              >
-                <a>
-                  Aircraft
-                </a>
-              </li>
-              <li
-                class=""
-                role="menuitem"
-              >
-                <a>
-                  Airlines
-                </a>
-              </li>
-              <li
-                class=""
-                role="menuitem"
-              >
-                <a>
-                  Airports
-                </a>
-              </li>
-              <li
-                class=""
-                role="menuitem"
-              >
-                <a>
-                  Countries
-                </a>
-              </li>
-              <li
-                class=""
-                role="menuitem"
-              >
-                <a>
-                  Regions
-                </a>
-              </li>
-            </ul>
+              Data
+            </a>
           </li>
         </ul>
       </div>
       <div
         class="flex-1 navbar-end"
       >
-        <button
+        <a
           class="btn"
+          href="/add-flight"
         >
           Add Flight
-        </button>
+        </a>
       </div>
     </div>
   </div>
