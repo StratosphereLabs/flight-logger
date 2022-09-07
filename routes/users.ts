@@ -1,10 +1,17 @@
 import express from 'express';
+import { prisma } from '../app/db';
 
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await prisma.user.findMany({});
+    res.status(200).json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
 });
 
 export default router;
