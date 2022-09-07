@@ -2,27 +2,14 @@ import http from 'http';
 import type { HttpError } from 'http-errors';
 
 import app from '.';
-import { sequelize } from './db';
-import { User } from './models/User';
+import { prisma } from './db';
 import { normalizePort } from './utils';
 
 const port = normalizePort(process.env.PORT ?? '3000');
 app.set('port', port);
 
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(async () => {
-  await sequelize.sync({ force: true });
-  const person = new User({
-    username: 'EchoSierra98',
-    email: 'none@none.com',
-    admin: true,
-    firstName: 'Ethan',
-    lastName: 'Shields',
-    flights: [],
-    trips: [],
-  });
-  await person.save();
-
+/* eslint-disable-next-line @typescript-eslint/require-await */
+const main = async (): Promise<void> => {
   const server = http.createServer(app);
 
   server.listen(port);
@@ -53,4 +40,14 @@ app.set('port', port);
         throw error;
     }
   });
-})();
+};
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async e => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
