@@ -79,7 +79,7 @@ CREATE TABLE "airport" (
     "name" TEXT NOT NULL,
     "lat" DOUBLE PRECISION NOT NULL,
     "lon" DOUBLE PRECISION NOT NULL,
-    "elevation" INTEGER NOT NULL,
+    "elevation" INTEGER,
     "continent" TEXT NOT NULL,
     "countryId" TEXT NOT NULL,
     "regionId" TEXT NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE "airport" (
     "ident" TEXT NOT NULL,
     "gps" TEXT NOT NULL,
     "iata" TEXT NOT NULL,
-    "icao" TEXT NOT NULL,
+    "local" TEXT NOT NULL,
 
     CONSTRAINT "airport_pkey" PRIMARY KEY ("id")
 );

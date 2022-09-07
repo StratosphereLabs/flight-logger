@@ -15,8 +15,8 @@ model user {
   lastName  String
   admin     Boolean @default(false)
 
-  trips   trip[]
-  flights flight[]
+  trips     trip[]
+  flights   flight[]
 }
 
 model trip {
@@ -59,25 +59,25 @@ model flight {
 }
 
 model aircraft_type {
-  id    String @id
-  iata  String
-  icao  String
-  name  String
-  class String
+  id      String    @id
+  iata    String
+  icao    String
+  name    String
+  class   String
 
   flights flight[]
 }
 
 model airline {
-  id           String  @id
-  iata         String
-  icao         String
-  name         String
-  callsign     String?
-  fleetSize    Int?
-  destinations Int?
-  logo         String?
-  wiki         String?
+  id              String  @id
+  iata            String
+  icao            String
+  name            String
+  callsign        String?
+  fleetSize       Int?
+  destinations    Int?
+  logo            String?
+  wiki            String?
 
   flights         flight[] @relation(name: "flights")
   operatorFlights flight[] @relation(name: "operatorFlights")
@@ -89,7 +89,7 @@ model airport {
   name             String
   lat              Float
   lon              Float
-  elevation        Int
+  elevation        Int?
   continent        String
   countryId        String
   country          country @relation(fields: [countryId], references: [id])
@@ -101,7 +101,7 @@ model airport {
   ident            String
   gps              String
   iata             String
-  icao             String
+  local            String
 
   departureFlights flight[] @relation(name: "departureFlights")
   arrivalFlights   flight[] @relation(name: "arrivalFlights")
@@ -113,8 +113,8 @@ model country {
   continent String
   wiki      String?
 
-  regions  region[]
-  airports airport[]
+  regions   region[]
+  airports  airport[]
 }
 
 model region {
@@ -125,5 +125,5 @@ model region {
   country   country @relation(fields: [countryId], references: [id])
   wiki      String?
 
-  airports airport[]
+  airports  airport[]
 }

@@ -8,9 +8,11 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon --watch app --watch routes --exec \"npm start\"",
     "dev:client": "vite",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev --name",
-    "prisma:seed": "prisma db seed",
+    "generate": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:reset": "prisma migrate reset",
+    "seed": "prisma db seed",
     "build": "rm -rf public && vite build --outDir public",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -20,7 +22,9 @@
   },
   "dependencies": {
     "@prisma/client": "^4.3.1",
+    "axios": "^0.27.2",
     "cookie-parser": "~1.4.4",
+    "csv-parse": "^5.3.0",
     "daisyui": "^2.24.0",
     "debug": "~2.6.9",
     "express": "~4.16.1",
@@ -75,6 +79,6 @@
     "vitest": "^0.22.1"
   },
   "prisma": {
-    "seed": "vite-node app/db/seed.ts"
+    "seed": "vite-node app/db/seeders"
   }
 }
