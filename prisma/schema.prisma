@@ -20,7 +20,7 @@ model user {
 }
 
 model trip {
-  id      String   @id @db.Uuid()
+  id      String   @id @db.Uuid() @default(uuid())
   userId  Int
   user    user     @relation(fields: [userId], references: [id])
   name    String
@@ -28,7 +28,7 @@ model trip {
 }
 
 model flight {
-  id                 String         @id @db.Uuid()
+  id                 String         @id @db.Uuid() @default(uuid())
   userId             Int
   user               user           @relation(fields: [userId], references: [id])
   tripId             String?        @db.Uuid()
