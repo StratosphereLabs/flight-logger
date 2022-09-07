@@ -70,5 +70,8 @@
     "vite": "^3.0.7",
     "vite-node": "^0.22.1",
     "vitest": "^0.22.1"
+  },
+  "prisma": {
+    "seed": "vite-node app/db/seed.ts"
   }
 }
