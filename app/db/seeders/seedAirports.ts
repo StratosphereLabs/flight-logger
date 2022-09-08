@@ -3,6 +3,11 @@ import axios from 'axios';
 import { prisma } from '../prisma';
 import { csvToJson } from './helpers';
 
+/* eslint-disable-next-line @typescript-eslint/no-var-requires */
+const { find } = require('geo-tz') as {
+  find: (lat: number, lon: number) => string[];
+};
+
 interface AirportResponse {
   id: string;
   ident: string;
@@ -29,36 +34,34 @@ const getDatabaseRows = (
 ): Prisma.Enumerable<Prisma.airportCreateManyInput> => {
   const rows = csvToJson<AirportResponse>(csv).reduce<
     Array<Record<string, unknown>>
-  >(
-    (acc, row) =>
-      row.scheduled_service !== 'no'
-        ? [
-            ...acc,
-            {
-              id: row.id,
-              type: row.type,
-              name: row.name,
-              lat: parseFloat(row.latitude_deg),
-              lon: parseFloat(row.longitude_deg),
-              elevation:
-                row.elevation_ft === ''
-                  ? undefined
-                  : parseInt(row.elevation_ft),
-              continent: row.continent,
-              countryId: row.iso_country,
-              regionId: row.iso_region,
-              municipality: row.municipality,
-              timeZone: '',
-              scheduledService: row.scheduled_service !== 'no',
-              ident: row.ident,
-              gps: row.gps_code,
-              iata: row.iata_code,
-              local: row.local_code,
-            },
-          ]
-        : acc,
-    [],
-  );
+  >((acc, row) => {
+    if (row.scheduled_service === 'no') return acc;
+    const lat = parseFloat(row.latitude_deg);
+    const lon = parseFloat(row.longitude_deg);
+    const timeZones = find(lat, lon);
+    return [
+      ...acc,
+      {
+        id: row.id,
+        type: row.type,
+        name: row.name,
+        lat: parseFloat(row.latitude_deg),
+        lon: parseFloat(row.longitude_deg),
+        elevation:
+          row.elevation_ft === '' ? undefined : parseInt(row.elevation_ft),
+        continent: row.continent,
+        countryId: row.iso_country,
+        regionId: row.iso_region,
+        municipality: row.municipality,
+        timeZone: timeZones[0],
+        scheduledService: row.scheduled_service !== 'no',
+        ident: row.ident,
+        gps: row.gps_code,
+        iata: row.iata_code,
+        local: row.local_code,
+      },
+    ];
+  }, []);
   return rows as Prisma.Enumerable<Prisma.airportCreateManyInput>;
 };
 

@@ -1,3 +1,5 @@
+import { seedAircraftTypes } from './seedAircraftTypes';
+import { seedAirlines } from './seedAirlines';
 import { seedAirports } from './seedAirports';
 import { seedCountries } from './seedCountries';
 import { seedRegions } from './seedRegions';
@@ -9,6 +11,8 @@ import { seedUsers } from './seedUsers';
   await seedCountries();
   await seedRegions();
   await seedAirports();
+  await seedAircraftTypes();
+  await seedAirlines();
 
   await seedUsers();
   await seedTrips();
