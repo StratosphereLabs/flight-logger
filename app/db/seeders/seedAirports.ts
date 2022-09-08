@@ -42,7 +42,7 @@ const getDatabaseRows = (
     return [
       ...acc,
       {
-        id: row.id,
+        id: row.ident,
         type: row.type,
         name: row.name,
         lat: parseFloat(row.latitude_deg),
