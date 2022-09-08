@@ -27,6 +27,12 @@ router.get('/search/:query', async (req, res) => {
         },
       ],
     },
+    orderBy: {
+      destinations: {
+        sort: 'desc',
+        nulls: 'last',
+      },
+    },
   });
   if (airlines.length === 0) {
     return res.sendStatus(404);

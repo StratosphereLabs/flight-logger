@@ -27,6 +27,9 @@ router.get('/search/:query', async (req, res) => {
         },
       ],
     },
+    orderBy: {
+      scheduledService: 'desc',
+    },
   });
   if (airports.length === 0) {
     return res.sendStatus(404);
