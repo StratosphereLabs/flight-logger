@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 
 export const MainNavbar = (): JSX.Element => (
   <div className="pb-4 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans">
-    <Navbar className="bg-base-100 shadow-xl rounded-box">
+    <Navbar className="bg-base-200 shadow-xl rounded-box">
       <Navbar.Start>
         <Dropdown>
           <Button color="ghost" tabIndex={0} className="lg:hidden">
