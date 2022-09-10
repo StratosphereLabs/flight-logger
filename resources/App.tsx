@@ -1,12 +1,18 @@
-import { Button } from 'react-daisyui';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { MainLayout } from './layouts';
+import { AddFlight, Data, Flights, Home } from './pages';
 
 export const App = (): JSX.Element => (
-  <div className="flex h-screen">
-    <div className="m-auto">
-      <div className="text-6xl text-red-600">1</div>
-      <Button color="primary">Click me!</Button>
-    </div>
-  </div>
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="add-flight" element={<AddFlight />} />
+        <Route path="flights" element={<Flights />} />
+        <Route path="data" element={<Data />} />
+      </Route>
+    </Routes>
+  </BrowserRouter>
 );
 
 export default App;
