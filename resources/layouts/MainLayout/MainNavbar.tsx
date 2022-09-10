@@ -2,7 +2,7 @@ import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
 import { Link, NavLink } from 'react-router-dom';
 
 export const MainNavbar = (): JSX.Element => (
-  <div className="pb-40 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans">
+  <div className="pb-4 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans">
     <Navbar className="bg-base-100 shadow-xl rounded-box">
       <Navbar.Start>
         <Dropdown>
@@ -35,7 +35,10 @@ export const MainNavbar = (): JSX.Element => (
           </Dropdown.Menu>
         </Dropdown>
         <Link to="/" className="btn btn-ghost normal-case text-xl">
-          FlightLogger
+          <div className="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-3xl">
+            <span>Flight</span>{' '}
+            <span className="text-base-content">Logger</span>
+          </div>
         </Link>
       </Navbar.Start>
       <Navbar.Center className="hidden lg:flex">
