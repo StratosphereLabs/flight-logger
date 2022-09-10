@@ -1,8 +1,8 @@
-import { Avatar, Badge, Card } from 'react-daisyui';
+import { Avatar, Badge, Button, Card } from 'react-daisyui';
 
 export const ProfileCard = (): JSX.Element => (
   <Card className="w-80">
-    <Card.Body>
+    <Card.Body className="items-center">
       <Card.Title>Ethan Shields</Card.Title>
       <div className="inline space-x-2">
         <Badge size="sm" color="primary">
@@ -18,6 +18,7 @@ export const ProfileCard = (): JSX.Element => (
       />
       <p>72 Flights (3 upcoming)</p>
       <p>Joined September 2022</p>
+      <Button className="mt-4">Follow</Button>
     </Card.Body>
   </Card>
 );

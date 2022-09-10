@@ -1,7 +1,7 @@
 import { Footer } from 'react-daisyui';
 
 export const MainFooter = (): JSX.Element => (
-  <Footer className="items-center p-4 bg-neutral text-neutral-content absolute bottom-0">
+  <Footer className="items-center p-4 mt-4 bg-neutral text-neutral-content">
     <div className="items-center grid-flow-col">
       <svg
         width="36"
