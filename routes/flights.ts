@@ -4,7 +4,14 @@ import { prisma } from '../app/db';
 const router = express.Router();
 
 router.get('/', async (_, res) => {
-  const response = await prisma.flight.findMany({});
+  const response = await prisma.flight.findMany({
+    include: {
+      departureAirport: true,
+      arrivalAirport: true,
+      airline: true,
+      aircraftType: true,
+    },
+  });
   return res.status(200).json(response);
 });
 
