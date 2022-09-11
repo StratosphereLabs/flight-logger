@@ -1,3 +1,12 @@
+-- CreateEnum
+CREATE TYPE "FlightClass" AS ENUM ('BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST');
+
+-- CreateEnum
+CREATE TYPE "SeatPosition" AS ENUM ('AISLE', 'MIDDLE', 'WINDOW');
+
+-- CreateEnum
+CREATE TYPE "FlightReason" AS ENUM ('LEISURE', 'BUSINESS', 'OTHER');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" SERIAL NOT NULL,
@@ -34,12 +43,12 @@ CREATE TABLE "flight" (
     "tailNumber" TEXT,
     "outTime" TEXT NOT NULL,
     "offTime" TEXT,
-    "oonTime" TEXT,
+    "onTime" TEXT,
     "inTime" TEXT NOT NULL,
-    "class" TEXT,
+    "class" "FlightClass",
     "seatNumber" TEXT,
-    "seatPosition" TEXT,
-    "reason" TEXT,
+    "seatPosition" "SeatPosition",
+    "reason" "FlightReason",
     "comments" TEXT,
     "trackingLink" TEXT,
 

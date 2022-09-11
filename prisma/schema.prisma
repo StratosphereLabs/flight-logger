@@ -28,6 +28,26 @@ model trip {
   flights flight[]
 }
 
+enum FlightClass {
+  BASIC
+  ECONOMY
+  PREMIUM
+  BUSINESS
+  FIRST
+}
+
+enum SeatPosition {
+  AISLE
+  MIDDLE
+  WINDOW
+}
+
+enum FlightReason {
+  LEISURE
+  BUSINESS
+  OTHER
+}
+
 model flight {
   id                 String         @id @db.Uuid() @default(uuid())
   userId             Int
@@ -49,12 +69,12 @@ model flight {
   tailNumber         String?
   outTime            String
   offTime            String?
-  oonTime            String?
+  onTime             String?
   inTime             String
-  class              String?
+  class              FlightClass?
   seatNumber         String?
-  seatPosition       String?
-  reason             String?
+  seatPosition       SeatPosition?
+  reason             FlightReason?
   comments           String?
   trackingLink       String?
 }
