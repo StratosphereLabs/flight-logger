@@ -4,7 +4,6 @@ import {
   Prisma,
   SeatPosition,
 } from '@prisma/client';
-import { m } from 'vitest/dist/index-ea17aa0c';
 
 export const flightsData: Prisma.Enumerable<Prisma.flightCreateManyInput> = [
   {
