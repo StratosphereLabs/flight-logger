@@ -1,4 +1,4 @@
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import GoogleStrategy from 'passport-google-oidc';
 import { prisma } from '../db';
 
 export const googleStrategy = new GoogleStrategy(
@@ -6,11 +6,12 @@ export const googleStrategy = new GoogleStrategy(
     clientID: process.env.GOOGLE_CLIENT_ID ?? '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     callbackURL: '/api/auth/google/callback',
+    scope: ['profile', 'email'],
   },
-  async (_, __, profile, done) => {
-    const email = profile.emails?.[0].value;
-    if (email === undefined) {
-      return done(new Error('No email defined'));
+  async (_, profile, done) => {
+    const email = profile.emails[0]?.value;
+    if (email === '' || email === undefined) {
+      return done(new Error('No email defined'), false);
     }
     try {
       const newUser = await prisma.user.upsert({
@@ -18,16 +19,16 @@ export const googleStrategy = new GoogleStrategy(
           email,
         },
         create: {
-          username: profile.username ?? email?.split('@')[0] ?? '',
+          username: profile.displayName ?? email.split('@')[0] ?? '',
           email,
-          firstName: profile.name?.givenName ?? '',
-          lastName: profile.name?.familyName ?? '',
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
         },
         update: {},
       });
-      done(null, newUser);
+      return done(null, newUser);
     } catch (err: unknown) {
-      done(err as Error);
+      return done(err as Error, false);
     }
   },
 );

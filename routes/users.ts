@@ -1,10 +1,7 @@
 import express from 'express';
-import { passport } from '../app/auth';
 import { prisma } from '../app/db';
 
 const router = express.Router();
-
-router.use(passport.authenticate('jwt', { session: false }));
 
 router.get('/', async (_, res) => {
   try {
