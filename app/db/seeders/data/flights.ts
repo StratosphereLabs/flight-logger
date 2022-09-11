@@ -36,4 +36,18 @@ export const flightsData: Prisma.Enumerable<Prisma.flightCreateManyInput> = [
     seatPosition: SeatPosition.WINDOW,
     reason: FlightReason.BUSINESS,
   },
+  {
+    userId: 1,
+    departureAirportId: 'KLAS',
+    arrivalAirportId: 'KPDX',
+    airlineId: 'AS_ASA_Alaska_Airlines',
+    flightNumber: 1365,
+    callsign: 'ASA1365',
+    aircraftTypeId: '73J_B739',
+    outTime: '2022-11-05 14:05:00',
+    inTime: '2022-11-05 16:25:00',
+    class: FlightClass.ECONOMY,
+    seatPosition: SeatPosition.AISLE,
+    reason: FlightReason.BUSINESS,
+  },
 ];
