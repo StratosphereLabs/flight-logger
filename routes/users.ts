@@ -1,5 +1,5 @@
 import express from 'express';
-import passport from 'passport';
+import { passport } from '../app/auth';
 import { prisma } from '../app/db';
 
 const router = express.Router();

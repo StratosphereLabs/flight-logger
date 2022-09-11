@@ -9,7 +9,6 @@ export const googleStrategy = new GoogleStrategy(
   },
   async (_, __, profile, done) => {
     const email = profile.emails?.[0].value;
-    const username = profile.username ?? email?.split('@')[0] ?? '';
     if (email === undefined) {
       return done(new Error('No email defined'));
     }
@@ -19,7 +18,7 @@ export const googleStrategy = new GoogleStrategy(
           email,
         },
         create: {
-          username,
+          username: profile.username ?? email?.split('@')[0] ?? '',
           email,
           firstName: profile.name?.givenName ?? '',
           lastName: profile.name?.familyName ?? '',
