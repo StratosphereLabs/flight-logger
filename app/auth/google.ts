@@ -1,43 +1,19 @@
+import { CredentialResponse } from '@react-oauth/google';
 import { NextFunction, Request, Response } from 'express';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import { CreateUserParams } from './utils';
 
-export interface GoogleAuthPayload {
-  credential: string;
-  g_csrf_token: string;
-}
+const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-const verifyIdToken = async (
+const verifyGoogleIdToken = async (
   token: string,
 ): Promise<TokenPayload | undefined> => {
   const ticket = await client.verifyIdToken({
     idToken: token,
-    audience: process.env.GOOGLE_CLIENT_ID,
+    audience: process.env.VITE_GOOGLE_CLIENT_ID,
   });
   const payload = ticket.getPayload();
   return payload;
-};
-
-export const verifyGoogleCsrfToken = (
-  req: Request,
-  _: Response,
-  next: NextFunction,
-): void => {
-  const response = req.body as GoogleAuthPayload;
-  const cookies = req.cookies as Record<string, string>;
-  const csrfTokenCookie = cookies.g_csrf_token;
-  if (csrfTokenCookie === undefined) {
-    next(new Error('No CSRF token in Cookie'));
-  }
-  const googleCsrfToken = response.g_csrf_token;
-  if (googleCsrfToken === undefined) {
-    next(new Error('No CSRF token in post body'));
-  }
-  if (csrfTokenCookie !== googleCsrfToken) {
-    next(new Error('Failed to verify double submit cookie'));
-  }
-  next();
 };
 
 export const verifyGoogleAuthToken = async (
@@ -45,13 +21,18 @@ export const verifyGoogleAuthToken = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  const response = req.body as GoogleAuthPayload;
+  const response = req.body as CredentialResponse;
+  if (response.credential === undefined) {
+    return next(new Error('No credential provided.'));
+  }
   try {
-    const token = await verifyIdToken(response.credential);
-    if (token === undefined) {
-      throw new Error('Unable to verify token');
-    }
-    res.locals.token = token;
+    const token = await verifyGoogleIdToken(response.credential);
+    const userParams: CreateUserParams = {
+      email: token?.email,
+      firstName: token?.given_name,
+      lastName: token?.family_name,
+    };
+    res.locals.userParams = userParams;
     next();
   } catch (err) {
     next(err);

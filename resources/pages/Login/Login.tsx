@@ -1,23 +1,17 @@
-import { API_URL } from '../../common/constants';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { GOOGLE_CLIENT_ID } from '../../common/constants';
+import { useGoogleLoginMutation } from './useGoogleLoginMutation';
 
 export const Login = (): JSX.Element => {
+  const { mutate } = useGoogleLoginMutation();
   return (
-    <>
-      <div
-        id="g_id_onload"
-        data-client_id="560106896800-9n8n420qsdtkc1en7el14kb6h49ibdsh.apps.googleusercontent.com"
-        data-login_uri={`${API_URL}/auth/google/callback`}
-        data-auto_prompt="false"
-      ></div>
-      <div
-        className="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="outline"
-        data-text="sign_in_with"
-        data-shape="rectangular"
-        data-logo_alignment="left"
-      ></div>
-    </>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <GoogleLogin
+        onSuccess={credentialResponse => mutate(credentialResponse)}
+        onError={() => {
+          console.log('Login Failed');
+        }}
+      />
+    </GoogleOAuthProvider>
   );
 };

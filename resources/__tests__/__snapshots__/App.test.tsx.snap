@@ -150,6 +150,11 @@ exports[`renders app 1`] = `
           >
             Add Flight
           </a>
+          <a
+            class="btn"
+          >
+            Logout
+          </a>
         </div>
       </div>
     </div>
