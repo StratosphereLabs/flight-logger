@@ -8,9 +8,3 @@ export const seedFlights = async (): Promise<void> => {
   });
   console.log(`  Added ${count} flights`);
 };
-
-/* eslint-disable-next-line @typescript-eslint/no-floating-promises */
-(async () => {
-  await prisma.flight.deleteMany({});
-  await seedFlights();
-})();

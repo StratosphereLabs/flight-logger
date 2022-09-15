@@ -10,25 +10,29 @@ export const googleStrategy = new GoogleStrategy(
   },
   async (_, profile, done) => {
     const email = profile.emails[0]?.value;
-    if (email === '' || email === undefined) {
-      return done(new Error('No email defined'), false);
+    if (email === undefined) {
+      return done(
+        new Error('No email found. Please try another authentication method.'),
+        false,
+      );
     }
+    await new Promise(resolve => setTimeout(resolve, 1000));
     try {
-      const newUser = await prisma.user.upsert({
+      const user = await prisma.user.upsert({
         where: {
           email,
         },
+        update: {},
         create: {
-          username: profile.displayName ?? email.split('@')[0] ?? '',
+          username: profile.displayName,
           email,
           firstName: profile.name.givenName,
           lastName: profile.name.familyName,
         },
-        update: {},
       });
-      return done(null, newUser);
-    } catch (err: unknown) {
-      return done(err as Error, false);
+      done(null, user);
+    } catch (err) {
+      done(err as Error, false);
     }
   },
 );

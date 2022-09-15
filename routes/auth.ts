@@ -9,8 +9,10 @@ passport.serializeUser((user, cb) => {
     cb(null, {
       id: user.id,
       username: user.username,
+      email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      admin: user.admin,
     });
   });
 });
@@ -34,11 +36,11 @@ router.get(
 );
 
 router.post('/logout', (req, res, next) => {
-  req.logout((err: Error | null) => {
-    if (err !== null) {
+  req.logout((err?: Error | null) => {
+    if (err !== null && err !== undefined) {
       return next(err);
     }
-    res.redirect('/');
+    res.redirect('/api/airports/KPDX');
   });
 });
 

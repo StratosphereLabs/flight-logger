@@ -1,6 +1,6 @@
+import connectPostgres from 'connect-pg-simple';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import csrf from 'csurf';
 import express from 'express';
 import session from 'express-session';
 import createError from 'http-errors';
@@ -22,19 +22,21 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET as string,
+    secret: process.env.SESSION_SECRET ?? '',
     resave: false,
     saveUninitialized: false,
+    store: new (connectPostgres(session))({
+      createTableIfMissing: true,
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
+    }),
   }),
 );
-app.use(csrf());
 app.use(passport.authenticate('session'));
-
-app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
-
 app.use('/api', router);
 
 app.use((_, __, next) => {
