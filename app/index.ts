@@ -19,6 +19,10 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/api', router);
 
+app.get('*', (_, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
 app.use((_, __, next) => {
   next(createError(404));
 });
