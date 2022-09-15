@@ -4,5 +4,5 @@ import { API_URL } from '../../common/constants';
 
 export const useLogoutMutation = (): UseMutationResult =>
   useMutation(async () => {
-    return await axios.post(`${API_URL}/auth/logout`);
+    return await axios.post(`${API_URL}`);
   });
