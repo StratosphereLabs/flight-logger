@@ -1,42 +1,35 @@
 import express from 'express';
-import { verifyToken } from '../app/auth';
-
-export interface GoogleAuthPayload {
-  credential: string;
-  g_csrf_token: string;
-}
+import { TokenPayload } from 'google-auth-library';
+import { verifyGoogleAuthToken, verifyGoogleCsrfToken } from '../app/auth';
+import { prisma } from '../app/db';
 
 const router = express.Router();
 
 router.post(
   '/google/callback',
-  (req, _, next) => {
-    const response = req.body as GoogleAuthPayload;
-    const cookies = req.cookies as Record<string, string>;
-    const csrfTokenCookie = cookies.g_csrf_token;
-    if (csrfTokenCookie === undefined) {
-      next(new Error('No CSRF token in Cookie'));
+  verifyGoogleCsrfToken,
+  verifyGoogleAuthToken,
+  async (_, res, next) => {
+    const token = res.locals.token as TokenPayload;
+    if (token.name === undefined) {
+      return next(new Error('Missing username'));
     }
-    const googleCsrfToken = response.g_csrf_token;
-    if (googleCsrfToken === undefined) {
-      next(new Error('No CSRF token in post body'));
+    if (token.email === undefined) {
+      return next(new Error('Missing email'));
     }
-    if (csrfTokenCookie !== googleCsrfToken) {
-      next(new Error('Failed to verify double submit cookie'));
-    }
-    next();
-  },
-  async (req, res, next) => {
-    const response = req.body as GoogleAuthPayload;
-    try {
-      const user = await verifyToken(response.credential);
-      if (user === undefined) {
-        throw new Error('Unable to verify token');
-      }
-      res.status(200).json(user);
-    } catch (err) {
-      next(err);
-    }
+    const user = await prisma.user.upsert({
+      where: {
+        email: token.email,
+      },
+      create: {
+        username: token.name,
+        email: token.email,
+        firstName: token.given_name ?? '',
+        lastName: token.family_name ?? '',
+      },
+      update: {},
+    });
+    res.status(200).json(user);
   },
 );
 
