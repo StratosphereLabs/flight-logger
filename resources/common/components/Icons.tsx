@@ -65,20 +65,15 @@ export const InfoIcon = (): JSX.Element => (
 export const CloseIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6"
+    className="h-6 w-6 stroke-current"
     fill="none"
     viewBox="0 0 24 24"
-    stroke="currentColor"
-    height="30%"
-    width="30%"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2"
       d="M6 18L18 6M6 6l12 12"
-      height="30%"
-      width="30%"
     />
   </svg>
 );

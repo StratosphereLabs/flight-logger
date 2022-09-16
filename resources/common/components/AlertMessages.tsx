@@ -24,14 +24,14 @@ export const AlertMessages = ({
 }: AlertMessagesProps): JSX.Element => {
   const { alertMessages, dismissAlertMessage } = useAppContext();
   return (
-    <div className="fixed top-0 right-0" style={{ zIndex: 1000 }}>
+    <div className="fixed top-0 right-0 p-2 z-0">
       {Array.from(Array(maxMessages ?? 1).keys()).map(index => {
         if (alertMessages[index] === undefined) return null;
         const status = alertMessages[index]?.status ?? 'success';
         const Icon = statusToIconMap[status];
         return (
           <Alert
-            className="m-2 min-w-[400px]"
+            className="min-w-[400px] mb-2"
             key={`error_message_${index}`}
             status={alertMessages[index].status}
             icon={<Icon />}
@@ -40,11 +40,10 @@ export const AlertMessages = ({
               {alertMessages[index].message}
             </div>
             <Button
-              color="secondary"
+              color="ghost"
               onClick={() => dismissAlertMessage(index)}
               shape="circle"
               size="xs"
-              variant="outline"
             >
               <CloseIcon />
             </Button>
