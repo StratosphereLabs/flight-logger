@@ -12,7 +12,7 @@ export const AuthenticationLayout = (): JSX.Element => (
           Welcome! Please choose a login method to get started
         </p>
       </div>
-      <Card className="flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100 mr-10">
+      <Card className="flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100 mx-10">
         <Card.Body>
           <Outlet />
         </Card.Body>

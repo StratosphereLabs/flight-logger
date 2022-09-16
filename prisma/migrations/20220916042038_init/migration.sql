@@ -11,6 +11,7 @@ CREATE TYPE "FlightReason" AS ENUM ('LEISURE', 'BUSINESS', 'OTHER');
 CREATE TABLE "user" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
+    "password" TEXT,
     "email" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
@@ -124,23 +125,11 @@ CREATE TABLE "region" (
     CONSTRAINT "region_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "session" (
-    "sid" VARCHAR NOT NULL,
-    "sess" JSON NOT NULL,
-    "expire" TIMESTAMP(6) NOT NULL,
-
-    CONSTRAINT "session_pkey" PRIMARY KEY ("sid")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "user_username_key" ON "user"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
-
--- CreateIndex
-CREATE INDEX "IDX_session_expire" ON "session"("expire");
 
 -- AddForeignKey
 ALTER TABLE "trip" ADD CONSTRAINT "trip_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,9 +1,9 @@
 import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
 import { Link, NavLink } from 'react-router-dom';
-import { useLogoutMutation } from './useLogoutMutation';
+import { useAppContext } from '../../context';
 
 export const MainNavbar = (): JSX.Element => {
-  const { mutate } = useLogoutMutation();
+  const { logout } = useAppContext();
   return (
     <div className="pb-4 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans">
       <Navbar className="bg-base-200 shadow-xl rounded-box">
@@ -61,7 +61,7 @@ export const MainNavbar = (): JSX.Element => {
           <Link className="btn" to="/add-flight">
             Add Flight
           </Link>
-          <a className="btn" onClick={mutate}>
+          <a className="btn" onClick={logout}>
             Logout
           </a>
         </Navbar.End>

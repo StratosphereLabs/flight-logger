@@ -1,3 +1,1 @@
-import { Outlet } from 'react-router-dom';
-
-export const Data = (): JSX.Element => <Outlet />;
+export const Data = (): JSX.Element => <div>Data Page</div>;

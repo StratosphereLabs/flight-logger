@@ -1,26 +1,37 @@
-import { useField } from 'formik';
-import { Input, InputProps } from 'react-daisyui';
+import { Form, Input, InputProps } from 'react-daisyui';
+import { Controller, useFormContext } from 'react-hook-form';
 
 export interface FormInputProps extends InputProps {
+  label?: string;
   name: string;
 }
 
-export const FormInput = ({ name, ...props }: FormInputProps): JSX.Element => {
-  const [, { error, value, touched }, { setTouched, setValue }] =
-    useField<string>(name);
-  const isInvalid = touched && error !== undefined;
+export const FormInput = ({
+  label,
+  name,
+  ...props
+}: FormInputProps): JSX.Element => {
+  const { control, formState, getFieldState } = useFormContext();
+  const { error } = getFieldState(name, formState);
   return (
     <>
-      <Input
-        color={isInvalid ? 'error' : 'ghost'}
-        onBlur={() => setTouched(true)}
-        onChange={({ target: { value } }) => setValue(value)}
-        value={value}
-        {...props}
+      {label !== undefined && <Form.Label title={label} />}
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <Input
+            color={error === undefined ? 'ghost' : 'error'}
+            {...field}
+            {...props}
+          />
+        )}
       />
-      <label className="label">
-        <span className="label-text-alt">Alt label</span>
-      </label>
+      {error !== undefined && (
+        <label className="label">
+          <span className="label-text-alt text-error">{error?.message}</span>
+        </label>
+      )}
     </>
   );
 };
