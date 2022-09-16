@@ -11,6 +11,8 @@ import { AlertMessage } from '../common/types';
 interface AppContextData {
   isLoggedIn: boolean;
   logout: () => void;
+  theme: string | null;
+  setTheme: (theme: AppTheme) => void;
   setToken: (token: string | null) => void;
   token: string | null;
   alertMessages: AlertMessage[];
@@ -23,9 +25,16 @@ interface AppContextProviderProps {
   children: ReactNode;
 }
 
+export enum AppTheme {
+  DARK = 'dark',
+  LIGHT = 'light',
+}
+
 const initialContext: AppContextData = {
   isLoggedIn: false,
   logout: () => undefined,
+  theme: null,
+  setTheme: () => undefined,
   setToken: () => undefined,
   token: null,
   alertMessages: [],
@@ -41,6 +50,9 @@ export const useAppContext = (): AppContextData => useContext(AppContext);
 export const AppContextProvider = ({
   children,
 }: AppContextProviderProps): JSX.Element => {
+  const [theme, setTheme] = useState(
+    localStorage.getItem('flightLoggerTheme') ?? AppTheme.LIGHT,
+  );
   const [token, setToken] = useState(localStorage.getItem('flightLoggerToken'));
   const logout = (): void => setToken(null);
   const isLoggedIn = useMemo(() => token !== null, [token]);
@@ -51,6 +63,11 @@ export const AppContextProvider = ({
       localStorage.setItem('flightLoggerToken', token);
     }
   }, [token]);
+
+  useEffect(() => {
+    document.getElementsByTagName('html')[0].setAttribute('data-theme', theme);
+    window.localStorage.setItem('flightLoggerTheme', theme);
+  }, [theme]);
 
   const [alertMessages, setAlertMessages] = useState<AlertMessage[]>(
     initialContext.alertMessages,
@@ -68,6 +85,8 @@ export const AppContextProvider = ({
       value={{
         isLoggedIn,
         logout,
+        theme,
+        setTheme,
         setToken,
         token,
         alertMessages,

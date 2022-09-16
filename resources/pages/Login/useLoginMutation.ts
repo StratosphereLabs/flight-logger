@@ -1,7 +1,7 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { API_URL } from '../../common/constants';
-import useErrorResponseHandler from '../../common/hooks/useErrorResponseHandler';
+import { useErrorResponseHandler } from '../../common/hooks';
 import { ErrorResponse } from '../../common/types';
 import { useAppContext } from '../../context';
 import { LoginResponse } from './Login';
@@ -13,7 +13,7 @@ export interface LoginRequest {
 
 export const useLoginMutation = (): UseMutationResult<
   AxiosResponse<LoginResponse>,
-  ErrorResponse,
+  AxiosError<ErrorResponse>,
   LoginRequest
 > => {
   const { setToken } = useAppContext();
@@ -26,7 +26,7 @@ export const useLoginMutation = (): UseMutationResult<
       onSuccess: ({ data }) => {
         setToken(data.token);
       },
-      onError: err => onErrorResponse(err),
+      onError: ({ response }) => onErrorResponse(response),
     },
   );
 };

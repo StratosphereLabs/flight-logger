@@ -1,14 +1,15 @@
+import { AxiosResponse } from 'axios';
 import { useCallback } from 'react';
 import { useAppContext } from '../../context';
 import { AlertMessage, ErrorResponse } from '../types';
 
 export const useErrorResponseHandler = (
   defaultMessage?: AlertMessage,
-): ((response?: ErrorResponse) => void) => {
+): ((response?: AxiosResponse<ErrorResponse>) => void) => {
   const { addAlertMessages } = useAppContext();
   return useCallback(
-    (response?: ErrorResponse) => {
-      const errorMessage = response?.message;
+    response => {
+      const errorMessage = response?.data?.message;
       if (errorMessage !== undefined) {
         addAlertMessages([
           {
