@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useAppContext } from '../../context';
 
 export const MainNavbar = (): JSX.Element => {
-  const { logout } = useAppContext();
+  const { isLoggedIn, logout } = useAppContext();
   return (
     <div className="pb-4 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans">
       <Navbar className="bg-base-200 shadow-xl rounded-box">
@@ -26,7 +26,7 @@ export const MainNavbar = (): JSX.Element => {
               </svg>
             </Button>
             <Dropdown.Menu tabIndex={0} className="w-52 menu-compact mt-3">
-              <Link to="/">
+              <Link to="/profile">
                 <Dropdown.Item>Home</Dropdown.Item>
               </Link>
               <Link to="/flights">
@@ -47,7 +47,7 @@ export const MainNavbar = (): JSX.Element => {
         <Navbar.Center className="hidden lg:flex">
           <Menu horizontal className="p-0">
             <Menu.Item>
-              <NavLink to="/">Home</NavLink>
+              <NavLink to="/profile">Home</NavLink>
             </Menu.Item>
             <Menu.Item>
               <NavLink to="/flights">My Flights</NavLink>
@@ -61,9 +61,15 @@ export const MainNavbar = (): JSX.Element => {
           <Link className="btn" to="/add-flight">
             Add Flight
           </Link>
-          <a className="btn" onClick={logout}>
-            Logout
-          </a>
+          {isLoggedIn ? (
+            <a className="btn" onClick={logout}>
+              Logout
+            </a>
+          ) : (
+            <Link className="btn" to="/auth/login">
+              Login
+            </Link>
+          )}
         </Navbar.End>
       </Navbar>
     </div>

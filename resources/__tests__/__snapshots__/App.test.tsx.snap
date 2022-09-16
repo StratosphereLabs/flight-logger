@@ -1,6 +1,125 @@
 // Vitest Snapshot v1
 
-exports[`renders app 1`] = `
+exports[`<App /> > renders login page 1`] = `
+<div>
+  <div
+    class="hero bg-base-200 min-h-screen"
+    role="banner"
+  >
+    <div
+      class="hero-content flex-col lg:flex-row-reverse"
+    >
+      <div
+        class="text-center lg:text-left"
+      >
+        <div
+          class="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-5xl"
+        >
+          <span>
+            Flight
+          </span>
+           
+          <span
+            class="text-base-content"
+          >
+            Logger
+          </span>
+        </div>
+        <p
+          class="py-6"
+        >
+          Welcome! Please choose a login method to get started
+        </p>
+      </div>
+      <div
+        aria-label="Card"
+        class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100 mx-10 card-bordered"
+      >
+        <div
+          class="card-body"
+        >
+          <div
+            style="height: 40px;"
+          />
+          <div
+            class="divider"
+            role="separator"
+          >
+            OR
+          </div>
+          <form>
+            <fieldset>
+              <div
+                class="form-control"
+                role="form"
+              >
+                <label
+                  class="label"
+                >
+                  <span
+                    class="label-text cursor-pointer"
+                  >
+                    Email
+                  </span>
+                </label>
+                <input
+                  class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
+                  name="email"
+                  placeholder="email"
+                  value=""
+                />
+              </div>
+              <div
+                class="form-control"
+                role="form"
+              >
+                <label
+                  class="label"
+                >
+                  <span
+                    class="label-text cursor-pointer"
+                  >
+                    Password
+                  </span>
+                </label>
+                <input
+                  class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
+                  name="password"
+                  placeholder="password"
+                  type="password"
+                  value=""
+                />
+                <label
+                  class="label"
+                >
+                  <a
+                    class="link label-text-alt link-hover"
+                  >
+                    Forgot password?
+                  </a>
+                </label>
+              </div>
+            </fieldset>
+            <div
+              class="form-control mt-6"
+              role="form"
+            >
+              <button
+                class="btn"
+                type="submit"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<App /> > renders profile page 1`] = `
 <div>
   <div
     class="flex min-h-screen flex-col justify-between"
@@ -47,7 +166,7 @@ exports[`renders app 1`] = `
                 tabindex="0"
               >
                 <a
-                  href="/"
+                  href="/profile"
                 >
                   <li>
                     <a>
@@ -112,7 +231,7 @@ exports[`renders app 1`] = `
               <a
                 aria-current="page"
                 class="active"
-                href="/"
+                href="/profile"
               >
                 Home
               </a>
@@ -152,8 +271,9 @@ exports[`renders app 1`] = `
           </a>
           <a
             class="btn"
+            href="/auth/login"
           >
-            Logout
+            Login
           </a>
         </div>
       </div>
