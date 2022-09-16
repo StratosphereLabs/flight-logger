@@ -1,6 +1,7 @@
 import { CredentialResponse } from '@react-oauth/google';
 import { NextFunction, Request, Response } from 'express';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import createHttpError from 'http-errors';
 import { CreateUserParams } from './utils';
 
 const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
@@ -23,7 +24,7 @@ export const verifyGoogleAuthToken = async (
 ): Promise<void> => {
   const response = req.body as CredentialResponse;
   if (response.credential === undefined) {
-    return next(new Error('No credential provided.'));
+    return next(createHttpError(401, 'No credential provided'));
   }
   try {
     const token = await verifyGoogleIdToken(response.credential);

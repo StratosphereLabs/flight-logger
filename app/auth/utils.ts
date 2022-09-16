@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import createHttpError from 'http-errors';
 import { prisma } from '../db';
 
 export interface CreateUserParams {
@@ -16,7 +17,10 @@ export const upsertUser = async (
   const params = res.locals.userParams as CreateUserParams;
   if (params.email === undefined) {
     return next(
-      new Error('No email found. Please choose another authentication method'),
+      createHttpError(
+        401,
+        'No email found. Please choose another authentication method',
+      ),
     );
   }
   try {

@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import express from 'express';
+import createHttpError from 'http-errors';
 import {
   generateUserToken,
   upsertUser,
@@ -19,13 +20,14 @@ router.post('/login', async (req, res, next) => {
       },
     });
     if (user.password === null) {
-      throw new Error(
+      throw createHttpError(
+        401,
         'No password stored. Please reset your password to create a new one.',
       );
     }
     const matching = await bcrypt.compare(body.password, user.password);
     if (!matching) {
-      throw new Error('Incorrect Password');
+      throw createHttpError(401, 'Incorrect Password');
     }
     res.locals.user = user;
     next();
