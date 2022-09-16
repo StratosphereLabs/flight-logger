@@ -1,6 +1,7 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import axios from 'axios';
 import { API_URL } from '../../common/constants';
+import { ErrorResponse } from '../../common/types';
 
 export interface ForgotPasswordRequest {
   email: string;
@@ -12,7 +13,7 @@ export interface ForgotPasswordResponse {
 
 export const useForgotPasswordMutation = (): UseMutationResult<
   ForgotPasswordResponse,
-  Error,
+  ErrorResponse,
   ForgotPasswordRequest
 > =>
   useMutation(async data => {

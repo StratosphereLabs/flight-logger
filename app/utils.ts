@@ -17,6 +17,7 @@ export const errorRequestHandler: ErrorRequestHandler = (
   err: HttpError,
   req,
   res,
+  next,
 ) => {
   const status = err.status ?? 500;
   res.status(status).json({
