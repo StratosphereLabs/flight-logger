@@ -1,4 +1,8 @@
-import { DashboardContainerProps } from './types';
+import { ReactNode } from 'react';
+
+export interface DashboardContainerProps {
+  children: ReactNode;
+}
 
 export const DashboardContainer = ({
   children,

@@ -1,18 +1,28 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { MainLayout } from './layouts';
-import { AddFlight, Data, Flights, Home } from './pages';
+import { Route, Routes } from 'react-router-dom';
+import { AuthenticationLayout, MainLayout } from './layouts';
+import {
+  AddFlight,
+  Data,
+  Flights,
+  ForgotPassword,
+  Profile,
+  Login,
+} from './pages';
 
 export const App = (): JSX.Element => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="add-flight" element={<AddFlight />} />
-        <Route path="flights" element={<Flights />} />
-        <Route path="data" element={<Data />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>
+  <Routes>
+    <Route path="/" element={null} />
+    <Route path="/" element={<MainLayout />}>
+      <Route path="data" element={<Data />} />
+      <Route path="profile" element={<Profile />} />
+      <Route path="add-flight" element={<AddFlight />} />
+      <Route path="flights" element={<Flights />} />
+    </Route>
+    <Route path="auth" element={<AuthenticationLayout />}>
+      <Route path="login" element={<Login />} />
+      <Route path="forgot-password" element={<ForgotPassword />} />
+    </Route>
+  </Routes>
 );
 
 export default App;

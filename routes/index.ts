@@ -3,6 +3,7 @@ import express from 'express';
 import aircraftTypesRouter from './aircraftTypes';
 import airlinesRouter from './airlines';
 import airportsRouter from './airports';
+import authRouter from './auth';
 import countriesRouter from './countries';
 import flightsRouter from './flights';
 import regionsRouter from './regions';
@@ -14,6 +15,8 @@ const router = express.Router();
 router.get('/', (_, res) => {
   res.json({ message: 'FlightLogger API Home Page' });
 });
+
+router.use('/auth', authRouter);
 
 router.use('/users', usersRouter);
 router.use('/aircraft-types', aircraftTypesRouter);

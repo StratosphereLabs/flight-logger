@@ -1,6 +1,125 @@
 // Vitest Snapshot v1
 
-exports[`renders app 1`] = `
+exports[`<App /> > renders login page 1`] = `
+<div>
+  <div
+    class="hero bg-base-200 min-h-screen"
+    role="banner"
+  >
+    <div
+      class="hero-content flex-col lg:flex-row-reverse"
+    >
+      <div
+        class="text-center lg:text-left"
+      >
+        <div
+          class="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-5xl"
+        >
+          <span>
+            Flight
+          </span>
+           
+          <span
+            class="text-base-content"
+          >
+            Logger
+          </span>
+        </div>
+        <p
+          class="py-6"
+        >
+          Welcome! Please choose a login method to get started
+        </p>
+      </div>
+      <div
+        aria-label="Card"
+        class="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100 mx-10 card-bordered"
+      >
+        <div
+          class="card-body"
+        >
+          <div
+            style="height: 40px;"
+          />
+          <div
+            class="divider"
+            role="separator"
+          >
+            OR
+          </div>
+          <form>
+            <fieldset>
+              <div
+                class="form-control"
+                role="form"
+              >
+                <label
+                  class="label"
+                >
+                  <span
+                    class="label-text cursor-pointer"
+                  >
+                    Email
+                  </span>
+                </label>
+                <input
+                  class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
+                  name="email"
+                  placeholder="email"
+                  value=""
+                />
+              </div>
+              <div
+                class="form-control"
+                role="form"
+              >
+                <label
+                  class="label"
+                >
+                  <span
+                    class="label-text cursor-pointer"
+                  >
+                    Password
+                  </span>
+                </label>
+                <input
+                  class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
+                  name="password"
+                  placeholder="password"
+                  type="password"
+                  value=""
+                />
+                <label
+                  class="label"
+                >
+                  <a
+                    class="link label-text-alt link-hover"
+                  >
+                    Forgot password?
+                  </a>
+                </label>
+              </div>
+            </fieldset>
+            <div
+              class="form-control mt-6"
+              role="form"
+            >
+              <button
+                class="btn"
+                type="submit"
+              >
+                Login
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<App /> > renders profile page 1`] = `
 <div>
   <div
     class="flex min-h-screen flex-col justify-between"
@@ -47,7 +166,7 @@ exports[`renders app 1`] = `
                 tabindex="0"
               >
                 <a
-                  href="/"
+                  href="/profile"
                 >
                   <li>
                     <a>
@@ -112,7 +231,7 @@ exports[`renders app 1`] = `
               <a
                 aria-current="page"
                 class="active"
-                href="/"
+                href="/profile"
               >
                 Home
               </a>
@@ -149,6 +268,12 @@ exports[`renders app 1`] = `
             href="/add-flight"
           >
             Add Flight
+          </a>
+          <a
+            class="btn"
+            href="/auth/login"
+          >
+            Login
           </a>
         </div>
       </div>
@@ -218,143 +343,14 @@ exports[`renders app 1`] = `
       </div>
       <div
         aria-label="Card"
-        class="card shadow flex-1 min-w-max card-bordered"
+        class="card shadow flex-1 bg-base-200 card-bordered"
       >
         <div
-          class="h-full w-full leaflet-container leaflet-touch leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
-          style="position: relative;"
-          tabindex="0"
+          class="h-full w-full flex items-center justify-center"
         >
-          <div
-            class="leaflet-pane leaflet-map-pane"
-            style="left: 0px; top: 0px;"
-          >
-            <div
-              class="leaflet-pane leaflet-tile-pane"
-            >
-              <div
-                class="leaflet-layer map-tiles"
-                style="z-index: 1;"
-              >
-                <div
-                  class="leaflet-tile-container leaflet-zoom-animated"
-                  style="z-index: 18; left: 0px; top: 0px;"
-                >
-                  <img
-                    alt=""
-                    class="leaflet-tile"
-                    role="presentation"
-                    src="https://b.tile.openstreetmap.org/13/4093/2724.png"
-                    style="width: 256px; height: 256px; left: -244px; top: -35px;"
-                  />
-                </div>
-              </div>
-            </div>
-            <div
-              class="leaflet-pane leaflet-overlay-pane"
-            />
-            <div
-              class="leaflet-pane leaflet-shadow-pane"
-            >
-              <img
-                alt=""
-                class="leaflet-marker-shadow leaflet-zoom-hide"
-                src="marker-shadow.png"
-                style="margin-left: -12px; margin-top: -41px; width: 41px; height: 41px; left: 0px; top: 0px;"
-              />
-            </div>
-            <div
-              class="leaflet-pane leaflet-marker-pane"
-            >
-              <img
-                alt="Marker"
-                class="leaflet-marker-icon leaflet-zoom-hide leaflet-interactive"
-                role="button"
-                src="marker-icon.png"
-                style="margin-left: -12px; margin-top: -41px; width: 25px; height: 41px; left: 0px; top: 0px; z-index: 0;"
-                tabindex="0"
-              />
-            </div>
-            <div
-              class="leaflet-pane leaflet-tooltip-pane"
-            />
-            <div
-              class="leaflet-pane leaflet-popup-pane"
-            />
-          </div>
-          <div
-            class="leaflet-control-container"
-          >
-            <div
-              class="leaflet-top leaflet-left"
-            >
-              <div
-                class="leaflet-control-zoom leaflet-bar leaflet-control"
-              >
-                <a
-                  aria-disabled="false"
-                  aria-label="Zoom in"
-                  class="leaflet-control-zoom-in"
-                  href="#"
-                  role="button"
-                  title="Zoom in"
-                >
-                  <span
-                    aria-hidden="true"
-                  >
-                    +
-                  </span>
-                </a>
-                <a
-                  aria-disabled="false"
-                  aria-label="Zoom out"
-                  class="leaflet-control-zoom-out"
-                  href="#"
-                  role="button"
-                  title="Zoom out"
-                >
-                  <span
-                    aria-hidden="true"
-                  >
-                    −
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div
-              class="leaflet-top leaflet-right"
-            />
-            <div
-              class="leaflet-bottom leaflet-left"
-            />
-            <div
-              class="leaflet-bottom leaflet-right"
-            >
-              <div
-                class="leaflet-control-attribution leaflet-control"
-              >
-                <a
-                  href="https://leafletjs.com"
-                  title="A JavaScript library for interactive maps"
-                >
-                  Leaflet
-                </a>
-                 
-                <span
-                  aria-hidden="true"
-                >
-                  |
-                </span>
-                 © 
-                <a
-                  href="https://www.openstreetmap.org/copyright"
-                >
-                  OpenStreetMap
-                </a>
-                 contributors
-              </div>
-            </div>
-          </div>
+          <progress
+            class="progress w-56"
+          />
         </div>
       </div>
     </div>

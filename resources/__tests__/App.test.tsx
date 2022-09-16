@@ -1,8 +1,19 @@
-import { render } from '@testing-library/react';
-import { expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import App from '../App';
+import { render } from '../common/test-utils';
 
-it('renders app', () => {
-  const { container } = render(<App />);
-  expect(container).toMatchSnapshot();
+describe('<App />', () => {
+  it('renders login page', () => {
+    const { container } = render(<App />, {
+      initialEntries: ['/auth/login'],
+    });
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders profile page', () => {
+    const { container } = render(<App />, {
+      initialEntries: ['/profile'],
+    });
+    expect(container).toMatchSnapshot();
+  });
 });

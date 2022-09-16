@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["orderByNulls"]
 }
 
@@ -9,68 +9,67 @@ datasource db {
 }
 
 model user {
-  id        Int     @id @default(autoincrement())
-  username  String  @unique
-  email     String  @unique
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String?
+  email     String   @unique
   firstName String
   lastName  String
-  admin     Boolean @default(false)
-
-  trips     trip[]
+  admin     Boolean  @default(false)
   flights   flight[]
+  trips     trip[]
 }
 
 model trip {
-  id      String   @id @db.Uuid() @default(uuid())
+  id      String   @id @default(uuid()) @db.Uuid
   userId  Int
-  user    user     @relation(fields: [userId], references: [id])
   name    String
+  user    user     @relation(fields: [userId], references: [id])
   flights flight[]
 }
 
 model flight {
-  id                 String         @id @db.Uuid() @default(uuid())
+  id                 String         @id @default(uuid()) @db.Uuid
   userId             Int
-  user               user           @relation(fields: [userId], references: [id])
-  tripId             String?        @db.Uuid()
-  trip               trip?          @relation(fields: [tripId], references: [id])
+  tripId             String?        @db.Uuid
   departureAirportId String
-  departureAirport   airport        @relation(name: "departureFlights", fields: [departureAirportId], references: [id])
   arrivalAirportId   String
-  arrivalAirport     airport        @relation(name: "arrivalFlights", fields: [arrivalAirportId], references: [id])
   airlineId          String
-  airline            airline        @relation(name: "flights", fields: [airlineId], references: [id])
   operatorAirlineId  String?
-  operatorAirline    airline?       @relation(name: "operatorFlights", fields: [operatorAirlineId], references: [id])
   flightNumber       Int?
   callsign           String?
   aircraftTypeId     String?
-  aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
   tailNumber         String?
   outTime            String
   offTime            String?
-  oonTime            String?
+  onTime             String?
   inTime             String
-  class              String?
+  class              FlightClass?
   seatNumber         String?
-  seatPosition       String?
-  reason             String?
+  seatPosition       SeatPosition?
+  reason             FlightReason?
   comments           String?
   trackingLink       String?
+  aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
+  airline            airline        @relation("flights", fields: [airlineId], references: [id])
+  arrivalAirport     airport        @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
+  departureAirport   airport        @relation("departureFlights", fields: [departureAirportId], references: [id])
+  operatorAirline    airline?       @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
+  trip               trip?          @relation(fields: [tripId], references: [id])
+  user               user           @relation(fields: [userId], references: [id])
 }
 
 model aircraft_type {
-  id      String    @id
+  id      String   @id
   iata    String
   icao    String
   name    String
   class   String
-
   flights flight[]
 }
 
 model airline {
-  id              String  @id
+  id              String   @id
   iata            String
   icao            String
   name            String
@@ -79,13 +78,12 @@ model airline {
   destinations    Int?
   logo            String?
   wiki            String?
-
-  flights         flight[] @relation(name: "flights")
-  operatorFlights flight[] @relation(name: "operatorFlights")
+  flights         flight[] @relation("flights")
+  operatorFlights flight[] @relation("operatorFlights")
 }
 
 model airport {
-  id               String  @id
+  id               String   @id
   type             String
   name             String
   lat              Float
@@ -93,9 +91,7 @@ model airport {
   elevation        Int?
   continent        String
   countryId        String
-  country          country @relation(fields: [countryId], references: [id])
   regionId         String
-  region           region  @relation(fields: [regionId], references: [id])
   municipality     String
   timeZone         String
   scheduledService Boolean
@@ -103,28 +99,47 @@ model airport {
   gps              String
   iata             String
   local            String
-
-  departureFlights flight[] @relation(name: "departureFlights")
-  arrivalFlights   flight[] @relation(name: "arrivalFlights")
+  country          country  @relation(fields: [countryId], references: [id])
+  region           region   @relation(fields: [regionId], references: [id])
+  arrivalFlights   flight[] @relation("arrivalFlights")
+  departureFlights flight[] @relation("departureFlights")
 }
 
 model country {
-  id        String  @id
+  id        String    @id
   name      String
   continent String
   wiki      String?
-
-  regions   region[]
   airports  airport[]
+  regions   region[]
 }
 
 model region {
-  id        String  @id
+  id        String    @id
   name      String
   continent String
   countryId String
-  country   country @relation(fields: [countryId], references: [id])
   wiki      String?
-
+  country   country   @relation(fields: [countryId], references: [id])
   airports  airport[]
+}
+
+enum FlightClass {
+  BASIC
+  ECONOMY
+  PREMIUM
+  BUSINESS
+  FIRST
+}
+
+enum SeatPosition {
+  AISLE
+  MIDDLE
+  WINDOW
+}
+
+enum FlightReason {
+  LEISURE
+  BUSINESS
+  OTHER
 }

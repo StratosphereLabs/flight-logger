@@ -1,7 +1,17 @@
+-- CreateEnum
+CREATE TYPE "FlightClass" AS ENUM ('BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST');
+
+-- CreateEnum
+CREATE TYPE "SeatPosition" AS ENUM ('AISLE', 'MIDDLE', 'WINDOW');
+
+-- CreateEnum
+CREATE TYPE "FlightReason" AS ENUM ('LEISURE', 'BUSINESS', 'OTHER');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
+    "password" TEXT,
     "email" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
@@ -34,12 +44,12 @@ CREATE TABLE "flight" (
     "tailNumber" TEXT,
     "outTime" TEXT NOT NULL,
     "offTime" TEXT,
-    "oonTime" TEXT,
+    "onTime" TEXT,
     "inTime" TEXT NOT NULL,
-    "class" TEXT,
+    "class" "FlightClass",
     "seatNumber" TEXT,
-    "seatPosition" TEXT,
-    "reason" TEXT,
+    "seatPosition" "SeatPosition",
+    "reason" "FlightReason",
     "comments" TEXT,
     "trackingLink" TEXT,
 
@@ -125,25 +135,25 @@ CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 ALTER TABLE "trip" ADD CONSTRAINT "trip_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "flight" ADD CONSTRAINT "flight_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "flight" ADD CONSTRAINT "flight_tripId_fkey" FOREIGN KEY ("tripId") REFERENCES "trip"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "flight" ADD CONSTRAINT "flight_departureAirportId_fkey" FOREIGN KEY ("departureAirportId") REFERENCES "airport"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "flight" ADD CONSTRAINT "flight_arrivalAirportId_fkey" FOREIGN KEY ("arrivalAirportId") REFERENCES "airport"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "flight" ADD CONSTRAINT "flight_aircraftTypeId_fkey" FOREIGN KEY ("aircraftTypeId") REFERENCES "aircraft_type"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "flight" ADD CONSTRAINT "flight_airlineId_fkey" FOREIGN KEY ("airlineId") REFERENCES "airline"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "flight" ADD CONSTRAINT "flight_arrivalAirportId_fkey" FOREIGN KEY ("arrivalAirportId") REFERENCES "airport"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "flight" ADD CONSTRAINT "flight_departureAirportId_fkey" FOREIGN KEY ("departureAirportId") REFERENCES "airport"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "flight" ADD CONSTRAINT "flight_operatorAirlineId_fkey" FOREIGN KEY ("operatorAirlineId") REFERENCES "airline"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "flight" ADD CONSTRAINT "flight_aircraftTypeId_fkey" FOREIGN KEY ("aircraftTypeId") REFERENCES "aircraft_type"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "flight" ADD CONSTRAINT "flight_tripId_fkey" FOREIGN KEY ("tripId") REFERENCES "trip"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "flight" ADD CONSTRAINT "flight_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "airport" ADD CONSTRAINT "airport_countryId_fkey" FOREIGN KEY ("countryId") REFERENCES "country"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
