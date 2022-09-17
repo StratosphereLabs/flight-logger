@@ -1,15 +1,17 @@
 import { user } from '@prisma/client';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { expressjwt, Request as JwtRequest } from 'express-jwt';
 import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
 
 export interface UserToken extends Pick<user, 'id' | 'username' | 'admin'> {}
 
-export const authorizeToken = expressjwt({
-  secret: process.env.JWT_SECRET ?? '',
-  algorithms: ['HS256'],
-});
+export const authorizeToken = (credentialsRequired?: boolean): RequestHandler =>
+  expressjwt({
+    secret: process.env.JWT_SECRET ?? '',
+    algorithms: ['HS256'],
+    credentialsRequired,
+  });
 
 export const generateUserToken = (
   _: Request,

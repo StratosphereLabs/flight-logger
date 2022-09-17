@@ -8,7 +8,7 @@ export interface CardProps extends DaisyUICardProps {
   isLoading?: boolean;
 }
 
-export const Card = ({
+export const LoadingCard = ({
   children,
   isLoading,
   ...props

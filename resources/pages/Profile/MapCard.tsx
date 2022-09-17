@@ -5,14 +5,17 @@ import {
   Popup,
   TileLayer,
 } from 'react-leaflet';
-import { Card } from '../../common/components';
+import { LoadingCard } from '../../common/components';
 import { useFlightsQuery } from '../../common/hooks';
 
 export const MapCard = (): JSX.Element => {
   const { isLoading, airportsList, routesList } =
     useFlightsQuery('EchoSierra98');
   return (
-    <Card isLoading={isLoading} className="shadow flex-1 bg-base-200">
+    <LoadingCard
+      isLoading={isLoading}
+      className="shadow flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
+    >
       <MapContainer className="h-full w-full" center={[51.505, -0.09]} zoom={8}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -34,6 +37,6 @@ export const MapCard = (): JSX.Element => {
           />
         ))}
       </MapContainer>
-    </Card>
+    </LoadingCard>
   );
 };
