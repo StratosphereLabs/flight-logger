@@ -1,6 +1,8 @@
 import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useContext,
   useEffect,
   useMemo,
@@ -12,7 +14,7 @@ interface AppContextData {
   isLoggedIn: boolean;
   logout: () => void;
   theme: string | null;
-  setTheme: (theme: AppTheme) => void;
+  setTheme: Dispatch<SetStateAction<AppTheme>>;
   setToken: (token: string | null) => void;
   token: string | null;
   alertMessages: AlertMessage[];

@@ -1,9 +1,11 @@
 import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLinkClickHandler } from 'react-router-dom';
+import { DarkModeButton } from '../../common/components';
 import { useAppContext } from '../../context';
 
 export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
+  const onLoginClick = useLinkClickHandler('/auth/login');
   return (
     <div className="pb-4 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans">
       <Navbar className="bg-base-200 shadow-xl rounded-box">
@@ -57,19 +59,14 @@ export const MainNavbar = (): JSX.Element => {
             </Menu.Item>
           </Menu>
         </Navbar.Center>
-        <Navbar.End>
-          <Link className="btn" to="/add-flight">
+        <Navbar.End className="space-x-2">
+          <DarkModeButton />
+          <Link className="btn btn-ghost" to="/add-flight">
             Add Flight
           </Link>
-          {isLoggedIn ? (
-            <a className="btn" onClick={logout}>
-              Logout
-            </a>
-          ) : (
-            <Link className="btn" to="/auth/login">
-              Login
-            </Link>
-          )}
+          <a className="btn" onClick={isLoggedIn ? logout : onLoginClick}>
+            {isLoggedIn ? 'Logout' : 'Login'}
+          </a>
         </Navbar.End>
       </Navbar>
     </div>

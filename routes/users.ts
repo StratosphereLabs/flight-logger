@@ -3,8 +3,34 @@ import { Request as JwtRequest } from 'express-jwt';
 import createHttpError from 'http-errors';
 import { authorizeToken, UserToken, verifyAdmin } from '../app/auth';
 import { prisma } from '../app/db';
+import { excludeKeys, fetchGravatarUrl } from '../app/utils';
 
 const router = express.Router();
+
+router.use(authorizeToken(false));
+
+router.get('/profile', async (req: JwtRequest<UserToken>, res, next) => {
+  const username = req.auth?.username;
+  if (username === undefined) {
+    return next(createHttpError(401, 'Unauthorized'));
+  }
+  try {
+    const result = await prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+    if (result === null) {
+      throw createHttpError(404, 'User not found.');
+    }
+    res.status(200).json({
+      avatar: fetchGravatarUrl(result.email),
+      ...excludeKeys(result, 'password', 'id'),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.get('/:username', async (req: JwtRequest<UserToken>, res, next) => {
   const { username } = req.params;
@@ -22,8 +48,6 @@ router.get('/:username', async (req: JwtRequest<UserToken>, res, next) => {
     next(err);
   }
 });
-
-router.use(authorizeToken);
 
 router.get('/', verifyAdmin, async (_, res, next) => {
   try {
