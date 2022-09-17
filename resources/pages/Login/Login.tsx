@@ -17,7 +17,7 @@ export const Login = (): JSX.Element => {
   }, [isLoggedIn]);
   return (
     <>
-      <GoogleLoginButton />
+      <GoogleLoginButton width="318px" />
       <Divider>OR</Divider>
       <LoginForm />
     </>
