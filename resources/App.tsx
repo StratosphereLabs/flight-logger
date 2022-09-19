@@ -7,6 +7,7 @@ import {
   ForgotPassword,
   Profile,
   Login,
+  ResetPassword,
 } from './pages';
 
 export const App = (): JSX.Element => (
@@ -21,6 +22,7 @@ export const App = (): JSX.Element => (
     <Route path="auth" element={<AuthenticationLayout />}>
       <Route path="login" element={<Login />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
+      <Route path="reset-password/:token" element={<ResetPassword />} />
     </Route>
   </Routes>
 );

@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import type { ErrorRequestHandler } from 'express';
 import { url } from 'gravatar';
 import type { HttpError } from 'http-errors';
@@ -26,6 +27,11 @@ export const normalizePort = (val: string): string | number | undefined => {
   if (port >= 0) {
     return port;
   }
+};
+
+export const getPasswordResetToken = (): string => {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  return crypto.createHash('sha256').update(resetToken).digest('hex');
 };
 
 export const errorRequestHandler: ErrorRequestHandler = (

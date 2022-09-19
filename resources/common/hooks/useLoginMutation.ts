@@ -4,11 +4,14 @@ import { API_URL } from '../../common/constants';
 import { useErrorResponseHandler } from '../../common/hooks';
 import { ErrorResponse } from '../../common/types';
 import { useAppContext } from '../../context';
-import { LoginResponse } from './Login';
 
 export interface LoginRequest {
   email: string;
   password: string;
+}
+
+export interface LoginResponse {
+  token: string;
 }
 
 export const useLoginMutation = (): UseMutationResult<
@@ -16,10 +19,11 @@ export const useLoginMutation = (): UseMutationResult<
   AxiosError<ErrorResponse>,
   LoginRequest
 > => {
-  const { setToken } = useAppContext();
+  const { clearAlertMessages, setToken } = useAppContext();
   const onErrorResponse = useErrorResponseHandler();
   return useMutation(
     async data => {
+      clearAlertMessages();
       return await axios.post(`${API_URL}/auth/login`, data);
     },
     {

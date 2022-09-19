@@ -5,10 +5,6 @@ import { useAppContext } from '../../context';
 import { GoogleLoginButton } from './GoogleLoginButton';
 import { LoginForm } from './LoginForm';
 
-export interface LoginResponse {
-  token: string;
-}
-
 export const Login = (): JSX.Element => {
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();

@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Form } from 'react-daisyui';
+import { useState } from 'react';
+import { Button, Card, Form } from 'react-daisyui';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FormInput } from '../../common/components';
+import { useForgotPasswordMutation } from '../../common/hooks';
 import { forgotPasswordSchema } from './schema';
-import { useForgotPasswordMutation } from './useForgotPasswordMutation';
 
 export const ForgotPassword = (): JSX.Element => {
+  const [resetLinkSent, setResetLinkSent] = useState(false);
   const { isLoading, mutate } = useForgotPasswordMutation();
   const methods = useForm({
     mode: 'onBlur',
@@ -15,22 +17,37 @@ export const ForgotPassword = (): JSX.Element => {
     resolver: zodResolver(forgotPasswordSchema),
     shouldUseNativeValidation: false,
   });
+  if (resetLinkSent) {
+    return (
+      <>
+        <Card.Title>Check your email</Card.Title>
+        <p>Password reset link sent!</p>
+      </>
+    );
+  }
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(data => mutate(data))}>
+      <form
+        onSubmit={methods.handleSubmit(data =>
+          mutate(data, {
+            onSuccess: () => setResetLinkSent(true),
+          }),
+        )}
+      >
         <fieldset disabled={isLoading}>
           <Form>
-            <Form.Label title="Email" />
             <FormInput
+              label="Email"
               name="email"
-              placeholder="email"
+              autoComplete="email"
+              placeholder="Email"
               className="input-bordered"
             />
           </Form>
         </fieldset>
         <Form className="mt-6">
           <Button type="submit" loading={isLoading}>
-            Reset
+            Reset Password
           </Button>
         </Form>
       </form>

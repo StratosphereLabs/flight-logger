@@ -67,9 +67,10 @@ exports[`<App /> > renders login page 1`] = `
                   </span>
                 </label>
                 <input
+                  autocomplete="email"
                   class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
                   name="email"
-                  placeholder="email"
+                  placeholder="Email"
                   value=""
                 />
               </div>
@@ -87,9 +88,10 @@ exports[`<App /> > renders login page 1`] = `
                   </span>
                 </label>
                 <input
+                  autocomplete="current-password"
                   class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
                   name="password"
-                  placeholder="password"
+                  placeholder="Password"
                   type="password"
                   value=""
                 />
@@ -193,9 +195,10 @@ exports[`<App /> > renders profile page 1`] = `
                   </span>
                 </label>
                 <input
+                  autocomplete="email"
                   class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
                   name="email"
-                  placeholder="email"
+                  placeholder="Email"
                   value=""
                 />
               </div>
@@ -213,9 +216,10 @@ exports[`<App /> > renders profile page 1`] = `
                   </span>
                 </label>
                 <input
+                  autocomplete="current-password"
                   class="input input-bordered input-ghost focus:outline-offset-0 input-bordered"
                   name="password"
-                  placeholder="password"
+                  placeholder="Password"
                   type="password"
                   value=""
                 />

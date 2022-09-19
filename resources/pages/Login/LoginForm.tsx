@@ -3,8 +3,8 @@ import { Button, Form, Link } from 'react-daisyui';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import { FormInput } from '../../common/components';
+import { useLoginMutation } from '../../common/hooks';
 import { loginSchema } from './schema';
-import { useLoginMutation } from './useLoginMutation';
 
 export const LoginForm = (): JSX.Element => {
   const { isLoading, mutate } = useLoginMutation();
@@ -26,7 +26,8 @@ export const LoginForm = (): JSX.Element => {
             <FormInput
               label="Email"
               name="email"
-              placeholder="email"
+              autoComplete="email"
+              placeholder="Email"
               className="input-bordered"
             />
           </Form>
@@ -34,8 +35,9 @@ export const LoginForm = (): JSX.Element => {
             <FormInput
               label="Password"
               name="password"
+              autoComplete="current-password"
               type="password"
-              placeholder="password"
+              placeholder="Password"
               className="input-bordered"
             />
             <label className="label">
