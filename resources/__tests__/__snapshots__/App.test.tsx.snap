@@ -39,8 +39,12 @@ exports[`<App /> > renders login page 1`] = `
           class="card-body"
         >
           <div
-            style="height: 40px;"
-          />
+            class="h-[55px] w-[318px]"
+          >
+            <div
+              style="height: 40px;"
+            />
+          </div>
           <div
             class="divider"
             role="separator"
@@ -161,8 +165,12 @@ exports[`<App /> > renders profile page 1`] = `
           class="card-body"
         >
           <div
-            style="height: 40px;"
-          />
+            class="h-[55px] w-[318px]"
+          >
+            <div
+              style="height: 40px;"
+            />
+          </div>
           <div
             class="divider"
             role="separator"
