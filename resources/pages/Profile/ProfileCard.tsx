@@ -1,6 +1,6 @@
 import { Avatar, Badge, Button, Card } from 'react-daisyui';
 import { LoadingCard } from '../../common/components';
-import { useUserQuery } from './useUserQuery';
+import { useUserQuery } from '../../common/hooks';
 
 export const ProfileCard = (): JSX.Element => {
   const { isLoading, data } = useUserQuery();

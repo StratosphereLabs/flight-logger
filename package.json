@@ -23,7 +23,7 @@
   "dependencies": {
     "@hookform/resolvers": "^2.9.8",
     "@prisma/client": "^4.3.1",
-    "@react-oauth/google": "^0.2.6",
+    "@react-oauth/google": "^0.2.8",
     "@tanstack/react-query": "^4.3.1",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
@@ -71,6 +71,7 @@
     "@types/mkdirp": "^1.0.2",
     "@types/morgan": "^1.9.3",
     "@types/node": "^18.7.14",
+    "@types/nodemailer": "^6.4.6",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/validator": "^13.7.6",

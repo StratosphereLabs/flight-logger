@@ -5,10 +5,6 @@ import { useAppContext } from '../../context';
 import { GoogleLoginButton } from './GoogleLoginButton';
 import { LoginForm } from './LoginForm';
 
-export interface LoginResponse {
-  token: string;
-}
-
 export const Login = (): JSX.Element => {
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();
@@ -17,7 +13,7 @@ export const Login = (): JSX.Element => {
   }, [isLoggedIn]);
   return (
     <>
-      <GoogleLoginButton />
+      <GoogleLoginButton width="318px" />
       <Divider>OR</Divider>
       <LoginForm />
     </>

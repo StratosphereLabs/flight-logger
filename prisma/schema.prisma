@@ -9,15 +9,17 @@ datasource db {
 }
 
 model user {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String?
-  email     String   @unique
-  firstName String
-  lastName  String
-  admin     Boolean  @default(false)
-  flights   flight[]
-  trips     trip[]
+  id                  Int      @id @default(autoincrement())
+  username            String   @unique
+  password            String?
+  email               String   @unique
+  firstName           String
+  lastName            String
+  admin               Boolean  @default(false)
+  passwordResetToken  String?
+  passwordResetAt     DateTime?
+  flights             flight[]
+  trips               trip[]
 }
 
 model trip {

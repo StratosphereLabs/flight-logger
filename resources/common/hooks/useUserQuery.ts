@@ -1,7 +1,7 @@
 import { user } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
-import { API_URL } from '../../common/constants';
+import { API_URL } from '../constants';
 import { useAppContext } from '../../context';
 
 export interface UserResponse
