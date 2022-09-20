@@ -4,7 +4,18 @@ import {
   PASSWORD_REQUIREMENT_STRING,
 } from '../../common/constants';
 
-export const resetPasswordSchema = z.object({
+export const registerSchema = z.object({
+  username: z.string().min(1, {
+    message: 'Required',
+  }),
+  email: z
+    .string()
+    .min(1, {
+      message: 'Required',
+    })
+    .email({ message: 'Invalid email address' }),
+  firstName: z.string(),
+  lastName: z.string(),
   password: z
     .string()
     .min(1, {

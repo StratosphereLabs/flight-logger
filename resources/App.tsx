@@ -8,6 +8,7 @@ import {
   Profile,
   Login,
   ResetPassword,
+  Register,
 } from './pages';
 
 export const App = (): JSX.Element => (
@@ -21,6 +22,7 @@ export const App = (): JSX.Element => (
     </Route>
     <Route path="auth" element={<AuthenticationLayout />}>
       <Route path="login" element={<Login />} />
+      <Route path="register" element={<Register />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="reset-password/:token" element={<ResetPassword />} />
     </Route>
