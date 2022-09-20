@@ -15,6 +15,7 @@ app.use(logger('dev'));
 app.use(
   helmet({
     contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
   }),
 );
 app.use(cors());
