@@ -1,7 +1,7 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-import helmet from 'helmet';
+// import helmet from 'helmet';
 import createError from 'http-errors';
 import logger from 'morgan';
 import path from 'path';
@@ -12,12 +12,12 @@ import router from '../routes';
 const app = express();
 
 app.use(logger('dev'));
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-    crossOriginEmbedderPolicy: false,
-  }),
-);
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: false,
+//     crossOriginEmbedderPolicy: false,
+//   }),
+// );
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
