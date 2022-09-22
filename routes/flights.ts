@@ -2,7 +2,7 @@ import express from 'express';
 import { Request } from 'express-jwt';
 import createHttpError from 'http-errors';
 import multer from 'multer';
-import { authorizeToken, UserToken } from '../app/auth';
+import { authorizeToken, UserToken, verifyAdmin } from '../app/auth';
 import { prisma } from '../app/db';
 import { saveFlightDiaryData } from '../app/parsers';
 
@@ -64,8 +64,24 @@ router.post(
   },
 );
 
+router.post(
+  '/upload/flightdiary/:userId',
+  verifyAdmin,
+  upload.single('file'),
+  async (req: Request<UserToken>, res, next) => {
+    const { file } = req;
+    const userId = req.params.userId;
+    try {
+      const flights = await saveFlightDiaryData(parseInt(userId, 10), file);
+      res.status(200).json(flights);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
 // TODO: Remove in production
-router.delete('/', async (_: Request<UserToken>, res, next) => {
+router.delete('/', verifyAdmin, async (_: Request<UserToken>, res, next) => {
   try {
     await prisma.flight.deleteMany({});
     res.sendStatus(200);
