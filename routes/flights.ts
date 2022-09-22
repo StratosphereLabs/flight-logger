@@ -1,4 +1,4 @@
-import express, { NextFunction, Response } from 'express';
+import express from 'express';
 import { Request } from 'express-jwt';
 import createHttpError from 'http-errors';
 import multer from 'multer';
@@ -49,7 +49,7 @@ router.use(authorizeToken());
 router.post(
   '/upload/flightdiary',
   upload.single('file'),
-  async (req: Request<UserToken>, res: Response, next: NextFunction) => {
+  async (req: Request<UserToken>, res, next) => {
     const { file } = req;
     const userId = req.auth?.id;
     if (userId === undefined) {
@@ -57,11 +57,21 @@ router.post(
     }
     try {
       const flights = await saveFlightDiaryData(userId, file);
-      res.status(201).json(flights);
+      res.status(200).json(flights);
     } catch (err) {
       next(err);
     }
   },
 );
+
+// TODO: Remove in production
+router.delete('/', async (_: Request<UserToken>, res, next) => {
+  try {
+    await prisma.flight.deleteMany({});
+    res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;

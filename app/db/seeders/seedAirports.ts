@@ -35,7 +35,7 @@ const getDatabaseRows = (
   const rows = csvToJson<AirportResponse>(csv).reduce<
     Array<Record<string, unknown>>
   >((acc, row) => {
-    if (row.scheduled_service === 'no') return acc;
+    if (row.iata_code === '') return acc;
     const lat = parseFloat(row.latitude_deg);
     const lon = parseFloat(row.longitude_deg);
     const timeZones = find(lat, lon);

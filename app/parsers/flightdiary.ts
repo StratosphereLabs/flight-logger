@@ -1,6 +1,8 @@
-import { aircraft_type, airline, airport } from '@prisma/client';
+import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import createHttpError from 'http-errors';
+import { DIGIT_REGEX } from '../constants';
 import { prisma } from '../db';
 
 interface FlightDiaryRow {
@@ -25,82 +27,67 @@ interface FlightDiaryRow {
   Aircraft_id: string;
 }
 
-export const parseAirport = (text: string): string | null => {
+interface DataFetchResults {
+  airports: Record<string, airport | undefined>;
+  airlines: Record<string, airline | undefined>;
+  aircraftTypes: Record<string, aircraft_type | undefined>;
+}
+
+export const getUTCTime = (
+  date: string,
+  time: string,
+  timeZone: string,
+): string => zonedTimeToUtc(`${date} ${time}`, timeZone).toISOString();
+
+export const getAirportId = (text: string): string | null => {
   const regex = /\([A-Z]{3}\/[A-Z]{4}\)/g;
   const match = text.match(regex);
   if (match === null) {
     return null;
   }
-  const icao = match[0].split('/')[1].split(')')[0];
-  return icao;
+  return match[0].split('/')[1].split(')')[0];
 };
 
-export const parseAirline = (text: string): string | null => {
+export const getAirlineId = (text: string): string | null => {
   const regex = /\([A-Z0-9]{2}\/[A-Z]{3}\)/g;
   const match = text.match(regex);
   if (match === null) {
     return null;
   }
-  const codes = match[0].split('(')[1].split(')')[0];
-  const [iata, icao] = codes.split('/');
-  return `${iata}_${icao}`;
+  return match[0].split('(')[1].split(')')[0];
 };
 
-export const parseAircraft = (text: string): string | null => {
+export const getAircraftId = (text: string): string | null => {
   const regex = /\([A-Z0-9]{3,4}\)/g;
   const match = text.match(regex);
   if (match === null) {
     return null;
   }
-  const icao = match[0].split('(')[1].split(')')[0];
-  return icao;
+  return match[0].split('(')[1].split(')')[0];
 };
 
-export const saveFlightDiaryData = async (
-  userId: number,
-  file?: Express.Multer.File,
-): Promise<{
-  userId: number;
-  airports: airport[];
-  airlines: airline[];
-  aircraftTypes: aircraft_type[];
-}> => {
-  if (file === undefined) {
-    throw createHttpError(400, 'File not found');
-  }
-  const csv = file.buffer.toString();
-  const rows = parse(csv, {
-    columns: true,
-    skip_empty_lines: true,
-  }) as FlightDiaryRow[];
+export const getFlightNumber = (text: string): number | null => {
+  const number = Number(text.match(DIGIT_REGEX)?.join(''));
+  if (isNaN(number)) return null;
+  return number;
+};
 
+export const fetchData = async (
+  rows: FlightDiaryRow[],
+): Promise<DataFetchResults> => {
   const airportIds = [
     ...new Set(
-      rows.flatMap(row => {
-        const departureAirport = parseAirport(row.From);
-        const arrivalAirport = parseAirport(row.To);
-        return departureAirport !== null && arrivalAirport !== null
-          ? [departureAirport, arrivalAirport]
-          : [];
-      }),
+      rows.flatMap(row =>
+        row.From !== '' && row.To !== '' ? [row.From, row.To] : [],
+      ),
     ),
   ];
-
   const airlineIds = [
-    ...new Set(
-      rows.flatMap(row => {
-        const airline = parseAirline(row.Airline);
-        return airline !== null ? [airline] : [];
-      }),
-    ),
+    ...new Set(rows.flatMap(row => (row.Airline !== '' ? [row.Airline] : []))),
   ];
-
-  const aircraftTypeIcaos = [
+  const aircraftTypeIds = [
     ...new Set(
-      rows.flatMap(row => {
-        const aircraftType = parseAircraft(row.Aircraft);
-        return aircraftType !== null ? [aircraftType] : [];
-      }),
+      rows.flatMap(row => (row.Aircraft !== '' ? [row.Aircraft] : [])),
     ),
   ];
 
@@ -121,12 +108,12 @@ export const saveFlightDiaryData = async (
         AND: [
           {
             iata: {
-              in: airlineIds.map(codes => codes.split('_')[0]),
+              in: airlineIds.map(codes => codes.split('/')[0]),
             },
           },
           {
             icao: {
-              in: airlineIds.map(codes => codes.split('_')[1]),
+              in: airlineIds.map(codes => codes.split('/')[1]),
             },
           },
         ],
@@ -135,18 +122,121 @@ export const saveFlightDiaryData = async (
     prisma.aircraft_type.findMany({
       where: {
         icao: {
-          in: aircraftTypeIcaos,
+          in: aircraftTypeIds,
         },
       },
     }),
   ];
 
-  const results = await Promise.all(dataPromises);
+  const [airports, airlines, aircraftTypes] = await Promise.all(dataPromises);
 
   return {
-    userId,
-    airports: results[0],
-    airlines: results[1],
-    aircraftTypes: results[2],
+    airports: airports.reduce(
+      (acc, airport) => ({
+        ...acc,
+        [airport.id]: airport,
+      }),
+      {},
+    ),
+    airlines: airlines.reduce(
+      (acc, airline) => ({
+        ...acc,
+        [`${airline.iata}/${airline.icao}`]: airline,
+      }),
+      {},
+    ),
+    aircraftTypes: aircraftTypes.reduce(
+      (acc, aircraftType) => ({
+        ...acc,
+        [aircraftType.icao]: aircraftType,
+      }),
+      {},
+    ),
   };
+};
+
+export const saveFlightDiaryData = async (
+  userId: number,
+  file?: Express.Multer.File,
+): Promise<Array<flight | null>> => {
+  if (file === undefined) {
+    throw createHttpError(400, 'File not found');
+  }
+  const csv = file.buffer.toString();
+  const parsedRows = parse(csv, {
+    columns: true,
+    skip_empty_lines: true,
+  }) as FlightDiaryRow[];
+  const rows: FlightDiaryRow[] = parsedRows.map(row => ({
+    ...row,
+    From: getAirportId(row.From) ?? '',
+    To: getAirportId(row.To) ?? '',
+    Airline: getAirlineId(row.Airline) ?? '',
+    Aircraft: getAircraftId(row.Aircraft) ?? '',
+  }));
+
+  const data = await fetchData(rows);
+
+  const promises = rows.flatMap(row => {
+    const departureAirport = data.airports[row.From];
+    const arrivalAirport = data.airports[row.To];
+    const airline = data.airlines[row.Airline];
+    const aircraftType = data.aircraftTypes[row.Aircraft];
+    if (
+      departureAirport === undefined ||
+      arrivalAirport === undefined ||
+      airline === undefined
+    )
+      return [];
+    return [
+      prisma.flight.create({
+        data: {
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+          departureAirport: {
+            connect: {
+              id: departureAirport.id,
+            },
+          },
+          arrivalAirport: {
+            connect: {
+              id: arrivalAirport.id,
+            },
+          },
+          airline: {
+            connect: {
+              id: airline.id,
+            },
+          },
+          aircraftType:
+            aircraftType !== undefined
+              ? {
+                  connect: {
+                    id: aircraftType.id,
+                  },
+                }
+              : undefined,
+          flightNumber: getFlightNumber(row['Flight number']),
+          tailNumber: row.Registration,
+          outTime: getUTCTime(
+            row.Date,
+            row['Dep time'],
+            departureAirport.timeZone,
+          ),
+          inTime: getUTCTime(
+            row.Date,
+            row['Arr time'],
+            arrivalAirport.timeZone,
+          ),
+          seatNumber: row['Seat number'],
+          comments: row.Note,
+        },
+      }),
+    ];
+  });
+
+  return await Promise.all(promises);
 };
