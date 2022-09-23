@@ -7,6 +7,7 @@ export const usersData: Prisma.Enumerable<Prisma.userCreateManyInput> = [
     email: 'ethan.shields21@gmail.com',
     firstName: 'Ethan',
     lastName: 'Shields',
+    admin: true,
   },
   {
     id: 2,

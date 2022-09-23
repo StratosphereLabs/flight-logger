@@ -8,3 +8,5 @@ export const nodemailerOptions: Options = {
     pass: process.env.MAILTRAP_PASSWORD,
   },
 };
+
+export const DIGIT_REGEX = /[0-9]/g;

@@ -1,22 +1,42 @@
-import {
-  MapContainer,
-  Marker,
-  Polyline,
-  Popup,
-  TileLayer,
-} from 'react-leaflet';
+import { useLeafletContext } from '@react-leaflet/core';
+import { LatLngExpression } from 'leaflet';
+import { GeodesicLine } from 'leaflet.geodesic';
+import { useEffect } from 'react';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { LoadingCard } from '../../common/components';
 import { useFlightsQuery } from '../../common/hooks';
 
+export interface FlightPathProps {
+  paths: LatLngExpression[] | LatLngExpression[][];
+}
+
+export const FlightPath = ({ paths }: FlightPathProps): null => {
+  const context = useLeafletContext();
+  useEffect(() => {
+    const line = new GeodesicLine(paths, { wrap: false });
+    const container = context.layerContainer ?? context.map;
+    container.addLayer(line);
+    return () => {
+      container.removeLayer(line);
+    };
+  }, []);
+  return null;
+};
+
 export const MapCard = (): JSX.Element => {
-  const { isLoading, airportsList, routesList } =
-    useFlightsQuery('EchoSierra98');
+  const { isLoading, airportsList, routesList } = useFlightsQuery();
   return (
     <LoadingCard
       isLoading={isLoading}
       className="shadow flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
     >
-      <MapContainer className="h-full w-full" center={[51.505, -0.09]} zoom={8}>
+      <MapContainer
+        className="h-full w-full"
+        boundsOptions={{}}
+        center={[38, -120]}
+        zoom={4}
+        worldCopyJump={false}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -28,9 +48,9 @@ export const MapCard = (): JSX.Element => {
           </Marker>
         ))}
         {routesList?.map(({ departureAirport, arrivalAirport }, index) => (
-          <Polyline
+          <FlightPath
             key={index}
-            positions={[
+            paths={[
               [departureAirport.lat, departureAirport.lon],
               [arrivalAirport.lat, arrivalAirport.lon],
             ]}
