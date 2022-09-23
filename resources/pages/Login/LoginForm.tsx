@@ -17,7 +17,8 @@ export const LoginForm = (): JSX.Element => {
     resolver: zodResolver(loginSchema),
     shouldUseNativeValidation: false,
   });
-  const handleClick = useLinkClickHandler('/auth/forgot-password');
+  const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
+  const handleRegister = useLinkClickHandler('/auth/register');
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(data => mutate(data))}>
@@ -41,8 +42,15 @@ export const LoginForm = (): JSX.Element => {
               className="input-bordered"
             />
             <label className="label">
-              <Link onClick={handleClick} className="label-text-alt" hover>
+              <Link
+                onClick={handleForgotPassword}
+                className="label-text-alt"
+                hover
+              >
                 Forgot password?
+              </Link>
+              <Link onClick={handleRegister} className="label-text-alt" hover>
+                Register
               </Link>
             </label>
           </Form>

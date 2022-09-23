@@ -3,8 +3,8 @@ import { LatLngExpression } from 'leaflet';
 import { GeodesicLine } from 'leaflet.geodesic';
 import { useEffect } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import { LoadingCard } from '../../common/components';
-import { useFlightsQuery } from '../../common/hooks';
+import { LoadingCard } from '../common/components';
+import { useFlightsQuery } from '../common/hooks';
 
 export interface FlightPathProps {
   paths: LatLngExpression[] | LatLngExpression[][];

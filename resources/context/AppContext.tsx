@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { UserResponse, useUserQuery } from '../common/hooks';
+import { UserResponse, useProfileQuery } from '../common/hooks';
 import { AlertMessage } from '../common/types';
 
 interface AppContextData {
@@ -63,7 +63,7 @@ export const AppContextProvider = ({
   const logout = (): void => setToken(null);
   const isLoggedIn = useMemo(() => token !== null, [token]);
 
-  const { data } = useUserQuery(token);
+  const { data } = useProfileQuery(token);
   useEffect(() => {
     if (token === null) setUser(null);
     else if (data !== undefined) setUser(data);

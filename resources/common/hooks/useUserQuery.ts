@@ -8,7 +8,7 @@ export interface UserResponse
   avatar: string;
 }
 
-export const useUserQuery = (
+export const useProfileQuery = (
   token: string | null,
 ): UseQueryResult<UserResponse> =>
   useQuery(
