@@ -2,6 +2,7 @@ import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
+import { useAppContext } from '../../context';
 import { API_URL } from '../constants';
 
 export interface FlightResponse extends flight {
@@ -21,15 +22,26 @@ export interface UseFlightQueryResult {
   routesList: Route[];
 }
 
-export const useFlightsQuery = (
-  username: string,
-): UseQueryResult<FlightResponse[]> & UseFlightQueryResult => {
+export const useFlightsQuery = (): UseQueryResult<FlightResponse[]> &
+  UseFlightQueryResult => {
+  const { user } = useAppContext();
   const queryResult = useQuery(
-    [username, 'flights'],
+    [user?.username, 'flights'],
     async (): Promise<FlightResponse[]> => {
-      const response = await axios.get<FlightResponse[]>(`${API_URL}/flights`);
+      const response = await axios.get<FlightResponse[]>(
+        `${API_URL}/users/${user?.username ?? ''}/flights`,
+      );
       return response?.data ?? [];
     },
+    {
+      enabled: user?.username !== undefined,
+    },
+  );
+  console.log(
+    queryResult?.data?.map(({ departureAirport, arrivalAirport }) => ({
+      departureAirport,
+      arrivalAirport,
+    })),
   );
   const airportsList = useMemo<airport[]>(() => {
     const departureAirports =

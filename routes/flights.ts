@@ -44,19 +44,18 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.use(authorizeToken());
-
 router.post(
   '/upload/flightdiary',
+  authorizeToken(true),
   upload.single('file'),
   async (req: Request<UserToken>, res, next) => {
     const { file } = req;
-    const userId = req.auth?.id;
-    if (userId === undefined) {
+    const username = req.auth?.username;
+    if (username === undefined) {
       return next(createHttpError(401, 'Unable to authenticate'));
     }
     try {
-      const flights = await saveFlightDiaryData(userId, file);
+      const flights = await saveFlightDiaryData(username, file);
       res.status(200).json(flights);
     } catch (err) {
       next(err);
@@ -65,14 +64,15 @@ router.post(
 );
 
 router.post(
-  '/upload/flightdiary/:userId',
+  '/upload/flightdiary/:username',
+  authorizeToken(true),
   verifyAdmin,
   upload.single('file'),
   async (req: Request<UserToken>, res, next) => {
     const { file } = req;
-    const userId = req.params.userId;
+    const username = req.params.username;
     try {
-      const flights = await saveFlightDiaryData(parseInt(userId, 10), file);
+      const flights = await saveFlightDiaryData(username, file);
       res.status(200).json(flights);
     } catch (err) {
       next(err);
@@ -81,13 +81,18 @@ router.post(
 );
 
 // TODO: Remove in production
-router.delete('/', verifyAdmin, async (_: Request<UserToken>, res, next) => {
-  try {
-    await prisma.flight.deleteMany({});
-    res.sendStatus(200);
-  } catch (err) {
-    next(err);
-  }
-});
+router.delete(
+  '/',
+  authorizeToken(true),
+  verifyAdmin,
+  async (_: Request<UserToken>, res, next) => {
+    try {
+      await prisma.flight.deleteMany({});
+      res.sendStatus(200);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
 
 export default router;

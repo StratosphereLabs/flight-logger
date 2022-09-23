@@ -10,7 +10,7 @@ export interface AppWrapperProps {
 }
 
 export const AppWrapper = ({ children }: AppWrapperProps): JSX.Element => (
-  <AppContextProvider>
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  </AppContextProvider>
+  <QueryClientProvider client={queryClient}>
+    <AppContextProvider>{children}</AppContextProvider>
+  </QueryClientProvider>
 );

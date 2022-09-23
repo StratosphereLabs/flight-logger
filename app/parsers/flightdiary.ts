@@ -156,7 +156,7 @@ export const fetchData = async (
 };
 
 export const saveFlightDiaryData = async (
-  userId: number,
+  username: string,
   file?: Express.Multer.File,
 ): Promise<Array<flight | null>> => {
   if (file === undefined) {
@@ -193,7 +193,7 @@ export const saveFlightDiaryData = async (
         data: {
           user: {
             connect: {
-              id: userId,
+              username,
             },
           },
           departureAirport: {

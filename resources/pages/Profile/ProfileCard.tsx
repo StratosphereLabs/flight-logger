@@ -1,20 +1,22 @@
+import { useIsFetching } from '@tanstack/react-query';
 import { Avatar, Badge, Button, Card } from 'react-daisyui';
 import { LoadingCard } from '../../common/components';
-import { useUserQuery } from '../../common/hooks';
+import { useAppContext } from '../../context';
 
 export const ProfileCard = (): JSX.Element => {
-  const { isLoading, data } = useUserQuery();
+  const { user } = useAppContext();
+  const isFetching = useIsFetching(['userData']);
   return (
     <LoadingCard
-      isLoading={isLoading}
+      isLoading={isFetching > 0}
       className="shadow w-80 bg-base-200 min-w-[200px]"
     >
       <Card.Body className="items-center">
         <Card.Title className="font-medium text-2xl">{`${
-          data?.firstName ?? ''
-        } ${data?.lastName ?? ''}`}</Card.Title>
-        <p className="text-md opacity-75">{`@${data?.username ?? ''}`}</p>
-        <Avatar size="lg" src={data?.avatar ?? undefined} />
+          user?.firstName ?? ''
+        } ${user?.lastName ?? ''}`}</Card.Title>
+        <p className="text-md opacity-75">{`@${user?.username ?? ''}`}</p>
+        <Avatar size="lg" src={user?.avatar ?? undefined} />
         <div className="inline space-x-2 font-bold">
           <Badge size="sm" color="primary">
             3 followers
