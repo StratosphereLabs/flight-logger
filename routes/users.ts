@@ -23,7 +23,13 @@ router.get(
       }
       res.status(200).json({
         avatar: fetchGravatarUrl(result.email),
-        ...excludeKeys(result, 'password', 'id'),
+        ...excludeKeys(
+          result,
+          'password',
+          'id',
+          'passwordResetToken',
+          'passwordResetAt',
+        ),
       });
     } catch (err) {
       next(err);
@@ -37,15 +43,24 @@ router.get(
   async (req: JwtRequest<UserToken>, res, next) => {
     const { username } = req.params;
     try {
-      const user = await prisma.user.findUnique({
+      const result = await prisma.user.findUnique({
         where: {
           username,
         },
       });
-      if (user === null) {
+      if (result === null) {
         throw createHttpError(404, 'User not found');
       }
-      return res.status(200).json(user);
+      return res.status(200).json({
+        avatar: fetchGravatarUrl(result.email),
+        ...excludeKeys(
+          result,
+          'password',
+          'id',
+          'passwordResetToken',
+          'passwordResetAt',
+        ),
+      });
     } catch (err) {
       next(err);
     }

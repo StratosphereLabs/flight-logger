@@ -103,6 +103,11 @@ exports[`<App /> > renders login page 1`] = `
                   >
                     Forgot password?
                   </a>
+                  <a
+                    class="link label-text-alt link-hover"
+                  >
+                    Register
+                  </a>
                 </label>
               </div>
             </fieldset>
@@ -230,6 +235,11 @@ exports[`<App /> > renders profile page 1`] = `
                     class="link label-text-alt link-hover"
                   >
                     Forgot password?
+                  </a>
+                  <a
+                    class="link label-text-alt link-hover"
+                  >
+                    Register
                   </a>
                 </label>
               </div>

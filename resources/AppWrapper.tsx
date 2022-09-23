@@ -3,7 +3,13 @@ import { ReactNode } from 'react';
 
 import { AppContextProvider } from './context';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export interface AppWrapperProps {
   children: ReactNode;

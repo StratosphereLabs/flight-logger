@@ -19,6 +19,7 @@ export const App = (): JSX.Element => (
       <Route path="profile" element={<Profile />} />
       <Route path="add-flight" element={<AddFlight />} />
       <Route path="flights" element={<Flights />} />
+      <Route path="user/:username" element={<Profile />} />
     </Route>
     <Route path="auth" element={<AuthenticationLayout />}>
       <Route path="login" element={<Login />} />

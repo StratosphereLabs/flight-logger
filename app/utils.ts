@@ -15,7 +15,7 @@ export const excludeKeys = <Model, Key extends keyof Model>(
 };
 
 export const fetchGravatarUrl = (email: string): string =>
-  url(email, { s: '200' });
+  url(email, { s: '200' }, true);
 
 export const normalizePort = (val: string): string | number | undefined => {
   const port = parseInt(val, 10);

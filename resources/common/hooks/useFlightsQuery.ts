@@ -37,12 +37,6 @@ export const useFlightsQuery = (): UseQueryResult<FlightResponse[]> &
       enabled: user?.username !== undefined,
     },
   );
-  console.log(
-    queryResult?.data?.map(({ departureAirport, arrivalAirport }) => ({
-      departureAirport,
-      arrivalAirport,
-    })),
-  );
   const airportsList = useMemo<airport[]>(() => {
     const departureAirports =
       queryResult?.data?.map(({ departureAirport }) => departureAirport) ?? [];
