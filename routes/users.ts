@@ -85,6 +85,11 @@ router.get(
           airline: true,
           aircraftType: true,
         },
+        orderBy: [
+          {
+            outTime: 'desc',
+          },
+        ],
       });
       return res.status(200).json(flights);
     } catch (err) {

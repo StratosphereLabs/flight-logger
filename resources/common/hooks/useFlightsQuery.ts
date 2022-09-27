@@ -6,6 +6,7 @@ import { useAppContext } from '../../context';
 import { API_URL } from '../constants';
 
 export interface FlightResponse extends flight {
+  [key: string]: unknown;
   departureAirport: airport;
   arrivalAirport: airport;
   airline: airline;

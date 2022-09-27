@@ -11,22 +11,6 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-router.get('/', async (_, res, next) => {
-  try {
-    const response = await prisma.flight.findMany({
-      include: {
-        departureAirport: true,
-        arrivalAirport: true,
-        airline: true,
-        aircraftType: true,
-      },
-    });
-    return res.status(200).json(response);
-  } catch (err) {
-    next(err);
-  }
-});
-
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
