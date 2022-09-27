@@ -1,10 +1,11 @@
-import { aircraft_type, airline } from '@prisma/client';
+import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
+import { Badge } from 'react-daisyui';
 import { LoadingCard, Table } from '../../common/components';
 import { useFlightsQuery } from '../../common/hooks';
 
-export const DATE_FORMAT = 'MM/dd/yyyy';
+export const DATE_FORMAT = 'M/d/yyyy';
 
 export const FlightsCard = (): JSX.Element => {
   const { data, isLoading } = useFlightsQuery();
@@ -13,78 +14,107 @@ export const FlightsCard = (): JSX.Element => {
       isLoading={isLoading}
       className="shadow flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
     >
-      <div className="overflow-x-scroll w-full">
-        <Table
-          columns={[
-            {
-              id: 'airline',
-              accessorKey: 'airline',
-              header: () => 'Airline',
-              cell: ({ getValue }) => {
-                const airlineData = getValue<airline>();
-                return airlineData?.logo !== null &&
-                  airlineData?.logo !== undefined ? (
-                  <img width="120px" src={airlineData.logo} />
-                ) : null;
-              },
-              footer: () => null,
-              size: 300,
+      <Table
+        columns={[
+          {
+            id: 'outTime',
+            accessorKey: 'outTime',
+            header: () => 'Date',
+            cell: ({ getValue }) => {
+              const isoTime = getValue<string>();
+              const date = format(new Date(isoTime), DATE_FORMAT);
+              const color = isBefore(new Date(isoTime), new Date())
+                ? 'primary'
+                : 'secondary';
+              return <Badge color={color}>{date}</Badge>;
             },
-            {
-              id: 'departureAirportId',
-              accessorKey: 'departureAirportId',
-              header: () => 'Dep Airport',
-              footer: () => null,
+            footer: () => null,
+          },
+          {
+            id: 'airline',
+            accessorKey: 'airline',
+            header: () => 'Airline',
+            cell: ({ getValue }) => {
+              const airlineData = getValue<airline>();
+              return airlineData?.logo !== null &&
+                airlineData?.logo !== undefined ? (
+                <div className="w-[120px] flex items-center justify-center">
+                  <img
+                    className="max-w-[120px] max-h-[50px]"
+                    src={airlineData.logo}
+                  />
+                </div>
+              ) : null;
             },
-            {
-              id: 'arrivalAirportId',
-              accessorKey: 'arrivalAirportId',
-              header: () => 'Arr Airport',
-              footer: () => null,
+            footer: () => null,
+            size: 300,
+          },
+          {
+            id: 'departureAirport',
+            accessorKey: 'departureAirport',
+            header: () => 'Dep Airport',
+            cell: ({ getValue }) => {
+              const airportData = getValue<airport>();
+              return (
+                <div>
+                  <div className="font-bold">{airportData?.id}</div>
+                  <div className="text-sm opacity-50">
+                    {airportData?.municipality}
+                  </div>
+                </div>
+              );
             },
-            {
-              id: 'outTime',
-              accessorKey: 'outTime',
-              header: () => 'Date',
-              cell: ({ getValue }) => {
-                const isoTime = getValue<string>();
-                return format(new Date(isoTime), DATE_FORMAT);
-              },
-              footer: () => null,
+            footer: () => null,
+          },
+          {
+            id: 'arrivalAirport',
+            accessorKey: 'arrivalAirport',
+            header: () => 'Arr Airport',
+            cell: ({ getValue }) => {
+              const airportData = getValue<airport>();
+              return (
+                <div>
+                  <div className="font-bold">{airportData?.id}</div>
+                  <div className="text-sm opacity-50">
+                    {airportData?.municipality}
+                  </div>
+                </div>
+              );
             },
-            {
-              id: 'aircraftType',
-              accessorKey: 'aircraftType',
-              header: () => 'Aircraft',
-              cell: ({ getValue }) => {
-                const aircraftType = getValue<aircraft_type>();
-                return aircraftType?.name ?? '';
-              },
-              footer: () => null,
+            footer: () => null,
+          },
+          {
+            id: 'flightNumber',
+            accessorKey: 'flightNumber',
+            header: () => 'Flight #',
+            cell: ({ getValue, row }) => {
+              const airlineData = row.getValue<airline>('airline');
+              const flightNumber = getValue<number>();
+              return `${airlineData?.iata ?? ''} ${flightNumber}`.trim();
             },
-            {
-              id: 'flightNumber',
-              accessorKey: 'flightNumber',
-              header: () => 'Flight #',
-              cell: ({ getValue, row }) => {
-                const airlineData = row.getValue<airline>('airline');
-                const flightNumber = getValue<number>();
-                return `${airlineData?.iata ?? ''} ${flightNumber}`.trim();
-              },
-              footer: () => null,
+            footer: () => null,
+          },
+          {
+            id: 'aircraftType',
+            accessorKey: 'aircraftType',
+            header: () => 'Aircraft',
+            cell: ({ getValue }) => {
+              const aircraftType = getValue<aircraft_type>();
+              return aircraftType?.name ?? '';
             },
-            {
-              id: 'tailNumber',
-              accessorKey: 'tailNumber',
-              header: () => 'Registration',
-              footer: () => null,
-            },
-          ]}
-          data={data ?? []}
-          enableRowHover
-          getCoreRowModel={getCoreRowModel()}
-        />
-      </div>
+            footer: () => null,
+          },
+          {
+            id: 'tailNumber',
+            accessorKey: 'tailNumber',
+            header: () => 'Registration',
+            footer: () => null,
+          },
+        ]}
+        data={data ?? []}
+        enableRowHover
+        getCoreRowModel={getCoreRowModel()}
+      />
     </LoadingCard>
   );
 };
