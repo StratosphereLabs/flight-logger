@@ -1,7 +1,7 @@
 import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { format, isBefore } from 'date-fns';
-import { Badge } from 'react-daisyui';
+import { Badge, Button, ButtonGroup } from 'react-daisyui';
 import { LoadingCard, Table } from '../../common/components';
 import { useFlightsQuery } from '../../common/hooks';
 
@@ -110,9 +110,22 @@ export const FlightsCard = (): JSX.Element => {
             header: () => 'Registration',
             footer: () => null,
           },
+          {
+            id: 'options',
+            header: () => 'Options',
+            cell: () => (
+              <ButtonGroup>
+                <Button size="sm">Edit</Button>
+                <Button size="sm">View</Button>
+                <Button size="sm">Trip</Button>
+              </ButtonGroup>
+            ),
+            footer: () => null,
+          },
         ]}
         data={data ?? []}
         enableRowHover
+        enableZebra
         getCoreRowModel={getCoreRowModel()}
       />
     </LoadingCard>
