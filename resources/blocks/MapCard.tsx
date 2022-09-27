@@ -1,62 +1,56 @@
-import { useLeafletContext } from '@react-leaflet/core';
-import { LatLngExpression } from 'leaflet';
-import { GeodesicLine } from 'leaflet.geodesic';
-import { useEffect } from 'react';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import {
+  GoogleMap,
+  MarkerF,
+  PolylineF,
+  useJsApiLoader,
+} from '@react-google-maps/api';
 import { LoadingCard } from '../common/components';
 import { useFlightsQuery } from '../common/hooks';
-
-export interface FlightPathProps {
-  paths: LatLngExpression[] | LatLngExpression[][];
-}
-
-export const FlightPath = ({ paths }: FlightPathProps): null => {
-  const context = useLeafletContext();
-  useEffect(() => {
-    const line = new GeodesicLine(paths, { wrap: false });
-    const container = context.layerContainer ?? context.map;
-    container.addLayer(line);
-    return () => {
-      container.removeLayer(line);
-    };
-  }, []);
-  return null;
-};
+import { AppTheme, useAppContext } from '../context';
+import { darkModeStyle } from '../common/mapStyle';
 
 export const MapCard = (): JSX.Element => {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
+  });
   const { isLoading, airportsList, routesList } = useFlightsQuery();
+  const { theme } = useAppContext();
   return (
     <LoadingCard
-      isLoading={isLoading}
+      isLoading={!isLoaded || isLoading}
       className="shadow flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
     >
-      <MapContainer
-        className="h-full w-full"
-        boundsOptions={{}}
-        center={[38, -120]}
-        zoom={4}
-        worldCopyJump={false}
+      <GoogleMap
+        mapContainerStyle={{
+          height: '100%',
+          width: '100%',
+        }}
+        center={{ lat: 37, lng: -122 }}
+        zoom={3}
+        options={{
+          streetViewControl: false,
+          gestureHandling: 'greedy',
+          styles: theme === AppTheme.DARK ? darkModeStyle : undefined,
+        }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          className="map-tiles"
-        />
         {airportsList?.map(({ id, lat, lon }) => (
-          <Marker key={id} position={[lat, lon]}>
-            <Popup>{id}</Popup>
-          </Marker>
+          <MarkerF key={id} position={{ lat, lng: lon }} />
         ))}
         {routesList?.map(({ departureAirport, arrivalAirport }, index) => (
-          <FlightPath
+          <PolylineF
             key={index}
-            paths={[
-              [departureAirport.lat, departureAirport.lon],
-              [arrivalAirport.lat, arrivalAirport.lon],
+            options={{
+              strokeOpacity: 0.5,
+              strokeColor: 'red',
+              geodesic: true,
+            }}
+            path={[
+              { lat: departureAirport.lat, lng: departureAirport.lon },
+              { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
             ]}
           />
         ))}
-      </MapContainer>
+      </GoogleMap>
     </LoadingCard>
   );
 };
