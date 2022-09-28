@@ -67,7 +67,7 @@ export const getAircraftId = (text: string): string | null => {
 };
 
 export const getFlightNumber = (text: string): number | null => {
-  const number = Number(text.match(DIGIT_REGEX)?.join(''));
+  const number = Number(text.slice(2).match(DIGIT_REGEX)?.join(''));
   if (isNaN(number)) return null;
   return number;
 };
