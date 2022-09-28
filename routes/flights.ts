@@ -1,13 +1,8 @@
 import express from 'express';
 import { Request } from 'express-jwt';
 import createHttpError from 'http-errors';
-import multer from 'multer';
 import { authorizeToken, UserToken, verifyAdmin } from '../app/auth';
 import { prisma } from '../app/db';
-import { saveFlightDiaryData } from '../app/parsers';
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 const router = express.Router();
 
@@ -27,42 +22,6 @@ router.get('/:id', async (req, res, next) => {
     next(err);
   }
 });
-
-router.post(
-  '/upload/flightdiary',
-  authorizeToken(true),
-  upload.single('file'),
-  async (req: Request<UserToken>, res, next) => {
-    const { file } = req;
-    const username = req.auth?.username;
-    if (username === undefined) {
-      return next(createHttpError(401, 'Unable to authenticate'));
-    }
-    try {
-      const flights = await saveFlightDiaryData(username, file);
-      res.status(200).json(flights);
-    } catch (err) {
-      next(err);
-    }
-  },
-);
-
-router.post(
-  '/upload/flightdiary/:username',
-  authorizeToken(true),
-  verifyAdmin,
-  upload.single('file'),
-  async (req: Request<UserToken>, res, next) => {
-    const { file } = req;
-    const username = req.params.username;
-    try {
-      const flights = await saveFlightDiaryData(username, file);
-      res.status(200).json(flights);
-    } catch (err) {
-      next(err);
-    }
-  },
-);
 
 // TODO: Remove in production
 router.delete(
