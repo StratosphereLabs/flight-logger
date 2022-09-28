@@ -36,7 +36,7 @@ model flight {
   tripId             String?        @db.Uuid
   departureAirportId String
   arrivalAirportId   String
-  airlineId          String
+  airlineId          String?
   operatorAirlineId  String?
   flightNumber       Int?
   callsign           String?
@@ -53,7 +53,7 @@ model flight {
   comments           String?
   trackingLink       String?
   aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
-  airline            airline        @relation("flights", fields: [airlineId], references: [id])
+  airline            airline?       @relation("flights", fields: [airlineId], references: [id])
   arrivalAirport     airport        @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
   departureAirport   airport        @relation("departureFlights", fields: [departureAirportId], references: [id])
   operatorAirline    airline?       @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
