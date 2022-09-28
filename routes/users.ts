@@ -1,9 +1,19 @@
 import express from 'express';
-import { Request as JwtRequest } from 'express-jwt';
+import { Request as JwtRequest, Request } from 'express-jwt';
 import createHttpError from 'http-errors';
+import multer from 'multer';
 import { authorizeToken, UserToken, verifyAdmin } from '../app/auth';
 import { prisma } from '../app/db';
-import { excludeKeys, fetchGravatarUrl } from '../app/utils';
+import { saveFlightDiaryData } from '../app/parsers';
+import {
+  excludeKeys,
+  fetchGravatarUrl,
+  paginatedResults,
+  paginateOptions,
+} from '../app/utils';
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const router = express.Router();
 
@@ -98,13 +108,49 @@ router.get(
   },
 );
 
-router.get('/', authorizeToken(true), verifyAdmin, async (_, res, next) => {
-  try {
-    const users = await prisma.user.findMany({});
-    res.status(200).json(users);
-  } catch (err) {
-    next(err);
-  }
-});
+router.post(
+  '/:username/flights/upload/flightdiary',
+  authorizeToken(true),
+  verifyAdmin,
+  upload.single('file'),
+  async (req: Request<UserToken>, res, next) => {
+    const { file } = req;
+    const username = req.params.username;
+    try {
+      const flights = await saveFlightDiaryData(username, file);
+      res.status(200).json(flights);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.get(
+  '/',
+  authorizeToken(true),
+  verifyAdmin,
+  paginateOptions,
+  async (req, res, next) => {
+    const {
+      query: { limit },
+      skip,
+    } = req;
+    try {
+      const [results, itemCount] = await prisma.$transaction([
+        prisma.user.findMany({
+          skip,
+          take: Number(limit),
+        }),
+        prisma.user.count(),
+      ]);
+      res.locals.results = results;
+      res.locals.itemCount = itemCount;
+      next();
+    } catch (err) {
+      next(err);
+    }
+  },
+  paginatedResults,
+);
 
 export default router;

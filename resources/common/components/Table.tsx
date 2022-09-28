@@ -18,6 +18,7 @@ export interface TableFetchOptions {
 }
 
 export type TableProps<DataType extends GenericDataType> = {
+  compact?: boolean;
   enableGlobalFilter?: boolean;
   enableRowHover?: boolean;
   enableZebra?: boolean;
@@ -25,6 +26,7 @@ export type TableProps<DataType extends GenericDataType> = {
 } & TableOptions<DataType>;
 
 export const Table = <DataType extends Record<string, unknown>>({
+  compact,
   enableGlobalFilter,
   enableRowHover,
   enableZebra,
@@ -56,7 +58,11 @@ export const Table = <DataType extends Record<string, unknown>>({
           : 'scrollbar-thumb-gray-300'
       }`}
     >
-      <DaisyUITable zebra={enableZebra} className="rounded-box w-full">
+      <DaisyUITable
+        compact={compact}
+        zebra={enableZebra}
+        className="rounded-box w-full"
+      >
         <DaisyUITable.Head>
           {getHeaderGroups().flatMap(headerGroup =>
             headerGroup.headers.map(header => (

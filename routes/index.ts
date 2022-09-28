@@ -13,7 +13,7 @@ import usersRouter from './users';
 const router = express.Router();
 
 router.get('/', (_, res) => {
-  res.json({ message: 'FlightLogger API Home Page' });
+  res.status(200).json({ message: 'FlightLogger API Home Page' });
 });
 
 router.use('/auth', authRouter);

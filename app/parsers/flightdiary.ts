@@ -97,11 +97,7 @@ export const fetchData = async (
     ),
   ];
 
-  const dataPromises: [
-    Promise<airport[]>,
-    Promise<airline[]>,
-    Promise<aircraft_type[]>,
-  ] = [
+  const [airports, airlines, aircraftTypes] = await prisma.$transaction([
     prisma.airport.findMany({
       where: {
         id: {
@@ -132,9 +128,7 @@ export const fetchData = async (
         },
       },
     }),
-  ];
-
-  const [airports, airlines, aircraftTypes] = await Promise.all(dataPromises);
+  ]);
 
   return {
     airports: keyBy(airports, 'id'),
@@ -164,71 +158,71 @@ export const saveFlightDiaryData = async (
 
   const data = await fetchData(rows);
 
-  const promises = rows.flatMap(row => {
-    const departureAirport = data.airports[row.From];
-    const arrivalAirport = data.airports[row.To];
-    if (departureAirport === undefined || arrivalAirport === undefined)
-      return [];
-    const airline = data.airlines[row.Airline];
-    const aircraftIcao = getAircraftIcao(row.Aircraft);
-    const aircraftName = getAircraftName(row.Aircraft);
-    const aircraftTypes = data.aircraftTypes[aircraftIcao];
-    const { bestMatchIndex } = findBestMatch(
-      aircraftName,
-      aircraftTypes?.map(({ name }) => name) ?? [''],
-    );
-    return [
-      prisma.flight.create({
-        data: {
-          user: {
-            connect: {
-              username,
+  return await prisma.$transaction(
+    rows.flatMap(row => {
+      const departureAirport = data.airports[row.From];
+      const arrivalAirport = data.airports[row.To];
+      if (departureAirport === undefined || arrivalAirport === undefined)
+        return [];
+      const airline = data.airlines[row.Airline];
+      const aircraftIcao = getAircraftIcao(row.Aircraft);
+      const aircraftName = getAircraftName(row.Aircraft);
+      const aircraftTypes = data.aircraftTypes[aircraftIcao];
+      const { bestMatchIndex } = findBestMatch(
+        aircraftName,
+        aircraftTypes?.map(({ name }) => name) ?? [''],
+      );
+      return [
+        prisma.flight.create({
+          data: {
+            user: {
+              connect: {
+                username,
+              },
             },
-          },
-          departureAirport: {
-            connect: {
-              id: departureAirport.id,
+            departureAirport: {
+              connect: {
+                id: departureAirport.id,
+              },
             },
-          },
-          arrivalAirport: {
-            connect: {
-              id: arrivalAirport.id,
+            arrivalAirport: {
+              connect: {
+                id: arrivalAirport.id,
+              },
             },
+            airline:
+              airline !== undefined
+                ? {
+                    connect: {
+                      id: airline.id,
+                    },
+                  }
+                : undefined,
+            aircraftType:
+              aircraftTypes !== undefined
+                ? {
+                    connect: {
+                      id: aircraftTypes[bestMatchIndex].id,
+                    },
+                  }
+                : undefined,
+            flightNumber: getFlightNumber(row['Flight number']),
+            tailNumber: row.Registration,
+            outTime: getUTCTime(
+              row.Date,
+              row['Dep time'],
+              departureAirport.timeZone,
+            ),
+            inTime: getUTCTime(
+              row.Date,
+              row['Arr time'],
+              arrivalAirport.timeZone,
+            ),
+            seatNumber: row['Seat number'],
+            comments: row.Note,
           },
-          airline:
-            airline !== undefined
-              ? {
-                  connect: {
-                    id: airline.id,
-                  },
-                }
-              : undefined,
-          aircraftType:
-            aircraftTypes !== undefined
-              ? {
-                  connect: {
-                    id: aircraftTypes[bestMatchIndex].id,
-                  },
-                }
-              : undefined,
-          flightNumber: getFlightNumber(row['Flight number']),
-          tailNumber: row.Registration,
-          outTime: getUTCTime(
-            row.Date,
-            row['Dep time'],
-            departureAirport.timeZone,
-          ),
-          inTime: getUTCTime(
-            row.Date,
-            row['Arr time'],
-            arrivalAirport.timeZone,
-          ),
-          seatNumber: row['Seat number'],
-          comments: row.Note,
-        },
-      }),
-    ];
-  });
-
-  return await Promise.all(promises);
+        }),
+      ];
+    }),
+  );
 };
