@@ -18,7 +18,7 @@ export const MapCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={!isLoaded || isLoading}
-      className="shadow flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
+      className="shadow-xl flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
     >
       <GoogleMap
         mapContainerStyle={{

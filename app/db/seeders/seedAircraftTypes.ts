@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import { prisma } from '../prisma';
+import { FREIGHTER_AIRCRAFT_REGEX } from './constants';
 import { getText, getWikipediaDataTable } from './helpers';
 
 const getUpdate = (
@@ -19,6 +20,9 @@ const getUpdate = (
   const id = `${iata}_${icao}`;
   const link = tds.eq(2).children('a').eq(0);
   const name = $(link).text();
+
+  const match = name.match(FREIGHTER_AIRCRAFT_REGEX) ?? [];
+  if (match.length > 0) return null;
 
   return { id, iata, icao, name, class: '' };
 };

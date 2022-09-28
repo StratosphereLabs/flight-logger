@@ -9,7 +9,7 @@ export const ProfileCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={isFetching > 0}
-      className="shadow w-80 bg-base-200 min-w-[200px]"
+      className="shadow-xl w-80 bg-base-200 min-w-[200px]"
     >
       <Card.Body className="items-center">
         <Card.Title className="font-medium text-2xl">{`${

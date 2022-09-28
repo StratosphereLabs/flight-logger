@@ -39,7 +39,7 @@ export const MainNavbar = (): JSX.Element => {
               </Link>
             </Dropdown.Menu>
           </Dropdown>
-          <Link to="/" className="btn btn-ghost normal-case text-xl">
+          <Link to="/profile" className="btn btn-ghost normal-case text-xl">
             <div className="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-3xl">
               <span>Flight</span>{' '}
               <span className="text-base-content">Logger</span>
