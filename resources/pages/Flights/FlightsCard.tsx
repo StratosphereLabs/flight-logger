@@ -12,7 +12,7 @@ export const FlightsCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={isLoading}
-      className="shadow-xl flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
+      className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px]"
     >
       <Card.Body>
         <Card.Title className="mb-5 justify-center" tag="h2">

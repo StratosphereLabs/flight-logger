@@ -3,7 +3,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMemo } from 'react';
 import { useAppContext } from '../../context';
-import { API_URL } from '../constants';
+import { API_URL, MINUTE } from '../constants';
 
 export interface FlightResponse extends flight {
   [key: string]: unknown;
@@ -35,7 +35,9 @@ export const useFlightsQuery = (): UseQueryResult<FlightResponse[]> &
       return response?.data ?? [];
     },
     {
+      cacheTime: 5 * MINUTE,
       enabled: user?.username !== undefined,
+      staleTime: 5 * MINUTE,
     },
   );
   const airportsList = useMemo<airport[]>(() => {

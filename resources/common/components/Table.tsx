@@ -1,28 +1,16 @@
-import {
-  ColumnFiltersState,
-  flexRender,
-  SortingState,
-  TableOptions,
-  useReactTable,
-} from '@tanstack/react-table';
-import { useEffect } from 'react';
-import { Table as DaisyUITable } from 'react-daisyui';
-import { AppTheme, useAppContext } from '../../context';
+import { flexRender, TableOptions, useReactTable } from '@tanstack/react-table';
+import { Button, Pagination, Table as DaisyUITable } from 'react-daisyui';
+import { useScrollBar } from '../hooks';
+import { PaginationMetadata } from '../types';
 
 export type GenericDataType = Record<string, unknown>;
-
-export interface TableFetchOptions {
-  columnFilters: ColumnFiltersState;
-  globalFilter: string;
-  sorting: SortingState;
-}
 
 export type TableProps<DataType extends GenericDataType> = {
   compact?: boolean;
   enableGlobalFilter?: boolean;
   enableRowHover?: boolean;
   enableZebra?: boolean;
-  onOptionsChange?: (fetchOptions: TableFetchOptions) => void;
+  metadata?: PaginationMetadata;
 } & TableOptions<DataType>;
 
 export const Table = <DataType extends Record<string, unknown>>({
@@ -31,10 +19,9 @@ export const Table = <DataType extends Record<string, unknown>>({
   enableRowHover,
   enableZebra,
   initialState,
-  onOptionsChange: onFetchData,
+  metadata,
   ...props
 }: TableProps<DataType>): JSX.Element => {
-  const { theme } = useAppContext();
   const tableInstance = useReactTable<DataType>({
     enableGlobalFilter,
     globalFilterFn: 'includesString',
@@ -44,20 +31,10 @@ export const Table = <DataType extends Record<string, unknown>>({
     },
     ...props,
   });
-  const { getHeaderGroups, getRowModel, getState } = tableInstance;
-  const { columnFilters, sorting } = getState();
-  const globalFilter = getState().globalFilter as string;
-  useEffect(() => {
-    onFetchData?.({ columnFilters, globalFilter, sorting });
-  }, [onFetchData, columnFilters, globalFilter, sorting]);
+  const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
+  const scrollBarClassName = useScrollBar();
   return (
-    <div
-      className={`overflow-x-scroll w-full scrollbar ${
-        theme === AppTheme.DARK
-          ? 'scrollbar-thumb-gray-900'
-          : 'scrollbar-thumb-gray-300'
-      }`}
-    >
+    <div className={`overflow-x-scroll w-full ${scrollBarClassName}`}>
       <DaisyUITable
         compact={compact}
         zebra={enableZebra}
@@ -89,6 +66,19 @@ export const Table = <DataType extends Record<string, unknown>>({
           ))}
         </DaisyUITable.Body>
       </DaisyUITable>
+      {metadata !== undefined ? (
+        <Pagination className="mt-2 float-right">
+          {metadata?.pages.map(({ number }) => (
+            <Button
+              active={number === metadata.page}
+              key={number}
+              onClick={() => setPageIndex(number - 1)}
+            >
+              {number}
+            </Button>
+          ))}
+        </Pagination>
+      ) : null}
     </div>
   );
 };

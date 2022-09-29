@@ -15,7 +15,7 @@ export const LoadingCard = ({
 }: CardProps): JSX.Element => (
   <DaisyUICard {...props}>
     {isLoading === true ? (
-      <div className="h-full w-full flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
         <Progress className="w-56" />
       </div>
     ) : (

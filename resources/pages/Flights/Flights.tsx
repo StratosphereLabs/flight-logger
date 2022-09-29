@@ -1,7 +1,7 @@
 import { FlightsCard } from './FlightsCard';
 
 export const Flights = (): JSX.Element => (
-  <div className="p-4">
+  <div className="flex-1 flex">
     <FlightsCard />
   </div>
 );

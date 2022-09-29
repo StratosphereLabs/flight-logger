@@ -1,7 +1,7 @@
 import { user } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
-import { API_URL } from '../constants';
+import { API_URL, MINUTE } from '../constants';
 
 export interface UserResponse
   extends Pick<user, 'username' | 'email' | 'firstName' | 'lastName'> {
@@ -25,6 +25,8 @@ export const useProfileQuery = (
       return response?.data;
     },
     {
+      cacheTime: 5 * MINUTE,
       enabled: token !== null,
+      staleTime: 5 * MINUTE,
     },
   );

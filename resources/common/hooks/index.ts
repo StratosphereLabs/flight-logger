@@ -5,4 +5,5 @@ export * from './useForgotPasswordMutation';
 export * from './useGoogleLoginMutation';
 export * from './useLoginMutation';
 export * from './useResetPasswordMutation';
+export * from './useScrollBar';
 export * from './useUserQuery';
