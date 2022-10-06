@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Form, Link } from 'react-daisyui';
+import { Button, Link } from 'react-daisyui';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import { FormInput } from '../../common/components';
@@ -23,43 +23,39 @@ export const LoginForm = (): JSX.Element => {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(data => mutate(data))}>
         <fieldset disabled={isLoading}>
-          <Form>
-            <FormInput
-              label="Email"
-              name="email"
-              autoComplete="email"
-              placeholder="Email"
-              className="input-bordered"
-            />
-          </Form>
-          <Form>
-            <FormInput
-              label="Password"
-              name="password"
-              autoComplete="current-password"
-              type="password"
-              placeholder="Password"
-              className="input-bordered"
-            />
-            <label className="label">
-              <Link
-                onClick={handleForgotPassword}
-                className="label-text-alt"
-                hover
-              >
-                Forgot password?
-              </Link>
-              <Link onClick={handleRegister} className="label-text-alt" hover>
-                Register
-              </Link>
-            </label>
-          </Form>
+          <FormInput
+            label="Email"
+            name="email"
+            autoComplete="email"
+            placeholder="Email"
+            className="input-bordered"
+          />
+          <FormInput
+            label="Password"
+            name="password"
+            autoComplete="current-password"
+            type="password"
+            placeholder="Password"
+            className="input-bordered"
+          />
+          <label className="label">
+            <Link
+              onClick={handleForgotPassword}
+              className="label-text-alt"
+              hover
+            >
+              Forgot password?
+            </Link>
+            <Link onClick={handleRegister} className="label-text-alt" hover>
+              Register
+            </Link>
+          </label>
         </fieldset>
-        <Form className="mt-6">
+        <div className="mt-6">
           <Button type="submit" loading={isLoading}>
             Login
           </Button>
-        </Form>
+        </div>
       </form>
     </FormProvider>
   );

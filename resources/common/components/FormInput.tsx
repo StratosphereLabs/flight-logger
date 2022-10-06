@@ -14,7 +14,7 @@ export const FormInput = ({
   const { control, formState, getFieldState } = useFormContext();
   const { error } = getFieldState(name, formState);
   return (
-    <>
+    <div className="form-control w-full max-w-xs">
       {label !== undefined && <Form.Label title={label} />}
       <Controller
         name={name}
@@ -32,6 +32,6 @@ export const FormInput = ({
           <span className="label-text-alt text-error">{error?.message}</span>
         </label>
       )}
-    </>
+    </div>
   );
 };

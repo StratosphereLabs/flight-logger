@@ -1,24 +1,26 @@
-import { aircraft_type, airline, airport, flight } from '@prisma/client';
+import { airport } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppContext } from '../../context';
 import { API_URL, MINUTE } from '../constants';
 
-export interface FlightsResponse extends flight {
-  [key: string]: unknown;
+export interface Route {
   departureAirport: airport;
   arrivalAirport: airport;
-  airline: airline;
-  aircraftType: aircraft_type;
 }
 
-export const useFlightsQuery = (): UseQueryResult<FlightsResponse[]> => {
+export interface FlightMapResponse {
+  airports: airport[];
+  routes: Route[];
+}
+
+export const useFlightMapQuery = (): UseQueryResult<FlightMapResponse> => {
   const { user } = useAppContext();
   return useQuery(
-    [user?.username, 'flights'],
+    [user?.username, 'flightMap'],
     async () => {
-      const response = await axios.get<FlightsResponse[]>(
-        `${API_URL}/users/${user?.username ?? ''}/flights`,
+      const response = await axios.get<FlightMapResponse>(
+        `${API_URL}/users/${user?.username ?? ''}/flight-map`,
       );
       return response?.data ?? [];
     },

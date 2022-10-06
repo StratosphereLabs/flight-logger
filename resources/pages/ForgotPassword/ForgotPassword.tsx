@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { Button, Card, Form } from 'react-daisyui';
+import { Button, Card } from 'react-daisyui';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FormInput } from '../../common/components';
 import { useForgotPasswordMutation } from '../../common/hooks';
@@ -35,21 +35,19 @@ export const ForgotPassword = (): JSX.Element => {
         )}
       >
         <fieldset disabled={isLoading}>
-          <Form>
-            <FormInput
-              label="Email"
-              name="email"
-              autoComplete="email"
-              placeholder="Email"
-              className="input-bordered"
-            />
-          </Form>
+          <FormInput
+            label="Email"
+            name="email"
+            autoComplete="email"
+            placeholder="Email"
+            className="input-bordered"
+          />
         </fieldset>
-        <Form className="mt-6">
+        <div className="mt-6">
           <Button type="submit" loading={isLoading}>
             Reset Password
           </Button>
-        </Form>
+        </div>
       </form>
     </FormProvider>
   );
