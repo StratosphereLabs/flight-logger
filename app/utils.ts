@@ -1,8 +1,8 @@
 import crypto from 'crypto';
-import type { ErrorRequestHandler, RequestHandler } from 'express';
-import { middleware } from 'express-paginate';
+import { ErrorRequestHandler, Request, RequestHandler } from 'express';
+import { getArrayPages, middleware } from 'express-paginate';
 import { url } from 'gravatar';
-import type { HttpError } from 'http-errors';
+import { HttpError } from 'http-errors';
 
 export const excludeKeys = <Model, Key extends keyof Model>(
   model: Model,
@@ -38,19 +38,22 @@ export const getPasswordResetToken = (): string => {
 export const paginateOptions = middleware(10, 50);
 
 export const getPageNumbers = (
+  req: Request,
   limit: number,
   pageCount: number,
   currentPage: number,
-): Array<number | null> => [
-  1,
-  ...(currentPage > 3 ? [null] : []),
-  ...[...Array(limit).keys()].flatMap(index => {
-    const page = currentPage + index - 1;
-    return page > 1 && page < pageCount ? [page] : [];
-  }),
-  ...(currentPage < pageCount - 2 ? [null] : []),
-  pageCount,
-];
+): Array<number | null> => {
+  const pages = getArrayPages(req)(limit, pageCount, currentPage);
+  return [
+    1,
+    ...(currentPage > 3 ? [null] : []),
+    ...pages.flatMap(({ number }) =>
+      number > 1 && number < pageCount ? [number] : [],
+    ),
+    ...(currentPage < pageCount - 2 ? [null] : []),
+    pageCount,
+  ];
+};
 
 export const paginatedResults: RequestHandler = (req, res) => {
   const {
@@ -64,7 +67,7 @@ export const paginatedResults: RequestHandler = (req, res) => {
     pageCount,
     limit: Number(limit),
     itemCount,
-    pages: getPageNumbers(3, pageCount, Number(page)),
+    pages: getPageNumbers(req, 3, pageCount, Number(page)),
   };
   res.status(200).json({ metadata, results });
 };
