@@ -1,8 +1,8 @@
 import {
   Card as DaisyUICard,
   CardProps as DaisyUICardProps,
-  Progress,
 } from 'react-daisyui';
+import { FullScreenLoader } from './FullScreenLoader';
 
 export interface CardProps extends DaisyUICardProps {
   isLoading?: boolean;
@@ -14,12 +14,6 @@ export const LoadingCard = ({
   ...props
 }: CardProps): JSX.Element => (
   <DaisyUICard {...props}>
-    {isLoading === true ? (
-      <div className="h-full w-full flex items-center justify-center">
-        <Progress className="w-56" />
-      </div>
-    ) : (
-      children
-    )}
+    {isLoading === true ? <FullScreenLoader /> : children}
   </DaisyUICard>
 );

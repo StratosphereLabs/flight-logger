@@ -53,7 +53,7 @@ exports[`<App /> > renders login page 1`] = `
           </div>
           <form>
             <fieldset>
-              <div
+              <form
                 class="form-control"
                 role="form"
               >
@@ -73,8 +73,8 @@ exports[`<App /> > renders login page 1`] = `
                   placeholder="Email"
                   value=""
                 />
-              </div>
-              <div
+              </form>
+              <form
                 class="form-control"
                 role="form"
               >
@@ -109,9 +109,9 @@ exports[`<App /> > renders login page 1`] = `
                     Register
                   </a>
                 </label>
-              </div>
+              </form>
             </fieldset>
-            <div
+            <form
               class="form-control mt-6"
               role="form"
             >
@@ -121,7 +121,7 @@ exports[`<App /> > renders login page 1`] = `
               >
                 Login
               </button>
-            </div>
+            </form>
           </form>
         </div>
       </div>
@@ -186,7 +186,7 @@ exports[`<App /> > renders profile page 1`] = `
           </div>
           <form>
             <fieldset>
-              <div
+              <form
                 class="form-control"
                 role="form"
               >
@@ -206,8 +206,8 @@ exports[`<App /> > renders profile page 1`] = `
                   placeholder="Email"
                   value=""
                 />
-              </div>
-              <div
+              </form>
+              <form
                 class="form-control"
                 role="form"
               >
@@ -242,9 +242,9 @@ exports[`<App /> > renders profile page 1`] = `
                     Register
                   </a>
                 </label>
-              </div>
+              </form>
             </fieldset>
-            <div
+            <form
               class="form-control mt-6"
               role="form"
             >
@@ -254,7 +254,7 @@ exports[`<App /> > renders profile page 1`] = `
               >
                 Login
               </button>
-            </div>
+            </form>
           </form>
         </div>
       </div>

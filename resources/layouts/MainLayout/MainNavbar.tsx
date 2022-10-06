@@ -7,7 +7,7 @@ export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
   const onLoginClick = useLinkClickHandler('/auth/login');
   return (
-    <div className="pb-4 flex w-full component-preview p-4 items-center justify-center gap-2 font-sans">
+    <div className="flex w-full component-preview p-3 items-center justify-center gap-2 font-sans">
       <Navbar className="bg-base-200 shadow-xl rounded-box">
         <Navbar.Start>
           <Dropdown>
