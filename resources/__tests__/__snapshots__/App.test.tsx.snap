@@ -110,7 +110,7 @@ exports[`<App /> > renders login page 1`] = `
               </label>
             </fieldset>
             <div
-              class="mt-6"
+              class="flex flex-col mt-6"
             >
               <button
                 class="btn"
@@ -240,7 +240,7 @@ exports[`<App /> > renders profile page 1`] = `
               </label>
             </fieldset>
             <div
-              class="mt-6"
+              class="flex flex-col mt-6"
             >
               <button
                 class="btn"

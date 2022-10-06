@@ -43,7 +43,7 @@ export const ForgotPassword = (): JSX.Element => {
             className="input-bordered"
           />
         </fieldset>
-        <div className="mt-6">
+        <div className="flex flex-col mt-6">
           <Button type="submit" loading={isLoading}>
             Reset Password
           </Button>
