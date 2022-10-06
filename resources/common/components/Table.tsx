@@ -1,6 +1,7 @@
 import { flexRender, TableOptions, useReactTable } from '@tanstack/react-table';
-import { Button, Pagination, Table as DaisyUITable } from 'react-daisyui';
+import { Table as DaisyUITable } from 'react-daisyui';
 import { FullScreenLoader } from './FullScreenLoader';
+import { Pagination } from './Pagination';
 import { PaginationMetadata } from '../types';
 
 export type GenericDataType = Record<string, unknown>;
@@ -73,23 +74,11 @@ export const Table = <DataType extends Record<string, unknown>>({
           </DaisyUITable.Body>
         </DaisyUITable>
       )}
-      {metadata !== undefined ? (
-        <Pagination className="mt-3">
-          {metadata?.pages.map((number, index) => (
-            <Button
-              size="sm"
-              active={number === metadata.page}
-              key={index}
-              onClick={
-                number !== null ? () => setPageIndex(number - 1) : undefined
-              }
-              disabled={number === null}
-            >
-              {number ?? '...'}
-            </Button>
-          ))}
-        </Pagination>
-      ) : null}
+      <Pagination
+        metadata={metadata}
+        onPaginationChange={number => setPageIndex(number - 1)}
+        size={compact === true ? 'sm' : undefined}
+      />
     </div>
   );
 };

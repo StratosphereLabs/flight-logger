@@ -13,11 +13,13 @@ export const AircraftTypesCard = (): JSX.Element => {
     () => ({ pageIndex, pageSize }),
     [pageIndex, pageSize],
   );
-  const { data, isLoading } = useAircraftTypesQuery(pagination);
+  const { data, isFetching } = useAircraftTypesQuery(pagination);
   return (
     <LoadingCard className="shadow-xl bg-base-200 h-full">
       <Card.Body>
-        <Card.Title className="mb-3">Aircraft Types</Card.Title>
+        <Card.Title className="mb-3 justify-center" tag="h2">
+          Aircraft Types
+        </Card.Title>
         <Table
           columns={[
             {
@@ -43,7 +45,7 @@ export const AircraftTypesCard = (): JSX.Element => {
           data={data?.results ?? []}
           enableRowHover
           getCoreRowModel={getCoreRowModel()}
-          isLoading={isLoading}
+          isLoading={isFetching}
           manualPagination
           metadata={data?.metadata}
           onPaginationChange={setPagination}

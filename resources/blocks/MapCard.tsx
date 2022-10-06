@@ -5,15 +5,15 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import { LoadingCard } from '../common/components';
-import { useFlightsQuery } from '../common/hooks';
-import { AppTheme, useAppContext } from '../context';
+import { useFlightMapQuery } from '../common/hooks';
 import { darkModeStyle } from '../common/mapStyle';
+import { AppTheme, useAppContext } from '../context';
 
 export const MapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
   });
-  const { isLoading, airportsList, routesList } = useFlightsQuery();
+  const { data, isLoading } = useFlightMapQuery();
   const { theme } = useAppContext();
   return (
     <LoadingCard
@@ -33,10 +33,10 @@ export const MapCard = (): JSX.Element => {
           styles: theme === AppTheme.DARK ? darkModeStyle : undefined,
         }}
       >
-        {airportsList?.map(({ id, lat, lon }) => (
+        {data?.airports?.map(({ id, lat, lon }) => (
           <MarkerF key={id} position={{ lat, lng: lon }} />
         ))}
-        {routesList?.map(({ departureAirport, arrivalAirport }, index) => (
+        {data?.routes?.map(({ departureAirport, arrivalAirport }, index) => (
           <PolylineF
             key={index}
             options={{

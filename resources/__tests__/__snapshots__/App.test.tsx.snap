@@ -53,9 +53,8 @@ exports[`<App /> > renders login page 1`] = `
           </div>
           <form>
             <fieldset>
-              <form
-                class="form-control"
-                role="form"
+              <div
+                class="form-control w-full max-w-xs"
               >
                 <label
                   class="label"
@@ -73,10 +72,9 @@ exports[`<App /> > renders login page 1`] = `
                   placeholder="Email"
                   value=""
                 />
-              </form>
-              <form
-                class="form-control"
-                role="form"
+              </div>
+              <div
+                class="form-control w-full max-w-xs"
               >
                 <label
                   class="label"
@@ -95,25 +93,24 @@ exports[`<App /> > renders login page 1`] = `
                   type="password"
                   value=""
                 />
-                <label
-                  class="label"
+              </div>
+              <label
+                class="label"
+              >
+                <a
+                  class="link label-text-alt link-hover"
                 >
-                  <a
-                    class="link label-text-alt link-hover"
-                  >
-                    Forgot password?
-                  </a>
-                  <a
-                    class="link label-text-alt link-hover"
-                  >
-                    Register
-                  </a>
-                </label>
-              </form>
+                  Forgot password?
+                </a>
+                <a
+                  class="link label-text-alt link-hover"
+                >
+                  Register
+                </a>
+              </label>
             </fieldset>
-            <form
-              class="form-control mt-6"
-              role="form"
+            <div
+              class="flex flex-col mt-6"
             >
               <button
                 class="btn"
@@ -121,7 +118,7 @@ exports[`<App /> > renders login page 1`] = `
               >
                 Login
               </button>
-            </form>
+            </div>
           </form>
         </div>
       </div>
@@ -186,9 +183,8 @@ exports[`<App /> > renders profile page 1`] = `
           </div>
           <form>
             <fieldset>
-              <form
-                class="form-control"
-                role="form"
+              <div
+                class="form-control w-full max-w-xs"
               >
                 <label
                   class="label"
@@ -206,10 +202,9 @@ exports[`<App /> > renders profile page 1`] = `
                   placeholder="Email"
                   value=""
                 />
-              </form>
-              <form
-                class="form-control"
-                role="form"
+              </div>
+              <div
+                class="form-control w-full max-w-xs"
               >
                 <label
                   class="label"
@@ -228,25 +223,24 @@ exports[`<App /> > renders profile page 1`] = `
                   type="password"
                   value=""
                 />
-                <label
-                  class="label"
+              </div>
+              <label
+                class="label"
+              >
+                <a
+                  class="link label-text-alt link-hover"
                 >
-                  <a
-                    class="link label-text-alt link-hover"
-                  >
-                    Forgot password?
-                  </a>
-                  <a
-                    class="link label-text-alt link-hover"
-                  >
-                    Register
-                  </a>
-                </label>
-              </form>
+                  Forgot password?
+                </a>
+                <a
+                  class="link label-text-alt link-hover"
+                >
+                  Register
+                </a>
+              </label>
             </fieldset>
-            <form
-              class="form-control mt-6"
-              role="form"
+            <div
+              class="flex flex-col mt-6"
             >
               <button
                 class="btn"
@@ -254,7 +248,7 @@ exports[`<App /> > renders profile page 1`] = `
               >
                 Login
               </button>
-            </form>
+            </div>
           </form>
         </div>
       </div>

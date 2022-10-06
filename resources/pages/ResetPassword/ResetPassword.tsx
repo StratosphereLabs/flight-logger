@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Form } from 'react-daisyui';
+import { Button } from 'react-daisyui';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { FormInput } from '../../common/components';
@@ -29,30 +29,26 @@ export const ResetPassword = (): JSX.Element => {
         )}
       >
         <fieldset disabled={isLoading}>
-          <Form>
-            <FormInput
-              label="New Password"
-              name="password"
-              autoComplete="new-password"
-              className="input-bordered"
-              type="password"
-            />
-          </Form>
-          <Form>
-            <FormInput
-              label="Confirm New Password"
-              name="confirmPassword"
-              autoComplete="new-password"
-              className="input-bordered"
-              type="password"
-            />
-          </Form>
+          <FormInput
+            label="New Password"
+            name="password"
+            autoComplete="new-password"
+            className="input-bordered"
+            type="password"
+          />
+          <FormInput
+            label="Confirm New Password"
+            name="confirmPassword"
+            autoComplete="new-password"
+            className="input-bordered"
+            type="password"
+          />
         </fieldset>
-        <Form className="mt-6">
+        <div className="flex flex-col mt-6">
           <Button type="submit" loading={isLoading}>
             Reset Password
           </Button>
-        </Form>
+        </div>
       </form>
     </FormProvider>
   );

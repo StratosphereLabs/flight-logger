@@ -4,7 +4,7 @@ import createHttpError from 'http-errors';
 import multer from 'multer';
 import { authorizeToken, UserToken, verifyAdmin } from '../app/auth';
 import { prisma } from '../app/db';
-import { saveFlightDiaryData } from '../app/parsers';
+import { getAirports, getRoutes, saveFlightDiaryData } from '../app/parsers';
 import {
   excludeKeys,
   fetchGravatarUrl,
@@ -102,6 +102,35 @@ router.get(
         ],
       });
       return res.status(200).json(flights);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.get(
+  '/:username/flight-map',
+  authorizeToken(false),
+  async (req: JwtRequest<UserToken>, res, next) => {
+    const { username } = req.params;
+    try {
+      const flights = await prisma.flight.findMany({
+        where: {
+          user: {
+            username,
+          },
+        },
+        include: {
+          departureAirport: true,
+          arrivalAirport: true,
+        },
+      });
+      const airports = getAirports(flights);
+      const routes = getRoutes(flights);
+      return res.status(200).json({
+        airports,
+        routes,
+      });
     } catch (err) {
       next(err);
     }
