@@ -1,17 +1,15 @@
 import { Outlet } from 'react-router-dom';
 import { AlertMessages } from '../../common/components';
-import { useScrollBar } from '../../common/hooks';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
 
-export const MainLayout = (): JSX.Element => {
-  const scrollBarClassName = useScrollBar();
-  return (
-    <div className={`flex h-screen flex-col justify-between`}>
-      <MainNavbar />
+export const MainLayout = (): JSX.Element => (
+  <div className={`flex h-screen flex-col justify-between`}>
+    <MainNavbar />
+    <div className="flex-1 flex flex-col p-3 gap-3">
       <Outlet />
-      <MainFooter />
-      <AlertMessages />
     </div>
-  );
-};
+    <MainFooter />
+    <AlertMessages />
+  </div>
+);

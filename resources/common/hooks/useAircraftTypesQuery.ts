@@ -24,5 +24,6 @@ export const useAircraftTypesQuery = ({
       cacheTime: 1 * HOUR,
       enabled: pageSize !== undefined && pageIndex !== undefined,
       staleTime: 1 * HOUR,
+      keepPreviousData: true,
     },
   );

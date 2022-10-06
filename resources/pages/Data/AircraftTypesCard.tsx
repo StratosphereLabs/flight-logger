@@ -15,8 +15,9 @@ export const AircraftTypesCard = (): JSX.Element => {
   );
   const { data, isLoading } = useAircraftTypesQuery(pagination);
   return (
-    <LoadingCard isLoading={isLoading} className="shadow-xl bg-base-200">
+    <LoadingCard className="shadow-xl bg-base-200 h-full">
       <Card.Body>
+        <Card.Title className="mb-3">Aircraft Types</Card.Title>
         <Table
           columns={[
             {
@@ -42,6 +43,7 @@ export const AircraftTypesCard = (): JSX.Element => {
           data={data?.results ?? []}
           enableRowHover
           getCoreRowModel={getCoreRowModel()}
+          isLoading={isLoading}
           manualPagination
           metadata={data?.metadata}
           onPaginationChange={setPagination}

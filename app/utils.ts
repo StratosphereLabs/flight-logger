@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import type { ErrorRequestHandler, RequestHandler } from 'express';
-import { getArrayPages, middleware } from 'express-paginate';
+import { middleware } from 'express-paginate';
 import { url } from 'gravatar';
 import type { HttpError } from 'http-errors';
 
@@ -37,11 +37,25 @@ export const getPasswordResetToken = (): string => {
 
 export const paginateOptions = middleware(10, 50);
 
+export const getPageNumbers = (
+  limit: number,
+  pageCount: number,
+  currentPage: number,
+): Array<number | null> => [
+  1,
+  ...(currentPage > 3 ? [null] : []),
+  ...[...Array(limit).keys()].flatMap(index => {
+    const page = currentPage + index - 1;
+    return page > 1 && page < pageCount ? [page] : [];
+  }),
+  ...(currentPage < pageCount - 2 ? [null] : []),
+  pageCount,
+];
+
 export const paginatedResults: RequestHandler = (req, res) => {
   const {
     query: { limit, page },
   } = req;
-  const getPages = getArrayPages(req);
   const results = res.locals.results as unknown[];
   const itemCount = res.locals.itemCount as number;
   const pageCount = Math.ceil(itemCount / Number(limit));
@@ -50,7 +64,7 @@ export const paginatedResults: RequestHandler = (req, res) => {
     pageCount,
     limit: Number(limit),
     itemCount,
-    pages: getPages(3, pageCount, Number(page)),
+    pages: getPageNumbers(3, pageCount, Number(page)),
   };
   res.status(200).json({ metadata, results });
 };

@@ -1,4 +1,3 @@
-import { PageElement } from 'express-paginate';
 import { AlertProps } from 'react-daisyui';
 
 export interface AlertMessage {
@@ -21,7 +20,7 @@ export interface PaginationMetadata {
   pageCount: number;
   limit: number;
   itemCount: number;
-  pages: PageElement[];
+  pages: Array<number | null>;
 }
 
 export interface PaginatedResults<Data> {

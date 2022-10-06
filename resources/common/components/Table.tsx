@@ -1,6 +1,6 @@
 import { flexRender, TableOptions, useReactTable } from '@tanstack/react-table';
 import { Button, Pagination, Table as DaisyUITable } from 'react-daisyui';
-import { useScrollBar } from '../hooks';
+import { FullScreenLoader } from './FullScreenLoader';
 import { PaginationMetadata } from '../types';
 
 export type GenericDataType = Record<string, unknown>;
@@ -10,6 +10,7 @@ export type TableProps<DataType extends GenericDataType> = {
   enableGlobalFilter?: boolean;
   enableRowHover?: boolean;
   enableZebra?: boolean;
+  isLoading?: boolean;
   metadata?: PaginationMetadata;
 } & TableOptions<DataType>;
 
@@ -19,6 +20,7 @@ export const Table = <DataType extends Record<string, unknown>>({
   enableRowHover,
   enableZebra,
   initialState,
+  isLoading,
   metadata,
   ...props
 }: TableProps<DataType>): JSX.Element => {
@@ -32,49 +34,58 @@ export const Table = <DataType extends Record<string, unknown>>({
     ...props,
   });
   const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
-  const scrollBarClassName = useScrollBar();
   return (
-    <div className={`overflow-x-scroll w-full ${scrollBarClassName}`}>
-      <DaisyUITable
-        compact={compact}
-        zebra={enableZebra}
-        className="rounded-box w-full"
-      >
-        <DaisyUITable.Head>
-          {getHeaderGroups().flatMap(headerGroup =>
-            headerGroup.headers.map(header => (
-              <span key={header.id}>
-                {header.isPlaceholder ? null : (
+    <div className="h-full flex flex-col justify-between">
+      {isLoading === true ? (
+        <FullScreenLoader />
+      ) : (
+        <DaisyUITable
+          compact={compact}
+          zebra={enableZebra}
+          className="rounded-box w-full"
+        >
+          <DaisyUITable.Head>
+            {getHeaderGroups().flatMap(headerGroup =>
+              headerGroup.headers.map(header => (
+                <span key={header.id}>
+                  {header.isPlaceholder ? null : (
+                    <>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                    </>
+                  )}
+                </span>
+              )),
+            )}
+          </DaisyUITable.Head>
+          <DaisyUITable.Body>
+            {getRowModel().rows.map(row => (
+              <DaisyUITable.Row hover={enableRowHover} key={row.id}>
+                {row.getVisibleCells().map(cell => (
                   <>
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </>
-                )}
-              </span>
-            )),
-          )}
-        </DaisyUITable.Head>
-        <DaisyUITable.Body>
-          {getRowModel().rows.map(row => (
-            <DaisyUITable.Row hover={enableRowHover} key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
-              ))}
-            </DaisyUITable.Row>
-          ))}
-        </DaisyUITable.Body>
-      </DaisyUITable>
+                ))}
+              </DaisyUITable.Row>
+            ))}
+          </DaisyUITable.Body>
+        </DaisyUITable>
+      )}
       {metadata !== undefined ? (
-        <Pagination className="mt-2 float-right">
-          {metadata?.pages.map(({ number }) => (
+        <Pagination className="mt-3">
+          {metadata?.pages.map((number, index) => (
             <Button
+              size="sm"
               active={number === metadata.page}
-              key={number}
-              onClick={() => setPageIndex(number - 1)}
+              key={index}
+              onClick={
+                number !== null ? () => setPageIndex(number - 1) : undefined
+              }
+              disabled={number === null}
             >
-              {number}
+              {number ?? '...'}
             </Button>
           ))}
         </Pagination>

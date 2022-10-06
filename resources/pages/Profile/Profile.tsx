@@ -11,7 +11,7 @@ export const Profile = (): JSX.Element => {
     if (!isLoggedIn) navigate('/auth/login');
   }, [isLoggedIn]);
   return (
-    <div className="flex-1 flex">
+    <>
       <DashboardContainer>
         <ProfileCard />
         <MapCard />
@@ -19,6 +19,6 @@ export const Profile = (): JSX.Element => {
       <DashboardContainer>
         <StatsCard />
       </DashboardContainer>
-    </div>
+    </>
   );
 };
