@@ -1,6 +1,7 @@
 import { flexRender, TableOptions, useReactTable } from '@tanstack/react-table';
 import { Table as DaisyUITable } from 'react-daisyui';
 import { FullScreenLoader } from './FullScreenLoader';
+import { HeaderSortIcon } from './HeaderSortIcon';
 import { Pagination } from './Pagination';
 import { PaginationMetadata } from '../types';
 
@@ -19,6 +20,7 @@ export const Table = <DataType extends Record<string, unknown>>({
   compact,
   enableGlobalFilter,
   enableRowHover,
+  enableSorting,
   enableZebra,
   initialState,
   isLoading,
@@ -37,43 +39,50 @@ export const Table = <DataType extends Record<string, unknown>>({
   const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
   return (
     <div className="h-full flex flex-col justify-between">
-      {isLoading === true ? (
-        <FullScreenLoader />
-      ) : (
-        <DaisyUITable
-          compact={compact}
-          zebra={enableZebra}
-          className="rounded-box w-full"
-        >
-          <DaisyUITable.Head>
-            {getHeaderGroups().flatMap(headerGroup =>
-              headerGroup.headers.map(header => (
-                <span key={header.id}>
-                  {header.isPlaceholder ? null : (
+      <DaisyUITable
+        compact={compact}
+        zebra={enableZebra}
+        className="rounded-box"
+      >
+        <DaisyUITable.Head>
+          {getHeaderGroups().flatMap(headerGroup =>
+            headerGroup.headers.map(
+              ({ column, getContext, id, isPlaceholder }) => (
+                <span
+                  key={id}
+                  className={`flex items-center ${
+                    column.getCanSort() ? 'cursor-pointer' : ''
+                  }`}
+                  onClick={
+                    column.getCanSort()
+                      ? column.getToggleSortingHandler()
+                      : undefined
+                  }
+                >
+                  {isPlaceholder ? null : (
                     <>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      {flexRender(column.columnDef.header, getContext())}
+                      <HeaderSortIcon column={column} />
                     </>
                   )}
                 </span>
-              )),
-            )}
-          </DaisyUITable.Head>
+              ),
+            ),
+          )}
+        </DaisyUITable.Head>
+        {isLoading !== true && (
           <DaisyUITable.Body>
-            {getRowModel().rows.map(row => (
-              <DaisyUITable.Row hover={enableRowHover} key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </>
+            {getRowModel().rows.map(({ getVisibleCells, id }) => (
+              <DaisyUITable.Row hover={enableRowHover} key={id}>
+                {getVisibleCells().map(({ column, getContext }) => (
+                  <>{flexRender(column.columnDef.cell, getContext())}</>
                 ))}
               </DaisyUITable.Row>
             ))}
           </DaisyUITable.Body>
-        </DaisyUITable>
-      )}
+        )}
+      </DaisyUITable>
+      {isLoading === true && <FullScreenLoader />}
       <Pagination
         metadata={metadata}
         onPaginationChange={number => setPageIndex(number - 1)}

@@ -1,19 +1,20 @@
-import { getCoreRowModel, PaginationState } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
+import {
+  getCoreRowModel,
+  PaginationState,
+  SortingState,
+} from '@tanstack/react-table';
+import { useState } from 'react';
 import { Card } from 'react-daisyui';
 import { LoadingCard, Table } from '../../common/components';
 import { useAircraftTypesQuery } from '../../common/hooks';
 
 export const AircraftTypesCard = (): JSX.Element => {
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+  const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
-  const pagination = useMemo(
-    () => ({ pageIndex, pageSize }),
-    [pageIndex, pageSize],
-  );
-  const { data, isFetching } = useAircraftTypesQuery(pagination);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const { data, isFetching } = useAircraftTypesQuery({ pagination, sorting });
   return (
     <LoadingCard className="shadow-xl bg-base-200 h-full">
       <Card.Body>
@@ -44,13 +45,15 @@ export const AircraftTypesCard = (): JSX.Element => {
           compact
           data={data?.results ?? []}
           enableRowHover
+          enableSorting
           getCoreRowModel={getCoreRowModel()}
           isLoading={isFetching}
           manualPagination
           metadata={data?.metadata}
           onPaginationChange={setPagination}
+          onSortingChange={setSorting}
           pageCount={data?.metadata?.pageCount}
-          state={{ pagination }}
+          state={{ pagination, sorting }}
         />
       </Card.Body>
     </LoadingCard>
