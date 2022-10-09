@@ -44,6 +44,7 @@ export const AircraftTypesCard = (): JSX.Element => {
           ]}
           compact
           data={data?.results ?? []}
+          enableFixedWidth
           enableRowHover
           enableSorting
           getCoreRowModel={getCoreRowModel()}
