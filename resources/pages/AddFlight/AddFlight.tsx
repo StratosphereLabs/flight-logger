@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { Card } from 'react-daisyui';
+import { Button, Card } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
 import { Form, FormControl, LoadingCard } from '../../common/components';
+import { useAddFlightMutation } from '../../common/hooks';
 import { useAppContext } from '../../context';
 import { ArrivalAirportInput } from './ArrivalAirportInput';
 import { DepartureAirportInput } from './DepartureAirportInput';
@@ -9,6 +10,7 @@ import { DepartureAirportInput } from './DepartureAirportInput';
 export const AddFlight = (): JSX.Element => {
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();
+  const { mutate, isLoading } = useAddFlightMutation();
   useEffect(() => {
     if (!isLoggedIn) navigate('/auth/login');
   }, [isLoggedIn]);
@@ -24,12 +26,12 @@ export const AddFlight = (): JSX.Element => {
             arrivalAirportId: '',
             airlineId: '',
             aircraftTypeId: '',
-            outTime: null,
+            outTime: '',
             offTime: null,
             onTime: null,
-            inTime: null,
+            inTime: '',
           }}
-          onFormSubmit={values => console.log(values)}
+          onFormSubmit={values => mutate(values)}
         >
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
@@ -55,6 +57,9 @@ export const AddFlight = (): JSX.Element => {
                 <FormControl label="Arrival Time" name="inTime" type="time" />
               </div>
             </div>
+            <Button className="mt-5" loading={isLoading}>
+              Add Flight
+            </Button>
           </div>
         </Form>
       </Card.Body>

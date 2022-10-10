@@ -38,7 +38,19 @@ export const verifyAdmin = (
   next: NextFunction,
 ): void => {
   if (req.auth?.admin !== true) {
-    return next(createHttpError(401, 'Unauthenticated'));
+    return next(createHttpError(401, 'Unauthorized'));
+  }
+  next();
+};
+
+export const verifyUsername = (
+  req: JwtRequest<UserToken>,
+  _: Response,
+  next: NextFunction,
+): void => {
+  const { username } = req.params;
+  if (req.auth?.username !== username) {
+    return next(createHttpError(401, 'Unauthorized'));
   }
   next();
 };

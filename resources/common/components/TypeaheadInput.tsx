@@ -39,6 +39,7 @@ export const TypeaheadInput = <DataItem extends Record<string, unknown>>({
             </Menu.Item>
           )}
           {isLoading === false &&
+            query.length > 0 &&
             options !== undefined &&
             options.length > 0 &&
             options.map((item, index) => (

@@ -2,7 +2,12 @@ import express from 'express';
 import { Request as JwtRequest, Request } from 'express-jwt';
 import createHttpError from 'http-errors';
 import multer from 'multer';
-import { authorizeToken, UserToken, verifyAdmin } from '../app/auth';
+import {
+  authorizeToken,
+  UserToken,
+  verifyAdmin,
+  verifyUsername,
+} from '../app/auth';
 import { prisma } from '../app/db';
 import { getAirports, getRoutes, saveFlightDiaryData } from '../app/parsers';
 import {
@@ -11,6 +16,7 @@ import {
   paginatedResults,
   paginateOptions,
 } from '../app/utils';
+import { AddFlightRequest } from '../resources/common/hooks';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -131,6 +137,20 @@ router.get(
         airports,
         routes,
       });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/:username/flights',
+  authorizeToken(true),
+  verifyUsername,
+  (req: Request<UserToken>, res, next) => {
+    const body = req.body as AddFlightRequest;
+    try {
+      res.status(200).json(body);
     } catch (err) {
       next(err);
     }
