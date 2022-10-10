@@ -1,31 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, Link } from 'react-daisyui';
-import { FormProvider, useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
-import { FormInput } from '../../common/components';
+import { Form, FormInput } from '../../common/components';
 import { useLoginMutation } from '../../common/hooks';
 import { registerSchema } from './schema';
 
 export const RegisterForm = (): JSX.Element => {
   const { isLoading, mutate } = useLoginMutation();
-  const methods = useForm({
-    mode: 'onBlur',
-    defaultValues: {
-      email: '',
-      username: '',
-      firstName: '',
-      lastName: '',
-      password: '',
-      confirmPassword: '',
-    },
-    resolver: zodResolver(registerSchema),
-    shouldUseNativeValidation: false,
-  });
   const handleClick = useLinkClickHandler('/auth/login');
   return (
-    <FormProvider {...methods}>
+    <>
       <Card.Title>Register</Card.Title>
-      <form onSubmit={methods.handleSubmit(data => mutate(data))}>
+      <Form
+        defaultValues={{
+          email: '',
+          username: '',
+          firstName: '',
+          lastName: '',
+          password: '',
+          confirmPassword: '',
+        }}
+        onFormSubmit={values => mutate(values)}
+        resolver={zodResolver(registerSchema)}
+      >
         <fieldset disabled={isLoading}>
           <FormInput
             label="Email"
@@ -80,7 +77,7 @@ export const RegisterForm = (): JSX.Element => {
             Login
           </Button>
         </div>
-      </form>
-    </FormProvider>
+      </Form>
+    </>
   );
 };

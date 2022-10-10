@@ -10,7 +10,7 @@ router.get(
   paginateOptions,
   async (req, res, next) => {
     const {
-      query: { limit },
+      query: { limit, sortKey, sort },
       skip,
     } = req;
     try {
@@ -18,6 +18,12 @@ router.get(
         prisma.aircraft_type.findMany({
           skip,
           take: Number(limit),
+          orderBy:
+            sortKey !== undefined
+              ? {
+                  [sortKey as string]: sort ?? 'asc',
+                }
+              : undefined,
         }),
         prisma.aircraft_type.count(),
       ]);

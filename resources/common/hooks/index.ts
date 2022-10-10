@@ -1,4 +1,6 @@
 export * from './useAircraftTypesQuery';
+export * from './useAirlinesQuery';
+export * from './useAirportsQuery';
 export * from './useErrorResponseHandler';
 export * from './useFlightMapQuery';
 export * from './useFlightsQuery';

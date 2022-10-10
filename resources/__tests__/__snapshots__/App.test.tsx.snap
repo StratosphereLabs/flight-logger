@@ -51,7 +51,9 @@ exports[`<App /> > renders login page 1`] = `
           >
             OR
           </div>
-          <form>
+          <form
+            novalidate=""
+          >
             <fieldset>
               <div
                 class="form-control w-full max-w-xs"
@@ -181,7 +183,9 @@ exports[`<App /> > renders profile page 1`] = `
           >
             OR
           </div>
-          <form>
+          <form
+            novalidate=""
+          >
             <fieldset>
               <div
                 class="form-control w-full max-w-xs"

@@ -6,23 +6,38 @@ import {
 import { useState } from 'react';
 import { Card } from 'react-daisyui';
 import { LoadingCard, Table } from '../../common/components';
-import { useAircraftTypesQuery } from '../../common/hooks';
+import { useAirlinesQuery } from '../../common/hooks';
 
-export const AircraftTypesCard = (): JSX.Element => {
+export const AirlinesCard = (): JSX.Element => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { data, isFetching } = useAircraftTypesQuery({ pagination, sorting });
+  const { data, isFetching } = useAirlinesQuery({ pagination, sorting });
   return (
-    <LoadingCard className="shadow-xl bg-base-200 h-[550px]">
+    <LoadingCard className="shadow-xl bg-base-200 h-[625px]">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
-          Aircraft Types
+          Airlines
         </Card.Title>
         <Table
           columns={[
+            {
+              id: 'logo',
+              accessorKey: 'logo',
+              header: () => 'Logo',
+              cell: ({ getValue }) => {
+                const logo = getValue<string>();
+                return logo !== null && logo !== undefined ? (
+                  <div className="w-[120px] flex justify-center">
+                    <img className="max-w-[100px] max-h-[30px]" src={logo} />
+                  </div>
+                ) : null;
+              },
+              enableSorting: false,
+              footer: () => null,
+            },
             {
               id: 'iata',
               accessorKey: 'iata',

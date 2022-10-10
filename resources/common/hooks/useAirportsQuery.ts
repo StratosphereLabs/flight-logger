@@ -1,4 +1,4 @@
-import { aircraft_type } from '@prisma/client';
+import { airport } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { PaginationState, SortingState } from '@tanstack/react-table';
 import axios from 'axios';
@@ -6,24 +6,24 @@ import { API_URL, HOUR } from '../constants';
 import { PaginatedResults } from '../types';
 import { getPaginationQueryString, getSortingQueryString } from '../utils';
 
-export interface AircraftTypesQueryOptions {
+export interface AirportsQueryOptions {
   pagination: PaginationState;
   sorting: SortingState;
 }
 
-export const useAircraftTypesQuery = ({
+export const useAirportsQuery = ({
   pagination,
   sorting,
-}: AircraftTypesQueryOptions): UseQueryResult<PaginatedResults<aircraft_type> | null> =>
+}: AirportsQueryOptions): UseQueryResult<PaginatedResults<airport> | null> =>
   useQuery(
-    ['aircraftTypes', pagination, sorting],
+    ['airports', pagination, sorting],
     async () => {
       const queryString = [
         getPaginationQueryString(pagination),
         getSortingQueryString(sorting),
       ].join('&');
-      const response = await axios.get<PaginatedResults<aircraft_type>>(
-        `${API_URL}/aircraft-types?${queryString}`,
+      const response = await axios.get<PaginatedResults<airport>>(
+        `${API_URL}/airports?${queryString}`,
       );
       return response?.data ?? null;
     },

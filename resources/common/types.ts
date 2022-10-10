@@ -10,11 +10,6 @@ export interface ErrorResponse {
   message: string;
 }
 
-export interface PaginatedQueryOptions {
-  pageIndex?: number;
-  pageSize?: number;
-}
-
 export interface PaginationMetadata {
   page: number;
   pageCount: number;

@@ -1,6 +1,7 @@
 import { flexRender, TableOptions, useReactTable } from '@tanstack/react-table';
-import { Table as DaisyUITable } from 'react-daisyui';
+import classNames from 'classnames';
 import { FullScreenLoader } from './FullScreenLoader';
+import { HeaderSortIcon } from './HeaderSortIcon';
 import { Pagination } from './Pagination';
 import { PaginationMetadata } from '../types';
 
@@ -8,6 +9,7 @@ export type GenericDataType = Record<string, unknown>;
 
 export type TableProps<DataType extends GenericDataType> = {
   compact?: boolean;
+  enableFixedWidth?: boolean;
   enableGlobalFilter?: boolean;
   enableRowHover?: boolean;
   enableZebra?: boolean;
@@ -17,6 +19,7 @@ export type TableProps<DataType extends GenericDataType> = {
 
 export const Table = <DataType extends Record<string, unknown>>({
   compact,
+  enableFixedWidth,
   enableGlobalFilter,
   enableRowHover,
   enableZebra,
@@ -36,44 +39,62 @@ export const Table = <DataType extends Record<string, unknown>>({
   });
   const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
   return (
-    <div className="h-full flex flex-col justify-between">
-      {isLoading === true ? (
-        <FullScreenLoader />
-      ) : (
-        <DaisyUITable
-          compact={compact}
-          zebra={enableZebra}
-          className="rounded-box w-full"
+    <div className="h-full flex flex-col">
+      <div className="flex-1 overflow-x-scroll">
+        <table
+          className={classNames('table', 'w-full', 'rounded-box', {
+            'table-compact': compact,
+            'table-fixed': enableFixedWidth,
+            'table-zebra': enableZebra,
+          })}
         >
-          <DaisyUITable.Head>
-            {getHeaderGroups().flatMap(headerGroup =>
-              headerGroup.headers.map(header => (
-                <span key={header.id}>
-                  {header.isPlaceholder ? null : (
-                    <>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
+          <thead>
+            {getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(
+                  ({ column, getContext, id, isPlaceholder }) => (
+                    <th
+                      key={id}
+                      className={classNames({
+                        'cursor-pointer': column.getCanSort(),
+                      })}
+                      onClick={
+                        column.getCanSort()
+                          ? column.getToggleSortingHandler()
+                          : undefined
+                      }
+                    >
+                      {isPlaceholder ? null : (
+                        <div className="flex items-center">
+                          {flexRender(column.columnDef.header, getContext())}
+                          <HeaderSortIcon column={column} />
+                        </div>
                       )}
-                    </>
-                  )}
-                </span>
-              )),
-            )}
-          </DaisyUITable.Head>
-          <DaisyUITable.Body>
-            {getRowModel().rows.map(row => (
-              <DaisyUITable.Row hover={enableRowHover} key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </>
-                ))}
-              </DaisyUITable.Row>
+                    </th>
+                  ),
+                )}
+              </tr>
             ))}
-          </DaisyUITable.Body>
-        </DaisyUITable>
-      )}
+          </thead>
+          {isLoading !== true && (
+            <tbody>
+              {getRowModel().rows.map(({ getVisibleCells, id }) => (
+                <tr
+                  className={enableRowHover === true ? 'hover' : undefined}
+                  key={id}
+                >
+                  {getVisibleCells().map(({ column, getContext }) => (
+                    <td key={column.id} className="truncate">
+                      {flexRender(column.columnDef.cell, getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          )}
+        </table>
+        {isLoading === true && <FullScreenLoader />}
+      </div>
       <Pagination
         metadata={metadata}
         onPaginationChange={number => setPageIndex(number - 1)}
