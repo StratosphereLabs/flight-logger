@@ -51,7 +51,6 @@ export const FlightsCard = (): JSX.Element => {
                 ) : null;
               },
               footer: () => null,
-              size: 300,
             },
             {
               id: 'departureAirport',
@@ -117,6 +116,7 @@ export const FlightsCard = (): JSX.Element => {
           ]}
           data={data ?? []}
           enableRowHover
+          enableSorting={false}
           getCoreRowModel={getCoreRowModel()}
         />
       </Card.Body>

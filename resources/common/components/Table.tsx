@@ -40,7 +40,7 @@ export const Table = <DataType extends Record<string, unknown>>({
   const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-1">
+      <div className="flex-1 overflow-x-scroll">
         <table
           className={classNames('table', 'w-full', 'rounded-box', {
             'table-compact': compact,
@@ -84,7 +84,7 @@ export const Table = <DataType extends Record<string, unknown>>({
                   key={id}
                 >
                   {getVisibleCells().map(({ column, getContext }) => (
-                    <td key={column.id}>
+                    <td key={column.id} className="truncate">
                       {flexRender(column.columnDef.cell, getContext())}
                     </td>
                   ))}
