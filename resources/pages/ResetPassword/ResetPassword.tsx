@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { Form, FormInput } from '../../common/components';
+import { Form, FormControl } from '../../common/components';
 import { useResetPasswordMutation } from '../../common/hooks';
 import { resetPasswordSchema } from './schema';
 
@@ -23,18 +23,16 @@ export const ResetPassword = (): JSX.Element => {
       resolver={zodResolver(resetPasswordSchema)}
     >
       <fieldset disabled={isLoading}>
-        <FormInput
+        <FormControl
           label="New Password"
           name="password"
           autoComplete="new-password"
-          className="input-bordered"
           type="password"
         />
-        <FormInput
+        <FormControl
           label="Confirm New Password"
           name="confirmPassword"
           autoComplete="new-password"
-          className="input-bordered"
           type="password"
         />
       </fieldset>

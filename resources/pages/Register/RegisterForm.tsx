@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, Link } from 'react-daisyui';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Form, FormInput } from '../../common/components';
+import { Form, FormControl } from '../../common/components';
 import { useLoginMutation } from '../../common/hooks';
 import { registerSchema } from './schema';
 
@@ -24,46 +24,40 @@ export const RegisterForm = (): JSX.Element => {
         resolver={zodResolver(registerSchema)}
       >
         <fieldset disabled={isLoading}>
-          <FormInput
+          <FormControl
             label="Email"
             name="email"
             autoComplete="email"
             placeholder="Email"
-            className="input-bordered"
           />
-          <FormInput
+          <FormControl
             label="Username"
             name="username"
             autoComplete="username"
             placeholder="Username"
-            className="input-bordered"
           />
-          <FormInput
+          <FormControl
             label="First Name"
             name="firstName"
             autoComplete="first-name"
             placeholder="First Name"
-            className="input-bordered"
           />
-          <FormInput
+          <FormControl
             label="Last Name"
             name="lastName"
             autoComplete="last-name"
             placeholder="Last Name"
-            className="input-bordered"
           />
-          <FormInput
+          <FormControl
             label="Password"
             name="password"
             autoComplete="new-password"
-            className="input-bordered"
             type="password"
           />
-          <FormInput
+          <FormControl
             label="Confirm Password"
             name="confirmPassword"
             autoComplete="new-password"
-            className="input-bordered"
             type="password"
           />
           <label className="label">
