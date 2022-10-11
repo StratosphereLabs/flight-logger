@@ -45,6 +45,7 @@ export const AddFlight = (): JSX.Element => {
             seatPosition: null,
             reason: null,
             comments: '',
+            trackingLink: '',
           }}
           onFormSubmit={values => mutate(values)}
         >

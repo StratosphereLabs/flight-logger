@@ -9,22 +9,22 @@ import useErrorResponseHandler from './useErrorResponseHandler';
 export interface AddFlightRequest {
   departureAirportId: string;
   arrivalAirportId: string;
-  airlineId?: string | null;
-  aircraftTypeId?: string | null;
-  flightNumber?: number | null;
-  callsign?: string | null;
-  tailNumber?: string | null;
+  airlineId: string | null;
+  aircraftTypeId: string | null;
+  flightNumber: number | null;
+  callsign: string | null;
+  tailNumber: string | null;
   outDate: string;
   outTime: string;
-  offTime?: string | null;
-  onTime?: string | null;
+  offTime: string | null;
+  onTime: string | null;
   inTime: string;
-  class?: FlightClass | null;
-  seatNumber?: string | null;
-  seatPosition?: SeatPosition | null;
-  reason?: FlightReason | null;
-  comments?: string | null;
-  trackingLink?: string | null;
+  class: FlightClass | null;
+  seatNumber: string | null;
+  seatPosition: SeatPosition | null;
+  reason: FlightReason | null;
+  comments: string | null;
+  trackingLink: string | null;
 }
 
 export const useAddFlightMutation = (): UseMutationResult<
@@ -32,7 +32,7 @@ export const useAddFlightMutation = (): UseMutationResult<
   AxiosError<ErrorResponse>,
   AddFlightRequest
 > => {
-  const { clearAlertMessages, token, user } = useAppContext();
+  const { addAlertMessages, clearAlertMessages, token, user } = useAppContext();
   const onErrorResponse = useErrorResponseHandler();
   return useMutation(
     async data => {
@@ -48,6 +48,13 @@ export const useAddFlightMutation = (): UseMutationResult<
       );
     },
     {
+      onSuccess: () =>
+        addAlertMessages([
+          {
+            status: 'success',
+            message: 'Flight Added!',
+          },
+        ]),
       onError: ({ response }) => onErrorResponse(response),
     },
   );

@@ -147,10 +147,57 @@ router.post(
   '/:username/flights',
   authorizeToken(true),
   verifyUsername,
-  (req: Request<UserToken>, res, next) => {
+  async (req: Request<UserToken>, res, next) => {
     const body = req.body as AddFlightRequest;
     try {
-      res.status(200).json(body);
+      const flight = await prisma.flight.create({
+        data: {
+          user: {
+            connect: {
+              id: req.auth?.id,
+            },
+          },
+          departureAirport: {
+            connect: {
+              id: body.departureAirportId,
+            },
+          },
+          arrivalAirport: {
+            connect: {
+              id: body.arrivalAirportId,
+            },
+          },
+          airline:
+            body.airlineId !== null && body.airlineId !== ''
+              ? {
+                  connect: {
+                    id: body.airlineId,
+                  },
+                }
+              : undefined,
+          aircraftType:
+            body.aircraftTypeId !== null && body.aircraftTypeId !== ''
+              ? {
+                  connect: {
+                    id: body.aircraftTypeId,
+                  },
+                }
+              : undefined,
+          flightNumber: body.flightNumber,
+          callsign: body.callsign,
+          tailNumber: body.tailNumber,
+          outTime: `${body.outDate} ${body.outTime}`,
+          offTime: body.offTime,
+          onTime: body.inTime,
+          inTime: body.inTime,
+          class: body.class,
+          seatNumber: body.seatNumber,
+          seatPosition: body.seatPosition,
+          reason: body.reason,
+          comments: body.comments,
+        },
+      });
+      res.status(200).json(flight);
     } catch (err) {
       next(err);
     }
