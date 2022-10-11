@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { Button, Card } from 'react-daisyui';
+import { Button, Card, Divider } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
 import { Form, FormControl, LoadingCard } from '../../common/components';
 import { useAddFlightMutation } from '../../common/hooks';
 import { useAppContext } from '../../context';
+import { AircraftTypeInput } from './AircraftTypeInput';
+import { AirlineInput } from './AirlineInput';
 import { ArrivalAirportInput } from './ArrivalAirportInput';
 import { DepartureAirportInput } from './DepartureAirportInput';
 
@@ -22,7 +24,7 @@ export const AddFlight = (): JSX.Element => {
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>
         <Card.Title className="mb-5 justify-center" tag="h2">
-          Add a flight
+          Add a Flight
         </Card.Title>
         <Form
           defaultValues={{
@@ -30,11 +32,19 @@ export const AddFlight = (): JSX.Element => {
             arrivalAirportId: '',
             airlineId: '',
             aircraftTypeId: '',
+            flightNumber: null,
+            callsign: '',
+            tailNumber: '',
             outDate: '',
             outTime: '',
-            offTime: null,
-            onTime: null,
+            offTime: '',
+            onTime: '',
             inTime: '',
+            class: null,
+            seatNumber: '',
+            seatPosition: null,
+            reason: null,
+            comments: '',
           }}
           onFormSubmit={values => mutate(values)}
         >
@@ -76,8 +86,36 @@ export const AddFlight = (): JSX.Element => {
                 />
               </div>
             </div>
-            <Button className="mt-5" loading={isLoading} type="submit">
-              Add Flight
+            <Divider />
+            <div className="flex flex-wrap gap-8">
+              <div className="flex-1 flex justify-center">
+                <AirlineInput />
+              </div>
+              <div className="flex-1 flex justify-center">
+                <AircraftTypeInput />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-8">
+              <div className="flex-1">
+                <FormControl
+                  inputProps={{
+                    type: 'number',
+                    onWheel: e => (e.target as HTMLInputElement).blur?.(),
+                  }}
+                  labelText="Flight Number"
+                  name="flightNumber"
+                />
+              </div>
+              <div className="flex-1">
+                <FormControl labelText="Callsign" name="callsign" />
+              </div>
+              <div className="flex-1">
+                <FormControl labelText="Registration" name="tailNumber" />
+              </div>
+            </div>
+            <Divider />
+            <Button loading={isLoading} type="submit">
+              Submit
             </Button>
           </div>
         </Form>

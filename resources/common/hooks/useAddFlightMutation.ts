@@ -7,6 +7,10 @@ import { ErrorResponse } from '../types';
 import useErrorResponseHandler from './useErrorResponseHandler';
 
 export interface AddFlightRequest {
+  departureAirportId: string;
+  arrivalAirportId: string;
+  airlineId?: string | null;
+  aircraftTypeId?: string | null;
   flightNumber?: number | null;
   callsign?: string | null;
   tailNumber?: string | null;

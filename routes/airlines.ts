@@ -41,7 +41,7 @@ router.get('/search/:query', async (req, res, next) => {
   const { query } = req.params;
   try {
     const airlines = await prisma.airline.findMany({
-      take: 10,
+      take: 5,
       where: {
         OR: [
           {

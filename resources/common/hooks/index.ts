@@ -2,6 +2,8 @@ export * from './useAddFlightMutation';
 export * from './useAircraftTypesQuery';
 export * from './useAirlinesQuery';
 export * from './useAirportsQuery';
+export * from './useAircraftTypesSearchQuery';
+export * from './useAirlinesSearchQuery';
 export * from './useAirportsSearchQuery';
 export * from './useDebouncedValue';
 export * from './useErrorResponseHandler';
