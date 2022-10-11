@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button, Card } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
 import { Form, FormControl, LoadingCard } from '../../common/components';
@@ -10,12 +10,16 @@ import { DepartureAirportInput } from './DepartureAirportInput';
 export const AddFlight = (): JSX.Element => {
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();
+  const firstFieldRef = useRef<HTMLInputElement>(null);
   const { mutate, isLoading } = useAddFlightMutation();
+  useEffect(() => {
+    firstFieldRef.current?.focus();
+  }, []);
   useEffect(() => {
     if (!isLoggedIn) navigate('/auth/login');
   }, [isLoggedIn]);
   return (
-    <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px]">
+    <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>
         <Card.Title className="mb-5 justify-center" tag="h2">
           Add a flight
@@ -36,7 +40,7 @@ export const AddFlight = (): JSX.Element => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <DepartureAirportInput />
+                <DepartureAirportInput innerRef={firstFieldRef} />
               </div>
               <div className="flex-1 flex justify-center">
                 <ArrivalAirportInput />

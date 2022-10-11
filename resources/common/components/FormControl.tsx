@@ -1,14 +1,16 @@
-import { ReactNode } from 'react';
+import { ForwardedRef, ReactNode } from 'react';
 import { Form, Input, InputProps } from 'react-daisyui';
 import { Controller, useFormContext } from 'react-hook-form';
 
 export interface FormControlProps extends InputProps {
+  innerRef?: ForwardedRef<HTMLInputElement>;
   label?: string;
   menuContent?: ReactNode;
   name: string;
 }
 
 export const FormControl = ({
+  innerRef,
   label,
   menuContent,
   name,
@@ -26,6 +28,7 @@ export const FormControl = ({
           <Input
             color={error === undefined ? 'ghost' : 'error'}
             {...field}
+            ref={innerRef}
             {...props}
           />
         )}
