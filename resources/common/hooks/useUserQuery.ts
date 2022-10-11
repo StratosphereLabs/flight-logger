@@ -4,7 +4,10 @@ import axios from 'axios';
 import { API_URL, MINUTE } from '../constants';
 
 export interface UserResponse
-  extends Pick<user, 'username' | 'email' | 'firstName' | 'lastName'> {
+  extends Pick<
+    user,
+    'username' | 'email' | 'firstName' | 'lastName' | 'admin'
+  > {
   avatar: string;
 }
 

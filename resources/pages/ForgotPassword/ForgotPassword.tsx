@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Button, Card } from 'react-daisyui';
-import { Form, FormInput } from '../../common/components';
+import { Form, FormControl } from '../../common/components';
 import { useForgotPasswordMutation } from '../../common/hooks';
 import { forgotPasswordSchema } from './schema';
 
@@ -29,12 +29,13 @@ export const ForgotPassword = (): JSX.Element => {
       resolver={zodResolver(forgotPasswordSchema)}
     >
       <fieldset disabled={isLoading}>
-        <FormInput
-          label="Email"
+        <FormControl
+          inputProps={{
+            autoComplete: 'email',
+            placeholder: 'Email',
+          }}
+          labelText="Email"
           name="email"
-          autoComplete="email"
-          placeholder="Email"
-          className="input-bordered"
         />
       </fieldset>
       <div className="flex flex-col mt-6">

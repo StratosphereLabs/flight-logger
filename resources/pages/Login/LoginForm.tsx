@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Link } from 'react-daisyui';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Form, FormInput } from '../../common/components';
+import { Form, FormControl } from '../../common/components';
 import { useLoginMutation } from '../../common/hooks';
 import { loginSchema } from './schema';
 
@@ -19,20 +19,22 @@ export const LoginForm = (): JSX.Element => {
       resolver={zodResolver(loginSchema)}
     >
       <fieldset disabled={isLoading}>
-        <FormInput
-          label="Email"
+        <FormControl
+          inputProps={{
+            autoComplete: 'email',
+            placeholder: 'Email',
+          }}
+          labelText="Email"
           name="email"
-          autoComplete="email"
-          placeholder="Email"
-          className="input-bordered"
         />
-        <FormInput
-          label="Password"
+        <FormControl
+          inputProps={{
+            autoComplete: 'current-password',
+            placeholder: 'Password',
+            type: 'password',
+          }}
+          labelText="Password"
           name="password"
-          autoComplete="current-password"
-          type="password"
-          placeholder="Password"
-          className="input-bordered"
         />
         <label className="label">
           <Link onClick={handleForgotPassword} className="label-text-alt" hover>

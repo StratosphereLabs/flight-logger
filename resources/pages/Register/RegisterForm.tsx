@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, Link } from 'react-daisyui';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Form, FormInput } from '../../common/components';
+import { Form, FormControl } from '../../common/components';
 import { useLoginMutation } from '../../common/hooks';
 import { registerSchema } from './schema';
 
@@ -24,47 +24,54 @@ export const RegisterForm = (): JSX.Element => {
         resolver={zodResolver(registerSchema)}
       >
         <fieldset disabled={isLoading}>
-          <FormInput
-            label="Email"
+          <FormControl
+            inputProps={{
+              autoComplete: 'email',
+              placeholder: 'Email',
+              type: 'email',
+            }}
+            labelText="Email"
             name="email"
-            autoComplete="email"
-            placeholder="Email"
-            className="input-bordered"
           />
-          <FormInput
-            label="Username"
+          <FormControl
+            inputProps={{
+              autoComplete: 'username',
+              placeholder: 'Username',
+            }}
+            labelText="Username"
             name="username"
-            autoComplete="username"
-            placeholder="Username"
-            className="input-bordered"
           />
-          <FormInput
-            label="First Name"
+          <FormControl
+            inputProps={{
+              autoComplete: 'first-name',
+              placeholder: 'First Name',
+            }}
+            labelText="First Name"
             name="firstName"
-            autoComplete="first-name"
-            placeholder="First Name"
-            className="input-bordered"
           />
-          <FormInput
-            label="Last Name"
+          <FormControl
+            inputProps={{
+              autoComplete: 'last-name',
+              placeholder: 'Last Name',
+            }}
+            labelText="Last Name"
             name="lastName"
-            autoComplete="last-name"
-            placeholder="Last Name"
-            className="input-bordered"
           />
-          <FormInput
-            label="Password"
+          <FormControl
+            inputProps={{
+              autoComplete: 'new-password',
+              type: 'password',
+            }}
+            labelText="Password"
             name="password"
-            autoComplete="new-password"
-            className="input-bordered"
-            type="password"
           />
-          <FormInput
-            label="Confirm Password"
+          <FormControl
+            inputProps={{
+              autoComplete: 'new-password',
+              type: 'password',
+            }}
+            labelText="Confirm Password"
             name="confirmPassword"
-            autoComplete="new-password"
-            className="input-bordered"
-            type="password"
           />
           <label className="label">
             <Link onClick={handleClick} className="label-text-alt" hover>
