@@ -25,40 +25,53 @@ export const RegisterForm = (): JSX.Element => {
       >
         <fieldset disabled={isLoading}>
           <FormControl
-            label="Email"
+            inputProps={{
+              autoComplete: 'email',
+              placeholder: 'Email',
+              type: 'email',
+            }}
+            labelText="Email"
             name="email"
-            autoComplete="email"
-            placeholder="Email"
           />
           <FormControl
-            label="Username"
+            inputProps={{
+              autoComplete: 'username',
+              placeholder: 'Username',
+            }}
+            labelText="Username"
             name="username"
-            autoComplete="username"
-            placeholder="Username"
           />
           <FormControl
-            label="First Name"
+            inputProps={{
+              autoComplete: 'first-name',
+              placeholder: 'First Name',
+            }}
+            labelText="First Name"
             name="firstName"
-            autoComplete="first-name"
-            placeholder="First Name"
           />
           <FormControl
-            label="Last Name"
+            inputProps={{
+              autoComplete: 'last-name',
+              placeholder: 'Last Name',
+            }}
+            labelText="Last Name"
             name="lastName"
-            autoComplete="last-name"
-            placeholder="Last Name"
           />
           <FormControl
-            label="Password"
+            inputProps={{
+              autoComplete: 'new-password',
+              type: 'password',
+            }}
+            labelText="Password"
             name="password"
-            autoComplete="new-password"
-            type="password"
           />
           <FormControl
-            label="Confirm Password"
+            inputProps={{
+              autoComplete: 'new-password',
+              type: 'password',
+            }}
+            labelText="Confirm Password"
             name="confirmPassword"
-            autoComplete="new-password"
-            type="password"
           />
           <label className="label">
             <Link onClick={handleClick} className="label-text-alt" hover>

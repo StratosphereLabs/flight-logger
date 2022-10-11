@@ -24,16 +24,20 @@ export const ResetPassword = (): JSX.Element => {
     >
       <fieldset disabled={isLoading}>
         <FormControl
-          label="New Password"
+          inputProps={{
+            autoComplete: 'new-password',
+            type: 'password',
+          }}
+          labelText="New Password"
           name="password"
-          autoComplete="new-password"
-          type="password"
         />
         <FormControl
-          label="Confirm New Password"
+          inputProps={{
+            autoComplete: 'new-password',
+            type: 'password',
+          }}
+          labelText="Confirm New Password"
           name="confirmPassword"
-          autoComplete="new-password"
-          type="password"
         />
       </fieldset>
       <div className="flex flex-col mt-6">

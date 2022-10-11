@@ -1,37 +1,35 @@
-import { ForwardedRef, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Form, Input, InputProps } from 'react-daisyui';
-import { Controller, useFormContext } from 'react-hook-form';
+import {
+  FieldValues,
+  useController,
+  UseControllerProps,
+} from 'react-hook-form';
 
-export interface FormControlProps extends InputProps {
-  innerRef?: ForwardedRef<HTMLInputElement>;
-  label?: string;
+export interface FormControlProps<Values extends FieldValues>
+  extends UseControllerProps<Values> {
+  inputProps?: InputProps & Record<string, unknown>;
+  labelText?: string;
   menuContent?: ReactNode;
-  name: string;
 }
 
-export const FormControl = ({
-  innerRef,
-  label,
+export const FormControl = <Values extends FieldValues>({
+  inputProps,
+  labelText,
   menuContent,
-  name,
   ...props
-}: FormControlProps): JSX.Element => {
-  const { control, formState, getFieldState } = useFormContext();
-  const { error } = getFieldState(name, formState);
+}: FormControlProps<Values>): JSX.Element => {
+  const {
+    field,
+    fieldState: { error },
+  } = useController(props);
   return (
     <div className="form-control w-full max-w-xs">
-      {label !== undefined && <Form.Label title={label} />}
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
-          <Input
-            color={error === undefined ? 'ghost' : 'error'}
-            {...field}
-            ref={innerRef}
-            {...props}
-          />
-        )}
+      {labelText !== undefined && <Form.Label title={labelText} />}
+      <Input
+        {...field}
+        {...inputProps}
+        color={error === undefined ? 'ghost' : 'error'}
       />
       {menuContent !== undefined && (
         <div className="relative">

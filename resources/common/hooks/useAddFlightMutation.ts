@@ -10,6 +10,7 @@ export interface AddFlightRequest {
   flightNumber?: number | null;
   callsign?: string | null;
   tailNumber?: string | null;
+  outDate: string;
   outTime: string;
   offTime?: string | null;
   onTime?: string | null;

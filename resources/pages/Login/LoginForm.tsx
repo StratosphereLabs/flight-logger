@@ -20,17 +20,21 @@ export const LoginForm = (): JSX.Element => {
     >
       <fieldset disabled={isLoading}>
         <FormControl
-          label="Email"
+          inputProps={{
+            autoComplete: 'email',
+            placeholder: 'Email',
+          }}
+          labelText="Email"
           name="email"
-          autoComplete="email"
-          placeholder="Email"
         />
         <FormControl
-          label="Password"
+          inputProps={{
+            autoComplete: 'current-password',
+            placeholder: 'Password',
+            type: 'password',
+          }}
+          labelText="Password"
           name="password"
-          autoComplete="current-password"
-          type="password"
-          placeholder="Password"
         />
         <label className="label">
           <Link onClick={handleForgotPassword} className="label-text-alt" hover>

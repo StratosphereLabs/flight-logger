@@ -30,6 +30,7 @@ export const AddFlight = (): JSX.Element => {
             arrivalAirportId: '',
             airlineId: '',
             aircraftTypeId: '',
+            outDate: '',
             outTime: '',
             offTime: null,
             onTime: null,
@@ -40,7 +41,7 @@ export const AddFlight = (): JSX.Element => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <DepartureAirportInput innerRef={firstFieldRef} />
+                <DepartureAirportInput inputProps={{ ref: firstFieldRef }} />
               </div>
               <div className="flex-1 flex justify-center">
                 <ArrivalAirportInput />
@@ -48,20 +49,34 @@ export const AddFlight = (): JSX.Element => {
             </div>
             <div className="flex flex-wrap gap-8">
               <div className="flex-1">
-                <FormControl label="Date" name="outTime" type="date" />
-              </div>
-              <div className="flex-1">
                 <FormControl
-                  label="Departure Time"
-                  name="outTime"
-                  type="time"
+                  inputProps={{
+                    type: 'date',
+                  }}
+                  labelText="Date"
+                  name="outDate"
                 />
               </div>
               <div className="flex-1">
-                <FormControl label="Arrival Time" name="inTime" type="time" />
+                <FormControl
+                  inputProps={{
+                    type: 'time',
+                  }}
+                  labelText="Departure Time"
+                  name="outTime"
+                />
+              </div>
+              <div className="flex-1">
+                <FormControl
+                  inputProps={{
+                    type: 'time',
+                  }}
+                  labelText="Arrival Time"
+                  name="inTime"
+                />
               </div>
             </div>
-            <Button className="mt-5" loading={isLoading}>
+            <Button className="mt-5" loading={isLoading} type="submit">
               Add Flight
             </Button>
           </div>

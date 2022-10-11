@@ -10,7 +10,7 @@ export const useAirportsSearchQuery = (
     ['airports', query],
     async () => {
       const response = await axios.get<airport[]>(
-        `${API_URL}/airports/search/${query}`,
+        `${API_URL}/airports/search/${encodeURIComponent(query)}`,
       );
       return response.data;
     },

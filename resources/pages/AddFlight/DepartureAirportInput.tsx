@@ -1,24 +1,28 @@
-import { ForwardedRef, useState } from 'react';
+import { useState } from 'react';
+import { InputProps } from 'react-daisyui';
+import { useFormContext } from 'react-hook-form';
 import { TypeaheadInput } from '../../common/components';
 import { useAirportsSearchQuery } from '../../common/hooks';
 
 export interface DepartureAirportInputProps {
-  innerRef?: ForwardedRef<HTMLInputElement>;
+  inputProps?: InputProps & Record<string, unknown>;
 }
 
 export const DepartureAirportInput = ({
-  innerRef,
+  inputProps,
 }: DepartureAirportInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, isFetching } = useAirportsSearchQuery(query.trim());
+  const { setValue } = useFormContext();
   return (
     <TypeaheadInput
-      innerRef={innerRef}
-      label="Departure Airport"
+      inputProps={inputProps}
+      labelText="Departure Airport"
       name="departureAirportId"
-      getMenuItem={({ id, name }) => <a>{`${id} - ${name}`}</a>}
+      getItemText={({ id, name }) => `${id} - ${name}`}
       isFetching={isFetching}
       onDebouncedChange={setQuery}
+      onItemSelect={item => setValue('departureAirportId', item?.id ?? '')}
       options={data}
     />
   );
