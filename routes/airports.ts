@@ -1,88 +1,103 @@
-import express from 'express';
-import createHttpError from 'http-errors';
+import { TRPCError } from '@trpc/server';
 import { prisma } from '../app/db';
-import { paginatedResults, paginateOptions } from '../app/middleware';
+import {
+  getPaginatedResponse,
+  parsePaginationRequest,
+} from '../app/middleware';
+import { searchSchema } from '../app/schemas/search';
+import { publicProcedure, router } from '../app/trpc';
+import { getAirportSchema, getAirportsSchema } from '../app/schemas';
 
-const router = express.Router();
-
-router.get(
-  '/',
-  paginateOptions,
-  async (req, res, next) => {
-    const {
-      query: { limit, sortKey, sort },
-      skip,
-    } = req;
-    try {
-      const [results, itemCount] = await prisma.$transaction([
-        prisma.airport.findMany({
-          skip,
-          take: Number(limit),
-          orderBy:
-            sortKey !== undefined
-              ? {
-                  [sortKey as string]: sort ?? 'asc',
-                }
-              : undefined,
-        }),
-        prisma.airport.count(),
-      ]);
-      res.locals.results = results;
-      res.locals.itemCount = itemCount;
-      next();
-    } catch (err) {
-      next(err);
-    }
-  },
-  paginatedResults,
-);
-
-router.get('/search/:query', async (req, res, next) => {
-  const { query } = req.params;
-  try {
-    const airports = await prisma.airport.findMany({
-      take: 5,
-      where: {
-        OR: [
-          {
-            id: {
-              contains: query,
-              mode: 'insensitive',
-            },
+export const airportsRouter = router({
+  getAirports: publicProcedure
+    .input(getAirportsSchema)
+    .query(async ({ input }) => {
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      const { sort, sortKey } = input;
+      try {
+        const [results, itemCount] = await prisma.$transaction([
+          prisma.airport.findMany({
+            skip,
+            take,
+            orderBy:
+              sortKey !== null
+                ? {
+                    [sortKey as string]: sort ?? 'asc',
+                  }
+                : undefined,
+          }),
+          prisma.airport.count(),
+        ]);
+        return getPaginatedResponse({
+          itemCount,
+          limit,
+          page,
+          results,
+        });
+      } catch (err) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred, please try again later.',
+          cause: err,
+        });
+      }
+    }),
+  searchAirports: publicProcedure
+    .input(searchSchema)
+    .query(async ({ input }) => {
+      const { query } = input;
+      try {
+        const airports = await prisma.airport.findMany({
+          take: 5,
+          where: {
+            OR: [
+              {
+                id: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                name: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+            ],
           },
-          {
-            name: {
-              contains: query,
-              mode: 'insensitive',
-            },
+        });
+        return airports;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred, please try again later.',
+          cause: err,
+        });
+      }
+    }),
+  getAirport: publicProcedure
+    .input(getAirportSchema)
+    .query(async ({ input }) => {
+      const { id } = input;
+      try {
+        const airport = await prisma.airport.findUnique({
+          where: {
+            id,
           },
-        ],
-      },
-      orderBy: {
-        scheduledService: 'desc',
-      },
-    });
-    return res.status(200).json(airports);
-  } catch (err) {
-    next(err);
-  }
+        });
+        if (airport === null) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Airport not found.',
+          });
+        }
+        return airport;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred, please try again later.',
+          cause: err,
+        });
+      }
+    }),
 });
-
-router.get('/:id', async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const airport = await prisma.airport.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (airport === null) {
-      throw createHttpError(404, 'Airport not found.');
-    }
-    return res.status(200).json(airport);
-  } catch (err) {
-    next(err);
-  }
-});
-
-export default router;

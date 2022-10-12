@@ -1,17 +1,9 @@
 import { user } from '@prisma/client';
-import { NextFunction, Request, RequestHandler, Response } from 'express';
-import { expressjwt, Request as JwtRequest } from 'express-jwt';
+import { TRPCError } from '@trpc/server';
+import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
-
-export interface UserToken extends Pick<user, 'id' | 'username' | 'admin'> {}
-
-export const authorizeToken = (credentialsRequired?: boolean): RequestHandler =>
-  expressjwt({
-    secret: process.env.JWT_SECRET ?? '',
-    algorithms: ['HS256'],
-    credentialsRequired,
-  });
+import { middleware } from '../../trpc';
 
 export const generateUserToken = (
   _: Request,
@@ -32,25 +24,16 @@ export const generateUserToken = (
   res.status(200).json({ token });
 };
 
-export const verifyAdmin = (
-  req: JwtRequest<UserToken>,
-  _: Response,
-  next: NextFunction,
-): void => {
-  if (req.auth?.admin !== true) {
-    return next(createHttpError(401, 'Unauthorized'));
+export const verifyAuthenticated = middleware(async ({ ctx, next }) => {
+  if (ctx.user === undefined) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
-  next();
-};
+  return await next({ ctx });
+});
 
-export const verifyUsername = (
-  req: JwtRequest<UserToken>,
-  _: Response,
-  next: NextFunction,
-): void => {
-  const { username } = req.params;
-  if (req.auth?.username !== username) {
-    return next(createHttpError(401, 'Unauthorized'));
+export const verifyAdmin = middleware(async ({ ctx, next }) => {
+  if (ctx.user?.admin !== true) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
-  next();
-};
+  return await next({ ctx });
+});

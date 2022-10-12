@@ -1,41 +1,41 @@
-import express from 'express';
-import { Request } from 'express-jwt';
-import createHttpError from 'http-errors';
+import { TRPCError } from '@trpc/server';
 import { prisma } from '../app/db';
-import { authorizeToken, UserToken, verifyAdmin } from '../app/middleware';
+import { getFlightSchema } from '../app/schemas';
+import { adminProcedure, publicProcedure, router } from '../app/trpc';
 
-const router = express.Router();
-
-router.get('/:id', async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const flight = await prisma.flight.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (flight === null) {
-      throw createHttpError(404, 'Flight not found.');
+export const flightsRouter = router({
+  getFlight: publicProcedure.input(getFlightSchema).query(async ({ input }) => {
+    const { id } = input;
+    try {
+      const flight = await prisma.flight.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      return flight;
+    } catch (err) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'An unexpected error occurred, please try again later.',
+        cause: err,
+      });
     }
-    return res.status(200).json(flight);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// TODO: Remove in production
-router.delete(
-  '/',
-  authorizeToken(true),
-  verifyAdmin,
-  async (_: Request<UserToken>, res, next) => {
+  }),
+  deleteFlights: adminProcedure.mutation(async () => {
     try {
       await prisma.flight.deleteMany({});
-      res.sendStatus(200);
     } catch (err) {
-      next(err);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'An unexpected error occurred, please try again later.',
+        cause: err,
+      });
     }
-  },
-);
-
-export default router;
+  }),
+});

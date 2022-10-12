@@ -1,22 +1,57 @@
-import { RequestHandler } from 'express';
-import { middleware as paginate } from 'express-paginate';
-import { getPageNumbers } from '../utils';
+import { PaginationRequest } from '../schemas';
 
-export const paginateOptions = paginate(10, 50);
+export interface PaginationData {
+  skip: number;
+  take: number;
+  limit: number;
+  page: number;
+}
 
-export const paginatedResults: RequestHandler = (req, res) => {
-  const {
-    query: { limit, page },
-  } = req;
-  const results = res.locals.results as unknown[];
-  const itemCount = res.locals.itemCount as number;
+export interface PaginatedResultsOptions<DataItem> {
+  results: DataItem[];
+  itemCount: number;
+  limit: number;
+  page: number;
+}
+
+export interface PaginatedResponse<DataItem> {
+  metadata: {
+    page: number;
+    pageCount: number;
+    limit: number;
+    itemCount: number;
+    pages: string[];
+  };
+  results: DataItem[];
+}
+
+export const parsePaginationRequest = ({
+  page: currentPage,
+  limit,
+}: PaginationRequest): PaginationData => {
+  const page = currentPage ?? 1;
+  const take = limit ?? 10;
+  return {
+    limit: take,
+    page,
+    take,
+    skip: take * (page - 1),
+  };
+};
+
+export const getPaginatedResponse = <DataItem>({
+  itemCount,
+  limit,
+  page,
+  results,
+}: PaginatedResultsOptions<DataItem>): PaginatedResponse<DataItem> => {
   const pageCount = Math.ceil(itemCount / Number(limit));
   const metadata = {
-    page: Number(page),
+    page,
     pageCount,
-    limit: Number(limit),
+    limit,
     itemCount,
-    pages: getPageNumbers(req, 3, pageCount, Number(page)),
+    pages: [],
   };
-  res.status(200).json({ metadata, results });
+  return { metadata, results };
 };

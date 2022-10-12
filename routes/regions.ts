@@ -1,51 +1,104 @@
-import express from 'express';
-import createHttpError from 'http-errors';
+import { TRPCError } from '@trpc/server';
 import { prisma } from '../app/db';
-import { paginatedResults, paginateOptions } from '../app/middleware';
+import {
+  getPaginatedResponse,
+  parsePaginationRequest,
+} from '../app/middleware';
+import { publicProcedure, router } from '../app/trpc';
+import {
+  getRegionSchema,
+  getRegionsSchema,
+  searchSchema,
+} from '../app/schemas';
 
-const router = express.Router();
-
-router.get(
-  '/',
-  paginateOptions,
-  async (req, res, next) => {
-    const {
-      query: { limit },
-      skip,
-    } = req;
+export const regionsRouter = router({
+  getRegions: publicProcedure
+    .input(getRegionsSchema)
+    .query(async ({ input }) => {
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      const { sort, sortKey } = input;
+      try {
+        const [results, itemCount] = await prisma.$transaction([
+          prisma.region.findMany({
+            skip,
+            take,
+            orderBy:
+              sortKey !== null
+                ? {
+                    [sortKey as string]: sort ?? 'asc',
+                  }
+                : undefined,
+          }),
+          prisma.region.count(),
+        ]);
+        return getPaginatedResponse({
+          itemCount,
+          limit,
+          page,
+          results,
+        });
+      } catch (err) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred, please try again later.',
+          cause: err,
+        });
+      }
+    }),
+  searchRegions: publicProcedure
+    .input(searchSchema)
+    .query(async ({ input }) => {
+      const { query } = input;
+      try {
+        const regions = await prisma.region.findMany({
+          take: 5,
+          where: {
+            OR: [
+              {
+                id: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                name: {
+                  contains: query,
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          },
+        });
+        return regions;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred, please try again later.',
+          cause: err,
+        });
+      }
+    }),
+  getRegion: publicProcedure.input(getRegionSchema).query(async ({ input }) => {
+    const { id } = input;
     try {
-      const [results, itemCount] = await prisma.$transaction([
-        prisma.region.findMany({
-          skip,
-          take: Number(limit),
-        }),
-        prisma.region.count(),
-      ]);
-      res.locals.results = results;
-      res.locals.itemCount = itemCount;
-      next();
+      const region = await prisma.region.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (region === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Region not found.',
+        });
+      }
+      return region;
     } catch (err) {
-      next(err);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'An unexpected error occurred, please try again later.',
+        cause: err,
+      });
     }
-  },
-  paginatedResults,
-);
-
-router.get('/:id', async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const region = await prisma.region.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (region === null) {
-      throw createHttpError(404, 'Region not found.');
-    }
-    return res.status(200).json(region);
-  } catch (err) {
-    next(err);
-  }
+  }),
 });
-
-export default router;

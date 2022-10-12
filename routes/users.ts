@@ -1,5 +1,4 @@
 import express from 'express';
-import { Request as JwtRequest, Request } from 'express-jwt';
 import createHttpError from 'http-errors';
 import multer from 'multer';
 import { prisma } from '../app/db';
