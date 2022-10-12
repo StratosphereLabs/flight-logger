@@ -2,14 +2,13 @@ import http from 'http';
 import type { HttpError } from 'http-errors';
 
 import app from '.';
-import { prisma } from './db';
 import { normalizePort } from './utils';
 
 const port = normalizePort(process.env.PORT ?? '3000');
 app.set('port', port);
 
 /* eslint-disable-next-line @typescript-eslint/require-await */
-const main = async (): Promise<void> => {
+((): void => {
   const server = http.createServer(app);
 
   server.listen(port);
@@ -40,14 +39,4 @@ const main = async (): Promise<void> => {
         throw error;
     }
   });
-};
-
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async e => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+})();

@@ -1,31 +1,13 @@
-import { FlightClass, FlightReason, SeatPosition } from '@prisma/client';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { z } from 'zod';
+import { addFlightSchema } from '../../../app/schemas';
 import { useAppContext } from '../../context';
 import { API_URL } from '../constants';
 import { ErrorResponse } from '../types';
-import useErrorResponseHandler from './useErrorResponseHandler';
+import { useErrorResponseHandler } from './useErrorResponseHandler';
 
-export interface AddFlightRequest {
-  departureAirportId: string;
-  arrivalAirportId: string;
-  airlineId: string | null;
-  aircraftTypeId: string | null;
-  flightNumber: number | null;
-  callsign: string | null;
-  tailNumber: string | null;
-  outDate: string;
-  outTime: string;
-  offTime: string | null;
-  onTime: string | null;
-  inTime: string;
-  class: FlightClass | null;
-  seatNumber: string | null;
-  seatPosition: SeatPosition | null;
-  reason: FlightReason | null;
-  comments: string | null;
-  trackingLink: string | null;
-}
+export type AddFlightRequest = z.infer<typeof addFlightSchema>;
 
 export const useAddFlightMutation = (): UseMutationResult<
   AxiosResponse,

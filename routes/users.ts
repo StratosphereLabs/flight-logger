@@ -10,6 +10,7 @@ import {
 } from '../app/auth';
 import { prisma } from '../app/db';
 import { getAirports, getRoutes, saveFlightDiaryData } from '../app/parsers';
+import { addFlightSchema } from '../app/schemas';
 import {
   excludeKeys,
   fetchGravatarUrl,
@@ -150,6 +151,7 @@ router.post(
   async (req: Request<UserToken>, res, next) => {
     const body = req.body as AddFlightRequest;
     try {
+      await addFlightSchema.parseAsync(body);
       const flight = await prisma.flight.create({
         data: {
           user: {
@@ -183,10 +185,10 @@ router.post(
                   },
                 }
               : undefined,
-          flightNumber: body.flightNumber,
+          flightNumber: Number(body.flightNumber),
           callsign: body.callsign,
           tailNumber: body.tailNumber,
-          outTime: `${body.outDate} ${body.outTime}`,
+          outTime: `${body.outDate} ${body.outTime}`.trim(),
           offTime: body.offTime,
           onTime: body.inTime,
           inTime: body.inTime,
@@ -195,6 +197,7 @@ router.post(
           seatPosition: body.seatPosition,
           reason: body.reason,
           comments: body.comments,
+          trackingLink: body.trackingLink,
         },
       });
       res.status(200).json(flight);

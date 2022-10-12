@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-export type UseDebouncedStateValue = string | number | boolean;
+export type UseDebouncedStateValue = string | number | boolean | null;
 
 export const useDebouncedState = <Value extends UseDebouncedStateValue>(
   value: Value,

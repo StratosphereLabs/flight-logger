@@ -1,6 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
+import { addFlightSchema } from '../../../app/schemas';
 import { Form, FormControl, LoadingCard } from '../../common/components';
 import { useAddFlightMutation } from '../../common/hooks';
 import { useAppContext } from '../../context';
@@ -48,6 +50,7 @@ export const AddFlight = (): JSX.Element => {
             trackingLink: '',
           }}
           onFormSubmit={values => mutate(values)}
+          resolver={zodResolver(addFlightSchema)}
         >
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
