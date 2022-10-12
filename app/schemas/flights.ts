@@ -15,7 +15,7 @@ export const addFlightSchema = z.object({
   outTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
   offTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
   onTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
-  inTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
+  inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
   class: z
     .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
     .nullable(),

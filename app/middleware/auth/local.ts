@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { LoginRequest } from '../../resources/common/hooks';
-import { prisma } from '../db';
+import { LoginRequest } from '../../../resources/common/hooks';
+import { prisma } from '../../db';
 
 export const verifyPassword = async (
   req: Request,

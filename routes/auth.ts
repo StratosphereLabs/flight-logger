@@ -1,16 +1,15 @@
 import bcrypt from 'bcryptjs';
 import express from 'express';
 import createHttpError from 'http-errors';
+import { prisma } from '../app/db';
+import { sendEmail } from '../app/email';
 import {
   generateUserToken,
   upsertUser,
   verifyGoogleAuthToken,
   verifyPassword,
-} from '../app/auth';
-import { prisma } from '../app/db';
-import { sendEmail } from '../app/email';
-import { getResetEmail } from '../app/getResetEmail';
-import { getPasswordResetToken } from '../app/utils';
+} from '../app/middleware';
+import { getPasswordResetToken, getResetEmail } from '../app/utils';
 import {
   ForgotPasswordRequest,
   ResetPasswordRequest,

@@ -6,8 +6,8 @@ import createError from 'http-errors';
 import logger from 'morgan';
 import path from 'path';
 
-import { errorRequestHandler } from './utils';
 import router from '../routes';
+import { errorRequestHandler } from './middleware';
 
 const app = express();
 

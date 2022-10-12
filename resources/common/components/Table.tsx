@@ -4,6 +4,7 @@ import { FullScreenLoader } from './FullScreenLoader';
 import { HeaderSortIcon } from './HeaderSortIcon';
 import { Pagination } from './Pagination';
 import { PaginationMetadata } from '../types';
+import { useScrollBar } from '../hooks';
 
 export type GenericDataType = Record<string, unknown>;
 
@@ -38,9 +39,10 @@ export const Table = <DataType extends Record<string, unknown>>({
     ...props,
   });
   const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
+  const scrollBar = useScrollBar();
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-1 overflow-x-scroll">
+      <div className={`flex-1 overflow-x-scroll ${scrollBar}`}>
         <table
           className={classNames('table', 'w-full', 'rounded-box', {
             'table-compact': compact,

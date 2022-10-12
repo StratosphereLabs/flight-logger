@@ -2,21 +2,18 @@ import express from 'express';
 import { Request as JwtRequest, Request } from 'express-jwt';
 import createHttpError from 'http-errors';
 import multer from 'multer';
+import { prisma } from '../app/db';
 import {
   authorizeToken,
+  paginatedResults,
+  paginateOptions,
   UserToken,
   verifyAdmin,
   verifyUsername,
-} from '../app/auth';
-import { prisma } from '../app/db';
+} from '../app/middleware';
 import { getAirports, getRoutes, saveFlightDiaryData } from '../app/parsers';
 import { addFlightSchema } from '../app/schemas';
-import {
-  excludeKeys,
-  fetchGravatarUrl,
-  paginatedResults,
-  paginateOptions,
-} from '../app/utils';
+import { excludeKeys, fetchGravatarUrl } from '../app/utils';
 import { AddFlightRequest } from '../resources/common/hooks';
 
 const storage = multer.memoryStorage();
@@ -188,7 +185,7 @@ router.post(
           flightNumber: Number(body.flightNumber),
           callsign: body.callsign,
           tailNumber: body.tailNumber,
-          outTime: `${body.outDate} ${body.outTime}`.trim(),
+          outTime: `${body.outDate} ${body.outTime ?? ''}`.trim(),
           offTime: body.offTime,
           onTime: body.inTime,
           inTime: body.inTime,

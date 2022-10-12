@@ -1,8 +1,8 @@
 import express from 'express';
 import { Request } from 'express-jwt';
 import createHttpError from 'http-errors';
-import { authorizeToken, UserToken, verifyAdmin } from '../app/auth';
 import { prisma } from '../app/db';
+import { authorizeToken, UserToken, verifyAdmin } from '../app/middleware';
 
 const router = express.Router();
 

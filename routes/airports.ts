@@ -1,7 +1,7 @@
 import express from 'express';
 import createHttpError from 'http-errors';
 import { prisma } from '../app/db';
-import { paginatedResults, paginateOptions } from '../app/utils';
+import { paginatedResults, paginateOptions } from '../app/middleware';
 
 const router = express.Router();
 
