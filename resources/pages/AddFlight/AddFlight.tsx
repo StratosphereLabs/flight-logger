@@ -4,8 +4,8 @@ import { Button, Card, Divider } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
 import { addFlightSchema } from '../../../app/schemas';
 import { Form, FormControl, LoadingCard } from '../../common/components';
-import { useAddFlightMutation } from '../../common/hooks';
 import { useAppContext } from '../../providers';
+import { trpc } from '../../utils/trpc';
 import { AircraftTypeInput } from './AircraftTypeInput';
 import { AirlineInput } from './AirlineInput';
 import { ArrivalAirportInput } from './ArrivalAirportInput';
@@ -15,7 +15,7 @@ export const AddFlight = (): JSX.Element => {
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();
   const firstFieldRef = useRef<HTMLInputElement>(null);
-  const { mutate, isLoading } = useAddFlightMutation();
+  const { mutate, isLoading } = trpc.users.addFlight.useMutation();
   useEffect(() => {
     firstFieldRef.current?.focus();
   }, []);
