@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { KeyboardEvent, useCallback, useEffect, useState } from 'react';
 import { Menu } from 'react-daisyui';
 import { FieldValues } from 'react-hook-form';
 import { useDebouncedState } from '../hooks';
@@ -33,6 +33,23 @@ export const TypeaheadInput = <
     useDebouncedState<string>('', debounceTime ?? 400);
   const [item, setItem] = useState<DataItem | null>(null);
   const [valueText, setValueText] = useState('');
+  const setSelectedItem = useCallback(
+    (item: DataItem | null): void => {
+      const valueText = item !== null ? getItemText(item) : '';
+      setItem(item);
+      setValueText(valueText);
+    },
+    [getItemText],
+  );
+  const handleKeyDown = useCallback(
+    ({ key }: KeyboardEvent<HTMLInputElement>) => {
+      if (key === 'Tab') {
+        const firstOption = options?.[0];
+        if (firstOption !== undefined) setSelectedItem(firstOption);
+      }
+    },
+    [options, setSelectedItem],
+  );
   const isLoading = isDebouncing || isFetching;
   const formattedQuery = debouncedQuery.trim();
   useEffect(() => {
@@ -45,10 +62,10 @@ export const TypeaheadInput = <
     <FormControl
       inputProps={{
         onChange: ({ target: { value } }) => {
-          setItem(null);
-          setValueText('');
+          setSelectedItem(null);
           setQuery(value);
         },
+        onKeyDown: handleKeyDown,
         value: valueText !== '' ? valueText : query,
         ...inputProps,
       }}
@@ -65,18 +82,12 @@ export const TypeaheadInput = <
             </Menu.Item>
           )}
           {isLoading === false &&
-            query.length > 0 &&
+            item === null &&
             options !== undefined &&
             options.length > 0 &&
             options.map((item, index) => (
               <Menu.Item key={index}>
-                <a
-                  onClick={() => {
-                    setItem(item);
-                    setValueText(getItemText(item));
-                    setQuery('');
-                  }}
-                >
+                <a onClick={() => setSelectedItem(item)}>
                   {getMenuItem !== undefined
                     ? getMenuItem(item)
                     : getItemText(item)}

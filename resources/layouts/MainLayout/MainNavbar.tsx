@@ -1,7 +1,7 @@
 import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
 import { Link, NavLink, useLinkClickHandler } from 'react-router-dom';
 import { DarkModeButton } from '../../common/components';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 
 export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();

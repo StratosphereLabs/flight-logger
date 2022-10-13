@@ -1,5 +1,5 @@
 import { Alert, Button } from 'react-daisyui';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 import {
   CloseIcon,
   ErrorIcon,

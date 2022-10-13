@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Divider } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 import { GoogleLoginButton } from './GoogleLoginButton';
 import { LoginForm } from './LoginForm';
 

@@ -1,5 +1,5 @@
 import { Button } from 'react-daisyui';
-import { AppTheme, useAppContext } from '../../context';
+import { AppTheme, useAppContext } from '../../providers';
 import { DarkModeIcon, LightModeIcon } from './Icons';
 
 export const DarkModeButton = (): JSX.Element => {

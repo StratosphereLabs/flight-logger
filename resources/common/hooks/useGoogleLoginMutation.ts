@@ -1,14 +1,17 @@
 import { CredentialResponse as GoogleLoginRequest } from '@react-oauth/google';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { API_URL } from '../constants';
+import { REST_API_URL } from '../constants';
 import { useErrorResponseHandler } from '.';
 import { ErrorResponse } from '../types';
-import { useAppContext } from '../../context';
-import { LoginResponse } from './useLoginMutation';
+import { useAppContext } from '../../providers';
+
+export interface GoogleLoginResponse {
+  token: string;
+}
 
 export const useGoogleLoginMutation = (): UseMutationResult<
-  AxiosResponse<LoginResponse>,
+  AxiosResponse<GoogleLoginResponse>,
   AxiosError<ErrorResponse>,
   GoogleLoginRequest
 > => {
@@ -17,7 +20,7 @@ export const useGoogleLoginMutation = (): UseMutationResult<
   return useMutation(
     async data => {
       clearAlertMessages();
-      return await axios.post(`${API_URL}/auth/google/authenticate`, data);
+      return await axios.post(`${REST_API_URL}/auth/google/authenticate`, data);
     },
     {
       onSuccess: ({ data }) => {

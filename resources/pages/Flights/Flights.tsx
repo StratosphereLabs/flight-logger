@@ -1,3 +1,3 @@
-import { FlightsCard } from './FlightsCard';
+import { FlightsCard } from '../../blocks';
 
 export const Flights = (): JSX.Element => <FlightsCard />;

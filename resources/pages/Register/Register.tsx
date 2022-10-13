@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 import { RegisterForm } from './RegisterForm';
 
 export const Register = (): JSX.Element => {

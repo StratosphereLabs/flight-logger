@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapCard, ProfileCard, StatsCard } from '../../blocks';
 import { DashboardContainer } from '../../common/components';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 
 export const Profile = (): JSX.Element => {
   const { isLoggedIn } = useAppContext();
