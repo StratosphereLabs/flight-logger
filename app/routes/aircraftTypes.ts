@@ -17,9 +17,9 @@ export const aircraftTypesRouter = router({
             skip,
             take,
             orderBy:
-              sortKey !== null
+              sortKey !== undefined
                 ? {
-                    [sortKey as string]: sort ?? 'asc',
+                    [sortKey]: sort ?? 'asc',
                   }
                 : undefined,
           }),

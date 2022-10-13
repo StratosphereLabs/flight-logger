@@ -6,11 +6,7 @@ export const getRegionSchema = z.object({
 });
 
 export const getRegionsSchema = paginationSchema.extend({
-  sortKey: z
-    .enum(['id', 'name'], {
-      required_error: 'Invalid sort key',
-    })
-    .optional(),
+  sortKey: z.string().optional(),
   sort: z
     .enum(['asc', 'desc'], { required_error: 'Invalid sort option' })
     .optional(),

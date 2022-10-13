@@ -1,5 +1,4 @@
 import { TRPCError } from '@trpc/server';
-import createHttpError from 'http-errors';
 import { prisma } from '../db';
 import {
   excludeKeys,
@@ -15,9 +14,10 @@ import {
 } from '../trpc';
 import { addFlightSchema, getUserSchema, getUsersSchema } from '../schemas';
 import { getAirports, getRoutes } from '../parsers';
+import { z } from 'zod';
 
 export const usersRouter = router({
-  getProfile: protectedProcedure.query(async ({ ctx }) => {
+  getProfile: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     const userId = ctx.user.id;
     try {
       const result = await prisma.user.findUnique({
@@ -26,7 +26,10 @@ export const usersRouter = router({
         },
       });
       if (result === null) {
-        throw createHttpError(404, 'User not found.');
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found.',
+        });
       }
       return {
         avatar: fetchGravatarUrl(result.email),
@@ -55,7 +58,10 @@ export const usersRouter = router({
         },
       });
       if (result === null) {
-        throw createHttpError(404, 'User not found');
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found.',
+        });
       }
       return {
         avatar: fetchGravatarUrl(result.email),

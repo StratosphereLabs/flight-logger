@@ -6,11 +6,7 @@ export const getAirportSchema = z.object({
 });
 
 export const getAirportsSchema = paginationSchema.extend({
-  sortKey: z
-    .enum(['id', 'iata', 'name'], {
-      required_error: 'Invalid sort key',
-    })
-    .optional(),
+  sortKey: z.string().optional(),
   sort: z
     .enum(['asc', 'desc'], { required_error: 'Invalid sort option' })
     .optional(),

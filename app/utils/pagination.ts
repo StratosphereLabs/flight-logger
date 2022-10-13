@@ -20,7 +20,7 @@ export interface PaginatedResponse<DataItem> {
     pageCount: number;
     limit: number;
     itemCount: number;
-    pages: string[];
+    pages: Array<number | null>;
   };
   results: DataItem[];
 }
