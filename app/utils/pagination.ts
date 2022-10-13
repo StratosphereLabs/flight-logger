@@ -39,6 +39,21 @@ export const parsePaginationRequest = ({
   };
 };
 
+export const getPageNumbers = (
+  limit: number,
+  pageCount: number,
+  currentPage: number,
+): Array<number | null> => [
+  1,
+  ...(currentPage > 3 ? [null] : []),
+  ...[...Array(3).keys()].flatMap(index => {
+    const page = currentPage + index - 1;
+    return page > 1 && page < pageCount ? [page] : [];
+  }),
+  ...(currentPage < pageCount - 2 ? [null] : []),
+  pageCount,
+];
+
 export const getPaginatedResponse = <DataItem>({
   itemCount,
   limit,
@@ -51,7 +66,7 @@ export const getPaginatedResponse = <DataItem>({
     pageCount,
     limit,
     itemCount,
-    pages: [],
+    pages: getPageNumbers(3, pageCount, Number(page)),
   };
   return { metadata, results };
 };
