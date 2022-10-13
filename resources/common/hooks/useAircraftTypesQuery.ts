@@ -2,7 +2,7 @@ import { aircraft_type } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { PaginationState, SortingState } from '@tanstack/react-table';
 import axios from 'axios';
-import { API_URL, HOUR } from '../constants';
+import { REST_API_URL, HOUR } from '../constants';
 import { PaginatedResults } from '../types';
 import { getPaginationQueryString, getSortingQueryString } from '../utils';
 
@@ -23,7 +23,7 @@ export const useAircraftTypesQuery = ({
         getSortingQueryString(sorting),
       ].join('&');
       const response = await axios.get<PaginatedResults<aircraft_type>>(
-        `${API_URL}/aircraft-types?${queryString}`,
+        `${REST_API_URL}/aircraft-types?${queryString}`,
       );
       return response?.data ?? null;
     },

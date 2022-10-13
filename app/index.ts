@@ -1,30 +1,33 @@
+import * as trpcExpress from '@trpc/server/adapters/express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-// import helmet from 'helmet';
 import createError from 'http-errors';
 import logger from 'morgan';
 import path from 'path';
 
-import router from '../routes';
+import { createContext } from './context';
 import { errorRequestHandler } from './middleware';
+import { authRouter, trpcRouter } from './routes';
 
 const app = express();
 
 app.use(logger('dev'));
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: false,
-//     crossOriginEmbedderPolicy: false,
-//   }),
-// );
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-app.use('/api', router);
+app.use('/rest/auth', authRouter);
+
+app.use(
+  '/trpc',
+  trpcExpress.createExpressMiddleware({
+    router: trpcRouter,
+    createContext,
+  }),
+);
 
 app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));

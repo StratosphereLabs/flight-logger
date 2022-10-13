@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../app/db';
-import { getTripSchema } from '../app/schemas';
-import { adminProcedure, publicProcedure, router } from '../app/trpc';
+import { prisma } from '../db';
+import { getTripSchema } from '../schemas';
+import { adminProcedure, publicProcedure, router } from '../trpc';
 
 export const tripsRouter = router({
   getTrip: publicProcedure.input(getTripSchema).query(async ({ input }) => {

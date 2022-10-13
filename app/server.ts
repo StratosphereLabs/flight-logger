@@ -7,7 +7,6 @@ import { normalizePort } from './utils';
 const port = normalizePort(process.env.PORT ?? '3000');
 app.set('port', port);
 
-/* eslint-disable-next-line @typescript-eslint/require-await */
 ((): void => {
   const server = http.createServer(app);
 

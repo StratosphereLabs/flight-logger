@@ -2,7 +2,7 @@ import { airport } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppContext } from '../../context';
-import { API_URL, MINUTE } from '../constants';
+import { REST_API_URL, MINUTE } from '../constants';
 
 export interface Route {
   departureAirport: airport;
@@ -20,7 +20,7 @@ export const useFlightMapQuery = (): UseQueryResult<FlightMapResponse> => {
     [user?.username, 'flightMap'],
     async () => {
       const response = await axios.get<FlightMapResponse>(
-        `${API_URL}/users/${user?.username ?? ''}/flight-map`,
+        `${REST_API_URL}/users/${user?.username ?? ''}/flight-map`,
       );
       return response?.data ?? [];
     },

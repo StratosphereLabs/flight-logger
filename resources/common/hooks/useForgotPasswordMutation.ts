@@ -1,7 +1,7 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useAppContext } from '../../context';
-import { API_URL } from '../constants';
+import { REST_API_URL } from '../constants';
 import { ErrorResponse } from '../types';
 import useErrorResponseHandler from './useErrorResponseHandler';
 
@@ -19,7 +19,7 @@ export const useForgotPasswordMutation = (): UseMutationResult<
   return useMutation(
     async data => {
       clearAlertMessages();
-      return await axios.post(`${API_URL}/auth/forgot-password`, data);
+      return await axios.post(`${REST_API_URL}/auth/forgot-password`, data);
     },
     {
       onError: ({ response }) => onErrorResponse(response),

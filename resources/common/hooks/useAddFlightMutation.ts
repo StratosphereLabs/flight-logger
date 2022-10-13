@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { z } from 'zod';
 import { addFlightSchema } from '../../../app/schemas';
 import { useAppContext } from '../../context';
-import { API_URL } from '../constants';
+import { REST_API_URL } from '../constants';
 import { ErrorResponse } from '../types';
 import { useErrorResponseHandler } from './useErrorResponseHandler';
 
@@ -20,7 +20,7 @@ export const useAddFlightMutation = (): UseMutationResult<
     async data => {
       clearAlertMessages();
       return await axios.post(
-        `${API_URL}/users/${user?.username ?? ''}/flights`,
+        `${REST_API_URL}/users/${user?.username ?? ''}/flights`,
         data,
         {
           headers: {

@@ -1,15 +1,8 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../app/db';
-import {
-  getPaginatedResponse,
-  parsePaginationRequest,
-} from '../app/middleware';
-import { publicProcedure, router } from '../app/trpc';
-import {
-  getRegionSchema,
-  getRegionsSchema,
-  searchSchema,
-} from '../app/schemas';
+import { prisma } from '../db';
+import { publicProcedure, router } from '../trpc';
+import { getRegionSchema, getRegionsSchema, searchSchema } from '../schemas';
+import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
 export const regionsRouter = router({
   getRegions: publicProcedure

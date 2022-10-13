@@ -1,7 +1,7 @@
 import { airline } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
-import { API_URL, HOUR } from '../constants';
+import { REST_API_URL, HOUR } from '../constants';
 
 export const useAirlinesSearchQuery = (
   query: string,
@@ -10,7 +10,7 @@ export const useAirlinesSearchQuery = (
     ['airlines', query],
     async () => {
       const response = await axios.get<airline[]>(
-        `${API_URL}/airlines/search/${encodeURIComponent(query)}`,
+        `${REST_API_URL}/airlines/search/${encodeURIComponent(query)}`,
       );
       return response.data;
     },

@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
+import { resetPasswordSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
 import { useResetPasswordMutation } from '../../common/hooks';
-import { resetPasswordSchema } from './schema';
 
 export const ResetPassword = (): JSX.Element => {
   const { token } = useParams();

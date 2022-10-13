@@ -2,7 +2,7 @@ import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAppContext } from '../../context';
-import { API_URL, MINUTE } from '../constants';
+import { REST_API_URL, MINUTE } from '../constants';
 
 export interface FlightsResponse extends flight {
   [key: string]: unknown;
@@ -18,7 +18,7 @@ export const useFlightsQuery = (): UseQueryResult<FlightsResponse[]> => {
     [user?.username, 'flights'],
     async () => {
       const response = await axios.get<FlightsResponse[]>(
-        `${API_URL}/users/${user?.username ?? ''}/flights`,
+        `${REST_API_URL}/users/${user?.username ?? ''}/flights`,
       );
       return response?.data ?? [];
     },

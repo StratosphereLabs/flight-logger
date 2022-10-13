@@ -1,12 +1,9 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../app/db';
-import {
-  getPaginatedResponse,
-  parsePaginationRequest,
-} from '../app/middleware';
-import { searchSchema } from '../app/schemas/search';
-import { publicProcedure, router } from '../app/trpc';
-import { getAirportSchema, getAirportsSchema } from '../app/schemas';
+import { prisma } from '../db';
+import { searchSchema } from '../schemas/search';
+import { publicProcedure, router } from '../trpc';
+import { getAirportSchema, getAirportsSchema } from '../schemas';
+import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
 export const airportsRouter = router({
   getAirports: publicProcedure

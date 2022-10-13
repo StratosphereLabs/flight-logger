@@ -1,7 +1,7 @@
 import { user } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
-import { API_URL, MINUTE } from '../constants';
+import { REST_API_URL, MINUTE } from '../constants';
 
 export interface UserResponse
   extends Pick<
@@ -18,7 +18,7 @@ export const useProfileQuery = (
     ['userData', token],
     async () => {
       const response = await axios.get<UserResponse>(
-        `${API_URL}/users/profile`,
+        `${REST_API_URL}/users/profile`,
         {
           headers: {
             Authorization: `Bearer ${token ?? ''}`,

@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { API_URL } from '../../common/constants';
+import { REST_API_URL } from '../../common/constants';
 import { useErrorResponseHandler } from '../../common/hooks';
 import { ErrorResponse } from '../../common/types';
 import { useAppContext } from '../../context';
@@ -24,7 +24,7 @@ export const useLoginMutation = (): UseMutationResult<
   return useMutation(
     async data => {
       clearAlertMessages();
-      return await axios.post(`${API_URL}/auth/login`, data);
+      return await axios.post(`${REST_API_URL}/auth/login`, data);
     },
     {
       onSuccess: ({ data }) => {

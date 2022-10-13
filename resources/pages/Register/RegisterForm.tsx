@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, Link } from 'react-daisyui';
 import { useLinkClickHandler } from 'react-router-dom';
+import { registerSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
 import { useLoginMutation } from '../../common/hooks';
-import { registerSchema } from './schema';
 
 export const RegisterForm = (): JSX.Element => {
   const { isLoading, mutate } = useLoginMutation();

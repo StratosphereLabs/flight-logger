@@ -1,8 +1,7 @@
 import { CredentialResponse } from '@react-oauth/google';
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { verifyGoogleIdToken } from '../../auth';
-import { CreateUserParams } from '../users';
+import { upsertUser, verifyGoogleIdToken } from '../../utils';
 
 export const verifyGoogleAuthToken = async (
   req: Request,
@@ -14,14 +13,16 @@ export const verifyGoogleAuthToken = async (
     return next(createHttpError(401, 'No credential provided'));
   }
   try {
-    const token = await verifyGoogleIdToken(response.credential);
-    const userParams: CreateUserParams = {
-      email: token?.email,
-      firstName: token?.given_name,
-      lastName: token?.family_name,
-    };
-    res.locals.userParams = userParams;
-    next();
+    const user = await verifyGoogleIdToken(response.credential);
+    if (user?.email === undefined) {
+      return next(createHttpError(401, ''));
+    }
+    const token = await upsertUser({
+      email: user.email,
+      firstName: user?.given_name,
+      lastName: user?.family_name,
+    });
+    res.status(200).json({ token });
   } catch (err) {
     next(err);
   }

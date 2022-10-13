@@ -1,25 +1,18 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../app/db';
-import {
-  getPaginatedResponse,
-  parsePaginationRequest,
-} from '../app/middleware';
-import {
-  getAirlineSchema,
-  getAirlinesSchema,
-  searchSchema,
-} from '../app/schemas';
-import { publicProcedure, router } from '../app/trpc';
+import { prisma } from '../db';
+import { publicProcedure, router } from '../trpc';
+import { getCountriesSchema, getCountrySchema, searchSchema } from '../schemas';
+import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
-export const airlinesRouter = router({
-  getAirlines: publicProcedure
-    .input(getAirlinesSchema)
+export const countriesRouter = router({
+  getCountries: publicProcedure
+    .input(getCountriesSchema)
     .query(async ({ input }) => {
       const { limit, page, skip, take } = parsePaginationRequest(input);
       const { sort, sortKey } = input;
       try {
         const [results, itemCount] = await prisma.$transaction([
-          prisma.airline.findMany({
+          prisma.country.findMany({
             skip,
             take,
             orderBy:
@@ -29,7 +22,7 @@ export const airlinesRouter = router({
                   }
                 : undefined,
           }),
-          prisma.airline.count(),
+          prisma.country.count(),
         ]);
         return getPaginatedResponse({
           itemCount,
@@ -45,12 +38,12 @@ export const airlinesRouter = router({
         });
       }
     }),
-  searchAirlines: publicProcedure
+  searchCountries: publicProcedure
     .input(searchSchema)
     .query(async ({ input }) => {
       const { query } = input;
       try {
-        const airlines = await prisma.airline.findMany({
+        const countries = await prisma.country.findMany({
           take: 5,
           where: {
             OR: [
@@ -69,7 +62,7 @@ export const airlinesRouter = router({
             ],
           },
         });
-        return airlines;
+        return countries;
       } catch (err) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -78,23 +71,23 @@ export const airlinesRouter = router({
         });
       }
     }),
-  getAirline: publicProcedure
-    .input(getAirlineSchema)
+  getCountry: publicProcedure
+    .input(getCountrySchema)
     .query(async ({ input }) => {
       const { id } = input;
       try {
-        const airline = await prisma.airline.findUnique({
+        const country = await prisma.country.findUnique({
           where: {
             id,
           },
         });
-        if (airline === null) {
+        if (country === null) {
           throw new TRPCError({
             code: 'NOT_FOUND',
-            message: 'Airline not found.',
+            message: 'Country not found.',
           });
         }
-        return airline;
+        return country;
       } catch (err) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

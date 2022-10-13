@@ -1,22 +1,18 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../app/db';
-import {
-  getPaginatedResponse,
-  parsePaginationRequest,
-} from '../app/middleware';
-import { getAircraftTypeSchema, getAircraftTypesSchema } from '../app/schemas';
-import { searchSchema } from '../app/schemas/search';
-import { publicProcedure, router } from '../app/trpc';
+import { prisma } from '../db';
+import { getAirlineSchema, getAirlinesSchema, searchSchema } from '../schemas';
+import { publicProcedure, router } from '../trpc';
+import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
-export const aircraftTypesRouter = router({
-  getAircraftTypes: publicProcedure
-    .input(getAircraftTypesSchema)
+export const airlinesRouter = router({
+  getAirlines: publicProcedure
+    .input(getAirlinesSchema)
     .query(async ({ input }) => {
       const { limit, page, skip, take } = parsePaginationRequest(input);
       const { sort, sortKey } = input;
       try {
         const [results, itemCount] = await prisma.$transaction([
-          prisma.aircraft_type.findMany({
+          prisma.airline.findMany({
             skip,
             take,
             orderBy:
@@ -26,7 +22,7 @@ export const aircraftTypesRouter = router({
                   }
                 : undefined,
           }),
-          prisma.aircraft_type.count(),
+          prisma.airline.count(),
         ]);
         return getPaginatedResponse({
           itemCount,
@@ -42,12 +38,12 @@ export const aircraftTypesRouter = router({
         });
       }
     }),
-  searchAircraft: publicProcedure
+  searchAirlines: publicProcedure
     .input(searchSchema)
     .query(async ({ input }) => {
       const { query } = input;
       try {
-        const aircraftTypes = await prisma.aircraft_type.findMany({
+        const airlines = await prisma.airline.findMany({
           take: 5,
           where: {
             OR: [
@@ -66,7 +62,7 @@ export const aircraftTypesRouter = router({
             ],
           },
         });
-        return aircraftTypes;
+        return airlines;
       } catch (err) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -75,23 +71,23 @@ export const aircraftTypesRouter = router({
         });
       }
     }),
-  getAircraftType: publicProcedure
-    .input(getAircraftTypeSchema)
+  getAirline: publicProcedure
+    .input(getAirlineSchema)
     .query(async ({ input }) => {
       const { id } = input;
       try {
-        const aircraftType = await prisma.aircraft_type.findUnique({
+        const airline = await prisma.airline.findUnique({
           where: {
             id,
           },
         });
-        if (aircraftType === null) {
+        if (airline === null) {
           throw new TRPCError({
             code: 'NOT_FOUND',
-            message: 'Aircraft Type not found.',
+            message: 'Airline not found.',
           });
         }
-        return aircraftType;
+        return airline;
       } catch (err) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
