@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { useCallback } from 'react';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 import { AlertMessage, ErrorResponse } from '../types';
 
 export const useErrorResponseHandler = (

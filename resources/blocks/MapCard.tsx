@@ -7,7 +7,7 @@ import {
 import { LoadingCard } from '../common/components';
 import { useFlightMapQuery } from '../common/hooks';
 import { darkModeStyle } from '../common/mapStyle';
-import { AppTheme, useAppContext } from '../context';
+import { AppTheme, useAppContext } from '../providers';
 
 export const MapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({

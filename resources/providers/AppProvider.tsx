@@ -8,7 +8,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { UserResponse, useProfileQuery } from '../common/hooks';
 import { AlertMessage } from '../common/types';
 
 interface AppContextData {
@@ -18,7 +17,6 @@ interface AppContextData {
   setTheme: Dispatch<SetStateAction<string>>;
   setToken: (token: string | null) => void;
   token: string | null;
-  user: UserResponse | null;
   alertMessages: AlertMessage[];
   addAlertMessages: (messages: AlertMessage[]) => void;
   clearAlertMessages: () => void;
@@ -41,7 +39,6 @@ const initialContext: AppContextData = {
   setTheme: () => undefined,
   setToken: () => undefined,
   token: null,
-  user: null,
   alertMessages: [],
   addAlertMessages: () => undefined,
   clearAlertMessages: () => undefined,
@@ -59,15 +56,8 @@ export const AppContextProvider = ({
     localStorage.getItem('flightLoggerTheme') ?? AppTheme.LIGHT,
   );
   const [token, setToken] = useState(localStorage.getItem('flightLoggerToken'));
-  const [user, setUser] = useState<UserResponse | null>(null);
   const logout = (): void => setToken(null);
   const isLoggedIn = useMemo(() => token !== null, [token]);
-
-  const { data } = useProfileQuery(token);
-  useEffect(() => {
-    if (token === null) setUser(null);
-    else if (data !== undefined) setUser(data);
-  }, [data, token]);
 
   useEffect(() => {
     if (token === null) {
@@ -102,7 +92,6 @@ export const AppContextProvider = ({
         setTheme,
         setToken,
         token,
-        user,
         alertMessages,
         addAlertMessages,
         clearAlertMessages,

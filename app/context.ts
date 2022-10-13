@@ -14,8 +14,8 @@ export const createContext = ({
   req,
 }: trpcExpress.CreateExpressContextOptions): Context => {
   const getUserFromHeader = (): UserToken | undefined => {
-    if (req.headers.authorization !== undefined) {
-      const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization?.split(' ')[1];
+    if (token !== undefined) {
       const result = jwt.verify(
         token,
         process.env.JWT_SECRET ?? '',

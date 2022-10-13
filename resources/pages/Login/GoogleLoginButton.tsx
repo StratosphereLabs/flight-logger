@@ -1,7 +1,7 @@
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { GOOGLE_CLIENT_ID } from '../../common/constants';
 import { useGoogleLoginMutation } from '../../common/hooks';
-import { AppTheme, useAppContext } from '../../context';
+import { AppTheme, useAppContext } from '../../providers';
 
 export interface GoogleLoginButtonProps {
   width: string;

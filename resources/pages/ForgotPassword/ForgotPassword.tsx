@@ -2,12 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Button, Card } from 'react-daisyui';
 import { Form, FormControl } from '../../common/components';
-import { useForgotPasswordMutation } from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
 import { forgotPasswordSchema } from './schema';
 
 export const ForgotPassword = (): JSX.Element => {
   const [resetLinkSent, setResetLinkSent] = useState(false);
-  const { isLoading, mutate } = useForgotPasswordMutation();
+  const { isLoading, mutate } = trpc.passwordReset.forgotPassword.useMutation();
   if (resetLinkSent) {
     return (
       <>

@@ -3,23 +3,19 @@ import { Button } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { resetPasswordSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
-import { useResetPasswordMutation } from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
 
 export const ResetPassword = (): JSX.Element => {
   const { token } = useParams();
-  const { isLoading, mutate } = useResetPasswordMutation();
+  const { isLoading, mutate } = trpc.passwordReset.resetPassword.useMutation();
   return (
     <Form
       defaultValues={{
+        token: token ?? '',
         password: '',
         confirmPassword: '',
       }}
-      onFormSubmit={data =>
-        mutate({
-          ...data,
-          token: token ?? '',
-        })
-      }
+      onFormSubmit={data => mutate(data)}
       resolver={zodResolver(resetPasswordSchema)}
     >
       <fieldset disabled={isLoading}>

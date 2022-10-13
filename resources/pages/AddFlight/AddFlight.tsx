@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { addFlightSchema } from '../../../app/schemas';
 import { Form, FormControl, LoadingCard } from '../../common/components';
 import { useAddFlightMutation } from '../../common/hooks';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 import { AircraftTypeInput } from './AircraftTypeInput';
 import { AirlineInput } from './AirlineInput';
 import { ArrivalAirportInput } from './ArrivalAirportInput';

@@ -1,4 +1,4 @@
-import { AppTheme, useAppContext } from '../../context';
+import { AppTheme, useAppContext } from '../../providers';
 
 export const useScrollBar = (): string => {
   const { theme } = useAppContext();

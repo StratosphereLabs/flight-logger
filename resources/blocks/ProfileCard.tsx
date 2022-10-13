@@ -1,7 +1,7 @@
 import { useIsFetching } from '@tanstack/react-query';
 import { Avatar, Badge, Button, Card } from 'react-daisyui';
 import { LoadingCard } from '../common/components';
-import { useAppContext } from '../context';
+import { useAppContext } from '../providers';
 
 export const ProfileCard = (): JSX.Element => {
   const { user } = useAppContext();

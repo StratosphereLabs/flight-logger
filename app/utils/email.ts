@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import { SentMessageInfo } from 'nodemailer/lib/smtp-transport';
-import { nodemailerOptions } from '../constants';
 
 export interface SendEmailOptions {
   address: string;
@@ -19,7 +18,14 @@ export const sendEmail = async ({
   text,
   html,
 }: SendEmailOptions): Promise<SentMessageInfo | null> => {
-  const transporter = nodemailer.createTransport(nodemailerOptions);
+  const transporter = nodemailer.createTransport({
+    host: process.env.MAILTRAP_HOST,
+    port: parseInt(process.env.MAILTRAP_PORT ?? '', 10),
+    auth: {
+      user: process.env.MAILTRAP_USERNAME,
+      pass: process.env.MAILTRAP_PASSWORD,
+    },
+  });
   const info = await transporter.sendMail({
     from: '"Flight Logger" <noreply@flightlogger.stratospherelabs.io>',
     to: address,

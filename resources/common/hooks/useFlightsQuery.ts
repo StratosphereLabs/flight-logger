@@ -1,7 +1,7 @@
 import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import axios from 'axios';
-import { useAppContext } from '../../context';
+import { useAppContext } from '../../providers';
 import { REST_API_URL, MINUTE } from '../constants';
 
 export interface FlightsResponse extends flight {

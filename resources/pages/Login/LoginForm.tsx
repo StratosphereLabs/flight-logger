@@ -3,10 +3,10 @@ import { Button, Link } from 'react-daisyui';
 import { useLinkClickHandler } from 'react-router-dom';
 import { loginSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
-import { useLoginMutation } from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
 
 export const LoginForm = (): JSX.Element => {
-  const { isLoading, mutate } = useLoginMutation();
+  const { isLoading, mutate } = trpc.auth.login.useMutation();
   const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
   const handleRegister = useLinkClickHandler('/auth/register');
   return (
