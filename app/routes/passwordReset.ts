@@ -2,11 +2,11 @@ import { TRPCError } from '@trpc/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../db';
 import { forgotPasswordSchema, resetPasswordSchema } from '../schemas';
-import { publicProcedure, router } from '../trpc';
+import { procedure, router } from '../trpc';
 import { getPasswordResetToken, getResetEmail, sendEmail } from '../utils';
 
 export const passwordResetRouter = router({
-  forgotPassword: publicProcedure
+  forgotPassword: procedure
     .input(forgotPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       const { email } = input;
@@ -58,7 +58,7 @@ export const passwordResetRouter = router({
         });
       }
     }),
-  resetPassword: publicProcedure
+  resetPassword: procedure
     .input(resetPasswordSchema)
     .mutation(async ({ input }) => {
       const { password, token } = input;

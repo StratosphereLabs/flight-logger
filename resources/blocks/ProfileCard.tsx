@@ -1,20 +1,11 @@
-import { useEffect } from 'react';
 import { Avatar, Badge, Button, Card } from 'react-daisyui';
+import { useParams } from 'react-router-dom';
 import { LoadingCard } from '../common/components';
-import { UserResponse } from '../common/hooks';
 import { trpc } from '../utils/trpc';
 
-export interface ProfileCardProps {
-  setUser?: (user: UserResponse) => void;
-}
-
-export const ProfileCard = ({ setUser }: ProfileCardProps): JSX.Element => {
-  const { data, isLoading } = trpc.users.getProfile.useQuery();
-  useEffect(() => {
-    if (data !== undefined && setUser !== undefined) {
-      setUser(data);
-    }
-  }, [data]);
+export const ProfileCard = (): JSX.Element => {
+  const { username } = useParams();
+  const { data, isLoading } = trpc.users.getUser.useQuery({ username });
   return (
     <LoadingCard isLoading={isLoading} className="shadow-xl w-80 bg-base-200">
       <Card.Body className="items-center">

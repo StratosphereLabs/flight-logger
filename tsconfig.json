@@ -23,6 +23,7 @@
     "app",
     "postcss.config.cjs",
     "resources",
+    "vitest",
     "tailwind.config.cjs",
     "vite.config.ts"
   ]

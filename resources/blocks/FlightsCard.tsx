@@ -2,22 +2,15 @@ import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { format, isBefore } from 'date-fns';
 import { Badge, Card } from 'react-daisyui';
+import { useParams } from 'react-router-dom';
 import { LoadingCard, Table } from '../common/components';
 import { trpc } from '../utils/trpc';
 
-export interface FlightsCardProps {
-  username?: string;
-}
-
 export const DATE_FORMAT = 'M/d/yyyy';
 
-export const FlightsCard = ({ username }: FlightsCardProps): JSX.Element => {
-  const { data, isLoading } = trpc.users.getUserFlights.useQuery(
-    { username: username ?? '' },
-    {
-      enabled: username !== undefined,
-    },
-  );
+export const FlightsCard = (): JSX.Element => {
+  const { username } = useParams();
+  const { data, isLoading } = trpc.users.getUserFlights.useQuery({ username });
   return (
     <LoadingCard
       isLoading={isLoading}

@@ -8,7 +8,7 @@ import path from 'path';
 
 import { createContext } from './context';
 import { errorRequestHandler } from './middleware';
-import { authRouter, trpcRouter } from './routes';
+import { authRouter, trpcRouter, uploadRouter } from './routes';
 
 const app = express();
 
@@ -20,6 +20,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/rest/auth', authRouter);
+app.use('/rest/upload', uploadRouter);
 
 app.use(
   '/trpc',

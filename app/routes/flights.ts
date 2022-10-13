@@ -1,10 +1,11 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
+import { verifyAdminTRPC } from '../middleware';
 import { getFlightSchema } from '../schemas';
-import { adminProcedure, publicProcedure, router } from '../trpc';
+import { procedure, router } from '../trpc';
 
 export const flightsRouter = router({
-  getFlight: publicProcedure.input(getFlightSchema).query(async ({ input }) => {
+  getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
     const { id } = input;
     try {
       const flight = await prisma.flight.findUnique({
@@ -27,7 +28,7 @@ export const flightsRouter = router({
       });
     }
   }),
-  deleteFlights: adminProcedure.mutation(async () => {
+  deleteFlights: procedure.use(verifyAdminTRPC).mutation(async () => {
     try {
       await prisma.flight.deleteMany({});
     } catch (err) {

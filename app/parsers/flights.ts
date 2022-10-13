@@ -1,5 +1,9 @@
 import { airport, flight } from '@prisma/client';
-import { Route } from '../../resources/common/hooks';
+
+export interface Route {
+  departureAirport: airport;
+  arrivalAirport: airport;
+}
 
 export interface FlightsResult extends Array<flight & Route> {}
 

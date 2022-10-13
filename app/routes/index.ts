@@ -11,6 +11,7 @@ import { tripsRouter } from './trips';
 import { usersRouter } from './users';
 
 export * from './googleAuth';
+export * from './upload';
 
 export const trpcRouter = router({
   aircraftTypes: aircraftTypesRouter,

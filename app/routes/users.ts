@@ -1,28 +1,22 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
+import { verifyAdminTRPC } from '../middleware';
 import {
   excludeKeys,
   fetchGravatarUrl,
   getPaginatedResponse,
   parsePaginationRequest,
 } from '../utils';
-import {
-  adminProcedure,
-  protectedProcedure,
-  publicProcedure,
-  router,
-} from '../trpc';
-import { addFlightSchema, getUserSchema, getUsersSchema } from '../schemas';
+import { procedure, router } from '../trpc';
+import { addFlightSchema, getUserSchema, paginationSchema } from '../schemas';
 import { getAirports, getRoutes } from '../parsers';
-import { z } from 'zod';
 
 export const usersRouter = router({
-  getProfile: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
-    const userId = ctx.user.id;
+  getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
     try {
       const result = await prisma.user.findUnique({
         where: {
-          id: userId,
+          username: input.username ?? ctx.user?.username,
         },
       });
       if (result === null) {
@@ -49,47 +43,14 @@ export const usersRouter = router({
       });
     }
   }),
-  getUser: publicProcedure.input(getUserSchema).query(async ({ input }) => {
-    const { username } = input;
-    try {
-      const result = await prisma.user.findUnique({
-        where: {
-          username,
-        },
-      });
-      if (result === null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found.',
-        });
-      }
-      return {
-        avatar: fetchGravatarUrl(result.email),
-        ...excludeKeys(
-          result,
-          'password',
-          'id',
-          'passwordResetToken',
-          'passwordResetAt',
-        ),
-      };
-    } catch (err) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred, please try again later.',
-        cause: err,
-      });
-    }
-  }),
-  getUserFlights: publicProcedure
-    .input(getUserSchema)
-    .query(async ({ input }) => {
-      const { username } = input;
+  getUserFlights: procedure
+    .input(getUserSchema.optional())
+    .query(async ({ ctx, input }) => {
       try {
         const flights = await prisma.flight.findMany({
           where: {
             user: {
-              username,
+              username: input?.username ?? ctx.user?.username,
             },
           },
           include: {
@@ -113,15 +74,14 @@ export const usersRouter = router({
         });
       }
     }),
-  getUserMapData: publicProcedure
+  getUserMapData: procedure
     .input(getUserSchema)
-    .query(async ({ input }) => {
-      const { username } = input;
+    .query(async ({ ctx, input }) => {
       try {
         const flights = await prisma.flight.findMany({
           where: {
             user: {
-              username,
+              username: input.username ?? ctx.user?.username,
             },
           },
           include: {
@@ -143,31 +103,35 @@ export const usersRouter = router({
         });
       }
     }),
-  getUsers: adminProcedure.input(getUsersSchema).query(async ({ input }) => {
-    const { limit, page, skip, take } = parsePaginationRequest(input);
-    try {
-      const [results, itemCount] = await prisma.$transaction([
-        prisma.user.findMany({
-          skip,
-          take,
-        }),
-        prisma.user.count(),
-      ]);
-      return getPaginatedResponse({
-        itemCount,
-        limit,
-        page,
-        results,
-      });
-    } catch (err) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred, please try again later.',
-        cause: err,
-      });
-    }
-  }),
-  addFlight: protectedProcedure
+  getUsers: procedure
+    .use(verifyAdminTRPC)
+    .input(paginationSchema)
+    .query(async ({ input }) => {
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      try {
+        const [results, itemCount] = await prisma.$transaction([
+          prisma.user.findMany({
+            skip,
+            take,
+          }),
+          prisma.user.count(),
+        ]);
+        return getPaginatedResponse({
+          itemCount,
+          limit,
+          page,
+          results,
+        });
+      } catch (err) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred, please try again later.',
+          cause: err,
+        });
+      }
+    }),
+  addFlight: procedure
+    .use(verifyAdminTRPC)
     .input(addFlightSchema)
     .mutation(async ({ ctx, input }) => {
       try {

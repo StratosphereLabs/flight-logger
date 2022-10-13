@@ -4,25 +4,18 @@ import {
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
+import { useParams } from 'react-router-dom';
 import { LoadingCard } from '../common/components';
 import { darkModeStyle } from '../common/mapStyle';
 import { AppTheme, useAppContext } from '../providers';
 import { trpc } from '../utils/trpc';
 
-export interface MapCardProps {
-  username?: string;
-}
-
-export const MapCard = ({ username }: MapCardProps): JSX.Element => {
+export const MapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
   });
-  const { data, isLoading } = trpc.users.getUserMapData.useQuery(
-    { username: username ?? '' },
-    {
-      enabled: username !== undefined,
-    },
-  );
+  const { username } = useParams();
+  const { data, isLoading } = trpc.users.getUserMapData.useQuery({ username });
   const { theme } = useAppContext();
   return (
     <LoadingCard
