@@ -48,7 +48,8 @@ export const authRouter = router({
   }),
   register: procedure.input(registerSchema).mutation(async ({ input }) => {
     try {
-      return await upsertUser(input);
+      const token = await upsertUser(input);
+      return { token };
     } catch (err) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',

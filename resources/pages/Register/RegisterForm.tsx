@@ -3,10 +3,14 @@ import { Button, Card, Link } from 'react-daisyui';
 import { useLinkClickHandler } from 'react-router-dom';
 import { registerSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
+import { useAppContext } from '../../providers';
 import { trpc } from '../../utils/trpc';
 
 export const RegisterForm = (): JSX.Element => {
-  const { isLoading, mutate } = trpc.auth.register.useMutation();
+  const { setToken } = useAppContext();
+  const { isLoading, mutate } = trpc.auth.register.useMutation({
+    onSuccess: ({ token }) => setToken(token),
+  });
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>
@@ -27,7 +31,6 @@ export const RegisterForm = (): JSX.Element => {
           <FormControl
             inputProps={{
               autoComplete: 'email',
-              placeholder: 'Email',
               type: 'email',
             }}
             labelText="Email"
@@ -36,7 +39,6 @@ export const RegisterForm = (): JSX.Element => {
           <FormControl
             inputProps={{
               autoComplete: 'username',
-              placeholder: 'Username',
             }}
             labelText="Username"
             name="username"
@@ -44,7 +46,6 @@ export const RegisterForm = (): JSX.Element => {
           <FormControl
             inputProps={{
               autoComplete: 'first-name',
-              placeholder: 'First Name',
             }}
             labelText="First Name"
             name="firstName"
@@ -52,7 +53,6 @@ export const RegisterForm = (): JSX.Element => {
           <FormControl
             inputProps={{
               autoComplete: 'last-name',
-              placeholder: 'Last Name',
             }}
             labelText="Last Name"
             name="lastName"
@@ -81,7 +81,7 @@ export const RegisterForm = (): JSX.Element => {
         </fieldset>
         <div className="flex flex-col mt-6">
           <Button type="submit" loading={isLoading}>
-            Login
+            Register
           </Button>
         </div>
       </Form>
