@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
-import { Button, Card, Divider } from 'react-daisyui';
+import {
+  Button,
+  Card,
+  Divider,
+  Form as DaisyUIForm,
+  Radio,
+} from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
 import { addFlightSchema } from '../../../app/schemas';
 import { Form, FormControl, LoadingCard } from '../../common/components';
@@ -118,6 +124,72 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
             <Divider />
+            <div className="flex flex-wrap gap-12">
+              <div className="flex-1">
+                <DaisyUIForm.Label title="Class" />
+                <DaisyUIForm.Label title="Basic Economy">
+                  <Radio name="class" defaultChecked />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="Economy">
+                  <Radio name="class" />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="Premium Economy">
+                  <Radio name="class" />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="Business">
+                  <Radio name="class" />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="First">
+                  <Radio name="class" />
+                </DaisyUIForm.Label>
+              </div>
+              <div className="flex-1">
+                <FormControl
+                  inputProps={{
+                    className: 'mb-5',
+                  }}
+                  labelText="Seat Number"
+                  name="seatNumber"
+                />
+                <DaisyUIForm.Label title="Seat Position" />
+                <DaisyUIForm.Label title="Window">
+                  <Radio name="seatPosition" defaultChecked />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="Middle">
+                  <Radio name="seatPosition" />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="Aisle">
+                  <Radio name="seatPosition" />
+                </DaisyUIForm.Label>
+              </div>
+              <div className="flex-1">
+                <DaisyUIForm.Label title="Reason" />
+                <DaisyUIForm.Label title="Business">
+                  <Radio name="reason" defaultChecked />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="Leisure">
+                  <Radio name="reason" />
+                </DaisyUIForm.Label>
+                <DaisyUIForm.Label title="Other">
+                  <Radio name="reason" />
+                </DaisyUIForm.Label>
+              </div>
+            </div>
+            <Divider />
+            <div className="flex flex-wrap gap-8 mb-8">
+              <div className="flex-1 flex justify-center">
+                <FormControl labelText="Comments" name="comments" />
+              </div>
+              <div className="flex-1 flex justify-center">
+                <FormControl
+                  inputProps={{
+                    placeholder: 'FlightAware, FlightRadar24 ...',
+                  }}
+                  labelText="Tracking Link"
+                  name="trackingLink"
+                />
+              </div>
+            </div>
             <Button loading={isLoading} type="submit">
               Submit
             </Button>
