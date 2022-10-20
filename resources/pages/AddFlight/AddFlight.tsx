@@ -1,15 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FlightClass, FlightReason, SeatPosition } from '@prisma/client';
 import { useEffect, useRef } from 'react';
-import {
-  Button,
-  Card,
-  Divider,
-  Form as DaisyUIForm,
-  Radio,
-} from 'react-daisyui';
+import { Button, Card, Divider } from 'react-daisyui';
 import { useNavigate } from 'react-router-dom';
 import { addFlightSchema } from '../../../app/schemas';
-import { Form, FormControl, LoadingCard } from '../../common/components';
+import {
+  Form,
+  FormControl,
+  FormRadio,
+  LoadingCard,
+} from '../../common/components';
 import { useAppContext } from '../../providers';
 import { trpc } from '../../utils/trpc';
 import { AircraftTypeInput } from './AircraftTypeInput';
@@ -68,7 +68,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
-              <div className="flex-1">
+              <div className="flex-1 flex justify-center">
                 <FormControl
                   inputProps={{
                     type: 'date',
@@ -77,7 +77,7 @@ export const AddFlight = (): JSX.Element => {
                   name="outDate"
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 flex justify-center">
                 <FormControl
                   inputProps={{
                     type: 'time',
@@ -86,7 +86,7 @@ export const AddFlight = (): JSX.Element => {
                   name="outTime"
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 flex justify-center">
                 <FormControl
                   inputProps={{
                     type: 'time',
@@ -106,7 +106,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
-              <div className="flex-1">
+              <div className="flex-1 flex justify-center">
                 <FormControl
                   inputProps={{
                     type: 'number',
@@ -116,34 +116,44 @@ export const AddFlight = (): JSX.Element => {
                   name="flightNumber"
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 flex justify-center">
                 <FormControl labelText="Callsign" name="callsign" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 flex justify-center">
                 <FormControl labelText="Registration" name="tailNumber" />
               </div>
             </div>
             <Divider />
             <div className="flex flex-wrap gap-12">
-              <div className="flex-1">
-                <DaisyUIForm.Label title="Class" />
-                <DaisyUIForm.Label title="Basic Economy">
-                  <Radio name="class" defaultChecked />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="Economy">
-                  <Radio name="class" />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="Premium Economy">
-                  <Radio name="class" />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="Business">
-                  <Radio name="class" />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="First">
-                  <Radio name="class" />
-                </DaisyUIForm.Label>
+              <div className="flex-1 min-w-[200px]">
+                <FormRadio
+                  labelText="Class"
+                  name="class"
+                  options={[
+                    {
+                      label: 'Basic Economy',
+                      value: FlightClass.BASIC,
+                    },
+                    {
+                      label: 'Economy',
+                      value: FlightClass.ECONOMY,
+                    },
+                    {
+                      label: 'Premium Economy',
+                      value: FlightClass.PREMIUM,
+                    },
+                    {
+                      label: 'Business',
+                      value: FlightClass.BUSINESS,
+                    },
+                    {
+                      label: 'First',
+                      value: FlightClass.FIRST,
+                    },
+                  ]}
+                />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-[200px]">
                 <FormControl
                   inputProps={{
                     className: 'mb-5',
@@ -151,28 +161,43 @@ export const AddFlight = (): JSX.Element => {
                   labelText="Seat Number"
                   name="seatNumber"
                 />
-                <DaisyUIForm.Label title="Seat Position" />
-                <DaisyUIForm.Label title="Window">
-                  <Radio name="seatPosition" defaultChecked />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="Middle">
-                  <Radio name="seatPosition" />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="Aisle">
-                  <Radio name="seatPosition" />
-                </DaisyUIForm.Label>
+                <FormRadio
+                  name="seatPosition"
+                  options={[
+                    {
+                      label: 'Window',
+                      value: SeatPosition.WINDOW,
+                    },
+                    {
+                      label: 'Middle',
+                      value: SeatPosition.MIDDLE,
+                    },
+                    {
+                      label: 'Aisle',
+                      value: SeatPosition.AISLE,
+                    },
+                  ]}
+                />
               </div>
-              <div className="flex-1">
-                <DaisyUIForm.Label title="Reason" />
-                <DaisyUIForm.Label title="Business">
-                  <Radio name="reason" defaultChecked />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="Leisure">
-                  <Radio name="reason" />
-                </DaisyUIForm.Label>
-                <DaisyUIForm.Label title="Other">
-                  <Radio name="reason" />
-                </DaisyUIForm.Label>
+              <div className="flex-1 min-w-[200px]">
+                <FormRadio
+                  labelText="Reason"
+                  name="reason"
+                  options={[
+                    {
+                      label: 'Leisure',
+                      value: FlightReason.LEISURE,
+                    },
+                    {
+                      label: 'Business',
+                      value: FlightReason.BUSINESS,
+                    },
+                    {
+                      label: 'Other',
+                      value: FlightReason.OTHER,
+                    },
+                  ]}
+                />
               </div>
             </div>
             <Divider />
@@ -181,13 +206,7 @@ export const AddFlight = (): JSX.Element => {
                 <FormControl labelText="Comments" name="comments" />
               </div>
               <div className="flex-1 flex justify-center">
-                <FormControl
-                  inputProps={{
-                    placeholder: 'FlightAware, FlightRadar24 ...',
-                  }}
-                  labelText="Tracking Link"
-                  name="trackingLink"
-                />
+                <FormControl labelText="Tracking Link" name="trackingLink" />
               </div>
             </div>
             <Button loading={isLoading} type="submit">
