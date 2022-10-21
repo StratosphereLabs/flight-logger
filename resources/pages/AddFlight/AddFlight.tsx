@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FlightClass, FlightReason, SeatPosition } from '@prisma/client';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { addFlightSchema } from '../../../app/schemas';
@@ -124,23 +123,23 @@ export const AddFlight = (): JSX.Element => {
                   options={[
                     {
                       label: 'Basic Economy',
-                      value: FlightClass.BASIC,
+                      value: 'BASIC',
                     },
                     {
                       label: 'Economy',
-                      value: FlightClass.ECONOMY,
+                      value: 'ECONOMY',
                     },
                     {
                       label: 'Premium Economy',
-                      value: FlightClass.PREMIUM,
+                      value: 'PREMIUM',
                     },
                     {
                       label: 'Business',
-                      value: FlightClass.BUSINESS,
+                      value: 'BUSINESS',
                     },
                     {
                       label: 'First',
-                      value: FlightClass.FIRST,
+                      value: 'FIRST',
                     },
                   ]}
                 />
@@ -158,15 +157,15 @@ export const AddFlight = (): JSX.Element => {
                   options={[
                     {
                       label: 'Window',
-                      value: SeatPosition.WINDOW,
+                      value: 'WINDOW',
                     },
                     {
                       label: 'Middle',
-                      value: SeatPosition.MIDDLE,
+                      value: 'MIDDLE',
                     },
                     {
                       label: 'Aisle',
-                      value: SeatPosition.AISLE,
+                      value: 'AISLE',
                     },
                   ]}
                 />
@@ -178,15 +177,15 @@ export const AddFlight = (): JSX.Element => {
                   options={[
                     {
                       label: 'Leisure',
-                      value: FlightReason.LEISURE,
+                      value: 'LEISURE',
                     },
                     {
                       label: 'Business',
-                      value: FlightReason.BUSINESS,
+                      value: 'BUSINESS',
                     },
                     {
                       label: 'Other',
-                      value: FlightReason.OTHER,
+                      value: 'OTHER',
                     },
                   ]}
                 />
