@@ -10,6 +10,10 @@ import {
   FormRadio,
   LoadingCard,
 } from '../../common/components';
+import {
+  nullEmptyStringTransformer,
+  numberInputTransformer,
+} from '../../common/transformers';
 import { useAppContext } from '../../providers';
 import { trpc } from '../../utils/trpc';
 import { AircraftTypeInput } from './AircraftTypeInput';
@@ -44,9 +48,9 @@ export const AddFlight = (): JSX.Element => {
             callsign: '',
             tailNumber: '',
             outDate: '',
-            outTime: '',
-            offTime: '',
-            onTime: '',
+            outTime: null,
+            offTime: null,
+            onTime: null,
             inTime: '',
             class: null,
             seatNumber: '',
@@ -84,6 +88,7 @@ export const AddFlight = (): JSX.Element => {
                   }}
                   labelText="Departure Time"
                   name="outTime"
+                  transform={nullEmptyStringTransformer}
                 />
               </div>
               <div className="flex-1 flex justify-center">
@@ -114,6 +119,7 @@ export const AddFlight = (): JSX.Element => {
                   }}
                   labelText="Flight Number"
                   name="flightNumber"
+                  transform={numberInputTransformer}
                 />
               </div>
               <div className="flex-1 flex justify-center">

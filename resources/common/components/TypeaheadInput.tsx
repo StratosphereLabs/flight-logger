@@ -1,43 +1,53 @@
 import { KeyboardEvent, useCallback, useEffect, useState } from 'react';
 import { Menu } from 'react-daisyui';
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, useFormContext } from 'react-hook-form';
 import { useDebouncedState } from '../hooks';
 import { FormControl, FormControlProps } from './FormControl';
 
-export interface TypeaheadInputProps<DataItem, Values extends FieldValues>
-  extends FormControlProps<Values> {
+export interface TypeaheadInputProps<
+  DataItem,
+  Values extends FieldValues,
+  TOutput,
+> extends FormControlProps<Values, TOutput> {
   debounceTime?: number;
   getItemText: (data: DataItem) => string;
+  getItemValue: (data: DataItem) => string;
   getMenuItem?: (data: DataItem) => JSX.Element | null;
   isFetching?: boolean;
   onDebouncedChange?: (value: string) => void;
-  onItemSelect: (data: DataItem | null) => void;
   options?: DataItem[];
 }
 
 export const TypeaheadInput = <
   DataItem extends Record<string, unknown>,
   Values extends FieldValues,
+  TOutput,
 >({
   debounceTime,
   getItemText,
+  getItemValue,
   getMenuItem,
   inputProps,
   isFetching,
+  name,
   onDebouncedChange,
-  onItemSelect,
   options,
   ...props
-}: TypeaheadInputProps<DataItem, Values>): JSX.Element => {
+}: TypeaheadInputProps<DataItem, Values, TOutput>): JSX.Element => {
   const [query, setQuery, debouncedQuery, isDebouncing] =
     useDebouncedState<string>('', debounceTime ?? 400);
   const [item, setItem] = useState<DataItem | null>(null);
   const [valueText, setValueText] = useState('');
+  const { setValue } = useFormContext();
   const setSelectedItem = useCallback(
     (item: DataItem | null): void => {
-      const valueText = item !== null ? getItemText(item) : '';
+      const itemText = item !== null ? getItemText(item) : '';
+      const itemValue = item !== null ? getItemValue(item) : '';
       setItem(item);
-      setValueText(valueText);
+      setValueText(itemText);
+      setValue<string>(name, itemValue, {
+        shouldValidate: item !== null,
+      });
     },
     [getItemText],
   );
@@ -55,9 +65,6 @@ export const TypeaheadInput = <
   useEffect(() => {
     onDebouncedChange?.(formattedQuery);
   }, [formattedQuery]);
-  useEffect(() => {
-    onItemSelect(item);
-  }, [item]);
   return (
     <FormControl
       inputProps={{
@@ -96,6 +103,7 @@ export const TypeaheadInput = <
             ))}
         </Menu>
       }
+      name={name}
       {...props}
     />
   );
