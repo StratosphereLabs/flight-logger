@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FlightClass, FlightReason, SeatPosition } from '@prisma/client';
 import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { addFlightSchema } from '../../../app/schemas';
 import {
@@ -10,6 +11,7 @@ import {
   FormRadio,
   LoadingCard,
 } from '../../common/components';
+import { useSuccessResponseHandler } from '../../common/hooks';
 import {
   nullEmptyStringTransformer,
   numberInputTransformer,
@@ -19,49 +21,39 @@ import { trpc } from '../../utils/trpc';
 import { AircraftTypeInput } from './AircraftTypeInput';
 import { AirlineInput } from './AirlineInput';
 import { ArrivalAirportInput } from './ArrivalAirportInput';
+import { addFlightDefaultValues } from './constants';
 import { DepartureAirportInput } from './DepartureAirportInput';
 
 export const AddFlight = (): JSX.Element => {
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();
   const firstFieldRef = useRef<HTMLInputElement>(null);
-  const { mutate, isLoading } = trpc.users.addFlight.useMutation();
-  useEffect(() => {
-    firstFieldRef.current?.focus();
-  }, []);
+  const methods = useForm({
+    mode: 'onBlur',
+    shouldUseNativeValidation: false,
+    defaultValues: addFlightDefaultValues,
+    resolver: zodResolver(addFlightSchema),
+  });
+  const handleSuccess = useSuccessResponseHandler('Flight Added!');
+  const { mutate, isLoading } = trpc.users.addFlight.useMutation({
+    onSuccess: () => {
+      handleSuccess();
+      methods.reset();
+    },
+  });
   useEffect(() => {
     if (!isLoggedIn) navigate('/auth/login');
   }, [isLoggedIn]);
+  useEffect(() => {
+    firstFieldRef.current?.focus();
+  }, []);
   return (
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>
         <Card.Title className="mb-5 justify-center" tag="h2">
           Add a Flight
         </Card.Title>
-        <Form
-          defaultValues={{
-            departureAirportId: '',
-            arrivalAirportId: '',
-            airlineId: '',
-            aircraftTypeId: '',
-            flightNumber: null,
-            callsign: '',
-            tailNumber: '',
-            outDate: '',
-            outTime: null,
-            offTime: null,
-            onTime: null,
-            inTime: '',
-            class: null,
-            seatNumber: '',
-            seatPosition: null,
-            reason: null,
-            comments: '',
-            trackingLink: '',
-          }}
-          onFormSubmit={values => mutate(values)}
-          resolver={zodResolver(addFlightSchema)}
-        >
+        <Form methods={methods} onFormSubmit={values => mutate(values)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">

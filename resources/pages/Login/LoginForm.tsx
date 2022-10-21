@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Link } from 'react-daisyui';
+import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import { loginSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
@@ -8,20 +9,22 @@ import { trpc } from '../../utils/trpc';
 
 export const LoginForm = (): JSX.Element => {
   const { setToken } = useAppContext();
+  const methods = useForm({
+    mode: 'onBlur',
+    shouldUseNativeValidation: false,
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+    resolver: zodResolver(loginSchema),
+  });
   const { isLoading, mutate } = trpc.auth.login.useMutation({
     onSuccess: ({ token }) => setToken(token),
   });
   const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
   const handleRegister = useLinkClickHandler('/auth/register');
   return (
-    <Form
-      defaultValues={{
-        email: '',
-        password: '',
-      }}
-      onFormSubmit={data => mutate(data)}
-      resolver={zodResolver(loginSchema)}
-    >
+    <Form methods={methods} onFormSubmit={data => mutate(data)}>
       <fieldset disabled={isLoading}>
         <FormControl
           inputProps={{

@@ -1,6 +1,12 @@
-import { KeyboardEvent, useCallback, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { Menu } from 'react-daisyui';
-import { FieldValues, useFormContext } from 'react-hook-form';
+import { FieldValues, useController, useFormContext } from 'react-hook-form';
 import { useDebouncedState } from '../hooks';
 import { FormControl, FormControlProps } from './FormControl';
 
@@ -29,7 +35,6 @@ export const TypeaheadInput = <
   getMenuItem,
   inputProps,
   isFetching,
-  name,
   onDebouncedChange,
   options,
   ...props
@@ -39,17 +44,26 @@ export const TypeaheadInput = <
   const [item, setItem] = useState<DataItem | null>(null);
   const [valueText, setValueText] = useState('');
   const { setValue } = useFormContext();
+  const { field } = useController(props);
   const setSelectedItem = useCallback(
     (item: DataItem | null): void => {
       const itemText = item !== null ? getItemText(item) : '';
       const itemValue = item !== null ? getItemValue(item) : '';
+      setQuery('');
       setItem(item);
       setValueText(itemText);
-      setValue<string>(name, itemValue, {
+      setValue<string>(props.name, itemValue, {
         shouldValidate: item !== null,
       });
     },
     [getItemText],
+  );
+  const handleChange = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+      setSelectedItem(null);
+      setQuery(value);
+    },
+    [setSelectedItem],
   );
   const handleKeyDown = useCallback(
     ({ key }: KeyboardEvent<HTMLInputElement>) => {
@@ -65,13 +79,13 @@ export const TypeaheadInput = <
   useEffect(() => {
     onDebouncedChange?.(formattedQuery);
   }, [formattedQuery]);
+  useEffect(() => {
+    if (field.value.length === 0) setSelectedItem(null);
+  }, [field.value]);
   return (
     <FormControl
       inputProps={{
-        onChange: ({ target: { value } }) => {
-          setSelectedItem(null);
-          setQuery(value);
-        },
+        onChange: handleChange,
         onKeyDown: handleKeyDown,
         value: valueText !== '' ? valueText : query,
         ...inputProps,
@@ -103,7 +117,6 @@ export const TypeaheadInput = <
             ))}
         </Menu>
       }
-      name={name}
       {...props}
     />
   );
