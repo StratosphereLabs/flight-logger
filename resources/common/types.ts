@@ -22,3 +22,8 @@ export interface PaginatedResults<Data> {
   metadata: PaginationMetadata;
   results: Data[];
 }
+
+export interface Transform<TOutput> {
+  output: (val: string) => TOutput;
+  input: (val: TOutput) => string;
+}

@@ -3,6 +3,7 @@ export * from './DarkModeButton';
 export * from './DashboardContainer';
 export * from './Form';
 export * from './FormControl';
+export * from './FormRadio';
 export * from './FullScreenLoader';
 export * from './LoadingCard';
 export * from './Table';

@@ -1,15 +1,9 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { MapCard, ProfileCard, StatsCard } from '../../blocks';
 import { DashboardContainer } from '../../common/components';
-import { useAppContext } from '../../providers';
+import { useProtectedPage } from '../../common/hooks';
 
 export const Profile = (): JSX.Element => {
-  const { isLoggedIn } = useAppContext();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!isLoggedIn) navigate('/auth/login');
-  }, [isLoggedIn]);
+  useProtectedPage();
   return (
     <>
       <DashboardContainer>

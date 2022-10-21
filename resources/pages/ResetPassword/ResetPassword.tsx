@@ -1,23 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from 'react-daisyui';
+import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { resetPasswordSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
+import { useAuthPage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const ResetPassword = (): JSX.Element => {
+  useAuthPage();
   const { token } = useParams();
+  const methods = useForm({
+    mode: 'onBlur',
+    shouldUseNativeValidation: false,
+    defaultValues: {
+      token: token ?? '',
+      password: '',
+      confirmPassword: '',
+    },
+    resolver: zodResolver(resetPasswordSchema),
+  });
   const { isLoading, mutate } = trpc.passwordReset.resetPassword.useMutation();
   return (
-    <Form
-      defaultValues={{
-        token: token ?? '',
-        password: '',
-        confirmPassword: '',
-      }}
-      onFormSubmit={data => mutate(data)}
-      resolver={zodResolver(resetPasswordSchema)}
-    >
+    <Form methods={methods} onFormSubmit={data => mutate(data)}>
       <fieldset disabled={isLoading}>
         <FormControl
           inputProps={{

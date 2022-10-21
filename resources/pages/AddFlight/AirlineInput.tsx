@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { TypeaheadInput } from '../../common/components';
 import { trpc } from '../../utils/trpc';
 
@@ -13,15 +12,14 @@ export const AirlineInput = (): JSX.Element => {
       enabled: query.length > 0,
     },
   );
-  const { setValue } = useFormContext();
   return (
     <TypeaheadInput
       labelText="Airline"
       name="airlineId"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
+      getItemValue={({ id }) => id}
       isFetching={isFetching}
       onDebouncedChange={setQuery}
-      onItemSelect={item => setValue('airlineId', item?.id ?? '')}
       options={data}
     />
   );
