@@ -1,9 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FlightClass, FlightReason, SeatPosition } from '@prisma/client';
-import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { addFlightSchema } from '../../../app/schemas';
 import {
   Form,
@@ -11,12 +9,15 @@ import {
   FormRadio,
   LoadingCard,
 } from '../../common/components';
-import { useSuccessResponseHandler } from '../../common/hooks';
+import {
+  useFocusOnFirstField,
+  useProtectedPage,
+  useSuccessResponseHandler,
+} from '../../common/hooks';
 import {
   nullEmptyStringTransformer,
   numberInputTransformer,
 } from '../../common/transformers';
-import { useAppContext } from '../../providers';
 import { trpc } from '../../utils/trpc';
 import { AircraftTypeInput } from './AircraftTypeInput';
 import { AirlineInput } from './AirlineInput';
@@ -25,9 +26,8 @@ import { addFlightDefaultValues } from './constants';
 import { DepartureAirportInput } from './DepartureAirportInput';
 
 export const AddFlight = (): JSX.Element => {
-  const { isLoggedIn } = useAppContext();
-  const navigate = useNavigate();
-  const firstFieldRef = useRef<HTMLInputElement>(null);
+  useProtectedPage();
+  const firstFieldRef = useFocusOnFirstField();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -41,12 +41,6 @@ export const AddFlight = (): JSX.Element => {
       methods.reset();
     },
   });
-  useEffect(() => {
-    if (!isLoggedIn) navigate('/auth/login');
-  }, [isLoggedIn]);
-  useEffect(() => {
-    firstFieldRef.current?.focus();
-  }, []);
   return (
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>

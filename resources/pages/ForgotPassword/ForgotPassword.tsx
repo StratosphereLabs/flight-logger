@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { Button, Card } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl } from '../../common/components';
+import { useAuthPage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { forgotPasswordSchema } from './schema';
 
 export const ForgotPassword = (): JSX.Element => {
+  useAuthPage();
   const [resetLinkSent, setResetLinkSent] = useState(false);
   const methods = useForm({
     mode: 'onBlur',

@@ -4,9 +4,11 @@ import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { resetPasswordSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
+import { useAuthPage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const ResetPassword = (): JSX.Element => {
+  useAuthPage();
   const { token } = useParams();
   const methods = useForm({
     mode: 'onBlur',
