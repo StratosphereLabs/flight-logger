@@ -21,7 +21,7 @@ export const ArrivalAirportInput = ({
       enabled: query.length > 0,
     },
   );
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   return (
     <TypeaheadInput
       className={className}

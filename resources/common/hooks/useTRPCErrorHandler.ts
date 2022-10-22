@@ -1,15 +1,15 @@
-import { Maybe } from '@trpc/server';
+import { TRPCClientErrorBase } from '@trpc/client';
 import { useEffect } from 'react';
 import { useAppContext } from '../../providers';
 import { DefaultErrorShape } from '../types';
 
 export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(
-  trpcError?: Maybe<TShape['data']> | null,
+  trpcError?: TRPCClientErrorBase<TShape> | null,
 ): void => {
   const { addAlertMessages } = useAppContext();
   useEffect(() => {
-    const error = trpcError ?? null;
-    const zodError = trpcError?.zodError ?? null;
+    const errorMessage = trpcError?.shape?.message ?? null;
+    const zodError = trpcError?.data?.zodError ?? null;
     if (zodError !== null) {
       addAlertMessages(
         Object.entries(zodError.fieldErrors).flatMap(
@@ -26,11 +26,11 @@ export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(
           message,
         })),
       );
-    } else if (error !== null) {
+    } else if (errorMessage !== null) {
       addAlertMessages([
         {
           status: 'error',
-          message: `Error ${error.httpStatus}: ${error.code}`,
+          message: errorMessage,
         },
       ]);
     }

@@ -22,7 +22,7 @@ export const LoginForm = (): JSX.Element => {
   const { error, isLoading, mutate } = trpc.auth.login.useMutation({
     onSuccess: ({ token }) => setToken(token),
   });
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
   const handleRegister = useLinkClickHandler('/auth/register');
   return (

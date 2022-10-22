@@ -7,7 +7,7 @@ import { trpc } from '../utils/trpc';
 export const ProfileCard = (): JSX.Element => {
   const { username } = useParams();
   const { data, error, isLoading } = trpc.users.getUser.useQuery({ username });
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   return (
     <LoadingCard isLoading={isLoading} className="shadow-xl w-80 bg-base-200">
       <Card.Body className="items-center">

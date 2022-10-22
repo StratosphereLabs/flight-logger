@@ -41,7 +41,7 @@ export const AddFlight = (): JSX.Element => {
       methods.reset();
     },
   });
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   return (
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>
