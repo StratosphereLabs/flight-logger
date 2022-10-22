@@ -6,6 +6,7 @@ import {
 } from '@react-google-maps/api';
 import { useParams } from 'react-router-dom';
 import { LoadingCard } from '../common/components';
+import { useTRPCErrorHandler } from '../common/hooks';
 import { darkModeStyle } from '../common/mapStyle';
 import { AppTheme, useAppContext } from '../providers';
 import { trpc } from '../utils/trpc';
@@ -15,7 +16,10 @@ export const MapCard = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
   });
   const { username } = useParams();
-  const { data, isLoading } = trpc.users.getUserMapData.useQuery({ username });
+  const { data, error, isLoading } = trpc.users.getUserMapData.useQuery({
+    username,
+  });
+  useTRPCErrorHandler(error?.data);
   const { theme } = useAppContext();
   return (
     <LoadingCard

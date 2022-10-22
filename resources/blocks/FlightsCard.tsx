@@ -4,13 +4,17 @@ import { format, isBefore } from 'date-fns';
 import { Badge, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { LoadingCard, Table } from '../common/components';
+import { useTRPCErrorHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
 
 export const DATE_FORMAT = 'M/d/yyyy';
 
 export const FlightsCard = (): JSX.Element => {
   const { username } = useParams();
-  const { data, isLoading } = trpc.users.getUserFlights.useQuery({ username });
+  const { data, error, isLoading } = trpc.users.getUserFlights.useQuery({
+    username,
+  });
+  useTRPCErrorHandler(error?.data);
   return (
     <LoadingCard
       isLoading={isLoading}

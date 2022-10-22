@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { verifyAdminTRPC } from '../middleware';
+import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
 import {
   excludeKeys,
   fetchGravatarUrl,
@@ -131,7 +131,7 @@ export const usersRouter = router({
       }
     }),
   addFlight: procedure
-    .use(verifyAdminTRPC)
+    .use(verifyAuthenticated)
     .input(addFlightSchema)
     .mutation(async ({ ctx, input }) => {
       try {

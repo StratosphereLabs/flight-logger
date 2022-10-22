@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import { registerSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
+import { useTRPCErrorHandler } from '../../common/hooks';
 import { useAppContext } from '../../providers';
 import { trpc } from '../../utils/trpc';
 
@@ -22,9 +23,10 @@ export const RegisterForm = (): JSX.Element => {
     },
     resolver: zodResolver(registerSchema),
   });
-  const { isLoading, mutate } = trpc.auth.register.useMutation({
+  const { error, isLoading, mutate } = trpc.auth.register.useMutation({
     onSuccess: ({ token }) => setToken(token),
   });
+  useTRPCErrorHandler(error?.data);
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>

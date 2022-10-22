@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { resetPasswordSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
-import { useAuthPage } from '../../common/hooks';
+import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const ResetPassword = (): JSX.Element => {
@@ -20,7 +20,9 @@ export const ResetPassword = (): JSX.Element => {
     },
     resolver: zodResolver(resetPasswordSchema),
   });
-  const { isLoading, mutate } = trpc.passwordReset.resetPassword.useMutation();
+  const { error, isLoading, mutate } =
+    trpc.passwordReset.resetPassword.useMutation();
+  useTRPCErrorHandler(error?.data);
   return (
     <Form methods={methods} onFormSubmit={data => mutate(data)}>
       <fieldset disabled={isLoading}>
