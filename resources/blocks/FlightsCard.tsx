@@ -17,23 +17,22 @@ export const FlightsCard = (): JSX.Element => {
   const [deleteFlight, setDeleteFlight] = useState<flight | null>(null);
   const { username } = useParams();
   const handleSuccess = useSuccessResponseHandler();
-  const { data, error, isLoading, refetch } =
+  const { data, error, isFetching, refetch } =
     trpc.users.getUserFlights.useQuery({
       username,
     });
-  const { isLoading: isDeleteFlightLoading, mutate } =
-    trpc.users.deleteFlight.useMutation({
-      onSuccess: async () => {
-        handleSuccess('Flight Deleted');
-        setDeleteFlight(null);
-        await refetch();
-      },
-    });
+  const { isLoading, mutate } = trpc.users.deleteFlight.useMutation({
+    onSuccess: async () => {
+      handleSuccess('Flight Deleted');
+      setDeleteFlight(null);
+      await refetch();
+    },
+  });
   useTRPCErrorHandler(error?.data);
   return (
     <>
       <LoadingCard
-        isLoading={isLoading}
+        isLoading={isFetching}
         className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px]"
       >
         <Card.Body>
@@ -170,7 +169,7 @@ export const FlightsCard = (): JSX.Element => {
           </Button>
           <Button
             color="error"
-            loading={isDeleteFlightLoading}
+            loading={isLoading}
             onClick={() => mutate({ id: deleteFlight?.id ?? '' })}
           >
             Yes
