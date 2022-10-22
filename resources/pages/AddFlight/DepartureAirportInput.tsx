@@ -6,10 +6,12 @@ import { trpc } from '../../utils/trpc';
 
 export interface DepartureAirportInputProps {
   inputProps?: InputProps & Record<string, unknown>;
+  isRequired?: boolean;
 }
 
 export const DepartureAirportInput = ({
   inputProps,
+  isRequired,
 }: DepartureAirportInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error, isFetching } = trpc.airports.searchAirports.useQuery(
@@ -24,6 +26,7 @@ export const DepartureAirportInput = ({
   return (
     <TypeaheadInput
       inputProps={inputProps}
+      isRequired={isRequired}
       labelText="Departure Airport"
       name="departureAirportId"
       getItemText={({ id, name }) => `${id} - ${name}`}

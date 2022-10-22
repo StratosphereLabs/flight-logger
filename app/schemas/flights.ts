@@ -16,7 +16,7 @@ export const addFlightSchema = z.object({
   callsign: z.string().nullable(),
   tailNumber: z.string().nullable(),
   outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
-  outTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
+  outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
   offTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
   onTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
   inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),

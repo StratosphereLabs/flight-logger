@@ -3,7 +3,13 @@ import { TypeaheadInput } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export const ArrivalAirportInput = (): JSX.Element => {
+export interface ArrivalAirportInputProps {
+  isRequired?: boolean;
+}
+
+export const ArrivalAirportInput = ({
+  isRequired,
+}: ArrivalAirportInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error, isFetching } = trpc.airports.searchAirports.useQuery(
     {
@@ -16,6 +22,7 @@ export const ArrivalAirportInput = (): JSX.Element => {
   useTRPCErrorHandler(error?.data);
   return (
     <TypeaheadInput
+      isRequired={isRequired}
       labelText="Arrival Airport"
       name="arrivalAirportId"
       getItemText={({ id, name }) => `${id} - ${name}`}

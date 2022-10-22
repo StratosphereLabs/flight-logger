@@ -7,7 +7,7 @@ export const addFlightDefaultValues = {
   callsign: '',
   tailNumber: '',
   outDate: '',
-  outTime: null,
+  outTime: '',
   offTime: null,
   onTime: null,
   inTime: '',

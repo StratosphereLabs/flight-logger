@@ -45,17 +45,20 @@ export const AddFlight = (): JSX.Element => {
   return (
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>
-        <Card.Title className="mb-5 justify-center" tag="h2">
+        <Card.Title className="mb-5 justify-center text-2xl">
           Add a Flight
         </Card.Title>
         <Form methods={methods} onFormSubmit={values => mutate(values)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <DepartureAirportInput inputProps={{ ref: firstFieldRef }} />
+                <DepartureAirportInput
+                  isRequired
+                  inputProps={{ ref: firstFieldRef }}
+                />
               </div>
               <div className="flex-1 flex justify-center">
-                <ArrivalAirportInput />
+                <ArrivalAirportInput isRequired />
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
@@ -64,6 +67,7 @@ export const AddFlight = (): JSX.Element => {
                   inputProps={{
                     type: 'date',
                   }}
+                  isRequired
                   labelText="Date"
                   name="outDate"
                 />
@@ -73,6 +77,7 @@ export const AddFlight = (): JSX.Element => {
                   inputProps={{
                     type: 'time',
                   }}
+                  isRequired
                   labelText="Departure Time"
                   name="outTime"
                   transform={nullEmptyStringTransformer}
@@ -83,6 +88,7 @@ export const AddFlight = (): JSX.Element => {
                   inputProps={{
                     type: 'time',
                   }}
+                  isRequired
                   labelText="Arrival Time"
                   name="inTime"
                 />

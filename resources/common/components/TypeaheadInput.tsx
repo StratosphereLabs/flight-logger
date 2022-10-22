@@ -65,29 +65,30 @@ export const TypeaheadInput = <
       }}
       menuContent={
         <Menu className="rounded-lg bg-base-300">
-          {isLoading && (
+          {isLoading ? (
             <Menu.Item disabled>
               <p>Loading...</p>
             </Menu.Item>
-          )}
-          {!isLoading && options?.length === 0 && (
+          ) : null}
+          {!isLoading && options?.length === 0 ? (
             <Menu.Item disabled>
               <p>No Results</p>
             </Menu.Item>
-          )}
+          ) : null}
           {!isLoading &&
-            item === null &&
-            options !== undefined &&
-            options.length > 0 &&
-            options.map((item, index) => (
-              <Menu.Item key={index}>
-                <a onClick={() => setSelectedItem(item)}>
-                  {getMenuItem !== undefined
-                    ? getMenuItem(item)
-                    : getItemText(item)}
-                </a>
-              </Menu.Item>
-            ))}
+          item === null &&
+          options !== undefined &&
+          options.length > 0
+            ? options.map((item, index) => (
+                <Menu.Item key={index}>
+                  <a onClick={() => setSelectedItem(item)}>
+                    {getMenuItem !== undefined
+                      ? getMenuItem(item)
+                      : getItemText(item)}
+                  </a>
+                </Menu.Item>
+              ))
+            : null}
         </Menu>
       }
       {...props}

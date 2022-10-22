@@ -56,15 +56,16 @@ exports[`<App /> > renders login page 1`] = `
           >
             <fieldset>
               <div
-                class="form-control w-full max-w-xs"
+                class="form-control w-full"
               >
                 <label
-                  class="label"
+                  class="label font-semibold"
                 >
                   <span
-                    class="label-text cursor-pointer"
+                    class="label-text"
                   >
                     Email
+                     
                   </span>
                 </label>
                 <input
@@ -76,15 +77,16 @@ exports[`<App /> > renders login page 1`] = `
                 />
               </div>
               <div
-                class="form-control w-full max-w-xs"
+                class="form-control w-full"
               >
                 <label
-                  class="label"
+                  class="label font-semibold"
                 >
                   <span
-                    class="label-text cursor-pointer"
+                    class="label-text"
                   >
                     Password
+                     
                   </span>
                 </label>
                 <input
@@ -188,15 +190,16 @@ exports[`<App /> > renders profile page 1`] = `
           >
             <fieldset>
               <div
-                class="form-control w-full max-w-xs"
+                class="form-control w-full"
               >
                 <label
-                  class="label"
+                  class="label font-semibold"
                 >
                   <span
-                    class="label-text cursor-pointer"
+                    class="label-text"
                   >
                     Email
+                     
                   </span>
                 </label>
                 <input
@@ -208,15 +211,16 @@ exports[`<App /> > renders profile page 1`] = `
                 />
               </div>
               <div
-                class="form-control w-full max-w-xs"
+                class="form-control w-full"
               >
                 <label
-                  class="label"
+                  class="label font-semibold"
                 >
                   <span
-                    class="label-text cursor-pointer"
+                    class="label-text"
                   >
                     Password
+                     
                   </span>
                 </label>
                 <input
