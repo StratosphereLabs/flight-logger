@@ -17,7 +17,7 @@ export const LoginForm = (): JSX.Element => {
       email: '',
       password: '',
     },
-    // resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema),
   });
   const { error, isLoading, mutate } = trpc.auth.login.useMutation({
     onSuccess: ({ token }) => setToken(token),
