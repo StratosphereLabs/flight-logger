@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { ReactNode, useMemo } from 'react';
 import { Input, InputProps } from 'react-daisyui';
 import {
@@ -11,6 +12,7 @@ import { FormLabel } from './FormLabel';
 
 export interface FormControlProps<Values extends FieldValues, TOutput>
   extends UseControllerProps<Values> {
+  className?: string;
   inputProps?: InputProps & Record<string, unknown>;
   isRequired?: boolean;
   labelText?: string;
@@ -19,6 +21,7 @@ export interface FormControlProps<Values extends FieldValues, TOutput>
 }
 
 export const FormControl = <Values extends FieldValues, TOutput>({
+  className,
   inputProps,
   isRequired,
   labelText,
@@ -36,7 +39,7 @@ export const FormControl = <Values extends FieldValues, TOutput>({
     [field.value, transform],
   );
   return (
-    <div className="form-control w-full">
+    <div className={classNames('form-control', 'w-full', className)}>
       {labelText !== undefined ? (
         <FormLabel isRequired={isRequired} labelText={labelText} />
       ) : null}

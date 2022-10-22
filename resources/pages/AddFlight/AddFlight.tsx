@@ -53,43 +53,47 @@ export const AddFlight = (): JSX.Element => {
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
                 <DepartureAirportInput
+                  className="max-w-sm"
                   isRequired
                   inputProps={{ ref: firstFieldRef }}
                 />
               </div>
               <div className="flex-1 flex justify-center">
-                <ArrivalAirportInput isRequired />
+                <ArrivalAirportInput className="max-w-sm" isRequired />
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'date',
                   }}
                   isRequired
-                  labelText="Date"
+                  labelText="Departure Date"
                   name="outDate"
                 />
               </div>
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'time',
                   }}
                   isRequired
-                  labelText="Departure Time"
+                  labelText="Departure Time (Local)"
                   name="outTime"
                   transform={nullEmptyStringTransformer}
                 />
               </div>
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'time',
                   }}
                   isRequired
-                  labelText="Arrival Time"
+                  labelText="Arrival Time (Local)"
                   name="inTime"
                 />
               </div>
@@ -97,15 +101,16 @@ export const AddFlight = (): JSX.Element => {
             <Divider />
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <AirlineInput />
+                <AirlineInput className="max-w-sm" />
               </div>
               <div className="flex-1 flex justify-center">
-                <AircraftTypeInput />
+                <AircraftTypeInput className="max-w-sm" />
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'number',
                     onWheel: e => (e.target as HTMLInputElement).blur?.(),
@@ -116,10 +121,18 @@ export const AddFlight = (): JSX.Element => {
                 />
               </div>
               <div className="flex-1 flex justify-center">
-                <FormControl labelText="Callsign" name="callsign" />
+                <FormControl
+                  className="w-[200px]"
+                  labelText="Callsign"
+                  name="callsign"
+                />
               </div>
               <div className="flex-1 flex justify-center">
-                <FormControl labelText="Registration" name="tailNumber" />
+                <FormControl
+                  className="w-[200px]"
+                  labelText="Registration"
+                  name="tailNumber"
+                />
               </div>
             </div>
             <Divider />
@@ -154,6 +167,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
               <div className="flex-1 min-w-[200px]">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     className: 'mb-5',
                   }}

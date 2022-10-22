@@ -4,10 +4,12 @@ import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export interface ArrivalAirportInputProps {
+  className?: string;
   isRequired?: boolean;
 }
 
 export const ArrivalAirportInput = ({
+  className,
   isRequired,
 }: ArrivalAirportInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
@@ -22,6 +24,7 @@ export const ArrivalAirportInput = ({
   useTRPCErrorHandler(error?.data);
   return (
     <TypeaheadInput
+      className={className}
       isRequired={isRequired}
       labelText="Arrival Airport"
       name="arrivalAirportId"
