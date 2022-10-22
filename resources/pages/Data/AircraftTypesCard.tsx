@@ -6,6 +6,7 @@ import {
 import { useState } from 'react';
 import { Card } from 'react-daisyui';
 import { LoadingCard, Table } from '../../common/components';
+import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const AircraftTypesCard = (): JSX.Element => {
@@ -14,12 +15,14 @@ export const AircraftTypesCard = (): JSX.Element => {
     pageSize: 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { data, isFetching } = trpc.aircraftTypes.getAircraftTypes.useQuery({
-    limit: pagination.pageSize,
-    page: pagination.pageIndex + 1,
-    sort: sorting[0]?.desc ? 'desc' : 'asc',
-    sortKey: sorting[0]?.id,
-  });
+  const { data, error, isFetching } =
+    trpc.aircraftTypes.getAircraftTypes.useQuery({
+      limit: pagination.pageSize,
+      page: pagination.pageIndex + 1,
+      sort: sorting[0]?.desc ? 'desc' : 'asc',
+      sortKey: sorting[0]?.id,
+    });
+  useTRPCErrorHandler(error?.data);
   return (
     <LoadingCard className="shadow-xl bg-base-200 h-[550px]">
       <Card.Body>

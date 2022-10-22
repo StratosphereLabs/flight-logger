@@ -6,4 +6,5 @@ export * from './useGoogleLoginMutation';
 export * from './useProtectedPage';
 export * from './useScrollBar';
 export * from './useSuccessResponseHandler';
+export * from './useTRPCErrorHandler';
 export * from './useTypeaheadInput';

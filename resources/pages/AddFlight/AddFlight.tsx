@@ -12,6 +12,7 @@ import {
   useFocusOnFirstField,
   useProtectedPage,
   useSuccessResponseHandler,
+  useTRPCErrorHandler,
 } from '../../common/hooks';
 import {
   nullEmptyStringTransformer,
@@ -34,12 +35,13 @@ export const AddFlight = (): JSX.Element => {
     resolver: zodResolver(addFlightSchema),
   });
   const handleSuccess = useSuccessResponseHandler('Flight Added!');
-  const { mutate, isLoading } = trpc.users.addFlight.useMutation({
+  const { error, mutate, isLoading } = trpc.users.addFlight.useMutation({
     onSuccess: () => {
       handleSuccess();
       methods.reset();
     },
   });
+  useTRPCErrorHandler(error?.data);
   return (
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>

@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { TypeaheadInput } from '../../common/components';
+import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const AircraftTypeInput = (): JSX.Element => {
   const [query, setQuery] = useState('');
-  const { data, isFetching } = trpc.aircraftTypes.searchAircraft.useQuery(
-    {
-      query,
-    },
-    {
-      enabled: query.length > 0,
-    },
-  );
+  const { data, error, isFetching } =
+    trpc.aircraftTypes.searchAircraft.useQuery(
+      {
+        query,
+      },
+      {
+        enabled: query.length > 0,
+      },
+    );
+  useTRPCErrorHandler(error?.data);
   return (
     <TypeaheadInput
       labelText="Aircraft Type"

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button, Card } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl } from '../../common/components';
-import { useAuthPage } from '../../common/hooks';
+import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { forgotPasswordSchema } from './schema';
 
@@ -18,7 +18,9 @@ export const ForgotPassword = (): JSX.Element => {
     },
     resolver: zodResolver(forgotPasswordSchema),
   });
-  const { isLoading, mutate } = trpc.passwordReset.forgotPassword.useMutation();
+  const { error, isLoading, mutate } =
+    trpc.passwordReset.forgotPassword.useMutation();
+  useTRPCErrorHandler(error?.data);
   if (resetLinkSent) {
     return (
       <>

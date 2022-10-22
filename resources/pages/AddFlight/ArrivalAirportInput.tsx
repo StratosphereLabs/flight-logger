@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { TypeaheadInput } from '../../common/components';
+import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const ArrivalAirportInput = (): JSX.Element => {
   const [query, setQuery] = useState('');
-  const { data, isFetching } = trpc.airports.searchAirports.useQuery(
+  const { data, error, isFetching } = trpc.airports.searchAirports.useQuery(
     {
       query,
     },
@@ -12,6 +13,7 @@ export const ArrivalAirportInput = (): JSX.Element => {
       enabled: query.length > 0,
     },
   );
+  useTRPCErrorHandler(error?.data);
   return (
     <TypeaheadInput
       labelText="Arrival Airport"
