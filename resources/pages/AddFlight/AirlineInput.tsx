@@ -17,7 +17,7 @@ export const AirlineInput = ({ className }: AirlineInputProps): JSX.Element => {
       enabled: query.length > 0,
     },
   );
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   return (
     <TypeaheadInput
       className={className}

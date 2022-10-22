@@ -17,17 +17,20 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-  username: z.string().min(1, {
-    message: 'Required',
-  }),
+  username: z
+    .string()
+    .min(1, {
+      message: 'Required',
+    })
+    .trim(),
   email: z
     .string()
     .min(1, {
       message: 'Required',
     })
     .email({ message: 'Invalid email address' }),
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().trim(),
+  lastName: z.string().trim(),
   password: z
     .string()
     .min(1, {

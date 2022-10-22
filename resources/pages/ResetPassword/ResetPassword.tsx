@@ -22,7 +22,7 @@ export const ResetPassword = (): JSX.Element => {
   });
   const { error, isLoading, mutate } =
     trpc.passwordReset.resetPassword.useMutation();
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   return (
     <Form methods={methods} onFormSubmit={data => mutate(data)}>
       <fieldset disabled={isLoading}>

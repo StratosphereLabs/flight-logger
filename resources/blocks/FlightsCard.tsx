@@ -28,7 +28,7 @@ export const FlightsCard = (): JSX.Element => {
       await refetch();
     },
   });
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   return (
     <>
       <LoadingCard

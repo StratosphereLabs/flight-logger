@@ -42,7 +42,7 @@ export const AirportsCard = (): JSX.Element => {
     sort: sorting[0]?.desc ? 'desc' : 'asc',
     sortKey: sorting[0]?.id,
   });
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   return (
     <LoadingCard className="shadow-xl bg-base-200 h-[625px]">
       <Card.Body>

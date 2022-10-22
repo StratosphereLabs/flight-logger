@@ -26,7 +26,7 @@ export const RegisterForm = (): JSX.Element => {
   const { error, isLoading, mutate } = trpc.auth.register.useMutation({
     onSuccess: ({ token }) => setToken(token),
   });
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>

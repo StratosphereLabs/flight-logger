@@ -10,90 +10,65 @@ export const passwordResetRouter = router({
     .input(forgotPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       const { email } = input;
-      try {
-        const user = await prisma.user.findUnique({
-          where: {
-            email,
-          },
-        });
-        if (user === null) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'No user with this email address found',
-          });
-        }
-        const passwordResetToken = getPasswordResetToken();
-        await prisma.user.update({
-          where: {
-            email,
-          },
-          data: {
-            passwordResetToken,
-            passwordResetAt: new Date(Date.now() + 10 * 60 * 1000),
-          },
-        });
-        await sendEmail({
-          address: email,
-          subject: 'Reset your password',
-          html: getResetEmail({
-            resetLink: `${
-              ctx.origin ?? ''
-            }/auth/reset-password/${passwordResetToken}`,
-          }),
-        });
-      } catch (err) {
-        await prisma.user.update({
-          where: {
-            email,
-          },
-          data: {
-            passwordResetAt: null,
-            passwordResetToken: null,
-          },
-        });
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+      if (user === null) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'An unexpected error occurred, please try again later.',
-          cause: err,
+          code: 'NOT_FOUND',
+          message: 'No user with this email address found',
         });
       }
+      const passwordResetToken = getPasswordResetToken();
+      await prisma.user.update({
+        where: {
+          email,
+        },
+        data: {
+          passwordResetToken,
+          passwordResetAt: new Date(Date.now() + 10 * 60 * 1000),
+        },
+      });
+      await sendEmail({
+        address: email,
+        subject: 'Reset your password',
+        html: getResetEmail({
+          resetLink: `${
+            ctx.origin ?? ''
+          }/auth/reset-password/${passwordResetToken}`,
+        }),
+      });
     }),
   resetPassword: procedure
     .input(resetPasswordSchema)
     .mutation(async ({ input }) => {
       const { password, token } = input;
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            passwordResetToken: token,
-            passwordResetAt: {
-              gt: new Date(),
-            },
+      const user = await prisma.user.findFirst({
+        where: {
+          passwordResetToken: token,
+          passwordResetAt: {
+            gt: new Date(),
           },
-        });
-        if (user === null) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'User not found.',
-          });
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await prisma.user.update({
-          where: {
-            id: user.id,
-          },
-          data: {
-            password: hashedPassword,
-            passwordResetToken: null,
-            passwordResetAt: null,
-          },
-        });
-      } catch (err) {
+        },
+      });
+      if (user === null) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'An unexpected error occurred, please try again later.',
-          cause: err,
+          code: 'NOT_FOUND',
+          message: 'User not found.',
         });
       }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: hashedPassword,
+          passwordResetToken: null,
+          passwordResetAt: null,
+        },
+      });
     }),
 });

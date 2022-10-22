@@ -20,7 +20,7 @@ export const ForgotPassword = (): JSX.Element => {
   });
   const { error, isLoading, mutate } =
     trpc.passwordReset.forgotPassword.useMutation();
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   if (resetLinkSent) {
     return (
       <>

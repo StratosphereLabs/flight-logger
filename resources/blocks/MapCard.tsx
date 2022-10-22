@@ -19,7 +19,7 @@ export const MapCard = (): JSX.Element => {
   const { data, error, isLoading } = trpc.users.getUserMapData.useQuery({
     username,
   });
-  useTRPCErrorHandler(error?.data);
+  useTRPCErrorHandler(error);
   const { theme } = useAppContext();
   return (
     <LoadingCard

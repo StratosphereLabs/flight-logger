@@ -11,88 +11,64 @@ export const aircraftTypesRouter = router({
     .query(async ({ input }) => {
       const { limit, page, skip, take } = parsePaginationRequest(input);
       const { sort, sortKey } = input;
-      try {
-        const [results, itemCount] = await prisma.$transaction([
-          prisma.aircraft_type.findMany({
-            skip,
-            take,
-            orderBy:
-              sortKey !== undefined
-                ? {
-                    [sortKey]: sort ?? 'asc',
-                  }
-                : undefined,
-          }),
-          prisma.aircraft_type.count(),
-        ]);
-        return getPaginatedResponse({
-          itemCount,
-          limit,
-          page,
-          results,
-        });
-      } catch (err) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'An unexpected error occurred, please try again later.',
-          cause: err,
-        });
-      }
+      const [results, itemCount] = await prisma.$transaction([
+        prisma.aircraft_type.findMany({
+          skip,
+          take,
+          orderBy:
+            sortKey !== undefined
+              ? {
+                  [sortKey]: sort ?? 'asc',
+                }
+              : undefined,
+        }),
+        prisma.aircraft_type.count(),
+      ]);
+      return getPaginatedResponse({
+        itemCount,
+        limit,
+        page,
+        results,
+      });
     }),
   searchAircraft: procedure.input(searchSchema).query(async ({ input }) => {
     const { query } = input;
-    try {
-      const aircraftTypes = await prisma.aircraft_type.findMany({
-        take: 5,
-        where: {
-          OR: [
-            {
-              id: {
-                contains: query,
-                mode: 'insensitive',
-              },
+    const aircraftTypes = await prisma.aircraft_type.findMany({
+      take: 5,
+      where: {
+        OR: [
+          {
+            id: {
+              contains: query,
+              mode: 'insensitive',
             },
-            {
-              name: {
-                contains: query,
-                mode: 'insensitive',
-              },
+          },
+          {
+            name: {
+              contains: query,
+              mode: 'insensitive',
             },
-          ],
-        },
-      });
-      return aircraftTypes;
-    } catch (err) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred, please try again later.',
-        cause: err,
-      });
-    }
+          },
+        ],
+      },
+    });
+    return aircraftTypes;
   }),
   getAircraftType: procedure
     .input(getAircraftTypeSchema)
     .query(async ({ input }) => {
       const { id } = input;
-      try {
-        const aircraftType = await prisma.aircraft_type.findUnique({
-          where: {
-            id,
-          },
-        });
-        if (aircraftType === null) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Aircraft Type not found.',
-          });
-        }
-        return aircraftType;
-      } catch (err) {
+      const aircraftType = await prisma.aircraft_type.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (aircraftType === null) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'An unexpected error occurred, please try again later.',
-          cause: err,
+          code: 'NOT_FOUND',
+          message: 'Aircraft Type not found.',
         });
       }
+      return aircraftType;
     }),
 });
