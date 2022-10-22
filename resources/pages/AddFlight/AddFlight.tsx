@@ -34,10 +34,10 @@ export const AddFlight = (): JSX.Element => {
     defaultValues: addFlightDefaultValues,
     resolver: zodResolver(addFlightSchema),
   });
-  const handleSuccess = useSuccessResponseHandler('Flight Added!');
+  const handleSuccess = useSuccessResponseHandler();
   const { error, mutate, isLoading } = trpc.users.addFlight.useMutation({
     onSuccess: () => {
-      handleSuccess();
+      handleSuccess('Flight Added!');
       methods.reset();
     },
   });
@@ -45,45 +45,55 @@ export const AddFlight = (): JSX.Element => {
   return (
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>
-        <Card.Title className="mb-5 justify-center" tag="h2">
+        <Card.Title className="mb-5 justify-center text-2xl">
           Add a Flight
         </Card.Title>
         <Form methods={methods} onFormSubmit={values => mutate(values)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <DepartureAirportInput inputProps={{ ref: firstFieldRef }} />
+                <DepartureAirportInput
+                  className="max-w-sm"
+                  isRequired
+                  inputProps={{ ref: firstFieldRef }}
+                />
               </div>
               <div className="flex-1 flex justify-center">
-                <ArrivalAirportInput />
+                <ArrivalAirportInput className="max-w-sm" isRequired />
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'date',
                   }}
-                  labelText="Date"
+                  isRequired
+                  labelText="Departure Date"
                   name="outDate"
                 />
               </div>
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'time',
                   }}
-                  labelText="Departure Time"
+                  isRequired
+                  labelText="Departure Time (Local)"
                   name="outTime"
                   transform={nullEmptyStringTransformer}
                 />
               </div>
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'time',
                   }}
-                  labelText="Arrival Time"
+                  isRequired
+                  labelText="Arrival Time (Local)"
                   name="inTime"
                 />
               </div>
@@ -91,15 +101,16 @@ export const AddFlight = (): JSX.Element => {
             <Divider />
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <AirlineInput />
+                <AirlineInput className="max-w-sm" />
               </div>
               <div className="flex-1 flex justify-center">
-                <AircraftTypeInput />
+                <AircraftTypeInput className="max-w-sm" />
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     type: 'number',
                     onWheel: e => (e.target as HTMLInputElement).blur?.(),
@@ -110,10 +121,18 @@ export const AddFlight = (): JSX.Element => {
                 />
               </div>
               <div className="flex-1 flex justify-center">
-                <FormControl labelText="Callsign" name="callsign" />
+                <FormControl
+                  className="w-[200px]"
+                  labelText="Callsign"
+                  name="callsign"
+                />
               </div>
               <div className="flex-1 flex justify-center">
-                <FormControl labelText="Registration" name="tailNumber" />
+                <FormControl
+                  className="w-[200px]"
+                  labelText="Registration"
+                  name="tailNumber"
+                />
               </div>
             </div>
             <Divider />
@@ -148,6 +167,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
               <div className="flex-1 min-w-[200px]">
                 <FormControl
+                  className="w-[200px]"
                   inputProps={{
                     className: 'mb-5',
                   }}

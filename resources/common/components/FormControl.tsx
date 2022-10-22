@@ -1,22 +1,29 @@
+import classNames from 'classnames';
 import { ReactNode, useMemo } from 'react';
-import { Form, Input, InputProps } from 'react-daisyui';
+import { Input, InputProps } from 'react-daisyui';
 import {
   FieldValues,
   useController,
   UseControllerProps,
 } from 'react-hook-form';
 import { Transform } from '../types';
+import { FormError } from './FormError';
+import { FormLabel } from './FormLabel';
 
 export interface FormControlProps<Values extends FieldValues, TOutput>
   extends UseControllerProps<Values> {
+  className?: string;
   inputProps?: InputProps & Record<string, unknown>;
+  isRequired?: boolean;
   labelText?: string;
   menuContent?: ReactNode;
   transform?: Transform<TOutput>;
 }
 
 export const FormControl = <Values extends FieldValues, TOutput>({
+  className,
   inputProps,
+  isRequired,
   labelText,
   menuContent,
   transform,
@@ -32,8 +39,10 @@ export const FormControl = <Values extends FieldValues, TOutput>({
     [field.value, transform],
   );
   return (
-    <div className="form-control w-full max-w-xs">
-      {labelText !== undefined && <Form.Label title={labelText} />}
+    <div className={classNames('form-control', 'w-full', className)}>
+      {labelText !== undefined ? (
+        <FormLabel isRequired={isRequired} labelText={labelText} />
+      ) : null}
       <Input
         {...field}
         onChange={({ target: { value } }) =>
@@ -45,18 +54,16 @@ export const FormControl = <Values extends FieldValues, TOutput>({
         color={error === undefined ? 'ghost' : 'error'}
         {...inputProps}
       />
-      {menuContent !== undefined && (
+      {menuContent !== undefined ? (
         <div className="relative">
           <div className="absolute min-w-[200px] z-10 mt-[1px] w-full">
             {menuContent}
           </div>
         </div>
-      )}
-      {error !== undefined && (
-        <label className="label">
-          <span className="label-text-alt text-error">{error?.message}</span>
-        </label>
-      )}
+      ) : null}
+      {error?.message !== undefined ? (
+        <FormError errorText={error.message} />
+      ) : null}
     </div>
   );
 };

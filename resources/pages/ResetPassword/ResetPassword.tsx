@@ -31,6 +31,7 @@ export const ResetPassword = (): JSX.Element => {
             autoComplete: 'new-password',
             type: 'password',
           }}
+          isRequired
           labelText="New Password"
           name="password"
         />
@@ -39,6 +40,7 @@ export const ResetPassword = (): JSX.Element => {
             autoComplete: 'new-password',
             type: 'password',
           }}
+          isRequired
           labelText="Confirm New Password"
           name="confirmPassword"
         />

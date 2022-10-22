@@ -4,6 +4,8 @@ import {
   useController,
   UseControllerProps,
 } from 'react-hook-form';
+import { FormError } from './FormError';
+import { FormLabel } from './FormLabel';
 
 export interface RadioOption {
   label: string;
@@ -12,12 +14,14 @@ export interface RadioOption {
 
 export interface FormRadioProps<Values extends FieldValues>
   extends UseControllerProps<Values> {
+  isRequired?: boolean;
   labelText?: string;
   options: RadioOption[];
   radioProps?: RadioProps;
 }
 
 export const FormRadio = <Values extends FieldValues>({
+  isRequired,
   labelText,
   options,
   radioProps,
@@ -29,7 +33,9 @@ export const FormRadio = <Values extends FieldValues>({
   } = useController(props);
   return (
     <>
-      {labelText !== undefined && <Form.Label title={labelText} />}
+      {labelText !== undefined ? (
+        <FormLabel isRequired={isRequired} labelText={labelText} />
+      ) : null}
       {options.map(({ label, value: optionValue }, index) => (
         <Form.Label key={index} title={label}>
           <Radio
@@ -40,11 +46,9 @@ export const FormRadio = <Values extends FieldValues>({
           />
         </Form.Label>
       ))}
-      {error !== undefined && (
-        <label className="label">
-          <span className="label-text-alt text-error">{error?.message}</span>
-        </label>
-      )}
+      {error?.message !== undefined ? (
+        <FormError errorText={error.message} />
+      ) : null}
     </>
   );
 };

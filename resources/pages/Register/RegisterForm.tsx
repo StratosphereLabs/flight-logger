@@ -38,6 +38,7 @@ export const RegisterForm = (): JSX.Element => {
               autoComplete: 'email',
               type: 'email',
             }}
+            isRequired
             labelText="Email"
             name="email"
           />
@@ -45,6 +46,7 @@ export const RegisterForm = (): JSX.Element => {
             inputProps={{
               autoComplete: 'username',
             }}
+            isRequired
             labelText="Username"
             name="username"
           />
@@ -67,6 +69,7 @@ export const RegisterForm = (): JSX.Element => {
               autoComplete: 'new-password',
               type: 'password',
             }}
+            isRequired
             labelText="Password"
             name="password"
           />
@@ -75,6 +78,7 @@ export const RegisterForm = (): JSX.Element => {
               autoComplete: 'new-password',
               type: 'password',
             }}
+            isRequired
             labelText="Confirm Password"
             name="confirmPassword"
           />

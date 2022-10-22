@@ -3,7 +3,13 @@ import { TypeaheadInput } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export const AircraftTypeInput = (): JSX.Element => {
+export interface AircraftTypeInputProps {
+  className?: string;
+}
+
+export const AircraftTypeInput = ({
+  className,
+}: AircraftTypeInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error, isFetching } =
     trpc.aircraftTypes.searchAircraft.useQuery(
@@ -17,6 +23,7 @@ export const AircraftTypeInput = (): JSX.Element => {
   useTRPCErrorHandler(error?.data);
   return (
     <TypeaheadInput
+      className={className}
       labelText="Aircraft Type"
       name="aircraftTypeId"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}

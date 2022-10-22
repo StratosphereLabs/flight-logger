@@ -44,6 +44,7 @@ export const ForgotPassword = (): JSX.Element => {
             autoComplete: 'email',
             placeholder: 'Email',
           }}
+          isRequired
           labelText="Email"
           name="email"
         />

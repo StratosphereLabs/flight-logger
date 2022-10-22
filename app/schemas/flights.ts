@@ -7,6 +7,10 @@ export const getFlightSchema = z.object({
   id: z.string().uuid(),
 });
 
+export const deleteFlightSchema = z.object({
+  id: z.string().uuid(),
+});
+
 export const addFlightSchema = z.object({
   departureAirportId: z.string().min(1, 'Required'),
   arrivalAirportId: z.string().min(1, 'Required'),
@@ -16,7 +20,7 @@ export const addFlightSchema = z.object({
   callsign: z.string().nullable(),
   tailNumber: z.string().nullable(),
   outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
-  outTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
+  outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
   offTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
   onTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
   inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),

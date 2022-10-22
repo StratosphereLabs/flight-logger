@@ -10,6 +10,6 @@ export const MainLayout = (): JSX.Element => (
       <Outlet />
     </div>
     <MainFooter />
-    <AlertMessages />
+    <AlertMessages maxMessages={4} />
   </div>
 );

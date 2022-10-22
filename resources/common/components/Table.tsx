@@ -78,7 +78,7 @@ export const Table = <DataType extends Record<string, unknown>>({
               </tr>
             ))}
           </thead>
-          {isLoading !== true && (
+          {isLoading !== true ? (
             <tbody>
               {getRowModel().rows.map(({ getVisibleCells, id }) => (
                 <tr
@@ -93,9 +93,9 @@ export const Table = <DataType extends Record<string, unknown>>({
                 </tr>
               ))}
             </tbody>
-          )}
+          ) : null}
         </table>
-        {isLoading === true && <FullScreenLoader />}
+        {isLoading === true ? <FullScreenLoader /> : null}
       </div>
       <Pagination
         metadata={metadata}
