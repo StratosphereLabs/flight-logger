@@ -44,7 +44,13 @@ export const passwordResetRouter = router({
   resetPassword: procedure
     .input(resetPasswordSchema)
     .mutation(async ({ input }) => {
-      const { password, token } = input;
+      const { confirmPassword, password, token } = input;
+      if (confirmPassword !== password) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Passwords do not match',
+        });
+      }
       const user = await prisma.user.findFirst({
         where: {
           passwordResetToken: token,
@@ -59,13 +65,12 @@ export const passwordResetRouter = router({
           message: 'User not found.',
         });
       }
-      const hashedPassword = await bcrypt.hash(password, 10);
       await prisma.user.update({
         where: {
           id: user.id,
         },
         data: {
-          password: hashedPassword,
+          password: bcrypt.hashSync(password, 10),
           passwordResetToken: null,
           passwordResetAt: null,
         },

@@ -27,8 +27,7 @@ export const authRouter = router({
           'No password stored. Please reset your password to create a new one.',
       });
     }
-    const matching = await bcrypt.compare(password, user.password);
-    if (!matching) {
+    if (!bcrypt.compareSync(password, user.password)) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'Incorrect password.',
@@ -39,6 +38,13 @@ export const authRouter = router({
     };
   }),
   register: procedure.input(registerSchema).mutation(async ({ input }) => {
+    const { confirmPassword, password } = input;
+    if (confirmPassword !== password) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Passwords do not match',
+      });
+    }
     const token = await upsertUser(input);
     return { token };
   }),

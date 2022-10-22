@@ -1,14 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { resetPasswordSchema } from '../../../app/schemas';
 import { Form, FormControl } from '../../common/components';
-import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
+import {
+  useAuthPage,
+  useSuccessResponseHandler,
+  useTRPCErrorHandler,
+} from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const ResetPassword = (): JSX.Element => {
   useAuthPage();
+  const navigate = useNavigate();
   const { token } = useParams();
   const methods = useForm({
     mode: 'onBlur',
@@ -20,8 +25,14 @@ export const ResetPassword = (): JSX.Element => {
     },
     resolver: zodResolver(resetPasswordSchema),
   });
+  const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } =
-    trpc.passwordReset.resetPassword.useMutation();
+    trpc.passwordReset.resetPassword.useMutation({
+      onSuccess: () => {
+        handleSuccess('Password Reset. Please log in again.');
+        navigate('/auth/login');
+      },
+    });
   useTRPCErrorHandler(error);
   return (
     <Form methods={methods} onFormSubmit={data => mutate(data)}>
