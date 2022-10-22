@@ -1,14 +1,13 @@
-import { useCallback } from 'react';
 import { useAppContext } from '../../providers';
 
-export const useSuccessResponseHandler = (message: string): (() => void) => {
+export const useSuccessResponseHandler = (): ((message: string) => void) => {
   const { addAlertMessages } = useAppContext();
-  return useCallback(() => {
+  return message => {
     addAlertMessages([
       {
         status: 'success',
         message,
       },
     ]);
-  }, [message]);
+  };
 };

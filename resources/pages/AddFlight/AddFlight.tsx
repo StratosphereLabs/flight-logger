@@ -34,10 +34,10 @@ export const AddFlight = (): JSX.Element => {
     defaultValues: addFlightDefaultValues,
     resolver: zodResolver(addFlightSchema),
   });
-  const handleSuccess = useSuccessResponseHandler('Flight Added!');
+  const handleSuccess = useSuccessResponseHandler();
   const { error, mutate, isLoading } = trpc.users.addFlight.useMutation({
     onSuccess: () => {
-      handleSuccess();
+      handleSuccess('Flight Added!');
       methods.reset();
     },
   });

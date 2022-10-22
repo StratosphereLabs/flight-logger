@@ -8,7 +8,12 @@ import {
   parsePaginationRequest,
 } from '../utils';
 import { procedure, router } from '../trpc';
-import { addFlightSchema, getUserSchema, paginationSchema } from '../schemas';
+import {
+  addFlightSchema,
+  deleteFlightSchema,
+  getUserSchema,
+  paginationSchema,
+} from '../schemas';
 import { getAirports, getRoutes } from '../parsers';
 
 export const usersRouter = router({
@@ -184,6 +189,36 @@ export const usersRouter = router({
           },
         });
         return flight;
+      } catch (err) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred, please try again later.',
+          cause: err,
+        });
+      }
+    }),
+  deleteFlight: procedure
+    .use(verifyAuthenticated)
+    .input(deleteFlightSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+      try {
+        const flight = await prisma.flight.findUnique({
+          where: {
+            id,
+          },
+        });
+        if (flight?.userId !== ctx.user.id) {
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'Unable to delete flight.',
+          });
+        }
+        return await prisma.flight.delete({
+          where: {
+            id,
+          },
+        });
       } catch (err) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

@@ -7,6 +7,10 @@ export const getFlightSchema = z.object({
   id: z.string().uuid(),
 });
 
+export const deleteFlightSchema = z.object({
+  id: z.string().uuid(),
+});
+
 export const addFlightSchema = z.object({
   departureAirportId: z.string().min(1, 'Required'),
   arrivalAirportId: z.string().min(1, 'Required'),
