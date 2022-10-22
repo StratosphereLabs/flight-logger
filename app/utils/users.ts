@@ -1,4 +1,5 @@
 import { user } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 import { url } from 'gravatar';
 import jwt from 'jsonwebtoken';
 import { UserToken } from '../context';
@@ -6,6 +7,7 @@ import { prisma } from '../db';
 
 export interface UpsertUserParams {
   email: string;
+  password?: string;
   username?: string;
   firstName?: string;
   lastName?: string;
@@ -26,6 +28,10 @@ export const upsertUser = async (params: UpsertUserParams): Promise<string> => {
     },
     create: {
       email: params.email,
+      password:
+        params.password !== undefined
+          ? bcrypt.hashSync(params.password, 10)
+          : null,
       username: params.username ?? params.email.split('@')[0],
       firstName: params.firstName ?? '',
       lastName: params.lastName ?? '',
