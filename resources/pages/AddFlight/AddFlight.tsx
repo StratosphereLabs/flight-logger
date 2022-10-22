@@ -184,8 +184,8 @@ export const AddFlight = (): JSX.Element => {
                       value: 'BUSINESS',
                     },
                     {
-                      label: 'Other',
-                      value: 'OTHER',
+                      label: 'Crew',
+                      value: 'CREW',
                     },
                   ]}
                 />

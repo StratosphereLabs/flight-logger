@@ -25,7 +25,7 @@ export const addFlightSchema = z.object({
     .nullable(),
   seatNumber: z.string().nullable(),
   seatPosition: z.enum(['AISLE', 'MIDDLE', 'WINDOW']).nullable(),
-  reason: z.enum(['BUSINESS', 'LEISURE', 'OTHER']).nullable(),
+  reason: z.enum(['BUSINESS', 'LEISURE', 'CREW']).nullable(),
   comments: z.string().nullable(),
   trackingLink: z.string().nullable(),
 });

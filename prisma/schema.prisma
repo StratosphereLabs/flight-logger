@@ -143,5 +143,5 @@ enum SeatPosition {
 enum FlightReason {
   LEISURE
   BUSINESS
-  OTHER
+  CREW
 }
