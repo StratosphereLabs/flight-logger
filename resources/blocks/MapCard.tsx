@@ -16,14 +16,14 @@ export const MapCard = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
   });
   const { username } = useParams();
-  const { data, error, isLoading } = trpc.users.getUserMapData.useQuery({
+  const { data, error, isFetching } = trpc.users.getUserMapData.useQuery({
     username,
   });
   useTRPCErrorHandler(error);
   const { theme } = useAppContext();
   return (
     <LoadingCard
-      isLoading={!isLoaded || isLoading}
+      isLoading={!isLoaded || isFetching}
       className="shadow-xl flex-1 bg-base-200 min-h-[400px] min-w-[500px]"
     >
       <GoogleMap
