@@ -145,7 +145,7 @@ export const usersRouter = router({
           tailNumber: input.tailNumber,
           outTime: `${input.outDate} ${input.outTime ?? ''}`.trim(),
           offTime: input.offTime,
-          onTime: input.inTime,
+          onTime: input.onTime,
           inTime: input.inTime,
           class: input.class,
           seatNumber: input.seatNumber,

@@ -113,8 +113,10 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Flight #',
                 cell: ({ getValue, row }) => {
                   const airlineData = row.getValue<airline>('airline');
-                  const flightNumber = getValue<number>();
-                  return `${airlineData?.iata ?? ''} ${flightNumber}`.trim();
+                  const flightNumber = getValue<number | null>();
+                  return `${airlineData?.iata ?? ''} ${
+                    flightNumber ?? ''
+                  }`.trim();
                 },
                 footer: () => null,
               },
