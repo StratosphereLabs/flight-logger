@@ -8,7 +8,8 @@ import { useScrollBar } from '../hooks';
 
 export type GenericDataType = Record<string, unknown>;
 
-export type TableProps<DataType extends GenericDataType> = {
+export interface TableProps<DataType extends GenericDataType>
+  extends TableOptions<DataType> {
   compact?: boolean;
   enableFixedWidth?: boolean;
   enableGlobalFilter?: boolean;
@@ -16,7 +17,7 @@ export type TableProps<DataType extends GenericDataType> = {
   enableZebra?: boolean;
   isLoading?: boolean;
   metadata?: PaginationMetadata;
-} & TableOptions<DataType>;
+}
 
 export const Table = <DataType extends Record<string, unknown>>({
   compact,
