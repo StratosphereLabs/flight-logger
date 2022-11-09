@@ -2,9 +2,9 @@ import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
-import { Badge, Button, Card, Modal } from 'react-daisyui';
+import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard, Table } from '../common/components';
+import { LoadingCard, Modal, Table } from '../common/components';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -14,6 +14,7 @@ import { trpc } from '../utils/trpc';
 export const DATE_FORMAT = 'M/d/yyyy';
 
 export const FlightsCard = (): JSX.Element => {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteFlight, setDeleteFlight] = useState<flight | null>(null);
   const { username } = useParams();
   const handleSuccess = useSuccessResponseHandler();
@@ -141,7 +142,10 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Actions',
                 cell: ({ row }) => (
                   <Button
-                    onClick={() => setDeleteFlight(row.original)}
+                    onClick={() => {
+                      setDeleteFlight(row.original);
+                      setIsDeleteDialogOpen(true);
+                    }}
                     color="error"
                     size="xs"
                   >
@@ -158,25 +162,27 @@ export const FlightsCard = (): JSX.Element => {
           />
         </Card.Body>
       </LoadingCard>
-      <Modal open={deleteFlight !== null}>
-        <Modal.Header className="font-bold">Delete Flight</Modal.Header>
-        <Modal.Body>
-          {`Are you sure you want to delete your ${
-            deleteFlight?.departureAirportId ?? ''
-          } - ${deleteFlight?.arrivalAirportId ?? ''} flight?`}
-        </Modal.Body>
-        <Modal.Actions>
-          <Button color="ghost" onClick={() => setDeleteFlight(null)}>
-            Cancel
-          </Button>
-          <Button
-            color="error"
-            loading={isLoading}
-            onClick={() => mutate({ id: deleteFlight?.id ?? '' })}
-          >
-            Yes
-          </Button>
-        </Modal.Actions>
+      <Modal
+        actionButtons={[
+          {
+            children: 'Cancel',
+            color: 'ghost',
+            onClick: () => setIsDeleteDialogOpen(false),
+          },
+          {
+            children: 'Yes',
+            color: 'error',
+            loading: isLoading,
+            onClick: () => mutate({ id: deleteFlight?.id ?? '' }),
+          },
+        ]}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        show={isDeleteDialogOpen}
+        title="Delete Flight"
+      >
+        {`Are you sure you want to delete your ${
+          deleteFlight?.departureAirportId ?? ''
+        } - ${deleteFlight?.arrivalAirportId ?? ''} flight?`}
       </Modal>
     </>
   );
