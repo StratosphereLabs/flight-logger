@@ -3,18 +3,17 @@ import { HTMLProps } from 'react';
 
 export interface FormLabelProps extends HTMLProps<HTMLLabelElement> {
   isRequired?: boolean;
-  labelText: string;
 }
 
 export const FormLabel = ({
+  children,
   className,
   isRequired,
-  labelText,
   ...props
 }: FormLabelProps): JSX.Element => (
   <label className={classNames('label', 'font-semibold', className)} {...props}>
     <span className="label-text">
-      {labelText}{' '}
+      {children}{' '}
       {isRequired === true ? <span className="font-normal">*</span> : null}
     </span>
   </label>

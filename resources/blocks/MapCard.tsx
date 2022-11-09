@@ -42,9 +42,9 @@ export const MapCard = (): JSX.Element => {
         {data?.airports?.map(({ id, lat, lon }) => (
           <MarkerF key={id} position={{ lat, lng: lon }} />
         ))}
-        {data?.routes?.map(({ departureAirport, arrivalAirport }, index) => (
+        {data?.routes?.map(({ departureAirport, arrivalAirport }) => (
           <PolylineF
-            key={index}
+            key={`${departureAirport.id}_${arrivalAirport.id}`}
             options={{
               strokeOpacity: 0.5,
               strokeColor: 'red',

@@ -1,13 +1,17 @@
 import { useState } from 'react';
+import { InputProps } from 'react-daisyui';
 import { TypeaheadInput } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export interface AirlineInputProps {
+export interface AirlineInputProps extends InputProps {
   className?: string;
 }
 
-export const AirlineInput = ({ className }: AirlineInputProps): JSX.Element => {
+export const AirlineInput = ({
+  className,
+  ...props
+}: AirlineInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error, isFetching } = trpc.airlines.searchAirlines.useQuery(
     {
@@ -22,12 +26,13 @@ export const AirlineInput = ({ className }: AirlineInputProps): JSX.Element => {
     <TypeaheadInput
       className={className}
       labelText="Airline"
-      name="airlineId"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
       getItemValue={({ id }) => id}
       isFetching={isFetching}
+      name="airlineId"
       onDebouncedChange={setQuery}
-      options={data}
+      options={data ?? []}
+      {...props}
     />
   );
 };

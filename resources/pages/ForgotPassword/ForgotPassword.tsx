@@ -40,13 +40,11 @@ export const ForgotPassword = (): JSX.Element => {
     >
       <fieldset disabled={isLoading}>
         <FormControl
-          inputProps={{
-            autoComplete: 'email',
-            placeholder: 'Email',
-          }}
+          autoComplete="email"
           isRequired
           labelText="Email"
           name="email"
+          type="email"
         />
       </fieldset>
       <div className="flex flex-col mt-6">

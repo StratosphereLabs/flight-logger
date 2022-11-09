@@ -66,13 +66,18 @@ exports[`<App /> > renders login page 1`] = `
                   >
                     Email
                      
+                    <span
+                      class="font-normal"
+                    >
+                      *
+                    </span>
                   </span>
                 </label>
                 <input
                   autocomplete="email"
                   class="input input-ghost focus:outline-offset-0 input-bordered"
                   name="email"
-                  placeholder="Email"
+                  type="email"
                   value=""
                 />
               </div>
@@ -87,13 +92,17 @@ exports[`<App /> > renders login page 1`] = `
                   >
                     Password
                      
+                    <span
+                      class="font-normal"
+                    >
+                      *
+                    </span>
                   </span>
                 </label>
                 <input
                   autocomplete="current-password"
                   class="input input-ghost focus:outline-offset-0 input-bordered"
                   name="password"
-                  placeholder="Password"
                   type="password"
                   value=""
                 />
@@ -200,13 +209,18 @@ exports[`<App /> > renders profile page 1`] = `
                   >
                     Email
                      
+                    <span
+                      class="font-normal"
+                    >
+                      *
+                    </span>
                   </span>
                 </label>
                 <input
                   autocomplete="email"
                   class="input input-ghost focus:outline-offset-0 input-bordered"
                   name="email"
-                  placeholder="Email"
+                  type="email"
                   value=""
                 />
               </div>
@@ -221,13 +235,17 @@ exports[`<App /> > renders profile page 1`] = `
                   >
                     Password
                      
+                    <span
+                      class="font-normal"
+                    >
+                      *
+                    </span>
                   </span>
                 </label>
                 <input
                   autocomplete="current-password"
                   class="input input-ghost focus:outline-offset-0 input-bordered"
                   name="password"
-                  placeholder="Password"
                   type="password"
                   value=""
                 />

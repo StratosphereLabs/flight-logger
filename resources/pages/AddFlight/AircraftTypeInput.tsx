@@ -1,14 +1,16 @@
 import { useState } from 'react';
+import { InputProps } from 'react-daisyui';
 import { TypeaheadInput } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export interface AircraftTypeInputProps {
+export interface AircraftTypeInputProps extends InputProps {
   className?: string;
 }
 
 export const AircraftTypeInput = ({
   className,
+  ...props
 }: AircraftTypeInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error, isFetching } =
@@ -25,12 +27,13 @@ export const AircraftTypeInput = ({
     <TypeaheadInput
       className={className}
       labelText="Aircraft Type"
-      name="aircraftTypeId"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
       getItemValue={({ id }) => id}
       isFetching={isFetching}
+      name="aircraftTypeId"
       onDebouncedChange={setQuery}
-      options={data}
+      options={data ?? []}
+      {...props}
     />
   );
 };

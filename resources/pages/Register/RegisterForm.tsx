@@ -34,53 +34,41 @@ export const RegisterForm = (): JSX.Element => {
       <Form methods={methods} onFormSubmit={values => mutate(values)}>
         <fieldset disabled={isLoading}>
           <FormControl
-            inputProps={{
-              autoComplete: 'email',
-              type: 'email',
-            }}
+            autoComplete="email"
             isRequired
             labelText="Email"
             name="email"
+            type="email"
           />
           <FormControl
-            inputProps={{
-              autoComplete: 'username',
-            }}
+            autoComplete="username"
             isRequired
             labelText="Username"
             name="username"
           />
           <FormControl
-            inputProps={{
-              autoComplete: 'first-name',
-            }}
+            autoComplete="first-name"
             labelText="First Name"
             name="firstName"
           />
           <FormControl
-            inputProps={{
-              autoComplete: 'last-name',
-            }}
+            autoComplete="last-name"
             labelText="Last Name"
             name="lastName"
           />
           <FormControl
-            inputProps={{
-              autoComplete: 'new-password',
-              type: 'password',
-            }}
+            autoComplete="new-password"
             isRequired
             labelText="Password"
             name="password"
+            type="password"
           />
           <FormControl
-            inputProps={{
-              autoComplete: 'new-password',
-              type: 'password',
-            }}
+            autoComplete="new-password"
             isRequired
             labelText="Confirm Password"
             name="confirmPassword"
+            type="password"
           />
           <label className="label">
             <Link onClick={handleClick} className="label-text-alt" hover>
