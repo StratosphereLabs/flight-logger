@@ -3,10 +3,8 @@ import classNames from 'classnames';
 import { FullScreenLoader } from './FullScreenLoader';
 import { HeaderSortIcon } from './HeaderSortIcon';
 import { Pagination } from './Pagination';
-import { PaginationMetadata } from '../types';
 import { useScrollBar } from '../hooks';
-
-export type GenericDataType = Record<string, unknown>;
+import { GenericDataType, PaginationMetadata } from '../types';
 
 export interface TableProps<DataType extends GenericDataType>
   extends TableOptions<DataType> {
@@ -19,7 +17,7 @@ export interface TableProps<DataType extends GenericDataType>
   metadata?: PaginationMetadata;
 }
 
-export const Table = <DataType extends Record<string, unknown>>({
+export const Table = <DataType extends GenericDataType>({
   compact,
   enableFixedWidth,
   enableGlobalFilter,

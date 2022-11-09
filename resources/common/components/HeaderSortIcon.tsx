@@ -1,6 +1,6 @@
 import { Column } from '@tanstack/react-table';
+import { GenericDataType } from '../types';
 import { SortAscendingIcon, SortDescendingIcon, SortIcon } from './Icons';
-import { GenericDataType } from './Table';
 
 export interface HeaderSortIconProps<DataType extends GenericDataType> {
   column: Column<DataType, unknown>;

@@ -6,6 +6,8 @@ import {
 import { AlertProps } from 'react-daisyui';
 import { typeToFlattenedError } from 'zod';
 
+export type GenericDataType = { id: string | number } & Record<string, unknown>;
+
 export interface AlertMessage {
   status: AlertProps['status'];
   message: string;

@@ -9,7 +9,6 @@ import {
   LoadingCard,
 } from '../../common/components';
 import {
-  useFocusOnFirstField,
   useProtectedPage,
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -27,7 +26,6 @@ import { DepartureAirportInput } from './DepartureAirportInput';
 
 export const AddFlight = (): JSX.Element => {
   useProtectedPage();
-  const firstFieldRef = useFocusOnFirstField();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -52,11 +50,7 @@ export const AddFlight = (): JSX.Element => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <DepartureAirportInput
-                  className="max-w-sm"
-                  isRequired
-                  inputProps={{ ref: firstFieldRef }}
-                />
+                <DepartureAirportInput className="max-w-sm" isRequired />
               </div>
               <div className="flex-1 flex justify-center">
                 <ArrivalAirportInput className="max-w-sm" isRequired />
@@ -66,35 +60,29 @@ export const AddFlight = (): JSX.Element => {
               <div className="flex-1 flex justify-center">
                 <FormControl
                   className="w-[200px]"
-                  inputProps={{
-                    type: 'date',
-                  }}
                   isRequired
                   labelText="Departure Date"
                   name="outDate"
+                  type="date"
                 />
               </div>
               <div className="flex-1 flex justify-center">
                 <FormControl
                   className="w-[200px]"
-                  inputProps={{
-                    type: 'time',
-                  }}
                   isRequired
                   labelText="Departure Time (Local)"
                   name="outTime"
                   transform={nullEmptyStringTransformer}
+                  type="time"
                 />
               </div>
               <div className="flex-1 flex justify-center">
                 <FormControl
                   className="w-[200px]"
-                  inputProps={{
-                    type: 'time',
-                  }}
                   isRequired
                   labelText="Arrival Time (Local)"
                   name="inTime"
+                  type="time"
                 />
               </div>
             </div>
@@ -111,13 +99,11 @@ export const AddFlight = (): JSX.Element => {
               <div className="flex-1 flex justify-center">
                 <FormControl
                   className="w-[200px]"
-                  inputProps={{
-                    type: 'number',
-                    onWheel: e => (e.target as HTMLInputElement).blur?.(),
-                  }}
                   labelText="Flight Number"
                   name="flightNumber"
+                  onWheel={e => (e.target as HTMLInputElement).blur?.()}
                   transform={numberInputTransformer}
+                  type="number"
                 />
               </div>
               <div className="flex-1 flex justify-center">
@@ -167,10 +153,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
               <div className="flex-1 min-w-[200px]">
                 <FormControl
-                  className="w-[200px]"
-                  inputProps={{
-                    className: 'mb-5',
-                  }}
+                  className="mb-5 w-[200px]"
                   labelText="Seat Number"
                   name="seatNumber"
                 />

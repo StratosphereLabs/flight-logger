@@ -38,22 +38,18 @@ export const ResetPassword = (): JSX.Element => {
     <Form methods={methods} onFormSubmit={data => mutate(data)}>
       <fieldset disabled={isLoading}>
         <FormControl
-          inputProps={{
-            autoComplete: 'new-password',
-            type: 'password',
-          }}
+          autoComplete="new-password"
           isRequired
           labelText="New Password"
           name="password"
+          type="password"
         />
         <FormControl
-          inputProps={{
-            autoComplete: 'new-password',
-            type: 'password',
-          }}
+          autoComplete="new-password"
           isRequired
           labelText="Confirm New Password"
           name="confirmPassword"
+          type="password"
         />
       </fieldset>
       <div className="flex flex-col mt-6">

@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { InputProps } from 'react-daisyui';
 import { TypeaheadInput } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export interface ArrivalAirportInputProps {
+export interface ArrivalAirportInputProps extends InputProps {
   className?: string;
   isRequired?: boolean;
 }
@@ -11,6 +12,7 @@ export interface ArrivalAirportInputProps {
 export const ArrivalAirportInput = ({
   className,
   isRequired,
+  ...props
 }: ArrivalAirportInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error, isFetching } = trpc.airports.searchAirports.useQuery(
@@ -27,12 +29,13 @@ export const ArrivalAirportInput = ({
       className={className}
       isRequired={isRequired}
       labelText="Arrival Airport"
-      name="arrivalAirportId"
       getItemText={({ id, name }) => `${id} - ${name}`}
       getItemValue={({ id }) => id}
       isFetching={isFetching}
+      name="arrivalAirportId"
       onDebouncedChange={setQuery}
-      options={data}
+      options={data ?? []}
+      {...props}
     />
   );
 };

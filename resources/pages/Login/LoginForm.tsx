@@ -29,21 +29,18 @@ export const LoginForm = (): JSX.Element => {
     <Form methods={methods} onFormSubmit={data => mutate(data)}>
       <fieldset disabled={isLoading}>
         <FormControl
-          inputProps={{
-            autoComplete: 'email',
-            placeholder: 'Email',
-          }}
+          autoComplete="email"
+          isRequired
           labelText="Email"
           name="email"
+          type="email"
         />
         <FormControl
-          inputProps={{
-            autoComplete: 'current-password',
-            placeholder: 'Password',
-            type: 'password',
-          }}
+          autoComplete="current-password"
+          isRequired
           labelText="Password"
           name="password"
+          type="password"
         />
         <label className="label">
           <Link onClick={handleForgotPassword} className="label-text-alt" hover>

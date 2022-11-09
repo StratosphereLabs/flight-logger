@@ -3,14 +3,15 @@ export const ErrorIcon = (): JSX.Element => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
-    className="w-6 h-6 mx-2 stroke-current"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-8 h-8"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
-      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-    ></path>
+      d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+    />
   </svg>
 );
 
@@ -19,14 +20,15 @@ export const WarningIcon = (): JSX.Element => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
-    className="w-6 h-6 mx-2 stroke-current"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-8 h-8"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
-      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-    ></path>
+      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+    />
   </svg>
 );
 
@@ -35,14 +37,15 @@ export const SuccessIcon = (): JSX.Element => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
-    className="w-6 h-6 mx-2 stroke-current"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-8 h-8"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
-      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-    ></path>
+      d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
   </svg>
 );
 
@@ -51,28 +54,30 @@ export const InfoIcon = (): JSX.Element => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
-    className="w-6 h-6 mx-2 stroke-current"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-8 h-8"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
-      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-    ></path>
+      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+    />
   </svg>
 );
 
 export const CloseIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6 stroke-current"
     fill="none"
     viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-6 h-6"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="2"
       d="M6 18L18 6M6 6l12 12"
     />
   </svg>
@@ -80,28 +85,27 @@ export const CloseIcon = (): JSX.Element => (
 
 export const DarkModeIcon = (): JSX.Element => (
   <svg
-    aria-hidden="true"
-    className="w-5 h-5"
-    viewBox="0 0 20 20"
     xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="w-6 h-6"
   >
-    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+    <path
+      fillRule="evenodd"
+      d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+      clipRule="evenodd"
+    />
   </svg>
 );
 
 export const LightModeIcon = (): JSX.Element => (
   <svg
-    aria-hidden="true"
-    className="w-5 h-5"
-    fill="currentColor"
-    viewBox="0 0 20 20"
     xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="w-6 h-6"
   >
-    <path
-      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-      fillRule="evenodd"
-      clipRule="evenodd"
-    ></path>
+    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
   </svg>
 );
 

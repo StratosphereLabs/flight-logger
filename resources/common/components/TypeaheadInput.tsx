@@ -1,97 +1,86 @@
-import { useCallback, useEffect } from 'react';
-import { Menu } from 'react-daisyui';
-import { FieldValues, useController, useFormContext } from 'react-hook-form';
+import { Combobox } from '@headlessui/react';
+import classNames from 'classnames';
+import { Input, InputProps } from 'react-daisyui';
 import { useTypeaheadInput, UseTypeaheadInputOptions } from '../hooks';
-import { FormControl, FormControlProps } from './FormControl';
+import { GenericDataType } from '../types';
+import { FormLabel } from './FormLabel';
 
-export interface TypeaheadInputProps<
-  DataItem,
-  Values extends FieldValues,
-  TOutput,
-> extends UseTypeaheadInputOptions<DataItem>,
-    FormControlProps<Values, TOutput> {
-  getItemValue: (data: DataItem) => string;
-  getMenuItem?: (data: DataItem) => JSX.Element | null;
+export interface TypeaheadInputProps<DataItem>
+  extends UseTypeaheadInputOptions,
+    InputProps {
+  isRequired?: boolean;
+  getItemText: (data: DataItem) => string;
+  labelText?: string;
+  options?: DataItem[];
 }
 
-export const TypeaheadInput = <
-  DataItem extends Record<string, unknown>,
-  Values extends FieldValues,
-  TOutput,
->({
+export const TypeaheadInput = <DataItem extends GenericDataType>({
   debounceTime,
   getItemText,
-  getItemValue,
-  getMenuItem,
-  inputProps,
   isFetching,
+  isRequired,
+  labelText,
   onDebouncedChange,
   options,
   ...props
-}: TypeaheadInputProps<DataItem, Values, TOutput>): JSX.Element => {
-  const { setValue } = useFormContext();
-  const { field } = useController(props);
-  const onItemSelect = useCallback((item: DataItem | null) => {
-    const itemValue = item !== null ? getItemValue(item) : '';
-    setValue<string>(props.name, itemValue, {
-      shouldValidate: item !== null,
+}: TypeaheadInputProps<DataItem>): JSX.Element => {
+  const { isLoading, selectedItem, setQuery, setSelectedItem } =
+    useTypeaheadInput<DataItem>({
+      debounceTime,
+      isFetching,
+      onDebouncedChange,
     });
-  }, []);
-  const {
-    handleChange,
-    handleKeyDown,
-    isLoading,
-    item,
-    setSelectedItem,
-    value,
-  } = useTypeaheadInput({
-    debounceTime,
-    getItemText,
-    isFetching,
-    onDebouncedChange,
-    onItemSelect,
-    options,
-  });
-  useEffect(() => {
-    if (field.value.length === 0) setSelectedItem(null);
-  }, [field.value]);
   return (
-    <FormControl
-      inputProps={{
-        onChange: handleChange,
-        onKeyDown: handleKeyDown,
-        value,
-        ...inputProps,
-      }}
-      menuContent={
-        <Menu className="rounded-lg bg-base-300">
-          {isLoading ? (
-            <Menu.Item disabled>
-              <p>Loading...</p>
-            </Menu.Item>
-          ) : null}
-          {!isLoading && options?.length === 0 ? (
-            <Menu.Item disabled>
-              <p>No Results</p>
-            </Menu.Item>
-          ) : null}
-          {!isLoading &&
-          item === null &&
-          options !== undefined &&
-          options.length > 0
-            ? options.map((item, index) => (
-                <Menu.Item key={index}>
-                  <a onClick={() => setSelectedItem(item)}>
-                    {getMenuItem !== undefined
-                      ? getMenuItem(item)
-                      : getItemText(item)}
-                  </a>
-                </Menu.Item>
-              ))
-            : null}
-        </Menu>
-      }
-      {...props}
-    />
+    <Combobox
+      as="div"
+      className="form-control w-full max-w-sm"
+      onChange={setSelectedItem}
+      value={selectedItem}
+    >
+      {labelText !== undefined ? (
+        <Combobox.Label as={FormLabel} isRequired={isRequired}>
+          {labelText}
+        </Combobox.Label>
+      ) : null}
+      <Combobox.Input
+        as={Input}
+        displayValue={(item: DataItem | null) =>
+          item !== null ? getItemText(item) : ''
+        }
+        onChange={({ target: { value } }) => setQuery(value)}
+        {...props}
+      />
+      <div className="relative">
+        <div className="absolute min-w-[200px] z-10 mt-[1px] w-full">
+          <Combobox.Options className="menu rounded-lg bg-base-300">
+            {isLoading ? (
+              <Combobox.Option className="disabled" value={null}>
+                <p>Loading...</p>
+              </Combobox.Option>
+            ) : null}
+            {!isLoading && options?.length === 0 ? (
+              <Combobox.Option className="disabled" value={null}>
+                <p>No Results</p>
+              </Combobox.Option>
+            ) : null}
+            {!isLoading &&
+              options?.map(option => (
+                <Combobox.Option
+                  className={({ active, disabled }) =>
+                    classNames(
+                      active ? 'bg-primary' : 'bg-ghost',
+                      disabled && 'disabled',
+                    )
+                  }
+                  key={option.id}
+                  value={option}
+                >
+                  <p>{getItemText(option)}</p>
+                </Combobox.Option>
+              ))}
+          </Combobox.Options>
+        </div>
+      </div>
+    </Combobox>
   );
 };

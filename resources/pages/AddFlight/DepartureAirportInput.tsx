@@ -4,16 +4,15 @@ import { TypeaheadInput } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export interface DepartureAirportInputProps {
+export interface DepartureAirportInputProps extends InputProps {
   className?: string;
-  inputProps?: InputProps & Record<string, unknown>;
   isRequired?: boolean;
 }
 
 export const DepartureAirportInput = ({
   className,
-  inputProps,
   isRequired,
+  ...props
 }: DepartureAirportInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error, isFetching } = trpc.airports.searchAirports.useQuery(
@@ -28,15 +27,15 @@ export const DepartureAirportInput = ({
   return (
     <TypeaheadInput
       className={className}
-      inputProps={inputProps}
       isRequired={isRequired}
       labelText="Departure Airport"
-      name="departureAirportId"
       getItemText={({ id, name }) => `${id} - ${name}`}
       getItemValue={({ id }) => id}
       isFetching={isFetching}
+      name="departureAirportId"
       onDebouncedChange={setQuery}
-      options={data}
+      options={data ?? []}
+      {...props}
     />
   );
 };
