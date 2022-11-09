@@ -97,7 +97,7 @@ export const TypeaheadInput = <
                 <Combobox.Option
                   className={({ active, disabled }) =>
                     classNames(
-                      active ? 'bg-primary' : 'bg-ghost',
+                      active ? 'bg-primary text-white' : 'bg-ghost',
                       disabled && 'disabled',
                     )
                   }

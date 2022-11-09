@@ -1,4 +1,5 @@
-import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
+import { Tab } from '@headlessui/react';
+import { Button, Dropdown, Menu as DaisyUIMenu, Navbar } from 'react-daisyui';
 import { Link, NavLink, useLinkClickHandler } from 'react-router-dom';
 import { DarkModeButton } from '../../common/components';
 import { useAppContext } from '../../providers';
@@ -47,17 +48,17 @@ export const MainNavbar = (): JSX.Element => {
           </Link>
         </Navbar.Start>
         <Navbar.Center className="hidden lg:flex">
-          <Menu horizontal className="p-0">
-            <Menu.Item>
+          <Tab.Group as={DaisyUIMenu} horizontal className="p-0">
+            <Tab.List as={DaisyUIMenu.Item}>
               <NavLink to="/profile">Home</NavLink>
-            </Menu.Item>
-            <Menu.Item>
+            </Tab.List>
+            <Tab.List as={DaisyUIMenu.Item}>
               <NavLink to="/flights">My Flights</NavLink>
-            </Menu.Item>
-            <Menu.Item>
+            </Tab.List>
+            <Tab.List as={DaisyUIMenu.Item}>
               <NavLink to="/data">Data</NavLink>
-            </Menu.Item>
-          </Menu>
+            </Tab.List>
+          </Tab.Group>
         </Navbar.Center>
         <Navbar.End className="space-x-2">
           <DarkModeButton />
