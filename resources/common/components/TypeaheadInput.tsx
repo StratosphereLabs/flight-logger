@@ -1,40 +1,67 @@
 import { Combobox } from '@headlessui/react';
 import classNames from 'classnames';
+import { useCallback } from 'react';
 import { Input, InputProps } from 'react-daisyui';
+import { FieldValues, useController, useFormContext } from 'react-hook-form';
 import { useTypeaheadInput, UseTypeaheadInputOptions } from '../hooks';
-import { GenericDataType } from '../types';
+import { FormFieldProps, GenericDataType } from '../types';
+import { FormError } from './FormError';
 import { FormLabel } from './FormLabel';
 
-export interface TypeaheadInputProps<DataItem>
-  extends UseTypeaheadInputOptions,
-    InputProps {
-  isRequired?: boolean;
+export interface TypeaheadInputProps<
+  DataItem extends GenericDataType,
+  Values extends FieldValues,
+> extends UseTypeaheadInputOptions,
+    FormFieldProps<Values>,
+    Omit<InputProps, 'name'> {
   getItemText: (data: DataItem) => string;
-  labelText?: string;
+  getItemValue: (data: DataItem) => string;
   options?: DataItem[];
 }
 
-export const TypeaheadInput = <DataItem extends GenericDataType>({
+export const TypeaheadInput = <
+  DataItem extends GenericDataType,
+  Values extends FieldValues,
+>({
+  controllerProps,
   debounceTime,
   getItemText,
+  getItemValue,
   isFetching,
   isRequired,
   labelText,
+  name,
   onDebouncedChange,
   options,
   ...props
-}: TypeaheadInputProps<DataItem>): JSX.Element => {
+}: TypeaheadInputProps<DataItem, Values>): JSX.Element => {
+  const { setValue } = useFormContext();
+  const {
+    field,
+    fieldState: { error },
+  } = useController({
+    ...controllerProps,
+    name,
+  });
   const { isLoading, selectedItem, setQuery, setSelectedItem } =
     useTypeaheadInput<DataItem>({
       debounceTime,
       isFetching,
       onDebouncedChange,
     });
+  const onSelectionChange = useCallback((item: DataItem | null) => {
+    const itemValue = item !== null ? getItemValue(item) : '';
+    setSelectedItem(item);
+    setValue<string>(name, itemValue, {
+      shouldValidate: item !== null,
+    });
+  }, []);
   return (
     <Combobox
       as="div"
       className="form-control w-full max-w-sm"
-      onChange={setSelectedItem}
+      name={name}
+      onChange={onSelectionChange}
       value={selectedItem}
     >
       {labelText !== undefined ? (
@@ -43,7 +70,9 @@ export const TypeaheadInput = <DataItem extends GenericDataType>({
         </Combobox.Label>
       ) : null}
       <Combobox.Input
+        {...field}
         as={Input}
+        color={error === undefined ? 'ghost' : 'error'}
         displayValue={(item: DataItem | null) =>
           item !== null ? getItemText(item) : ''
         }
@@ -81,6 +110,9 @@ export const TypeaheadInput = <DataItem extends GenericDataType>({
           </Combobox.Options>
         </div>
       </div>
+      {error?.message !== undefined ? (
+        <FormError errorText={error.message} />
+      ) : null}
     </Combobox>
   );
 };

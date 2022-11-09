@@ -4,6 +4,7 @@ import {
   TRPC_ERROR_CODE_NUMBER,
 } from '@trpc/server/rpc';
 import { AlertProps } from 'react-daisyui';
+import { FieldValues, Path, UseControllerProps } from 'react-hook-form';
 import { typeToFlattenedError } from 'zod';
 
 export type GenericDataType = { id: string | number } & Record<string, unknown>;
@@ -31,6 +32,13 @@ export interface DefaultErrorShape
   extends TRPCErrorShape<TRPC_ERROR_CODE_NUMBER, DefaultErrorData> {
   message: string;
   code: TRPC_ERROR_CODE_NUMBER;
+}
+
+export interface FormFieldProps<Values extends FieldValues> {
+  controllerProps?: Omit<UseControllerProps<Values>, 'name'>;
+  isRequired?: boolean;
+  labelText?: string;
+  name: Path<Values>;
 }
 
 export interface PaginationMetadata {

@@ -10,9 +10,10 @@ export interface UseTypeaheadInputOptions {
 
 export interface UseTypeaheadInputResult<DataItem> {
   isLoading: boolean;
+  query: string;
   selectedItem: DataItem | null;
   setQuery: Dispatch<SetStateAction<string>>;
-  setSelectedItem: (item: DataItem | null) => void;
+  setSelectedItem: Dispatch<SetStateAction<DataItem | null>>;
 }
 
 export const useTypeaheadInput = <DataItem extends GenericDataType>({
@@ -20,10 +21,8 @@ export const useTypeaheadInput = <DataItem extends GenericDataType>({
   isFetching,
   onDebouncedChange,
 }: UseTypeaheadInputOptions): UseTypeaheadInputResult<DataItem> => {
-  const [, setQuery, debouncedQuery, isDebouncing] = useDebouncedState<string>(
-    '',
-    debounceTime ?? 400,
-  );
+  const [query, setQuery, debouncedQuery, isDebouncing] =
+    useDebouncedState<string>('', debounceTime ?? 400);
   const [selectedItem, setSelectedItem] = useState<DataItem | null>(null);
   const isLoading = (isDebouncing || isFetching) ?? false;
   const formattedQuery = debouncedQuery.trim();
@@ -32,6 +31,7 @@ export const useTypeaheadInput = <DataItem extends GenericDataType>({
   }, [formattedQuery]);
   return {
     isLoading,
+    query,
     selectedItem,
     setQuery,
     setSelectedItem,

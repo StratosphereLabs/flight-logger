@@ -1,21 +1,13 @@
 import { useMemo } from 'react';
 import { Input, InputProps } from 'react-daisyui';
-import {
-  FieldValues,
-  Path,
-  useController,
-  UseControllerProps,
-} from 'react-hook-form';
-import { Transform } from '../types';
+import { FieldValues, useController } from 'react-hook-form';
+import { FormFieldProps, Transform } from '../types';
 import { FormError } from './FormError';
 import { FormLabel } from './FormLabel';
 
 export interface FormControlProps<Values extends FieldValues, TOutput>
-  extends Omit<InputProps, 'name'> {
-  controllerProps?: Omit<UseControllerProps<Values>, 'name'>;
-  isRequired?: boolean;
-  labelText?: string;
-  name: Path<Values>;
+  extends FormFieldProps<Values>,
+    Omit<InputProps, 'name'> {
   transform?: Transform<TOutput>;
 }
 
@@ -46,6 +38,7 @@ export const FormControl = <Values extends FieldValues, TOutput>({
       ) : null}
       <Input
         {...field}
+        color={error === undefined ? 'ghost' : 'error'}
         name={name}
         onChange={({ target: { value } }) =>
           field.onChange(
@@ -53,7 +46,6 @@ export const FormControl = <Values extends FieldValues, TOutput>({
           )
         }
         value={inputValue}
-        color={error === undefined ? 'ghost' : 'error'}
         {...props}
       />
       {error?.message !== undefined ? (
