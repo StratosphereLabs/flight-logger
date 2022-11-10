@@ -8,7 +8,6 @@ import { FormError } from './FormError';
 import { FormLabel } from './FormLabel';
 
 export interface RadioOption {
-  key: string;
   label: string;
   value: string;
 }
@@ -37,8 +36,8 @@ export const FormRadio = <Values extends FieldValues>({
       {labelText !== undefined ? (
         <FormLabel isRequired={isRequired}>{labelText}</FormLabel>
       ) : null}
-      {options.map(({ key, label, value: optionValue }) => (
-        <Form.Label key={key} title={label}>
+      {options.map(({ label, value: optionValue }) => (
+        <Form.Label key={optionValue} title={label}>
           <Radio
             {...field}
             {...radioProps}

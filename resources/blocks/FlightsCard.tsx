@@ -25,7 +25,7 @@ export const FlightsCard = (): JSX.Element => {
   const { isLoading, mutate } = trpc.users.deleteFlight.useMutation({
     onSuccess: async () => {
       handleSuccess('Flight Deleted');
-      setDeleteFlight(null);
+      setIsDeleteDialogOpen(false);
       await refetch();
     },
   });
