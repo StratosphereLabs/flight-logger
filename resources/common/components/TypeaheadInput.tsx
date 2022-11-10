@@ -1,4 +1,4 @@
-import { Combobox } from '@headlessui/react';
+import { Combobox, Transition } from '@headlessui/react';
 import classNames from 'classnames';
 import { useCallback } from 'react';
 import { Input, InputProps } from 'react-daisyui';
@@ -61,6 +61,7 @@ export const TypeaheadInput = <
       as="div"
       className="form-control w-full max-w-sm"
       name={name}
+      nullable
       onChange={onSelectionChange}
       value={selectedItem}
     >
@@ -81,33 +82,42 @@ export const TypeaheadInput = <
       />
       <div className="relative">
         <div className="absolute min-w-[200px] z-10 mt-[1px] w-full">
-          <Combobox.Options className="menu rounded-lg bg-base-300">
-            {isLoading ? (
-              <Combobox.Option className="disabled" value={null}>
-                <p>Loading...</p>
-              </Combobox.Option>
-            ) : null}
-            {!isLoading && options?.length === 0 ? (
-              <Combobox.Option className="disabled" value={null}>
-                <p>No Results</p>
-              </Combobox.Option>
-            ) : null}
-            {!isLoading &&
-              options?.map(option => (
-                <Combobox.Option
-                  className={({ active, disabled }) =>
-                    classNames(
-                      active ? 'bg-primary text-white' : 'bg-ghost',
-                      disabled && 'disabled',
-                    )
-                  }
-                  key={option.id}
-                  value={option}
-                >
-                  <p>{getItemText(option)}</p>
+          <Transition
+            enter="transition duration-100 ease-out"
+            enterFrom="transform scale-95 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform scale-100 opacity-100"
+            leaveTo="transform scale-95 opacity-0"
+          >
+            <Combobox.Options className="menu rounded-lg bg-base-300">
+              {isLoading ? (
+                <Combobox.Option className="disabled" value={null}>
+                  <p>Loading...</p>
                 </Combobox.Option>
-              ))}
-          </Combobox.Options>
+              ) : null}
+              {!isLoading && options?.length === 0 ? (
+                <Combobox.Option className="disabled" value={null}>
+                  <p>No Results</p>
+                </Combobox.Option>
+              ) : null}
+              {!isLoading &&
+                options?.map(option => (
+                  <Combobox.Option
+                    className={({ active, disabled }) =>
+                      classNames(
+                        active ? 'bg-primary text-white' : 'bg-ghost',
+                        disabled && 'disabled',
+                      )
+                    }
+                    key={option.id}
+                    value={option}
+                  >
+                    <p>{getItemText(option)}</p>
+                  </Combobox.Option>
+                ))}
+            </Combobox.Options>
+          </Transition>
         </div>
       </div>
       {error?.message !== undefined ? (
