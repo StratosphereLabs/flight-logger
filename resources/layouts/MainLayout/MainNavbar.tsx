@@ -1,8 +1,8 @@
-import { Tab } from '@headlessui/react';
-import { Button, Dropdown, Menu as DaisyUIMenu, Navbar } from 'react-daisyui';
-import { Link, NavLink, useLinkClickHandler } from 'react-router-dom';
+import { Button, Dropdown, Navbar } from 'react-daisyui';
+import { Link, useLinkClickHandler } from 'react-router-dom';
 import { DarkModeButton } from '../../common/components';
 import { useAppContext } from '../../providers';
+import { NavbarTab } from './NavbarTab';
 
 export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
@@ -48,17 +48,11 @@ export const MainNavbar = (): JSX.Element => {
           </Link>
         </Navbar.Start>
         <Navbar.Center className="hidden lg:flex">
-          <Tab.Group as={DaisyUIMenu} horizontal className="p-0">
-            <Tab.List as={DaisyUIMenu.Item}>
-              <NavLink to="/profile">Home</NavLink>
-            </Tab.List>
-            <Tab.List as={DaisyUIMenu.Item}>
-              <NavLink to="/flights">My Flights</NavLink>
-            </Tab.List>
-            <Tab.List as={DaisyUIMenu.Item}>
-              <NavLink to="/data">Data</NavLink>
-            </Tab.List>
-          </Tab.Group>
+          <div className="tabs tabs-boxed">
+            <NavbarTab to="/profile">Home</NavbarTab>
+            <NavbarTab to="/flights">My Flights</NavbarTab>
+            <NavbarTab to="/data">Data</NavbarTab>
+          </div>
         </Navbar.Center>
         <Navbar.End className="space-x-2">
           <DarkModeButton />

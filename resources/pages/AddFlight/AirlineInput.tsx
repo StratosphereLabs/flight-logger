@@ -13,7 +13,7 @@ export const AirlineInput = ({
   ...props
 }: AirlineInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
-  const { data, error, isFetching } = trpc.airlines.searchAirlines.useQuery(
+  const { data, error } = trpc.airlines.searchAirlines.useQuery(
     {
       query,
     },
@@ -28,10 +28,9 @@ export const AirlineInput = ({
       labelText="Airline"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
       getItemValue={({ id }) => id}
-      isFetching={isFetching}
       name="airlineId"
       onDebouncedChange={setQuery}
-      options={data ?? []}
+      options={data}
       {...props}
     />
   );

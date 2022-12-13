@@ -1,6 +1,6 @@
 import { Combobox, Transition } from '@headlessui/react';
 import classNames from 'classnames';
-import { useCallback } from 'react';
+import { useEffect } from 'react';
 import { Input, InputProps } from 'react-daisyui';
 import { FieldValues, useController, useFormContext } from 'react-hook-form';
 import { useTypeaheadInput, UseTypeaheadInputOptions } from '../hooks';
@@ -11,7 +11,7 @@ import { FormLabel } from './FormLabel';
 export interface TypeaheadInputProps<
   DataItem extends GenericDataType,
   Values extends FieldValues,
-> extends UseTypeaheadInputOptions,
+> extends UseTypeaheadInputOptions<DataItem>,
     FormFieldProps<Values>,
     Omit<InputProps, 'name'> {
   getItemText: (data: DataItem) => string;
@@ -27,7 +27,6 @@ export const TypeaheadInput = <
   debounceTime,
   getItemText,
   getItemValue,
-  isFetching,
   isRequired,
   labelText,
   name,
@@ -46,23 +45,22 @@ export const TypeaheadInput = <
   const { isLoading, selectedItem, setQuery, setSelectedItem } =
     useTypeaheadInput<DataItem>({
       debounceTime,
-      isFetching,
       onDebouncedChange,
+      options,
     });
-  const onSelectionChange = useCallback((item: DataItem | null) => {
-    const itemValue = item !== null ? getItemValue(item) : '';
-    setSelectedItem(item);
+  useEffect(() => {
+    const itemValue = selectedItem !== null ? getItemValue(selectedItem) : '';
     setValue<string>(name, itemValue, {
-      shouldValidate: item !== null,
+      shouldValidate: selectedItem !== null,
     });
-  }, []);
+  }, [selectedItem]);
   return (
     <Combobox
       as="div"
       className="form-control w-full max-w-sm"
       name={name}
       nullable
-      onChange={onSelectionChange}
+      onChange={setSelectedItem}
       value={selectedItem}
     >
       {labelText !== undefined ? (
