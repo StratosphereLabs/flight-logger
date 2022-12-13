@@ -24,7 +24,7 @@ export const AlertMessages = ({
 }: AlertMessagesProps): JSX.Element => {
   const { alertMessages, dismissAlertMessage } = useAppContext();
   return (
-    <div className="fixed top-0 right-0 p-2 z-0">
+    <div className="toast toast-top toast-end">
       {Array.from(Array(maxMessages ?? 1).keys()).map(index => {
         if (alertMessages[index] === undefined) return null;
         const status = alertMessages[index]?.status ?? 'success';

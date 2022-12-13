@@ -39,12 +39,8 @@ exports[`<App /> > renders login page 1`] = `
           class="card-body"
         >
           <div
-            class="h-[55px] w-[318px]"
-          >
-            <div
-              style="height: 40px;"
-            />
-          </div>
+            style="height: 40px;"
+          />
           <div
             class="divider"
             role="separator"
@@ -112,11 +108,13 @@ exports[`<App /> > renders login page 1`] = `
               >
                 <a
                   class="link label-text-alt link-hover"
+                  rel="noopener noreferrer"
                 >
                   Forgot password?
                 </a>
                 <a
                   class="link label-text-alt link-hover"
+                  rel="noopener noreferrer"
                 >
                   Register
                 </a>
@@ -137,8 +135,28 @@ exports[`<App /> > renders login page 1`] = `
       </div>
     </div>
     <div
-      class="fixed top-0 right-0 p-2 z-0"
+      class="toast toast-top toast-end"
     />
+    <div
+      class="absolute top-0 right-0"
+    >
+      <button
+        class="btn rounded-lg text-sm p-2.5 btn-ghost"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clip-rule="evenodd"
+            d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 `;
@@ -182,12 +200,8 @@ exports[`<App /> > renders profile page 1`] = `
           class="card-body"
         >
           <div
-            class="h-[55px] w-[318px]"
-          >
-            <div
-              style="height: 40px;"
-            />
-          </div>
+            style="height: 40px;"
+          />
           <div
             class="divider"
             role="separator"
@@ -255,11 +269,13 @@ exports[`<App /> > renders profile page 1`] = `
               >
                 <a
                   class="link label-text-alt link-hover"
+                  rel="noopener noreferrer"
                 >
                   Forgot password?
                 </a>
                 <a
                   class="link label-text-alt link-hover"
+                  rel="noopener noreferrer"
                 >
                   Register
                 </a>
@@ -280,8 +296,28 @@ exports[`<App /> > renders profile page 1`] = `
       </div>
     </div>
     <div
-      class="fixed top-0 right-0 p-2 z-0"
+      class="toast toast-top toast-end"
     />
+    <div
+      class="absolute top-0 right-0"
+    >
+      <button
+        class="btn rounded-lg text-sm p-2.5 btn-ghost"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            clip-rule="evenodd"
+            d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+            fill-rule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 `;
