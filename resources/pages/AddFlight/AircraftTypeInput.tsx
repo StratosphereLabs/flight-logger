@@ -13,15 +13,14 @@ export const AircraftTypeInput = ({
   ...props
 }: AircraftTypeInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
-  const { data, error, isFetching } =
-    trpc.aircraftTypes.searchAircraft.useQuery(
-      {
-        query,
-      },
-      {
-        enabled: query.length > 0,
-      },
-    );
+  const { data, error } = trpc.aircraftTypes.searchAircraft.useQuery(
+    {
+      query,
+    },
+    {
+      enabled: query.length > 0,
+    },
+  );
   useTRPCErrorHandler(error);
   return (
     <TypeaheadInput
@@ -29,10 +28,9 @@ export const AircraftTypeInput = ({
       labelText="Aircraft Type"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
       getItemValue={({ id }) => id}
-      isFetching={isFetching}
       name="aircraftTypeId"
       onDebouncedChange={setQuery}
-      options={data ?? []}
+      options={data}
       {...props}
     />
   );
