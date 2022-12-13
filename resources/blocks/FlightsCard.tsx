@@ -9,24 +9,40 @@ import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../common/hooks';
+import { useAppContext } from '../providers';
 import { trpc } from '../utils/trpc';
 
 export const DATE_FORMAT = 'M/d/yyyy';
 
 export const FlightsCard = (): JSX.Element => {
+  const utils = trpc.useContext();
+  const { addAlertMessages } = useAppContext();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteFlight, setDeleteFlight] = useState<flight | null>(null);
   const { username } = useParams();
   const handleSuccess = useSuccessResponseHandler();
-  const { data, error, isFetching, refetch } =
-    trpc.users.getUserFlights.useQuery({
-      username,
-    });
+  const { data, error, isFetching } = trpc.users.getUserFlights.useQuery({
+    username,
+  });
   const { isLoading, mutate } = trpc.users.deleteFlight.useMutation({
-    onSuccess: async () => {
+    onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
       setIsDeleteDialogOpen(false);
-      await refetch();
+      const previousFlights = utils.users.getUserFlights.getData({
+        username,
+      });
+      utils.users.getUserFlights.setData(
+        previousFlights?.filter(flight => flight.id !== id),
+        { username },
+      );
+    },
+    onError: err => {
+      addAlertMessages([
+        {
+          status: 'error',
+          message: err.message,
+        },
+      ]);
     },
   });
   useTRPCErrorHandler(error);
