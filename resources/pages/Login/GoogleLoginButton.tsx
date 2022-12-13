@@ -14,23 +14,21 @@ export const GoogleLoginButton = ({
   const { mutate } = useGoogleLoginMutation();
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <div className={`h-[55px] w-[${width}]`}>
-        <GoogleLogin
-          onSuccess={credentialResponse => mutate(credentialResponse)}
-          onError={() => {
-            addAlertMessages([
-              {
-                status: 'error',
-                message: 'Unable to fetch Google Auth token',
-              },
-            ]);
-          }}
-          useOneTap
-          shape="pill"
-          width={width}
-          theme={theme === AppTheme.DARK ? 'filled_black' : undefined}
-        />
-      </div>
+      <GoogleLogin
+        onSuccess={credentialResponse => mutate(credentialResponse)}
+        onError={() => {
+          addAlertMessages([
+            {
+              status: 'error',
+              message: 'Unable to fetch Google Auth token',
+            },
+          ]);
+        }}
+        useOneTap
+        shape="pill"
+        width={width}
+        theme={theme === AppTheme.DARK ? 'filled_black' : undefined}
+      />
     </GoogleOAuthProvider>
   );
 };

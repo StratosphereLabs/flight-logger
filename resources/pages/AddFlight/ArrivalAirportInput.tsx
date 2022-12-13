@@ -15,7 +15,7 @@ export const ArrivalAirportInput = ({
   ...props
 }: ArrivalAirportInputProps): JSX.Element => {
   const [query, setQuery] = useState('');
-  const { data, error, isFetching } = trpc.airports.searchAirports.useQuery(
+  const { data, error } = trpc.airports.searchAirports.useQuery(
     {
       query,
     },
@@ -31,10 +31,9 @@ export const ArrivalAirportInput = ({
       labelText="Arrival Airport"
       getItemText={({ id, name }) => `${id} - ${name}`}
       getItemValue={({ id }) => id}
-      isFetching={isFetching}
       name="arrivalAirportId"
       onDebouncedChange={setQuery}
-      options={data ?? []}
+      options={data}
       {...props}
     />
   );

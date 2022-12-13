@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { addFlightSchema } from '../../../app/schemas';
@@ -26,6 +27,7 @@ import { DepartureAirportInput } from './DepartureAirportInput';
 
 export const AddFlight = (): JSX.Element => {
   useProtectedPage();
+  const firstFieldRef = useRef<HTMLInputElement>(null);
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -37,9 +39,13 @@ export const AddFlight = (): JSX.Element => {
     onSuccess: () => {
       handleSuccess('Flight Added!');
       methods.reset();
+      firstFieldRef.current?.focus();
     },
   });
   useTRPCErrorHandler(error);
+  useEffect(() => {
+    firstFieldRef.current?.focus();
+  }, []);
   return (
     <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
       <Card.Body>
@@ -50,7 +56,11 @@ export const AddFlight = (): JSX.Element => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <DepartureAirportInput className="max-w-sm" isRequired />
+                <DepartureAirportInput
+                  ref={firstFieldRef}
+                  className="max-w-sm"
+                  isRequired
+                />
               </div>
               <div className="flex-1 flex justify-center">
                 <ArrivalAirportInput className="max-w-sm" isRequired />

@@ -1,6 +1,6 @@
 import { Card, Hero } from 'react-daisyui';
 import { Outlet } from 'react-router-dom';
-import { AlertMessages } from '../../common/components';
+import { AlertMessages, DarkModeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => (
   <Hero className="bg-base-200 min-h-screen">
@@ -20,5 +20,8 @@ export const AuthenticationLayout = (): JSX.Element => (
       </Card>
     </Hero.Content>
     <AlertMessages maxMessages={4} />
+    <div className="absolute top-0 right-0">
+      <DarkModeButton />
+    </div>
   </Hero>
 );

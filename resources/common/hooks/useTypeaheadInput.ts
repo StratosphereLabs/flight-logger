@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { GenericDataType } from '../types';
 import { useDebouncedState } from './useDebouncedValue';
 
-export interface UseTypeaheadInputOptions {
+export interface UseTypeaheadInputOptions<DataItem> {
   debounceTime?: number;
-  isFetching?: boolean;
-  onDebouncedChange?: (value: string) => void;
+  onDebouncedChange: (value: string) => void;
+  options?: DataItem[];
 }
 
 export interface UseTypeaheadInputResult<DataItem> {
@@ -18,17 +18,29 @@ export interface UseTypeaheadInputResult<DataItem> {
 
 export const useTypeaheadInput = <DataItem extends GenericDataType>({
   debounceTime,
-  isFetching,
   onDebouncedChange,
-}: UseTypeaheadInputOptions): UseTypeaheadInputResult<DataItem> => {
-  const [query, setQuery, debouncedQuery, isDebouncing] =
-    useDebouncedState<string>('', debounceTime ?? 400);
+  options,
+}: UseTypeaheadInputOptions<DataItem>): UseTypeaheadInputResult<DataItem> => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [query, setQuery, debouncedQuery] = useDebouncedState<string>(
+    '',
+    debounceTime ?? 400,
+  );
   const [selectedItem, setSelectedItem] = useState<DataItem | null>(null);
-  const isLoading = (isDebouncing || isFetching) ?? false;
-  const formattedQuery = debouncedQuery.trim();
+  const currentQuery = useMemo(() => {
+    const formattedQuery = query.trim();
+    const formattedDebouncedQuery = debouncedQuery.trim();
+    return formattedQuery === '' ? formattedQuery : formattedDebouncedQuery;
+  }, [query, debouncedQuery]);
   useEffect(() => {
-    onDebouncedChange?.(formattedQuery);
-  }, [formattedQuery]);
+    onDebouncedChange?.(currentQuery);
+  }, [currentQuery]);
+  useEffect(() => {
+    if (options !== undefined) setIsLoading(false);
+  }, [options]);
+  useEffect(() => {
+    setIsLoading(query !== '');
+  }, [query]);
   return {
     isLoading,
     query,

@@ -1,8 +1,8 @@
-import { Tab } from '@headlessui/react';
-import { Button, Dropdown, Menu as DaisyUIMenu, Navbar } from 'react-daisyui';
-import { Link, NavLink, useLinkClickHandler } from 'react-router-dom';
+import { Button, Navbar } from 'react-daisyui';
+import { Link, useLinkClickHandler } from 'react-router-dom';
 import { DarkModeButton } from '../../common/components';
 import { useAppContext } from '../../providers';
+import { NavbarTab } from './NavbarTab';
 
 export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
@@ -11,7 +11,7 @@ export const MainNavbar = (): JSX.Element => {
     <div className="flex w-full component-preview p-3 items-center justify-center gap-2 font-sans">
       <Navbar className="bg-base-200 shadow-xl rounded-box">
         <Navbar.Start>
-          <Dropdown>
+          <div className="dropdown dropdown-bottom">
             <Button color="ghost" tabIndex={0} className="lg:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -28,18 +28,21 @@ export const MainNavbar = (): JSX.Element => {
                 />
               </svg>
             </Button>
-            <Dropdown.Menu tabIndex={0} className="w-52 menu-compact mt-3">
-              <Link to="/profile">
-                <Dropdown.Item>Home</Dropdown.Item>
-              </Link>
-              <Link to="/flights">
-                <Dropdown.Item>My Flights</Dropdown.Item>
-              </Link>
-              <Link to="/data">
-                <Dropdown.Item>Data</Dropdown.Item>
-              </Link>
-            </Dropdown.Menu>
-          </Dropdown>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <Link to="/profile">Home</Link>
+              </li>
+              <li>
+                <Link to="/flights">My Flights</Link>
+              </li>
+              <li>
+                <Link to="/data">Data</Link>
+              </li>
+            </ul>
+          </div>
           <Link to="/profile" className="btn btn-ghost normal-case text-xl">
             <div className="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-3xl">
               <span>Flight</span>{' '}
@@ -48,17 +51,11 @@ export const MainNavbar = (): JSX.Element => {
           </Link>
         </Navbar.Start>
         <Navbar.Center className="hidden lg:flex">
-          <Tab.Group as={DaisyUIMenu} horizontal className="p-0">
-            <Tab.List as={DaisyUIMenu.Item}>
-              <NavLink to="/profile">Home</NavLink>
-            </Tab.List>
-            <Tab.List as={DaisyUIMenu.Item}>
-              <NavLink to="/flights">My Flights</NavLink>
-            </Tab.List>
-            <Tab.List as={DaisyUIMenu.Item}>
-              <NavLink to="/data">Data</NavLink>
-            </Tab.List>
-          </Tab.Group>
+          <div className="tabs tabs-boxed">
+            <NavbarTab to="/profile">Home</NavbarTab>
+            <NavbarTab to="/flights">My Flights</NavbarTab>
+            <NavbarTab to="/data">Data</NavbarTab>
+          </div>
         </Navbar.Center>
         <Navbar.End className="space-x-2">
           <DarkModeButton />
