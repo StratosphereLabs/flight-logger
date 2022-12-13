@@ -36,7 +36,7 @@ export const TypeaheadInput = <
 }: TypeaheadInputProps<DataItem, Values>): JSX.Element => {
   const { setValue } = useFormContext();
   const {
-    field,
+    field: { value, ...field },
     fieldState: { error },
   } = useController({
     ...controllerProps,
@@ -54,6 +54,9 @@ export const TypeaheadInput = <
       shouldValidate: selectedItem !== null,
     });
   }, [selectedItem]);
+  useEffect(() => {
+    if (value === '') setSelectedItem(null);
+  }, [value]);
   return (
     <Combobox
       as="div"
