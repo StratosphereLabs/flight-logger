@@ -172,6 +172,7 @@ export const FlightsCard = (): JSX.Element => {
           {
             children: 'Yes',
             color: 'error',
+            initialFocus: true,
             loading: isLoading,
             onClick: () => mutate({ id: deleteFlight?.id ?? '' }),
           },
@@ -180,9 +181,12 @@ export const FlightsCard = (): JSX.Element => {
         show={isDeleteDialogOpen}
         title="Delete Flight"
       >
-        {`Are you sure you want to delete your ${
-          deleteFlight?.departureAirportId ?? ''
-        } - ${deleteFlight?.arrivalAirportId ?? ''} flight?`}
+        Are you sure you want to delete your{' '}
+        <strong>
+          {deleteFlight?.departureAirportId ?? ''} -{' '}
+          {deleteFlight?.arrivalAirportId ?? ''}
+        </strong>{' '}
+        flight?
       </Modal>
     </>
   );
