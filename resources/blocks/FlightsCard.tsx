@@ -9,24 +9,40 @@ import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../common/hooks';
+import { useAppContext } from '../providers';
 import { trpc } from '../utils/trpc';
 
 export const DATE_FORMAT = 'M/d/yyyy';
 
 export const FlightsCard = (): JSX.Element => {
+  const utils = trpc.useContext();
+  const { addAlertMessages } = useAppContext();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteFlight, setDeleteFlight] = useState<flight | null>(null);
   const { username } = useParams();
   const handleSuccess = useSuccessResponseHandler();
-  const { data, error, isFetching, refetch } =
-    trpc.users.getUserFlights.useQuery({
-      username,
-    });
+  const { data, error, isFetching } = trpc.users.getUserFlights.useQuery({
+    username,
+  });
   const { isLoading, mutate } = trpc.users.deleteFlight.useMutation({
-    onSuccess: async () => {
+    onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
       setIsDeleteDialogOpen(false);
-      await refetch();
+      const previousFlights = utils.users.getUserFlights.getData({
+        username,
+      });
+      utils.users.getUserFlights.setData(
+        previousFlights?.filter(flight => flight.id !== id),
+        { username },
+      );
+    },
+    onError: err => {
+      addAlertMessages([
+        {
+          status: 'error',
+          message: err.message,
+        },
+      ]);
     },
   });
   useTRPCErrorHandler(error);
@@ -172,6 +188,7 @@ export const FlightsCard = (): JSX.Element => {
           {
             children: 'Yes',
             color: 'error',
+            initialFocus: true,
             loading: isLoading,
             onClick: () => mutate({ id: deleteFlight?.id ?? '' }),
           },
@@ -180,9 +197,12 @@ export const FlightsCard = (): JSX.Element => {
         show={isDeleteDialogOpen}
         title="Delete Flight"
       >
-        {`Are you sure you want to delete your ${
-          deleteFlight?.departureAirportId ?? ''
-        } - ${deleteFlight?.arrivalAirportId ?? ''} flight?`}
+        Are you sure you want to delete your{' '}
+        <strong>
+          {deleteFlight?.departureAirportId ?? ''} -{' '}
+          {deleteFlight?.arrivalAirportId ?? ''}
+        </strong>{' '}
+        flight?
       </Modal>
     </>
   );
