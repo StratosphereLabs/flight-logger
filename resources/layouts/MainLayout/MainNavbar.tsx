@@ -1,4 +1,4 @@
-import { Button, Dropdown, Navbar } from 'react-daisyui';
+import { Button, Navbar } from 'react-daisyui';
 import { Link, useLinkClickHandler } from 'react-router-dom';
 import { DarkModeButton } from '../../common/components';
 import { useAppContext } from '../../providers';
