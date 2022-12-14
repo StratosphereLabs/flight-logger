@@ -57,8 +57,8 @@ export const AddFlight = (): JSX.Element => {
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
                 <DepartureAirportInput
-                  ref={firstFieldRef}
                   className="max-w-sm"
+                  inputRef={firstFieldRef}
                   isRequired
                 />
               </div>
