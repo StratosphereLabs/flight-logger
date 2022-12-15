@@ -1,4 +1,5 @@
 import { airport } from '@prisma/client';
+import { add, formatISO, intervalToDuration, isBefore } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
 
 export interface FlightTimestampsInput {
@@ -22,25 +23,31 @@ export interface FlightTimestampsResult {
 export const getFlightTimestamps = ({
   departureAirport,
   arrivalAirport,
+  outDate,
   outTime,
   offTime,
   onTime,
   inTime,
 }: FlightTimestampsInput): FlightTimestampsResult => {
-  console.log({
-    departureAirport,
-    arrivalAirport,
-    outTime,
-    offTime,
-    onTime,
-    inTime,
+  const departureTimeZone = departureAirport.timeZone;
+  const arrivalTimeZone = arrivalAirport.timeZone;
+  const outTimeUtc = zonedTimeToUtc(`${outDate} ${outTime}`, departureTimeZone);
+  const inTimeUtc = zonedTimeToUtc(`${outDate} ${inTime}`, arrivalTimeZone);
+  const correctedInTime = isBefore(inTimeUtc, outTimeUtc)
+    ? add(inTimeUtc, {
+        days: 1,
+      })
+    : inTimeUtc;
+  const duration = intervalToDuration({
+    start: outTimeUtc,
+    end: correctedInTime,
   });
   return {
-    duration: 115,
-    outTime: '2022-11-05 11:55:05',
+    duration: 60 * (duration.hours ?? 0) + (duration.minutes ?? 0),
+    outTime: formatISO(outTimeUtc),
     offTime: null,
     onTime: null,
-    inTime: '2022-11-05 13:50:05',
+    inTime: formatISO(inTimeUtc),
   };
 };
 

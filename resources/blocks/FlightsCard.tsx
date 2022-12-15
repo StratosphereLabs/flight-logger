@@ -1,6 +1,6 @@
 import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
-import { format, formatDuration, intervalToDuration, isBefore } from 'date-fns';
+import { format, intervalToDuration, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
@@ -141,16 +141,15 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Duration',
                 cell: ({ getValue }) => {
                   const totalMinutes = getValue<number>();
-                  const duration = intervalToDuration({
+                  const { hours, minutes } = intervalToDuration({
                     start: 0,
                     end: totalMinutes * 60 * 1000,
                   });
-                  const formattedDuration = formatDuration(duration, {
-                    format: ['hours', 'minutes'],
-                  })
-                    .replace(/ hours| hour/, 'h')
-                    .replace(/ minutes| minute/, 'm');
-                  return <div className="font-mono">{formattedDuration}</div>;
+                  return (
+                    <div className="font-mono">{`${hours ?? 0}h ${
+                      minutes ?? 0
+                    }m`}</div>
+                  );
                 },
               },
               {
