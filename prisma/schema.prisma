@@ -46,6 +46,7 @@ model flight {
   offTime            String?
   onTime             String?
   inTime             String
+  duration           Int            @default(0)
   class              FlightClass?
   seatNumber         String?
   seatPosition       SeatPosition?

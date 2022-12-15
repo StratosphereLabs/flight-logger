@@ -1,12 +1,18 @@
 import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
-import { zonedTimeToUtc } from 'date-fns-tz';
 import createHttpError from 'http-errors';
 import groupBy from 'lodash.groupby';
 import keyBy from 'lodash.keyby';
 import { findBestMatch } from 'string-similarity';
-import { DIGIT_REGEX } from '../constants';
 import { prisma } from '../db';
+import { getFlightTimestamps } from '../utils/datetime';
+import {
+  getAircraftIcao,
+  getAircraftName,
+  getAirlineId,
+  getAirportId,
+  getFlightNumber,
+} from '../utils/flightdiary';
 
 interface FlightDiaryRow {
   Date: string;
@@ -35,46 +41,6 @@ interface DataFetchResults {
   airlines: Record<string, airline>;
   aircraftTypes: Record<string, aircraft_type[]>;
 }
-
-export const AIRPORT_ID_REGEX = /\([A-Z]{3}\/[A-Z]{4}\)/g;
-export const AIRLINE_ID_REGEX = /\([A-Z0-9]{2}\/[A-Z]{3}\)/g;
-export const AIRCRAFT_TYPE_ICAO_REGEX = /\([A-Z0-9]{3,4}\)/g;
-
-export const getUTCTime = (
-  date: string,
-  time: string,
-  timeZone: string,
-): string => zonedTimeToUtc(`${date} ${time}`, timeZone).toISOString();
-
-export const getAirportId = (text: string): string | null => {
-  const match = text.match(AIRPORT_ID_REGEX);
-  if (match === null) {
-    return null;
-  }
-  return match[0].split('/')[1].split(')')[0];
-};
-
-export const getAirlineId = (text: string): string | null => {
-  const match = text.match(AIRLINE_ID_REGEX);
-  if (match === null) {
-    return null;
-  }
-  return match[0].split('(')[1].split(')')[0];
-};
-
-export const getAircraftName = (text: string): string =>
-  text.split('(')[0].trim();
-
-export const getAircraftIcao = (text: string): string => {
-  const match = text.match(AIRCRAFT_TYPE_ICAO_REGEX);
-  return match?.[0].split('(')[1].split(')')[0] ?? '';
-};
-
-export const getFlightNumber = (text: string): number | null => {
-  const number = Number(text.slice(2).match(DIGIT_REGEX)?.join(''));
-  if (isNaN(number)) return null;
-  return number;
-};
 
 export const fetchData = async (
   rows: FlightDiaryRow[],
@@ -172,6 +138,15 @@ export const saveFlightDiaryData = async (
         aircraftName,
         aircraftTypes?.map(({ name }) => name) ?? [''],
       );
+      const { outTime, inTime, duration } = getFlightTimestamps({
+        departureAirport,
+        arrivalAirport,
+        outDate: row.Date,
+        outTime: row['Dep time'],
+        offTime: null,
+        onTime: null,
+        inTime: row['Arr time'],
+      });
       return [
         prisma.flight.create({
           data: {
@@ -208,16 +183,9 @@ export const saveFlightDiaryData = async (
                 : undefined,
             flightNumber: getFlightNumber(row['Flight number']),
             tailNumber: row.Registration,
-            outTime: getUTCTime(
-              row.Date,
-              row['Dep time'],
-              departureAirport.timeZone,
-            ),
-            inTime: getUTCTime(
-              row.Date,
-              row['Arr time'],
-              arrivalAirport.timeZone,
-            ),
+            outTime,
+            inTime,
+            duration,
             seatNumber: row['Seat number'],
             comments: row.Note,
           },

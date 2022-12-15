@@ -1,10 +1,17 @@
 import { aircraft_type, airline, airport, flight } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
-import { format, isBefore } from 'date-fns';
+import { format, intervalToDuration, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard, Modal, Table } from '../common/components';
+import {
+  EditIcon,
+  LinkIcon,
+  LoadingCard,
+  Modal,
+  Table,
+  TrashIcon,
+} from '../common/components';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -12,7 +19,7 @@ import {
 import { useAppContext } from '../providers';
 import { trpc } from '../utils/trpc';
 
-export const DATE_FORMAT = 'M/d/yyyy';
+export const DATE_FORMAT = 'yyyy-MM-dd';
 
 export const FlightsCard = (): JSX.Element => {
   const utils = trpc.useContext();
@@ -66,9 +73,13 @@ export const FlightsCard = (): JSX.Element => {
                   const isoTime = getValue<string>();
                   const date = format(new Date(isoTime), DATE_FORMAT);
                   const color = isBefore(new Date(isoTime), new Date())
-                    ? 'primary'
+                    ? 'info'
                     : 'secondary';
-                  return <Badge color={color}>{date}</Badge>;
+                  return (
+                    <Badge className="font-semibold" color={color}>
+                      {date}
+                    </Badge>
+                  );
                 },
                 footer: () => null,
               },
@@ -125,15 +136,36 @@ export const FlightsCard = (): JSX.Element => {
                 footer: () => null,
               },
               {
+                id: 'duration',
+                accessorKey: 'duration',
+                header: () => 'Duration',
+                cell: ({ getValue }) => {
+                  const totalMinutes = getValue<number>();
+                  const { hours, minutes } = intervalToDuration({
+                    start: 0,
+                    end: totalMinutes * 60 * 1000,
+                  });
+                  return (
+                    <div className="font-mono">{`${hours ?? 0}h ${
+                      minutes ?? 0
+                    }m`}</div>
+                  );
+                },
+              },
+              {
                 id: 'flightNumber',
                 accessorKey: 'flightNumber',
                 header: () => 'Flight #',
                 cell: ({ getValue, row }) => {
                   const airlineData = row.getValue<airline>('airline');
                   const flightNumber = getValue<number | null>();
-                  return `${airlineData?.iata ?? ''} ${
-                    flightNumber ?? ''
-                  }`.trim();
+                  return (
+                    <div className="opacity-70">
+                      {`${airlineData?.iata ?? ''} ${
+                        flightNumber ?? ''
+                      }`.trim()}
+                    </div>
+                  );
                 },
                 footer: () => null,
               },
@@ -143,7 +175,11 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Aircraft',
                 cell: ({ getValue }) => {
                   const aircraftType = getValue<aircraft_type>();
-                  return aircraftType?.name ?? '';
+                  return (
+                    <div className="opacity-70 italic">
+                      {aircraftType?.name ?? ''}
+                    </div>
+                  );
                 },
                 footer: () => null,
               },
@@ -151,22 +187,40 @@ export const FlightsCard = (): JSX.Element => {
                 id: 'tailNumber',
                 accessorKey: 'tailNumber',
                 header: () => 'Registration',
+                cell: ({ getValue }) => {
+                  const tailNumber = getValue<string>();
+                  return <div className="font-mono">{tailNumber}</div>;
+                },
                 footer: () => null,
               },
               {
                 id: 'actions',
                 header: () => 'Actions',
                 cell: ({ row }) => (
-                  <Button
-                    onClick={() => {
-                      setDeleteFlight(row.original);
-                      setIsDeleteDialogOpen(true);
-                    }}
-                    color="error"
-                    size="xs"
-                  >
-                    Delete
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      className="px-1"
+                      color="ghost"
+                      startIcon={<LinkIcon />}
+                      size="xs"
+                    />
+                    <Button
+                      className="px-1"
+                      color="info"
+                      startIcon={<EditIcon />}
+                      size="xs"
+                    />
+                    <Button
+                      onClick={() => {
+                        setDeleteFlight(row.original);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                      className="px-1"
+                      color="error"
+                      startIcon={<TrashIcon />}
+                      size="xs"
+                    />
+                  </div>
                 ),
                 footer: () => null,
               },
