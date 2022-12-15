@@ -15,6 +15,7 @@ import {
   paginationSchema,
 } from '../schemas';
 import { getAirports, getRoutes } from '../parsers';
+import { getFlightTimestamps } from '../utils/datetime';
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
@@ -107,6 +108,34 @@ export const usersRouter = router({
     .use(verifyAuthenticated)
     .input(addFlightSchema)
     .mutation(async ({ ctx, input }) => {
+      const [departureAirport, arrivalAirport] = await prisma.$transaction([
+        prisma.airport.findUnique({
+          where: {
+            id: input.departureAirportId,
+          },
+        }),
+        prisma.airport.findUnique({
+          where: {
+            id: input.arrivalAirportId,
+          },
+        }),
+      ]);
+      if (departureAirport === null || arrivalAirport === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Airport not found.',
+        });
+      }
+      const { outTime, offTime, onTime, inTime, duration } =
+        getFlightTimestamps({
+          departureAirport,
+          arrivalAirport,
+          outDate: input.outDate,
+          outTime: input.outTime,
+          offTime: input.offTime,
+          onTime: input.onTime,
+          inTime: input.inTime,
+        });
       const flight = await prisma.flight.create({
         data: {
           user: {
@@ -143,10 +172,11 @@ export const usersRouter = router({
           flightNumber: input.flightNumber,
           callsign: input.callsign,
           tailNumber: input.tailNumber,
-          outTime: `${input.outDate} ${input.outTime ?? ''}`.trim(),
-          offTime: input.offTime,
-          onTime: input.onTime,
-          inTime: input.inTime,
+          outTime,
+          offTime,
+          onTime,
+          inTime,
+          duration,
           class: input.class,
           seatNumber: input.seatNumber,
           seatPosition: input.seatPosition,
