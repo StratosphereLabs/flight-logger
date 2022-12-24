@@ -28,6 +28,9 @@ export const Badge = ({
           event.stopPropagation();
           onDismiss(event);
         }}
+        onKeyDown={event => {
+          event.stopPropagation();
+        }}
       >
         <CloseIcon />
         <span className="sr-only">Remove badge</span>
