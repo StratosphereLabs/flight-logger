@@ -8,9 +8,9 @@ import { GenericDataType, PaginationMetadata } from '../types';
 
 export interface TableProps<DataType extends GenericDataType>
   extends TableOptions<DataType> {
+  className?: string;
   compact?: boolean;
   enableFixedWidth?: boolean;
-  enableGlobalFilter?: boolean;
   enableRowHover?: boolean;
   enableZebra?: boolean;
   isLoading?: boolean;
@@ -18,6 +18,7 @@ export interface TableProps<DataType extends GenericDataType>
 }
 
 export const Table = <DataType extends GenericDataType>({
+  className,
   compact,
   enableFixedWidth,
   enableGlobalFilter,
@@ -43,11 +44,17 @@ export const Table = <DataType extends GenericDataType>({
     <div className="h-full flex flex-col">
       <div className={`flex-1 overflow-x-scroll ${scrollBar}`}>
         <table
-          className={classNames('table', 'w-full', 'rounded-box', {
-            'table-compact': compact,
-            'table-fixed': enableFixedWidth,
-            'table-zebra': enableZebra,
-          })}
+          className={classNames(
+            'table',
+            'w-full',
+            'rounded-box',
+            {
+              'table-compact': compact,
+              'table-fixed': enableFixedWidth,
+              'table-zebra': enableZebra,
+            },
+            className,
+          )}
         >
           <thead>
             {getHeaderGroups().map(headerGroup => (

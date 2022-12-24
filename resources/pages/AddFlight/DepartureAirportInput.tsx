@@ -1,6 +1,6 @@
 import { RefObject, useState } from 'react';
 import { InputProps } from 'react-daisyui';
-import { TypeaheadInput } from '../../common/components';
+import { TypeaheadSingleSelect } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -26,7 +26,7 @@ export const DepartureAirportInput = ({
   );
   useTRPCErrorHandler(error);
   return (
-    <TypeaheadInput
+    <TypeaheadSingleSelect
       className={className}
       isRequired={isRequired}
       labelText="Departure Airport"

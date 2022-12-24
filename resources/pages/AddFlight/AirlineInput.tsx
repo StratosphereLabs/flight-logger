@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { InputProps } from 'react-daisyui';
-import { TypeaheadInput } from '../../common/components';
+import { TypeaheadSingleSelect } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -23,7 +23,7 @@ export const AirlineInput = ({
   );
   useTRPCErrorHandler(error);
   return (
-    <TypeaheadInput
+    <TypeaheadSingleSelect
       className={className}
       labelText="Airline"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}

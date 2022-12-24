@@ -10,7 +10,7 @@ export const AuthenticationLayout = (): JSX.Element => (
           <span>Flight</span> <span className="text-base-content">Logger</span>
         </div>
         <p className="py-6">
-          Welcome! Please choose a login method to get started
+          Welcome! Please login to access your flights and trips
         </p>
       </div>
       <Card className="flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100 mx-10">

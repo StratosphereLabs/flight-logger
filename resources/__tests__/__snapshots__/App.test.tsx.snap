@@ -28,7 +28,7 @@ exports[`<App /> > renders login page 1`] = `
         <p
           class="py-6"
         >
-          Welcome! Please choose a login method to get started
+          Welcome! Please login to access your flights and trips
         </p>
       </div>
       <div
@@ -38,15 +38,6 @@ exports[`<App /> > renders login page 1`] = `
         <div
           class="card-body"
         >
-          <div
-            style="height: 40px;"
-          />
-          <div
-            class="divider"
-            role="separator"
-          >
-            OR
-          </div>
           <form
             novalidate=""
           >
@@ -189,7 +180,7 @@ exports[`<App /> > renders profile page 1`] = `
         <p
           class="py-6"
         >
-          Welcome! Please choose a login method to get started
+          Welcome! Please login to access your flights and trips
         </p>
       </div>
       <div
@@ -199,15 +190,6 @@ exports[`<App /> > renders profile page 1`] = `
         <div
           class="card-body"
         >
-          <div
-            style="height: 40px;"
-          />
-          <div
-            class="divider"
-            role="separator"
-          >
-            OR
-          </div>
           <form
             novalidate=""
           >
