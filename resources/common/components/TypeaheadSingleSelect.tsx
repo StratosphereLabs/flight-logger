@@ -58,7 +58,7 @@ export const TypeaheadSingleSelect = <
   return (
     <Combobox
       as="div"
-      className={classNames('form-control', 'w-full', 'max-w-sm', className)}
+      className={classNames('form-control', 'w-full', className)}
       name={name}
       nullable
       onChange={setSelectedItem}

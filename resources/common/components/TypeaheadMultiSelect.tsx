@@ -61,7 +61,7 @@ export const TypeaheadMultiSelect = <
   return (
     <Combobox
       as="div"
-      className={classNames('form-control', 'w-full', 'max-w-sm', className)}
+      className={classNames('form-control', 'w-full', className)}
       multiple
       name={name}
       onChange={value => {
