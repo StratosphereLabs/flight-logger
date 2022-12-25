@@ -1,17 +1,22 @@
+import { airline } from '@prisma/client';
 import { useState } from 'react';
-import { InputProps } from 'react-daisyui';
-import { TypeaheadSingleSelect } from '../../common/components';
+import { FieldValues } from 'react-hook-form';
+import {
+  TypeaheadSingleSelect,
+  TypeaheadSingleSelectProps,
+} from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export interface AirlineInputProps extends InputProps {
-  className?: string;
-}
+export interface AirlineInputProps<Values extends FieldValues>
+  extends Omit<
+    TypeaheadSingleSelectProps<airline, Values>,
+    'getItemText' | 'getItemValue' | 'onDebouncedChange' | 'options'
+  > {}
 
-export const AirlineInput = ({
-  className,
-  ...props
-}: AirlineInputProps): JSX.Element => {
+export const AirlineInput = <Values extends FieldValues>(
+  props: AirlineInputProps<Values>,
+): JSX.Element => {
   const [query, setQuery] = useState('');
   const { data, error } = trpc.airlines.searchAirlines.useQuery(
     {
@@ -24,11 +29,8 @@ export const AirlineInput = ({
   useTRPCErrorHandler(error);
   return (
     <TypeaheadSingleSelect
-      className={className}
-      labelText="Airline"
       getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
       getItemValue={({ id }) => id}
-      name="airlineId"
       onDebouncedChange={setQuery}
       options={data}
       {...props}

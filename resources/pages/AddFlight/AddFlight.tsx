@@ -4,6 +4,9 @@ import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { addFlightSchema } from '../../../app/schemas';
 import {
+  AircraftTypeInput,
+  AirlineInput,
+  AirportInput,
   Form,
   FormControl,
   FormRadio,
@@ -19,11 +22,7 @@ import {
   numberInputTransformer,
 } from '../../common/transformers';
 import { trpc } from '../../utils/trpc';
-import { AircraftTypeInput } from './AircraftTypeInput';
-import { AirlineInput } from './AirlineInput';
-import { ArrivalAirportInput } from './ArrivalAirportInput';
 import { addFlightDefaultValues } from './constants';
-import { DepartureAirportInput } from './DepartureAirportInput';
 
 export const AddFlight = (): JSX.Element => {
   useProtectedPage();
@@ -56,14 +55,21 @@ export const AddFlight = (): JSX.Element => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <DepartureAirportInput
+                <AirportInput
                   className="max-w-sm"
                   inputRef={firstFieldRef}
                   isRequired
+                  labelText="Departure Airport"
+                  name="departureAirportId"
                 />
               </div>
               <div className="flex-1 flex justify-center">
-                <ArrivalAirportInput className="max-w-sm" isRequired />
+                <AirportInput
+                  className="max-w-sm"
+                  isRequired
+                  labelText="Arrival Airport"
+                  name="arrivalAirportId"
+                />
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
@@ -99,10 +105,18 @@ export const AddFlight = (): JSX.Element => {
             <Divider />
             <div className="flex flex-wrap gap-8">
               <div className="flex-1 flex justify-center">
-                <AirlineInput className="max-w-sm" />
+                <AirlineInput
+                  className="max-w-sm"
+                  labelText="Airline"
+                  name="airlineId"
+                />
               </div>
               <div className="flex-1 flex justify-center">
-                <AircraftTypeInput className="max-w-sm" />
+                <AircraftTypeInput
+                  className="max-w-sm"
+                  labelText="Aircraft Type"
+                  name="aircraftTypeId"
+                />
               </div>
             </div>
             <div className="flex flex-wrap gap-8">

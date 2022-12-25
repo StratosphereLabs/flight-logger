@@ -43,11 +43,8 @@ export const MainNavbar = (): JSX.Element => {
               </li>
             </ul>
           </div>
-          <Link
-            to="/profile"
-            className="btn btn-ghost normal-case text-xl hidden sm:block"
-          >
-            <div className="font-title text-primary inline-flex transition-all duration-200 text-3xl">
+          <Link to="/" className="btn btn-ghost normal-case text-xl">
+            <div className="font-title text-primary hidden sm:inline-flex transition-all duration-200 text-3xl">
               <span>Flight</span>{' '}
               <span className="text-base-content">Logger</span>
             </div>
