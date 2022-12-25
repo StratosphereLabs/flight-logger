@@ -1,6 +1,6 @@
 import { Button, Navbar } from 'react-daisyui';
 import { Link, useLinkClickHandler } from 'react-router-dom';
-import { DarkModeButton } from '../../common/components';
+import { DarkModeButton, LogoutIcon } from '../../common/components';
 import { useAppContext } from '../../providers';
 import { NavbarTab } from './NavbarTab';
 
@@ -33,18 +33,18 @@ export const MainNavbar = (): JSX.Element => {
               className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <Link to="/profile">Home</Link>
+                <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/flights">My Flights</Link>
+                <Link to="/profile">My Profile</Link>
               </li>
               <li>
                 <Link to="/data">Data</Link>
               </li>
             </ul>
           </div>
-          <Link to="/profile" className="btn btn-ghost normal-case text-xl">
-            <div className="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-3xl">
+          <Link to="/" className="btn btn-ghost normal-case text-xl">
+            <div className="font-title text-primary hidden sm:inline-flex transition-all duration-200 text-3xl">
               <span>Flight</span>{' '}
               <span className="text-base-content">Logger</span>
             </div>
@@ -52,18 +52,27 @@ export const MainNavbar = (): JSX.Element => {
         </Navbar.Start>
         <Navbar.Center className="hidden lg:flex">
           <div className="tabs tabs-boxed">
-            <NavbarTab to="/profile">Home</NavbarTab>
-            <NavbarTab to="/flights">My Flights</NavbarTab>
+            <NavbarTab to="/" end>
+              Home
+            </NavbarTab>
+            {isLoggedIn ? (
+              <NavbarTab to="/profile">My Profile</NavbarTab>
+            ) : null}
             <NavbarTab to="/data">Data</NavbarTab>
           </div>
         </Navbar.Center>
         <Navbar.End className="space-x-2">
           <DarkModeButton />
-          <Link className="btn btn-ghost" to="/add-flight">
-            Add Flight
-          </Link>
-          <a className="btn" onClick={isLoggedIn ? logout : onLoginClick}>
-            {isLoggedIn ? 'Logout' : 'Login'}
+          {isLoggedIn ? (
+            <Link className="btn btn-ghost" to="/add-flight">
+              Add Flight
+            </Link>
+          ) : null}
+          <a
+            className="btn btn-md"
+            onClick={isLoggedIn ? logout : onLoginClick}
+          >
+            {isLoggedIn ? <LogoutIcon /> : 'Login'}
           </a>
         </Navbar.End>
       </Navbar>

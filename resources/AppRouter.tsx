@@ -5,16 +5,17 @@ import {
   Data,
   Flights,
   ForgotPassword,
+  Home,
   Profile,
   Login,
   ResetPassword,
   Register,
 } from './pages';
 
-export const App = (): JSX.Element => (
+export const AppRouter = (): JSX.Element => (
   <Routes>
-    <Route path="/" element={null} />
     <Route path="/" element={<MainLayout />}>
+      <Route path="" element={<Home />} />
       <Route path="data" element={<Data />} />
       <Route path="profile" element={<Profile />} />
       <Route path="add-flight" element={<AddFlight />} />
@@ -29,5 +30,3 @@ export const App = (): JSX.Element => (
     </Route>
   </Routes>
 );
-
-export default App;

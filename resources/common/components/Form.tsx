@@ -6,25 +6,21 @@ import {
   UseFormReturn,
 } from 'react-hook-form';
 
-export interface FormProps<Values extends FieldValues> {
+export interface FormProps<Values extends FieldValues>
+  extends HTMLProps<HTMLFormElement> {
   children?: ReactNode;
-  formProps?: HTMLProps<HTMLFormElement>;
   methods: UseFormReturn<Values>;
   onFormSubmit: SubmitHandler<Values>;
 }
 
 export const Form = <Values extends FieldValues>({
   children,
-  formProps,
   methods,
   onFormSubmit,
+  ...props
 }: FormProps<Values>): JSX.Element => (
   <FormProvider {...methods}>
-    <form
-      noValidate
-      onSubmit={methods.handleSubmit(onFormSubmit)}
-      {...formProps}
-    >
+    <form noValidate onSubmit={methods.handleSubmit(onFormSubmit)} {...props}>
       {children}
     </form>
   </FormProvider>

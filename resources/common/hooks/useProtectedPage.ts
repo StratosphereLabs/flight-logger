@@ -6,6 +6,6 @@ export const useProtectedPage = (): void => {
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();
   useEffect(() => {
-    if (!isLoggedIn) navigate('/auth/login');
+    if (!isLoggedIn) navigate('/');
   }, [isLoggedIn]);
 };
