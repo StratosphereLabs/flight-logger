@@ -56,7 +56,7 @@ export const ItineraryBuilderCard = forwardRef<HTMLDivElement>(
         {flights.length > 0 ? (
           <ItineraryFlightsToast
             flights={flights}
-            onReset={() => setFlights([])}
+            onReset={() => setIsResetDialogOpen(true)}
           />
         ) : null}
         <Card className="bg-base-200 text-center" ref={ref}>
@@ -183,7 +183,10 @@ export const ItineraryBuilderCard = forwardRef<HTMLDivElement>(
         </Card>
         <ResetItineraryModal
           onCancel={() => setIsResetDialogOpen(false)}
-          onSubmit={() => null}
+          onSubmit={() => {
+            setFlights([]);
+            setIsResetDialogOpen(false);
+          }}
           show={isResetDialogOpen}
         />
       </>
