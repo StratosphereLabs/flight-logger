@@ -37,14 +37,12 @@ export const addFlightSchema = z.object({
 export const addItineraryFlightSchema = z.object({
   departureAirportId: z.string().min(1, 'Required'),
   arrivalAirportId: z.string().min(1, 'Required'),
+  outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
+  outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
+  inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
   airlineId: z.string().nullable(),
   aircraftTypeId: z.string().nullable(),
   flightNumber: z.number().int().nullable(),
-  outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
-  outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
-  offTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
-  onTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
-  inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
   class: z
     .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
     .nullable(),
@@ -53,3 +51,7 @@ export const addItineraryFlightSchema = z.object({
 export type GetFlightRequest = z.infer<typeof getFlightSchema>;
 
 export type AddFlightRequest = z.infer<typeof addFlightSchema>;
+
+export type AddItineraryFlightRequest = z.infer<
+  typeof addItineraryFlightSchema
+>;

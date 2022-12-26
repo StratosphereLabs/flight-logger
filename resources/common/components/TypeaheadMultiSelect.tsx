@@ -64,10 +64,7 @@ export const TypeaheadMultiSelect = <
       className={classNames('form-control', 'w-full', className)}
       multiple
       name={name}
-      onChange={value => {
-        console.log({ value });
-        setSelectedItems(value);
-      }}
+      onChange={value => setSelectedItems(value)}
       value={selectedItems}
     >
       {labelText !== undefined ? (

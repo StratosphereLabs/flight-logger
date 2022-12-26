@@ -12,7 +12,7 @@ describe('<App />', () => {
 
   it('renders profile page', () => {
     const { container } = render(<AppRouter />, {
-      initialEntries: ['/profile'],
+      initialEntries: ['/'],
     });
     expect(container).toMatchSnapshot();
   });
