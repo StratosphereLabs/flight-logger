@@ -3,13 +3,20 @@ import { ItineraryBuilderCard } from './ItineraryBuilderCard';
 import { WelcomeCard } from './WelcomeCard';
 
 export const Home = (): JSX.Element => {
+  const firstFieldRef = useRef<HTMLInputElement | null>(null);
   const itineraryCardRef = useRef<HTMLDivElement | null>(null);
   return (
     <>
       <WelcomeCard
-        onGetStarted={() => itineraryCardRef.current?.scrollIntoView()}
+        onGetStarted={() => {
+          itineraryCardRef.current?.scrollIntoView();
+          firstFieldRef.current?.focus();
+        }}
       />
-      <ItineraryBuilderCard ref={itineraryCardRef} />
+      <ItineraryBuilderCard
+        firstFieldRef={firstFieldRef}
+        ref={itineraryCardRef}
+      />
     </>
   );
 };
