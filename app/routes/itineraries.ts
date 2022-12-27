@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../db';
+import { fetchData } from '../parsers/fetchData';
+import { getItineraryData } from '../parsers/itineraries';
 import { addItinerarySchema } from '../schemas/itineraries';
 import { procedure, router } from '../trpc';
 
@@ -7,17 +8,40 @@ export const itinerariesRouter = router({
   createItinerary: procedure
     .input(addItinerarySchema)
     .mutation(async ({ input }) => {
-      const flight = await prisma.flight.findUnique({
-        where: {
-          id: '',
-        },
-      });
-      if (flight === null) {
+      if (input.length === 0) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Flight not found.',
+          code: 'BAD_REQUEST',
+          message: 'Please add at least one flight',
         });
       }
-      return flight;
+      const airportIds = [
+        ...new Set(
+          input.flatMap(flight => [
+            flight.departureAirportId,
+            flight.arrivalAirportId,
+          ]),
+        ),
+      ];
+      const airlineIds = [
+        ...new Set(
+          input.flatMap(flight =>
+            flight.airlineId !== null ? [flight.airlineId] : [],
+          ),
+        ),
+      ];
+      const aircraftTypeData = [
+        ...new Set(
+          input.flatMap(flight =>
+            flight.aircraftTypeId !== null ? [flight.aircraftTypeId] : [],
+          ),
+        ),
+      ];
+      const data = await fetchData({
+        airportIds,
+        airlineIds,
+        aircraftTypeData,
+        aircraftSearchType: 'id',
+      });
+      return getItineraryData({ input, data });
     }),
 });
