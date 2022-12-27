@@ -385,24 +385,24 @@ exports[`<App /> > renders profile page 1`] = `
           </div>
         </div>
       </div>
-      <div
-        aria-label="Card"
-        class="card bg-base-200 text-center card-bordered"
+      <form
+        class="w-full"
+        novalidate=""
       >
         <div
-          class="card-body items-center"
+          aria-label="Card"
+          class="card bg-base-200 text-center card-bordered"
         >
           <div
-            class="card-title text-2xl mb-5"
-          >
-            Create Itinerary
-          </div>
-          <form
-            class="w-full"
-            novalidate=""
+            class="card-body items-center"
           >
             <div
-              class="flex flex-col gap-4"
+              class="card-title text-2xl mb-5"
+            >
+              Create Itinerary
+            </div>
+            <div
+              class="flex flex-col gap-4 w-full"
             >
               <div
                 class="flex flex-wrap gap-8"
@@ -795,9 +795,9 @@ exports[`<App /> > renders profile page 1`] = `
                 Add Flight
               </button>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
     <div
       class="footer items-center p-3 bg-neutral text-neutral-content"

@@ -5,6 +5,7 @@ import { airportsRouter } from './airports';
 import { authRouter } from './auth';
 import { countriesRouter } from './countries';
 import { flightsRouter } from './flights';
+import { itinerariesRouter } from './itineraries';
 import { passwordResetRouter } from './passwordReset';
 import { regionsRouter } from './regions';
 import { tripsRouter } from './trips';
@@ -20,6 +21,7 @@ export const trpcRouter = router({
   auth: authRouter,
   countries: countriesRouter,
   flights: flightsRouter,
+  itineraries: itinerariesRouter,
   passwordReset: passwordResetRouter,
   regions: regionsRouter,
   trips: tripsRouter,
