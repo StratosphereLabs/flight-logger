@@ -402,7 +402,7 @@ exports[`<App /> > renders profile page 1`] = `
               Create Itinerary
             </div>
             <div
-              class="flex flex-col gap-4 w-full"
+              class="flex flex-col gap-8 w-full"
             >
               <div
                 class="flex flex-wrap gap-8"
@@ -694,12 +694,8 @@ exports[`<App /> > renders profile page 1`] = `
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="flex flex-wrap gap-12"
-              >
                 <div
-                  class="flex-1 min-w-[200px]"
+                  class="min-w-[250px]"
                 >
                   <label
                     class="label font-semibold"
@@ -788,12 +784,16 @@ exports[`<App /> > renders profile page 1`] = `
                   </label>
                 </div>
               </div>
-              <button
-                class="btn"
-                type="submit"
+              <div
+                class="text-center"
               >
-                Add Flight
-              </button>
+                <button
+                  class="btn w-full max-w-md"
+                  type="submit"
+                >
+                  Add Flight
+                </button>
+              </div>
             </div>
           </div>
         </div>

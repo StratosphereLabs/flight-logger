@@ -49,11 +49,11 @@ export const ItineraryFlightsCard = forwardRef<
             </Breadcrumbs.Item>
           ))}
         </Breadcrumbs>
-        <div className="flex gap-2">
-          <Button color="error" onClick={onReset}>
+        <div className="flex gap-2 flex-wrap">
+          <Button color="error" onClick={onReset} size="sm">
             Reset
           </Button>
-          <Button loading={isLoading} onClick={onSubmit}>
+          <Button loading={isLoading} onClick={onSubmit} size="sm">
             Create
           </Button>
         </div>

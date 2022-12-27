@@ -28,10 +28,16 @@ export const Itinerary = (): JSX.Element | null => {
             </Divider>
           ) : null}
           <Card key={index} className="bg-base-200 shadow-xl">
-            <Card.Body className="flex-row gap-4 justify-between">
-              <AirlineLogo url={flight.airline?.logo} />
-              <div className="flex-1 flex">
-                {flight.airline?.iata ?? ''} {flight.flightNumber}
+            <Card.Body className="flex-row gap-4 justify-between items-center">
+              <AirlineLogo
+                className="hidden sm:block"
+                url={flight.airline?.logo}
+              />
+              <div className="flex-1 flex flex-col opacity-80">
+                {flight.airline?.name}
+                <div className="opacity-60 text-xs">
+                  {flight.airline?.iata ?? ''} {flight.flightNumber}
+                </div>
               </div>
               <div className="flex-[3] flex font-semibold truncate">
                 {flight.departureAirport.municipality} (

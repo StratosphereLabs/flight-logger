@@ -36,7 +36,7 @@ export const ItineraryBuilderCard = forwardRef<
     >
       <Card.Body className="items-center">
         <Card.Title className="text-2xl mb-5">Create Itinerary</Card.Title>
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-8 w-full">
           <div className="flex flex-wrap gap-8">
             <div className="flex-1 flex justify-center">
               <AirportInput
@@ -112,9 +112,7 @@ export const ItineraryBuilderCard = forwardRef<
                 name="aircraftTypeId"
               />
             </div>
-          </div>
-          <div className="flex flex-wrap gap-12">
-            <div className="flex-1 min-w-[200px]">
+            <div className="min-w-[250px]">
               <FormRadio
                 labelText="Class"
                 name="class"
@@ -143,7 +141,11 @@ export const ItineraryBuilderCard = forwardRef<
               />
             </div>
           </div>
-          <Button type="submit">Add Flight</Button>
+          <div className="text-center">
+            <Button className="w-full max-w-md" type="submit">
+              Add Flight
+            </Button>
+          </div>
         </div>
       </Card.Body>
     </Card>
