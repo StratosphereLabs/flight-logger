@@ -1,4 +1,4 @@
-import { aircraft_type, airline, airport } from '@prisma/client';
+import { aircraft_type, airline, airport, FlightClass } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { intervalToDuration, isBefore } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -17,9 +17,11 @@ export interface ItineraryResult {
   arrivalAirport: airport;
   outTime: Date;
   inTime: Date;
+  duration: [number | undefined, number | undefined];
   airline: airline | null;
   flightNumber: number | null;
   aircraftType: aircraft_type | null;
+  class: FlightClass | null;
 }
 
 export const getItineraryData = ({
@@ -69,6 +71,10 @@ export const getItineraryData = ({
       departureAirport.timeZone,
     );
     const inTime = utcToZonedTime(timestamps.inTime, arrivalAirport.timeZone);
+    const { hours, minutes } = intervalToDuration({
+      start: 0,
+      end: timestamps.duration * 60 * 1000,
+    });
     return {
       layoverDuration:
         60 * (layoverDuration.hours ?? 0) + (layoverDuration.minutes ?? 0),
@@ -76,6 +82,7 @@ export const getItineraryData = ({
       arrivalAirport,
       outTime,
       inTime,
+      duration: [hours, minutes],
       airline,
       flightNumber: flight.flightNumber,
       aircraftType,

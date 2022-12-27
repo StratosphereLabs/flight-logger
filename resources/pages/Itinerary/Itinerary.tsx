@@ -22,12 +22,30 @@ export const Itinerary = (): JSX.Element | null => {
       {data?.flights.map((flight, index) => (
         <>
           {flight.layoverDuration > 0 ? (
-            <Divider>Layover ({flight.layoverDuration} min)</Divider>
+            <Divider>
+              Layover at {flight.departureAirport.iata} (
+              {flight.layoverDuration} min)
+            </Divider>
           ) : null}
           <Card key={index} className="bg-base-200 shadow-xl">
-            <Card.Body className="flex-row gap-4">
+            <Card.Body className="flex-row gap-4 justify-between">
               <AirlineLogo url={flight.airline?.logo} />
-              {flight.airline?.iata ?? ''} {flight.flightNumber}
+              <div className="flex-1 flex">
+                {flight.airline?.iata ?? ''} {flight.flightNumber}
+              </div>
+              <div className="flex-[3] flex font-semibold truncate">
+                {flight.departureAirport.municipality} (
+                {flight.departureAirport.iata}) to{' '}
+                {flight.arrivalAirport.municipality} (
+                {flight.arrivalAirport.iata})
+              </div>
+              <div className="flex-1 flex font-mono">
+                {flight.duration[0] ?? 0}h {flight.duration[1] ?? 0}m
+              </div>
+              <div className="flex-1 flex flex-col text-sm gap-1">
+                {flight.aircraftType?.name ?? ''}
+                <div className="opacity-50 text-xs">{flight.class ?? ''}</div>
+              </div>
             </Card.Body>
           </Card>
         </>
