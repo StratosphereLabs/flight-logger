@@ -1,5 +1,5 @@
 import { airport } from '@prisma/client';
-import { add, formatISO, intervalToDuration, isBefore } from 'date-fns';
+import { add, intervalToDuration, isBefore } from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
 
 export interface FlightTimestampsInput {
@@ -14,10 +14,10 @@ export interface FlightTimestampsInput {
 
 export interface FlightTimestampsResult {
   duration: number;
-  outTime: string;
-  offTime: string | null;
-  onTime: string | null;
-  inTime: string;
+  outTime: Date;
+  offTime: Date | null;
+  onTime: Date | null;
+  inTime: Date;
 }
 
 export const getFlightTimestamps = ({
@@ -44,10 +44,10 @@ export const getFlightTimestamps = ({
   });
   return {
     duration: 60 * (duration.hours ?? 0) + (duration.minutes ?? 0),
-    outTime: formatISO(outTimeUtc),
+    outTime: outTimeUtc,
     offTime: null,
     onTime: null,
-    inTime: formatISO(inTimeUtc),
+    inTime: correctedInTime,
   };
 };
 

@@ -30,6 +30,13 @@ model trip {
   flights flight[]
 }
 
+model itinerary {
+  id        String    @id @default(uuid()) @db.Uuid
+  flights   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model flight {
   id                 String         @id @default(uuid()) @db.Uuid
   userId             Int

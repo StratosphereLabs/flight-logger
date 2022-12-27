@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Card } from 'react-daisyui';
-import { LoadingCard, Table } from '../../common/components';
+import { AirlineLogo, LoadingCard, Table } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -36,11 +36,7 @@ export const AirlinesCard = (): JSX.Element => {
               header: () => 'Logo',
               cell: ({ getValue }) => {
                 const logo = getValue<string>();
-                return logo !== null && logo !== undefined ? (
-                  <div className="w-[120px] flex justify-center">
-                    <img className="max-w-[100px] max-h-[30px]" src={logo} />
-                  </div>
-                ) : null;
+                return <AirlineLogo url={logo} />;
               },
               enableSorting: false,
               footer: () => null,

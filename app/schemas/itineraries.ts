@@ -7,12 +7,16 @@ export const itineraryFlightSchema = z.object({
   outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
   outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
   inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
-  airlineId: z.string().nullable(),
-  aircraftTypeId: z.string().nullable(),
+  airlineId: z.string(),
+  aircraftTypeId: z.string(),
   flightNumber: z.number().int().nullable(),
   class: z
     .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
     .nullable(),
+});
+
+export const getItinerarySchema = z.object({
+  id: z.string().uuid('Must be a valid UUID'),
 });
 
 export const addItinerarySchema = z.array(itineraryFlightSchema);

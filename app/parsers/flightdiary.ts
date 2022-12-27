@@ -1,9 +1,8 @@
-import { aircraft_type, airline, airport, flight } from '@prisma/client';
+import { flight } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
 import createHttpError from 'http-errors';
-import groupBy from 'lodash.groupby';
-import keyBy from 'lodash.keyby';
 import { findBestMatch } from 'string-similarity';
+import { fetchData } from './fetchData';
 import { prisma } from '../db';
 import { getFlightTimestamps } from '../utils/datetime';
 import {
@@ -36,73 +35,6 @@ interface FlightDiaryRow {
   Aircraft_id: string;
 }
 
-interface DataFetchResults {
-  airports: Record<string, airport>;
-  airlines: Record<string, airline>;
-  aircraftTypes: Record<string, aircraft_type[]>;
-}
-
-export const fetchData = async (
-  rows: FlightDiaryRow[],
-): Promise<DataFetchResults> => {
-  const airportIds = [
-    ...new Set(
-      rows.flatMap(row =>
-        row.From !== '' && row.To !== '' ? [row.From, row.To] : [],
-      ),
-    ),
-  ];
-  const airlineIds = [
-    ...new Set(rows.flatMap(row => (row.Airline !== '' ? [row.Airline] : []))),
-  ];
-  const aircraftTypeIcaos = [
-    ...new Set(
-      rows.flatMap(row =>
-        row.Aircraft !== '' ? [getAircraftIcao(row.Aircraft)] : [],
-      ),
-    ),
-  ];
-
-  const [airports, airlines, aircraftTypes] = await prisma.$transaction([
-    prisma.airport.findMany({
-      where: {
-        id: {
-          in: airportIds,
-        },
-      },
-    }),
-    prisma.airline.findMany({
-      where: {
-        AND: [
-          {
-            iata: {
-              in: airlineIds.map(codes => codes.split('/')[0]),
-            },
-          },
-          {
-            icao: {
-              in: airlineIds.map(codes => codes.split('/')[1]),
-            },
-          },
-        ],
-      },
-    }),
-    prisma.aircraft_type.findMany({
-      where: {
-        icao: {
-          in: aircraftTypeIcaos,
-        },
-      },
-    }),
-  ]);
-
-  return {
-    airports: keyBy(airports, 'id'),
-    airlines: keyBy(airlines, ({ iata, icao }) => `${iata}/${icao}`),
-    aircraftTypes: groupBy(aircraftTypes, 'icao'),
-  };
-};
-
 export const saveFlightDiaryData = async (
   username: string,
   file?: Express.Multer.File,
@@ -122,7 +54,30 @@ export const saveFlightDiaryData = async (
     Airline: getAirlineId(row.Airline) ?? '',
   }));
 
-  const data = await fetchData(rows);
+  const airportIds = [
+    ...new Set(
+      rows.flatMap(row =>
+        row.From !== '' && row.To !== '' ? [row.From, row.To] : [],
+      ),
+    ),
+  ];
+  const airlineIds = [
+    ...new Set(rows.flatMap(row => (row.Airline !== '' ? [row.Airline] : []))),
+  ];
+  const aircraftTypeData = [
+    ...new Set(
+      rows.flatMap(row =>
+        row.Aircraft !== '' ? [getAircraftIcao(row.Aircraft)] : [],
+      ),
+    ),
+  ];
+
+  const data = await fetchData({
+    airportIds,
+    airlineIds,
+    aircraftTypeData,
+    aircraftSearchType: 'icao',
+  });
 
   return await prisma.$transaction(
     rows.flatMap(row => {
@@ -183,8 +138,8 @@ export const saveFlightDiaryData = async (
                 : undefined,
             flightNumber: getFlightNumber(row['Flight number']),
             tailNumber: row.Registration,
-            outTime,
-            inTime,
+            outTime: outTime.toISOString(),
+            inTime: inTime.toISOString(),
             duration,
             seatNumber: row['Seat number'],
             comments: row.Note,
