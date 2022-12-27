@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import { prisma } from '../db';
 import { fetchData } from '../parsers/fetchData';
 import { getItineraryData } from '../parsers/itineraries';
 import { addItinerarySchema } from '../schemas/itineraries';
@@ -42,6 +43,11 @@ export const itinerariesRouter = router({
         aircraftTypeData,
         aircraftSearchType: 'id',
       });
-      return getItineraryData({ input, data });
+      const itineraryData = getItineraryData({ input, data });
+      return await prisma.itinerary.create({
+        data: {
+          flights: JSON.stringify(itineraryData),
+        },
+      });
     }),
 });

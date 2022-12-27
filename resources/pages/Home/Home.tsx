@@ -45,7 +45,7 @@ export const Home = (): JSX.Element => {
   const { error, isLoading, mutate } =
     trpc.itineraries.createItinerary.useMutation({
       onSuccess: response => {
-        console.log(response);
+        console.log(JSON.parse(response.flights));
       },
     });
   useTRPCErrorHandler(error);
