@@ -1,7 +1,5 @@
 import { z } from 'zod';
-
-const TIME_REGEX = /^[0-9]{2}:[0-9]{2}$/;
-const DATE_REGEX = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
+import { DATE_REGEX, TIME_REGEX } from '../constants';
 
 export const getFlightSchema = z.object({
   id: z.string().uuid(),
@@ -34,24 +32,6 @@ export const addFlightSchema = z.object({
   trackingLink: z.string().trim().nullable(),
 });
 
-export const addItineraryFlightSchema = z.object({
-  departureAirportId: z.string().min(1, 'Required'),
-  arrivalAirportId: z.string().min(1, 'Required'),
-  outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
-  outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
-  inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
-  airlineId: z.string().nullable(),
-  aircraftTypeId: z.string().nullable(),
-  flightNumber: z.number().int().nullable(),
-  class: z
-    .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
-    .nullable(),
-});
-
 export type GetFlightRequest = z.infer<typeof getFlightSchema>;
 
 export type AddFlightRequest = z.infer<typeof addFlightSchema>;
-
-export type AddItineraryFlightRequest = z.infer<
-  typeof addItineraryFlightSchema
->;

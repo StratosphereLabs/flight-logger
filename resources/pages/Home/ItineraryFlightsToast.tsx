@@ -1,19 +1,23 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 import { Alert, Button, Toast, ToastProps } from 'react-daisyui';
-import { AddItineraryFlightRequest } from '../../../app/schemas';
+import { AddItineraryRequest } from '../../../app/schemas/itineraries';
 import { ChevronDownIcon, ChevronUpIcon } from '../../common/components';
 
 export interface ItineraryFlightsToastProps
   extends Omit<ToastProps, 'horizontal' | 'vertical'> {
-  flights: AddItineraryFlightRequest[];
+  flights: AddItineraryRequest;
+  isLoading?: boolean;
   onReset: () => void;
+  onSubmit: () => void;
 }
 
 export const ItineraryFlightsToast = ({
   className,
   flights,
+  isLoading,
   onReset,
+  onSubmit,
   ...props
 }: ItineraryFlightsToastProps): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -53,13 +57,22 @@ export const ItineraryFlightsToast = ({
               )}
             </tbody>
           </table>
-          <div className="flex justify-around">
-            <Button color="error" size="sm" onClick={onReset}>
-              Reset
-            </Button>
-            <Button color="primary" size="sm">
-              Create
-            </Button>
+          <div className="flex">
+            <div className="flex-1 flex justify-center">
+              <Button color="error" size="sm" onClick={onReset}>
+                Reset
+              </Button>
+            </div>
+            <div className="flex-1 flex justify-center">
+              <Button
+                color="primary"
+                loading={isLoading}
+                onClick={onSubmit}
+                size="sm"
+              >
+                Create
+              </Button>
+            </div>
           </div>
           {flights.length > 1 ? (
             <Button

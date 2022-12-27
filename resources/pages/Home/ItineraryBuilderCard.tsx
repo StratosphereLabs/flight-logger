@@ -4,9 +4,10 @@ import { forwardRef, HTMLProps, RefObject, useEffect, useState } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import {
-  AddItineraryFlightRequest,
-  addItineraryFlightSchema,
-} from '../../../app/schemas';
+  AddItineraryRequest,
+  ItineraryFlight,
+  itineraryFlightSchema,
+} from '../../../app/schemas/itineraries';
 import {
   AircraftTypeInput,
   AirlineInput,
@@ -19,6 +20,7 @@ import {
   nullEmptyStringTransformer,
   numberInputTransformer,
 } from '../../common/transformers';
+import { trpc } from '../../utils/trpc';
 import { itineraryBuilderDefaultValues } from './constants';
 import { ItineraryFlightsToast } from './ItineraryFlightsToast';
 import { ResetItineraryModal } from './ResetItineraryModal';
@@ -36,22 +38,27 @@ export const ItineraryBuilderCard = forwardRef<
     'flight-logger-itinerary-flights',
   );
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
-  const [flights, setFlights] = useState<AddItineraryFlightRequest[]>(
+  const [flights, setFlights] = useState<AddItineraryRequest>(
     existingFlights !== null
-      ? (JSON.parse(existingFlights) as AddItineraryFlightRequest[])
+      ? (JSON.parse(existingFlights) as AddItineraryRequest)
       : [],
   );
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
     defaultValues: itineraryBuilderDefaultValues,
-    resolver: zodResolver(addItineraryFlightSchema),
+    resolver: zodResolver(itineraryFlightSchema),
   });
-  const addFlight = (flight: AddItineraryFlightRequest): void => {
+  const addFlight = (flight: ItineraryFlight): void => {
     setFlights(prevFlights => [...prevFlights, flight]);
     methods.reset();
     firstFieldRef.current?.focus();
   };
+  const { isLoading, mutate } = trpc.itineraries.createItinerary.useMutation({
+    onSuccess: response => {
+      console.log(response);
+    },
+  });
   useEffect(() => {
     localStorage.setItem(
       'flight-logger-itinerary-flights',
@@ -63,7 +70,9 @@ export const ItineraryBuilderCard = forwardRef<
       {flights.length > 0 ? (
         <ItineraryFlightsToast
           flights={flights}
+          isLoading={isLoading}
           onReset={() => setIsResetDialogOpen(true)}
+          onSubmit={() => mutate(flights)}
         />
       ) : null}
       <Card
