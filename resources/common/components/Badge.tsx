@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { ComponentProps, FC, MouseEvent } from 'react';
 import {
   Badge as DaisyUIBadge,
@@ -13,11 +14,16 @@ export interface BadgeProps extends DaisyUIBadgeProps {
 
 export const Badge = ({
   children,
+  className,
   icon: Icon,
   onDismiss,
   ...props
 }: BadgeProps): JSX.Element => (
-  <DaisyUIBadge size="lg" {...props}>
+  <DaisyUIBadge
+    className={classNames('text-sm', 'font-semibold', className)}
+    size="lg"
+    {...props}
+  >
     {Icon !== undefined ? <Icon /> : null}
     {children}
     {onDismiss !== undefined ? (
