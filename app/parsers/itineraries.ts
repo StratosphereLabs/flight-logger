@@ -1,6 +1,8 @@
+import { aircraft_type, airline, airport } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { intervalToDuration, isBefore } from 'date-fns';
-import { AddItineraryRequest, ItineraryFlight } from '../schemas/itineraries';
+import { utcToZonedTime } from 'date-fns-tz';
+import { AddItineraryRequest } from '../schemas/itineraries';
 import { getFlightTimestamps } from '../utils/datetime';
 import { DataFetchResults } from './fetchData';
 
@@ -9,8 +11,15 @@ export interface GetItineraryDataOptions {
   data: DataFetchResults;
 }
 
-export interface ItineraryResult extends ItineraryFlight {
+export interface ItineraryResult {
   layoverDuration: number;
+  departureAirport: airport;
+  arrivalAirport: airport;
+  outTime: Date;
+  inTime: Date;
+  airline: airline | null;
+  flightNumber: number | null;
+  aircraftType: aircraft_type | null;
 }
 
 export const getItineraryData = ({
@@ -29,6 +38,14 @@ export const getItineraryData = ({
     }),
   );
   return input.map((flight, index) => {
+    const departureAirport = data.airports[flight.departureAirportId];
+    const arrivalAirport = data.airports[flight.arrivalAirportId];
+    const aircraftType =
+      flight.aircraftTypeId.length > 0
+        ? data.aircraftTypes[flight.aircraftTypeId][0]
+        : null;
+    const airline =
+      flight.airlineId.length > 0 ? data.airlines[flight.airlineId] : null;
     const prevTimestamps = flightTimestamps[index - 1];
     const timestamps = flightTimestamps[index];
     if (
@@ -47,10 +64,22 @@ export const getItineraryData = ({
           : timestamps.outTime,
       end: timestamps.outTime,
     });
+    const outTime = utcToZonedTime(
+      timestamps.outTime,
+      departureAirport.timeZone,
+    );
+    const inTime = utcToZonedTime(timestamps.inTime, arrivalAirport.timeZone);
     return {
-      ...flight,
       layoverDuration:
         60 * (layoverDuration.hours ?? 0) + (layoverDuration.minutes ?? 0),
+      departureAirport,
+      arrivalAirport,
+      outTime,
+      inTime,
+      airline,
+      flightNumber: flight.flightNumber,
+      aircraftType,
+      class: flight.class,
     };
   });
 };

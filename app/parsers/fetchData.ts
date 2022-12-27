@@ -31,18 +31,27 @@ export const fetchData = async ({
     }),
     prisma.airline.findMany({
       where: {
-        AND: [
-          {
-            iata: {
-              in: airlineIds.map(codes => codes.split('/')[0]),
-            },
-          },
-          {
-            icao: {
-              in: airlineIds.map(codes => codes.split('/')[1]),
-            },
-          },
-        ],
+        id:
+          aircraftSearchType === 'id'
+            ? {
+                in: airlineIds,
+              }
+            : undefined,
+        AND:
+          aircraftSearchType === 'icao'
+            ? [
+                {
+                  iata: {
+                    in: airlineIds.map(codes => codes.split('/')[0]),
+                  },
+                },
+                {
+                  icao: {
+                    in: airlineIds.map(codes => codes.split('/')[1]),
+                  },
+                },
+              ]
+            : undefined,
       },
     }),
     prisma.aircraft_type.findMany({
@@ -62,10 +71,14 @@ export const fetchData = async ({
       },
     }),
   ]);
-
   return {
     airports: keyBy(airports, 'id'),
-    airlines: keyBy(airlines, ({ iata, icao }) => `${iata}/${icao}`),
+    airlines: keyBy(
+      airlines,
+      aircraftSearchType === 'icao'
+        ? ({ iata, icao }) => `${iata}/${icao}`
+        : 'id',
+    ),
     aircraftTypes: groupBy(aircraftTypes, aircraftSearchType),
   };
 };
