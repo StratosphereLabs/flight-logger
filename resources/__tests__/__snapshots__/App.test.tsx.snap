@@ -391,7 +391,7 @@ exports[`<App /> > renders profile page 1`] = `
       >
         <div
           aria-label="Card"
-          class="card bg-base-200 text-center card-bordered"
+          class="card bg-base-200 shadow-xl text-center card-bordered"
         >
           <div
             class="card-body items-center"

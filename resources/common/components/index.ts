@@ -1,5 +1,6 @@
 export * from './AircraftTypeInput';
 export * from './AirlineInput';
+export * from './AirlineLogo';
 export * from './AirportInput';
 export * from './AlertMessages';
 export * from './Badge';

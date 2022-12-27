@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import {
   AddItineraryRequest,
   ItineraryFlight,
@@ -22,6 +23,7 @@ export const Home = (): JSX.Element => {
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
   const flightsCardRef = useRef<HTMLDivElement | null>(null);
   const itineraryCardRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -44,9 +46,7 @@ export const Home = (): JSX.Element => {
     setFlights(prevFlights => prevFlights.filter((_, idx) => index !== idx));
   const { error, isLoading, mutate } =
     trpc.itineraries.createItinerary.useMutation({
-      onSuccess: response => {
-        console.log(JSON.parse(response.flights));
-      },
+      onSuccess: response => navigate(`/itinerary/${response.id}`),
     });
   useTRPCErrorHandler(error);
   useEffect(() => {

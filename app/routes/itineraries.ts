@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import { fetchData } from '../parsers/fetchData';
-import { getItineraryData } from '../parsers/itineraries';
-import { addItinerarySchema } from '../schemas/itineraries';
+import { getItineraryData, ItineraryResult } from '../parsers/itineraries';
+import { addItinerarySchema, getItinerarySchema } from '../schemas/itineraries';
 import { procedure, router } from '../trpc';
 
 export const itinerariesRouter = router({
@@ -50,4 +50,21 @@ export const itinerariesRouter = router({
         },
       });
     }),
+  getItinerary: procedure.input(getItinerarySchema).query(async ({ input }) => {
+    const itinerary = await prisma.itinerary.findUnique({
+      where: {
+        id: input.id,
+      },
+    });
+    if (itinerary === null) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Itinerary not found',
+      });
+    }
+    return {
+      ...itinerary,
+      flights: JSON.parse(itinerary?.flights) as ItineraryResult[],
+    };
+  }),
 });

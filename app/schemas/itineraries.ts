@@ -15,6 +15,10 @@ export const itineraryFlightSchema = z.object({
     .nullable(),
 });
 
+export const getItinerarySchema = z.object({
+  id: z.string().uuid('Must be a valid UUID'),
+});
+
 export const addItinerarySchema = z.array(itineraryFlightSchema);
 
 export type AddItineraryRequest = z.infer<typeof addItinerarySchema>;

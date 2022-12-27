@@ -6,6 +6,7 @@ import {
   Flights,
   ForgotPassword,
   Home,
+  Itinerary,
   Profile,
   Login,
   ResetPassword,
@@ -21,6 +22,7 @@ export const AppRouter = (): JSX.Element => (
       <Route path="add-flight" element={<AddFlight />} />
       <Route path="flights" element={<Flights />} />
       <Route path="user/:username" element={<Profile />} />
+      <Route path="itinerary/:id" element={<Itinerary />} />
     </Route>
     <Route path="auth" element={<AuthenticationLayout />}>
       <Route path="login" element={<Login />} />
