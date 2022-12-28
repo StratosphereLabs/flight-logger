@@ -1,10 +1,11 @@
 import { aircraft_type, airline, airport, FlightClass } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { intervalToDuration, isBefore } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
-import { AddItineraryRequest } from '../schemas/itineraries';
-import { getFlightTimestamps } from '../utils/datetime';
+import { isBefore } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import { DataFetchResults } from './fetchData';
+import { DATE_FORMAT, TIME_FORMAT } from '../constants';
+import { AddItineraryRequest } from '../schemas/itineraries';
+import { getDurationMinutes, getFlightTimestamps } from '../utils/datetime';
 
 export interface GetItineraryDataOptions {
   input: AddItineraryRequest;
@@ -15,9 +16,11 @@ export interface ItineraryResult {
   layoverDuration: number;
   departureAirport: airport;
   arrivalAirport: airport;
-  outTime: Date;
-  inTime: Date;
-  duration: [number | undefined, number | undefined];
+  outDate: string;
+  outTime: string;
+  inTime: string;
+  daysAdded: number;
+  duration: number;
   airline: airline | null;
   flightNumber: number | null;
   aircraftType: aircraft_type | null;
@@ -59,30 +62,46 @@ export const getItineraryData = ({
         message: 'Flights must be in chronological order',
       });
     }
-    const layoverDuration = intervalToDuration({
+    const layoverDuration = getDurationMinutes({
       start:
         prevTimestamps !== undefined
           ? prevTimestamps.inTime
           : timestamps.outTime,
       end: timestamps.outTime,
     });
-    const outTime = utcToZonedTime(
+    const outDate = formatInTimeZone(
       timestamps.outTime,
       departureAirport.timeZone,
+      DATE_FORMAT,
     );
-    const inTime = utcToZonedTime(timestamps.inTime, arrivalAirport.timeZone);
-    const { hours, minutes } = intervalToDuration({
+    const outTime = formatInTimeZone(
+      timestamps.outTime,
+      departureAirport.timeZone,
+      TIME_FORMAT,
+    );
+    const inDate = formatInTimeZone(
+      timestamps.inTime,
+      arrivalAirport.timeZone,
+      DATE_FORMAT,
+    );
+    const inTime = formatInTimeZone(
+      timestamps.inTime,
+      arrivalAirport.timeZone,
+      TIME_FORMAT,
+    );
+    const duration = getDurationMinutes({
       start: 0,
       end: timestamps.duration * 60 * 1000,
     });
     return {
-      layoverDuration:
-        60 * (layoverDuration.hours ?? 0) + (layoverDuration.minutes ?? 0),
+      layoverDuration,
       departureAirport,
       arrivalAirport,
+      outDate,
       outTime,
       inTime,
-      duration: [hours, minutes],
+      daysAdded: inDate === outDate ? 0 : 1,
+      duration,
       airline,
       flightNumber: flight.flightNumber,
       aircraftType,
