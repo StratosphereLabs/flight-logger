@@ -1,6 +1,6 @@
-import { aircraft_type, airline, airport, flight } from '@prisma/client';
+import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
-import { format, intervalToDuration, isBefore } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
@@ -21,11 +21,18 @@ import { trpc } from '../utils/trpc';
 
 export const DATE_FORMAT = 'yyyy-MM-dd';
 
+export interface DeleteFlightData {
+  departureAirportId: string;
+  arrivalAirportId: string;
+  id: string;
+}
+
 export const FlightsCard = (): JSX.Element => {
   const utils = trpc.useContext();
   const { addAlertMessages } = useAppContext();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deleteFlight, setDeleteFlight] = useState<flight | null>(null);
+  const [deleteFlightData, setDeleteFlightData] =
+    useState<DeleteFlightData | null>(null);
   const { username } = useParams();
   const handleSuccess = useSuccessResponseHandler();
   const { data, error, isFetching } = trpc.users.getUserFlights.useQuery({
@@ -140,16 +147,8 @@ export const FlightsCard = (): JSX.Element => {
                 accessorKey: 'duration',
                 header: () => 'Duration',
                 cell: ({ getValue }) => {
-                  const totalMinutes = getValue<number>();
-                  const { hours, minutes } = intervalToDuration({
-                    start: 0,
-                    end: totalMinutes * 60 * 1000,
-                  });
-                  return (
-                    <div className="font-mono">{`${hours ?? 0}h ${
-                      minutes ?? 0
-                    }m`}</div>
-                  );
+                  const duration = getValue<string>();
+                  return <div className="font-mono">{duration}</div>;
                 },
               },
               {
@@ -212,7 +211,11 @@ export const FlightsCard = (): JSX.Element => {
                     />
                     <Button
                       onClick={() => {
-                        setDeleteFlight(row.original);
+                        setDeleteFlightData({
+                          departureAirportId: row.original.departureAirportId,
+                          arrivalAirportId: row.original.arrivalAirportId,
+                          id: row.original.id,
+                        });
                         setIsDeleteDialogOpen(true);
                       }}
                       className="px-1"
@@ -244,7 +247,8 @@ export const FlightsCard = (): JSX.Element => {
             color: 'error',
             initialFocus: true,
             loading: isLoading,
-            onClick: () => mutate({ id: deleteFlight?.id ?? '' }),
+            onClick: () =>
+              deleteFlightData !== null && mutate({ id: deleteFlightData.id }),
           },
         ]}
         onClose={() => setIsDeleteDialogOpen(false)}
@@ -253,8 +257,8 @@ export const FlightsCard = (): JSX.Element => {
       >
         Are you sure you want to delete your{' '}
         <strong>
-          {deleteFlight?.departureAirportId ?? ''} -{' '}
-          {deleteFlight?.arrivalAirportId ?? ''}
+          {deleteFlightData?.departureAirportId ?? ''} -{' '}
+          {deleteFlightData?.arrivalAirportId ?? ''}
         </strong>{' '}
         flight?
       </Modal>

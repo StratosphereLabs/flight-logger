@@ -4,6 +4,7 @@ import { fetchData } from '../parsers/fetchData';
 import { getItineraryData, ItineraryResult } from '../parsers/itineraries';
 import { addItinerarySchema, getItinerarySchema } from '../schemas/itineraries';
 import { procedure, router } from '../trpc';
+import { getDurationString } from '../utils/datetime';
 
 export const itinerariesRouter = router({
   createItinerary: procedure
@@ -62,9 +63,14 @@ export const itinerariesRouter = router({
         message: 'Itinerary not found',
       });
     }
+    const data = JSON.parse(itinerary?.flights) as ItineraryResult[];
     return {
       ...itinerary,
-      flights: JSON.parse(itinerary?.flights) as ItineraryResult[],
+      flights: data.map(flight => ({
+        ...flight,
+        duration: getDurationString(flight.duration),
+        layoverDuration: getDurationString(flight.layoverDuration),
+      })),
     };
   }),
 });

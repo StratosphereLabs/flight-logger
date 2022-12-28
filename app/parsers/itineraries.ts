@@ -1,10 +1,10 @@
 import { aircraft_type, airline, airport, FlightClass } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { intervalToDuration, isBefore } from 'date-fns';
+import { isBefore } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
-import { AddItineraryRequest } from '../schemas/itineraries';
-import { getFlightTimestamps } from '../utils/datetime';
 import { DataFetchResults } from './fetchData';
+import { AddItineraryRequest } from '../schemas/itineraries';
+import { getDurationMinutes, getFlightTimestamps } from '../utils/datetime';
 
 export interface GetItineraryDataOptions {
   input: AddItineraryRequest;
@@ -17,7 +17,7 @@ export interface ItineraryResult {
   arrivalAirport: airport;
   outTime: Date;
   inTime: Date;
-  duration: [number | undefined, number | undefined];
+  duration: number;
   airline: airline | null;
   flightNumber: number | null;
   aircraftType: aircraft_type | null;
@@ -59,7 +59,7 @@ export const getItineraryData = ({
         message: 'Flights must be in chronological order',
       });
     }
-    const layoverDuration = intervalToDuration({
+    const layoverDuration = getDurationMinutes({
       start:
         prevTimestamps !== undefined
           ? prevTimestamps.inTime
@@ -71,18 +71,17 @@ export const getItineraryData = ({
       departureAirport.timeZone,
     );
     const inTime = utcToZonedTime(timestamps.inTime, arrivalAirport.timeZone);
-    const { hours, minutes } = intervalToDuration({
+    const duration = getDurationMinutes({
       start: 0,
       end: timestamps.duration * 60 * 1000,
     });
     return {
-      layoverDuration:
-        60 * (layoverDuration.hours ?? 0) + (layoverDuration.minutes ?? 0),
+      layoverDuration,
       departureAirport,
       arrivalAirport,
       outTime,
       inTime,
-      duration: [hours, minutes],
+      duration,
       airline,
       flightNumber: flight.flightNumber,
       aircraftType,

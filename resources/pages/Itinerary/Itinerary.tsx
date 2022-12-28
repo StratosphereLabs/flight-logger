@@ -1,6 +1,7 @@
 import { Card, Divider, Progress } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { AirlineLogo } from '../../common/components';
+import { BADGE_COLORS_MAP } from './constants';
+import { AirlineLogo, Badge } from '../../common/components';
 import { trpc } from '../../utils/trpc';
 
 export const Itinerary = (): JSX.Element | null => {
@@ -21,13 +22,13 @@ export const Itinerary = (): JSX.Element | null => {
       {isLoading ? <Progress /> : null}
       {data?.flights.map((flight, index) => (
         <>
-          {flight.layoverDuration > 0 ? (
+          {flight.layoverDuration.length > 0 ? (
             <Divider>
               Layover at {flight.departureAirport.iata} (
-              {flight.layoverDuration} min)
+              {flight.layoverDuration})
             </Divider>
           ) : null}
-          <Card key={index} className="bg-base-200 shadow-xl">
+          <Card key={index} className="bg-base-200 shadow-lg">
             <Card.Body className="flex-row gap-4 justify-between items-center">
               <AirlineLogo
                 className="hidden sm:block"
@@ -39,18 +40,35 @@ export const Itinerary = (): JSX.Element | null => {
                   {flight.airline?.iata ?? ''} {flight.flightNumber}
                 </div>
               </div>
-              <div className="flex-[3] flex font-semibold truncate">
-                {flight.departureAirport.municipality} (
-                {flight.departureAirport.iata}) to{' '}
-                {flight.arrivalAirport.municipality} (
-                {flight.arrivalAirport.iata})
+              <div className="flex-[3] flex gap-2 flex-wrap justify-center font-semibold truncate">
+                <div>
+                  {flight.departureAirport.municipality} (
+                  {flight.departureAirport.iata})
+                </div>
+                <div className="font-normal">to</div>
+                <div>
+                  {flight.arrivalAirport.municipality} (
+                  {flight.arrivalAirport.iata})
+                </div>
               </div>
-              <div className="flex-1 flex font-mono">
-                {flight.duration[0] ?? 0}h {flight.duration[1] ?? 0}m
+              <div className="flex-1 flex flex-col">
+                <div className="text-sm opacity-70">Travel Time</div>
+                <div className="font-mono">{flight.duration}</div>
               </div>
               <div className="flex-1 flex flex-col text-sm gap-1">
+                <div className="text-sm opacity-70">Aircraft</div>
                 {flight.aircraftType?.name ?? ''}
-                <div className="opacity-50 text-xs">{flight.class ?? ''}</div>
+              </div>
+              <div className="w-[75px] hidden sm:flex">
+                {flight.class !== null ? (
+                  <Badge
+                    className="text-xs"
+                    color={BADGE_COLORS_MAP[flight.class]}
+                    size="sm"
+                  >
+                    {flight.class}
+                  </Badge>
+                ) : null}
               </div>
             </Card.Body>
           </Card>

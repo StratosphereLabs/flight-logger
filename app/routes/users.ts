@@ -15,7 +15,7 @@ import {
   paginationSchema,
 } from '../schemas';
 import { getAirports, getRoutes } from '../parsers';
-import { getFlightTimestamps } from '../utils/datetime';
+import { getDurationString, getFlightTimestamps } from '../utils/datetime';
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
@@ -62,7 +62,10 @@ export const usersRouter = router({
           },
         ],
       });
-      return flights;
+      return flights.map(flight => ({
+        ...flight,
+        duration: getDurationString(flight.duration),
+      }));
     }),
   getUserMapData: procedure
     .input(getUserSchema)
