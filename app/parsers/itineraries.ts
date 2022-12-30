@@ -4,8 +4,12 @@ import { isBefore } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DataFetchResults } from './fetchData';
 import { DATE_FORMAT, TIME_FORMAT } from '../constants';
-import { AddItineraryRequest } from '../schemas/itineraries';
-import { getDurationMinutes, getFlightTimestamps } from '../utils/datetime';
+import { AddItineraryRequest, ItineraryFlight } from '../schemas/itineraries';
+import {
+  FlightTimestampsResult,
+  getDurationMinutes,
+  getFlightTimestamps,
+} from '../utils/datetime';
 
 export interface GetItineraryDataOptions {
   input: AddItineraryRequest;
@@ -13,6 +17,7 @@ export interface GetItineraryDataOptions {
 }
 
 export interface ItineraryResult {
+  segmentTitle: string;
   layoverDuration: number;
   departureAirport: airport;
   arrivalAirport: airport;
@@ -26,6 +31,42 @@ export interface ItineraryResult {
   aircraftType: aircraft_type | null;
   class: FlightClass | null;
 }
+
+const getSegmentedFlights = ({
+  flights,
+  flightTimestamps,
+}: {
+  flights: ItineraryFlight[];
+  flightTimestamps: FlightTimestampsResult[];
+}): ItineraryFlight[][] =>
+  flights.reduce(
+    (acc: ItineraryFlight[][], flight, index) => {
+      const prevTimestamps = flightTimestamps[index - 1];
+      const timestamps = flightTimestamps[index];
+      if (
+        prevTimestamps !== undefined &&
+        isBefore(timestamps.outTime, prevTimestamps.inTime)
+      ) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Flights must be in chronological order',
+        });
+      }
+      const layoverDuration = getDurationMinutes({
+        start:
+          prevTimestamps !== undefined
+            ? prevTimestamps.inTime
+            : timestamps.outTime,
+        end: timestamps.outTime,
+      });
+      if (layoverDuration >= 8 * 60) {
+        acc.push([]);
+      }
+      acc[acc.length - 1].push(flight);
+      return acc;
+    },
+    [[]],
+  );
 
 export const getItineraryData = ({
   input,
@@ -42,6 +83,11 @@ export const getItineraryData = ({
       inTime: flight.inTime,
     }),
   );
+  const segmentedFlights = getSegmentedFlights({
+    flights: input,
+    flightTimestamps,
+  });
+  console.log(segmentedFlights);
   return input.map((flight, index) => {
     const departureAirport = data.airports[flight.departureAirportId];
     const arrivalAirport = data.airports[flight.arrivalAirportId];
@@ -53,15 +99,6 @@ export const getItineraryData = ({
       flight.airlineId.length > 0 ? data.airlines[flight.airlineId] : null;
     const prevTimestamps = flightTimestamps[index - 1];
     const timestamps = flightTimestamps[index];
-    if (
-      prevTimestamps !== undefined &&
-      isBefore(timestamps.outTime, prevTimestamps.inTime)
-    ) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Flights must be in chronological order',
-      });
-    }
     const layoverDuration = getDurationMinutes({
       start:
         prevTimestamps !== undefined
@@ -89,11 +126,8 @@ export const getItineraryData = ({
       arrivalAirport.timeZone,
       TIME_FORMAT,
     );
-    const duration = getDurationMinutes({
-      start: 0,
-      end: timestamps.duration * 60 * 1000,
-    });
     return {
+      segmentTitle: '',
       layoverDuration,
       departureAirport,
       arrivalAirport,
@@ -101,7 +135,7 @@ export const getItineraryData = ({
       outTime,
       inTime,
       daysAdded: inDate === outDate ? 0 : 1,
-      duration,
+      duration: timestamps.duration,
       airline,
       flightNumber: flight.flightNumber,
       aircraftType,
