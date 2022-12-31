@@ -38,12 +38,12 @@ export const getFlightTimestamps = ({
         days: 1,
       })
     : inTimeUtc;
-  const duration = intervalToDuration({
+  const duration = getDurationMinutes({
     start: outTimeUtc,
     end: correctedInTime,
   });
   return {
-    duration: 60 * (duration.hours ?? 0) + (duration.minutes ?? 0),
+    duration,
     outTime: outTimeUtc,
     offTime: null,
     onTime: null,
@@ -53,7 +53,13 @@ export const getFlightTimestamps = ({
 
 export const getDurationMinutes = (interval: Interval): number => {
   const layoverDuration = intervalToDuration(interval);
-  return 60 * (layoverDuration.hours ?? 0) + (layoverDuration.minutes ?? 0);
+  return (
+    12 * 30 * 24 * 60 * (layoverDuration.years ?? 0) +
+    30 * 24 * 60 * (layoverDuration.months ?? 0) +
+    24 * 60 * (layoverDuration.days ?? 0) +
+    60 * (layoverDuration.hours ?? 0) +
+    (layoverDuration.minutes ?? 0)
+  );
 };
 
 export const getDurationString = (duration: number): string => {
