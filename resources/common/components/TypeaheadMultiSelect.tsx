@@ -118,6 +118,7 @@ export const TypeaheadMultiSelect = <
         onClose={() => setShowDropdown(false)}
         options={options}
         show={showDropdown}
+        showSelected
       >
         <Combobox.Input
           {...field}

@@ -443,7 +443,7 @@ exports[`<App /> > renders profile page 1`] = `
                       value=""
                     />
                     <div
-                      class="relative z-10"
+                      class="relative z-10 text-left"
                     >
                       <div
                         class="absolute min-w-[200px] mt-[1px] w-full"
@@ -487,7 +487,7 @@ exports[`<App /> > renders profile page 1`] = `
                       value=""
                     />
                     <div
-                      class="relative z-10"
+                      class="relative z-10 text-left"
                     >
                       <div
                         class="absolute min-w-[200px] mt-[1px] w-full"
@@ -625,7 +625,7 @@ exports[`<App /> > renders profile page 1`] = `
                       value=""
                     />
                     <div
-                      class="relative z-10"
+                      class="relative z-10 text-left"
                     >
                       <div
                         class="absolute min-w-[200px] mt-[1px] w-full"
@@ -686,7 +686,7 @@ exports[`<App /> > renders profile page 1`] = `
                       value=""
                     />
                     <div
-                      class="relative z-10"
+                      class="relative z-10 text-left"
                     >
                       <div
                         class="absolute min-w-[200px] mt-[1px] w-full"

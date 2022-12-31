@@ -21,6 +21,7 @@ export interface TypeaheadDropdownProps<
   isLoading: boolean;
   onClose?: () => void;
   show?: boolean;
+  showSelected?: boolean;
 }
 
 export const TypeaheadDropdown = <
@@ -35,11 +36,13 @@ export const TypeaheadDropdown = <
   onClose,
   options,
   show,
+  showSelected,
 }: TypeaheadDropdownProps<DataItem, Values, Element>): JSX.Element => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   useOutsideClick(dropdownRef, () => onClose?.());
   return (
     <Dropdown
+      className="text-left"
       onKeyDown={({ key }) => {
         if (key === 'Escape') onClose?.();
       }}
@@ -70,7 +73,7 @@ export const TypeaheadDropdown = <
                       children !== undefined && index === 0 && 'mt-2',
                     )}
                     disabled={disabled}
-                    selected={selected}
+                    selected={showSelected === true ? selected : undefined}
                   >
                     {getItemText(option)}
                   </DropdownOption>
