@@ -3,18 +3,18 @@ import classNames from 'classnames';
 import { Fragment, ReactNode, useRef } from 'react';
 import { Progress } from 'react-daisyui';
 import { FieldValues } from 'react-hook-form';
-import { Dropdown } from './Dropdown';
-import { DropdownMenu } from './DropdownMenu';
-import { DropdownOption } from './DropdownOption';
-import { useOutsideClick } from '../hooks';
-import { GenericDataType, TypeaheadSelectProps } from '../types';
+import { TypeaheadSelectProps } from './TypeaheadSelect';
+import { Dropdown } from '../Dropdown';
+import { DropdownMenu } from '../DropdownMenu';
+import { DropdownOption } from '../DropdownOption';
+import { useOutsideClick } from '../../hooks';
+import { GenericDataType } from '../../types';
 
 export interface TypeaheadDropdownProps<
   DataItem extends GenericDataType,
   Values extends FieldValues,
-  Element extends HTMLElement,
 > extends Pick<
-    TypeaheadSelectProps<DataItem, Values, Element>,
+    TypeaheadSelectProps<DataItem, Values>,
     'getItemText' | 'getItemValue' | 'options'
   > {
   children?: ReactNode;
@@ -27,7 +27,6 @@ export interface TypeaheadDropdownProps<
 export const TypeaheadDropdown = <
   DataItem extends GenericDataType,
   Values extends FieldValues,
-  Element extends HTMLElement,
 >({
   children,
   getItemText,
@@ -37,7 +36,7 @@ export const TypeaheadDropdown = <
   options,
   show,
   showSelected,
-}: TypeaheadDropdownProps<DataItem, Values, Element>): JSX.Element => {
+}: TypeaheadDropdownProps<DataItem, Values>): JSX.Element => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   useOutsideClick(dropdownRef, () => onClose?.());
   return (

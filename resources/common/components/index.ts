@@ -21,6 +21,4 @@ export * from './LoadingCard';
 export * from './Modal';
 export * from './Pagination';
 export * from './Table';
-export * from './TypeaheadDropdown';
-export * from './TypeaheadSingleSelect';
-export * from './TypeaheadMultiSelect';
+export * from './TypeaheadSelect';
