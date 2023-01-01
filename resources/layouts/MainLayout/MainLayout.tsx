@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { AlertMessages } from '../../common/components';
+import { AlertMessages } from 'stratosphere-ui';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
 

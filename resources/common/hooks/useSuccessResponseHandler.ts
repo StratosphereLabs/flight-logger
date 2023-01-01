@@ -1,7 +1,7 @@
-import { useAppContext } from '../../providers';
+import { useAlertMessages } from 'stratosphere-ui';
 
 export const useSuccessResponseHandler = (): ((message: string) => void) => {
-  const { addAlertMessages } = useAppContext();
+  const { addAlertMessages } = useAlertMessages();
   return message => {
     addAlertMessages([
       {

@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { Breadcrumbs, Button, Card, ToastProps } from 'react-daisyui';
+import { Badge } from 'stratosphere-ui';
 import { AddItineraryRequest } from '../../../app/schemas/itineraries';
-import { Badge } from '../../common/components';
 
 export interface ItineraryFlightsCardProps
   extends Omit<ToastProps, 'horizontal' | 'vertical'> {

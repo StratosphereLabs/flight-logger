@@ -2,12 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { Form } from 'stratosphere-ui';
 import {
   AddItineraryRequest,
   ItineraryFlight,
   itineraryFlightSchema,
 } from '../../../app/schemas/itineraries';
-import { Form } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { itineraryBuilderDefaultValues } from './constants';

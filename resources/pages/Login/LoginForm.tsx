@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
+import { Form, FormControl } from 'stratosphere-ui';
 import { useLinkClickHandler } from 'react-router-dom';
 import { loginSchema } from '../../../app/schemas';
-import { Form, FormControl } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { useAppContext } from '../../providers';
 import { trpc } from '../../utils/trpc';

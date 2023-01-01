@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { AlertMessagesProvider } from 'stratosphere-ui';
 import { AppContextProvider, TRPCProvider } from './providers';
 
 export interface AppWrapperProps {
@@ -7,6 +8,8 @@ export interface AppWrapperProps {
 
 export const AppWrapper = ({ children }: AppWrapperProps): JSX.Element => (
   <AppContextProvider>
-    <TRPCProvider>{children}</TRPCProvider>
+    <AlertMessagesProvider>
+      <TRPCProvider>{children}</TRPCProvider>
+    </AlertMessagesProvider>
   </AppContextProvider>
 );

@@ -1,5 +1,5 @@
 import { Column } from '@tanstack/react-table';
-import { GenericDataType } from '../types';
+import { GenericDataType } from 'stratosphere-ui';
 import { SortAscendingIcon, SortDescendingIcon, SortIcon } from './Icons';
 
 export interface HeaderSortIconProps<DataType extends GenericDataType> {

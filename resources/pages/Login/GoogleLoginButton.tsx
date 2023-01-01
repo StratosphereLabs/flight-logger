@@ -1,4 +1,5 @@
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { useAlertMessages } from 'stratosphere-ui';
 import { GOOGLE_CLIENT_ID } from '../../common/constants';
 import { useGoogleLoginMutation } from '../../common/hooks';
 import { AppTheme, useAppContext } from '../../providers';
@@ -10,7 +11,8 @@ export interface GoogleLoginButtonProps {
 export const GoogleLoginButton = ({
   width,
 }: GoogleLoginButtonProps): JSX.Element => {
-  const { addAlertMessages, theme } = useAppContext();
+  const { addAlertMessages } = useAlertMessages();
+  const { theme } = useAppContext();
   const { mutate } = useGoogleLoginMutation();
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>

@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { Card, Divider, Progress } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
+import { Badge } from 'stratosphere-ui';
 import { BADGE_COLORS_MAP, CLASS_TEXT_MAP } from './constants';
-import { AirlineLogo, Badge, RightArrowIcon } from '../../common/components';
+import { AirlineLogo, RightArrowIcon } from '../../common/components';
 import { trpc } from '../../utils/trpc';
 
 export const Itinerary = (): JSX.Element | null => {
