@@ -4,7 +4,7 @@ import createHttpError from 'http-errors';
 import { findBestMatch } from 'string-similarity';
 import { fetchData } from './fetchData';
 import { prisma } from '../db';
-import { getFlightTimestamps } from '../utils/datetime';
+import { getFlightTimestamps } from '../utils';
 import {
   getAircraftIcao,
   getAircraftName,
