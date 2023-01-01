@@ -1,13 +1,13 @@
 import { airport } from '@prisma/client';
 import { useState } from 'react';
 import { FieldValues } from 'react-hook-form';
-import { TypeaheadSingleSelect, TypeaheadSingleSelectProps } from '.';
+import { TypeaheadSelect, TypeaheadSelectProps } from './TypeaheadSelect';
 import { useTRPCErrorHandler } from '../hooks';
 import { trpc } from '../../utils/trpc';
 
 export interface AirportInputProps<Values extends FieldValues>
   extends Omit<
-    TypeaheadSingleSelectProps<airport, Values>,
+    TypeaheadSelectProps<airport, Values>,
     'getItemText' | 'getItemValue' | 'onDebouncedChange' | 'options'
   > {}
 
@@ -25,7 +25,7 @@ export const AirportInput = <Values extends FieldValues>(
   );
   useTRPCErrorHandler(error);
   return (
-    <TypeaheadSingleSelect
+    <TypeaheadSelect
       getItemText={({ id, name }) => `${id} - ${name}`}
       getItemValue={({ id }) => id}
       onDebouncedChange={setQuery}

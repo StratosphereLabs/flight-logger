@@ -3,19 +3,18 @@ import classNames from 'classnames';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Input } from 'react-daisyui';
 import { FieldValues, useController, useFormContext } from 'react-hook-form';
-import { FormError } from './FormError';
-import { FormLabel } from './FormLabel';
-import { Badge } from './Badge';
 import { TypeaheadDropdown } from './TypeaheadDropdown';
-import { useTypeaheadInput } from '../hooks';
-import { GenericDataType, TypeaheadSelectProps } from '../types';
+import { TypeaheadSelectProps } from './TypeaheadSelect';
+import { Badge } from '../Badge';
+import { FormError } from '../FormError';
+import { FormLabel } from '../FormLabel';
+import { useTypeaheadInput } from '../../hooks';
+import { GenericDataType } from '../../types';
 
 export interface TypeaheadMultiSelectProps<
   DataItem extends GenericDataType,
   Values extends FieldValues,
-> extends TypeaheadSelectProps<DataItem, Values, HTMLDivElement> {
-  className?: string;
-}
+> extends Omit<TypeaheadSelectProps<DataItem, Values>, 'multi'> {}
 
 export const TypeaheadMultiSelect = <
   DataItem extends GenericDataType,
@@ -32,6 +31,7 @@ export const TypeaheadMultiSelect = <
   name,
   onDebouncedChange,
   options,
+  placeholder,
 }: TypeaheadMultiSelectProps<DataItem, Values>): JSX.Element => {
   const { setValue } = useFormContext();
   const {
@@ -57,6 +57,7 @@ export const TypeaheadMultiSelect = <
   }, [selectedItems]);
   useEffect(() => {
     if (showDropdown) searchInputRef.current?.focus();
+    else setQuery('');
   }, [showDropdown]);
   return (
     <Combobox
@@ -109,7 +110,7 @@ export const TypeaheadMultiSelect = <
                 {getItemValue(item)}
               </Badge>
             ))
-          : labelText}
+          : placeholder}
       </div>
       <TypeaheadDropdown
         isLoading={isLoading}

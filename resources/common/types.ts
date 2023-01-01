@@ -3,11 +3,9 @@ import {
   TRPC_ERROR_CODE_KEY,
   TRPC_ERROR_CODE_NUMBER,
 } from '@trpc/server/rpc';
-import { RefObject } from 'react';
 import { AlertProps } from 'react-daisyui';
 import { FieldValues, Path, UseControllerProps } from 'react-hook-form';
 import { typeToFlattenedError } from 'zod';
-import { UseTypeaheadInputOptions } from './hooks';
 
 export type GenericDataType = { id: string | number } & Record<string, unknown>;
 
@@ -41,17 +39,7 @@ export interface FormFieldProps<Values extends FieldValues> {
   isRequired?: boolean;
   labelText?: string;
   name: Path<Values>;
-}
-
-export interface TypeaheadSelectProps<
-  DataItem extends GenericDataType,
-  Values extends FieldValues,
-  Element extends HTMLElement,
-> extends UseTypeaheadInputOptions<DataItem>,
-    FormFieldProps<Values> {
-  getItemText: (data: DataItem) => string;
-  getItemValue: (data: DataItem) => string;
-  inputRef?: RefObject<Element>;
+  placeholder?: string;
 }
 
 export interface PaginationMetadata {

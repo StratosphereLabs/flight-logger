@@ -1,19 +1,19 @@
 import { Combobox } from '@headlessui/react';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { Input, InputProps } from 'react-daisyui';
+import { Input } from 'react-daisyui';
 import { FieldValues, useController, useFormContext } from 'react-hook-form';
-import { FormError } from './FormError';
-import { FormLabel } from './FormLabel';
 import { TypeaheadDropdown } from './TypeaheadDropdown';
-import { useTypeaheadInput } from '../hooks';
-import { GenericDataType, TypeaheadSelectProps } from '../types';
+import { TypeaheadSelectProps } from './TypeaheadSelect';
+import { FormError } from '../FormError';
+import { FormLabel } from '../FormLabel';
+import { useTypeaheadInput } from '../../hooks';
+import { GenericDataType } from '../../types';
 
 export interface TypeaheadSingleSelectProps<
   DataItem extends GenericDataType,
   Values extends FieldValues,
-> extends TypeaheadSelectProps<DataItem, Values, HTMLInputElement>,
-    Omit<InputProps, 'name'> {}
+> extends Omit<TypeaheadSelectProps<DataItem, Values>, 'multi'> {}
 
 export const TypeaheadSingleSelect = <
   DataItem extends GenericDataType,
@@ -30,7 +30,7 @@ export const TypeaheadSingleSelect = <
   name,
   onDebouncedChange,
   options,
-  ...props
+  placeholder,
 }: TypeaheadSingleSelectProps<DataItem, Values>): JSX.Element => {
   const { setValue } = useFormContext();
   const {
@@ -77,8 +77,8 @@ export const TypeaheadSingleSelect = <
           item !== null ? getItemText(item) : ''
         }
         onChange={({ target: { value } }) => setQuery(value)}
+        placeholder={placeholder}
         ref={inputRef}
-        {...props}
       />
       <TypeaheadDropdown
         isLoading={isLoading}

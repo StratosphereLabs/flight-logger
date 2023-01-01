@@ -10,7 +10,7 @@ import {
   getDurationMinutes,
   getDurationString,
   getFlightTimestamps,
-} from '../utils/datetime';
+} from '../utils';
 
 export interface GetItineraryDataOptions {
   input: AddItineraryRequest;
@@ -117,11 +117,6 @@ export const getItineraryData = ({
         departureAirport.timeZone,
         TIME_FORMAT,
       );
-      const inDate = formatInTimeZone(
-        flight.inTime,
-        arrivalAirport.timeZone,
-        DATE_FORMAT,
-      );
       const inTime = formatInTimeZone(
         flight.inTime,
         arrivalAirport.timeZone,
@@ -135,7 +130,7 @@ export const getItineraryData = ({
         outDate,
         outTime,
         inTime,
-        daysAdded: inDate === outDate ? 0 : 1,
+        daysAdded: flight.daysAdded,
         duration,
         airline,
         flightNumber: flight.flightNumber,

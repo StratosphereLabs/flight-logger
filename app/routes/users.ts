@@ -1,21 +1,22 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
-import {
-  excludeKeys,
-  fetchGravatarUrl,
-  getPaginatedResponse,
-  parsePaginationRequest,
-} from '../utils';
-import { procedure, router } from '../trpc';
+import { getAirports, getRoutes } from '../parsers';
 import {
   addFlightSchema,
   deleteFlightSchema,
   getUserSchema,
   paginationSchema,
 } from '../schemas';
-import { getAirports, getRoutes } from '../parsers';
-import { getDurationString, getFlightTimestamps } from '../utils/datetime';
+import { procedure, router } from '../trpc';
+import {
+  excludeKeys,
+  fetchGravatarUrl,
+  getDurationString,
+  getFlightTimestamps,
+  getPaginatedResponse,
+  parsePaginationRequest,
+} from '../utils';
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
