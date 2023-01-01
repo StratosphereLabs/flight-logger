@@ -1,5 +1,5 @@
 {
-  "name": "flight-logger-reboot",
+  "name": "flight-logger",
   "version": "0.0.1",
   "private": true,
   "type": "module",
