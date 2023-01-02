@@ -2,14 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
+import { Form, FormControl, FormRadio } from 'stratosphere-ui';
 import { addFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
   AirlineInput,
   AirportInput,
-  Form,
-  FormControl,
-  FormRadio,
   LoadingCard,
 } from '../../common/components';
 import {

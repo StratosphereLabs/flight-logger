@@ -4,6 +4,7 @@ import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
+import { useAlertMessages } from 'stratosphere-ui';
 import {
   EditIcon,
   LinkIcon,
@@ -16,7 +17,6 @@ import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../common/hooks';
-import { useAppContext } from '../providers';
 import { trpc } from '../utils/trpc';
 
 export const DATE_FORMAT = 'yyyy-MM-dd';
@@ -29,7 +29,7 @@ export interface DeleteFlightData {
 
 export const FlightsCard = (): JSX.Element => {
   const utils = trpc.useContext();
-  const { addAlertMessages } = useAppContext();
+  const { addAlertMessages } = useAlertMessages();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteFlightData, setDeleteFlightData] =
     useState<DeleteFlightData | null>(null);

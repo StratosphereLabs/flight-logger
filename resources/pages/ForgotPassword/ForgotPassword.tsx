@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Button, Card } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl } from '../../common/components';
+import { Form, FormControl } from 'stratosphere-ui';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { forgotPasswordSchema } from './schema';

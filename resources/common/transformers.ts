@@ -1,4 +1,4 @@
-import { Transform } from './types';
+import { Transform } from 'stratosphere-ui';
 
 export const numberInputTransformer: Transform<number | null> = {
   input: value => (value !== null ? value.toString() : ''),

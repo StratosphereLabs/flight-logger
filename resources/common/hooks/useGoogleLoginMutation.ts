@@ -1,6 +1,7 @@
 import { CredentialResponse as GoogleLoginRequest } from '@react-oauth/google';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { useAlertMessages } from 'stratosphere-ui';
 import { REST_API_URL } from '../constants';
 import { useErrorResponseHandler } from '.';
 import { ErrorResponse } from '../types';
@@ -15,7 +16,8 @@ export const useGoogleLoginMutation = (): UseMutationResult<
   AxiosError<ErrorResponse>,
   GoogleLoginRequest
 > => {
-  const { clearAlertMessages, setToken } = useAppContext();
+  const { clearAlertMessages } = useAlertMessages();
+  const { setToken } = useAppContext();
   const onErrorResponse = useErrorResponseHandler();
   return useMutation(
     async data => {

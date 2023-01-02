@@ -1,6 +1,7 @@
 import { Card, Hero } from 'react-daisyui';
 import { Outlet } from 'react-router-dom';
-import { AlertMessages, DarkModeButton } from '../../common/components';
+import { AlertMessages } from 'stratosphere-ui';
+import { DarkModeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => (
   <Hero className="bg-base-200 min-h-screen">

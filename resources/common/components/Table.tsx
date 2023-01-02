@@ -1,10 +1,11 @@
 import { flexRender, TableOptions, useReactTable } from '@tanstack/react-table';
 import classNames from 'classnames';
+import { GenericDataType } from 'stratosphere-ui';
 import { FullScreenLoader } from './FullScreenLoader';
 import { HeaderSortIcon } from './HeaderSortIcon';
 import { Pagination } from './Pagination';
 import { useScrollBar } from '../hooks';
-import { GenericDataType, PaginationMetadata } from '../types';
+import { PaginationMetadata } from '../types';
 
 export interface TableProps<DataType extends GenericDataType>
   extends TableOptions<DataType> {

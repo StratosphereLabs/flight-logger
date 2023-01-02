@@ -1,12 +1,11 @@
 import classNames from 'classnames';
 import { forwardRef, HTMLProps, RefObject } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
+import { FormControl, FormRadio } from 'stratosphere-ui';
 import {
   AircraftTypeInput,
   AirlineInput,
   AirportInput,
-  FormControl,
-  FormRadio,
 } from '../../common/components';
 import {
   nullEmptyStringTransformer,

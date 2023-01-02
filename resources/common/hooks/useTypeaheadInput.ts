@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import { GenericDataType } from '../types';
+import { GenericDataType } from 'stratosphere-ui';
 import { useDebouncedState } from './useDebouncedValue';
 
 export interface UseTypeaheadInputOptions<DataItem> {

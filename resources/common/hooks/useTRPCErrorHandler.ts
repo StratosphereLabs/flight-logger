@@ -1,12 +1,12 @@
 import { TRPCClientErrorBase } from '@trpc/client';
 import { useEffect } from 'react';
-import { useAppContext } from '../../providers';
+import { useAlertMessages } from 'stratosphere-ui';
 import { DefaultErrorShape } from '../types';
 
 export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(
   trpcError?: TRPCClientErrorBase<TShape> | null,
 ): void => {
-  const { addAlertMessages } = useAppContext();
+  const { addAlertMessages } = useAlertMessages();
   useEffect(() => {
     const errorMessage = trpcError?.shape?.message ?? null;
     const zodError = trpcError?.data?.zodError ?? null;

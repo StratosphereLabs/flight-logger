@@ -8,7 +8,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { AlertMessage } from '../common/types';
 
 interface AppContextData {
   isLoggedIn: boolean;
@@ -17,10 +16,6 @@ interface AppContextData {
   setTheme: Dispatch<SetStateAction<string>>;
   setToken: (token: string | null) => void;
   token: string | null;
-  alertMessages: AlertMessage[];
-  addAlertMessages: (messages: AlertMessage[]) => void;
-  clearAlertMessages: () => void;
-  dismissAlertMessage: (index?: number) => void;
 }
 
 interface AppContextProviderProps {
@@ -39,10 +34,6 @@ const initialContext: AppContextData = {
   setTheme: () => undefined,
   setToken: () => undefined,
   token: null,
-  alertMessages: [],
-  addAlertMessages: () => undefined,
-  clearAlertMessages: () => undefined,
-  dismissAlertMessage: () => undefined,
 };
 
 const AppContext = createContext<AppContextData>(initialContext);
@@ -72,17 +63,6 @@ export const AppContextProvider = ({
     window.localStorage.setItem('flightLoggerTheme', theme);
   }, [theme]);
 
-  const [alertMessages, setAlertMessages] = useState<AlertMessage[]>(
-    initialContext.alertMessages,
-  );
-  const addAlertMessages = (messages: AlertMessage[]): void =>
-    setAlertMessages(prevMessages => [...prevMessages, ...messages]);
-  const clearAlertMessages = (): void => setAlertMessages([]);
-  const dismissAlertMessage = (index?: number): void =>
-    setAlertMessages(prevMessages =>
-      prevMessages.filter((_, i) => i !== index || 0),
-    );
-
   return (
     <AppContext.Provider
       value={{
@@ -92,10 +72,6 @@ export const AppContextProvider = ({
         setTheme,
         setToken,
         token,
-        alertMessages,
-        addAlertMessages,
-        clearAlertMessages,
-        dismissAlertMessage,
       }}
     >
       {children}

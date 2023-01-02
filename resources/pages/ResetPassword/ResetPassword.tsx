@@ -2,8 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Form, FormControl } from 'stratosphere-ui';
 import { resetPasswordSchema } from '../../../app/schemas';
-import { Form, FormControl } from '../../common/components';
 import {
   useAuthPage,
   useSuccessResponseHandler,
