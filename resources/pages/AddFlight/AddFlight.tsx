@@ -44,7 +44,7 @@ export const AddFlight = (): JSX.Element => {
     firstFieldRef.current?.focus();
   }, []);
   return (
-    <LoadingCard className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px] overflow-visible">
+    <LoadingCard className="min-h-[400px] min-w-[500px] overflow-visible bg-base-200 shadow-xl">
       <Card.Body>
         <Card.Title className="mb-5 justify-center text-2xl">
           Add a Flight
@@ -52,7 +52,7 @@ export const AddFlight = (): JSX.Element => {
         <Form methods={methods} onFormSubmit={values => mutate(values)}>
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-8">
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <AirportInput
                   className="max-w-sm"
                   inputRef={firstFieldRef}
@@ -61,7 +61,7 @@ export const AddFlight = (): JSX.Element => {
                   name="departureAirportId"
                 />
               </div>
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <AirportInput
                   className="max-w-sm"
                   isRequired
@@ -71,7 +71,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <FormControl
                   className="w-[200px]"
                   isRequired
@@ -80,7 +80,7 @@ export const AddFlight = (): JSX.Element => {
                   type="date"
                 />
               </div>
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <FormControl
                   className="w-[200px]"
                   isRequired
@@ -90,7 +90,7 @@ export const AddFlight = (): JSX.Element => {
                   type="time"
                 />
               </div>
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <FormControl
                   className="w-[200px]"
                   isRequired
@@ -102,14 +102,14 @@ export const AddFlight = (): JSX.Element => {
             </div>
             <Divider />
             <div className="flex flex-wrap gap-8">
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <AirlineInput
                   className="max-w-sm"
                   labelText="Airline"
                   name="airlineId"
                 />
               </div>
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <AircraftTypeInput
                   className="max-w-sm"
                   labelText="Aircraft Type"
@@ -118,7 +118,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
             <div className="flex flex-wrap gap-8">
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <FormControl
                   className="w-[200px]"
                   labelText="Flight Number"
@@ -128,14 +128,14 @@ export const AddFlight = (): JSX.Element => {
                   type="number"
                 />
               </div>
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <FormControl
                   className="w-[200px]"
                   labelText="Callsign"
                   name="callsign"
                 />
               </div>
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <FormControl
                   className="w-[200px]"
                   labelText="Registration"
@@ -145,7 +145,7 @@ export const AddFlight = (): JSX.Element => {
             </div>
             <Divider />
             <div className="flex flex-wrap gap-12">
-              <div className="flex-1 min-w-[200px]">
+              <div className="min-w-[200px] flex-1">
                 <FormRadio
                   labelText="Class"
                   name="class"
@@ -173,7 +173,7 @@ export const AddFlight = (): JSX.Element => {
                   ]}
                 />
               </div>
-              <div className="flex-1 min-w-[200px]">
+              <div className="min-w-[200px] flex-1">
                 <FormControl
                   className="mb-5 w-[200px]"
                   labelText="Seat Number"
@@ -197,7 +197,7 @@ export const AddFlight = (): JSX.Element => {
                   ]}
                 />
               </div>
-              <div className="flex-1 min-w-[200px]">
+              <div className="min-w-[200px] flex-1">
                 <FormRadio
                   labelText="Reason"
                   name="reason"
@@ -219,11 +219,11 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
             <Divider />
-            <div className="flex flex-wrap gap-8 mb-8">
-              <div className="flex-1 flex justify-center">
+            <div className="mb-8 flex flex-wrap gap-8">
+              <div className="flex flex-1 justify-center">
                 <FormControl labelText="Comments" name="comments" />
               </div>
-              <div className="flex-1 flex justify-center">
+              <div className="flex flex-1 justify-center">
                 <FormControl labelText="Tracking Link" name="trackingLink" />
               </div>
             </div>

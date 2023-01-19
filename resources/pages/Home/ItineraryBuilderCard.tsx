@@ -24,20 +24,15 @@ export const ItineraryBuilderCard = forwardRef<
 >(
   ({ className, firstFieldRef, onReset, ...props }, ref): JSX.Element => (
     <Card
-      className={classNames(
-        'bg-base-200',
-        'shadow-xl',
-        'text-center',
-        className,
-      )}
+      className={classNames('bg-base-200 text-center shadow-xl', className)}
       ref={ref}
       {...props}
     >
       <Card.Body className="items-center">
-        <Card.Title className="text-2xl mb-5">Create Itinerary</Card.Title>
-        <div className="flex flex-col gap-8 w-full">
+        <Card.Title className="mb-5 text-2xl">Create Itinerary</Card.Title>
+        <div className="flex w-full flex-col gap-8">
           <div className="flex flex-wrap gap-8">
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <AirportInput
                 className="max-w-sm"
                 inputRef={firstFieldRef}
@@ -46,7 +41,7 @@ export const ItineraryBuilderCard = forwardRef<
                 name="departureAirportId"
               />
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <AirportInput
                 className="max-w-sm"
                 isRequired
@@ -56,7 +51,7 @@ export const ItineraryBuilderCard = forwardRef<
             </div>
           </div>
           <div className="flex flex-wrap gap-8">
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <FormControl
                 className="w-[200px]"
                 isRequired
@@ -65,7 +60,7 @@ export const ItineraryBuilderCard = forwardRef<
                 type="date"
               />
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <FormControl
                 className="w-[200px]"
                 isRequired
@@ -75,7 +70,7 @@ export const ItineraryBuilderCard = forwardRef<
                 type="time"
               />
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <FormControl
                 className="w-[200px]"
                 isRequired
@@ -87,7 +82,7 @@ export const ItineraryBuilderCard = forwardRef<
           </div>
           <Divider />
           <div className="flex flex-wrap gap-8">
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <AirlineInput
                 className="max-w-sm"
                 labelText="Airline"
@@ -104,7 +99,7 @@ export const ItineraryBuilderCard = forwardRef<
                 type="number"
               />
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex flex-1 justify-center">
               <AircraftTypeInput
                 className="max-w-sm"
                 labelText="Aircraft Type"

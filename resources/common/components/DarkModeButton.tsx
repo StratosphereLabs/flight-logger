@@ -12,7 +12,7 @@ export const DarkModeButton = (): JSX.Element => {
     <Button
       onClick={toggleTheme}
       color="ghost"
-      className="rounded-lg text-sm p-2.5"
+      className="rounded-lg p-2.5 text-sm"
     >
       {theme === AppTheme.DARK ? <LightModeIcon /> : <DarkModeIcon />}
     </Button>

@@ -8,10 +8,10 @@ export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
   const onLoginClick = useLinkClickHandler('/auth/login');
   return (
-    <div className="flex w-full component-preview p-3 items-center justify-center gap-2 font-sans">
-      <Navbar className="bg-base-200 shadow-xl rounded-box">
+    <div className="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans">
+      <Navbar className="rounded-box bg-base-200 shadow-xl">
         <Navbar.Start>
-          <div className="dropdown dropdown-bottom">
+          <div className="dropdown-bottom dropdown">
             <Button color="ghost" tabIndex={0} className="lg:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +30,7 @@ export const MainNavbar = (): JSX.Element => {
             </Button>
             <ul
               tabIndex={0}
-              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+              className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
             >
               <li>
                 <Link to="/">Home</Link>
@@ -43,8 +43,8 @@ export const MainNavbar = (): JSX.Element => {
               </li>
             </ul>
           </div>
-          <Link to="/" className="btn btn-ghost normal-case text-xl">
-            <div className="font-title text-primary hidden sm:inline-flex transition-all duration-200 text-3xl">
+          <Link to="/" className="btn-ghost btn text-xl normal-case">
+            <div className="font-title hidden text-3xl text-primary transition-all duration-200 sm:inline-flex">
               <span>Flight</span>{' '}
               <span className="text-base-content">Logger</span>
             </div>
@@ -64,12 +64,12 @@ export const MainNavbar = (): JSX.Element => {
         <Navbar.End className="space-x-2">
           <DarkModeButton />
           {isLoggedIn ? (
-            <Link className="btn btn-ghost" to="/add-flight">
+            <Link className="btn-ghost btn" to="/add-flight">
               Add Flight
             </Link>
           ) : null}
           <a
-            className="btn btn-md"
+            className="btn-md btn"
             onClick={isLoggedIn ? logout : onLoginClick}
           >
             {isLoggedIn ? <LogoutIcon /> : 'Login'}

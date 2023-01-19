@@ -12,7 +12,7 @@ export const NavbarTab = ({
   <NavLink
     {...props}
     className={({ isActive }) =>
-      classNames('tab', 'tab-lg', isActive && 'tab-active', className)
+      classNames('tab tab-lg', isActive && 'tab-active', className)
     }
   />
 );

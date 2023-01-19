@@ -21,9 +21,10 @@
   },
   "include": [
     "app",
-    "postcss.config.cjs",
     "resources",
     "vitest",
+    "postcss.config.cjs",
+    "prettier.config.cjs",
     "tailwind.config.cjs",
     "vite.config.ts"
   ]

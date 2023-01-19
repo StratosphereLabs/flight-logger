@@ -18,7 +18,7 @@ export const Itinerary = (): JSX.Element | null => {
   );
   return (
     <>
-      <div className="flex justify-center mb-4">
+      <div className="mb-4 flex justify-center">
         <h1 className="text-3xl font-bold">Itinerary</h1>
       </div>
       {isLoading ? <Progress /> : null}
@@ -27,13 +27,8 @@ export const Itinerary = (): JSX.Element | null => {
           {flight.segmentTitle !== '' ? (
             <div
               className={classNames(
-                'flex',
-                'gap-4',
-                'items-center',
-                'font-semibold',
-                'pl-1',
+                'mb-2 flex items-center gap-4 pl-1 font-semibold',
                 index > 0 && 'mt-10',
-                'mb-2',
               )}
             >
               <h2 className="text-lg">{flight.segmentTitle}</h2>
@@ -47,12 +42,12 @@ export const Itinerary = (): JSX.Element | null => {
             </Divider>
           ) : null}
           <Card key={index} className="bg-base-200 shadow-lg">
-            <Card.Body className="flex-row gap-4 justify-between items-center">
+            <Card.Body className="flex-row items-center justify-between gap-4">
               <AirlineLogo
                 className="hidden md:block"
                 url={flight.airline?.logo}
               />
-              <div className="flex-1 flex flex-col gap-1">
+              <div className="flex flex-1 flex-col gap-1">
                 <div className="opacity-90">{flight.airline?.name}</div>
                 {flight.flightNumber !== null ? (
                   <div className="text-xs opacity-60">
@@ -60,11 +55,11 @@ export const Itinerary = (): JSX.Element | null => {
                   </div>
                 ) : null}
               </div>
-              <div className="w-[120px] flex flex-col text-sm opacity-60">
+              <div className="flex w-[120px] flex-col text-sm opacity-60">
                 {flight.outDate}
               </div>
-              <div className="flex-[3] flex flex-col gap-1 opacity-80">
-                <div className="flex-1 flex gap-2 flex-wrap justify-center truncate">
+              <div className="flex flex-[3] flex-col gap-1 opacity-80">
+                <div className="flex flex-1 flex-wrap justify-center gap-2 truncate">
                   <div className="font-semibold">
                     {flight.departureAirport.municipality} (
                     {flight.departureAirport.iata})
@@ -75,7 +70,7 @@ export const Itinerary = (): JSX.Element | null => {
                     {flight.arrivalAirport.iata})
                   </div>
                 </div>
-                <div className="flex-1 flex gap-2 justify-center items-center text-sm">
+                <div className="flex flex-1 items-center justify-center gap-2 text-sm">
                   {flight.outTime} <RightArrowIcon />{' '}
                   <div>
                     {flight.inTime}
@@ -85,11 +80,11 @@ export const Itinerary = (): JSX.Element | null => {
                   </div>
                 </div>
               </div>
-              <div className="w-[100px] flex flex-col text-sm gap-1">
+              <div className="flex w-[100px] flex-col gap-1 text-sm">
                 <div className="opacity-60">Travel Time</div>
                 <div className="font-mono opacity-90">{flight.duration}</div>
               </div>
-              <div className="flex-1 hidden sm:flex flex-col text-sm gap-1">
+              <div className="hidden flex-1 flex-col gap-1 text-sm sm:flex">
                 <div className="opacity-60">Aircraft</div>
                 <div className="opacity-90">
                   {flight.aircraftType?.name ?? ''}

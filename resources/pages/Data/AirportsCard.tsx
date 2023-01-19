@@ -44,7 +44,7 @@ export const AirportsCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard className="shadow-xl bg-base-200 h-[625px]">
+    <LoadingCard className="h-[625px] bg-base-200 shadow-xl">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
           Airports
