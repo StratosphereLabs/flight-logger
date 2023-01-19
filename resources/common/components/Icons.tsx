@@ -3,7 +3,7 @@ export const DarkModeIcon = (): JSX.Element => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="currentColor"
-    className="w-6 h-6"
+    className="h-6 w-6"
   >
     <path
       fillRule="evenodd"
@@ -18,7 +18,7 @@ export const LightModeIcon = (): JSX.Element => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="currentColor"
-    className="w-6 h-6"
+    className="h-6 w-6"
   >
     <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
   </svg>
@@ -27,7 +27,7 @@ export const LightModeIcon = (): JSX.Element => (
 export const SortAscendingIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="ml-1 w-3 h-3"
+    className="ml-1 h-3 w-3"
     aria-hidden="true"
     fill="currentColor"
     viewBox="0 0 320 512"
@@ -39,7 +39,7 @@ export const SortAscendingIcon = (): JSX.Element => (
 export const SortDescendingIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="ml-1 w-3 h-3"
+    className="ml-1 h-3 w-3"
     aria-hidden="true"
     fill="currentColor"
     viewBox="0 0 320 512"
@@ -51,7 +51,7 @@ export const SortDescendingIcon = (): JSX.Element => (
 export const SortIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="ml-1 w-3 h-3"
+    className="ml-1 h-3 w-3"
     aria-hidden="true"
     fill="currentColor"
     viewBox="0 0 320 512"
@@ -67,7 +67,7 @@ export const TrashIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    className="w-4 h-4"
+    className="h-4 w-4"
   >
     <path
       stroke-linecap="round"
@@ -84,7 +84,7 @@ export const EditIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    className="w-4 h-4"
+    className="h-4 w-4"
   >
     <path
       stroke-linecap="round"
@@ -101,7 +101,7 @@ export const LinkIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    className="w-4 h-4"
+    className="h-4 w-4"
   >
     <path
       stroke-linecap="round"
@@ -118,7 +118,7 @@ export const LogoutIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-6 h-6"
+    className="h-6 w-6"
   >
     <path
       strokeLinecap="round"
@@ -135,7 +135,7 @@ export const ListIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-5 h-5"
+    className="h-5 w-5"
   >
     <path
       strokeLinecap="round"
@@ -152,7 +152,7 @@ export const GlobeIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-5 h-5"
+    className="h-5 w-5"
   >
     <path
       strokeLinecap="round"
@@ -169,7 +169,7 @@ export const ChartIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-5 h-5"
+    className="h-5 w-5"
   >
     <path
       strokeLinecap="round"
@@ -186,7 +186,7 @@ export const ChevronDownIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-5 h-5"
+    className="h-5 w-5"
   >
     <path
       strokeLinecap="round"
@@ -203,7 +203,7 @@ export const ChevronUpIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-5 h-5"
+    className="h-5 w-5"
   >
     <path
       strokeLinecap="round"
@@ -220,7 +220,7 @@ export const RightArrowIcon = (): JSX.Element => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-5 h-5"
+    className="h-5 w-5"
   >
     <path
       strokeLinecap="round"

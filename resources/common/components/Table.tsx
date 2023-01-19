@@ -42,13 +42,11 @@ export const Table = <DataType extends GenericDataType>({
   const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
   const scrollBar = useScrollBar();
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex h-full flex-col">
       <div className={`flex-1 overflow-x-scroll ${scrollBar}`}>
         <table
           className={classNames(
-            'table',
-            'w-full',
-            'rounded-box',
+            'rounded-box table w-full',
             {
               'table-compact': compact,
               'table-fixed': enableFixedWidth,

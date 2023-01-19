@@ -13,7 +13,7 @@ export const WelcomeCard = ({
   ...props
 }: WelcomeCardProps): JSX.Element => (
   <Card
-    className={classNames('bg-base-200', 'min-h-[75vh]', className)}
+    className={classNames('min-h-[75vh] bg-base-200', className)}
     {...props}
   >
     <Card.Body className="justify-center">
@@ -24,7 +24,7 @@ export const WelcomeCard = ({
             <p className="py-4">
               Your all-in-one personal flight logbook and trip planner
             </p>
-            <ul className="py-4 space-y-1 text-sm text-gray-500">
+            <ul className="space-y-1 py-4 text-sm text-gray-500">
               <li className="flex justify-center gap-2">
                 <ListIcon />
                 Log detailed flight information and organize them by trip
