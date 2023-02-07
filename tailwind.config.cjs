@@ -3,6 +3,7 @@ module.exports = {
     './resources/**/*.{html,ts,tsx}',
     'node_modules/daisyui/dist/**/*.js',
     'node_modules/react-daisyui/dist/**/*.js',
+    'node_modules/stratosphere-ui/dist/**/*.js',
   ],
   daisyui: {
     themes: ['light', 'dark'],

@@ -21,7 +21,7 @@
     "format": "prettier --config ./.prettierrc -w app routes resources vite.config.ts"
   },
   "dependencies": {
-    "@headlessui/react": "^0.0.0-insiders.65d5ce2",
+    "@headlessui/react": "^1.7.10",
     "@hookform/resolvers": "^2.9.10",
     "@prisma/client": "^4.8.0",
     "@react-google-maps/api": "^2.17.1",
@@ -67,7 +67,7 @@
     "react-hook-form": "^7.41.3",
     "react-router-dom": "^6.6.1",
     "reflect-metadata": "^0.1.13",
-    "stratosphere-ui": "^0.0.4",
+    "stratosphere-ui": "^0.1.12",
     "string-similarity": "^4.0.4",
     "vitest-fetch-mock": "^0.2.1",
     "zod": "^3.20.2"
