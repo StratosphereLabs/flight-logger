@@ -1,14 +1,14 @@
 import { Stats } from 'react-daisyui';
 
 export const StatsCard = (): JSX.Element => (
-  <Stats className="shadow font-sans bg-base-200">
+  <Stats className="bg-base-200 font-sans shadow">
     <Stats.Stat>
       <Stats.Stat.Item variant="figure" className="text-primary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          className="inline-block w-8 h-8 stroke-current"
+          className="inline-block h-8 w-8 stroke-current"
         >
           <path
             strokeLinecap="round"
@@ -31,7 +31,7 @@ export const StatsCard = (): JSX.Element => (
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          className="inline-block w-8 h-8 stroke-current"
+          className="inline-block h-8 w-8 stroke-current"
         >
           <path
             strokeLinecap="round"

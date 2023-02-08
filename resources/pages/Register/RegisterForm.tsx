@@ -76,7 +76,7 @@ export const RegisterForm = (): JSX.Element => {
             </Link>
           </label>
         </fieldset>
-        <div className="flex flex-col mt-6">
+        <div className="mt-6 flex flex-col">
           <Button type="submit" loading={isLoading}>
             Register
           </Button>

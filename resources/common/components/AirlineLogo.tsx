@@ -9,9 +9,9 @@ export const AirlineLogo = ({
   className,
   url,
 }: AirlineLogoProps): JSX.Element => (
-  <div className={classNames('w-[120px]', 'flex', 'justify-center', className)}>
+  <div className={classNames('flex w-[120px] justify-center', className)}>
     {url !== null && url !== undefined ? (
-      <img className="max-w-[100px] max-h-[30px]" src={url} />
+      <img className="max-h-[30px] max-w-[100px]" src={url} />
     ) : null}
   </div>
 );

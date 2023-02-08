@@ -3,17 +3,17 @@
 exports[`<App /> > renders login page 1`] = `
 <div>
   <div
-    class="hero bg-base-200 min-h-screen"
+    class="hero min-h-screen bg-base-200"
     role="banner"
   >
     <div
-      class="hero-content w-full justify-around flex-wrap"
+      class="hero-content w-full flex-wrap justify-around"
     >
       <div
         class="text-center lg:text-left"
       >
         <div
-          class="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-5xl"
+          class="font-title inline-flex text-lg text-primary transition-all duration-200 md:text-5xl"
         >
           <span>
             Flight
@@ -33,7 +33,7 @@ exports[`<App /> > renders login page 1`] = `
       </div>
       <div
         aria-label="Card"
-        class="card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100 mx-10 card-bordered"
+        class="card mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-2xl card-bordered"
       >
         <div
           class="card-body"
@@ -43,7 +43,7 @@ exports[`<App /> > renders login page 1`] = `
           >
             <fieldset>
               <div
-                class="form-control w-full"
+                class="form-control flex-1"
               >
                 <label
                   class="label font-semibold"
@@ -62,14 +62,14 @@ exports[`<App /> > renders login page 1`] = `
                 </label>
                 <input
                   autocomplete="email"
-                  class="input input-ghost focus:outline-offset-0 input-bordered"
+                  class="input w-full input-ghost focus:outline-offset-0 input-bordered"
                   name="email"
                   type="email"
                   value=""
                 />
               </div>
               <div
-                class="form-control w-full"
+                class="form-control flex-1"
               >
                 <label
                   class="label font-semibold"
@@ -88,7 +88,7 @@ exports[`<App /> > renders login page 1`] = `
                 </label>
                 <input
                   autocomplete="current-password"
-                  class="input input-ghost focus:outline-offset-0 input-bordered"
+                  class="input w-full input-ghost focus:outline-offset-0 input-bordered"
                   name="password"
                   type="password"
                   value=""
@@ -112,7 +112,7 @@ exports[`<App /> > renders login page 1`] = `
               </label>
             </fieldset>
             <div
-              class="flex flex-col mt-6"
+              class="mt-6 flex flex-col"
             >
               <button
                 class="btn"
@@ -126,16 +126,13 @@ exports[`<App /> > renders login page 1`] = `
       </div>
     </div>
     <div
-      class="toast toast-top toast-end"
-    />
-    <div
       class="absolute top-0 right-0"
     >
       <button
-        class="btn rounded-lg text-sm p-2.5 btn-ghost"
+        class="btn rounded-lg p-2.5 text-sm btn-ghost"
       >
         <svg
-          class="w-6 h-6"
+          class="h-6 w-6"
           fill="currentColor"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
@@ -158,18 +155,18 @@ exports[`<App /> > renders profile page 1`] = `
     class="flex h-screen flex-col justify-between"
   >
     <div
-      class="flex w-full component-preview p-3 items-center justify-center gap-2 font-sans"
+      class="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans"
     >
       <div
         aria-label="Navbar"
-        class="navbar bg-base-200 shadow-xl rounded-box"
+        class="navbar rounded-box bg-base-200 shadow-xl"
         role="navigation"
       >
         <div
           class="flex-1 navbar-start"
         >
           <div
-            class="dropdown dropdown-bottom"
+            class="dropdown-bottom dropdown"
           >
             <button
               class="btn lg:hidden btn-ghost"
@@ -191,7 +188,7 @@ exports[`<App /> > renders profile page 1`] = `
               </svg>
             </button>
             <ul
-              class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+              class="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
               tabindex="0"
             >
               <li>
@@ -218,11 +215,11 @@ exports[`<App /> > renders profile page 1`] = `
             </ul>
           </div>
           <a
-            class="btn btn-ghost normal-case text-xl"
+            class="btn-ghost btn text-xl normal-case"
             href="/"
           >
             <div
-              class="font-title text-primary hidden sm:inline-flex transition-all duration-200 text-3xl"
+              class="font-title hidden text-3xl text-primary transition-all duration-200 sm:inline-flex"
             >
               <span>
                 Flight
@@ -261,10 +258,10 @@ exports[`<App /> > renders profile page 1`] = `
           class="space-x-2 flex-1 navbar-end"
         >
           <button
-            class="btn rounded-lg text-sm p-2.5 btn-ghost"
+            class="btn rounded-lg p-2.5 text-sm btn-ghost"
           >
             <svg
-              class="w-6 h-6"
+              class="h-6 w-6"
               fill="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
@@ -277,7 +274,7 @@ exports[`<App /> > renders profile page 1`] = `
             </svg>
           </button>
           <a
-            class="btn btn-md"
+            class="btn-md btn"
           >
             Login
           </a>
@@ -285,11 +282,11 @@ exports[`<App /> > renders profile page 1`] = `
       </div>
     </div>
     <div
-      class="flex-1 flex flex-col p-3 gap-3"
+      class="flex flex-1 flex-col gap-3 p-3"
     >
       <div
         aria-label="Card"
-        class="card bg-base-200 min-h-[75vh] card-bordered"
+        class="card min-h-[75vh] bg-base-200 card-bordered"
       >
         <div
           class="card-body justify-center"
@@ -315,13 +312,13 @@ exports[`<App /> > renders profile page 1`] = `
                   Your all-in-one personal flight logbook and trip planner
                 </p>
                 <ul
-                  class="py-4 space-y-1 text-sm text-gray-500"
+                  class="space-y-1 py-4 text-sm text-gray-500"
                 >
                   <li
                     class="flex justify-center gap-2"
                   >
                     <svg
-                      class="w-5 h-5"
+                      class="h-5 w-5"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="1.5"
@@ -340,7 +337,7 @@ exports[`<App /> > renders profile page 1`] = `
                     class="flex justify-center gap-2"
                   >
                     <svg
-                      class="w-5 h-5"
+                      class="h-5 w-5"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="1.5"
@@ -359,7 +356,7 @@ exports[`<App /> > renders profile page 1`] = `
                     class="flex justify-center gap-2"
                   >
                     <svg
-                      class="w-5 h-5"
+                      class="h-5 w-5"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="1.5"
@@ -391,200 +388,166 @@ exports[`<App /> > renders profile page 1`] = `
       >
         <div
           aria-label="Card"
-          class="card bg-base-200 shadow-xl text-center card-bordered"
+          class="card bg-base-200 text-center shadow-xl card-bordered"
         >
           <div
             class="card-body items-center"
           >
             <div
-              class="card-title text-2xl mb-5"
+              class="card-title mb-5 text-2xl"
             >
               Create Itinerary
             </div>
             <div
-              class="flex flex-col gap-8 w-full"
+              class="flex w-full flex-col gap-8"
             >
               <div
-                class="flex flex-wrap gap-8"
+                class="flex flex-wrap justify-around gap-8"
               >
                 <div
-                  class="flex-1 flex justify-center"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
+                  <label
+                    class="label font-semibold"
                     data-headlessui-state=""
+                    id="headlessui-combobox-label-:r0:"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r0:"
+                    <span
+                      class="label-text"
                     >
+                      Departure Airport
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Departure Airport
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r0:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:r1:"
-                      name="departureAirportId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
+                    </span>
+                  </label>
+                  <div
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
+                  >
                     <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
+                      class="absolute mt-[1px] w-full min-w-[200px]"
+                    />
                   </div>
                 </div>
                 <div
-                  class="flex-1 flex justify-center"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
+                  <label
+                    class="label font-semibold"
                     data-headlessui-state=""
+                    id="headlessui-combobox-label-:r1:"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r3:"
+                    <span
+                      class="label-text"
                     >
+                      Arrival Airport
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Arrival Airport
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r3:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:r4:"
-                      name="arrivalAirportId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
+                    </span>
+                  </label>
+                  <div
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
+                  >
                     <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
+                      class="absolute mt-[1px] w-full min-w-[200px]"
+                    />
                   </div>
                 </div>
               </div>
               <div
-                class="flex flex-wrap gap-8"
+                class="flex flex-wrap justify-between gap-8"
               >
                 <div
-                  class="flex-1 flex justify-center"
+                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
                 >
-                  <div
-                    class="form-control w-full"
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
+                    <span
+                      class="label-text"
                     >
+                      Departure Date
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Departure Date
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      class="input w-[200px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="outDate"
-                      type="date"
-                      value=""
-                    />
-                  </div>
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="outDate"
+                    type="date"
+                    value=""
+                  />
                 </div>
                 <div
-                  class="flex-1 flex justify-center"
+                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
                 >
-                  <div
-                    class="form-control w-full"
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
+                    <span
+                      class="label-text"
                     >
+                      Departure Time (Local)
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Departure Time (Local)
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      class="input w-[200px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="outTime"
-                      type="time"
-                      value=""
-                    />
-                  </div>
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="outTime"
+                    type="time"
+                    value=""
+                  />
                 </div>
                 <div
-                  class="flex-1 flex justify-center"
+                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
                 >
-                  <div
-                    class="form-control w-full"
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
+                    <span
+                      class="label-text"
                     >
+                      Arrival Time (Local)
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Arrival Time (Local)
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      class="input w-[200px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="inTime"
-                      type="time"
-                      value=""
-                    />
-                  </div>
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="inTime"
+                    type="time"
+                    value=""
+                  />
                 </div>
               </div>
               <div
@@ -592,110 +555,86 @@ exports[`<App /> > renders profile page 1`] = `
                 role="separator"
               />
               <div
-                class="flex flex-wrap gap-8"
+                class="flex flex-wrap justify-between gap-8"
               >
                 <div
-                  class="flex-1 flex justify-center"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
+                  <label
+                    class="label font-semibold"
                     data-headlessui-state=""
+                    id="headlessui-combobox-label-:r2:"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r6:"
+                    <span
+                      class="label-text"
                     >
-                      <span
-                        class="label-text"
-                      >
-                        Airline
-                         
-                      </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r6:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:r7:"
-                      name="airlineId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
-                    <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
+                      Airline
+                       
+                    </span>
+                  </label>
                   <div
-                    class="form-control w-full"
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
                   >
-                    <label
-                      class="label font-semibold"
-                    >
-                      <span
-                        class="label-text"
-                      >
-                        Flight Number
-                         
-                      </span>
-                    </label>
-                    <input
-                      class="input w-[120px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="flightNumber"
-                      type="number"
-                      value=""
+                    <div
+                      class="absolute mt-[1px] w-full min-w-[200px]"
                     />
                   </div>
                 </div>
                 <div
-                  class="flex-1 flex justify-center"
+                  class="form-control flex-1 min-w-[150px] max-w-[150px]"
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
-                    data-headlessui-state=""
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r9:"
+                    <span
+                      class="label-text"
                     >
-                      <span
-                        class="label-text"
-                      >
-                        Aircraft Type
-                         
-                      </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r9:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:ra:"
-                      name="aircraftTypeId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
+                      Flight Number
+                       
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="flightNumber"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <div
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
+                >
+                  <label
+                    class="label font-semibold"
+                    data-headlessui-state=""
+                    id="headlessui-combobox-label-:r3:"
+                  >
+                    <span
+                      class="label-text"
+                    >
+                      Aircraft Type
+                       
+                    </span>
+                  </label>
+                  <div
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
+                  >
                     <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
+                      class="absolute mt-[1px] w-full min-w-[200px]"
+                    />
                   </div>
                 </div>
                 <div
-                  class="min-w-[250px]"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
                 >
                   <label
                     class="label font-semibold"
@@ -800,11 +739,11 @@ exports[`<App /> > renders profile page 1`] = `
       </form>
     </div>
     <div
-      class="footer items-center p-3 bg-neutral text-neutral-content"
+      class="footer items-center bg-neutral p-3 text-neutral-content"
       role="contentinfo"
     >
       <div
-        class="items-center grid-flow-col"
+        class="grid-flow-col items-center"
       >
         <svg
           class="fill-current"
@@ -867,9 +806,6 @@ exports[`<App /> > renders profile page 1`] = `
         </a>
       </div>
     </div>
-    <div
-      class="toast toast-top toast-end"
-    />
   </div>
 </div>
 `;

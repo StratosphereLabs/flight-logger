@@ -7,5 +7,5 @@ export interface DashboardContainerProps {
 export const DashboardContainer = ({
   children,
 }: DashboardContainerProps): JSX.Element => (
-  <div className="flex flex-wrap flex-row justify-center gap-3">{children}</div>
+  <div className="flex flex-row flex-wrap justify-center gap-3">{children}</div>
 );

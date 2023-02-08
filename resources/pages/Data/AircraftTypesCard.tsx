@@ -24,7 +24,7 @@ export const AircraftTypesCard = (): JSX.Element => {
     });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard className="shadow-xl bg-base-200 h-[550px]">
+    <LoadingCard className="h-[550px] bg-base-200 shadow-xl">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
           Aircraft Types

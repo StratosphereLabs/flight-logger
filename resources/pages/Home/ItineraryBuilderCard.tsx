@@ -24,121 +24,104 @@ export const ItineraryBuilderCard = forwardRef<
 >(
   ({ className, firstFieldRef, onReset, ...props }, ref): JSX.Element => (
     <Card
-      className={classNames(
-        'bg-base-200',
-        'shadow-xl',
-        'text-center',
-        className,
-      )}
+      className={classNames('bg-base-200 text-center shadow-xl', className)}
       ref={ref}
       {...props}
     >
       <Card.Body className="items-center">
-        <Card.Title className="text-2xl mb-5">Create Itinerary</Card.Title>
-        <div className="flex flex-col gap-8 w-full">
-          <div className="flex flex-wrap gap-8">
-            <div className="flex-1 flex justify-center">
-              <AirportInput
-                className="max-w-sm"
-                inputRef={firstFieldRef}
-                isRequired
-                labelText="Departure Airport"
-                name="departureAirportId"
-              />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <AirportInput
-                className="max-w-sm"
-                isRequired
-                labelText="Arrival Airport"
-                name="arrivalAirportId"
-              />
-            </div>
+        <Card.Title className="mb-5 text-2xl">Create Itinerary</Card.Title>
+        <div className="flex w-full flex-col gap-8">
+          <div className="flex flex-wrap justify-around gap-8">
+            <AirportInput
+              className="min-w-[250px] max-w-[400px]"
+              inputRef={firstFieldRef}
+              isRequired
+              labelText="Departure Airport"
+              name="departureAirportId"
+            />
+            <AirportInput
+              className="min-w-[250px] max-w-[400px]"
+              isRequired
+              labelText="Arrival Airport"
+              name="arrivalAirportId"
+            />
           </div>
-          <div className="flex flex-wrap gap-8">
-            <div className="flex-1 flex justify-center">
-              <FormControl
-                className="w-[200px]"
-                isRequired
-                labelText="Departure Date"
-                name="outDate"
-                type="date"
-              />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <FormControl
-                className="w-[200px]"
-                isRequired
-                labelText="Departure Time (Local)"
-                name="outTime"
-                transform={nullEmptyStringTransformer}
-                type="time"
-              />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <FormControl
-                className="w-[200px]"
-                isRequired
-                labelText="Arrival Time (Local)"
-                name="inTime"
-                type="time"
-              />
-            </div>
+          <div className="flex flex-wrap justify-between gap-8">
+            <FormControl
+              className="min-w-[200px] max-w-[200px]"
+              isRequired
+              labelText="Departure Date"
+              name="outDate"
+              type="date"
+            />
+            <FormControl
+              className="min-w-[200px] max-w-[200px]"
+              isRequired
+              labelText="Departure Time (Local)"
+              name="outTime"
+              transform={nullEmptyStringTransformer}
+              type="time"
+            />
+            <FormControl
+              className="min-w-[200px] max-w-[200px]"
+              isRequired
+              labelText="Arrival Time (Local)"
+              name="inTime"
+              type="time"
+            />
           </div>
           <Divider />
-          <div className="flex flex-wrap gap-8">
-            <div className="flex-1 flex justify-center">
-              <AirlineInput
-                className="max-w-sm"
-                labelText="Airline"
-                name="airlineId"
-              />
-            </div>
-            <div>
-              <FormControl
-                className="w-[120px]"
-                labelText="Flight Number"
-                name="flightNumber"
-                onWheel={e => (e.target as HTMLInputElement).blur?.()}
-                transform={numberInputTransformer}
-                type="number"
-              />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <AircraftTypeInput
-                className="max-w-sm"
-                labelText="Aircraft Type"
-                name="aircraftTypeId"
-              />
-            </div>
-            <div className="min-w-[250px]">
-              <FormRadio
-                labelText="Class"
-                name="class"
-                options={[
-                  {
-                    label: 'Basic Economy',
-                    value: 'BASIC',
-                  },
-                  {
-                    label: 'Economy',
-                    value: 'ECONOMY',
-                  },
-                  {
-                    label: 'Premium Economy',
-                    value: 'PREMIUM',
-                  },
-                  {
-                    label: 'Business',
-                    value: 'BUSINESS',
-                  },
-                  {
-                    label: 'First',
-                    value: 'FIRST',
-                  },
-                ]}
-              />
-            </div>
+          <div className="flex flex-wrap justify-between gap-8">
+            <AirlineInput
+              className="min-w-[250px] max-w-[400px]"
+              labelText="Airline"
+              name="airlineId"
+            />
+            <FormControl
+              className="min-w-[150px] max-w-[150px]"
+              labelText="Flight Number"
+              name="flightNumber"
+              onWheel={e => (e.target as HTMLInputElement).blur?.()}
+              transform={numberInputTransformer}
+              type="number"
+            />
+            <AircraftTypeInput
+              className="min-w-[250px] max-w-[400px]"
+              labelText="Aircraft Type"
+              name="aircraftTypeId"
+            />
+            <FormRadio
+              className="min-w-[250px] max-w-[400px]"
+              labelText="Class"
+              name="class"
+              options={[
+                {
+                  id: 'BASIC',
+                  label: 'Basic Economy',
+                  value: 'BASIC',
+                },
+                {
+                  id: 'ECONOMY',
+                  label: 'Economy',
+                  value: 'ECONOMY',
+                },
+                {
+                  id: 'PREMIUM',
+                  label: 'Premium Economy',
+                  value: 'PREMIUM',
+                },
+                {
+                  id: 'BUSINESS',
+                  label: 'Business',
+                  value: 'BUSINESS',
+                },
+                {
+                  id: 'FIRST',
+                  label: 'First',
+                  value: 'FIRST',
+                },
+              ]}
+            />
           </div>
           <div className="text-center">
             <Button className="w-full max-w-md" type="submit">

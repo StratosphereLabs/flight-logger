@@ -1,7 +1,7 @@
 import { Progress } from 'react-daisyui';
 
 export const FullScreenLoader = (): JSX.Element => (
-  <div className="flex-1 flex items-center justify-center">
-    <Progress className="w-56 mt-4" />
+  <div className="flex flex-1 items-center justify-center">
+    <Progress className="mt-4 w-56" />
   </div>
 );

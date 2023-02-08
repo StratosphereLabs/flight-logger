@@ -30,12 +30,7 @@ export const ItineraryFlightsCard = forwardRef<
     ref,
   ): JSX.Element => (
     <Card
-      className={classNames(
-        'bg-base-200',
-        'shadow-xl',
-        'text-center',
-        className,
-      )}
+      className={classNames('bg-base-200 text-center shadow-xl', className)}
       ref={ref}
       {...props}
     >
@@ -49,7 +44,7 @@ export const ItineraryFlightsCard = forwardRef<
             </Breadcrumbs.Item>
           ))}
         </Breadcrumbs>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Button color="error" onClick={onReset} size="sm">
             Reset
           </Button>

@@ -64,7 +64,7 @@ export const FlightsCard = (): JSX.Element => {
     <>
       <LoadingCard
         isLoading={isFetching}
-        className="shadow-xl bg-base-200 min-h-[400px] min-w-[500px]"
+        className="min-h-[400px] min-w-[500px] bg-base-200 shadow-xl"
       >
         <Card.Body>
           <Card.Title className="mb-5 justify-center" tag="h2">
@@ -98,9 +98,9 @@ export const FlightsCard = (): JSX.Element => {
                   const airlineData = getValue<airline>();
                   return airlineData?.logo !== null &&
                     airlineData?.logo !== undefined ? (
-                    <div className="w-[120px] flex justify-center">
+                    <div className="flex w-[120px] justify-center">
                       <img
-                        className="max-w-[120px] max-h-[50px]"
+                        className="max-h-[50px] max-w-[120px]"
                         src={airlineData.logo}
                       />
                     </div>
@@ -175,7 +175,7 @@ export const FlightsCard = (): JSX.Element => {
                 cell: ({ getValue }) => {
                   const aircraftType = getValue<aircraft_type>();
                   return (
-                    <div className="opacity-70 italic">
+                    <div className="italic opacity-70">
                       {aircraftType?.name ?? ''}
                     </div>
                   );
