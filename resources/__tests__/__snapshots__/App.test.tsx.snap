@@ -43,7 +43,7 @@ exports[`<App /> > renders login page 1`] = `
           >
             <fieldset>
               <div
-                class="form-control w-full"
+                class="form-control flex-1"
               >
                 <label
                   class="label font-semibold"
@@ -62,14 +62,14 @@ exports[`<App /> > renders login page 1`] = `
                 </label>
                 <input
                   autocomplete="email"
-                  class="input input-ghost focus:outline-offset-0 input-bordered"
+                  class="input w-full input-ghost focus:outline-offset-0 input-bordered"
                   name="email"
                   type="email"
                   value=""
                 />
               </div>
               <div
-                class="form-control w-full"
+                class="form-control flex-1"
               >
                 <label
                   class="label font-semibold"
@@ -88,7 +88,7 @@ exports[`<App /> > renders login page 1`] = `
                 </label>
                 <input
                   autocomplete="current-password"
-                  class="input input-ghost focus:outline-offset-0 input-bordered"
+                  class="input w-full input-ghost focus:outline-offset-0 input-bordered"
                   name="password"
                   type="password"
                   value=""
@@ -125,9 +125,6 @@ exports[`<App /> > renders login page 1`] = `
         </div>
       </div>
     </div>
-    <div
-      class="toast toast-top toast-end"
-    />
     <div
       class="absolute top-0 right-0"
     >
@@ -405,186 +402,152 @@ exports[`<App /> > renders profile page 1`] = `
               class="flex w-full flex-col gap-8"
             >
               <div
-                class="flex flex-wrap gap-8"
+                class="flex flex-wrap justify-around gap-8"
               >
                 <div
-                  class="flex flex-1 justify-center"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
+                  <label
+                    class="label font-semibold"
                     data-headlessui-state=""
+                    id="headlessui-combobox-label-:r0:"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r0:"
+                    <span
+                      class="label-text"
                     >
+                      Departure Airport
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Departure Airport
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r0:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:r1:"
-                      name="departureAirportId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
+                    </span>
+                  </label>
+                  <div
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
+                  >
                     <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
+                      class="absolute mt-[1px] w-full min-w-[200px]"
+                    />
                   </div>
                 </div>
                 <div
-                  class="flex flex-1 justify-center"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
+                  <label
+                    class="label font-semibold"
                     data-headlessui-state=""
+                    id="headlessui-combobox-label-:r1:"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r3:"
+                    <span
+                      class="label-text"
                     >
+                      Arrival Airport
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Arrival Airport
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r3:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:r4:"
-                      name="arrivalAirportId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
+                    </span>
+                  </label>
+                  <div
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
+                  >
                     <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
+                      class="absolute mt-[1px] w-full min-w-[200px]"
+                    />
                   </div>
                 </div>
               </div>
               <div
-                class="flex flex-wrap gap-8"
+                class="flex flex-wrap justify-between gap-8"
               >
                 <div
-                  class="flex flex-1 justify-center"
+                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
                 >
-                  <div
-                    class="form-control w-full"
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
+                    <span
+                      class="label-text"
                     >
+                      Departure Date
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Departure Date
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      class="input w-[200px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="outDate"
-                      type="date"
-                      value=""
-                    />
-                  </div>
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="outDate"
+                    type="date"
+                    value=""
+                  />
                 </div>
                 <div
-                  class="flex flex-1 justify-center"
+                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
                 >
-                  <div
-                    class="form-control w-full"
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
+                    <span
+                      class="label-text"
                     >
+                      Departure Time (Local)
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Departure Time (Local)
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      class="input w-[200px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="outTime"
-                      type="time"
-                      value=""
-                    />
-                  </div>
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="outTime"
+                    type="time"
+                    value=""
+                  />
                 </div>
                 <div
-                  class="flex flex-1 justify-center"
+                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
                 >
-                  <div
-                    class="form-control w-full"
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
+                    <span
+                      class="label-text"
                     >
+                      Arrival Time (Local)
+                       
                       <span
-                        class="label-text"
+                        class="font-normal"
                       >
-                        Arrival Time (Local)
-                         
-                        <span
-                          class="font-normal"
-                        >
-                          *
-                        </span>
+                        *
                       </span>
-                    </label>
-                    <input
-                      class="input w-[200px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="inTime"
-                      type="time"
-                      value=""
-                    />
-                  </div>
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="inTime"
+                    type="time"
+                    value=""
+                  />
                 </div>
               </div>
               <div
@@ -592,110 +555,86 @@ exports[`<App /> > renders profile page 1`] = `
                 role="separator"
               />
               <div
-                class="flex flex-wrap gap-8"
+                class="flex flex-wrap justify-between gap-8"
               >
                 <div
-                  class="flex flex-1 justify-center"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
+                  <label
+                    class="label font-semibold"
                     data-headlessui-state=""
+                    id="headlessui-combobox-label-:r2:"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r6:"
+                    <span
+                      class="label-text"
                     >
-                      <span
-                        class="label-text"
-                      >
-                        Airline
-                         
-                      </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r6:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:r7:"
-                      name="airlineId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
-                    <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
+                      Airline
+                       
+                    </span>
+                  </label>
                   <div
-                    class="form-control w-full"
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
                   >
-                    <label
-                      class="label font-semibold"
-                    >
-                      <span
-                        class="label-text"
-                      >
-                        Flight Number
-                         
-                      </span>
-                    </label>
-                    <input
-                      class="input w-[120px] input-ghost focus:outline-offset-0 input-bordered"
-                      name="flightNumber"
-                      type="number"
-                      value=""
+                    <div
+                      class="absolute mt-[1px] w-full min-w-[200px]"
                     />
                   </div>
                 </div>
                 <div
-                  class="flex flex-1 justify-center"
+                  class="form-control flex-1 min-w-[150px] max-w-[150px]"
                 >
-                  <div
-                    class="form-control w-full max-w-sm"
-                    data-headlessui-state=""
+                  <label
+                    class="label font-semibold"
                   >
-                    <label
-                      class="label font-semibold"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-label-:r9:"
+                    <span
+                      class="label-text"
                     >
-                      <span
-                        class="label-text"
-                      >
-                        Aircraft Type
-                         
-                      </span>
-                    </label>
-                    <input
-                      aria-expanded="false"
-                      aria-labelledby="headlessui-combobox-label-:r9:"
-                      class="input input-ghost focus:outline-offset-0 input-bordered"
-                      data-headlessui-state=""
-                      id="headlessui-combobox-input-:ra:"
-                      name="aircraftTypeId"
-                      role="combobox"
-                      type="text"
-                      value=""
-                    />
+                      Flight Number
+                       
+                    </span>
+                  </label>
+                  <input
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="flightNumber"
+                    type="number"
+                    value=""
+                  />
+                </div>
+                <div
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  data-headlessui-state=""
+                >
+                  <label
+                    class="label font-semibold"
+                    data-headlessui-state=""
+                    id="headlessui-combobox-label-:r3:"
+                  >
+                    <span
+                      class="label-text"
+                    >
+                      Aircraft Type
+                       
+                    </span>
+                  </label>
+                  <div
+                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    tabindex="0"
+                  />
+                  <div
+                    class="relative z-10 text-left"
+                  >
                     <div
-                      class="relative z-10 text-left"
-                    >
-                      <div
-                        class="absolute min-w-[200px] mt-[1px] w-full"
-                      />
-                    </div>
+                      class="absolute mt-[1px] w-full min-w-[200px]"
+                    />
                   </div>
                 </div>
                 <div
-                  class="min-w-[250px]"
+                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
                 >
                   <label
                     class="label font-semibold"
@@ -867,9 +806,6 @@ exports[`<App /> > renders profile page 1`] = `
         </a>
       </div>
     </div>
-    <div
-      class="toast toast-top toast-end"
-    />
   </div>
 </div>
 `;
