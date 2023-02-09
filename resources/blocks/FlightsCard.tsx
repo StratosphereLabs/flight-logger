@@ -39,8 +39,8 @@ export const FlightsCard = (): JSX.Element => {
         username,
       });
       utils.users.getUserFlights.setData(
-        previousFlights?.filter(flight => flight.id !== id),
         { username },
+        previousFlights?.filter(flight => flight.id !== id),
       );
     },
     onError: err => {

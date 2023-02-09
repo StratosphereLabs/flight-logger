@@ -126,6 +126,9 @@ exports[`<App /> > renders login page 1`] = `
       </div>
     </div>
     <div
+      class="toast toast-end toast-top z-50 w-1/2 min-w-[400px]"
+    />
+    <div
       class="absolute top-0 right-0"
     >
       <button
@@ -196,13 +199,6 @@ exports[`<App /> > renders profile page 1`] = `
                   href="/"
                 >
                   Home
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/profile"
-                >
-                  My Profile
                 </a>
               </li>
               <li>
@@ -806,6 +802,9 @@ exports[`<App /> > renders profile page 1`] = `
         </a>
       </div>
     </div>
+    <div
+      class="toast toast-end toast-top z-50 w-1/2 min-w-[400px]"
+    />
   </div>
 </div>
 `;
