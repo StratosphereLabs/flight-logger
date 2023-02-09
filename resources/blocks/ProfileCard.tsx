@@ -1,6 +1,6 @@
 import { Avatar, Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard } from '../common/components';
+import { LoadingCard } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
 

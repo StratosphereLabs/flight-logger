@@ -4,15 +4,8 @@ import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { useAlertMessages } from 'stratosphere-ui';
-import {
-  EditIcon,
-  LinkIcon,
-  LoadingCard,
-  Modal,
-  Table,
-  TrashIcon,
-} from '../common/components';
+import { LoadingCard, Modal, useAlertMessages } from 'stratosphere-ui';
+import { EditIcon, LinkIcon, Table, TrashIcon } from '../common/components';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -245,7 +238,6 @@ export const FlightsCard = (): JSX.Element => {
           {
             children: 'Yes',
             color: 'error',
-            initialFocus: true,
             loading: isLoading,
             onClick: () =>
               deleteFlightData !== null && mutate({ id: deleteFlightData.id }),

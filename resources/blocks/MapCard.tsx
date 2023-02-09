@@ -5,7 +5,7 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import { useParams } from 'react-router-dom';
-import { LoadingCard } from '../common/components';
+import { LoadingCard } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../common/hooks';
 import { darkModeStyle } from '../common/mapStyle';
 import { AppTheme, useAppContext } from '../providers';

@@ -35,9 +35,16 @@ export const MainNavbar = (): JSX.Element => {
               <li>
                 <Link to="/">Home</Link>
               </li>
-              <li>
-                <Link to="/profile">My Profile</Link>
-              </li>
+              {isLoggedIn ? (
+                <>
+                  <li>
+                    <Link to="/profile">My Profile</Link>
+                  </li>
+                  <li>
+                    <Link to="/flights">My Flights</Link>
+                  </li>
+                </>
+              ) : null}
               <li>
                 <Link to="/data">Data</Link>
               </li>
@@ -56,7 +63,10 @@ export const MainNavbar = (): JSX.Element => {
               Home
             </NavbarTab>
             {isLoggedIn ? (
-              <NavbarTab to="/profile">My Profile</NavbarTab>
+              <>
+                <NavbarTab to="/profile">My Profile</NavbarTab>
+                <NavbarTab to="/flights">My Flights</NavbarTab>
+              </>
             ) : null}
             <NavbarTab to="/data">Data</NavbarTab>
           </div>
