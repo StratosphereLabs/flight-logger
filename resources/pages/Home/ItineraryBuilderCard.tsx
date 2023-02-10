@@ -24,7 +24,7 @@ export const ItineraryBuilderCard = forwardRef<
 >(
   ({ className, firstFieldRef, onReset, ...props }, ref): JSX.Element => (
     <Card
-      className={classNames('bg-base-200 text-center shadow-xl', className)}
+      className={classNames('bg-base-100 text-center shadow-lg', className)}
       ref={ref}
       {...props}
     >

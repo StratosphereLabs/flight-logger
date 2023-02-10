@@ -24,7 +24,7 @@ export const AirlinesCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard className="h-[625px] bg-base-200 shadow-xl">
+    <LoadingCard className="h-[625px] bg-base-100 shadow-lg">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
           Airlines
