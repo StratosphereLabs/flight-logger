@@ -1,8 +1,13 @@
-import { Button, Navbar } from 'react-daisyui';
+import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
 import { Link, useLinkClickHandler } from 'react-router-dom';
-import { DarkModeButton, LogoutIcon } from '../../common/components';
-import { useAppContext } from '../../providers';
 import { NavbarTab } from './NavbarTab';
+import {
+  ChevronDownIcon,
+  DarkModeButton,
+  LogoutIcon,
+  MenuIcon,
+} from '../../common/components';
+import { useAppContext } from '../../providers';
 
 export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
@@ -11,38 +16,29 @@ export const MainNavbar = (): JSX.Element => {
     <div className="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans">
       <Navbar className="rounded-box bg-base-200 shadow-xl">
         <Navbar.Start>
-          <div className="dropdown-bottom dropdown">
+          <Dropdown>
             <Button color="ghost" tabIndex={0} className="lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
+              <MenuIcon />
             </Button>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
-            >
+            <Dropdown.Menu tabIndex={0} className="menu-compact mt-3 w-52">
               <li>
                 <Link to="/">Home</Link>
               </li>
-              <li>
-                <Link to="/profile">My Profile</Link>
-              </li>
+              {isLoggedIn ? (
+                <>
+                  <li>
+                    <Link to="/profile">My Profile</Link>
+                  </li>
+                  <li>
+                    <Link to="/flights">My Flights</Link>
+                  </li>
+                </>
+              ) : null}
               <li>
                 <Link to="/data">Data</Link>
               </li>
-            </ul>
-          </div>
+            </Dropdown.Menu>
+          </Dropdown>
           <Link to="/" className="btn-ghost btn text-xl normal-case">
             <div className="font-title hidden text-3xl text-primary transition-all duration-200 sm:inline-flex">
               <span>Flight</span>{' '}
@@ -51,15 +47,26 @@ export const MainNavbar = (): JSX.Element => {
           </Link>
         </Navbar.Start>
         <Navbar.Center className="hidden lg:flex">
-          <div className="tabs tabs-boxed">
+          <Menu horizontal className="p-0">
             <NavbarTab to="/" end>
               Home
             </NavbarTab>
             {isLoggedIn ? (
-              <NavbarTab to="/profile">My Profile</NavbarTab>
+              <>
+                <NavbarTab
+                  to="/profile"
+                  subMenu={
+                    <Menu className="z-10 bg-base-200 p-2">
+                      <NavbarTab to="/flights">My Flights</NavbarTab>
+                    </Menu>
+                  }
+                >
+                  My Profile <ChevronDownIcon className="h-4 w-4" />
+                </NavbarTab>
+              </>
             ) : null}
             <NavbarTab to="/data">Data</NavbarTab>
-          </div>
+          </Menu>
         </Navbar.Center>
         <Navbar.End className="space-x-2">
           <DarkModeButton />

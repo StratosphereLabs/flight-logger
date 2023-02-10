@@ -34,6 +34,7 @@ export const ItineraryBuilderCard = forwardRef<
           <div className="flex flex-wrap justify-around gap-8">
             <AirportInput
               className="min-w-[250px] max-w-[400px]"
+              getBadgeText={({ id, name }) => `${id} - ${name}`}
               inputRef={firstFieldRef}
               isRequired
               labelText="Departure Airport"
@@ -41,6 +42,7 @@ export const ItineraryBuilderCard = forwardRef<
             />
             <AirportInput
               className="min-w-[250px] max-w-[400px]"
+              getBadgeText={({ id, name }) => `${id} - ${name}`}
               isRequired
               labelText="Arrival Airport"
               name="arrivalAirportId"
@@ -74,6 +76,9 @@ export const ItineraryBuilderCard = forwardRef<
           <div className="flex flex-wrap justify-between gap-8">
             <AirlineInput
               className="min-w-[250px] max-w-[400px]"
+              getBadgeText={({ iata, icao, name }) =>
+                `${iata}/${icao} - ${name}`
+              }
               labelText="Airline"
               name="airlineId"
             />
@@ -87,6 +92,9 @@ export const ItineraryBuilderCard = forwardRef<
             />
             <AircraftTypeInput
               className="min-w-[250px] max-w-[400px]"
+              getBadgeText={({ iata, icao, name }) =>
+                `${iata}/${icao} - ${name}`
+              }
               labelText="Aircraft Type"
               name="aircraftTypeId"
             />

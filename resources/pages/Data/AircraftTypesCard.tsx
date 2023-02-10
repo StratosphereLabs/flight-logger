@@ -5,7 +5,8 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Card } from 'react-daisyui';
-import { LoadingCard, Table } from '../../common/components';
+import { LoadingCard } from 'stratosphere-ui';
+import { Table } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
