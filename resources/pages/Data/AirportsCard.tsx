@@ -5,7 +5,8 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Badge, Card } from 'react-daisyui';
-import { LoadingCard, Table } from '../../common/components';
+import { LoadingCard } from 'stratosphere-ui';
+import { Table } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -44,7 +45,7 @@ export const AirportsCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard className="h-[625px] bg-base-200 shadow-xl">
+    <LoadingCard className="h-[625px] bg-base-100 shadow-lg">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
           Airports

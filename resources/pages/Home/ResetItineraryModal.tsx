@@ -1,4 +1,4 @@
-import { Modal, ModalProps } from '../../common/components';
+import { Modal, ModalProps } from 'stratosphere-ui';
 
 export interface ResetItineraryModalProps
   extends Omit<ModalProps, 'actionButtons' | 'children' | 'onClose' | 'title'> {
@@ -21,7 +21,6 @@ export const ResetItineraryModal = ({
       {
         children: 'Yes',
         color: 'error',
-        initialFocus: true,
         onClick: onSubmit,
       },
     ]}

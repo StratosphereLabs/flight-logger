@@ -5,7 +5,7 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import { useParams } from 'react-router-dom';
-import { LoadingCard } from '../common/components';
+import { LoadingCard } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../common/hooks';
 import { darkModeStyle } from '../common/mapStyle';
 import { AppTheme, useAppContext } from '../providers';
@@ -24,7 +24,7 @@ export const MapCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={!isLoaded || isFetching}
-      className="min-h-[400px] min-w-[500px] flex-1 bg-base-200 shadow-xl"
+      className="min-h-[400px] min-w-[500px] flex-1 bg-base-100 shadow-lg"
     >
       <GoogleMap
         mapContainerStyle={{

@@ -5,7 +5,8 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Card } from 'react-daisyui';
-import { AirlineLogo, LoadingCard, Table } from '../../common/components';
+import { LoadingCard } from 'stratosphere-ui';
+import { AirlineLogo, Table } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -23,7 +24,7 @@ export const AirlinesCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard className="h-[625px] bg-base-200 shadow-xl">
+    <LoadingCard className="h-[625px] bg-base-100 shadow-lg">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
           Airlines

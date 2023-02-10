@@ -7,7 +7,5 @@ export * from './DashboardContainer';
 export * from './FullScreenLoader';
 export * from './HeaderSortIcon';
 export * from './Icons';
-export * from './LoadingCard';
-export * from './Modal';
 export * from './Pagination';
 export * from './Table';

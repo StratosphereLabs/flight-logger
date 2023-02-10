@@ -2,13 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormRadio } from 'stratosphere-ui';
+import { Form, FormControl, FormRadio, LoadingCard } from 'stratosphere-ui';
 import { addFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
   AirlineInput,
   AirportInput,
-  LoadingCard,
 } from '../../common/components';
 import {
   useProtectedPage,
@@ -44,7 +43,7 @@ export const AddFlight = (): JSX.Element => {
     firstFieldRef.current?.focus();
   }, []);
   return (
-    <LoadingCard className="min-h-[400px] overflow-visible bg-base-200 shadow-xl">
+    <LoadingCard className="min-h-[400px] overflow-visible bg-base-100 shadow-lg">
       <Card.Body>
         <Card.Title className="mb-5 justify-center text-2xl">
           Add a Flight

@@ -41,7 +41,7 @@ export const Itinerary = (): JSX.Element | null => {
               {flight.layoverDuration})
             </Divider>
           ) : null}
-          <Card key={index} className="bg-base-200 shadow-lg">
+          <Card key={index} className="bg-base-100 shadow-lg">
             <Card.Body className="flex-row items-center justify-between gap-4">
               <AirlineLogo
                 className="hidden md:block"

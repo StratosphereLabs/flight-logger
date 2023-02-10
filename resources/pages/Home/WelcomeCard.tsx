@@ -13,7 +13,7 @@ export const WelcomeCard = ({
   ...props
 }: WelcomeCardProps): JSX.Element => (
   <Card
-    className={classNames('min-h-[75vh] bg-base-200', className)}
+    className={classNames('min-h-[75vh] bg-base-100 shadow-lg', className)}
     {...props}
   >
     <Card.Body className="justify-center">
