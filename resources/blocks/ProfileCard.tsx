@@ -9,7 +9,7 @@ export const ProfileCard = (): JSX.Element => {
   const { data, error, isFetching } = trpc.users.getUser.useQuery({ username });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard isLoading={isFetching} className="w-80 bg-base-200 shadow-xl">
+    <LoadingCard isLoading={isFetching} className="w-80 bg-base-100 shadow-lg">
       <Card.Body className="items-center">
         <Card.Title className="text-2xl font-medium">{`${
           data?.firstName ?? ''

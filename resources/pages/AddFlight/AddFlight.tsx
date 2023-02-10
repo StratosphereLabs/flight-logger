@@ -43,7 +43,7 @@ export const AddFlight = (): JSX.Element => {
     firstFieldRef.current?.focus();
   }, []);
   return (
-    <LoadingCard className="min-h-[400px] overflow-visible bg-base-200 shadow-xl">
+    <LoadingCard className="min-h-[400px] overflow-visible bg-base-100 shadow-lg">
       <Card.Body>
         <Card.Title className="mb-5 justify-center text-2xl">
           Add a Flight

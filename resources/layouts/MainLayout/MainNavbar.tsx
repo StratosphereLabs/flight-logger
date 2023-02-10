@@ -32,6 +32,12 @@ export const MainNavbar = (): JSX.Element => {
                   <li>
                     <Link to="/flights">My Flights</Link>
                   </li>
+                  <li>
+                    <Link to="/trips">My Trips</Link>
+                  </li>
+                  <li>
+                    <Link to="/itineraries">My Itineraries</Link>
+                  </li>
                 </>
               ) : null}
               <li>
@@ -58,6 +64,8 @@ export const MainNavbar = (): JSX.Element => {
                   subMenu={
                     <Menu className="z-10 bg-base-200 p-2">
                       <NavbarTab to="/flights">My Flights</NavbarTab>
+                      <NavbarTab to="/trips">My Trips</NavbarTab>
+                      <NavbarTab to="/itineraries">My Itineraries</NavbarTab>
                     </Menu>
                   }
                 >

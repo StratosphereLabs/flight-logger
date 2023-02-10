@@ -57,7 +57,7 @@ export const FlightsCard = (): JSX.Element => {
     <>
       <LoadingCard
         isLoading={isFetching}
-        className="min-h-[400px] min-w-[500px] bg-base-200 shadow-xl"
+        className="min-h-[400px] min-w-[500px] bg-base-100 shadow-lg"
       >
         <Card.Body>
           <Card.Title className="mb-5 justify-center" tag="h2">

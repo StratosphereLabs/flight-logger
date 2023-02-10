@@ -1,7 +1,7 @@
 import { Stats } from 'react-daisyui';
 
 export const StatsCard = (): JSX.Element => (
-  <Stats className="bg-base-200 font-sans shadow">
+  <Stats className="bg-base-100 font-sans shadow-lg">
     <Stats.Stat>
       <Stats.Stat.Item variant="figure" className="text-primary">
         <svg
