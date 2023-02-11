@@ -6,7 +6,7 @@ import {
   addFlightSchema,
   deleteFlightSchema,
   getUserSchema,
-  paginationSchema,
+  getUsersSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -14,8 +14,6 @@ import {
   fetchGravatarUrl,
   getDurationString,
   getFlightTimestamps,
-  getPaginatedResponse,
-  parsePaginationRequest,
 } from '../utils';
 
 export const usersRouter = router({
@@ -91,22 +89,18 @@ export const usersRouter = router({
     }),
   getUsers: procedure
     .use(verifyAdminTRPC)
-    .input(paginationSchema)
+    .input(getUsersSchema)
     .query(async ({ input }) => {
-      const { limit, page, skip, take } = parsePaginationRequest(input);
-      const [results, itemCount] = await prisma.$transaction([
-        prisma.user.findMany({
-          skip,
-          take,
-        }),
-        prisma.user.count(),
-      ]);
-      return getPaginatedResponse({
-        itemCount,
-        limit,
-        page,
-        results,
+      const results = await prisma.user.findMany({
+        take: 5,
+        where: {
+          username: {
+            contains: input.query,
+            mode: 'insensitive',
+          },
+        },
       });
+      return results;
     }),
   addFlight: procedure
     .use(verifyAuthenticated)
