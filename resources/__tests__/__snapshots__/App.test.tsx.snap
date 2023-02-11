@@ -132,7 +132,7 @@ exports[`<App /> > renders login page 1`] = `
       class="absolute top-0 right-0"
     >
       <button
-        class="btn rounded-lg p-2.5 text-sm btn-ghost"
+        class="btn btn-circle btn-ghost"
       >
         <svg
           class="h-6 w-6"
@@ -218,24 +218,22 @@ exports[`<App /> > renders profile page 1`] = `
               class="dropdown-content"
             />
           </div>
-          <a
-            class="btn-ghost btn text-xl normal-case"
-            href="/"
+          <button
+            class="btn hidden text-xl normal-case sm:inline-flex btn-ghost"
           >
             <div
-              class="font-title hidden text-3xl text-primary transition-all duration-200 sm:inline-flex"
+              class="font-title text-3xl text-primary transition-all duration-200"
             >
               <span>
                 Flight
               </span>
-               
               <span
                 class="text-base-content"
               >
                 Logger
               </span>
             </div>
-          </a>
+          </button>
         </div>
         <div
           class="hidden lg:flex navbar-center"
@@ -270,10 +268,28 @@ exports[`<App /> > renders profile page 1`] = `
           </ul>
         </div>
         <div
-          class="space-x-2 flex-1 navbar-end"
+          class="gap-1 flex-1 navbar-end"
         >
           <button
-            class="btn rounded-lg p-2.5 text-sm btn-ghost"
+            class="btn btn-circle btn-ghost"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+          </button>
+          <button
+            class="btn btn-circle btn-ghost"
           >
             <svg
               class="h-6 w-6"
@@ -288,11 +304,15 @@ exports[`<App /> > renders profile page 1`] = `
               />
             </svg>
           </button>
-          <a
-            class="btn-md btn"
+          <div
+            class="flex gap-2"
           >
-            Login
-          </a>
+            <button
+              class="btn"
+            >
+              Login
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -441,7 +461,7 @@ exports[`<App /> > renders profile page 1`] = `
                     </span>
                   </label>
                   <div
-                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
                     tabindex="0"
                   />
                   <div
@@ -474,7 +494,7 @@ exports[`<App /> > renders profile page 1`] = `
                     </span>
                   </label>
                   <div
-                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
                     tabindex="0"
                   />
                   <div
@@ -589,7 +609,7 @@ exports[`<App /> > renders profile page 1`] = `
                     </span>
                   </label>
                   <div
-                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
                     tabindex="0"
                   />
                   <div
@@ -637,7 +657,7 @@ exports[`<App /> > renders profile page 1`] = `
                     </span>
                   </label>
                   <div
-                    class="input-bordered input flex cursor-pointer items-center gap-2 overflow-y-scroll input-ghost"
+                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
                     tabindex="0"
                   />
                   <div
