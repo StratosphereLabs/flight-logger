@@ -57,6 +57,7 @@ export const AddFlight = (): JSX.Element => {
             <div className="flex flex-wrap justify-around gap-8">
               <AirportInput
                 className="min-w-[250px] max-w-[400px]"
+                getBadgeText={({ id, name }) => `${id} - ${name}`}
                 inputRef={firstFieldRef}
                 isRequired
                 labelText="Departure Airport"
@@ -64,6 +65,7 @@ export const AddFlight = (): JSX.Element => {
               />
               <AirportInput
                 className="min-w-[250px] max-w-[400px]"
+                getBadgeText={({ id, name }) => `${id} - ${name}`}
                 isRequired
                 labelText="Arrival Airport"
                 name="arrivalAirportId"
@@ -97,11 +99,17 @@ export const AddFlight = (): JSX.Element => {
             <div className="flex flex-wrap justify-around gap-8">
               <AirlineInput
                 className="min-w-[250px] max-w-[400px]"
+                getBadgeText={({ iata, icao, name }) =>
+                  `${iata}/${icao} - ${name}`
+                }
                 labelText="Airline"
                 name="airlineId"
               />
               <AircraftTypeInput
                 className="min-w-[250px] max-w-[400px]"
+                getBadgeText={({ iata, icao, name }) =>
+                  `${iata}/${icao} - ${name}`
+                }
                 labelText="Aircraft Type"
                 name="aircraftTypeId"
               />

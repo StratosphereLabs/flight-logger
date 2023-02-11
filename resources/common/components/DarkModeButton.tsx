@@ -9,11 +9,7 @@ export const DarkModeButton = (): JSX.Element => {
       oldTheme === AppTheme.DARK ? AppTheme.LIGHT : AppTheme.DARK,
     );
   return (
-    <Button
-      onClick={toggleTheme}
-      color="ghost"
-      className="rounded-lg p-2.5 text-sm"
-    >
+    <Button onClick={toggleTheme} color="ghost" shape="circle">
       {theme === AppTheme.DARK ? <LightModeIcon /> : <DarkModeIcon />}
     </Button>
   );

@@ -6,12 +6,16 @@ import {
   DarkModeButton,
   LogoutIcon,
   MenuIcon,
+  SearchButton,
 } from '../../common/components';
 import { useAppContext } from '../../providers';
 
 export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
-  const onLoginClick = useLinkClickHandler('/auth/login');
+  const onHomeClick = useLinkClickHandler<HTMLButtonElement>('/');
+  const onAddFlightClick =
+    useLinkClickHandler<HTMLButtonElement>('/add-flight');
+  const onLoginClick = useLinkClickHandler<HTMLButtonElement>('/auth/login');
   return (
     <div className="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans">
       <Navbar className="rounded-box bg-base-200 shadow-xl">
@@ -26,6 +30,9 @@ export const MainNavbar = (): JSX.Element => {
               </li>
               {isLoggedIn ? (
                 <>
+                  <li>
+                    <Link to="/add-flight">Add Flight</Link>
+                  </li>
                   <li>
                     <Link to="/profile">My Profile</Link>
                   </li>
@@ -45,12 +52,16 @@ export const MainNavbar = (): JSX.Element => {
               </li>
             </Dropdown.Menu>
           </Dropdown>
-          <Link to="/" className="btn-ghost btn text-xl normal-case">
-            <div className="font-title hidden text-3xl text-primary transition-all duration-200 sm:inline-flex">
-              <span>Flight</span>{' '}
+          <Button
+            className="hidden text-xl normal-case sm:inline-flex"
+            color="ghost"
+            onClick={onHomeClick}
+          >
+            <div className="font-title text-3xl text-primary transition-all duration-200">
+              <span>Flight</span>
               <span className="text-base-content">Logger</span>
             </div>
-          </Link>
+          </Button>
         </Navbar.Start>
         <Navbar.Center className="hidden lg:flex">
           <Menu horizontal className="p-0">
@@ -76,19 +87,23 @@ export const MainNavbar = (): JSX.Element => {
             <NavbarTab to="/data">Data</NavbarTab>
           </Menu>
         </Navbar.Center>
-        <Navbar.End className="space-x-2">
+        <Navbar.End className="gap-1">
+          <SearchButton />
           <DarkModeButton />
-          {isLoggedIn ? (
-            <Link className="btn-ghost btn" to="/add-flight">
-              Add Flight
-            </Link>
-          ) : null}
-          <a
-            className="btn-md btn"
-            onClick={isLoggedIn ? logout : onLoginClick}
-          >
-            {isLoggedIn ? <LogoutIcon /> : 'Login'}
-          </a>
+          <div className="flex gap-2">
+            {isLoggedIn ? (
+              <Button
+                className="hidden lg:block"
+                color="ghost"
+                onClick={onAddFlightClick}
+              >
+                Add Flight
+              </Button>
+            ) : null}
+            <Button onClick={isLoggedIn ? logout : onLoginClick}>
+              {isLoggedIn ? <LogoutIcon /> : 'Login'}
+            </Button>
+          </div>
         </Navbar.End>
       </Navbar>
     </div>
