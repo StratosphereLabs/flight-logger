@@ -26,11 +26,11 @@ export const WelcomeCard = ({
             </p>
             <ul className="space-y-1 py-4 text-sm text-gray-500">
               <li className="flex justify-center gap-2">
-                <ListIcon />
+                <ListIcon className="h-5 w-5" />
                 Log detailed flight information and organize them by trip
               </li>
               <li className="flex justify-center gap-2">
-                <GlobeIcon />
+                <GlobeIcon className="h-5 w-5" />
                 Create itineraries and share with family and friends easily
               </li>
               <li className="flex justify-center gap-2">
