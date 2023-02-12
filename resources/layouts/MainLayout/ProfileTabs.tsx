@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ProfileTab } from './ProfileTab';
 import {
   CogIcon,
@@ -10,10 +10,9 @@ import {
 } from '../../common/components';
 
 export const ProfileTabs = (): JSX.Element => {
-  const location = useLocation();
-  const username = location.pathname.split('/user/')[1]?.split('/')[0];
+  const { username } = useParams();
   return (
-    <div className="tabs mt-2 w-full flex-nowrap">
+    <div className="tabs my-2 w-full flex-nowrap">
       <ProfileTab
         end
         to={username !== undefined ? `/user/${username}` : '/profile'}

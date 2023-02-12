@@ -24,7 +24,7 @@ export const AppRouter = (): JSX.Element => (
       <Route path="add-flight" element={<AddFlight />} />
       {['', 'user/:username'].map(path => (
         <Route key={path} path={path} element={<ProfileLayout />}>
-          <Route path="profile" element={<Profile />} />
+          <Route path={path === '' ? 'profile' : ''} element={<Profile />} />
           <Route path="flights" element={<Flights />} />
           <Route path="trips" element={<Trips />} />
           <Route path="itineraries" element={<Itineraries />} />

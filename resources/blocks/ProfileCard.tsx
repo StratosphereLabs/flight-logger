@@ -18,15 +18,17 @@ export const ProfileCard = (): JSX.Element => {
         <Avatar size="lg" src={data?.avatar ?? undefined} />
         <div className="inline space-x-2 font-bold">
           <Badge size="sm" color="primary">
-            3 followers
+            0 followers
           </Badge>
           <Badge size="sm" color="success">
-            5 following
+            0 following
           </Badge>
         </div>
-        <p>72 Flights (3 upcoming)</p>
+        <p>{data?.flightCount} Flights</p>
         <p className="text-xs opacity-50">Joined September 2022</p>
-        <Button className="mt-4">Follow</Button>
+        {username !== undefined ? (
+          <Button className="mt-4">Follow</Button>
+        ) : null}
       </Card.Body>
     </LoadingCard>
   );
