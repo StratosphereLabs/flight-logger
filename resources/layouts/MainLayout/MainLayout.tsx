@@ -7,7 +7,7 @@ import { MainNavbar } from './MainNavbar';
 export const MainLayout = (): JSX.Element => (
   <div className={`flex h-screen flex-col justify-between`}>
     <MainNavbar />
-    <div className="flex flex-1 flex-col gap-3 p-3">
+    <div className="flex flex-1 flex-col">
       <Outlet />
     </div>
     <MainFooter />

@@ -2,7 +2,6 @@ import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
 import { Link, useLinkClickHandler } from 'react-router-dom';
 import { NavbarTab } from './NavbarTab';
 import {
-  ChevronDownIcon,
   DarkModeButton,
   LogoutIcon,
   MenuIcon,
@@ -31,19 +30,10 @@ export const MainNavbar = (): JSX.Element => {
               {isLoggedIn ? (
                 <>
                   <li>
-                    <Link to="/add-flight">Add Flight</Link>
-                  </li>
-                  <li>
                     <Link to="/profile">My Profile</Link>
                   </li>
                   <li>
-                    <Link to="/flights">My Flights</Link>
-                  </li>
-                  <li>
-                    <Link to="/trips">My Trips</Link>
-                  </li>
-                  <li>
-                    <Link to="/itineraries">My Itineraries</Link>
+                    <Link to="/add-flight">Add Flight</Link>
                   </li>
                 </>
               ) : null}
@@ -69,20 +59,7 @@ export const MainNavbar = (): JSX.Element => {
               Home
             </NavbarTab>
             {isLoggedIn ? (
-              <>
-                <NavbarTab
-                  to="/profile"
-                  subMenu={
-                    <Menu className="z-10 bg-base-200 p-2">
-                      <NavbarTab to="/flights">My Flights</NavbarTab>
-                      <NavbarTab to="/trips">My Trips</NavbarTab>
-                      <NavbarTab to="/itineraries">My Itineraries</NavbarTab>
-                    </Menu>
-                  }
-                >
-                  My Profile <ChevronDownIcon className="h-4 w-4" />
-                </NavbarTab>
-              </>
+              <NavbarTab to="/profile">My Profile</NavbarTab>
             ) : null}
             <NavbarTab to="/data">Data</NavbarTab>
           </Menu>

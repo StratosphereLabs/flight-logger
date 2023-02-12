@@ -18,21 +18,31 @@ import {
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
-    const result = await prisma.user.findUnique({
-      where: {
-        username: input.username ?? ctx.user?.username,
-      },
-    });
-    if (result === null) {
+    const [userData, flightCount] = await prisma.$transaction([
+      prisma.user.findUnique({
+        where: {
+          username: input.username ?? ctx.user?.username,
+        },
+      }),
+      prisma.flight.count({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+        },
+      }),
+    ]);
+    if (userData === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'User not found.',
       });
     }
     return {
-      avatar: fetchGravatarUrl(result.email),
+      avatar: fetchGravatarUrl(userData.email),
+      flightCount,
       ...excludeKeys(
-        result,
+        userData,
         'password',
         'id',
         'passwordResetToken',
