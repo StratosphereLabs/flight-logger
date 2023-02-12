@@ -56,7 +56,7 @@ export const Home = (): JSX.Element => {
     );
   }, [flights]);
   return (
-    <>
+    <div className="flex flex-1 flex-col gap-3 p-3">
       <WelcomeCard
         onGetStarted={() => {
           firstFieldRef.current?.focus();
@@ -94,6 +94,6 @@ export const Home = (): JSX.Element => {
           show={isResetDialogOpen}
         />
       ) : null}
-    </>
+    </div>
   );
 };

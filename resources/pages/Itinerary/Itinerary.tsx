@@ -17,7 +17,7 @@ export const Itinerary = (): JSX.Element | null => {
     },
   );
   return (
-    <>
+    <div className="flex flex-1 flex-col gap-3 p-3">
       <div className="mb-4 flex justify-center">
         <h1 className="text-3xl font-bold">Itinerary</h1>
       </div>
@@ -105,6 +105,6 @@ export const Itinerary = (): JSX.Element | null => {
           </Card>
         </>
       ))}
-    </>
+    </div>
   );
 };

@@ -317,461 +317,465 @@ exports[`<App /> > renders profile page 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-1 flex-col gap-3 p-3"
+      class="flex flex-1 flex-col"
     >
       <div
-        aria-label="Card"
-        class="card min-h-[75vh] bg-base-100 shadow-lg card-bordered"
-      >
-        <div
-          class="card-body justify-center"
-        >
-          <div
-            class="hero"
-            role="banner"
-          >
-            <div
-              class="hero-content text-center"
-            >
-              <div
-                class="max-w-md"
-              >
-                <h1
-                  class="text-5xl font-bold"
-                >
-                  Welcome!
-                </h1>
-                <p
-                  class="py-4"
-                >
-                  Your all-in-one personal flight logbook and trip planner
-                </p>
-                <ul
-                  class="space-y-1 py-4 text-sm text-gray-500"
-                >
-                  <li
-                    class="flex justify-center gap-2"
-                  >
-                    <svg
-                      class="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    Log detailed flight information and organize them by trip
-                  </li>
-                  <li
-                    class="flex justify-center gap-2"
-                  >
-                    <svg
-                      class="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    Create itineraries and share with family and friends easily
-                  </li>
-                  <li
-                    class="flex justify-center gap-2"
-                  >
-                    <svg
-                      class="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    Advanced data analytics
-                  </li>
-                </ul>
-                <button
-                  class="btn mt-4 btn-info"
-                >
-                  Get Started
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <form
-        class="w-full"
-        novalidate=""
+        class="flex flex-1 flex-col gap-3 p-3"
       >
         <div
           aria-label="Card"
-          class="card bg-base-100 text-center shadow-lg card-bordered"
+          class="card min-h-[75vh] bg-base-100 shadow-lg card-bordered"
         >
           <div
-            class="card-body items-center"
+            class="card-body justify-center"
           >
             <div
-              class="card-title mb-5 text-2xl"
-            >
-              Create Itinerary
-            </div>
-            <div
-              class="flex w-full flex-col gap-8"
+              class="hero"
+              role="banner"
             >
               <div
-                class="flex flex-wrap justify-around gap-8"
+                class="hero-content text-center"
               >
                 <div
-                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
-                  data-headlessui-state=""
+                  class="max-w-md"
                 >
-                  <label
-                    class="label font-semibold"
-                    data-headlessui-state=""
-                    id="headlessui-combobox-label-:r0:"
+                  <h1
+                    class="text-5xl font-bold"
                   >
-                    <span
-                      class="label-text"
+                    Welcome!
+                  </h1>
+                  <p
+                    class="py-4"
+                  >
+                    Your all-in-one personal flight logbook and trip planner
+                  </p>
+                  <ul
+                    class="space-y-1 py-4 text-sm text-gray-500"
+                  >
+                    <li
+                      class="flex justify-center gap-2"
                     >
-                      Departure Airport
-                       
-                      <span
-                        class="font-normal"
+                      <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        *
-                      </span>
-                    </span>
-                  </label>
-                  <div
-                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
-                    tabindex="0"
-                  />
-                  <div
-                    class="relative z-10 text-left"
-                  >
-                    <div
-                      class="absolute mt-[1px] w-full min-w-[200px]"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
-                  data-headlessui-state=""
-                >
-                  <label
-                    class="label font-semibold"
-                    data-headlessui-state=""
-                    id="headlessui-combobox-label-:r1:"
-                  >
-                    <span
-                      class="label-text"
+                        <path
+                          d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Log detailed flight information and organize them by trip
+                    </li>
+                    <li
+                      class="flex justify-center gap-2"
                     >
-                      Arrival Airport
-                       
-                      <span
-                        class="font-normal"
+                      <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        *
-                      </span>
-                    </span>
-                  </label>
-                  <div
-                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
-                    tabindex="0"
-                  />
-                  <div
-                    class="relative z-10 text-left"
-                  >
-                    <div
-                      class="absolute mt-[1px] w-full min-w-[200px]"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div
-                class="flex flex-wrap justify-between gap-8"
-              >
-                <div
-                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
-                >
-                  <label
-                    class="label font-semibold"
-                  >
-                    <span
-                      class="label-text"
+                        <path
+                          d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Create itineraries and share with family and friends easily
+                    </li>
+                    <li
+                      class="flex justify-center gap-2"
                     >
-                      Departure Date
-                       
-                      <span
-                        class="font-normal"
+                      <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
-                        *
-                      </span>
-                    </span>
-                  </label>
-                  <input
-                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                    name="outDate"
-                    type="date"
-                    value=""
-                  />
+                        <path
+                          d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Advanced data analytics
+                    </li>
+                  </ul>
+                  <button
+                    class="btn mt-4 btn-info"
+                  >
+                    Get Started
+                  </button>
                 </div>
-                <div
-                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
-                >
-                  <label
-                    class="label font-semibold"
-                  >
-                    <span
-                      class="label-text"
-                    >
-                      Departure Time (Local)
-                       
-                      <span
-                        class="font-normal"
-                      >
-                        *
-                      </span>
-                    </span>
-                  </label>
-                  <input
-                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                    name="outTime"
-                    type="time"
-                    value=""
-                  />
-                </div>
-                <div
-                  class="form-control flex-1 min-w-[200px] max-w-[200px]"
-                >
-                  <label
-                    class="label font-semibold"
-                  >
-                    <span
-                      class="label-text"
-                    >
-                      Arrival Time (Local)
-                       
-                      <span
-                        class="font-normal"
-                      >
-                        *
-                      </span>
-                    </span>
-                  </label>
-                  <input
-                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                    name="inTime"
-                    type="time"
-                    value=""
-                  />
-                </div>
-              </div>
-              <div
-                class="divider"
-                role="separator"
-              />
-              <div
-                class="flex flex-wrap justify-between gap-8"
-              >
-                <div
-                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
-                  data-headlessui-state=""
-                >
-                  <label
-                    class="label font-semibold"
-                    data-headlessui-state=""
-                    id="headlessui-combobox-label-:r2:"
-                  >
-                    <span
-                      class="label-text"
-                    >
-                      Airline
-                       
-                    </span>
-                  </label>
-                  <div
-                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
-                    tabindex="0"
-                  />
-                  <div
-                    class="relative z-10 text-left"
-                  >
-                    <div
-                      class="absolute mt-[1px] w-full min-w-[200px]"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="form-control flex-1 min-w-[150px] max-w-[150px]"
-                >
-                  <label
-                    class="label font-semibold"
-                  >
-                    <span
-                      class="label-text"
-                    >
-                      Flight Number
-                       
-                    </span>
-                  </label>
-                  <input
-                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                    name="flightNumber"
-                    type="number"
-                    value=""
-                  />
-                </div>
-                <div
-                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
-                  data-headlessui-state=""
-                >
-                  <label
-                    class="label font-semibold"
-                    data-headlessui-state=""
-                    id="headlessui-combobox-label-:r3:"
-                  >
-                    <span
-                      class="label-text"
-                    >
-                      Aircraft Type
-                       
-                    </span>
-                  </label>
-                  <div
-                    class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
-                    tabindex="0"
-                  />
-                  <div
-                    class="relative z-10 text-left"
-                  >
-                    <div
-                      class="absolute mt-[1px] w-full min-w-[200px]"
-                    />
-                  </div>
-                </div>
-                <div
-                  class="form-control flex-1 min-w-[250px] max-w-[400px]"
-                >
-                  <label
-                    class="label font-semibold"
-                  >
-                    <span
-                      class="label-text"
-                    >
-                      Class
-                       
-                    </span>
-                  </label>
-                  <label
-                    class="label"
-                  >
-                    <span
-                      class="label-text cursor-pointer"
-                    >
-                      Basic Economy
-                    </span>
-                    <input
-                      class="radio"
-                      name="class"
-                      type="radio"
-                      value="BASIC"
-                    />
-                  </label>
-                  <label
-                    class="label"
-                  >
-                    <span
-                      class="label-text cursor-pointer"
-                    >
-                      Economy
-                    </span>
-                    <input
-                      class="radio"
-                      name="class"
-                      type="radio"
-                      value="ECONOMY"
-                    />
-                  </label>
-                  <label
-                    class="label"
-                  >
-                    <span
-                      class="label-text cursor-pointer"
-                    >
-                      Premium Economy
-                    </span>
-                    <input
-                      class="radio"
-                      name="class"
-                      type="radio"
-                      value="PREMIUM"
-                    />
-                  </label>
-                  <label
-                    class="label"
-                  >
-                    <span
-                      class="label-text cursor-pointer"
-                    >
-                      Business
-                    </span>
-                    <input
-                      class="radio"
-                      name="class"
-                      type="radio"
-                      value="BUSINESS"
-                    />
-                  </label>
-                  <label
-                    class="label"
-                  >
-                    <span
-                      class="label-text cursor-pointer"
-                    >
-                      First
-                    </span>
-                    <input
-                      class="radio"
-                      name="class"
-                      type="radio"
-                      value="FIRST"
-                    />
-                  </label>
-                </div>
-              </div>
-              <div
-                class="text-center"
-              >
-                <button
-                  class="btn w-full max-w-md"
-                  type="submit"
-                >
-                  Add Flight
-                </button>
               </div>
             </div>
           </div>
         </div>
-      </form>
+        <form
+          class="w-full"
+          novalidate=""
+        >
+          <div
+            aria-label="Card"
+            class="card bg-base-100 text-center shadow-lg card-bordered"
+          >
+            <div
+              class="card-body items-center"
+            >
+              <div
+                class="card-title mb-5 text-2xl"
+              >
+                Create Itinerary
+              </div>
+              <div
+                class="flex w-full flex-col gap-8"
+              >
+                <div
+                  class="flex flex-wrap justify-around gap-8"
+                >
+                  <div
+                    class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                    data-headlessui-state=""
+                  >
+                    <label
+                      class="label font-semibold"
+                      data-headlessui-state=""
+                      id="headlessui-combobox-label-:r0:"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Departure Airport
+                         
+                        <span
+                          class="font-normal"
+                        >
+                          *
+                        </span>
+                      </span>
+                    </label>
+                    <div
+                      class="scrollbar-none input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
+                      tabindex="0"
+                    />
+                    <div
+                      class="relative z-10 text-left"
+                    >
+                      <div
+                        class="absolute mt-[1px] w-full min-w-[200px]"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                    data-headlessui-state=""
+                  >
+                    <label
+                      class="label font-semibold"
+                      data-headlessui-state=""
+                      id="headlessui-combobox-label-:r1:"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Arrival Airport
+                         
+                        <span
+                          class="font-normal"
+                        >
+                          *
+                        </span>
+                      </span>
+                    </label>
+                    <div
+                      class="scrollbar-none input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
+                      tabindex="0"
+                    />
+                    <div
+                      class="relative z-10 text-left"
+                    >
+                      <div
+                        class="absolute mt-[1px] w-full min-w-[200px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-wrap justify-between gap-8"
+                >
+                  <div
+                    class="form-control flex-1 min-w-[200px] max-w-[200px]"
+                  >
+                    <label
+                      class="label font-semibold"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Departure Date
+                         
+                        <span
+                          class="font-normal"
+                        >
+                          *
+                        </span>
+                      </span>
+                    </label>
+                    <input
+                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                      name="outDate"
+                      type="date"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="form-control flex-1 min-w-[200px] max-w-[200px]"
+                  >
+                    <label
+                      class="label font-semibold"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Departure Time (Local)
+                         
+                        <span
+                          class="font-normal"
+                        >
+                          *
+                        </span>
+                      </span>
+                    </label>
+                    <input
+                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                      name="outTime"
+                      type="time"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="form-control flex-1 min-w-[200px] max-w-[200px]"
+                  >
+                    <label
+                      class="label font-semibold"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Arrival Time (Local)
+                         
+                        <span
+                          class="font-normal"
+                        >
+                          *
+                        </span>
+                      </span>
+                    </label>
+                    <input
+                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                      name="inTime"
+                      type="time"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="divider"
+                  role="separator"
+                />
+                <div
+                  class="flex flex-wrap justify-between gap-8"
+                >
+                  <div
+                    class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                    data-headlessui-state=""
+                  >
+                    <label
+                      class="label font-semibold"
+                      data-headlessui-state=""
+                      id="headlessui-combobox-label-:r2:"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Airline
+                         
+                      </span>
+                    </label>
+                    <div
+                      class="scrollbar-none input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
+                      tabindex="0"
+                    />
+                    <div
+                      class="relative z-10 text-left"
+                    >
+                      <div
+                        class="absolute mt-[1px] w-full min-w-[200px]"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="form-control flex-1 min-w-[150px] max-w-[150px]"
+                  >
+                    <label
+                      class="label font-semibold"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Flight Number
+                         
+                      </span>
+                    </label>
+                    <input
+                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                      name="flightNumber"
+                      type="number"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                    data-headlessui-state=""
+                  >
+                    <label
+                      class="label font-semibold"
+                      data-headlessui-state=""
+                      id="headlessui-combobox-label-:r3:"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Aircraft Type
+                         
+                      </span>
+                    </label>
+                    <div
+                      class="scrollbar-none input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll input-ghost"
+                      tabindex="0"
+                    />
+                    <div
+                      class="relative z-10 text-left"
+                    >
+                      <div
+                        class="absolute mt-[1px] w-full min-w-[200px]"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="form-control flex-1 min-w-[250px] max-w-[400px]"
+                  >
+                    <label
+                      class="label font-semibold"
+                    >
+                      <span
+                        class="label-text"
+                      >
+                        Class
+                         
+                      </span>
+                    </label>
+                    <label
+                      class="label"
+                    >
+                      <span
+                        class="label-text cursor-pointer"
+                      >
+                        Basic Economy
+                      </span>
+                      <input
+                        class="radio"
+                        name="class"
+                        type="radio"
+                        value="BASIC"
+                      />
+                    </label>
+                    <label
+                      class="label"
+                    >
+                      <span
+                        class="label-text cursor-pointer"
+                      >
+                        Economy
+                      </span>
+                      <input
+                        class="radio"
+                        name="class"
+                        type="radio"
+                        value="ECONOMY"
+                      />
+                    </label>
+                    <label
+                      class="label"
+                    >
+                      <span
+                        class="label-text cursor-pointer"
+                      >
+                        Premium Economy
+                      </span>
+                      <input
+                        class="radio"
+                        name="class"
+                        type="radio"
+                        value="PREMIUM"
+                      />
+                    </label>
+                    <label
+                      class="label"
+                    >
+                      <span
+                        class="label-text cursor-pointer"
+                      >
+                        Business
+                      </span>
+                      <input
+                        class="radio"
+                        name="class"
+                        type="radio"
+                        value="BUSINESS"
+                      />
+                    </label>
+                    <label
+                      class="label"
+                    >
+                      <span
+                        class="label-text cursor-pointer"
+                      >
+                        First
+                      </span>
+                      <input
+                        class="radio"
+                        name="class"
+                        type="radio"
+                        value="FIRST"
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div
+                  class="text-center"
+                >
+                  <button
+                    class="btn w-full max-w-md"
+                    type="submit"
+                  >
+                    Add Flight
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
     <div
       class="footer items-center bg-neutral p-3 text-neutral-content"

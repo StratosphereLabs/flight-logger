@@ -196,26 +196,31 @@ export const FlightsCard = (): JSX.Element => {
                       startIcon={<LinkIcon />}
                       size="xs"
                     />
-                    <Button
-                      className="px-1"
-                      color="info"
-                      startIcon={<EditIcon />}
-                      size="xs"
-                    />
-                    <Button
-                      onClick={() => {
-                        setDeleteFlightData({
-                          departureAirportId: row.original.departureAirportId,
-                          arrivalAirportId: row.original.arrivalAirportId,
-                          id: row.original.id,
-                        });
-                        setIsDeleteDialogOpen(true);
-                      }}
-                      className="px-1"
-                      color="error"
-                      startIcon={<TrashIcon />}
-                      size="xs"
-                    />
+                    {username === undefined ? (
+                      <>
+                        <Button
+                          className="px-1"
+                          color="info"
+                          startIcon={<EditIcon />}
+                          size="xs"
+                        />
+                        <Button
+                          onClick={() => {
+                            setDeleteFlightData({
+                              departureAirportId:
+                                row.original.departureAirportId,
+                              arrivalAirportId: row.original.arrivalAirportId,
+                              id: row.original.id,
+                            });
+                            setIsDeleteDialogOpen(true);
+                          }}
+                          className="px-1"
+                          color="error"
+                          startIcon={<TrashIcon />}
+                          size="xs"
+                        />
+                      </>
+                    ) : null}
                   </div>
                 ),
                 footer: () => null,
