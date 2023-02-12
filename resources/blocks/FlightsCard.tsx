@@ -61,7 +61,7 @@ export const FlightsCard = (): JSX.Element => {
       >
         <Card.Body>
           <Card.Title className="mb-5 justify-center" tag="h2">
-            My Flights
+            {username !== undefined ? `${username}'s Flights` : 'My Flights'}
           </Card.Title>
           <Table
             columns={[
@@ -104,7 +104,7 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'departureAirport',
                 accessorKey: 'departureAirport',
-                header: () => 'Dep Airport',
+                header: () => 'Dep',
                 cell: ({ getValue }) => {
                   const airportData = getValue<airport>();
                   return (
@@ -121,7 +121,7 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'arrivalAirport',
                 accessorKey: 'arrivalAirport',
-                header: () => 'Arr Airport',
+                header: () => 'Arr',
                 cell: ({ getValue }) => {
                   const airportData = getValue<airport>();
                   return (
