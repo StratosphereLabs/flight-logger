@@ -5,7 +5,13 @@ import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { LoadingCard, Modal, Table, useAlertMessages } from 'stratosphere-ui';
-import { EditIcon, LinkIcon, TrashIcon, ViewIcon } from '../common/components';
+import {
+  EditIcon,
+  EllipsisVerticalIcon,
+  LinkIcon,
+  TrashIcon,
+  ViewIcon,
+} from '../common/components';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -57,14 +63,14 @@ export const FlightsCard = (): JSX.Element => {
     <>
       <LoadingCard
         isLoading={isFetching}
-        className="min-h-[400px] min-w-[500px] bg-base-100 shadow-lg"
+        className="min-h-[400px] min-w-[375px] bg-base-100 shadow-lg"
       >
-        <Card.Body className="px-2">
+        <Card.Body className="px-3">
           <Card.Title className="mb-5 justify-center" tag="h2">
             {username !== undefined ? `${username}'s Flights` : 'My Flights'}
           </Card.Title>
           <Table
-            className="text-sm"
+            className="table-compact xl:table-normal"
             columns={[
               {
                 id: 'outTime',
@@ -77,7 +83,10 @@ export const FlightsCard = (): JSX.Element => {
                     ? 'info'
                     : 'secondary';
                   return (
-                    <Badge size="sm" className="font-semibold" color={color}>
+                    <Badge
+                      className="badge-sm font-semibold xl:badge-md"
+                      color={color}
+                    >
                       {date}
                     </Badge>
                   );
@@ -92,9 +101,9 @@ export const FlightsCard = (): JSX.Element => {
                   const airlineData = getValue<airline>();
                   return airlineData?.logo !== null &&
                     airlineData?.logo !== undefined ? (
-                    <div className="flex w-[100px] justify-center">
+                    <div className="flex w-[110px] justify-center xl:w-[120px]">
                       <img
-                        className="max-h-[50px] max-w-[100px]"
+                        className="max-h-[55px] max-w-[110px] xl:max-w-[120px]"
                         src={airlineData.logo}
                       />
                     </div>
@@ -115,10 +124,10 @@ export const FlightsCard = (): JSX.Element => {
                       <div className="text-base font-bold">
                         {airportData?.id}
                       </div>
-                      <div className="truncate text-xs opacity-50">
+                      <div className="truncate text-xs opacity-75 xl:text-sm">
                         {airportData?.municipality}
                       </div>
-                      <div className="font-mono text-xs font-bold opacity-50">
+                      <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
                         {departureTime}
                       </div>
                     </div>
@@ -139,10 +148,10 @@ export const FlightsCard = (): JSX.Element => {
                       <div className="text-base font-bold">
                         {airportData?.id}
                       </div>
-                      <div className="truncate text-xs opacity-50">
+                      <div className="truncate text-xs opacity-75 xl:text-sm">
                         {airportData?.municipality}
                       </div>
-                      <div className="font-mono text-xs font-bold opacity-50">
+                      <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
                         {arrivalTime}
                       </div>
                     </div>
@@ -202,59 +211,66 @@ export const FlightsCard = (): JSX.Element => {
               },
               {
                 id: 'actions',
-                header: () => 'Actions',
+                header: () => <div className="hidden xl:flex">Actions</div>,
                 cell: ({ row }) => (
-                  <div className="flex gap-1">
-                    <Button
-                      className="px-1"
-                      color="ghost"
-                      startIcon={<LinkIcon />}
-                      size="xs"
-                    />
-                    <Button
-                      className="px-1"
-                      color="info"
-                      startIcon={<ViewIcon className="h-4 w-4" />}
-                      size="xs"
-                    />
-                    {username === undefined ? (
-                      <>
-                        <Button
-                          className="px-1"
-                          color="warning"
-                          startIcon={<EditIcon />}
-                          size="xs"
-                        />
-                        <Button
-                          onClick={() => {
-                            setDeleteFlightData({
-                              departureAirportId:
-                                row.original.departureAirportId,
-                              arrivalAirportId: row.original.arrivalAirportId,
-                              id: row.original.id,
-                            });
-                            setIsDeleteDialogOpen(true);
-                          }}
-                          className="px-1"
-                          color="error"
-                          startIcon={<TrashIcon />}
-                          size="xs"
-                        />
-                      </>
-                    ) : null}
-                  </div>
+                  <>
+                    <div className="hidden gap-1 xl:flex">
+                      <Button
+                        className="px-1"
+                        color="ghost"
+                        startIcon={<LinkIcon />}
+                        size="xs"
+                      />
+                      <Button
+                        className="px-1"
+                        color="info"
+                        startIcon={<ViewIcon className="h-4 w-4" />}
+                        size="xs"
+                      />
+                      {username === undefined ? (
+                        <>
+                          <Button
+                            className="px-1"
+                            color="success"
+                            startIcon={<EditIcon />}
+                            size="xs"
+                          />
+                          <Button
+                            onClick={() => {
+                              setDeleteFlightData({
+                                departureAirportId:
+                                  row.original.departureAirportId,
+                                arrivalAirportId: row.original.arrivalAirportId,
+                                id: row.original.id,
+                              });
+                              setIsDeleteDialogOpen(true);
+                            }}
+                            className="px-1"
+                            color="error"
+                            startIcon={<TrashIcon />}
+                            size="xs"
+                          />
+                        </>
+                      ) : null}
+                    </div>
+                    <div className="flex xl:hidden">
+                      <Button shape="circle" color="ghost" size="sm">
+                        <EllipsisVerticalIcon className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </>
                 ),
                 footer: () => null,
               },
             ]}
             cellClassNames={{
-              outTime: 'w-[120px]',
-              airline: 'w-[135px] hidden md:table-cell',
-              duration: 'w-[100px] hidden xl:table-cell',
-              flightNumber: 'w-[120px] hidden lg:table-cell',
-              aircraftType: 'hidden lg:table-cell',
-              tailNumber: 'w-[100px] hidden xl:table-cell',
-              actions: 'w-[150px]',
+              outTime: 'w-[100px] xl:w-[130px]',
+              airline: 'w-[135px] hidden sm:table-cell xl:w-[150px]',
+              duration: 'w-[100px] hidden lg:table-cell',
+              flightNumber: 'w-[100px] hidden md:table-cell xl:w-[120px]',
+              aircraftType: 'hidden md:table-cell',
+              tailNumber: 'w-[100px] hidden lg:table-cell',
+              actions: 'w-[50px] xl:w-[150px]',
             }}
             data={data ?? []}
             enableFixedWidth
