@@ -70,7 +70,7 @@ export const MainNavbar = (): JSX.Element => {
           <div className="flex gap-2">
             {isLoggedIn ? (
               <Button
-                className="hidden lg:block"
+                className="hidden md:block"
                 color="ghost"
                 onClick={onAddFlightClick}
               >

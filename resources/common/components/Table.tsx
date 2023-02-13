@@ -4,11 +4,11 @@ import { GenericDataType } from 'stratosphere-ui';
 import { FullScreenLoader } from './FullScreenLoader';
 import { HeaderSortIcon } from './HeaderSortIcon';
 import { Pagination } from './Pagination';
-import { useScrollBar } from '../hooks';
 import { PaginationMetadata } from '../types';
 
 export interface TableProps<DataType extends GenericDataType>
   extends TableOptions<DataType> {
+  cellClassNames?: Record<string, string>;
   className?: string;
   compact?: boolean;
   enableFixedWidth?: boolean;
@@ -19,6 +19,7 @@ export interface TableProps<DataType extends GenericDataType>
 }
 
 export const Table = <DataType extends GenericDataType>({
+  cellClassNames,
   className,
   compact,
   enableFixedWidth,
@@ -40,13 +41,12 @@ export const Table = <DataType extends GenericDataType>({
     ...props,
   });
   const { getHeaderGroups, getRowModel, setPageIndex } = tableInstance;
-  const scrollBar = useScrollBar();
   return (
-    <div className="flex h-full flex-col">
-      <div className={`flex-1 overflow-x-scroll ${scrollBar}`}>
+    <div className="flex flex-1 flex-col">
+      <div className="flex-1">
         <table
           className={classNames(
-            'rounded-box table w-full',
+            'table w-full',
             {
               'table-compact': compact,
               'table-fixed': enableFixedWidth,
@@ -62,9 +62,12 @@ export const Table = <DataType extends GenericDataType>({
                   ({ column, getContext, id, isPlaceholder }) => (
                     <th
                       key={id}
-                      className={classNames({
-                        'cursor-pointer': column.getCanSort(),
-                      })}
+                      className={classNames(
+                        {
+                          'cursor-pointer': column.getCanSort(),
+                        },
+                        cellClassNames?.[column.id],
+                      )}
                       onClick={
                         column.getCanSort()
                           ? column.getToggleSortingHandler()
@@ -91,7 +94,7 @@ export const Table = <DataType extends GenericDataType>({
                   key={id}
                 >
                   {getVisibleCells().map(({ column, getContext }) => (
-                    <td key={column.id} className="truncate">
+                    <td className={cellClassNames?.[column.id]} key={column.id}>
                       {flexRender(column.columnDef.cell, getContext())}
                     </td>
                   ))}

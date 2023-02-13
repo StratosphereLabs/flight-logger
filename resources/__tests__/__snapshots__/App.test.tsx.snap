@@ -162,11 +162,11 @@ exports[`<App /> > renders profile page 1`] = `
     >
       <div
         aria-label="Navbar"
-        class="navbar rounded-box bg-base-200 shadow-xl"
+        class="navbar rounded-box justify-between bg-base-200 shadow-xl lg:justify-start"
         role="navigation"
       >
         <div
-          class="flex-1 navbar-start"
+          class="navbar-start w-auto lg:w-1/2"
         >
           <div
             class="dropdown"
@@ -236,7 +236,7 @@ exports[`<App /> > renders profile page 1`] = `
           </button>
         </div>
         <div
-          class="hidden lg:flex navbar-center"
+          class="navbar-center hidden lg:flex"
         >
           <ul
             class="menu p-0 menu-horizontal"
@@ -268,7 +268,7 @@ exports[`<App /> > renders profile page 1`] = `
           </ul>
         </div>
         <div
-          class="gap-1 flex-1 navbar-end"
+          class="navbar-end w-auto lg:w-1/2"
         >
           <button
             class="btn btn-circle btn-ghost"
@@ -798,7 +798,14 @@ exports[`<App /> > renders profile page 1`] = `
           />
         </svg>
         <p>
-          Copyright © 2022 - All right reserved
+          Copyright © 2022
+           
+          <a
+            class="link-hover link"
+            href="https://github.com/StratosphereLabs"
+          >
+            Stratosphere Labs
+          </a>
         </p>
       </div>
       <div
