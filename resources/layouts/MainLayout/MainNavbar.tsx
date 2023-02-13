@@ -17,8 +17,8 @@ export const MainNavbar = (): JSX.Element => {
   const onLoginClick = useLinkClickHandler<HTMLButtonElement>('/auth/login');
   return (
     <div className="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans">
-      <Navbar className="rounded-box bg-base-200 shadow-xl">
-        <Navbar.Start>
+      <Navbar className="rounded-box justify-between bg-base-200 shadow-xl lg:justify-start">
+        <div className="navbar-start w-auto lg:w-1/2">
           <Dropdown>
             <Button color="ghost" tabIndex={0} className="lg:hidden">
               <MenuIcon />
@@ -52,8 +52,8 @@ export const MainNavbar = (): JSX.Element => {
               <span className="text-base-content">Logger</span>
             </div>
           </Button>
-        </Navbar.Start>
-        <Navbar.Center className="hidden lg:flex">
+        </div>
+        <div className="navbar-center hidden lg:flex">
           <Menu horizontal className="p-0">
             <NavbarTab to="/" end>
               Home
@@ -63,14 +63,14 @@ export const MainNavbar = (): JSX.Element => {
             ) : null}
             <NavbarTab to="/data">Data</NavbarTab>
           </Menu>
-        </Navbar.Center>
-        <Navbar.End className="gap-1">
+        </div>
+        <div className="navbar-end w-auto lg:w-1/2">
           <SearchButton />
           <DarkModeButton />
           <div className="flex gap-2">
             {isLoggedIn ? (
               <Button
-                className="hidden lg:block"
+                className="hidden md:block"
                 color="ghost"
                 onClick={onAddFlightClick}
               >
@@ -81,7 +81,7 @@ export const MainNavbar = (): JSX.Element => {
               {isLoggedIn ? <LogoutIcon /> : 'Login'}
             </Button>
           </div>
-        </Navbar.End>
+        </div>
       </Navbar>
     </div>
   );

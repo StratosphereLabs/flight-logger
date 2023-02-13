@@ -5,7 +5,13 @@ import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { LoadingCard, Modal, useAlertMessages } from 'stratosphere-ui';
-import { EditIcon, LinkIcon, Table, TrashIcon } from '../common/components';
+import {
+  EditIcon,
+  LinkIcon,
+  Table,
+  TrashIcon,
+  ViewIcon,
+} from '../common/components';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -59,11 +65,12 @@ export const FlightsCard = (): JSX.Element => {
         isLoading={isFetching}
         className="min-h-[400px] min-w-[500px] bg-base-100 shadow-lg"
       >
-        <Card.Body>
+        <Card.Body className="px-2">
           <Card.Title className="mb-5 justify-center" tag="h2">
-            My Flights
+            {username !== undefined ? `${username}'s Flights` : 'My Flights'}
           </Card.Title>
           <Table
+            className="text-sm"
             columns={[
               {
                 id: 'outTime',
@@ -76,7 +83,7 @@ export const FlightsCard = (): JSX.Element => {
                     ? 'info'
                     : 'secondary';
                   return (
-                    <Badge className="font-semibold" color={color}>
+                    <Badge size="sm" className="font-semibold" color={color}>
                       {date}
                     </Badge>
                   );
@@ -91,9 +98,9 @@ export const FlightsCard = (): JSX.Element => {
                   const airlineData = getValue<airline>();
                   return airlineData?.logo !== null &&
                     airlineData?.logo !== undefined ? (
-                    <div className="flex w-[120px] justify-center">
+                    <div className="flex w-[100px] justify-center">
                       <img
-                        className="max-h-[50px] max-w-[120px]"
+                        className="max-h-[50px] max-w-[100px]"
                         src={airlineData.logo}
                       />
                     </div>
@@ -104,14 +111,21 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'departureAirport',
                 accessorKey: 'departureAirport',
-                header: () => 'Dep Airport',
-                cell: ({ getValue }) => {
+                header: () => 'Dep',
+                cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
+                  const outTime = row.original.outTime;
+                  const departureTime = format(new Date(outTime), 'h:mm a');
                   return (
                     <div>
-                      <div className="font-bold">{airportData?.id}</div>
-                      <div className="text-sm opacity-50">
+                      <div className="text-base font-bold">
+                        {airportData?.id}
+                      </div>
+                      <div className="truncate text-xs opacity-50">
                         {airportData?.municipality}
+                      </div>
+                      <div className="font-mono text-xs font-bold opacity-50">
+                        {departureTime}
                       </div>
                     </div>
                   );
@@ -121,14 +135,21 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'arrivalAirport',
                 accessorKey: 'arrivalAirport',
-                header: () => 'Arr Airport',
-                cell: ({ getValue }) => {
+                header: () => 'Arr',
+                cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
+                  const inTime = row.original.inTime;
+                  const arrivalTime = format(new Date(inTime), 'h:mm a');
                   return (
                     <div>
-                      <div className="font-bold">{airportData?.id}</div>
-                      <div className="text-sm opacity-50">
+                      <div className="text-base font-bold">
+                        {airportData?.id}
+                      </div>
+                      <div className="truncate text-xs opacity-50">
                         {airportData?.municipality}
+                      </div>
+                      <div className="font-mono text-xs font-bold opacity-50">
+                        {arrivalTime}
                       </div>
                     </div>
                   );
@@ -168,7 +189,7 @@ export const FlightsCard = (): JSX.Element => {
                 cell: ({ getValue }) => {
                   const aircraftType = getValue<aircraft_type>();
                   return (
-                    <div className="italic opacity-70">
+                    <div className="truncate italic opacity-70">
                       {aircraftType?.name ?? ''}
                     </div>
                   );
@@ -178,7 +199,7 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'tailNumber',
                 accessorKey: 'tailNumber',
-                header: () => 'Registration',
+                header: () => 'Tail #',
                 cell: ({ getValue }) => {
                   const tailNumber = getValue<string>();
                   return <div className="font-mono">{tailNumber}</div>;
@@ -196,11 +217,17 @@ export const FlightsCard = (): JSX.Element => {
                       startIcon={<LinkIcon />}
                       size="xs"
                     />
+                    <Button
+                      className="px-1"
+                      color="info"
+                      startIcon={<ViewIcon className="h-4 w-4" />}
+                      size="xs"
+                    />
                     {username === undefined ? (
                       <>
                         <Button
                           className="px-1"
-                          color="info"
+                          color="warning"
                           startIcon={<EditIcon />}
                           size="xs"
                         />
@@ -226,8 +253,17 @@ export const FlightsCard = (): JSX.Element => {
                 footer: () => null,
               },
             ]}
+            cellClassNames={{
+              outTime: 'w-[120px]',
+              airline: 'w-[135px] hidden md:table-cell',
+              duration: 'w-[100px] hidden xl:table-cell',
+              flightNumber: 'w-[120px] hidden lg:table-cell',
+              aircraftType: 'hidden lg:table-cell',
+              tailNumber: 'w-[100px] hidden xl:table-cell',
+              actions: 'w-[150px]',
+            }}
             data={data ?? []}
-            enableRowHover
+            enableFixedWidth
             enableSorting={false}
             getCoreRowModel={getCoreRowModel()}
           />
