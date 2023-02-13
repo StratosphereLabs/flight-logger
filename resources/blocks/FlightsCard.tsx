@@ -4,8 +4,14 @@ import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard, Modal, useAlertMessages } from 'stratosphere-ui';
-import { EditIcon, LinkIcon, Table, TrashIcon } from '../common/components';
+import { LoadingCard, Modal, Table, useAlertMessages } from 'stratosphere-ui';
+import {
+  EditIcon,
+  EllipsisVerticalIcon,
+  LinkIcon,
+  TrashIcon,
+  ViewIcon,
+} from '../common/components';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -57,13 +63,14 @@ export const FlightsCard = (): JSX.Element => {
     <>
       <LoadingCard
         isLoading={isFetching}
-        className="min-h-[400px] min-w-[500px] bg-base-100 shadow-lg"
+        className="min-h-[400px] min-w-[375px] bg-base-100 shadow-lg"
       >
-        <Card.Body>
+        <Card.Body className="px-3">
           <Card.Title className="mb-5 justify-center" tag="h2">
-            My Flights
+            {username !== undefined ? `${username}'s Flights` : 'My Flights'}
           </Card.Title>
           <Table
+            className="table-compact xl:table-normal"
             columns={[
               {
                 id: 'outTime',
@@ -76,7 +83,10 @@ export const FlightsCard = (): JSX.Element => {
                     ? 'info'
                     : 'secondary';
                   return (
-                    <Badge className="font-semibold" color={color}>
+                    <Badge
+                      className="badge-sm font-semibold xl:badge-md"
+                      color={color}
+                    >
                       {date}
                     </Badge>
                   );
@@ -91,9 +101,9 @@ export const FlightsCard = (): JSX.Element => {
                   const airlineData = getValue<airline>();
                   return airlineData?.logo !== null &&
                     airlineData?.logo !== undefined ? (
-                    <div className="flex w-[120px] justify-center">
+                    <div className="flex w-[110px] justify-center xl:w-[120px]">
                       <img
-                        className="max-h-[50px] max-w-[120px]"
+                        className="max-h-[55px] max-w-[110px] xl:max-w-[120px]"
                         src={airlineData.logo}
                       />
                     </div>
@@ -104,14 +114,21 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'departureAirport',
                 accessorKey: 'departureAirport',
-                header: () => 'Dep Airport',
-                cell: ({ getValue }) => {
+                header: () => 'Dep',
+                cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
+                  const outTime = row.original.outTime;
+                  const departureTime = format(new Date(outTime), 'h:mm a');
                   return (
                     <div>
-                      <div className="font-bold">{airportData?.id}</div>
-                      <div className="text-sm opacity-50">
+                      <div className="text-base font-bold">
+                        {airportData?.id}
+                      </div>
+                      <div className="truncate text-xs opacity-75 xl:text-sm">
                         {airportData?.municipality}
+                      </div>
+                      <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
+                        {departureTime}
                       </div>
                     </div>
                   );
@@ -121,14 +138,21 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'arrivalAirport',
                 accessorKey: 'arrivalAirport',
-                header: () => 'Arr Airport',
-                cell: ({ getValue }) => {
+                header: () => 'Arr',
+                cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
+                  const inTime = row.original.inTime;
+                  const arrivalTime = format(new Date(inTime), 'h:mm a');
                   return (
                     <div>
-                      <div className="font-bold">{airportData?.id}</div>
-                      <div className="text-sm opacity-50">
+                      <div className="text-base font-bold">
+                        {airportData?.id}
+                      </div>
+                      <div className="truncate text-xs opacity-75 xl:text-sm">
                         {airportData?.municipality}
+                      </div>
+                      <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
+                        {arrivalTime}
                       </div>
                     </div>
                   );
@@ -168,7 +192,7 @@ export const FlightsCard = (): JSX.Element => {
                 cell: ({ getValue }) => {
                   const aircraftType = getValue<aircraft_type>();
                   return (
-                    <div className="italic opacity-70">
+                    <div className="truncate italic opacity-70">
                       {aircraftType?.name ?? ''}
                     </div>
                   );
@@ -178,7 +202,7 @@ export const FlightsCard = (): JSX.Element => {
               {
                 id: 'tailNumber',
                 accessorKey: 'tailNumber',
-                header: () => 'Registration',
+                header: () => 'Tail #',
                 cell: ({ getValue }) => {
                   const tailNumber = getValue<string>();
                   return <div className="font-mono">{tailNumber}</div>;
@@ -187,47 +211,69 @@ export const FlightsCard = (): JSX.Element => {
               },
               {
                 id: 'actions',
-                header: () => 'Actions',
+                header: () => <div className="hidden xl:flex">Actions</div>,
                 cell: ({ row }) => (
-                  <div className="flex gap-1">
-                    <Button
-                      className="px-1"
-                      color="ghost"
-                      startIcon={<LinkIcon />}
-                      size="xs"
-                    />
-                    {username === undefined ? (
-                      <>
-                        <Button
-                          className="px-1"
-                          color="info"
-                          startIcon={<EditIcon />}
-                          size="xs"
-                        />
-                        <Button
-                          onClick={() => {
-                            setDeleteFlightData({
-                              departureAirportId:
-                                row.original.departureAirportId,
-                              arrivalAirportId: row.original.arrivalAirportId,
-                              id: row.original.id,
-                            });
-                            setIsDeleteDialogOpen(true);
-                          }}
-                          className="px-1"
-                          color="error"
-                          startIcon={<TrashIcon />}
-                          size="xs"
-                        />
-                      </>
-                    ) : null}
-                  </div>
+                  <>
+                    <div className="hidden gap-1 xl:flex">
+                      <Button
+                        className="px-1"
+                        color="ghost"
+                        startIcon={<LinkIcon />}
+                        size="xs"
+                      />
+                      <Button
+                        className="px-1"
+                        color="info"
+                        startIcon={<ViewIcon className="h-4 w-4" />}
+                        size="xs"
+                      />
+                      {username === undefined ? (
+                        <>
+                          <Button
+                            className="px-1"
+                            color="success"
+                            startIcon={<EditIcon />}
+                            size="xs"
+                          />
+                          <Button
+                            onClick={() => {
+                              setDeleteFlightData({
+                                departureAirportId:
+                                  row.original.departureAirportId,
+                                arrivalAirportId: row.original.arrivalAirportId,
+                                id: row.original.id,
+                              });
+                              setIsDeleteDialogOpen(true);
+                            }}
+                            className="px-1"
+                            color="error"
+                            startIcon={<TrashIcon />}
+                            size="xs"
+                          />
+                        </>
+                      ) : null}
+                    </div>
+                    <div className="flex xl:hidden">
+                      <Button shape="circle" color="ghost" size="sm">
+                        <EllipsisVerticalIcon className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </>
                 ),
                 footer: () => null,
               },
             ]}
+            cellClassNames={{
+              outTime: 'w-[100px] xl:w-[130px]',
+              airline: 'w-[135px] hidden sm:table-cell xl:w-[150px]',
+              duration: 'w-[100px] hidden lg:table-cell',
+              flightNumber: 'w-[100px] hidden md:table-cell xl:w-[120px]',
+              aircraftType: 'hidden md:table-cell',
+              tailNumber: 'w-[100px] hidden lg:table-cell',
+              actions: 'w-[50px] xl:w-[150px]',
+            }}
             data={data ?? []}
-            enableRowHover
+            enableFixedWidth
             enableSorting={false}
             getCoreRowModel={getCoreRowModel()}
           />

@@ -18,7 +18,7 @@ export const ProfileTabs = (): JSX.Element => {
         to={username !== undefined ? `/user/${username}` : '/profile'}
       >
         <HomeIcon />
-        <div className="hidden md:block">Dashboard</div>
+        <div className="hidden md:block">Profile</div>
       </ProfileTab>
       <ProfileTab
         to={username !== undefined ? `/user/${username}/flights` : '/flights'}
