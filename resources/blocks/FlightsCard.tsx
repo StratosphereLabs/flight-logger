@@ -4,14 +4,8 @@ import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard, Modal, useAlertMessages } from 'stratosphere-ui';
-import {
-  EditIcon,
-  LinkIcon,
-  Table,
-  TrashIcon,
-  ViewIcon,
-} from '../common/components';
+import { LoadingCard, Modal, Table, useAlertMessages } from 'stratosphere-ui';
+import { EditIcon, LinkIcon, TrashIcon, ViewIcon } from '../common/components';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,

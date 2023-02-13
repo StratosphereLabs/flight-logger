@@ -5,8 +5,5 @@ export * from './AirportInput';
 export * from './DarkModeButton';
 export * from './DashboardContainer';
 export * from './FullScreenLoader';
-export * from './HeaderSortIcon';
 export * from './Icons';
-export * from './Pagination';
 export * from './SearchButton';
-export * from './Table';
