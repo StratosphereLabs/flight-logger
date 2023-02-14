@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormRadio, LoadingCard } from 'stratosphere-ui';
-import { addFlightSchema } from '../../../app/schemas';
+import { addFlightDefaultValues } from './constants';
 import {
   AircraftTypeInput,
   AirlineInput,
@@ -19,7 +19,7 @@ import {
   numberInputTransformer,
 } from '../../common/transformers';
 import { trpc } from '../../utils/trpc';
-import { addFlightDefaultValues } from './constants';
+import { addFlightSchema } from '../../../app/schemas';
 
 export const AddFlight = (): JSX.Element => {
   useProtectedPage();
@@ -31,7 +31,7 @@ export const AddFlight = (): JSX.Element => {
     resolver: zodResolver(addFlightSchema),
   });
   const handleSuccess = useSuccessResponseHandler();
-  const { error, mutate, isLoading } = trpc.users.addFlight.useMutation({
+  const { error, mutate, isLoading } = trpc.flights.addFlight.useMutation({
     onSuccess: () => {
       handleSuccess('Flight Added!');
       methods.reset();

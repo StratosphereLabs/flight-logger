@@ -1,6 +1,5 @@
 import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
-import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
 import { Badge, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
@@ -12,8 +11,6 @@ import { ViewFlightModal } from './ViewFlightModal';
 import { useTRPCErrorHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
 import { UsersRouterOutput } from '../../app/routes/users';
-
-export const DATE_FORMAT = 'yyyy-MM-dd';
 
 export interface DeleteFlightData {
   departureAirportId: string;
@@ -47,19 +44,15 @@ export const FlightsCard = (): JSX.Element => {
             className="table-compact xl:table-normal"
             columns={[
               {
-                id: 'outTime',
-                accessorKey: 'outTime',
+                id: 'outDateISO',
+                accessorKey: 'outDateISO',
                 header: () => 'Date',
-                cell: ({ getValue }) => {
-                  const isoTime = getValue<string>();
-                  const date = format(new Date(isoTime), DATE_FORMAT);
-                  const color = isBefore(new Date(isoTime), new Date())
-                    ? 'info'
-                    : 'secondary';
+                cell: ({ getValue, row }) => {
+                  const date = getValue<string>();
                   return (
                     <Badge
                       className="badge-sm font-semibold xl:badge-md"
-                      color={color}
+                      color={row.original.inFuture ? 'secondary' : 'info'}
                     >
                       {date}
                     </Badge>
@@ -195,7 +188,7 @@ export const FlightsCard = (): JSX.Element => {
               },
             ]}
             cellClassNames={{
-              outTime: 'w-[100px] xl:w-[130px]',
+              outDateISO: 'w-[100px] xl:w-[130px]',
               airline: 'w-[135px] hidden sm:table-cell xl:w-[150px]',
               duration: 'w-[100px] hidden lg:table-cell',
               flightNumber: 'w-[100px] hidden md:table-cell xl:w-[120px]',

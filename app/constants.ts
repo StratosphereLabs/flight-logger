@@ -8,4 +8,5 @@ export const TIME_REGEX = /^[0-9]{2}:[0-9]{2}$/;
 export const DATE_REGEX = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
 
 export const DATE_FORMAT = 'iii, MMM d, yyyy';
+export const DATE_FORMAT_ISO = 'yyyy-MM-dd';
 export const TIME_FORMAT = 'h:mm aaa';

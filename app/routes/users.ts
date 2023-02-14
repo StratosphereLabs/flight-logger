@@ -1,21 +1,13 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
-import { formatInTimeZone } from 'date-fns-tz';
-import { DATE_FORMAT, TIME_FORMAT } from '../constants';
 import { prisma } from '../db';
-import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
+import { verifyAdminTRPC } from '../middleware';
 import { getAirports, getRoutes } from '../parsers';
-import {
-  addFlightSchema,
-  deleteFlightSchema,
-  getUserSchema,
-  getUsersSchema,
-} from '../schemas';
+import { getUserSchema, getUsersSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
   calculateDistance,
   excludeKeys,
   fetchGravatarUrl,
-  getDurationString,
   getFlightTimestamps,
 } from '../utils';
 
@@ -74,34 +66,40 @@ export const usersRouter = router({
           },
         ],
       });
-      return flights.map(flight => ({
-        ...flight,
-        duration: getDurationString(flight.duration),
-        flightNumberString: `${flight.airline?.iata ?? ''} ${
-          flight.flightNumber ?? ''
-        }`.trim(),
-        outDateLocal: formatInTimeZone(
-          flight.outTime,
-          flight.departureAirport.timeZone,
-          DATE_FORMAT,
-        ),
-        outTimeLocal: formatInTimeZone(
-          flight.outTime,
-          flight.departureAirport.timeZone,
-          TIME_FORMAT,
-        ),
-        inTimeLocal: formatInTimeZone(
-          flight.inTime,
-          flight.arrivalAirport.timeZone,
-          TIME_FORMAT,
-        ),
-        distance: calculateDistance(
-          flight.departureAirport.lat,
-          flight.departureAirport.lon,
-          flight.arrivalAirport.lat,
-          flight.arrivalAirport.lon,
-        ),
-      }));
+      return flights.map(flight => {
+        const {
+          duration,
+          inFuture,
+          outDateISO,
+          outDateLocal,
+          outTimeLocal,
+          inTimeLocal,
+        } = getFlightTimestamps({
+          departureAirport: flight.departureAirport,
+          arrivalAirport: flight.arrivalAirport,
+          duration: flight.duration,
+          outTime: flight.outTime,
+          inTime: flight.inTime,
+        });
+        return {
+          ...flight,
+          flightNumberString: `${flight.airline?.iata ?? ''} ${
+            flight.flightNumber ?? ''
+          }`.trim(),
+          duration,
+          inFuture,
+          outDateISO,
+          outDateLocal,
+          outTimeLocal,
+          inTimeLocal,
+          distance: calculateDistance(
+            flight.departureAirport.lat,
+            flight.departureAirport.lon,
+            flight.arrivalAirport.lat,
+            flight.arrivalAirport.lon,
+          ),
+        };
+      });
     }),
   getUserMapData: procedure
     .input(getUserSchema)
@@ -138,111 +136,6 @@ export const usersRouter = router({
         },
       });
       return results;
-    }),
-  addFlight: procedure
-    .use(verifyAuthenticated)
-    .input(addFlightSchema)
-    .mutation(async ({ ctx, input }) => {
-      const [departureAirport, arrivalAirport] = await prisma.$transaction([
-        prisma.airport.findUnique({
-          where: {
-            id: input.departureAirportId,
-          },
-        }),
-        prisma.airport.findUnique({
-          where: {
-            id: input.arrivalAirportId,
-          },
-        }),
-      ]);
-      if (departureAirport === null || arrivalAirport === null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Airport not found.',
-        });
-      }
-      const { outTime, offTime, onTime, inTime, duration } =
-        getFlightTimestamps({
-          departureAirport,
-          arrivalAirport,
-          outDate: input.outDate,
-          outTime: input.outTime,
-          offTime: input.offTime,
-          onTime: input.onTime,
-          inTime: input.inTime,
-        });
-      const flight = await prisma.flight.create({
-        data: {
-          user: {
-            connect: {
-              id: ctx.user.id,
-            },
-          },
-          departureAirport: {
-            connect: {
-              id: input.departureAirportId,
-            },
-          },
-          arrivalAirport: {
-            connect: {
-              id: input.arrivalAirportId,
-            },
-          },
-          airline:
-            input.airlineId !== null && input.airlineId !== ''
-              ? {
-                  connect: {
-                    id: input.airlineId,
-                  },
-                }
-              : undefined,
-          aircraftType:
-            input.aircraftTypeId !== null && input.aircraftTypeId !== ''
-              ? {
-                  connect: {
-                    id: input.aircraftTypeId,
-                  },
-                }
-              : undefined,
-          flightNumber: input.flightNumber,
-          callsign: input.callsign,
-          tailNumber: input.tailNumber,
-          outTime: outTime.toISOString(),
-          offTime: offTime?.toISOString() ?? null,
-          onTime: onTime?.toISOString() ?? null,
-          inTime: inTime.toISOString(),
-          duration,
-          class: input.class,
-          seatNumber: input.seatNumber,
-          seatPosition: input.seatPosition,
-          reason: input.reason,
-          comments: input.comments,
-          trackingLink: input.trackingLink,
-        },
-      });
-      return flight;
-    }),
-  deleteFlight: procedure
-    .use(verifyAuthenticated)
-    .input(deleteFlightSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { id } = input;
-      const flight = await prisma.flight.findUnique({
-        where: {
-          id,
-        },
-      });
-      if (flight?.userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Unable to delete flight.',
-        });
-      }
-      return await prisma.flight.delete({
-        where: {
-          id,
-        },
-      });
     }),
 });
 
