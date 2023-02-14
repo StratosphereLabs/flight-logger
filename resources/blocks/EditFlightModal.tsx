@@ -2,9 +2,10 @@ import { useParams } from 'react-router-dom';
 import { Modal, useAlertMessages } from 'stratosphere-ui';
 import { useSuccessResponseHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
+import { UsersRouterOutput } from '../../app/routes/users';
 
 export interface EditFlightProps {
-  data: Record<string, unknown> | null;
+  data: UsersRouterOutput['getUserFlights'][number] | null;
   onClose: () => void;
   show: boolean;
 }

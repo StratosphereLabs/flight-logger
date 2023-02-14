@@ -8,8 +8,10 @@ import { LoadingCard, Table } from 'stratosphere-ui';
 import { ActionsCell } from './ActionsCell';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
+import { ViewFlightModal } from './ViewFlightModal';
 import { useTRPCErrorHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
+import { UsersRouterOutput } from '../../app/routes/users';
 
 export const DATE_FORMAT = 'yyyy-MM-dd';
 
@@ -22,8 +24,10 @@ export interface DeleteFlightData {
 export const FlightsCard = (): JSX.Element => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [deleteFlightData, setDeleteFlightData] =
-    useState<DeleteFlightData | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [activeFlight, setActiveFlight] = useState<
+    UsersRouterOutput['getUserFlights'][number] | null
+  >(null);
   const { username } = useParams();
   const { data, error, isFetching } = trpc.users.getUserFlights.useQuery({
     username,
@@ -87,8 +91,6 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Dep',
                 cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
-                  const outTime = row.original.outTime;
-                  const departureTime = format(new Date(outTime), 'h:mm a');
                   return (
                     <div>
                       <div className="text-base font-bold">
@@ -98,7 +100,7 @@ export const FlightsCard = (): JSX.Element => {
                         {airportData?.municipality}
                       </div>
                       <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
-                        {departureTime}
+                        {row.original.outTimeLocal}
                       </div>
                     </div>
                   );
@@ -111,8 +113,6 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Arr',
                 cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
-                  const inTime = row.original.inTime;
-                  const arrivalTime = format(new Date(inTime), 'h:mm a');
                   return (
                     <div>
                       <div className="text-base font-bold">
@@ -122,7 +122,7 @@ export const FlightsCard = (): JSX.Element => {
                         {airportData?.municipality}
                       </div>
                       <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
-                        {arrivalTime}
+                        {row.original.inTimeLocal}
                       </div>
                     </div>
                   );
@@ -140,18 +140,11 @@ export const FlightsCard = (): JSX.Element => {
               },
               {
                 id: 'flightNumber',
-                accessorKey: 'flightNumber',
+                accessorKey: 'flightNumberString',
                 header: () => 'Flight #',
-                cell: ({ getValue, row }) => {
-                  const airlineData = row.getValue<airline>('airline');
+                cell: ({ getValue }) => {
                   const flightNumber = getValue<number | null>();
-                  return (
-                    <div className="opacity-70">
-                      {`${airlineData?.iata ?? ''} ${
-                        flightNumber ?? ''
-                      }`.trim()}
-                    </div>
-                  );
+                  return <div className="opacity-70">{flightNumber}</div>;
                 },
                 footer: () => null,
               },
@@ -185,15 +178,16 @@ export const FlightsCard = (): JSX.Element => {
                 cell: ({ row }) => (
                   <ActionsCell
                     onDeleteFlight={() => {
-                      setDeleteFlightData({
-                        departureAirportId: row.original.departureAirportId,
-                        arrivalAirportId: row.original.arrivalAirportId,
-                        id: row.original.id,
-                      });
+                      setActiveFlight(row.original);
                       setIsDeleteDialogOpen(true);
                     }}
                     onEditFlight={() => {
+                      setActiveFlight(row.original);
                       setIsEditDialogOpen(true);
+                    }}
+                    onViewFlight={() => {
+                      setActiveFlight(row.original);
+                      setIsViewDialogOpen(true);
                     }}
                   />
                 ),
@@ -217,14 +211,19 @@ export const FlightsCard = (): JSX.Element => {
         </Card.Body>
       </LoadingCard>
       <DeleteFlightModal
-        data={deleteFlightData}
+        data={activeFlight}
         onClose={() => setIsDeleteDialogOpen(false)}
         show={isDeleteDialogOpen}
       />
       <EditFlightModal
-        data={{}}
+        data={activeFlight}
         onClose={() => setIsEditDialogOpen(false)}
         show={isEditDialogOpen}
+      />
+      <ViewFlightModal
+        data={activeFlight}
+        onClose={() => setIsViewDialogOpen(false)}
+        show={isViewDialogOpen}
       />
     </>
   );

@@ -2,10 +2,10 @@ import { useParams } from 'react-router-dom';
 import { Modal, useAlertMessages } from 'stratosphere-ui';
 import { useSuccessResponseHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
-import { DeleteFlightData } from './FlightsCard';
+import { UsersRouterOutput } from '../../app/routes/users';
 
 export interface DeleteFlightProps {
-  data: DeleteFlightData | null;
+  data: UsersRouterOutput['getUserFlights'][number] | null;
   onClose: () => void;
   show: boolean;
 }
