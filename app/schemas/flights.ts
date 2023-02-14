@@ -32,6 +32,10 @@ export const addFlightSchema = z.object({
   trackingLink: z.string().trim().nullable(),
 });
 
+export const editFlightSchema = addFlightSchema.partial();
+
 export type GetFlightRequest = z.infer<typeof getFlightSchema>;
 
 export type AddFlightRequest = z.infer<typeof addFlightSchema>;
+
+export type EditFlightRequest = z.infer<typeof editFlightSchema>;
