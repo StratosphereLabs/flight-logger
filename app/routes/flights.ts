@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { verifyAdminTRPC } from '../middleware';
-import { getFlightSchema } from '../schemas';
+import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
+import { editFlightSchema, getFlightSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 
 export const flightsRouter = router({
@@ -20,6 +20,12 @@ export const flightsRouter = router({
     }
     return flight;
   }),
+  editFlight: procedure
+    .use(verifyAuthenticated)
+    .input(editFlightSchema)
+    .mutation(({ ctx, input }) => {
+      console.log({ ctx, input });
+    }),
   deleteFlights: procedure.use(verifyAdminTRPC).mutation(async () => {
     await prisma.flight.deleteMany({});
   }),

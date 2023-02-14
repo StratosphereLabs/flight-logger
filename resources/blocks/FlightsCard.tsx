@@ -2,20 +2,13 @@ import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
-import { Badge, Button, Card } from 'react-daisyui';
+import { Badge, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard, Modal, Table, useAlertMessages } from 'stratosphere-ui';
-import {
-  EditIcon,
-  EllipsisVerticalIcon,
-  LinkIcon,
-  TrashIcon,
-  ViewIcon,
-} from '../common/components';
-import {
-  useSuccessResponseHandler,
-  useTRPCErrorHandler,
-} from '../common/hooks';
+import { LoadingCard, Table } from 'stratosphere-ui';
+import { ActionsCell } from './ActionsCell';
+import { DeleteFlightModal } from './DeleteFlightModal';
+import { EditFlightModal } from './EditFlightModal';
+import { useTRPCErrorHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
 
 export const DATE_FORMAT = 'yyyy-MM-dd';
@@ -27,36 +20,13 @@ export interface DeleteFlightData {
 }
 
 export const FlightsCard = (): JSX.Element => {
-  const utils = trpc.useContext();
-  const { addAlertMessages } = useAlertMessages();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [deleteFlightData, setDeleteFlightData] =
     useState<DeleteFlightData | null>(null);
   const { username } = useParams();
-  const handleSuccess = useSuccessResponseHandler();
   const { data, error, isFetching } = trpc.users.getUserFlights.useQuery({
     username,
-  });
-  const { isLoading, mutate } = trpc.users.deleteFlight.useMutation({
-    onSuccess: ({ id }) => {
-      handleSuccess('Flight Deleted');
-      setIsDeleteDialogOpen(false);
-      const previousFlights = utils.users.getUserFlights.getData({
-        username,
-      });
-      utils.users.getUserFlights.setData(
-        { username },
-        previousFlights?.filter(flight => flight.id !== id),
-      );
-    },
-    onError: err => {
-      addAlertMessages([
-        {
-          status: 'error',
-          message: err.message,
-        },
-      ]);
-    },
   });
   useTRPCErrorHandler(error);
   return (
@@ -213,52 +183,19 @@ export const FlightsCard = (): JSX.Element => {
                 id: 'actions',
                 header: () => <div className="hidden xl:flex">Actions</div>,
                 cell: ({ row }) => (
-                  <>
-                    <div className="hidden gap-1 xl:flex">
-                      <Button
-                        className="px-1"
-                        color="ghost"
-                        startIcon={<LinkIcon />}
-                        size="xs"
-                      />
-                      <Button
-                        className="px-1"
-                        color="info"
-                        startIcon={<ViewIcon className="h-4 w-4" />}
-                        size="xs"
-                      />
-                      {username === undefined ? (
-                        <>
-                          <Button
-                            className="px-1"
-                            color="success"
-                            startIcon={<EditIcon />}
-                            size="xs"
-                          />
-                          <Button
-                            onClick={() => {
-                              setDeleteFlightData({
-                                departureAirportId:
-                                  row.original.departureAirportId,
-                                arrivalAirportId: row.original.arrivalAirportId,
-                                id: row.original.id,
-                              });
-                              setIsDeleteDialogOpen(true);
-                            }}
-                            className="px-1"
-                            color="error"
-                            startIcon={<TrashIcon />}
-                            size="xs"
-                          />
-                        </>
-                      ) : null}
-                    </div>
-                    <div className="flex xl:hidden">
-                      <Button shape="circle" color="ghost" size="sm">
-                        <EllipsisVerticalIcon className="h-5 w-5" />
-                      </Button>
-                    </div>
-                  </>
+                  <ActionsCell
+                    onDeleteFlight={() => {
+                      setDeleteFlightData({
+                        departureAirportId: row.original.departureAirportId,
+                        arrivalAirportId: row.original.arrivalAirportId,
+                        id: row.original.id,
+                      });
+                      setIsDeleteDialogOpen(true);
+                    }}
+                    onEditFlight={() => {
+                      setIsEditDialogOpen(true);
+                    }}
+                  />
                 ),
                 footer: () => null,
               },
@@ -279,32 +216,16 @@ export const FlightsCard = (): JSX.Element => {
           />
         </Card.Body>
       </LoadingCard>
-      <Modal
-        actionButtons={[
-          {
-            children: 'Cancel',
-            color: 'ghost',
-            onClick: () => setIsDeleteDialogOpen(false),
-          },
-          {
-            children: 'Yes',
-            color: 'error',
-            loading: isLoading,
-            onClick: () =>
-              deleteFlightData !== null && mutate({ id: deleteFlightData.id }),
-          },
-        ]}
+      <DeleteFlightModal
+        data={deleteFlightData}
         onClose={() => setIsDeleteDialogOpen(false)}
         show={isDeleteDialogOpen}
-        title="Delete Flight"
-      >
-        Are you sure you want to delete your{' '}
-        <strong>
-          {deleteFlightData?.departureAirportId ?? ''} -{' '}
-          {deleteFlightData?.arrivalAirportId ?? ''}
-        </strong>{' '}
-        flight?
-      </Modal>
+      />
+      <EditFlightModal
+        data={{}}
+        onClose={() => setIsEditDialogOpen(false)}
+        show={isEditDialogOpen}
+      />
     </>
   );
 };
