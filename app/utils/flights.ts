@@ -6,7 +6,12 @@ import {
   getDurationMinutes,
   getDurationString,
 } from './datetime';
-import { DATE_FORMAT, DATE_FORMAT_ISO, TIME_FORMAT } from '../constants';
+import {
+  DATE_FORMAT,
+  DATE_FORMAT_ISO,
+  TIME_FORMAT_12H,
+  TIME_FORMAT_24H,
+} from '../constants';
 
 export interface FlightTimesInput {
   departureAirport: airport;
@@ -41,7 +46,9 @@ export interface FlightTimestampsResult {
   outDateISO: string;
   outDateLocal: string;
   outTimeLocal: string;
+  outTimeValue: string;
   inTimeLocal: string;
+  inTimeValue: string;
 }
 
 export const getFlightTimes = ({
@@ -101,7 +108,21 @@ export const getFlightTimestamps = ({
   outTimeLocal: formatInTimeZone(
     outTime,
     departureAirport.timeZone,
-    TIME_FORMAT,
+    TIME_FORMAT_12H,
   ),
-  inTimeLocal: formatInTimeZone(inTime, arrivalAirport.timeZone, TIME_FORMAT),
+  outTimeValue: formatInTimeZone(
+    outTime,
+    departureAirport.timeZone,
+    TIME_FORMAT_24H,
+  ),
+  inTimeLocal: formatInTimeZone(
+    inTime,
+    arrivalAirport.timeZone,
+    TIME_FORMAT_12H,
+  ),
+  inTimeValue: formatInTimeZone(
+    inTime,
+    arrivalAirport.timeZone,
+    TIME_FORMAT_24H,
+  ),
 });

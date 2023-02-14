@@ -73,7 +73,9 @@ export const usersRouter = router({
           outDateISO,
           outDateLocal,
           outTimeLocal,
+          outTimeValue,
           inTimeLocal,
+          inTimeValue,
         } = getFlightTimestamps({
           departureAirport: flight.departureAirport,
           arrivalAirport: flight.arrivalAirport,
@@ -91,7 +93,9 @@ export const usersRouter = router({
           outDateISO,
           outDateLocal,
           outTimeLocal,
+          outTimeValue,
           inTimeLocal,
+          inTimeValue,
           distance: calculateDistance(
             flight.departureAirport.lat,
             flight.departureAirport.lon,
