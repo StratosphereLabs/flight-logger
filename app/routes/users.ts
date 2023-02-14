@@ -1,5 +1,6 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { formatInTimeZone } from 'date-fns-tz';
+import { DATE_FORMAT, TIME_FORMAT } from '../constants';
 import { prisma } from '../db';
 import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
 import { getAirports, getRoutes } from '../parsers';
@@ -11,12 +12,12 @@ import {
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
+  calculateDistance,
   excludeKeys,
   fetchGravatarUrl,
   getDurationString,
   getFlightTimestamps,
 } from '../utils';
-import { calculateDistance } from '../utils/distance';
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
@@ -79,15 +80,20 @@ export const usersRouter = router({
         flightNumberString: `${flight.airline?.iata ?? ''} ${
           flight.flightNumber ?? ''
         }`.trim(),
+        outDateLocal: formatInTimeZone(
+          flight.outTime,
+          flight.departureAirport.timeZone,
+          DATE_FORMAT,
+        ),
         outTimeLocal: formatInTimeZone(
           flight.outTime,
           flight.departureAirport.timeZone,
-          'h:mm a',
+          TIME_FORMAT,
         ),
         inTimeLocal: formatInTimeZone(
           flight.inTime,
           flight.arrivalAirport.timeZone,
-          'h:mm a',
+          TIME_FORMAT,
         ),
         distance: calculateDistance(
           flight.departureAirport.lat,
