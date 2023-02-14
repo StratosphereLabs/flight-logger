@@ -71,7 +71,7 @@ export const Itinerary = (): JSX.Element | null => {
                   </div>
                 </div>
                 <div className="flex flex-1 items-center justify-center gap-2 text-sm">
-                  {flight.outTime} <RightArrowIcon />{' '}
+                  {flight.outTime} <RightArrowIcon className="h-4 w-4" />{' '}
                   <div>
                     {flight.inTime}
                     {flight.daysAdded > 0 ? (

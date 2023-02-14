@@ -2,21 +2,16 @@ import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { format, isBefore } from 'date-fns';
 import { useState } from 'react';
-import { Badge, Button, Card } from 'react-daisyui';
+import { Badge, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard, Modal, Table, useAlertMessages } from 'stratosphere-ui';
-import {
-  EditIcon,
-  EllipsisVerticalIcon,
-  LinkIcon,
-  TrashIcon,
-  ViewIcon,
-} from '../common/components';
-import {
-  useSuccessResponseHandler,
-  useTRPCErrorHandler,
-} from '../common/hooks';
+import { LoadingCard, Table } from 'stratosphere-ui';
+import { ActionsCell } from './ActionsCell';
+import { DeleteFlightModal } from './DeleteFlightModal';
+import { EditFlightModal } from './EditFlightModal';
+import { ViewFlightModal } from './ViewFlightModal';
+import { useTRPCErrorHandler } from '../common/hooks';
 import { trpc } from '../utils/trpc';
+import { UsersRouterOutput } from '../../app/routes/users';
 
 export const DATE_FORMAT = 'yyyy-MM-dd';
 
@@ -27,36 +22,15 @@ export interface DeleteFlightData {
 }
 
 export const FlightsCard = (): JSX.Element => {
-  const utils = trpc.useContext();
-  const { addAlertMessages } = useAlertMessages();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [deleteFlightData, setDeleteFlightData] =
-    useState<DeleteFlightData | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [activeFlight, setActiveFlight] = useState<
+    UsersRouterOutput['getUserFlights'][number] | null
+  >(null);
   const { username } = useParams();
-  const handleSuccess = useSuccessResponseHandler();
   const { data, error, isFetching } = trpc.users.getUserFlights.useQuery({
     username,
-  });
-  const { isLoading, mutate } = trpc.users.deleteFlight.useMutation({
-    onSuccess: ({ id }) => {
-      handleSuccess('Flight Deleted');
-      setIsDeleteDialogOpen(false);
-      const previousFlights = utils.users.getUserFlights.getData({
-        username,
-      });
-      utils.users.getUserFlights.setData(
-        { username },
-        previousFlights?.filter(flight => flight.id !== id),
-      );
-    },
-    onError: err => {
-      addAlertMessages([
-        {
-          status: 'error',
-          message: err.message,
-        },
-      ]);
-    },
   });
   useTRPCErrorHandler(error);
   return (
@@ -117,8 +91,6 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Dep',
                 cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
-                  const outTime = row.original.outTime;
-                  const departureTime = format(new Date(outTime), 'h:mm a');
                   return (
                     <div>
                       <div className="text-base font-bold">
@@ -128,7 +100,7 @@ export const FlightsCard = (): JSX.Element => {
                         {airportData?.municipality}
                       </div>
                       <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
-                        {departureTime}
+                        {row.original.outTimeLocal}
                       </div>
                     </div>
                   );
@@ -141,8 +113,6 @@ export const FlightsCard = (): JSX.Element => {
                 header: () => 'Arr',
                 cell: ({ row, getValue }) => {
                   const airportData = getValue<airport>();
-                  const inTime = row.original.inTime;
-                  const arrivalTime = format(new Date(inTime), 'h:mm a');
                   return (
                     <div>
                       <div className="text-base font-bold">
@@ -152,7 +122,7 @@ export const FlightsCard = (): JSX.Element => {
                         {airportData?.municipality}
                       </div>
                       <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
-                        {arrivalTime}
+                        {row.original.inTimeLocal}
                       </div>
                     </div>
                   );
@@ -170,18 +140,11 @@ export const FlightsCard = (): JSX.Element => {
               },
               {
                 id: 'flightNumber',
-                accessorKey: 'flightNumber',
+                accessorKey: 'flightNumberString',
                 header: () => 'Flight #',
-                cell: ({ getValue, row }) => {
-                  const airlineData = row.getValue<airline>('airline');
+                cell: ({ getValue }) => {
                   const flightNumber = getValue<number | null>();
-                  return (
-                    <div className="opacity-70">
-                      {`${airlineData?.iata ?? ''} ${
-                        flightNumber ?? ''
-                      }`.trim()}
-                    </div>
-                  );
+                  return <div className="opacity-70">{flightNumber}</div>;
                 },
                 footer: () => null,
               },
@@ -213,52 +176,20 @@ export const FlightsCard = (): JSX.Element => {
                 id: 'actions',
                 header: () => <div className="hidden xl:flex">Actions</div>,
                 cell: ({ row }) => (
-                  <>
-                    <div className="hidden gap-1 xl:flex">
-                      <Button
-                        className="px-1"
-                        color="ghost"
-                        startIcon={<LinkIcon />}
-                        size="xs"
-                      />
-                      <Button
-                        className="px-1"
-                        color="info"
-                        startIcon={<ViewIcon className="h-4 w-4" />}
-                        size="xs"
-                      />
-                      {username === undefined ? (
-                        <>
-                          <Button
-                            className="px-1"
-                            color="success"
-                            startIcon={<EditIcon />}
-                            size="xs"
-                          />
-                          <Button
-                            onClick={() => {
-                              setDeleteFlightData({
-                                departureAirportId:
-                                  row.original.departureAirportId,
-                                arrivalAirportId: row.original.arrivalAirportId,
-                                id: row.original.id,
-                              });
-                              setIsDeleteDialogOpen(true);
-                            }}
-                            className="px-1"
-                            color="error"
-                            startIcon={<TrashIcon />}
-                            size="xs"
-                          />
-                        </>
-                      ) : null}
-                    </div>
-                    <div className="flex xl:hidden">
-                      <Button shape="circle" color="ghost" size="sm">
-                        <EllipsisVerticalIcon className="h-5 w-5" />
-                      </Button>
-                    </div>
-                  </>
+                  <ActionsCell
+                    onDeleteFlight={() => {
+                      setActiveFlight(row.original);
+                      setIsDeleteDialogOpen(true);
+                    }}
+                    onEditFlight={() => {
+                      setActiveFlight(row.original);
+                      setIsEditDialogOpen(true);
+                    }}
+                    onViewFlight={() => {
+                      setActiveFlight(row.original);
+                      setIsViewDialogOpen(true);
+                    }}
+                  />
                 ),
                 footer: () => null,
               },
@@ -279,32 +210,21 @@ export const FlightsCard = (): JSX.Element => {
           />
         </Card.Body>
       </LoadingCard>
-      <Modal
-        actionButtons={[
-          {
-            children: 'Cancel',
-            color: 'ghost',
-            onClick: () => setIsDeleteDialogOpen(false),
-          },
-          {
-            children: 'Yes',
-            color: 'error',
-            loading: isLoading,
-            onClick: () =>
-              deleteFlightData !== null && mutate({ id: deleteFlightData.id }),
-          },
-        ]}
+      <DeleteFlightModal
+        data={activeFlight}
         onClose={() => setIsDeleteDialogOpen(false)}
         show={isDeleteDialogOpen}
-        title="Delete Flight"
-      >
-        Are you sure you want to delete your{' '}
-        <strong>
-          {deleteFlightData?.departureAirportId ?? ''} -{' '}
-          {deleteFlightData?.arrivalAirportId ?? ''}
-        </strong>{' '}
-        flight?
-      </Modal>
+      />
+      <EditFlightModal
+        data={activeFlight}
+        onClose={() => setIsEditDialogOpen(false)}
+        show={isEditDialogOpen}
+      />
+      <ViewFlightModal
+        data={activeFlight}
+        onClose={() => setIsViewDialogOpen(false)}
+        show={isViewDialogOpen}
+      />
     </>
   );
 };

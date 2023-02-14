@@ -31,10 +31,14 @@ export const getFlightTimestamps = ({
   onTime,
   inTime,
 }: FlightTimestampsInput): FlightTimestampsResult => {
-  const departureTimeZone = departureAirport.timeZone;
-  const arrivalTimeZone = arrivalAirport.timeZone;
-  const outTimeUtc = zonedTimeToUtc(`${outDate} ${outTime}`, departureTimeZone);
-  const inTimeUtc = zonedTimeToUtc(`${outDate} ${inTime}`, arrivalTimeZone);
+  const outTimeUtc = zonedTimeToUtc(
+    `${outDate} ${outTime}`,
+    departureAirport.timeZone,
+  );
+  const inTimeUtc = zonedTimeToUtc(
+    `${outDate} ${inTime}`,
+    arrivalAirport.timeZone,
+  );
   const daysAdded = getDaysToAdd({ outTime: outTimeUtc, inTime: inTimeUtc });
   const correctedInTime = add(inTimeUtc, {
     days: daysAdded,

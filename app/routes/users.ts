@@ -1,4 +1,6 @@
-import { TRPCError } from '@trpc/server';
+import { inferRouterOutputs, TRPCError } from '@trpc/server';
+import { formatInTimeZone } from 'date-fns-tz';
+import { DATE_FORMAT, TIME_FORMAT } from '../constants';
 import { prisma } from '../db';
 import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
 import { getAirports, getRoutes } from '../parsers';
@@ -10,6 +12,7 @@ import {
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
+  calculateDistance,
   excludeKeys,
   fetchGravatarUrl,
   getDurationString,
@@ -74,6 +77,30 @@ export const usersRouter = router({
       return flights.map(flight => ({
         ...flight,
         duration: getDurationString(flight.duration),
+        flightNumberString: `${flight.airline?.iata ?? ''} ${
+          flight.flightNumber ?? ''
+        }`.trim(),
+        outDateLocal: formatInTimeZone(
+          flight.outTime,
+          flight.departureAirport.timeZone,
+          DATE_FORMAT,
+        ),
+        outTimeLocal: formatInTimeZone(
+          flight.outTime,
+          flight.departureAirport.timeZone,
+          TIME_FORMAT,
+        ),
+        inTimeLocal: formatInTimeZone(
+          flight.inTime,
+          flight.arrivalAirport.timeZone,
+          TIME_FORMAT,
+        ),
+        distance: calculateDistance(
+          flight.departureAirport.lat,
+          flight.departureAirport.lon,
+          flight.arrivalAirport.lat,
+          flight.arrivalAirport.lon,
+        ),
       }));
     }),
   getUserMapData: procedure
@@ -218,3 +245,7 @@ export const usersRouter = router({
       });
     }),
 });
+
+export type UsersRouter = typeof usersRouter;
+
+export type UsersRouterOutput = inferRouterOutputs<UsersRouter>;
