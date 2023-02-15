@@ -96,11 +96,9 @@ export const saveFlightDiaryData = async (
       const { outTime, inTime, duration } = getFlightTimes({
         departureAirport,
         arrivalAirport,
-        outDate: row.Date,
-        outTime: row['Dep time'],
-        offTime: null,
-        onTime: null,
-        inTime: row['Arr time'],
+        outDateISO: row.Date,
+        outTimeValue: row['Dep time'],
+        inTimeValue: row['Arr time'],
       });
       return [
         prisma.flight.create({

@@ -91,7 +91,7 @@ export const Home = (): JSX.Element => {
             setIsResetDialogOpen(false);
             firstFieldRef.current?.focus();
           }}
-          show={isResetDialogOpen}
+          open={isResetDialogOpen}
         />
       ) : null}
     </div>

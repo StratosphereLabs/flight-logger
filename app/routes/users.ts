@@ -85,9 +85,10 @@ export const usersRouter = router({
         });
         return {
           ...flight,
-          flightNumberString: `${flight.airline?.iata ?? ''} ${
-            flight.flightNumber ?? ''
-          }`.trim(),
+          flightNumberString:
+            flight.flightNumber !== null
+              ? `${flight.airline?.iata ?? ''} ${flight.flightNumber}`.trim()
+              : '',
           duration,
           inFuture,
           outDateISO,

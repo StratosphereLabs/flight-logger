@@ -1,4 +1,5 @@
-export const addFlightDefaultValues = {
+export const editFlightDefaultValues = {
+  id: '',
   departureAirportId: '',
   arrivalAirportId: '',
   airlineId: '',

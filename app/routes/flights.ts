@@ -33,14 +33,12 @@ export const flightsRouter = router({
           message: 'Airport not found.',
         });
       }
-      const { outTime, offTime, onTime, inTime, duration } = getFlightTimes({
+      const { outTime, inTime, duration } = getFlightTimes({
         departureAirport,
         arrivalAirport,
-        outDate: input.outDate,
-        outTime: input.outTime,
-        offTime: input.offTime,
-        onTime: input.onTime,
-        inTime: input.inTime,
+        outDateISO: input.outDateISO,
+        outTimeValue: input.outTimeValue,
+        inTimeValue: input.inTimeValue,
       });
       const flight = await prisma.flight.create({
         data: {
@@ -79,8 +77,6 @@ export const flightsRouter = router({
           callsign: input.callsign,
           tailNumber: input.tailNumber,
           outTime: outTime.toISOString(),
-          offTime: offTime?.toISOString() ?? null,
-          onTime: onTime?.toISOString() ?? null,
           inTime: inTime.toISOString(),
           duration,
           class: input.class,
@@ -142,14 +138,12 @@ export const flightsRouter = router({
           message: 'Airport not found.',
         });
       }
-      const { outTime, offTime, onTime, inTime, duration } = getFlightTimes({
+      const { outTime, inTime, duration } = getFlightTimes({
         departureAirport,
         arrivalAirport,
-        outDate: input.outDate,
-        offTime: null,
-        onTime: null,
-        outTime: input.outTime,
-        inTime: input.inTime,
+        outDateISO: input.outDateISO,
+        outTimeValue: input.outTimeValue,
+        inTimeValue: input.inTimeValue,
       });
       return await prisma.flight.update({
         where: {
@@ -188,8 +182,6 @@ export const flightsRouter = router({
           callsign: input.callsign,
           tailNumber: input.tailNumber,
           outTime: outTime.toISOString(),
-          offTime: offTime?.toISOString() ?? '',
-          onTime: onTime?.toISOString() ?? '',
           inTime: inTime.toISOString(),
           duration,
           class: input.class,
