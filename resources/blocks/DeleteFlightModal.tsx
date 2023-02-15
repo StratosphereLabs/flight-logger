@@ -19,7 +19,7 @@ export const DeleteFlightModal = ({
   const { username } = useParams();
   const { addAlertMessages } = useAlertMessages();
   const handleSuccess = useSuccessResponseHandler();
-  const { isLoading, mutate } = trpc.users.deleteFlight.useMutation({
+  const { isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
     onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
       onClose();
