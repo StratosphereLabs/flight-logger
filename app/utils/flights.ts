@@ -1,9 +1,19 @@
 import { airport } from '@prisma/client';
-import { add } from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
-import { getDaysToAdd, getDurationMinutes } from './datetime';
+import { add, isBefore } from 'date-fns';
+import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
+import {
+  getDaysToAdd,
+  getDurationMinutes,
+  getDurationString,
+} from './datetime';
+import {
+  DATE_FORMAT,
+  DATE_FORMAT_ISO,
+  TIME_FORMAT_12H,
+  TIME_FORMAT_24H,
+} from '../constants';
 
-export interface FlightTimestampsInput {
+export interface FlightTimesInput {
   departureAirport: airport;
   arrivalAirport: airport;
   outDate: string;
@@ -13,7 +23,15 @@ export interface FlightTimestampsInput {
   inTime: string;
 }
 
-export interface FlightTimestampsResult {
+export interface FlightTimestampsInput {
+  departureAirport: airport;
+  arrivalAirport: airport;
+  duration: number;
+  outTime: string | number | Date;
+  inTime: string | number | Date;
+}
+
+export interface FlightTimesResult {
   duration: number;
   outTime: Date;
   offTime: Date | null;
@@ -22,7 +40,18 @@ export interface FlightTimestampsResult {
   daysAdded: number;
 }
 
-export const getFlightTimestamps = ({
+export interface FlightTimestampsResult {
+  duration: string;
+  inFuture: boolean;
+  outDateISO: string;
+  outDateLocal: string;
+  outTimeLocal: string;
+  outTimeValue: string;
+  inTimeLocal: string;
+  inTimeValue: string;
+}
+
+export const getFlightTimes = ({
   departureAirport,
   arrivalAirport,
   outDate,
@@ -30,7 +59,7 @@ export const getFlightTimestamps = ({
   offTime,
   onTime,
   inTime,
-}: FlightTimestampsInput): FlightTimestampsResult => {
+}: FlightTimesInput): FlightTimesResult => {
   const outTimeUtc = zonedTimeToUtc(
     `${outDate} ${outTime}`,
     departureAirport.timeZone,
@@ -56,3 +85,44 @@ export const getFlightTimestamps = ({
     daysAdded,
   };
 };
+
+export const getFlightTimestamps = ({
+  departureAirport,
+  arrivalAirport,
+  duration,
+  outTime,
+  inTime,
+}: FlightTimestampsInput): FlightTimestampsResult => ({
+  duration: getDurationString(duration),
+  inFuture: !isBefore(new Date(outTime), new Date()),
+  outDateISO: formatInTimeZone(
+    outTime,
+    departureAirport.timeZone,
+    DATE_FORMAT_ISO,
+  ),
+  outDateLocal: formatInTimeZone(
+    outTime,
+    departureAirport.timeZone,
+    DATE_FORMAT,
+  ),
+  outTimeLocal: formatInTimeZone(
+    outTime,
+    departureAirport.timeZone,
+    TIME_FORMAT_12H,
+  ),
+  outTimeValue: formatInTimeZone(
+    outTime,
+    departureAirport.timeZone,
+    TIME_FORMAT_24H,
+  ),
+  inTimeLocal: formatInTimeZone(
+    inTime,
+    arrivalAirport.timeZone,
+    TIME_FORMAT_12H,
+  ),
+  inTimeValue: formatInTimeZone(
+    inTime,
+    arrivalAirport.timeZone,
+    TIME_FORMAT_24H,
+  ),
+});

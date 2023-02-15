@@ -4,7 +4,7 @@ import createHttpError from 'http-errors';
 import { findBestMatch } from 'string-similarity';
 import { fetchData } from './fetchData';
 import { prisma } from '../db';
-import { getFlightTimestamps } from '../utils';
+import { getFlightTimes } from '../utils';
 import {
   getAircraftIcao,
   getAircraftName,
@@ -93,7 +93,7 @@ export const saveFlightDiaryData = async (
         aircraftName,
         aircraftTypes?.map(({ name }) => name) ?? [''],
       );
-      const { outTime, inTime, duration } = getFlightTimestamps({
+      const { outTime, inTime, duration } = getFlightTimes({
         departureAirport,
         arrivalAirport,
         outDate: row.Date,

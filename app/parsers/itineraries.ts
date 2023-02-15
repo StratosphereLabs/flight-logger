@@ -1,14 +1,13 @@
 import { aircraft_type, airline, airport, FlightClass } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { isBefore } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
 import { DataFetchResults } from './fetchData';
-import { DATE_FORMAT, TIME_FORMAT } from '../constants';
 import { AddItineraryRequest, ItineraryFlight } from '../schemas/itineraries';
 import {
-  FlightTimestampsResult,
+  FlightTimesResult,
   getDurationMinutes,
   getDurationString,
+  getFlightTimes,
   getFlightTimestamps,
 } from '../utils';
 
@@ -35,7 +34,7 @@ export interface ItineraryResult {
 
 export interface ItineraryFlightWithTimestamps
   extends Omit<ItineraryFlight, 'outTime' | 'offTime' | 'onTime' | 'inTime'>,
-    FlightTimestampsResult {}
+    FlightTimesResult {}
 
 const getSegmentedFlights = (
   flightsWithTimestamps: ItineraryFlightWithTimestamps[],
@@ -72,7 +71,7 @@ export const getItineraryData = ({
   const flightsWithTimestamps: ItineraryFlightWithTimestamps[] = input.map(
     flight => ({
       ...flight,
-      ...getFlightTimestamps({
+      ...getFlightTimes({
         departureAirport: data.airports[flight.departureAirportId],
         arrivalAirport: data.airports[flight.arrivalAirportId],
         outDate: flight.outDate,
@@ -106,30 +105,22 @@ export const getItineraryData = ({
           end: flight.outTime,
         }),
       );
-      const duration = getDurationString(flight.duration);
-      const outDate = formatInTimeZone(
-        flight.outTime,
-        departureAirport.timeZone,
-        DATE_FORMAT,
-      );
-      const outTime = formatInTimeZone(
-        flight.outTime,
-        departureAirport.timeZone,
-        TIME_FORMAT,
-      );
-      const inTime = formatInTimeZone(
-        flight.inTime,
-        arrivalAirport.timeZone,
-        TIME_FORMAT,
-      );
+      const { duration, outDateLocal, outTimeLocal, inTimeLocal } =
+        getFlightTimestamps({
+          departureAirport,
+          arrivalAirport,
+          duration: flight.duration,
+          outTime: flight.outTime,
+          inTime: flight.inTime,
+        });
       return {
         segmentTitle: index === 0 ? segmentTitle : '',
         layoverDuration,
         departureAirport,
         arrivalAirport,
-        outDate,
-        outTime,
-        inTime,
+        outDate: outDateLocal,
+        outTime: outTimeLocal,
+        inTime: inTimeLocal,
         daysAdded: flight.daysAdded,
         duration,
         airline,
