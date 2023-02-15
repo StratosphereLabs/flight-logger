@@ -1,12 +1,21 @@
 import { z } from 'zod';
-import { DATE_REGEX, TIME_REGEX } from '../constants';
+import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
 
 export const itineraryFlightSchema = z.object({
   departureAirportId: z.string().min(1, 'Required'),
   arrivalAirportId: z.string().min(1, 'Required'),
-  outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
-  outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
-  inTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
+  outDateISO: z
+    .string()
+    .min(1, 'Required')
+    .regex(DATE_REGEX_ISO, 'Invalid Date'),
+  outTimeValue: z
+    .string()
+    .min(1, 'Required')
+    .regex(TIME_REGEX_24H, 'Invalid Time'),
+  inTimeValue: z
+    .string()
+    .min(1, 'Required')
+    .regex(TIME_REGEX_24H, 'Invalid Time'),
   airlineId: z.string(),
   aircraftTypeId: z.string(),
   flightNumber: z.number().int().nullable(),

@@ -16,11 +16,9 @@ import {
 export interface FlightTimesInput {
   departureAirport: airport;
   arrivalAirport: airport;
-  outDate: string;
-  outTime: string;
-  offTime: string | null;
-  onTime: string | null;
-  inTime: string;
+  outDateISO: string;
+  outTimeValue: string;
+  inTimeValue: string;
 }
 
 export interface FlightTimestampsInput {
@@ -34,8 +32,6 @@ export interface FlightTimestampsInput {
 export interface FlightTimesResult {
   duration: number;
   outTime: Date;
-  offTime: Date | null;
-  onTime: Date | null;
   inTime: Date;
   daysAdded: number;
 }
@@ -54,18 +50,16 @@ export interface FlightTimestampsResult {
 export const getFlightTimes = ({
   departureAirport,
   arrivalAirport,
-  outDate,
-  outTime,
-  offTime,
-  onTime,
-  inTime,
+  outDateISO,
+  outTimeValue,
+  inTimeValue,
 }: FlightTimesInput): FlightTimesResult => {
   const outTimeUtc = zonedTimeToUtc(
-    `${outDate} ${outTime}`,
+    `${outDateISO} ${outTimeValue}`,
     departureAirport.timeZone,
   );
   const inTimeUtc = zonedTimeToUtc(
-    `${outDate} ${inTime}`,
+    `${outDateISO} ${inTimeValue}`,
     arrivalAirport.timeZone,
   );
   const daysAdded = getDaysToAdd({ outTime: outTimeUtc, inTime: inTimeUtc });
@@ -79,8 +73,6 @@ export const getFlightTimes = ({
   return {
     duration,
     outTime: outTimeUtc,
-    offTime: null,
-    onTime: null,
     inTime: correctedInTime,
     daysAdded,
   };

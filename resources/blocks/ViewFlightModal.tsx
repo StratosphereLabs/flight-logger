@@ -5,13 +5,13 @@ import { RightArrowIcon } from '../common/components';
 export interface ViewFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;
   onClose: () => void;
-  show: boolean;
+  open: boolean;
 }
 
 export const ViewFlightModal = ({
   data,
   onClose,
-  show,
+  open,
 }: ViewFlightProps): JSX.Element => (
   <Modal
     actionButtons={[
@@ -22,7 +22,7 @@ export const ViewFlightModal = ({
       },
     ]}
     onClose={onClose}
-    show={show}
+    open={open}
     title=""
   >
     <div className="flex flex-1 flex-col items-center gap-8">

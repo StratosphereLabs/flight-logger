@@ -207,18 +207,18 @@ export const FlightsCard = (): JSX.Element => {
       <DeleteFlightModal
         data={activeFlight}
         onClose={() => setIsDeleteDialogOpen(false)}
-        show={isDeleteDialogOpen}
+        open={isDeleteDialogOpen}
       />
       <EditFlightModal
         data={activeFlight}
         onClose={() => setIsEditDialogOpen(false)}
         onSuccess={async () => await refetch()}
-        show={isEditDialogOpen}
+        open={isEditDialogOpen}
       />
       <ViewFlightModal
         data={activeFlight}
         onClose={() => setIsViewDialogOpen(false)}
-        show={isViewDialogOpen}
+        open={isViewDialogOpen}
       />
     </>
   );

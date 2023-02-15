@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -7,6 +8,7 @@ import {
   Modal,
   useAlertMessages,
 } from 'stratosphere-ui';
+import { editFlightDefaultValues } from './constants';
 import {
   AircraftTypeInput,
   AirlineInput,
@@ -20,23 +22,27 @@ import {
 import { trpc } from '../utils/trpc';
 import { UsersRouterOutput } from '../../app/routes/users';
 import { FlightsRouterOutput } from '../../app/routes/flights';
+import { editFlightSchema } from '../../app/schemas';
 
 export interface EditFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;
   onClose: () => void;
   onSuccess: (data: FlightsRouterOutput['editFlight']) => void;
-  show: boolean;
+  open: boolean;
 }
 
 export const EditFlightModal = ({
   data,
   onClose,
   onSuccess,
-  show,
+  open,
 }: EditFlightProps): JSX.Element => {
   const { addAlertMessages } = useAlertMessages();
   const handleSuccess = useSuccessResponseHandler();
-  const methods = useForm<UsersRouterOutput['getUserFlights'][number]>();
+  const methods = useForm<UsersRouterOutput['getUserFlights'][number]>({
+    defaultValues: editFlightDefaultValues,
+    resolver: zodResolver(editFlightSchema),
+  });
   const { isLoading, mutate } = trpc.flights.editFlight.useMutation({
     onSuccess: newFlight => {
       handleSuccess('Flight Edited!');
@@ -75,9 +81,9 @@ export const EditFlightModal = ({
               id: values.id,
               departureAirportId: values.departureAirportId,
               arrivalAirportId: values.arrivalAirportId,
-              outDate: values.outDateISO,
-              outTime: values.outTimeValue,
-              inTime: values.inTimeValue,
+              outDateISO: values.outDateISO,
+              outTimeValue: values.outTimeValue,
+              inTimeValue: values.inTimeValue,
               airlineId: values.airlineId ?? '',
               aircraftTypeId: values.aircraftTypeId ?? '',
               flightNumber: values.flightNumber,
@@ -94,7 +100,7 @@ export const EditFlightModal = ({
         },
       ]}
       onClose={onClose}
-      show={show}
+      open={open}
       title="Edit Flight"
     >
       <Form className="flex flex-col gap-4" methods={methods}>
@@ -103,18 +109,21 @@ export const EditFlightModal = ({
           isRequired
           labelText="Departure Airport"
           name="departureAirportId"
+          showDirty
         />
         <AirportInput
           defaultOptions={data !== null ? [data.arrivalAirport] : []}
           isRequired
           labelText="Arrival Airport"
           name="arrivalAirportId"
+          showDirty
         />
         <FormControl
           className="w-[200px]"
           isRequired
           labelText="Departure Date"
           name="outDateISO"
+          showDirty
           type="date"
         />
         <FormControl
@@ -122,6 +131,7 @@ export const EditFlightModal = ({
           isRequired
           labelText="Departure Time (Local)"
           name="outTimeValue"
+          showDirty
           transform={nullEmptyStringTransformer}
           type="time"
         />
@@ -130,6 +140,7 @@ export const EditFlightModal = ({
           isRequired
           labelText="Arrival Time (Local)"
           name="inTimeValue"
+          showDirty
           type="time"
         />
         <AirlineInput
@@ -141,6 +152,7 @@ export const EditFlightModal = ({
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Airline"
           name="airlineId"
+          showDirty
         />
         <AircraftTypeInput
           defaultOptions={
@@ -151,12 +163,14 @@ export const EditFlightModal = ({
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
           name="aircraftTypeId"
+          showDirty
         />
         <FormControl
           className="w-[200px]"
           labelText="Flight Number"
           name="flightNumber"
           onWheel={e => (e.target as HTMLInputElement).blur?.()}
+          showDirty
           transform={numberInputTransformer}
           type="number"
         />
@@ -164,11 +178,13 @@ export const EditFlightModal = ({
           className="w-[200px]"
           labelText="Callsign"
           name="callsign"
+          showDirty
         />
         <FormControl
           className="w-[200px]"
           labelText="Registration"
           name="tailNumber"
+          showDirty
         />
         <FormRadio
           labelText="Class"
@@ -200,11 +216,13 @@ export const EditFlightModal = ({
               value: 'FIRST',
             },
           ]}
+          showDirty
         />
         <FormControl
           className="w-[200px]"
           labelText="Seat Number"
           name="seatNumber"
+          showDirty
         />
         <FormRadio
           name="seatPosition"
@@ -225,6 +243,7 @@ export const EditFlightModal = ({
               value: 'AISLE',
             },
           ]}
+          showDirty
         />
         <FormRadio
           labelText="Reason"
@@ -246,9 +265,10 @@ export const EditFlightModal = ({
               value: 'CREW',
             },
           ]}
+          showDirty
         />
-        <FormControl labelText="Comments" name="comments" />
-        <FormControl labelText="Tracking Link" name="trackingLink" />
+        <FormControl labelText="Comments" name="comments" showDirty />
+        <FormControl labelText="Tracking Link" name="trackingLink" showDirty />
       </Form>
     </Modal>
   );
