@@ -7,13 +7,13 @@ import { UsersRouterOutput } from '../../app/routes/users';
 export interface DeleteFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;
   onClose: () => void;
-  show: boolean;
+  open: boolean;
 }
 
 export const DeleteFlightModal = ({
   data,
   onClose,
-  show,
+  open,
 }: DeleteFlightProps): JSX.Element => {
   const utils = trpc.useContext();
   const { username } = useParams();
@@ -56,7 +56,7 @@ export const DeleteFlightModal = ({
         },
       ]}
       onClose={onClose}
-      show={show}
+      open={open}
       title="Delete Flight"
     >
       Are you sure you want to delete your{' '}

@@ -33,7 +33,7 @@ export interface ItineraryResult {
 }
 
 export interface ItineraryFlightWithTimestamps
-  extends Omit<ItineraryFlight, 'outTime' | 'offTime' | 'onTime' | 'inTime'>,
+  extends Omit<ItineraryFlight, 'outTime' | 'inTime'>,
     FlightTimesResult {}
 
 const getSegmentedFlights = (
@@ -76,8 +76,6 @@ export const getItineraryData = ({
         arrivalAirport: data.airports[flight.arrivalAirportId],
         outDate: flight.outDate,
         outTime: flight.outTime,
-        offTime: flight.outTime,
-        onTime: flight.inTime,
         inTime: flight.inTime,
       }),
     }),

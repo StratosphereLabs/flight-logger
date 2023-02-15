@@ -1,9 +1,9 @@
 export const itineraryBuilderDefaultValues = {
   departureAirportId: '',
   arrivalAirportId: '',
-  outDate: '',
-  outTime: '',
-  inTime: '',
+  outDateISO: '',
+  outTimeValue: '',
+  inTimeValue: '',
   airlineId: '',
   aircraftTypeId: '',
   flightNumber: null,

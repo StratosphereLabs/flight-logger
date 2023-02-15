@@ -77,14 +77,14 @@ export const AddFlight = (): JSX.Element => {
                   className="min-w-[200px] max-w-[200px]"
                   isRequired
                   labelText="Departure Date"
-                  name="outDate"
+                  name="outDateISO"
                   type="date"
                 />
                 <FormControl
                   className="min-w-[200px] max-w-[200px]"
                   isRequired
                   labelText="Departure Time (Local)"
-                  name="outTime"
+                  name="outTimeValue"
                   transform={nullEmptyStringTransformer}
                   type="time"
                 />
@@ -92,7 +92,7 @@ export const AddFlight = (): JSX.Element => {
                   className="min-w-[200px] max-w-[200px]"
                   isRequired
                   labelText="Arrival Time (Local)"
-                  name="inTime"
+                  name="inTimeValue"
                   type="time"
                 />
               </div>

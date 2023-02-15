@@ -464,7 +464,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
                       tabindex="0"
                     />
                     <div
@@ -497,7 +497,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
                       tabindex="0"
                     />
                     <div
@@ -532,7 +532,7 @@ exports[`<App /> > renders profile page 1`] = `
                     </label>
                     <input
                       class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                      name="outDate"
+                      name="outDateISO"
                       type="date"
                       value=""
                     />
@@ -557,7 +557,7 @@ exports[`<App /> > renders profile page 1`] = `
                     </label>
                     <input
                       class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                      name="outTime"
+                      name="outTimeValue"
                       type="time"
                       value=""
                     />
@@ -582,7 +582,7 @@ exports[`<App /> > renders profile page 1`] = `
                     </label>
                     <input
                       class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                      name="inTime"
+                      name="inTimeValue"
                       type="time"
                       value=""
                     />
@@ -612,7 +612,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
                       tabindex="0"
                     />
                     <div
@@ -660,7 +660,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
                       tabindex="0"
                     />
                     <div
@@ -693,7 +693,7 @@ exports[`<App /> > renders profile page 1`] = `
                         Basic Economy
                       </span>
                       <input
-                        class="radio"
+                        class="radio radio-ghost"
                         name="class"
                         type="radio"
                         value="BASIC"
@@ -708,7 +708,7 @@ exports[`<App /> > renders profile page 1`] = `
                         Economy
                       </span>
                       <input
-                        class="radio"
+                        class="radio radio-ghost"
                         name="class"
                         type="radio"
                         value="ECONOMY"
@@ -723,7 +723,7 @@ exports[`<App /> > renders profile page 1`] = `
                         Premium Economy
                       </span>
                       <input
-                        class="radio"
+                        class="radio radio-ghost"
                         name="class"
                         type="radio"
                         value="PREMIUM"
@@ -738,7 +738,7 @@ exports[`<App /> > renders profile page 1`] = `
                         Business
                       </span>
                       <input
-                        class="radio"
+                        class="radio radio-ghost"
                         name="class"
                         type="radio"
                         value="BUSINESS"
@@ -753,7 +753,7 @@ exports[`<App /> > renders profile page 1`] = `
                         First
                       </span>
                       <input
-                        class="radio"
+                        class="radio radio-ghost"
                         name="class"
                         type="radio"
                         value="FIRST"
