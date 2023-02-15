@@ -1,5 +1,5 @@
-import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -19,23 +19,28 @@ import {
 } from '../common/transformers';
 import { trpc } from '../utils/trpc';
 import { UsersRouterOutput } from '../../app/routes/users';
+import { FlightsRouterOutput } from '../../app/routes/flights';
 
 export interface EditFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;
   onClose: () => void;
+  onSuccess: (data: FlightsRouterOutput['editFlight']) => void;
   show: boolean;
 }
 
 export const EditFlightModal = ({
   data,
   onClose,
+  onSuccess,
   show,
 }: EditFlightProps): JSX.Element => {
   const { addAlertMessages } = useAlertMessages();
   const handleSuccess = useSuccessResponseHandler();
+  const methods = useForm<UsersRouterOutput['getUserFlights'][number]>();
   const { isLoading, mutate } = trpc.flights.editFlight.useMutation({
-    onSuccess: ({ id }) => {
+    onSuccess: newFlight => {
       handleSuccess('Flight Edited!');
+      onSuccess(newFlight);
       onClose();
     },
     onError: err => {
@@ -47,7 +52,6 @@ export const EditFlightModal = ({
       ]);
     },
   });
-  const methods = useForm();
   useEffect(() => {
     if (data !== null) {
       methods.reset(data);
@@ -64,32 +68,47 @@ export const EditFlightModal = ({
         {
           children: 'Save',
           color: 'success',
+          disabled: !methods.formState.isDirty,
           loading: isLoading,
-          onClick: () => mutate({}),
+          onClick: methods.handleSubmit(values => {
+            mutate({
+              id: values.id,
+              departureAirportId: values.departureAirportId,
+              arrivalAirportId: values.arrivalAirportId,
+              outDate: values.outDateISO,
+              outTime: values.outTimeValue,
+              inTime: values.inTimeValue,
+              airlineId: values.airlineId ?? '',
+              aircraftTypeId: values.aircraftTypeId ?? '',
+              flightNumber: values.flightNumber,
+              callsign: values.callsign ?? '',
+              tailNumber: values.tailNumber ?? '',
+              class: values.class,
+              seatPosition: values.seatPosition,
+              seatNumber: values.seatNumber ?? '',
+              reason: values.reason,
+              comments: values.comments ?? '',
+              trackingLink: values.trackingLink ?? '',
+            });
+          }),
         },
       ]}
       onClose={onClose}
       show={show}
       title="Edit Flight"
     >
-      <Form
-        className="flex flex-col gap-4"
-        methods={methods}
-        onFormSubmit={() => {
-          console.log('submit');
-        }}
-      >
+      <Form className="flex flex-col gap-4" methods={methods}>
         <AirportInput
           defaultOptions={data !== null ? [data.departureAirport] : []}
           isRequired
           labelText="Departure Airport"
-          name="departureAirport"
+          name="departureAirportId"
         />
         <AirportInput
           defaultOptions={data !== null ? [data.arrivalAirport] : []}
           isRequired
           labelText="Arrival Airport"
-          name="arrivalAirport"
+          name="arrivalAirportId"
         />
         <FormControl
           className="w-[200px]"
@@ -121,7 +140,7 @@ export const EditFlightModal = ({
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Airline"
-          name="airline"
+          name="airlineId"
         />
         <AircraftTypeInput
           defaultOptions={
@@ -131,7 +150,7 @@ export const EditFlightModal = ({
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
-          name="aircraftType"
+          name="aircraftTypeId"
         />
         <FormControl
           className="w-[200px]"

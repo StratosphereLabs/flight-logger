@@ -1,4 +1,4 @@
-import { TRPCError } from '@trpc/server';
+import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
 import {
@@ -60,7 +60,7 @@ export const flightsRouter = router({
             },
           },
           airline:
-            input.airlineId !== null && input.airlineId !== ''
+            input.airlineId !== ''
               ? {
                   connect: {
                     id: input.airlineId,
@@ -68,7 +68,7 @@ export const flightsRouter = router({
                 }
               : undefined,
           aircraftType:
-            input.aircraftTypeId !== null && input.aircraftTypeId !== ''
+            input.aircraftTypeId !== ''
               ? {
                   connect: {
                     id: input.aircraftTypeId,
@@ -111,8 +111,95 @@ export const flightsRouter = router({
   editFlight: procedure
     .use(verifyAuthenticated)
     .input(editFlightSchema)
-    .mutation(({ ctx, input }) => {
-      console.log({ ctx, input });
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+      const flight = await prisma.flight.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (flight?.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Unable to edit flight.',
+        });
+      }
+      const [departureAirport, arrivalAirport] = await prisma.$transaction([
+        prisma.airport.findUnique({
+          where: {
+            id: input.departureAirportId,
+          },
+        }),
+        prisma.airport.findUnique({
+          where: {
+            id: input.arrivalAirportId,
+          },
+        }),
+      ]);
+      if (departureAirport === null || arrivalAirport === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Airport not found.',
+        });
+      }
+      const { outTime, offTime, onTime, inTime, duration } = getFlightTimes({
+        departureAirport,
+        arrivalAirport,
+        outDate: input.outDate,
+        offTime: null,
+        onTime: null,
+        outTime: input.outTime,
+        inTime: input.inTime,
+      });
+      return await prisma.flight.update({
+        where: {
+          id,
+        },
+        data: {
+          departureAirport: {
+            connect: {
+              id: input.departureAirportId,
+            },
+          },
+          arrivalAirport: {
+            connect: {
+              id: input.arrivalAirportId,
+            },
+          },
+          airline: {
+            connect:
+              input.airlineId !== ''
+                ? {
+                    id: input.airlineId,
+                  }
+                : undefined,
+            disconnect: input.airlineId === '' ? true : undefined,
+          },
+          aircraftType: {
+            connect:
+              input.aircraftTypeId !== ''
+                ? {
+                    id: input.aircraftTypeId,
+                  }
+                : undefined,
+            disconnect: input.aircraftTypeId === '' ? true : undefined,
+          },
+          flightNumber: input.flightNumber,
+          callsign: input.callsign,
+          tailNumber: input.tailNumber,
+          outTime: outTime.toISOString(),
+          offTime: offTime?.toISOString() ?? '',
+          onTime: onTime?.toISOString() ?? '',
+          inTime: inTime.toISOString(),
+          duration,
+          class: input.class,
+          seatNumber: input.seatNumber,
+          seatPosition: input.seatPosition,
+          reason: input.reason,
+          comments: input.comments,
+          trackingLink: input.trackingLink,
+        },
+      });
     }),
   deleteFlight: procedure
     .use(verifyAuthenticated)
@@ -140,3 +227,7 @@ export const flightsRouter = router({
     await prisma.flight.deleteMany({});
   }),
 });
+
+export type FlightsRouter = typeof flightsRouter;
+
+export type FlightsRouterOutput = inferRouterOutputs<FlightsRouter>;

@@ -12,11 +12,11 @@ export const deleteFlightSchema = z.object({
 export const addFlightSchema = z.object({
   departureAirportId: z.string().min(1, 'Required'),
   arrivalAirportId: z.string().min(1, 'Required'),
-  airlineId: z.string().nullable(),
-  aircraftTypeId: z.string().nullable(),
+  airlineId: z.string(),
+  aircraftTypeId: z.string(),
   flightNumber: z.number().int().nullable(),
-  callsign: z.string().trim().nullable(),
-  tailNumber: z.string().trim().nullable(),
+  callsign: z.string().trim(),
+  tailNumber: z.string().trim(),
   outDate: z.string().min(1, 'Required').regex(DATE_REGEX, 'Invalid Date'),
   outTime: z.string().min(1, 'Required').regex(TIME_REGEX, 'Invalid Time'),
   offTime: z.string().regex(TIME_REGEX, 'Invalid Time').nullable(),
@@ -25,14 +25,18 @@ export const addFlightSchema = z.object({
   class: z
     .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
     .nullable(),
-  seatNumber: z.string().trim().nullable(),
+  seatNumber: z.string().trim(),
   seatPosition: z.enum(['AISLE', 'MIDDLE', 'WINDOW']).nullable(),
   reason: z.enum(['BUSINESS', 'LEISURE', 'CREW']).nullable(),
-  comments: z.string().trim().nullable(),
-  trackingLink: z.string().trim().nullable(),
+  comments: z.string().trim(),
+  trackingLink: z.string().trim(),
 });
 
-export const editFlightSchema = addFlightSchema.partial();
+export const editFlightSchema = addFlightSchema
+  .omit({ offTime: true, onTime: true })
+  .extend({
+    id: z.string().uuid(),
+  });
 
 export type GetFlightRequest = z.infer<typeof getFlightSchema>;
 

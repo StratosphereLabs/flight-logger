@@ -26,9 +26,10 @@ export const FlightsCard = (): JSX.Element => {
     UsersRouterOutput['getUserFlights'][number] | null
   >(null);
   const { username } = useParams();
-  const { data, error, isFetching } = trpc.users.getUserFlights.useQuery({
-    username,
-  });
+  const { data, error, isFetching, refetch } =
+    trpc.users.getUserFlights.useQuery({
+      username,
+    });
   useTRPCErrorHandler(error);
   return (
     <>
@@ -211,6 +212,7 @@ export const FlightsCard = (): JSX.Element => {
       <EditFlightModal
         data={activeFlight}
         onClose={() => setIsEditDialogOpen(false)}
+        onSuccess={async () => await refetch()}
         show={isEditDialogOpen}
       />
       <ViewFlightModal
