@@ -54,7 +54,7 @@ export const MainNavbar = (): JSX.Element => {
           </Button>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <Menu horizontal className="p-0 space-x-2">
+          <Menu horizontal className="space-x-2 p-0">
             <NavbarTab to="/" end>
               Home
             </NavbarTab>
@@ -64,7 +64,7 @@ export const MainNavbar = (): JSX.Element => {
             <NavbarTab to="/data">Data</NavbarTab>
           </Menu>
         </div>
-        <div className="navbar-end w-auto lg:w-1/2 space-x-2">
+        <div className="navbar-end w-auto space-x-2 lg:w-1/2">
           <SearchButton />
           <DarkModeButton />
           <div className="flex gap-2">
