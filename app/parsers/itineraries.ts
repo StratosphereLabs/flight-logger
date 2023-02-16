@@ -74,9 +74,9 @@ export const getItineraryData = ({
       ...getFlightTimes({
         departureAirport: data.airports[flight.departureAirportId],
         arrivalAirport: data.airports[flight.arrivalAirportId],
-        outDate: flight.outDate,
-        outTime: flight.outTime,
-        inTime: flight.inTime,
+        outDateISO: flight.outDateISO,
+        outTimeValue: flight.outTimeValue,
+        inTimeValue: flight.inTimeValue,
       }),
     }),
   );
