@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -20,9 +20,9 @@ import {
   numberInputTransformer,
 } from '../common/transformers';
 import { trpc } from '../utils/trpc';
-import { UsersRouterOutput } from '../../app/routes/users';
 import { FlightsRouterOutput } from '../../app/routes/flights';
-import { editFlightSchema } from '../../app/schemas';
+import { UsersRouterOutput } from '../../app/routes/users';
+import { EditFlightRequest, editFlightSchema } from '../../app/schemas';
 
 export interface EditFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;
@@ -37,9 +37,10 @@ export const EditFlightModal = ({
   onSuccess,
   open,
 }: EditFlightProps): JSX.Element => {
+  const modalRef = useRef<HTMLDivElement | null>(null);
   const { addAlertMessages } = useAlertMessages();
   const handleSuccess = useSuccessResponseHandler();
-  const methods = useForm<UsersRouterOutput['getUserFlights'][number]>({
+  const methods = useForm<EditFlightRequest>({
     defaultValues: editFlightDefaultValues,
     resolver: zodResolver(editFlightSchema),
   });
@@ -59,8 +60,29 @@ export const EditFlightModal = ({
     },
   });
   useEffect(() => {
+    if (open) modalRef.current?.scrollTo(0, 0);
+  }, [open]);
+  useEffect(() => {
     if (data !== null) {
-      methods.reset(data);
+      methods.reset({
+        id: data.id,
+        departureAirportId: data.departureAirportId,
+        arrivalAirportId: data.arrivalAirportId,
+        airlineId: data.airlineId ?? '',
+        aircraftTypeId: data.aircraftTypeId ?? '',
+        flightNumber: data.flightNumber,
+        callsign: data.callsign ?? '',
+        tailNumber: data.tailNumber ?? '',
+        outDateISO: data.outDateISO,
+        outTimeValue: data.outTimeValue,
+        inTimeValue: data.inTimeValue,
+        class: data.class,
+        seatNumber: data.seatNumber ?? '',
+        seatPosition: data.seatPosition,
+        reason: data.reason,
+        comments: data.comments ?? '',
+        trackingLink: data.trackingLink ?? '',
+      });
     }
   }, [data]);
   return (
@@ -76,31 +98,12 @@ export const EditFlightModal = ({
           color: 'success',
           disabled: !methods.formState.isDirty,
           loading: isLoading,
-          onClick: methods.handleSubmit(values => {
-            mutate({
-              id: values.id,
-              departureAirportId: values.departureAirportId,
-              arrivalAirportId: values.arrivalAirportId,
-              outDateISO: values.outDateISO,
-              outTimeValue: values.outTimeValue,
-              inTimeValue: values.inTimeValue,
-              airlineId: values.airlineId ?? '',
-              aircraftTypeId: values.aircraftTypeId ?? '',
-              flightNumber: values.flightNumber,
-              callsign: values.callsign ?? '',
-              tailNumber: values.tailNumber ?? '',
-              class: values.class,
-              seatPosition: values.seatPosition,
-              seatNumber: values.seatNumber ?? '',
-              reason: values.reason,
-              comments: values.comments ?? '',
-              trackingLink: values.trackingLink ?? '',
-            });
-          }),
+          onClick: methods.handleSubmit(values => mutate(values)),
         },
       ]}
       onClose={onClose}
       open={open}
+      ref={modalRef}
       title="Edit Flight"
     >
       <Form className="flex flex-col gap-4" methods={methods}>
