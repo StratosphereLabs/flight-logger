@@ -239,7 +239,7 @@ exports[`<App /> > renders profile page 1`] = `
           class="navbar-center hidden lg:flex"
         >
           <ul
-            class="menu p-0 menu-horizontal"
+            class="menu space-x-2 p-0 menu-horizontal"
             role="menu"
           >
             <li
@@ -268,7 +268,7 @@ exports[`<App /> > renders profile page 1`] = `
           </ul>
         </div>
         <div
-          class="navbar-end w-auto lg:w-1/2"
+          class="navbar-end w-auto space-x-2 lg:w-1/2"
         >
           <button
             class="btn btn-circle btn-ghost"
@@ -798,7 +798,7 @@ exports[`<App /> > renders profile page 1`] = `
           />
         </svg>
         <p>
-          Copyright © 2022
+          Copyright © 2023
            
           <a
             class="link-hover link"
