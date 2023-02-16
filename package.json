@@ -13,7 +13,7 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:reset": "prisma migrate reset",
     "seed": "prisma db seed",
-    "build": "rm -rf public && vite build --outDir public",
+    "build": "rm -rf public && vite build --outDir public && npm run generate",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "coverage": "vitest --coverage",
