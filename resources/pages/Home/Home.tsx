@@ -66,7 +66,7 @@ export const Home = (): JSX.Element => {
         open={isItineraryModalOpen}
         onClose={() => setIsItineraryModalOpen(false)}
         actionButtons={[]}
-        modal-bottom
+        className="w-96 min-w-[1000px]"
       >
         {flights.length > 0 ? (
           <ItineraryFlightsCard
