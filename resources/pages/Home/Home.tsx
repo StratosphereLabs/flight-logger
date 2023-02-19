@@ -66,7 +66,7 @@ export const Home = (): JSX.Element => {
         open={isItineraryModalOpen}
         onClose={() => setIsItineraryModalOpen(false)}
         actionButtons={[]}
-        className="w-96 min-w-1/2"
+        className="min-w-full"
       >
         {flights.length > 0 ? (
           <ItineraryFlightsCard
