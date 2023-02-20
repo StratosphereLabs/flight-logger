@@ -29,7 +29,6 @@ export const ItineraryBuilderCard = forwardRef<
       {...props}
     >
       <Card.Body className="items-center">
-        <Card.Title className="mb-5 text-2xl">Create Itinerary</Card.Title>
         <div className="flex w-full flex-col gap-8">
           <div className="flex flex-wrap justify-around gap-8">
             <AirportInput

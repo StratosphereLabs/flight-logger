@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Form } from 'stratosphere-ui';
+import { Form, Modal } from 'stratosphere-ui';
 import {
   AddItineraryRequest,
   ItineraryFlight,
@@ -55,45 +55,49 @@ export const Home = (): JSX.Element => {
       JSON.stringify(flights),
     );
   }, [flights]);
+
+  const [isItineraryModalOpen, setIsItineraryModalOpen] = useState(false);
   return (
     <div className="flex flex-1 flex-col gap-3 p-3">
-      <WelcomeCard
-        onGetStarted={() => {
-          firstFieldRef.current?.focus();
-          if (flightsCardRef.current !== null) {
-            return flightsCardRef.current.scrollIntoView();
-          }
-          return itineraryCardRef.current?.scrollIntoView();
-        }}
-      />
-      {flights.length > 0 ? (
-        <ItineraryFlightsCard
-          flights={flights}
-          isLoading={isLoading}
-          onDeleteFlight={deleteFlight}
-          onReset={() => setIsResetDialogOpen(true)}
-          onSubmit={() => mutate(flights)}
-          ref={flightsCardRef}
-        />
-      ) : null}
-      <Form className="w-full" methods={methods} onFormSubmit={addFlight}>
-        <ItineraryBuilderCard
-          firstFieldRef={firstFieldRef}
-          onReset={() => setFlights([])}
-          ref={itineraryCardRef}
-        />
-      </Form>
-      {isResetDialogOpen ? (
-        <ResetItineraryModal
-          onCancel={() => setIsResetDialogOpen(false)}
-          onSubmit={() => {
-            setFlights([]);
-            setIsResetDialogOpen(false);
-            firstFieldRef.current?.focus();
-          }}
-          open={isResetDialogOpen}
-        />
-      ) : null}
+      <WelcomeCard onGetStarted={() => setIsItineraryModalOpen(true)} />
+
+      <Modal
+        title="Create Itinerary"
+        open={isItineraryModalOpen}
+        onClose={() => setIsItineraryModalOpen(false)}
+        actionButtons={[]}
+        className="w-full max-w-full md:w-[75%]"
+        responsive={false}
+      >
+        {flights.length > 0 ? (
+          <ItineraryFlightsCard
+            flights={flights}
+            isLoading={isLoading}
+            onDeleteFlight={deleteFlight}
+            onReset={() => setIsResetDialogOpen(true)}
+            onSubmit={() => mutate(flights)}
+            ref={flightsCardRef}
+          />
+        ) : null}
+        <Form className="w-full" methods={methods} onFormSubmit={addFlight}>
+          <ItineraryBuilderCard
+            firstFieldRef={firstFieldRef}
+            onReset={() => setFlights([])}
+            ref={itineraryCardRef}
+          />
+        </Form>
+        {isResetDialogOpen ? (
+          <ResetItineraryModal
+            onCancel={() => setIsResetDialogOpen(false)}
+            onSubmit={() => {
+              setFlights([]);
+              setIsResetDialogOpen(false);
+              firstFieldRef.current?.focus();
+            }}
+            open={isResetDialogOpen}
+          />
+        ) : null}
+      </Modal>
     </div>
   );
 };
