@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl } from 'stratosphere-ui';
+import { Form, FormControl, PasswordInput } from 'stratosphere-ui';
 import { useLinkClickHandler } from 'react-router-dom';
 import { loginSchema } from '../../../app/schemas';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -35,12 +35,11 @@ export const LoginForm = (): JSX.Element => {
           name="email"
           type="email"
         />
-        <FormControl
+        <PasswordInput
           autoComplete="current-password"
           isRequired
           labelText="Password"
           name="password"
-          type="password"
         />
         <label className="label">
           <Link onClick={handleForgotPassword} className="label-text-alt" hover>
