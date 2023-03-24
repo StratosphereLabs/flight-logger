@@ -60,13 +60,17 @@ exports[`<App /> > renders login page 1`] = `
                     </span>
                   </span>
                 </label>
-                <input
-                  autocomplete="email"
-                  class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                  name="email"
-                  type="email"
-                  value=""
-                />
+                <div
+                  class="relative inline-flex"
+                >
+                  <input
+                    autocomplete="email"
+                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    name="email"
+                    type="email"
+                    value=""
+                  />
+                </div>
               </div>
               <div
                 class="form-control flex-1"
@@ -86,13 +90,45 @@ exports[`<App /> > renders login page 1`] = `
                     </span>
                   </span>
                 </label>
-                <input
-                  autocomplete="current-password"
-                  class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                  name="password"
-                  type="password"
-                  value=""
-                />
+                <div
+                  class="relative inline-flex"
+                >
+                  <input
+                    autocomplete="current-password"
+                    class="input w-full pr-10 input-ghost focus:outline-offset-0 input-bordered"
+                    name="password"
+                    type="password"
+                    value=""
+                  />
+                  <div
+                    class="absolute right-0 top-0 z-20 flex h-full items-center pr-2"
+                  >
+                    <button
+                      class="btn w-8 btn-sm btn-circle btn-ghost"
+                      type="button"
+                    >
+                      <svg
+                        class="h-5 w-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
               <label
                 class="label"
@@ -239,7 +275,7 @@ exports[`<App /> > renders profile page 1`] = `
           class="navbar-center hidden lg:flex"
         >
           <ul
-            class="menu p-0 menu-horizontal"
+            class="menu space-x-1 p-0 menu-horizontal"
             role="menu"
           >
             <li
@@ -268,7 +304,7 @@ exports[`<App /> > renders profile page 1`] = `
           </ul>
         </div>
         <div
-          class="navbar-end w-auto lg:w-1/2"
+          class="navbar-end w-auto space-x-1 lg:w-1/2"
         >
           <button
             class="btn btn-circle btn-ghost"
@@ -305,7 +341,7 @@ exports[`<App /> > renders profile page 1`] = `
             </svg>
           </button>
           <div
-            class="flex gap-2"
+            class="flex gap-1"
           >
             <button
               class="btn"
@@ -464,7 +500,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
                       tabindex="0"
                     />
                     <div
@@ -497,7 +533,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
                       tabindex="0"
                     />
                     <div
@@ -530,12 +566,16 @@ exports[`<App /> > renders profile page 1`] = `
                         </span>
                       </span>
                     </label>
-                    <input
-                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                      name="outDateISO"
-                      type="date"
-                      value=""
-                    />
+                    <div
+                      class="relative inline-flex"
+                    >
+                      <input
+                        class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                        name="outDateISO"
+                        type="date"
+                        value=""
+                      />
+                    </div>
                   </div>
                   <div
                     class="form-control flex-1 min-w-[200px] max-w-[200px]"
@@ -555,12 +595,16 @@ exports[`<App /> > renders profile page 1`] = `
                         </span>
                       </span>
                     </label>
-                    <input
-                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                      name="outTimeValue"
-                      type="time"
-                      value=""
-                    />
+                    <div
+                      class="relative inline-flex"
+                    >
+                      <input
+                        class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                        name="outTimeValue"
+                        type="time"
+                        value=""
+                      />
+                    </div>
                   </div>
                   <div
                     class="form-control flex-1 min-w-[200px] max-w-[200px]"
@@ -580,12 +624,16 @@ exports[`<App /> > renders profile page 1`] = `
                         </span>
                       </span>
                     </label>
-                    <input
-                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                      name="inTimeValue"
-                      type="time"
-                      value=""
-                    />
+                    <div
+                      class="relative inline-flex"
+                    >
+                      <input
+                        class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                        name="inTimeValue"
+                        type="time"
+                        value=""
+                      />
+                    </div>
                   </div>
                 </div>
                 <div
@@ -612,7 +660,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
                       tabindex="0"
                     />
                     <div
@@ -636,12 +684,16 @@ exports[`<App /> > renders profile page 1`] = `
                          
                       </span>
                     </label>
-                    <input
-                      class="input w-full input-ghost focus:outline-offset-0 input-bordered"
-                      name="flightNumber"
-                      type="number"
-                      value=""
-                    />
+                    <div
+                      class="relative inline-flex"
+                    >
+                      <input
+                        class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                        name="flightNumber"
+                        type="number"
+                        value=""
+                      />
+                    </div>
                   </div>
                   <div
                     class="form-control flex-1 min-w-[250px] max-w-[400px]"
@@ -660,7 +712,7 @@ exports[`<App /> > renders profile page 1`] = `
                       </span>
                     </label>
                     <div
-                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost input-ghost"
+                      class="input-bordered input flex cursor-pointer items-center gap-1 overflow-x-scroll scrollbar-none input-ghost"
                       tabindex="0"
                     />
                     <div

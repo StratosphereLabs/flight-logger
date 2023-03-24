@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Form, FormControl } from 'stratosphere-ui';
+import { Form, PasswordInput } from 'stratosphere-ui';
 import { resetPasswordSchema } from '../../../app/schemas';
 import {
   useAuthPage,
@@ -37,19 +37,17 @@ export const ResetPassword = (): JSX.Element => {
   return (
     <Form methods={methods} onFormSubmit={data => mutate(data)}>
       <fieldset disabled={isLoading}>
-        <FormControl
+        <PasswordInput
           autoComplete="new-password"
           isRequired
           labelText="New Password"
           name="password"
-          type="password"
         />
-        <FormControl
+        <PasswordInput
           autoComplete="new-password"
           isRequired
           labelText="Confirm New Password"
           name="confirmPassword"
-          type="password"
         />
       </fieldset>
       <div className="mt-6 flex flex-col">
