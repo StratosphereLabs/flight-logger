@@ -59,13 +59,13 @@ export const RegisterForm = (): JSX.Element => {
           <PasswordInput
             autoComplete="new-password"
             isRequired
-            labelText="New Password"
+            labelText="Password"
             name="password"
           />
           <PasswordInput
             autoComplete="new-password"
             isRequired
-            labelText="Confirm New Password"
+            labelText="Confirm Password"
             name="confirmPassword"
           />
           <label className="label">
