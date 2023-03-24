@@ -1,6 +1,5 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { verifyAdminTRPC } from '../middleware';
 import { getAirports, getRoutes } from '../parsers';
 import { getUserSchema, getUsersSchema } from '../schemas';
 import { procedure, router } from '../trpc';
@@ -127,21 +126,18 @@ export const usersRouter = router({
         routes,
       };
     }),
-  getUsers: procedure
-    .use(verifyAdminTRPC)
-    .input(getUsersSchema)
-    .query(async ({ input }) => {
-      const results = await prisma.user.findMany({
-        take: 5,
-        where: {
-          username: {
-            contains: input.query,
-            mode: 'insensitive',
-          },
+  getUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
+    const results = await prisma.user.findMany({
+      take: 5,
+      where: {
+        username: {
+          contains: input.query,
+          mode: 'insensitive',
         },
-      });
-      return results;
-    }),
+      },
+    });
+    return results;
+  }),
 });
 
 export type UsersRouter = typeof usersRouter;

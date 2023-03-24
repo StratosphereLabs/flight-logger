@@ -1,3 +1,4 @@
+import { PaginatedResults } from 'stratosphere-ui';
 import { PaginationRequest } from '../schemas';
 
 export interface PaginationData {
@@ -14,17 +15,6 @@ export interface PaginatedResultsOptions<DataItem> {
   page: number;
 }
 
-export interface PaginatedResponse<DataItem> {
-  metadata: {
-    page: number;
-    pageCount: number;
-    limit: number;
-    itemCount: number;
-    pages: Array<number | null>;
-  };
-  results: DataItem[];
-}
-
 export const parsePaginationRequest = ({
   page: currentPage,
   limit,
@@ -39,34 +29,18 @@ export const parsePaginationRequest = ({
   };
 };
 
-export const getPageNumbers = (
-  limit: number,
-  pageCount: number,
-  currentPage: number,
-): Array<number | null> => [
-  1,
-  ...(currentPage > 3 ? [null] : []),
-  ...[...Array(3).keys()].flatMap(index => {
-    const page = currentPage + index - 1;
-    return page > 1 && page < pageCount ? [page] : [];
-  }),
-  ...(currentPage < pageCount - 2 ? [null] : []),
-  pageCount,
-];
-
 export const getPaginatedResponse = <DataItem>({
   itemCount,
   limit,
   page,
   results,
-}: PaginatedResultsOptions<DataItem>): PaginatedResponse<DataItem> => {
+}: PaginatedResultsOptions<DataItem>): PaginatedResults<DataItem> => {
   const pageCount = Math.ceil(itemCount / Number(limit));
   const metadata = {
     page,
     pageCount,
     limit,
     itemCount,
-    pages: getPageNumbers(3, pageCount, Number(page)),
   };
   return { metadata, results };
 };

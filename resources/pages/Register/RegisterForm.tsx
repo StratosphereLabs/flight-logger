@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Form, FormControl } from 'stratosphere-ui';
+import { Form, FormControl, PasswordInput } from 'stratosphere-ui';
 import { registerSchema } from '../../../app/schemas';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { useAppContext } from '../../providers';
@@ -56,19 +56,17 @@ export const RegisterForm = (): JSX.Element => {
             labelText="Last Name"
             name="lastName"
           />
-          <FormControl
+          <PasswordInput
             autoComplete="new-password"
             isRequired
-            labelText="Password"
+            labelText="New Password"
             name="password"
-            type="password"
           />
-          <FormControl
+          <PasswordInput
             autoComplete="new-password"
             isRequired
-            labelText="Confirm Password"
+            labelText="Confirm New Password"
             name="confirmPassword"
-            type="password"
           />
           <label className="label">
             <Link onClick={handleClick} className="label-text-alt" hover>
