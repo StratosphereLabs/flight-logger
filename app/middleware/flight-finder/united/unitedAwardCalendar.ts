@@ -9,6 +9,7 @@ export const unitedAwardCalendar = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
+  console.log(req.headers);
   const token = req.headers['x-authorization-api'] as string | undefined;
   if (token === undefined || token === '') {
     return next(createHttpError(401, 'United Airlines API token required.'));
@@ -77,8 +78,8 @@ export const unitedAwardCalendar = async (
       },
       {
         headers: {
+          ...req.headers,
           'Accept-Language': 'en-US',
-          host: 'www.united.com',
           'x-authorization-api': `bearer ${token}`,
         },
       },
