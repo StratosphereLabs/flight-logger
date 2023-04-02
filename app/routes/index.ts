@@ -11,7 +11,6 @@ import { regionsRouter } from './regions';
 import { tripsRouter } from './trips';
 import { usersRouter } from './users';
 
-export * from './flightFinder';
 export * from './googleAuth';
 export * from './upload';
 
