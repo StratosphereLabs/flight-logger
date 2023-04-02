@@ -77,6 +77,7 @@ export const unitedAwardCalendar = async (
       },
       {
         headers: {
+          ...req.headers,
           'Accept-Language': 'en-US',
           'x-authorization-api': `bearer ${token}`,
         },
