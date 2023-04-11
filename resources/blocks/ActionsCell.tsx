@@ -1,6 +1,7 @@
 import { MouseEventHandler } from 'react';
-import { Button, Dropdown } from 'react-daisyui';
+import { Button } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
+import { DropdownMenu } from 'stratosphere-ui';
 import {
   EditIcon,
   EllipsisVerticalIcon,
@@ -60,33 +61,61 @@ export const ActionsCell = ({
         ) : null}
       </div>
       <div className="flex xl:hidden">
-        <Dropdown horizontal="center" vertical="end">
-          <Button shape="circle" color="ghost" size="sm">
-            <EllipsisVerticalIcon className="h-5 w-5" />
-          </Button>
-          <Dropdown.Menu className="w-52">
-            <Dropdown.Item onClick={onCopyLink}>
-              <LinkIcon />
-              Copy Link
-            </Dropdown.Item>
-            <Dropdown.Item onClick={onViewFlight}>
-              <ViewIcon className="h-4 w-4" />
-              View Details
-            </Dropdown.Item>
-            {username === undefined ? (
-              <>
-                <Dropdown.Item onClick={onEditFlight}>
-                  <EditIcon />
-                  Edit Flight
-                </Dropdown.Item>
-                <Dropdown.Item onClick={onDeleteFlight}>
-                  <TrashIcon />
-                  Delete Flight
-                </Dropdown.Item>
-              </>
-            ) : null}
-          </Dropdown.Menu>
-        </Dropdown>
+        <DropdownMenu
+          buttonProps={{
+            shape: 'circle',
+            color: 'ghost',
+            size: 'sm',
+            children: <EllipsisVerticalIcon className="h-5 w-5" />,
+          }}
+          items={[
+            {
+              id: 'copy',
+              onClick: onCopyLink,
+              children: (
+                <>
+                  <LinkIcon />
+                  Copy Link
+                </>
+              ),
+            },
+            {
+              id: 'view',
+              onClick: onViewFlight,
+              children: (
+                <>
+                  <ViewIcon className="h-4 w-4" />
+                  View Details
+                </>
+              ),
+            },
+            ...(username === undefined
+              ? [
+                  {
+                    id: 'edit',
+                    onClick: onEditFlight,
+                    children: (
+                      <>
+                        <EditIcon />
+                        Edit Flight
+                      </>
+                    ),
+                  },
+                  {
+                    id: 'delete',
+                    onClick: onDeleteFlight,
+                    children: (
+                      <>
+                        <TrashIcon />
+                        Delete Flight
+                      </>
+                    ),
+                  },
+                ]
+              : []),
+          ]}
+          menuClassName="rounded-box p-2 w-48 right-0"
+        />
       </div>
     </>
   );
