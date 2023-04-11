@@ -6,6 +6,8 @@ import {
   FormControl,
   FormRadio,
   Modal,
+  integerInputTransformer,
+  nullEmptyStringTransformer,
   useAlertMessages,
 } from 'stratosphere-ui';
 import { editFlightDefaultValues } from './constants';
@@ -15,10 +17,6 @@ import {
   AirportInput,
 } from '../common/components';
 import { useSuccessResponseHandler } from '../common/hooks';
-import {
-  nullEmptyStringTransformer,
-  numberInputTransformer,
-} from '../common/transformers';
 import { trpc } from '../utils/trpc';
 import { FlightsRouterOutput } from '../../app/routes/flights';
 import { UsersRouterOutput } from '../../app/routes/users';
@@ -111,6 +109,7 @@ export const EditFlightModal = ({
           defaultOptions={data !== null ? [data.departureAirport] : []}
           isRequired
           labelText="Departure Airport"
+          menuClassName="w-full"
           name="departureAirportId"
           showDirty
         />
@@ -118,6 +117,7 @@ export const EditFlightModal = ({
           defaultOptions={data !== null ? [data.arrivalAirport] : []}
           isRequired
           labelText="Arrival Airport"
+          menuClassName="w-full"
           name="arrivalAirportId"
           showDirty
         />
@@ -154,6 +154,7 @@ export const EditFlightModal = ({
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Airline"
+          menuClassName="w-full"
           name="airlineId"
           showDirty
         />
@@ -165,6 +166,7 @@ export const EditFlightModal = ({
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
+          menuClassName="w-full"
           name="aircraftTypeId"
           showDirty
         />
@@ -172,10 +174,8 @@ export const EditFlightModal = ({
           className="w-[200px]"
           labelText="Flight Number"
           name="flightNumber"
-          onWheel={e => (e.target as HTMLInputElement).blur?.()}
           showDirty
-          transform={numberInputTransformer}
-          type="number"
+          transform={integerInputTransformer}
         />
         <FormControl
           className="w-[200px]"

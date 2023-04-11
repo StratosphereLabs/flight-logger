@@ -18,7 +18,11 @@ export const itineraryFlightSchema = z.object({
     .regex(TIME_REGEX_24H, 'Invalid Time'),
   airlineId: z.string(),
   aircraftTypeId: z.string(),
-  flightNumber: z.number().int().nullable(),
+  flightNumber: z
+    .number()
+    .int()
+    .lte(9999, 'Must be 4 digits or less')
+    .nullable(),
   class: z
     .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
     .nullable(),

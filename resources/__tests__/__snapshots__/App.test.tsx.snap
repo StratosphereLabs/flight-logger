@@ -43,7 +43,7 @@ exports[`<App /> > renders login page 1`] = `
           >
             <fieldset>
               <div
-                class="form-control flex-1"
+                class="form-control"
               >
                 <label
                   class="label font-semibold"
@@ -73,7 +73,7 @@ exports[`<App /> > renders login page 1`] = `
                 </div>
               </div>
               <div
-                class="form-control flex-1"
+                class="form-control"
               >
                 <label
                   class="label font-semibold"

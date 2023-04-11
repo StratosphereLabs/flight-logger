@@ -2,7 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormRadio, LoadingCard } from 'stratosphere-ui';
+import {
+  Form,
+  FormControl,
+  FormRadio,
+  LoadingCard,
+  integerInputTransformer,
+  nullEmptyStringTransformer,
+} from 'stratosphere-ui';
 import { addFlightDefaultValues } from './constants';
 import {
   AircraftTypeInput,
@@ -14,10 +21,6 @@ import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
-import {
-  nullEmptyStringTransformer,
-  numberInputTransformer,
-} from '../../common/transformers';
 import { trpc } from '../../utils/trpc';
 import { addFlightSchema } from '../../../app/schemas';
 
@@ -57,31 +60,33 @@ export const AddFlight = (): JSX.Element => {
             <div className="flex flex-col gap-8">
               <div className="flex flex-wrap justify-around gap-8">
                 <AirportInput
-                  className="min-w-[250px] max-w-[400px]"
+                  className="w-[400px] min-w-[250px]"
                   getBadgeText={({ id, name }) => `${id} - ${name}`}
                   inputRef={firstFieldRef}
                   isRequired
                   labelText="Departure Airport"
+                  menuClassName="w-full"
                   name="departureAirportId"
                 />
                 <AirportInput
-                  className="min-w-[250px] max-w-[400px]"
+                  className="w-[400px] min-w-[250px]"
                   getBadgeText={({ id, name }) => `${id} - ${name}`}
                   isRequired
                   labelText="Arrival Airport"
+                  menuClassName="w-full"
                   name="arrivalAirportId"
                 />
               </div>
               <div className="flex flex-wrap justify-between gap-8">
                 <FormControl
-                  className="min-w-[200px] max-w-[200px]"
+                  className="w-[200px]"
                   isRequired
                   labelText="Departure Date"
                   name="outDateISO"
                   type="date"
                 />
                 <FormControl
-                  className="min-w-[200px] max-w-[200px]"
+                  className="w-[200px]"
                   isRequired
                   labelText="Departure Time (Local)"
                   name="outTimeValue"
@@ -89,7 +94,7 @@ export const AddFlight = (): JSX.Element => {
                   type="time"
                 />
                 <FormControl
-                  className="min-w-[200px] max-w-[200px]"
+                  className="w-[200px]"
                   isRequired
                   labelText="Arrival Time (Local)"
                   name="inTimeValue"
@@ -99,38 +104,38 @@ export const AddFlight = (): JSX.Element => {
               <Divider />
               <div className="flex flex-wrap justify-around gap-8">
                 <AirlineInput
-                  className="min-w-[250px] max-w-[400px]"
+                  className="w-[400px] min-w-[250px]"
                   getBadgeText={({ iata, icao, name }) =>
                     `${iata}/${icao} - ${name}`
                   }
                   labelText="Airline"
+                  menuClassName="w-full"
                   name="airlineId"
                 />
                 <AircraftTypeInput
-                  className="min-w-[250px] max-w-[400px]"
+                  className="w-[400px] min-w-[250px]"
                   getBadgeText={({ iata, icao, name }) =>
                     `${iata}/${icao} - ${name}`
                   }
                   labelText="Aircraft Type"
+                  menuClassName="w-full"
                   name="aircraftTypeId"
                 />
               </div>
               <div className="flex flex-wrap justify-between gap-8">
                 <FormControl
-                  className="min-w-[200px] max-w-[200px]"
+                  className="w-[200px]"
                   labelText="Flight Number"
                   name="flightNumber"
-                  onWheel={e => (e.target as HTMLInputElement).blur?.()}
-                  transform={numberInputTransformer}
-                  type="number"
+                  transform={integerInputTransformer}
                 />
                 <FormControl
-                  className="min-w-[200px] max-w-[200px]"
+                  className="w-[200px]"
                   labelText="Callsign"
                   name="callsign"
                 />
                 <FormControl
-                  className="min-w-[200px] max-w-[200px]"
+                  className="w-[200px]"
                   labelText="Registration"
                   name="tailNumber"
                 />
@@ -138,7 +143,7 @@ export const AddFlight = (): JSX.Element => {
               <Divider />
               <div className="flex flex-wrap justify-between gap-12">
                 <FormRadio
-                  className="min-w-[250px] max-w-[400px]"
+                  className="w-[400px] min-w-[250px]"
                   labelText="Class"
                   name="class"
                   options={[
@@ -171,7 +176,7 @@ export const AddFlight = (): JSX.Element => {
                 />
                 <div className="flex min-w-[250px] max-w-[400px] flex-1 flex-col gap-4">
                   <FormControl
-                    className="min-w-[250px] max-w-[400px]"
+                    className="w-[400px] min-w-[250px]"
                     labelText="Seat Number"
                     name="seatNumber"
                   />
@@ -197,7 +202,7 @@ export const AddFlight = (): JSX.Element => {
                   />
                 </div>
                 <FormRadio
-                  className="min-w-[250px] max-w-[400px]"
+                  className="w-[400px] min-w-[250px]"
                   labelText="Reason"
                   name="reason"
                   options={[
@@ -222,12 +227,12 @@ export const AddFlight = (): JSX.Element => {
               <Divider />
               <div className="mb-8 flex flex-wrap gap-8">
                 <FormControl
-                  className="min-w-[250px]"
+                  className="min-w-[250px] flex-1"
                   labelText="Comments"
                   name="comments"
                 />
                 <FormControl
-                  className="min-w-[250px]"
+                  className="min-w-[250px] flex-1"
                   labelText="Tracking Link"
                   name="trackingLink"
                 />
