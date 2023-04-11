@@ -1,16 +1,17 @@
 import classNames from 'classnames';
 import { forwardRef, HTMLProps, RefObject } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
-import { FormControl, FormRadio } from 'stratosphere-ui';
+import {
+  FormControl,
+  FormRadio,
+  integerInputTransformer,
+  nullEmptyStringTransformer,
+} from 'stratosphere-ui';
 import {
   AircraftTypeInput,
   AirlineInput,
   AirportInput,
 } from '../../common/components';
-import {
-  nullEmptyStringTransformer,
-  numberInputTransformer,
-} from '../../common/transformers';
 
 export interface ItineraryBuilderCardProps
   extends Omit<HTMLProps<HTMLDivElement>, 'ref'> {
@@ -32,31 +33,33 @@ export const ItineraryBuilderCard = forwardRef<
         <div className="flex w-full flex-col gap-8">
           <div className="flex flex-wrap justify-around gap-8">
             <AirportInput
-              className="min-w-[250px] max-w-[400px]"
+              className="w-[400px] min-w-[250px]"
               getBadgeText={({ id, name }) => `${id} - ${name}`}
               inputRef={firstFieldRef}
               isRequired
               labelText="Departure Airport"
+              menuClassName="w-full"
               name="departureAirportId"
             />
             <AirportInput
-              className="min-w-[250px] max-w-[400px]"
+              className="w-[400px] min-w-[250px]"
               getBadgeText={({ id, name }) => `${id} - ${name}`}
               isRequired
               labelText="Arrival Airport"
+              menuClassName="w-full"
               name="arrivalAirportId"
             />
           </div>
           <div className="flex flex-wrap justify-between gap-8">
             <FormControl
-              className="min-w-[200px] max-w-[200px]"
+              className="w-[200px]"
               isRequired
               labelText="Departure Date"
               name="outDateISO"
               type="date"
             />
             <FormControl
-              className="min-w-[200px] max-w-[200px]"
+              className="w-[200px]"
               isRequired
               labelText="Departure Time (Local)"
               name="outTimeValue"
@@ -64,7 +67,7 @@ export const ItineraryBuilderCard = forwardRef<
               type="time"
             />
             <FormControl
-              className="min-w-[200px] max-w-[200px]"
+              className="w-[200px]"
               isRequired
               labelText="Arrival Time (Local)"
               name="inTimeValue"
@@ -74,31 +77,31 @@ export const ItineraryBuilderCard = forwardRef<
           <Divider />
           <div className="flex flex-wrap justify-between gap-8">
             <AirlineInput
-              className="min-w-[250px] max-w-[400px]"
+              className="w-[400px] min-w-[250px]"
               getBadgeText={({ iata, icao, name }) =>
                 `${iata}/${icao} - ${name}`
               }
               labelText="Airline"
+              menuClassName="w-full"
               name="airlineId"
             />
             <FormControl
-              className="min-w-[150px] max-w-[150px]"
+              className="w-[150px]"
               labelText="Flight Number"
               name="flightNumber"
-              onWheel={e => (e.target as HTMLInputElement).blur?.()}
-              transform={numberInputTransformer}
-              type="number"
+              transform={integerInputTransformer}
             />
             <AircraftTypeInput
-              className="min-w-[250px] max-w-[400px]"
+              className="w-[400px] min-w-[250px]"
               getBadgeText={({ iata, icao, name }) =>
                 `${iata}/${icao} - ${name}`
               }
               labelText="Aircraft Type"
+              menuClassName="w-full"
               name="aircraftTypeId"
             />
             <FormRadio
-              className="min-w-[250px] max-w-[400px]"
+              className="w-[400px] min-w-[250px]"
               labelText="Class"
               name="class"
               options={[

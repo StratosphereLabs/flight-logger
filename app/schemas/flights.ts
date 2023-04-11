@@ -14,7 +14,11 @@ export const addFlightSchema = z.object({
   arrivalAirportId: z.string().min(1, 'Required'),
   airlineId: z.string(),
   aircraftTypeId: z.string(),
-  flightNumber: z.number().int().nullable(),
+  flightNumber: z
+    .number()
+    .int()
+    .lte(9999, 'Must be 4 digits or less')
+    .nullable(),
   callsign: z.string().trim(),
   tailNumber: z.string().trim(),
   outDateISO: z
