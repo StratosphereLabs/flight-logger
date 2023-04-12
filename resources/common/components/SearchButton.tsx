@@ -56,6 +56,7 @@ export const SearchButton = (): JSX.Element => {
         </Form>
       ) : (
         <Button
+          aria-label="Search Users"
           color="ghost"
           onClick={() => {
             setIsSearching(true);

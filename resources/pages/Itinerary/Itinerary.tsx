@@ -44,6 +44,7 @@ export const Itinerary = (): JSX.Element | null => {
           <Card key={index} className="bg-base-100 shadow-lg">
             <Card.Body className="flex-row items-center justify-between gap-4">
               <AirlineLogo
+                alt="Airline Logo"
                 className="hidden md:block"
                 url={flight.airline?.logo}
               />

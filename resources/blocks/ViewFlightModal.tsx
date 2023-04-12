@@ -29,8 +29,9 @@ export const ViewFlightModal = ({
       {typeof data?.airline?.logo === 'string' ? (
         <div className="flex w-[200px] justify-center">
           <img
+            alt={`${data.airline.name} Logo`}
             className="max-h-[80px] max-w-[200px]"
-            src={data?.airline?.logo}
+            src={data.airline.logo}
           />
         </div>
       ) : null}
