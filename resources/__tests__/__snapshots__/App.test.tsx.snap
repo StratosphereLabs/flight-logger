@@ -47,6 +47,7 @@ exports[`<App /> > renders login page 1`] = `
               >
                 <label
                   class="label font-semibold"
+                  id="label-email"
                 >
                   <span
                     class="label-text"
@@ -64,6 +65,7 @@ exports[`<App /> > renders login page 1`] = `
                   class="relative inline-flex"
                 >
                   <input
+                    aria-labelledby="label-email"
                     autocomplete="email"
                     class="input w-full input-ghost focus:outline-offset-0 input-bordered"
                     name="email"
@@ -77,6 +79,7 @@ exports[`<App /> > renders login page 1`] = `
               >
                 <label
                   class="label font-semibold"
+                  id="label-password"
                 >
                   <span
                     class="label-text"
@@ -94,6 +97,7 @@ exports[`<App /> > renders login page 1`] = `
                   class="relative inline-flex"
                 >
                   <input
+                    aria-labelledby="label-password"
                     autocomplete="current-password"
                     class="input w-full pr-10 input-ghost focus:outline-offset-0 input-bordered"
                     name="password"
@@ -168,6 +172,7 @@ exports[`<App /> > renders login page 1`] = `
       class="absolute top-0 right-0"
     >
       <button
+        aria-label="Toggle Theme"
         class="btn btn-circle btn-ghost"
       >
         <svg
@@ -211,6 +216,7 @@ exports[`<App /> > renders profile page 1`] = `
             <button
               aria-expanded="false"
               aria-haspopup="menu"
+              aria-label="Navigation Menu"
               class="btn lg:hidden btn-ghost"
               data-headlessui-state=""
               id="headlessui-menu-button-:r0:"
@@ -288,6 +294,7 @@ exports[`<App /> > renders profile page 1`] = `
           class="navbar-end w-auto space-x-1 lg:w-1/2"
         >
           <button
+            aria-label="Search Users"
             class="btn btn-circle btn-ghost"
           >
             <svg
@@ -306,6 +313,7 @@ exports[`<App /> > renders profile page 1`] = `
             </svg>
           </button>
           <button
+            aria-label="Toggle Theme"
             class="btn btn-circle btn-ghost"
           >
             <svg
@@ -325,6 +333,7 @@ exports[`<App /> > renders profile page 1`] = `
             class="flex gap-1"
           >
             <button
+              aria-label="Logout"
               class="btn"
             >
               Login
