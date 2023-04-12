@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Card } from 'react-daisyui';
+import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { LoadingCard } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../common/hooks';
@@ -15,7 +15,11 @@ export const ProfileCard = (): JSX.Element => {
           data?.firstName ?? ''
         } ${data?.lastName ?? ''}`}</Card.Title>
         <p className="text-md opacity-75">{`@${data?.username ?? ''}`}</p>
-        <Avatar size="lg" src={data?.avatar ?? undefined} />
+        <div className="avatar">
+          <div className="h-32 w-32">
+            <img alt="Avatar" src={data?.avatar ?? undefined} />
+          </div>
+        </div>
         <div className="inline space-x-2 font-bold">
           <Badge size="sm" color="primary">
             0 followers

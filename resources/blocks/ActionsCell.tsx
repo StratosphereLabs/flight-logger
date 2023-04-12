@@ -63,6 +63,7 @@ export const ActionsCell = ({
       <div className="flex xl:hidden">
         <DropdownMenu
           buttonProps={{
+            'aria-label': 'Actions',
             shape: 'circle',
             color: 'ghost',
             size: 'sm',

@@ -35,9 +35,11 @@ export const AirlinesCard = (): JSX.Element => {
               id: 'logo',
               accessorKey: 'logo',
               header: () => 'Logo',
-              cell: ({ getValue }) => {
+              cell: ({ getValue, row }) => {
                 const logo = getValue<string>();
-                return <AirlineLogo url={logo} />;
+                return (
+                  <AirlineLogo alt={`${row.original.name} Logo`} url={logo} />
+                );
               },
               enableSorting: false,
               footer: () => null,

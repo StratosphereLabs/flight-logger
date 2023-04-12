@@ -71,6 +71,7 @@ export const FlightsCard = (): JSX.Element => {
                     airlineData?.logo !== undefined ? (
                     <div className="flex w-[110px] justify-center xl:w-[120px]">
                       <img
+                        alt={`${airlineData.name} Logo`}
                         className="max-h-[55px] max-w-[110px] xl:max-w-[120px]"
                         src={airlineData.logo}
                       />
