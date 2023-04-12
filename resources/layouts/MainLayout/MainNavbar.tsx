@@ -1,6 +1,6 @@
-import { Button, Dropdown, Menu, Navbar } from 'react-daisyui';
-import { Link, useLinkClickHandler } from 'react-router-dom';
-import { NavbarTab } from './NavbarTab';
+import { Button, Navbar } from 'react-daisyui';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { DropdownMenu, Tabs } from 'stratosphere-ui';
 import {
   DarkModeButton,
   LogoutIcon,
@@ -11,41 +11,50 @@ import { useAppContext } from '../../providers';
 
 export const MainNavbar = (): JSX.Element => {
   const { isLoggedIn, logout } = useAppContext();
-  const onHomeClick = useLinkClickHandler<HTMLButtonElement>('/');
-  const onAddFlightClick =
-    useLinkClickHandler<HTMLButtonElement>('/add-flight');
-  const onLoginClick = useLinkClickHandler<HTMLButtonElement>('/auth/login');
+  const location = useLocation();
+  const navigate = useNavigate();
   return (
     <div className="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans">
       <Navbar className="rounded-box justify-between bg-base-200 shadow-xl lg:justify-start">
         <div className="navbar-start w-auto lg:w-1/2">
-          <Dropdown>
-            <Button color="ghost" tabIndex={0} className="lg:hidden">
-              <MenuIcon />
-            </Button>
-            <Dropdown.Menu tabIndex={0} className="menu-compact mt-3 w-52">
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              {isLoggedIn ? (
-                <>
-                  <li>
-                    <Link to="/profile">My Profile</Link>
-                  </li>
-                  <li>
-                    <Link to="/add-flight">Add Flight</Link>
-                  </li>
-                </>
-              ) : null}
-              <li>
-                <Link to="/data">Data</Link>
-              </li>
-            </Dropdown.Menu>
-          </Dropdown>
+          <DropdownMenu
+            buttonProps={{
+              color: 'ghost',
+              className: 'lg:hidden',
+              children: <MenuIcon />,
+            }}
+            items={[
+              {
+                id: 'home',
+                children: 'Home',
+                onClick: () => navigate('/'),
+              },
+              ...(isLoggedIn
+                ? [
+                    {
+                      id: 'myProfile',
+                      children: 'My Profile',
+                      onClick: () => navigate('/profile'),
+                    },
+                    {
+                      id: 'addFlight',
+                      children: 'Add Flight',
+                      onClick: () => navigate('/add-flight'),
+                    },
+                  ]
+                : []),
+              {
+                id: 'data',
+                children: 'Data',
+                onClick: () => navigate('/data'),
+              },
+            ]}
+            menuClassName="rounded-box p-2 w-48"
+          />
           <Button
             className="hidden text-xl normal-case sm:inline-flex"
             color="ghost"
-            onClick={onHomeClick}
+            onClick={() => navigate('/')}
           >
             <div className="font-title text-3xl text-primary transition-all duration-200">
               <span>Flight</span>
@@ -54,15 +63,42 @@ export const MainNavbar = (): JSX.Element => {
           </Button>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <Menu horizontal className="space-x-1 p-0">
-            <NavbarTab to="/" end>
-              Home
-            </NavbarTab>
-            {isLoggedIn ? (
-              <NavbarTab to="/profile">My Profile</NavbarTab>
-            ) : null}
-            <NavbarTab to="/data">Data</NavbarTab>
-          </Menu>
+          <Tabs
+            boxed
+            className="p-0"
+            onChange={({ paths }) =>
+              paths?.[0] !== undefined && navigate(paths[0])
+            }
+            pathname={location.pathname}
+            size="lg"
+            tabs={[
+              {
+                id: 'home',
+                paths: ['/'],
+                children: 'Home',
+              },
+              ...(isLoggedIn
+                ? [
+                    {
+                      id: 'profile',
+                      paths: [
+                        '/profile',
+                        '/flights',
+                        '/trips',
+                        '/itineraries',
+                        '/account',
+                      ],
+                      children: 'My Profile',
+                    },
+                  ]
+                : []),
+              {
+                id: 'data',
+                paths: ['/data'],
+                children: 'Data',
+              },
+            ]}
+          />
         </div>
         <div className="navbar-end w-auto space-x-1 lg:w-1/2">
           <SearchButton />
@@ -72,12 +108,14 @@ export const MainNavbar = (): JSX.Element => {
               <Button
                 className="hidden xl:block"
                 color="ghost"
-                onClick={onAddFlightClick}
+                onClick={() => navigate('/add-flight')}
               >
                 Add Flight
               </Button>
             ) : null}
-            <Button onClick={isLoggedIn ? logout : onLoginClick}>
+            <Button
+              onClick={isLoggedIn ? logout : () => navigate('/auth/login')}
+            >
               {isLoggedIn ? <LogoutIcon /> : 'Login'}
             </Button>
           </div>

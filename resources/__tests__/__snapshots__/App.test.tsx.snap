@@ -205,54 +205,32 @@ exports[`<App /> > renders profile page 1`] = `
           class="navbar-start w-auto lg:w-1/2"
         >
           <div
-            class="dropdown"
-            role="listbox"
+            class="relative"
+            data-headlessui-state=""
           >
-            <label
-              tabindex="0"
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              class="btn lg:hidden btn-ghost"
+              data-headlessui-state=""
+              id="headlessui-menu-button-:r0:"
+              type="button"
             >
-              <button
-                class="btn lg:hidden btn-ghost"
-                tabindex="0"
+              <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4 6h16M4 12h8m-8 6h16"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                  />
-                </svg>
-              </button>
-              <ul
-                class="dropdown-content menu p-2 shadow bg-base-100 rounded-box menu-compact mt-3 w-52"
-                tabindex="0"
-              >
-                <li>
-                  <a
-                    href="/"
-                  >
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/data"
-                  >
-                    Data
-                  </a>
-                </li>
-              </ul>
-            </label>
-            <ul
-              class="dropdown-content"
-            />
+                <path
+                  d="M4 6h16M4 12h8m-8 6h16"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                />
+              </svg>
+            </button>
           </div>
           <button
             class="btn hidden text-xl normal-case sm:inline-flex btn-ghost"
@@ -274,34 +252,37 @@ exports[`<App /> > renders profile page 1`] = `
         <div
           class="navbar-center hidden lg:flex"
         >
-          <ul
-            class="menu space-x-1 p-0 menu-horizontal"
-            role="menu"
+          <div
+            aria-orientation="horizontal"
+            class="tabs tabs-boxed p-0"
+            role="tablist"
           >
-            <li
-              class=""
-              role="menuitem"
+            <button
+              aria-selected="true"
+              class="tab tab-active tab-lg"
+              data-headlessui-state="selected"
+              id="headlessui-tabs-tab-:r1:"
+              paths="/"
+              role="tab"
+              tabindex="0"
+              type="button"
             >
-              <a
-                aria-current="page"
-                class="rounded-lg bg-primary text-white"
-                href="/"
-              >
-                Home
-              </a>
-            </li>
-            <li
-              class=""
-              role="menuitem"
+              Home
+            </button>
+            <button
+              aria-selected="false"
+              class="tab tab-lg"
+              data-headlessui-state=""
+              id="headlessui-tabs-tab-:r2:"
+              paths="/data"
+              role="tab"
+              tabindex="-1"
+              type="button"
             >
-              <a
-                class="rounded-lg"
-                href="/data"
-              >
-                Data
-              </a>
-            </li>
-          </ul>
+              Data
+            </button>
+          </div>
+          <div />
         </div>
         <div
           class="navbar-end w-auto space-x-1 lg:w-1/2"
