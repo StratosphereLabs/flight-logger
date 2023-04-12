@@ -29,7 +29,10 @@ export const SearchButton = (): JSX.Element => {
     name: 'username',
   });
   useEffect(() => {
-    if (value.length > 0) navigate(`/user/${value}`);
+    if (value.length > 0) {
+      setIsSearching(false);
+      navigate(`/user/${value}`);
+    }
   }, [value]);
   useOutsideClick(inputRef, event => {
     const element = event.target as HTMLElement;
@@ -44,6 +47,7 @@ export const SearchButton = (): JSX.Element => {
             getItemText={({ username }) => username}
             getItemValue={({ username }) => username}
             inputRef={inputRef}
+            menuClassName="min-w-full"
             name="username"
             onDebouncedChange={setQuery}
             options={data}

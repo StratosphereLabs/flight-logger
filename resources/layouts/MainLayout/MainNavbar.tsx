@@ -66,28 +66,36 @@ export const MainNavbar = (): JSX.Element => {
           <Tabs
             boxed
             className="p-0"
-            onChange={id => navigate(id)}
-            selectedTabId={location.pathname}
+            onChange={({ paths }) =>
+              paths?.[0] !== undefined && navigate(paths[0])
+            }
+            pathname={location.pathname}
             size="lg"
             tabs={[
               {
-                id: '/',
+                id: 'home',
+                paths: ['/'],
                 children: 'Home',
-                className: '',
               },
               ...(isLoggedIn
                 ? [
                     {
-                      id: '/profile',
+                      id: 'profile',
+                      paths: [
+                        '/profile',
+                        '/flights',
+                        '/trips',
+                        '/itineraries',
+                        '/account',
+                      ],
                       children: 'My Profile',
-                      className: '',
                     },
                   ]
                 : []),
               {
-                id: '/data',
+                id: 'data',
+                paths: ['/data'],
                 children: 'Data',
-                className: '',
               },
             ]}
           />
