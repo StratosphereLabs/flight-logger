@@ -47,6 +47,7 @@ exports[`<App /> > renders login page 1`] = `
               >
                 <label
                   class="label font-semibold"
+                  id="label-email"
                 >
                   <span
                     class="label-text"
@@ -64,6 +65,7 @@ exports[`<App /> > renders login page 1`] = `
                   class="relative inline-flex"
                 >
                   <input
+                    aria-labelledby="label-email"
                     autocomplete="email"
                     class="input w-full input-ghost focus:outline-offset-0 input-bordered"
                     name="email"
@@ -77,6 +79,7 @@ exports[`<App /> > renders login page 1`] = `
               >
                 <label
                   class="label font-semibold"
+                  id="label-password"
                 >
                   <span
                     class="label-text"
@@ -94,6 +97,7 @@ exports[`<App /> > renders login page 1`] = `
                   class="relative inline-flex"
                 >
                   <input
+                    aria-labelledby="label-password"
                     autocomplete="current-password"
                     class="input w-full pr-10 input-ghost focus:outline-offset-0 input-bordered"
                     name="password"
@@ -126,6 +130,11 @@ exports[`<App /> > renders login page 1`] = `
                           stroke-linejoin="round"
                         />
                       </svg>
+                      <span
+                        class="sr-only"
+                      >
+                        Toggle Password Visibility
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -182,6 +191,11 @@ exports[`<App /> > renders login page 1`] = `
             fill-rule="evenodd"
           />
         </svg>
+        <span
+          class="sr-only"
+        >
+          Toggle Theme
+        </span>
       </button>
     </div>
   </div>
@@ -230,6 +244,11 @@ exports[`<App /> > renders profile page 1`] = `
                   stroke-width="2"
                 />
               </svg>
+              <span
+                class="sr-only"
+              >
+                Navigation Menu
+              </span>
             </button>
           </div>
           <button
@@ -304,6 +323,11 @@ exports[`<App /> > renders profile page 1`] = `
                 stroke-width="2"
               />
             </svg>
+            <span
+              class="sr-only"
+            >
+              Search Users
+            </span>
           </button>
           <button
             class="btn btn-circle btn-ghost"
@@ -320,6 +344,11 @@ exports[`<App /> > renders profile page 1`] = `
                 fill-rule="evenodd"
               />
             </svg>
+            <span
+              class="sr-only"
+            >
+              Toggle Theme
+            </span>
           </button>
           <div
             class="flex gap-1"
@@ -328,6 +357,9 @@ exports[`<App /> > renders profile page 1`] = `
               class="btn"
             >
               Login
+              <span
+                class="sr-only"
+              />
             </button>
           </div>
         </div>

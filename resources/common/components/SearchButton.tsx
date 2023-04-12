@@ -56,7 +56,6 @@ export const SearchButton = (): JSX.Element => {
         </Form>
       ) : (
         <Button
-          aria-label="Search Users"
           color="ghost"
           onClick={() => {
             setIsSearching(true);
@@ -65,6 +64,7 @@ export const SearchButton = (): JSX.Element => {
           shape="circle"
         >
           <SearchIcon />
+          <span className="sr-only">Search Users</span>
         </Button>
       )}
     </>

@@ -9,13 +9,9 @@ export const DarkModeButton = (): JSX.Element => {
       oldTheme === AppTheme.DARK ? AppTheme.LIGHT : AppTheme.DARK,
     );
   return (
-    <Button
-      aria-label="Toggle Theme"
-      onClick={toggleTheme}
-      color="ghost"
-      shape="circle"
-    >
+    <Button onClick={toggleTheme} color="ghost" shape="circle">
       {theme === AppTheme.DARK ? <LightModeIcon /> : <DarkModeIcon />}
+      <span className="sr-only">Toggle Theme</span>
     </Button>
   );
 };
