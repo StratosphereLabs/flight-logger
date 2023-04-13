@@ -6,10 +6,10 @@ import {
 } from '@react-google-maps/api';
 import { useParams } from 'react-router-dom';
 import { LoadingCard } from 'stratosphere-ui';
-import { useTRPCErrorHandler } from '../common/hooks';
-import { darkModeStyle } from '../common/mapStyle';
-import { AppTheme, useAppContext } from '../providers';
-import { trpc } from '../utils/trpc';
+import { useTRPCErrorHandler } from '../../common/hooks';
+import { darkModeStyle } from '../../common/mapStyle';
+import { AppTheme, useAppContext } from '../../providers';
+import { trpc } from '../../utils/trpc';
 
 export const MapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import {
@@ -26,7 +26,6 @@ import { addFlightSchema } from '../../../app/schemas';
 
 export const AddFlight = (): JSX.Element => {
   useProtectedPage();
-  const firstFieldRef = useRef<HTMLInputElement>(null);
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -38,12 +37,12 @@ export const AddFlight = (): JSX.Element => {
     onSuccess: () => {
       handleSuccess('Flight Added!');
       methods.reset();
-      firstFieldRef.current?.focus();
+      setTimeout(() => methods.setFocus('departureAirportId'));
     },
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
-    firstFieldRef.current?.focus();
+    setTimeout(() => methods.setFocus('departureAirportId'));
   }, []);
   return (
     <div className="flex flex-1 flex-col gap-3 p-3">
@@ -62,7 +61,6 @@ export const AddFlight = (): JSX.Element => {
                 <AirportInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ id, name }) => `${id} - ${name}`}
-                  inputRef={firstFieldRef}
                   isRequired
                   labelText="Departure Airport"
                   menuClassName="w-full"

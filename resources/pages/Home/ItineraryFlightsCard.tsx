@@ -2,14 +2,11 @@ import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { Breadcrumbs, Button, Card, ToastProps } from 'react-daisyui';
 import { Badge } from 'stratosphere-ui';
-import { AddItineraryRequest } from '../../../app/schemas/itineraries';
+import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
 
 export interface ItineraryFlightsCardProps
   extends Omit<ToastProps, 'horizontal' | 'vertical'> {
-  flights: AddItineraryRequest;
   isLoading?: boolean;
-  onDeleteFlight: (index: number) => void;
-  onReset: () => void;
   onSubmit: () => void;
 }
 
@@ -18,41 +15,52 @@ export const ItineraryFlightsCard = forwardRef<
   ItineraryFlightsCardProps
 >(
   (
-    {
-      className,
-      flights,
-      isLoading,
-      onDeleteFlight,
-      onReset,
-      onSubmit,
-      ...props
-    }: ItineraryFlightsCardProps,
+    { className, isLoading, onSubmit, ...props }: ItineraryFlightsCardProps,
     ref,
-  ): JSX.Element => (
-    <Card
-      className={classNames('bg-base-100 text-center shadow-lg', className)}
-      ref={ref}
-      {...props}
-    >
-      <Card.Body className="flex-row justify-between">
-        <Breadcrumbs>
-          {flights.map((flight, index) => (
-            <Breadcrumbs.Item key={index}>
-              <Badge color="info" onDismiss={() => onDeleteFlight(index)}>
-                {flight.departureAirportId} / {flight.arrivalAirportId}
-              </Badge>
-            </Breadcrumbs.Item>
-          ))}
-        </Breadcrumbs>
-        <div className="flex flex-wrap gap-2">
-          <Button color="error" onClick={onReset} size="sm">
-            Reset
-          </Button>
-          <Button loading={isLoading} onClick={onSubmit} size="sm">
-            Create
-          </Button>
-        </div>
-      </Card.Body>
-    </Card>
-  ),
+  ): JSX.Element => {
+    const {
+      flights,
+      setDeleteFlightId,
+      setIsDeleteItineraryModalOpen,
+      setIsResetItineraryModalOpen,
+    } = useItineraryFlightsContext();
+    return (
+      <Card
+        className={classNames('bg-base-100 text-center shadow-lg', className)}
+        ref={ref}
+        {...props}
+      >
+        <Card.Body className="flex-row justify-between gap-2">
+          <Breadcrumbs className="flex-1">
+            {flights.map(({ arrivalAirportId, departureAirportId, id }) => (
+              <Breadcrumbs.Item key={id}>
+                <Badge
+                  color="info"
+                  dismissable
+                  onDismiss={() => {
+                    setDeleteFlightId(id);
+                    setIsDeleteItineraryModalOpen(true);
+                  }}
+                >
+                  {departureAirportId} / {arrivalAirportId}
+                </Badge>
+              </Breadcrumbs.Item>
+            ))}
+          </Breadcrumbs>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              color="error"
+              onClick={() => setIsResetItineraryModalOpen(true)}
+              size="sm"
+            >
+              Reset
+            </Button>
+            <Button loading={isLoading} onClick={onSubmit} size="sm">
+              Create
+            </Button>
+          </div>
+        </Card.Body>
+      </Card>
+    );
+  },
 );
