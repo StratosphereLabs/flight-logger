@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Form, Modal } from 'stratosphere-ui';
 import { itineraryBuilderDefaultValues } from './constants';
-import { ItineraryBuilderCard } from './ItineraryBuilderCard';
+import { ItineraryBuilderFields } from './ItineraryBuilderFields';
 import { ItineraryFlightsCard } from './ItineraryFlightsCard';
 import { ResetItineraryModal } from './ResetItineraryModal';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -71,23 +71,25 @@ export const CreateItineraryModal = ({
       className="w-full max-w-full md:w-[75%]"
       responsive={false}
     >
-      {flights.length > 0 ? (
-        <ItineraryFlightsCard
-          flights={flights}
-          isLoading={isLoading}
-          onDeleteFlight={deleteFlight}
-          onReset={() => setIsResetDialogOpen(true)}
-          onSubmit={() => mutate(flights)}
-          ref={flightsCardRef}
-        />
-      ) : null}
-      <Form className="w-full" methods={methods} onFormSubmit={addFlight}>
-        <ItineraryBuilderCard
-          firstFieldRef={firstFieldRef}
-          onReset={() => setFlights([])}
-          ref={itineraryCardRef}
-        />
-      </Form>
+      <div className="flex flex-col gap-2">
+        {flights.length > 0 ? (
+          <ItineraryFlightsCard
+            flights={flights}
+            isLoading={isLoading}
+            onDeleteFlight={deleteFlight}
+            onReset={() => setIsResetDialogOpen(true)}
+            onSubmit={() => mutate(flights)}
+            ref={flightsCardRef}
+          />
+        ) : null}
+        <Form className="w-full" methods={methods} onFormSubmit={addFlight}>
+          <ItineraryBuilderFields
+            firstFieldRef={firstFieldRef}
+            onReset={() => setFlights([])}
+            ref={itineraryCardRef}
+          />
+        </Form>
+      </div>
       <ResetItineraryModal
         onCancel={() => setIsResetDialogOpen(false)}
         onSubmit={() => {

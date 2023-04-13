@@ -1,8 +1,8 @@
 import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { LoadingCard } from 'stratosphere-ui';
-import { useTRPCErrorHandler } from '../common/hooks';
-import { trpc } from '../utils/trpc';
+import { useTRPCErrorHandler } from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
   const { username } = useParams();

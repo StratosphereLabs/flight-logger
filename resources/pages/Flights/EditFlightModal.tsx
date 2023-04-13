@@ -8,19 +8,21 @@ import {
   Modal,
   integerInputTransformer,
   nullEmptyStringTransformer,
-  useAlertMessages,
 } from 'stratosphere-ui';
 import { editFlightDefaultValues } from './constants';
 import {
   AircraftTypeInput,
   AirlineInput,
   AirportInput,
-} from '../common/components';
-import { useSuccessResponseHandler } from '../common/hooks';
-import { trpc } from '../utils/trpc';
-import { FlightsRouterOutput } from '../../app/routes/flights';
-import { UsersRouterOutput } from '../../app/routes/users';
-import { EditFlightRequest, editFlightSchema } from '../../app/schemas';
+} from '../../common/components';
+import {
+  useSuccessResponseHandler,
+  useTRPCErrorHandler,
+} from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
+import { FlightsRouterOutput } from '../../../app/routes/flights';
+import { UsersRouterOutput } from '../../../app/routes/users';
+import { EditFlightRequest, editFlightSchema } from '../../../app/schemas';
 
 export interface EditFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;
@@ -36,27 +38,19 @@ export const EditFlightModal = ({
   open,
 }: EditFlightProps): JSX.Element => {
   const modalRef = useRef<HTMLDivElement | null>(null);
-  const { addAlertMessages } = useAlertMessages();
-  const handleSuccess = useSuccessResponseHandler();
   const methods = useForm<EditFlightRequest>({
     defaultValues: editFlightDefaultValues,
     resolver: zodResolver(editFlightSchema),
   });
-  const { isLoading, mutate } = trpc.flights.editFlight.useMutation({
+  const handleSuccess = useSuccessResponseHandler();
+  const { error, isLoading, mutate } = trpc.flights.editFlight.useMutation({
     onSuccess: newFlight => {
       handleSuccess('Flight Edited!');
       onSuccess(newFlight);
       onClose();
     },
-    onError: err => {
-      addAlertMessages([
-        {
-          status: 'error',
-          message: err.message,
-        },
-      ]);
-    },
   });
+  useTRPCErrorHandler(error);
   useEffect(() => {
     if (open) modalRef.current?.scrollTo(0, 0);
   }, [open]);

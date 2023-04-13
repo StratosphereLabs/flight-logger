@@ -38,7 +38,11 @@ export const ItineraryFlightsCard = forwardRef<
         <Breadcrumbs>
           {flights.map((flight, index) => (
             <Breadcrumbs.Item key={index}>
-              <Badge color="info" onDismiss={() => onDeleteFlight(index)}>
+              <Badge
+                color="info"
+                dismissable
+                onDismiss={() => onDeleteFlight(index)}
+              >
                 {flight.departureAirportId} / {flight.arrivalAirportId}
               </Badge>
             </Breadcrumbs.Item>
