@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
 
 export const itineraryFlightSchema = z.object({
+  id: z.string().uuid(),
   departureAirportId: z.string().min(1, 'Required'),
   arrivalAirportId: z.string().min(1, 'Required'),
   outDateISO: z

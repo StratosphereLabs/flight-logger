@@ -1,16 +1,12 @@
-import { useState } from 'react';
 import { CreateItineraryModal } from './CreateItineraryModal';
 import { WelcomeCard } from './WelcomeCard';
+import { ItineraryFlightsProvider } from './ItineraryFlightsProvider';
 
-export const Home = (): JSX.Element => {
-  const [isItineraryModalOpen, setIsItineraryModalOpen] = useState(false);
-  return (
+export const Home = (): JSX.Element => (
+  <ItineraryFlightsProvider>
     <div className="flex flex-1 flex-col gap-3 p-3">
-      <WelcomeCard onGetStarted={() => setIsItineraryModalOpen(true)} />
-      <CreateItineraryModal
-        open={isItineraryModalOpen}
-        onClose={() => setIsItineraryModalOpen(false)}
-      />
+      <WelcomeCard />
     </div>
-  );
-};
+    <CreateItineraryModal />
+  </ItineraryFlightsProvider>
+);

@@ -1,104 +1,78 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Form, Modal } from 'stratosphere-ui';
 import { itineraryBuilderDefaultValues } from './constants';
+import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { ItineraryBuilderFields } from './ItineraryBuilderFields';
 import { ItineraryFlightsCard } from './ItineraryFlightsCard';
+import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
 import { ResetItineraryModal } from './ResetItineraryModal';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import {
-  AddItineraryRequest,
-  ItineraryFlight,
-  itineraryFlightSchema,
-} from '../../../app/schemas/itineraries';
+import { itineraryFlightSchema } from '../../../app/schemas/itineraries';
 
-export interface CreateItineraryModalProps {
-  onClose: () => void;
-  open: boolean;
-}
-
-export const CreateItineraryModal = ({
-  onClose,
-  open,
-}: CreateItineraryModalProps): JSX.Element => {
-  const existingFlights = localStorage.getItem(
-    'flight-logger-itinerary-flights',
-  );
+export const CreateItineraryModal = (): JSX.Element => {
   const navigate = useNavigate();
-  const firstFieldRef = useRef<HTMLInputElement | null>(null);
-  const flightsCardRef = useRef<HTMLDivElement | null>(null);
-  const itineraryCardRef = useRef<HTMLDivElement | null>(null);
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
-  const [flights, setFlights] = useState<AddItineraryRequest>(
-    existingFlights !== null
-      ? (JSON.parse(existingFlights) as AddItineraryRequest)
-      : [],
-  );
-  const addFlight = (flight: ItineraryFlight): void => {
-    setFlights(prevFlights => [...prevFlights, flight]);
-    methods.reset();
-    firstFieldRef.current?.focus();
-    setTimeout(() => flightsCardRef.current?.scrollIntoView());
-  };
-  const deleteFlight = (index: number): void =>
-    setFlights(prevFlights => prevFlights.filter((_, idx) => index !== idx));
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const {
+    addFlight,
+    flights,
+    isCreateItineraryModalOpen,
+    setIsCreateItineraryModalOpen,
+  } = useItineraryFlightsContext();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
     defaultValues: itineraryBuilderDefaultValues,
-    resolver: zodResolver(itineraryFlightSchema),
+    resolver: zodResolver(itineraryFlightSchema.omit({ id: true })),
   });
+  const resetForm = (): void => {
+    methods.reset();
+    setTimeout(() => methods.setFocus('departureAirportId'), 250);
+  };
   const { error, isLoading, mutate } =
     trpc.itineraries.createItinerary.useMutation({
       onSuccess: response => navigate(`/itinerary/${response.id}`),
     });
   useTRPCErrorHandler(error);
   useEffect(() => {
-    localStorage.setItem(
-      'flight-logger-itinerary-flights',
-      JSON.stringify(flights),
-    );
-  }, [flights]);
+    if (isCreateItineraryModalOpen) {
+      modalRef.current?.scrollTo(0, 0);
+      setTimeout(() => methods.setFocus('departureAirportId'), 100);
+    }
+  }, [isCreateItineraryModalOpen]);
   return (
     <Modal
       title="Create Itinerary"
-      open={open}
-      onClose={onClose}
+      open={isCreateItineraryModalOpen}
+      onClose={() => setIsCreateItineraryModalOpen(false)}
       actionButtons={[]}
-      className="w-full max-w-full md:w-[75%]"
+      className="w-full max-w-full overflow-x-hidden md:w-[75%]"
+      ref={modalRef}
       responsive={false}
     >
       <div className="flex flex-col gap-2">
         {flights.length > 0 ? (
           <ItineraryFlightsCard
-            flights={flights}
             isLoading={isLoading}
-            onDeleteFlight={deleteFlight}
-            onReset={() => setIsResetDialogOpen(true)}
             onSubmit={() => mutate(flights)}
-            ref={flightsCardRef}
           />
         ) : null}
-        <Form className="w-full" methods={methods} onFormSubmit={addFlight}>
-          <ItineraryBuilderFields
-            firstFieldRef={firstFieldRef}
-            onReset={() => setFlights([])}
-            ref={itineraryCardRef}
-          />
+        <Form
+          className="w-full"
+          methods={methods}
+          onFormSubmit={data => {
+            addFlight(data);
+            resetForm();
+          }}
+        >
+          <ItineraryBuilderFields />
         </Form>
       </div>
-      <ResetItineraryModal
-        onCancel={() => setIsResetDialogOpen(false)}
-        onSubmit={() => {
-          setFlights([]);
-          setIsResetDialogOpen(false);
-          firstFieldRef.current?.focus();
-        }}
-        open={isResetDialogOpen}
-      />
+      <DeleteItineraryModal />
+      <ResetItineraryModal onSubmit={resetForm} />
     </Modal>
   );
 };

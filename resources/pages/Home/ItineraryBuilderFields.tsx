@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { forwardRef, HTMLProps, RefObject } from 'react';
+import { forwardRef, HTMLProps } from 'react';
 import { Button, Divider } from 'react-daisyui';
 import {
   FormControl,
@@ -13,17 +13,13 @@ import {
   AirportInput,
 } from '../../common/components';
 
-export interface ItineraryBuilderCardProps
-  extends Omit<HTMLProps<HTMLDivElement>, 'ref'> {
-  firstFieldRef: RefObject<HTMLInputElement>;
-  onReset: () => void;
-}
+export interface ItineraryBuilderCardProps extends HTMLProps<HTMLDivElement> {}
 
 export const ItineraryBuilderFields = forwardRef<
   HTMLDivElement,
   ItineraryBuilderCardProps
 >(
-  ({ className, firstFieldRef, onReset, ...props }, ref): JSX.Element => (
+  ({ className, ...props }, ref): JSX.Element => (
     <div
       className={classNames('flex w-full flex-col gap-8', className)}
       ref={ref}
@@ -31,16 +27,15 @@ export const ItineraryBuilderFields = forwardRef<
     >
       <div className="flex flex-wrap justify-around gap-8">
         <AirportInput
-          className="w-[400px] min-w-[250px]"
+          className="w-[350px] min-w-[250px]"
           getBadgeText={({ id, name }) => `${id} - ${name}`}
-          inputRef={firstFieldRef}
           isRequired
           labelText="Departure Airport"
           menuClassName="w-full"
           name="departureAirportId"
         />
         <AirportInput
-          className="w-[400px] min-w-[250px]"
+          className="w-[350px] min-w-[250px]"
           getBadgeText={({ id, name }) => `${id} - ${name}`}
           isRequired
           labelText="Arrival Airport"
@@ -75,7 +70,7 @@ export const ItineraryBuilderFields = forwardRef<
       <Divider />
       <div className="flex flex-wrap justify-between gap-8">
         <AirlineInput
-          className="w-[400px] min-w-[250px]"
+          className="w-[350px] min-w-[250px]"
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Airline"
           menuClassName="w-full"
@@ -88,7 +83,7 @@ export const ItineraryBuilderFields = forwardRef<
           transform={integerInputTransformer}
         />
         <AircraftTypeInput
-          className="w-[400px] min-w-[250px]"
+          className="w-[350px] min-w-[250px]"
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
           menuClassName="w-full"

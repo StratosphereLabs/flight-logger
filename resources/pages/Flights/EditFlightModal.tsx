@@ -52,7 +52,10 @@ export const EditFlightModal = ({
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
-    if (open) modalRef.current?.scrollTo(0, 0);
+    if (open) {
+      modalRef.current?.scrollTo(0, 0);
+      setTimeout(() => methods.setFocus('departureAirportId'), 100);
+    }
   }, [open]);
   useEffect(() => {
     if (data !== null) {
