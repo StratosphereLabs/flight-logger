@@ -8,7 +8,7 @@ import {
   LinkIcon,
   TrashIcon,
   ViewIcon,
-} from '../common/components';
+} from '../../common/components';
 
 export interface ActionsCellProps {
   onCopyLink?: MouseEventHandler<HTMLElement>;

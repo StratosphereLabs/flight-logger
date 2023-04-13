@@ -8,9 +8,9 @@ import { ActionsCell } from './ActionsCell';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { ViewFlightModal } from './ViewFlightModal';
-import { useTRPCErrorHandler } from '../common/hooks';
-import { trpc } from '../utils/trpc';
-import { UsersRouterOutput } from '../../app/routes/users';
+import { useTRPCErrorHandler } from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
+import { UsersRouterOutput } from '../../../app/routes/users';
 
 export interface DeleteFlightData {
   departureAirportId: string;

@@ -1,0 +1,46 @@
+import { Modal } from 'stratosphere-ui';
+import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
+import { useMemo } from 'react';
+
+export const DeleteItineraryModal = (): JSX.Element => {
+  const {
+    deleteFlight,
+    deleteFlightId,
+    flights,
+    isDeleteItineraryModalOpen,
+    setIsDeleteItineraryModalOpen,
+  } = useItineraryFlightsContext();
+  const flight = useMemo(
+    () => flights.find(({ id }) => id === deleteFlightId),
+    [deleteFlightId, flights],
+  );
+  const onClose = (): void => setIsDeleteItineraryModalOpen(false);
+  return (
+    <Modal
+      actionButtons={[
+        {
+          children: 'Cancel',
+          color: 'ghost',
+          onClick: onClose,
+        },
+        {
+          children: 'Yes',
+          color: 'error',
+          onClick: () => {
+            if (flight !== undefined) deleteFlight(flight.id);
+            onClose();
+          },
+        },
+      ]}
+      onClose={onClose}
+      open={isDeleteItineraryModalOpen}
+      title="Delete Flight"
+    >
+      Are you sure you want to delete your{' '}
+      <strong>
+        {flight?.departureAirportId ?? ''} - {flight?.arrivalAirportId ?? ''}
+      </strong>{' '}
+      flight?
+    </Modal>
+  );
+};

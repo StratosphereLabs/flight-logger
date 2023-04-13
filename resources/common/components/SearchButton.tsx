@@ -12,7 +12,8 @@ export interface UserSearchFormData {
 
 export const SearchButton = (): JSX.Element => {
   const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [query, setQuery] = useState('');
   const { data } = trpc.users.getUsers.useQuery(
@@ -34,22 +35,27 @@ export const SearchButton = (): JSX.Element => {
       navigate(`/user/${value}`);
     }
   }, [value]);
-  useOutsideClick(inputRef, event => {
+  useOutsideClick(formRef, event => {
     const element = event.target as HTMLElement;
     if (element.tagName !== 'A') setIsSearching(false);
   });
   return (
     <>
       {isSearching ? (
-        <Form methods={methods} onFormSubmit={() => null}>
+        <Form methods={methods} onFormSubmit={() => null} formRef={formRef}>
           <TypeaheadSelect
             disableSingleSelectBadge
             getItemText={({ username }) => username}
             getItemValue={({ username }) => username}
-            inputRef={inputRef}
             menuClassName="min-w-full"
             name="username"
             onDebouncedChange={setQuery}
+            onKeyDown={({ key }) => {
+              if (key === 'Escape' || key === 'Tab') {
+                setIsSearching(false);
+                if (key !== 'Tab') setTimeout(() => buttonRef.current?.focus());
+              }
+            }}
             options={data}
             placeholder="Search Users..."
           />
@@ -60,8 +66,9 @@ export const SearchButton = (): JSX.Element => {
           color="ghost"
           onClick={() => {
             setIsSearching(true);
-            setTimeout(() => inputRef.current?.focus());
+            setTimeout(() => methods.setFocus('username'));
           }}
+          ref={buttonRef}
           shape="circle"
         >
           <SearchIcon />

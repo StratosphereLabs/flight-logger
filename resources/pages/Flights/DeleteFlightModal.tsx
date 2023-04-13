@@ -1,8 +1,11 @@
 import { useParams } from 'react-router-dom';
-import { Modal, useAlertMessages } from 'stratosphere-ui';
-import { useSuccessResponseHandler } from '../common/hooks';
-import { trpc } from '../utils/trpc';
-import { UsersRouterOutput } from '../../app/routes/users';
+import { Modal } from 'stratosphere-ui';
+import {
+  useSuccessResponseHandler,
+  useTRPCErrorHandler,
+} from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
+import { UsersRouterOutput } from '../../../app/routes/users';
 
 export interface DeleteFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;
@@ -17,9 +20,8 @@ export const DeleteFlightModal = ({
 }: DeleteFlightProps): JSX.Element => {
   const utils = trpc.useContext();
   const { username } = useParams();
-  const { addAlertMessages } = useAlertMessages();
   const handleSuccess = useSuccessResponseHandler();
-  const { isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
+  const { error, isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
     onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
       onClose();
@@ -31,15 +33,8 @@ export const DeleteFlightModal = ({
         previousFlights?.filter(flight => flight.id !== id),
       );
     },
-    onError: err => {
-      addAlertMessages([
-        {
-          status: 'error',
-          message: err.message,
-        },
-      ]);
-    },
   });
+  useTRPCErrorHandler(error);
   return (
     <Modal
       actionButtons={[

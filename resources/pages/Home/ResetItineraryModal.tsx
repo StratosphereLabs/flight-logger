@@ -1,33 +1,43 @@
-import { Modal, ModalProps } from 'stratosphere-ui';
+import { Modal } from 'stratosphere-ui';
+import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
 
-export interface ResetItineraryModalProps
-  extends Omit<ModalProps, 'actionButtons' | 'children' | 'onClose' | 'title'> {
-  onCancel: () => void;
-  onSubmit: () => void;
+export interface ResetItineraryModalProps {
+  onSubmit?: () => void;
 }
 
 export const ResetItineraryModal = ({
-  onCancel,
   onSubmit,
-  ...props
-}: ResetItineraryModalProps): JSX.Element => (
-  <Modal
-    actionButtons={[
-      {
-        children: 'Cancel',
-        color: 'ghost',
-        onClick: onCancel,
-      },
-      {
-        children: 'Yes',
-        color: 'error',
-        onClick: onSubmit,
-      },
-    ]}
-    onClose={onCancel}
-    title="Reset Itinerary"
-    {...props}
-  >
-    Are you sure you want to clear your entered flights?
-  </Modal>
-);
+}: ResetItineraryModalProps): JSX.Element => {
+  const {
+    isResetItineraryModalOpen,
+    resetFlights,
+    setIsResetItineraryModalOpen,
+  } = useItineraryFlightsContext();
+  const onClose = (): void => setIsResetItineraryModalOpen(false);
+  return (
+    <Modal
+      actionButtons={[
+        {
+          children: 'Cancel',
+          color: 'ghost',
+          onClick: onClose,
+          type: 'button',
+        },
+        {
+          children: 'Yes',
+          color: 'error',
+          onClick: () => {
+            resetFlights();
+            onClose();
+            onSubmit?.();
+          },
+        },
+      ]}
+      onClose={onClose}
+      open={isResetItineraryModalOpen}
+      title="Reset Itinerary"
+    >
+      Are you sure you want to clear your entered flights?
+    </Modal>
+  );
+};
