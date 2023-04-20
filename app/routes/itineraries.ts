@@ -8,7 +8,7 @@ import { procedure, router } from '../trpc';
 export const itinerariesRouter = router({
   createItinerary: procedure
     .input(addItinerarySchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       if (input.length === 0) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
@@ -46,6 +46,7 @@ export const itinerariesRouter = router({
       const itineraryData = getItineraryData({ input, data });
       return await prisma.itinerary.create({
         data: {
+          userId: ctx.user?.id,
           flights: JSON.stringify(itineraryData),
         },
       });
