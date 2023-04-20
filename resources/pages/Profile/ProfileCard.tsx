@@ -24,14 +24,16 @@ export const ProfileCard = (): JSX.Element => {
           <Badge size="sm" color="primary">
             0 followers
           </Badge>
-          <Badge size="sm" color="success">
+          <Badge size="sm" color="secondary">
             0 following
           </Badge>
         </div>
         <p>{data?.flightCount} Flights</p>
         <p className="text-xs opacity-50">Joined September 2022</p>
         {username !== undefined ? (
-          <Button className="mt-4">Follow</Button>
+          <Button color="success" className="mt-4">
+            Follow
+          </Button>
         ) : null}
       </Card.Body>
     </LoadingCard>

@@ -20,12 +20,12 @@ export const DeleteItineraryModal = (): JSX.Element => {
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'ghost',
+          color: 'secondary',
           onClick: onClose,
         },
         {
-          children: 'Yes',
-          color: 'error',
+          children: 'Delete',
+          color: 'primary',
           onClick: () => {
             if (flight !== undefined) deleteFlight(flight.id);
             onClose();
