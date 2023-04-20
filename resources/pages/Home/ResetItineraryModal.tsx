@@ -19,13 +19,13 @@ export const ResetItineraryModal = ({
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'ghost',
+          color: 'secondary',
           onClick: onClose,
           type: 'button',
         },
         {
-          children: 'Yes',
-          color: 'error',
+          children: 'Reset',
+          color: 'primary',
           onClick: () => {
             resetFlights();
             onClose();

@@ -96,6 +96,7 @@ export const EditFlightModal = ({
           onClick: methods.handleSubmit(values => mutate(values)),
         },
       ]}
+      className="overflow-x-hidden"
       onClose={onClose}
       open={open}
       ref={modalRef}
