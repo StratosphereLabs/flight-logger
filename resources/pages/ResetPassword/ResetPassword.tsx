@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from 'react-daisyui';
+import { Button, Card } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, PasswordInput } from 'stratosphere-ui';
@@ -35,26 +35,29 @@ export const ResetPassword = (): JSX.Element => {
     });
   useTRPCErrorHandler(error);
   return (
-    <Form methods={methods} onFormSubmit={data => mutate(data)}>
-      <fieldset disabled={isLoading}>
-        <PasswordInput
-          autoComplete="new-password"
-          isRequired
-          labelText="New Password"
-          name="password"
-        />
-        <PasswordInput
-          autoComplete="new-password"
-          isRequired
-          labelText="Confirm New Password"
-          name="confirmPassword"
-        />
-      </fieldset>
-      <div className="mt-6 flex flex-col">
-        <Button type="submit" loading={isLoading}>
-          Reset Password
-        </Button>
-      </div>
-    </Form>
+    <>
+      <Card.Title>Reset Password</Card.Title>
+      <Form methods={methods} onFormSubmit={data => mutate(data)}>
+        <fieldset disabled={isLoading}>
+          <PasswordInput
+            autoComplete="new-password"
+            isRequired
+            labelText="New Password"
+            name="password"
+          />
+          <PasswordInput
+            autoComplete="new-password"
+            isRequired
+            labelText="Confirm New Password"
+            name="confirmPassword"
+          />
+        </fieldset>
+        <div className="mt-6 flex flex-col">
+          <Button color="primary" type="submit" loading={isLoading}>
+            Reset Password
+          </Button>
+        </div>
+      </Form>
+    </>
   );
 };

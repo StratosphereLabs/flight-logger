@@ -85,12 +85,12 @@ export const EditFlightModal = ({
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'ghost',
+          color: 'secondary',
           onClick: onClose,
         },
         {
           children: 'Save',
-          color: 'success',
+          color: 'primary',
           disabled: !methods.formState.isDirty,
           loading: isLoading,
           onClick: methods.handleSubmit(values => mutate(values)),

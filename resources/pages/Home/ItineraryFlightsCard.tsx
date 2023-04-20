@@ -49,13 +49,18 @@ export const ItineraryFlightsCard = forwardRef<
           </Breadcrumbs>
           <div className="flex flex-wrap items-center gap-2">
             <Button
-              color="error"
+              color="secondary"
               onClick={() => setIsResetItineraryModalOpen(true)}
               size="sm"
             >
               Reset
             </Button>
-            <Button loading={isLoading} onClick={onSubmit} size="sm">
+            <Button
+              color="primary"
+              loading={isLoading}
+              onClick={onSubmit}
+              size="sm"
+            >
               Create
             </Button>
           </div>

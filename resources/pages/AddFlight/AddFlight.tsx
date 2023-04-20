@@ -235,9 +235,16 @@ export const AddFlight = (): JSX.Element => {
                   name="trackingLink"
                 />
               </div>
-              <Button loading={isLoading} type="submit">
-                Submit
-              </Button>
+              <div className="text-center">
+                <Button
+                  className="w-full max-w-md"
+                  color="primary"
+                  loading={isLoading}
+                  type="submit"
+                >
+                  Submit
+                </Button>
+              </div>
             </div>
           </Form>
         </Card.Body>

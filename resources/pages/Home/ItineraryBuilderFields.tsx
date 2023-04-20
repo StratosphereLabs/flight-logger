@@ -123,7 +123,7 @@ export const ItineraryBuilderFields = forwardRef<
         />
       </div>
       <div className="text-center">
-        <Button className="w-full max-w-md" type="submit">
+        <Button color="primary" className="w-full max-w-md" type="submit">
           Add Flight
         </Button>
       </div>

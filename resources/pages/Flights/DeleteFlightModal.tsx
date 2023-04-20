@@ -40,12 +40,12 @@ export const DeleteFlightModal = ({
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'ghost',
+          color: 'secondary',
           onClick: onClose,
         },
         {
-          children: 'Yes',
-          color: 'error',
+          children: 'Delete',
+          color: 'primary',
           loading: isLoading,
           onClick: () => data !== null && mutate({ id: data.id }),
         },

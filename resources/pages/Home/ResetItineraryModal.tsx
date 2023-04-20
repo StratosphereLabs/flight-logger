@@ -33,6 +33,7 @@ export const ResetItineraryModal = ({
           },
         },
       ]}
+      className="z-[80]"
       onClose={onClose}
       open={isResetItineraryModalOpen}
       title="Reset Itinerary"
