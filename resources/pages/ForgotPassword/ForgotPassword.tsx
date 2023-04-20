@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { Button, Card } from 'react-daisyui';
+import { Button, Card, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
+import { useLinkClickHandler } from 'react-router-dom';
 import { Form, FormControl } from 'stratosphere-ui';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
@@ -18,6 +19,7 @@ export const ForgotPassword = (): JSX.Element => {
     },
     resolver: zodResolver(forgotPasswordSchema),
   });
+  const handleBackToLogin = useLinkClickHandler('/auth/login');
   const { error, isLoading, mutate } =
     trpc.passwordReset.forgotPassword.useMutation();
   useTRPCErrorHandler(error);
@@ -30,28 +32,42 @@ export const ForgotPassword = (): JSX.Element => {
     );
   }
   return (
-    <Form
-      methods={methods}
-      onFormSubmit={values =>
-        mutate(values, {
-          onSuccess: () => setResetLinkSent(true),
-        })
-      }
-    >
-      <fieldset disabled={isLoading}>
-        <FormControl
-          autoComplete="email"
-          isRequired
-          labelText="Email"
-          name="email"
-          type="email"
-        />
-      </fieldset>
-      <div className="mt-6 flex flex-col">
-        <Button type="submit" loading={isLoading}>
-          Reset Password
-        </Button>
-      </div>
-    </Form>
+    <>
+      <Card.Title>Forgot Password</Card.Title>
+      <Form
+        methods={methods}
+        onFormSubmit={values =>
+          mutate(values, {
+            onSuccess: () => setResetLinkSent(true),
+          })
+        }
+      >
+        <fieldset disabled={isLoading}>
+          <FormControl
+            autoComplete="email"
+            isRequired
+            labelText="Email"
+            name="email"
+            type="email"
+          />
+          <label className="label">
+            <Link
+              onClick={handleBackToLogin}
+              className="label-text-alt"
+              hover
+              href="#"
+              tabIndex={0}
+            >
+              Back to Login
+            </Link>
+          </label>
+        </fieldset>
+        <div className="mt-6 flex flex-col">
+          <Button color="primary" type="submit" loading={isLoading}>
+            Reset Password
+          </Button>
+        </div>
+      </Form>
+    </>
   );
 };

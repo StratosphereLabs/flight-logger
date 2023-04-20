@@ -53,7 +53,7 @@ export const CreateItineraryModal = (): JSX.Element => {
       ref={modalRef}
       responsive={false}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         {flights.length > 0 ? (
           <ItineraryFlightsCard
             isLoading={isLoading}
@@ -70,9 +70,9 @@ export const CreateItineraryModal = (): JSX.Element => {
         >
           <ItineraryBuilderFields />
         </Form>
+        <DeleteItineraryModal />
+        <ResetItineraryModal onSubmit={resetForm} />
       </div>
-      <DeleteItineraryModal />
-      <ResetItineraryModal onSubmit={resetForm} />
     </Modal>
   );
 };
