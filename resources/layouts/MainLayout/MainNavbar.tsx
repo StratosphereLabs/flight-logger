@@ -19,10 +19,14 @@ export const MainNavbar = (): JSX.Element => {
         <div className="navbar-start w-auto lg:w-1/2">
           <DropdownMenu
             buttonProps={{
-              'aria-label': 'Navigation Menu',
               color: 'ghost',
               className: 'lg:hidden',
-              children: <MenuIcon />,
+              children: (
+                <>
+                  <MenuIcon />
+                  <span className="sr-only">Navigation Menu</span>
+                </>
+              ),
             }}
             items={[
               {
@@ -115,10 +119,10 @@ export const MainNavbar = (): JSX.Element => {
               </Button>
             ) : null}
             <Button
-              aria-label="Logout"
               onClick={isLoggedIn ? logout : () => navigate('/auth/login')}
             >
               {isLoggedIn ? <LogoutIcon /> : 'Login'}
+              <span className="sr-only">{isLoggedIn ? 'Logout' : null}</span>
             </Button>
           </div>
         </div>
