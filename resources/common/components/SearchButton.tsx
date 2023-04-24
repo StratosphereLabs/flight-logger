@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from 'react-daisyui';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Form, TypeaheadSelect, useOutsideClick } from 'stratosphere-ui';
 import { trpc } from '../../utils/trpc';
@@ -25,16 +25,13 @@ export const SearchButton = (): JSX.Element => {
       username: '',
     },
   });
-  const value = useWatch({
-    control: methods.control,
-    name: 'username',
-  });
+  const username = methods.watch('username');
   useEffect(() => {
-    if (value.length > 0) {
+    if (username.length > 0) {
       setIsSearching(false);
-      navigate(`/user/${value}`);
+      navigate(`/user/${username}`);
     }
-  }, [value]);
+  }, [username]);
   useOutsideClick(formRef, event => {
     const element = event.target as HTMLElement;
     if (element.tagName !== 'A') setIsSearching(false);

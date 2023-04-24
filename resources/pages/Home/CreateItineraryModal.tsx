@@ -7,7 +7,7 @@ import { itineraryBuilderDefaultValues } from './constants';
 import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { ItineraryBuilderFields } from './ItineraryBuilderFields';
 import { ItineraryFlightsCard } from './ItineraryFlightsCard';
-import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
+import { useItineraryFlightsStore } from './itineraryFlightsStore';
 import { ResetItineraryModal } from './ResetItineraryModal';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
@@ -21,7 +21,7 @@ export const CreateItineraryModal = (): JSX.Element => {
     flights,
     isCreateItineraryModalOpen,
     setIsCreateItineraryModalOpen,
-  } = useItineraryFlightsContext();
+  } = useItineraryFlightsStore();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -34,7 +34,10 @@ export const CreateItineraryModal = (): JSX.Element => {
   };
   const { error, isLoading, mutate } =
     trpc.itineraries.createItinerary.useMutation({
-      onSuccess: response => navigate(`/itinerary/${response.id}`),
+      onSuccess: response => {
+        setIsCreateItineraryModalOpen(false);
+        navigate(`/itinerary/${response.id}`);
+      },
     });
   useTRPCErrorHandler(error);
   useEffect(() => {

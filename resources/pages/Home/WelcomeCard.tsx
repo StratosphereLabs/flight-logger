@@ -1,9 +1,9 @@
 import { Button, Card, Hero } from 'react-daisyui';
-import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
+import { useItineraryFlightsStore } from './itineraryFlightsStore';
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
 
 export const WelcomeCard = (): JSX.Element => {
-  const { setIsCreateItineraryModalOpen } = useItineraryFlightsContext();
+  const { setIsCreateItineraryModalOpen } = useItineraryFlightsStore();
   return (
     <Card className="min-h-[75vh] bg-base-100 shadow-lg">
       <Card.Body className="justify-center">

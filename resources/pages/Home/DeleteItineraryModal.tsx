@@ -1,6 +1,6 @@
 import { Modal } from 'stratosphere-ui';
-import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
 import { useMemo } from 'react';
+import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
 export const DeleteItineraryModal = (): JSX.Element => {
   const {
@@ -9,7 +9,7 @@ export const DeleteItineraryModal = (): JSX.Element => {
     flights,
     isDeleteItineraryModalOpen,
     setIsDeleteItineraryModalOpen,
-  } = useItineraryFlightsContext();
+  } = useItineraryFlightsStore();
   const flight = useMemo(
     () => flights.find(({ id }) => id === deleteFlightId),
     [deleteFlightId, flights],
