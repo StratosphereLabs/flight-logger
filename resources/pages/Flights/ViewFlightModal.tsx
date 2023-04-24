@@ -1,6 +1,6 @@
 import { Modal } from 'stratosphere-ui';
-import { UsersRouterOutput } from '../../app/routes/users';
-import { RightArrowIcon } from '../common/components';
+import { UsersRouterOutput } from '../../../app/routes/users';
+import { RightArrowIcon } from '../../common/components';
 
 export interface ViewFlightProps {
   data: UsersRouterOutput['getUserFlights'][number] | null;

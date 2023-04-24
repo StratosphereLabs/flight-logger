@@ -1,7 +1,6 @@
 export * from './useAuthPage';
 export * from './useDebouncedValue';
 export * from './useErrorResponseHandler';
-export * from './useFocusOnFirstField';
 export * from './useGoogleLoginMutation';
 export * from './useOutsideClick';
 export * from './useProtectedPage';

@@ -69,13 +69,19 @@ export const RegisterForm = (): JSX.Element => {
             name="confirmPassword"
           />
           <label className="label">
-            <Link onClick={handleClick} className="label-text-alt" hover>
+            <Link
+              onClick={handleClick}
+              className="label-text-alt"
+              hover
+              href="#"
+              tabIndex={0}
+            >
               Already registered? Login
             </Link>
           </label>
         </fieldset>
         <div className="mt-6 flex flex-col">
-          <Button type="submit" loading={isLoading}>
+          <Button color="primary" type="submit" loading={isLoading}>
             Register
           </Button>
         </div>

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Link } from 'react-daisyui';
+import { Button, Card, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, PasswordInput } from 'stratosphere-ui';
 import { useLinkClickHandler } from 'react-router-dom';
@@ -26,35 +26,50 @@ export const LoginForm = (): JSX.Element => {
   const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
   const handleRegister = useLinkClickHandler('/auth/register');
   return (
-    <Form methods={methods} onFormSubmit={data => mutate(data)}>
-      <fieldset disabled={isLoading}>
-        <FormControl
-          autoComplete="email"
-          isRequired
-          labelText="Email"
-          name="email"
-          type="email"
-        />
-        <PasswordInput
-          autoComplete="current-password"
-          isRequired
-          labelText="Password"
-          name="password"
-        />
-        <label className="label">
-          <Link onClick={handleForgotPassword} className="label-text-alt" hover>
-            Forgot password?
-          </Link>
-          <Link onClick={handleRegister} className="label-text-alt" hover>
-            Register
-          </Link>
-        </label>
-      </fieldset>
-      <div className="mt-6 flex flex-col">
-        <Button type="submit" loading={isLoading}>
-          Login
-        </Button>
-      </div>
-    </Form>
+    <>
+      <Card.Title>Sign In</Card.Title>
+      <Form methods={methods} onFormSubmit={data => mutate(data)}>
+        <fieldset disabled={isLoading}>
+          <FormControl
+            autoComplete="email"
+            isRequired
+            labelText="Email"
+            name="email"
+            type="email"
+          />
+          <PasswordInput
+            autoComplete="current-password"
+            isRequired
+            labelText="Password"
+            name="password"
+          />
+          <label className="label">
+            <Link
+              onClick={handleForgotPassword}
+              href="#"
+              className="label-text-alt"
+              hover
+              tabIndex={0}
+            >
+              Forgot password?
+            </Link>
+            <Link
+              onClick={handleRegister}
+              href="#"
+              className="label-text-alt"
+              hover
+              tabIndex={0}
+            >
+              Register
+            </Link>
+          </label>
+        </fieldset>
+        <div className="mt-6 flex flex-col">
+          <Button color="primary" type="submit" loading={isLoading}>
+            Login
+          </Button>
+        </div>
+      </Form>
+    </>
   );
 };
