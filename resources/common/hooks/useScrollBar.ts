@@ -1,5 +1,4 @@
-import { AppTheme } from '../../providers';
-import { useThemeStore } from '../../stores';
+import { AppTheme, useThemeStore } from '../../stores';
 
 export const useScrollBar = (): string => {
   const { theme } = useThemeStore();

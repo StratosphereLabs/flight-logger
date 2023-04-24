@@ -2,8 +2,7 @@ import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useAlertMessages } from 'stratosphere-ui';
 import { GOOGLE_CLIENT_ID } from '../../common/constants';
 import { useGoogleLoginMutation } from '../../common/hooks';
-import { AppTheme } from '../../providers';
-import { useThemeStore } from '../../stores';
+import { AppTheme, useThemeStore } from '../../stores';
 
 export interface GoogleLoginButtonProps {
   width: string;

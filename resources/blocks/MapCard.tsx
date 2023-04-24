@@ -8,9 +8,8 @@ import { useParams } from 'react-router-dom';
 import { LoadingCard } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../common/hooks';
 import { darkModeStyle } from '../common/mapStyle';
-import { AppTheme } from '../providers';
+import { AppTheme, useThemeStore } from '../stores';
 import { trpc } from '../utils/trpc';
-import { useThemeStore } from '../stores';
 
 export const MapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({

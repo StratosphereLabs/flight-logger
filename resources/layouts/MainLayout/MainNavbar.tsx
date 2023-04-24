@@ -7,10 +7,11 @@ import {
   MenuIcon,
   SearchButton,
 } from '../../common/components';
-import { useAppContext } from '../../providers';
+import { useAuthStore } from '../../stores';
 
 export const MainNavbar = (): JSX.Element => {
-  const { isLoggedIn, logout } = useAppContext();
+  const isLoggedIn = useAuthStore(({ token }) => token !== null);
+  const { logout } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
   return (
