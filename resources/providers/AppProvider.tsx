@@ -1,8 +1,6 @@
 import {
   createContext,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   useContext,
   useEffect,
   useMemo,
@@ -12,8 +10,6 @@ import {
 interface AppContextData {
   isLoggedIn: boolean;
   logout: () => void;
-  theme: string | null;
-  setTheme: Dispatch<SetStateAction<string>>;
   setToken: (token: string | null) => void;
   token: string | null;
 }
@@ -30,8 +26,6 @@ export enum AppTheme {
 const initialContext: AppContextData = {
   isLoggedIn: false,
   logout: () => undefined,
-  theme: null,
-  setTheme: () => undefined,
   setToken: () => undefined,
   token: null,
 };
@@ -43,9 +37,6 @@ export const useAppContext = (): AppContextData => useContext(AppContext);
 export const AppContextProvider = ({
   children,
 }: AppContextProviderProps): JSX.Element => {
-  const [theme, setTheme] = useState(
-    localStorage.getItem('flightLoggerTheme') ?? AppTheme.LIGHT,
-  );
   const [token, setToken] = useState(localStorage.getItem('flightLoggerToken'));
   const logout = (): void => setToken(null);
   const isLoggedIn = useMemo(() => token !== null, [token]);
@@ -58,18 +49,11 @@ export const AppContextProvider = ({
     }
   }, [token]);
 
-  useEffect(() => {
-    document.getElementsByTagName('html')[0].setAttribute('data-theme', theme);
-    window.localStorage.setItem('flightLoggerTheme', theme);
-  }, [theme]);
-
   return (
     <AppContext.Provider
       value={{
         isLoggedIn,
         logout,
-        theme,
-        setTheme,
         setToken,
         token,
       }}
