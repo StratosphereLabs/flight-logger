@@ -1,30 +1,22 @@
 import { useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
+import { useFlightsPageStore } from './flightsPageStore';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { UsersRouterOutput } from '../../../app/routes/users';
 
-export interface DeleteFlightProps {
-  data: UsersRouterOutput['getUserFlights'][number] | null;
-  onClose: () => void;
-  open: boolean;
-}
-
-export const DeleteFlightModal = ({
-  data,
-  onClose,
-  open,
-}: DeleteFlightProps): JSX.Element => {
+export const DeleteFlightModal = (): JSX.Element => {
   const utils = trpc.useContext();
   const { username } = useParams();
+  const { activeFlight, isDeleteDialogOpen, setIsDeleteDialogOpen } =
+    useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
     onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
-      onClose();
+      setIsDeleteDialogOpen(false);
       const previousFlights = utils.users.getUserFlights.getData({
         username,
       });
@@ -41,22 +33,24 @@ export const DeleteFlightModal = ({
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: onClose,
+          onClick: () => setIsDeleteDialogOpen(false),
         },
         {
           children: 'Delete',
           color: 'primary',
           loading: isLoading,
-          onClick: () => data !== null && mutate({ id: data.id }),
+          onClick: () =>
+            activeFlight !== null && mutate({ id: activeFlight.id }),
         },
       ]}
-      onClose={onClose}
-      open={open}
+      onClose={() => setIsDeleteDialogOpen(false)}
+      open={isDeleteDialogOpen}
       title="Delete Flight"
     >
       Are you sure you want to delete your{' '}
       <strong>
-        {data?.departureAirportId ?? ''} - {data?.arrivalAirportId ?? ''}
+        {activeFlight?.departureAirportId ?? ''} -{' '}
+        {activeFlight?.arrivalAirportId ?? ''}
       </strong>{' '}
       flight?
     </Modal>

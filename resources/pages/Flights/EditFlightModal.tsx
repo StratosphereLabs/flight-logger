@@ -10,6 +10,7 @@ import {
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
 import { editFlightDefaultValues } from './constants';
+import { useFlightsPageStore } from './flightsPageStore';
 import {
   AircraftTypeInput,
   AirlineInput,
@@ -21,72 +22,67 @@ import {
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { FlightsRouterOutput } from '../../../app/routes/flights';
-import { UsersRouterOutput } from '../../../app/routes/users';
 import { EditFlightRequest, editFlightSchema } from '../../../app/schemas';
 
 export interface EditFlightProps {
-  data: UsersRouterOutput['getUserFlights'][number] | null;
-  onClose: () => void;
   onSuccess: (data: FlightsRouterOutput['editFlight']) => void;
-  open: boolean;
 }
 
 export const EditFlightModal = ({
-  data,
-  onClose,
   onSuccess,
-  open,
 }: EditFlightProps): JSX.Element => {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const methods = useForm<EditFlightRequest>({
     defaultValues: editFlightDefaultValues,
     resolver: zodResolver(editFlightSchema),
   });
+  const { activeFlight, isEditDialogOpen, setIsEditDialogOpen } =
+    useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.flights.editFlight.useMutation({
     onSuccess: newFlight => {
       handleSuccess('Flight Edited!');
       onSuccess(newFlight);
-      onClose();
+      setIsEditDialogOpen(false);
     },
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
-    if (open) {
+    if (isEditDialogOpen) {
       modalRef.current?.scrollTo(0, 0);
       setTimeout(() => methods.setFocus('departureAirportId'), 100);
     }
-  }, [open]);
+  }, [isEditDialogOpen]);
   useEffect(() => {
-    if (data !== null) {
+    if (activeFlight !== null) {
       methods.reset({
-        id: data.id,
-        departureAirportId: data.departureAirportId,
-        arrivalAirportId: data.arrivalAirportId,
-        airlineId: data.airlineId ?? '',
-        aircraftTypeId: data.aircraftTypeId ?? '',
-        flightNumber: data.flightNumber,
-        callsign: data.callsign ?? '',
-        tailNumber: data.tailNumber ?? '',
-        outDateISO: data.outDateISO,
-        outTimeValue: data.outTimeValue,
-        inTimeValue: data.inTimeValue,
-        class: data.class,
-        seatNumber: data.seatNumber ?? '',
-        seatPosition: data.seatPosition,
-        reason: data.reason,
-        comments: data.comments ?? '',
-        trackingLink: data.trackingLink ?? '',
+        id: activeFlight.id,
+        departureAirportId: activeFlight.departureAirportId,
+        arrivalAirportId: activeFlight.arrivalAirportId,
+        airlineId: activeFlight.airlineId ?? '',
+        aircraftTypeId: activeFlight.aircraftTypeId ?? '',
+        flightNumber: activeFlight.flightNumber,
+        callsign: activeFlight.callsign ?? '',
+        tailNumber: activeFlight.tailNumber ?? '',
+        outDateISO: activeFlight.outDateISO,
+        outTimeValue: activeFlight.outTimeValue,
+        inTimeValue: activeFlight.inTimeValue,
+        class: activeFlight.class,
+        seatNumber: activeFlight.seatNumber ?? '',
+        seatPosition: activeFlight.seatPosition,
+        reason: activeFlight.reason,
+        comments: activeFlight.comments ?? '',
+        trackingLink: activeFlight.trackingLink ?? '',
       });
     }
-  }, [data]);
+  }, [activeFlight]);
   return (
     <Modal
       actionButtons={[
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: onClose,
+          onClick: () => setIsEditDialogOpen(false),
         },
         {
           children: 'Save',
@@ -97,14 +93,16 @@ export const EditFlightModal = ({
         },
       ]}
       className="overflow-x-hidden"
-      onClose={onClose}
-      open={open}
+      onClose={() => setIsEditDialogOpen(false)}
+      open={isEditDialogOpen}
       ref={modalRef}
       title="Edit Flight"
     >
       <Form className="flex flex-col gap-4" methods={methods}>
         <AirportInput
-          defaultOptions={data !== null ? [data.departureAirport] : []}
+          defaultOptions={
+            activeFlight !== null ? [activeFlight.departureAirport] : []
+          }
           isRequired
           labelText="Departure Airport"
           menuClassName="w-full"
@@ -112,7 +110,9 @@ export const EditFlightModal = ({
           showDirty
         />
         <AirportInput
-          defaultOptions={data !== null ? [data.arrivalAirport] : []}
+          defaultOptions={
+            activeFlight !== null ? [activeFlight.arrivalAirport] : []
+          }
           isRequired
           labelText="Arrival Airport"
           menuClassName="w-full"
@@ -146,8 +146,9 @@ export const EditFlightModal = ({
         />
         <AirlineInput
           defaultOptions={
-            data?.airline !== undefined && data?.airline !== null
-              ? [data.airline]
+            activeFlight?.airline !== undefined &&
+            activeFlight?.airline !== null
+              ? [activeFlight.airline]
               : []
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
@@ -158,8 +159,9 @@ export const EditFlightModal = ({
         />
         <AircraftTypeInput
           defaultOptions={
-            data?.aircraftType !== undefined && data?.aircraftType !== null
-              ? [data.aircraftType]
+            activeFlight?.aircraftType !== undefined &&
+            activeFlight?.aircraftType !== null
+              ? [activeFlight.aircraftType]
               : []
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
