@@ -5,7 +5,7 @@ import { useAlertMessages } from 'stratosphere-ui';
 import { REST_API_URL } from '../constants';
 import { useErrorResponseHandler } from '.';
 import { ErrorResponse } from '../types';
-import { useAppContext } from '../../providers';
+import { useAuthStore } from '../../stores';
 
 export interface GoogleLoginResponse {
   token: string;
@@ -17,7 +17,7 @@ export const useGoogleLoginMutation = (): UseMutationResult<
   GoogleLoginRequest
 > => {
   const { clearAlertMessages } = useAlertMessages();
-  const { setToken } = useAppContext();
+  const { setToken } = useAuthStore();
   const onErrorResponse = useErrorResponseHandler();
   return useMutation(
     async data => {

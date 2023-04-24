@@ -1,7 +1,7 @@
-import { AppTheme, useAppContext } from '../../providers';
+import { AppTheme, useThemeStore } from '../../stores';
 
 export const useScrollBar = (): string => {
-  const { theme } = useAppContext();
+  const { theme } = useThemeStore();
   return `scrollbar ${
     theme === AppTheme.DARK
       ? 'scrollbar-thumb-gray-900'

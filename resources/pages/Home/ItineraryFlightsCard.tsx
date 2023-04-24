@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { Breadcrumbs, Button, Card, ToastProps } from 'react-daisyui';
 import { Badge } from 'stratosphere-ui';
-import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
+import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
 export interface ItineraryFlightsCardProps
   extends Omit<ToastProps, 'horizontal' | 'vertical'> {
@@ -23,7 +23,7 @@ export const ItineraryFlightsCard = forwardRef<
       setDeleteFlightId,
       setIsDeleteItineraryModalOpen,
       setIsResetItineraryModalOpen,
-    } = useItineraryFlightsContext();
+    } = useItineraryFlightsStore();
     return (
       <Card
         className={classNames('bg-base-100 text-center shadow-lg', className)}
