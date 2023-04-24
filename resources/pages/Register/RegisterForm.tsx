@@ -5,11 +5,11 @@ import { useLinkClickHandler } from 'react-router-dom';
 import { Form, FormControl, PasswordInput } from 'stratosphere-ui';
 import { registerSchema } from '../../../app/schemas';
 import { useTRPCErrorHandler } from '../../common/hooks';
-import { useAppContext } from '../../providers';
+import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
 export const RegisterForm = (): JSX.Element => {
-  const { setToken } = useAppContext();
+  const { setToken } = useAuthStore();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
