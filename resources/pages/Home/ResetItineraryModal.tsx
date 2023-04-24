@@ -1,5 +1,5 @@
 import { Modal } from 'stratosphere-ui';
-import { useItineraryFlightsContext } from './ItineraryFlightsProvider';
+import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
 export interface ResetItineraryModalProps {
   onSubmit?: () => void;
@@ -12,7 +12,7 @@ export const ResetItineraryModal = ({
     isResetItineraryModalOpen,
     resetFlights,
     setIsResetItineraryModalOpen,
-  } = useItineraryFlightsContext();
+  } = useItineraryFlightsStore();
   const onClose = (): void => setIsResetItineraryModalOpen(false);
   return (
     <Modal
