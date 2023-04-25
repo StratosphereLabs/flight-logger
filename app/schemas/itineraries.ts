@@ -49,6 +49,10 @@ export const addItinerarySchema = z.object({
     .min(1, 'Must add at least one flight.'),
 });
 
+export const deleteItinerarySchema = z.object({
+  id: z.string().uuid(),
+});
+
 export type AddItineraryRequest = z.infer<typeof addItinerarySchema>;
 
 export type ItineraryFlight = z.infer<typeof itineraryFlightSchema>;

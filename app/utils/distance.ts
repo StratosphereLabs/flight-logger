@@ -18,9 +18,7 @@ export const calculateDistance = (
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  const distance = earthRadius * c;
-
-  return Math.round(distance);
+  return earthRadius * c;
 };
 
 export const toRadians = (degrees: number): number => {

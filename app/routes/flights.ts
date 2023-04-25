@@ -215,9 +215,6 @@ export const flightsRouter = router({
         },
       });
     }),
-  deleteFlights: procedure.use(verifyAdminTRPC).mutation(async () => {
-    await prisma.flight.deleteMany({});
-  }),
 });
 
 export type FlightsRouter = typeof flightsRouter;

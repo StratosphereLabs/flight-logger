@@ -3,11 +3,11 @@ import { getCoreRowModel } from '@tanstack/react-table';
 import { Badge, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { LoadingCard, Table } from 'stratosphere-ui';
-import { ActionsCell } from './ActionsCell';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { useFlightsPageStore } from './flightsPageStore';
 import { ViewFlightModal } from './ViewFlightModal';
+import { ActionsCell } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -171,15 +171,18 @@ export const Flights = (): JSX.Element => {
                 header: () => <div className="hidden xl:flex">Actions</div>,
                 cell: ({ row }) => (
                   <ActionsCell
-                    onDeleteFlight={() => {
+                    deleteMessage="Delete Flight"
+                    editMessage="Edit Flight"
+                    viewMessage="View Flight"
+                    onDelete={() => {
                       setActiveFlight(row.original);
                       setIsDeleteDialogOpen(true);
                     }}
-                    onEditFlight={() => {
+                    onEdit={() => {
                       setActiveFlight(row.original);
                       setIsEditDialogOpen(true);
                     }}
-                    onViewFlight={() => {
+                    onView={() => {
                       setActiveFlight(row.original);
                       setIsViewDialogOpen(true);
                     }}
