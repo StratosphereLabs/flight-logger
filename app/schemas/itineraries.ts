@@ -43,8 +43,10 @@ export const getItinerarySchema = z.object({
 });
 
 export const addItinerarySchema = z.object({
-  name: z.string().optional(),
-  flights: z.array(itineraryFlightSchema),
+  name: z.string().trim().min(1, 'Invalid itinerary name.').optional(),
+  flights: z
+    .array(itineraryFlightSchema)
+    .min(1, 'Must add at least one flight.'),
 });
 
 export type AddItineraryRequest = z.infer<typeof addItinerarySchema>;

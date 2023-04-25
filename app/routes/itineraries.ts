@@ -9,18 +9,6 @@ export const itinerariesRouter = router({
   createItinerary: procedure
     .input(addItinerarySchema)
     .mutation(async ({ input, ctx }) => {
-      if (input.name?.length === 0) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: "Itinerary name can't be blank",
-        });
-      }
-      if (input.flights.length === 0) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Please add at least one flight',
-        });
-      }
       const airportIds = [
         ...new Set(
           input.flights.flatMap(flight =>
@@ -52,7 +40,7 @@ export const itinerariesRouter = router({
       });
       const itineraryData = getItineraryData({ flights: input.flights, data });
       const itineraryName =
-        input.name ??
+        input.name?.trim() ??
         `${itineraryData
           .map(({ arrivalAirport }) => arrivalAirport.municipality)
           .join(', ')} trip`;
