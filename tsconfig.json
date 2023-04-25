@@ -21,6 +21,7 @@
   },
   "include": [
     "app",
+    "prisma/generated/zod",
     "resources",
     "vitest",
     "postcss.config.cjs",

@@ -61,6 +61,7 @@ export const AddFlight = (): JSX.Element => {
                 <AirportInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ id, name }) => `${id} - ${name}`}
+                  getItemValue={({ id }) => id}
                   isRequired
                   labelText="Departure Airport"
                   menuClassName="w-full"
@@ -69,6 +70,7 @@ export const AddFlight = (): JSX.Element => {
                 <AirportInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ id, name }) => `${id} - ${name}`}
+                  getItemValue={({ id }) => id}
                   isRequired
                   labelText="Arrival Airport"
                   menuClassName="w-full"
@@ -106,6 +108,7 @@ export const AddFlight = (): JSX.Element => {
                   getBadgeText={({ iata, icao, name }) =>
                     `${iata}/${icao} - ${name}`
                   }
+                  getItemValue={({ id }) => id}
                   labelText="Airline"
                   menuClassName="w-full"
                   name="airlineId"
@@ -115,6 +118,7 @@ export const AddFlight = (): JSX.Element => {
                   getBadgeText={({ iata, icao, name }) =>
                     `${iata}/${icao} - ${name}`
                   }
+                  getItemValue={({ id }) => id}
                   labelText="Aircraft Type"
                   menuClassName="w-full"
                   name="aircraftTypeId"

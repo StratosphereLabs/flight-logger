@@ -30,7 +30,7 @@ export const CreateItineraryModal = (): JSX.Element => {
   });
   const resetForm = (): void => {
     methods.reset();
-    setTimeout(() => methods.setFocus('departureAirportId'), 250);
+    setTimeout(() => methods.setFocus('departureAirport'), 250);
   };
   const { error, isLoading, mutate } =
     trpc.itineraries.createItinerary.useMutation({
@@ -43,7 +43,7 @@ export const CreateItineraryModal = (): JSX.Element => {
   useEffect(() => {
     if (isCreateItineraryModalOpen) {
       modalRef.current?.scrollTo(0, 0);
-      setTimeout(() => methods.setFocus('departureAirportId'), 100);
+      setTimeout(() => methods.setFocus('departureAirport'), 100);
     }
   }, [isCreateItineraryModalOpen]);
   return (

@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { Breadcrumbs, Button, Card, ToastProps } from 'react-daisyui';
 import { Badge } from 'stratosphere-ui';
 import { useItineraryFlightsStore } from './itineraryFlightsStore';
+import { ResetIcon } from '../../common/components';
 
 export interface ItineraryFlightsCardProps
   extends Omit<ToastProps, 'horizontal' | 'vertical'> {
@@ -31,10 +32,11 @@ export const ItineraryFlightsCard = forwardRef<
         {...props}
       >
         <Card.Body className="flex-row justify-between gap-2">
-          <Breadcrumbs className="flex-1">
-            {flights.map(({ arrivalAirportId, departureAirportId, id }) => (
+          <Breadcrumbs className="flex flex-1 items-center">
+            {flights.map(({ arrivalAirport, departureAirport, id }) => (
               <Breadcrumbs.Item key={id}>
                 <Badge
+                  className="font-mono"
                   color="info"
                   dismissable
                   onDismiss={() => {
@@ -42,25 +44,21 @@ export const ItineraryFlightsCard = forwardRef<
                     setIsDeleteItineraryModalOpen(true);
                   }}
                 >
-                  {departureAirportId} / {arrivalAirportId}
+                  {departureAirport?.iata}/{arrivalAirport?.iata}
                 </Badge>
               </Breadcrumbs.Item>
             ))}
           </Breadcrumbs>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             <Button
-              color="secondary"
+              color="ghost"
               onClick={() => setIsResetItineraryModalOpen(true)}
+              shape="circle"
               size="sm"
             >
-              Reset
+              <ResetIcon className="h-6 w-6" />
             </Button>
-            <Button
-              color="primary"
-              loading={isLoading}
-              onClick={onSubmit}
-              size="sm"
-            >
+            <Button color="primary" loading={isLoading} onClick={onSubmit}>
               Create
             </Button>
           </div>

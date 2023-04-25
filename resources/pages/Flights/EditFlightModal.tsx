@@ -103,6 +103,7 @@ export const EditFlightModal = ({
           defaultOptions={
             activeFlight !== null ? [activeFlight.departureAirport] : []
           }
+          getItemValue={({ id }) => id}
           isRequired
           labelText="Departure Airport"
           menuClassName="w-full"
@@ -113,6 +114,7 @@ export const EditFlightModal = ({
           defaultOptions={
             activeFlight !== null ? [activeFlight.arrivalAirport] : []
           }
+          getItemValue={({ id }) => id}
           isRequired
           labelText="Arrival Airport"
           menuClassName="w-full"
@@ -152,6 +154,7 @@ export const EditFlightModal = ({
               : []
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
+          getItemValue={({ id }) => id}
           labelText="Airline"
           menuClassName="w-full"
           name="airlineId"
@@ -165,6 +168,7 @@ export const EditFlightModal = ({
               : []
           }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
+          getItemValue={({ id }) => id}
           labelText="Aircraft Type"
           menuClassName="w-full"
           name="aircraftTypeId"

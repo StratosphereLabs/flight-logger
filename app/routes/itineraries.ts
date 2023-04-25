@@ -17,23 +17,24 @@ export const itinerariesRouter = router({
       }
       const airportIds = [
         ...new Set(
-          input.flatMap(flight => [
-            flight.departureAirportId,
-            flight.arrivalAirportId,
-          ]),
+          input.flatMap(flight =>
+            flight.departureAirport !== null && flight.arrivalAirport !== null
+              ? [flight.departureAirport.id, flight.arrivalAirport.id]
+              : [],
+          ),
         ),
       ];
       const airlineIds = [
         ...new Set(
           input.flatMap(flight =>
-            flight.airlineId !== null ? [flight.airlineId] : [],
+            flight.airline !== null ? [flight.airline.id] : [],
           ),
         ),
       ];
       const aircraftTypeData = [
         ...new Set(
           input.flatMap(flight =>
-            flight.aircraftTypeId !== null ? [flight.aircraftTypeId] : [],
+            flight.aircraftType !== null ? [flight.aircraftType.id] : [],
           ),
         ),
       ];
