@@ -1,6 +1,7 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import { getAirports, getRoutes } from '../parsers';
+import { ItineraryResult } from '../parsers/itineraries';
 import { getUserSchema, getUsersSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -125,6 +126,25 @@ export const usersRouter = router({
         airports,
         routes,
       };
+    }),
+  getUserItineraries: procedure
+    .input(getUserSchema.optional())
+    .query(async ({ ctx, input }) => {
+      const itineraries = await prisma.itinerary.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+        },
+      });
+      return itineraries.map(({ flights, ...itinerary }) => {
+        const itineraryFlights = JSON.parse(flights) as ItineraryResult[];
+        return {
+          ...itinerary,
+          flights: itineraryFlights,
+          numFlights: itineraryFlights.length,
+        };
+      });
     }),
   getUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
     const results = await prisma.user.findMany({

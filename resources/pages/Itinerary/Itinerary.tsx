@@ -19,10 +19,10 @@ export const Itinerary = (): JSX.Element | null => {
   return (
     <div className="flex flex-1 flex-col gap-3 p-3">
       <div className="mb-4 flex justify-center">
-        <h1 className="text-3xl font-bold">Itinerary</h1>
+        <h1 className="text-3xl font-bold">{data?.name}</h1>
       </div>
       {isLoading ? <Progress /> : null}
-      {data?.map((flight, index) => (
+      {data?.flights.map((flight, index) => (
         <>
           {flight.segmentTitle !== '' ? (
             <div
@@ -43,11 +43,15 @@ export const Itinerary = (): JSX.Element | null => {
           ) : null}
           <Card key={index} className="bg-base-100 shadow-lg">
             <Card.Body className="flex-row items-center justify-between gap-4">
-              <AirlineLogo
-                alt="Airline Logo"
-                className="hidden md:block"
-                url={flight.airline?.logo}
-              />
+              {flight.airline !== null ? (
+                <AirlineLogo
+                  alt="Airline Logo"
+                  className="hidden md:block"
+                  url={flight.airline?.logo}
+                />
+              ) : (
+                'Unknown Airline'
+              )}
               <div className="flex flex-1 flex-col gap-1">
                 <div className="opacity-90">{flight.airline?.name}</div>
                 {flight.flightNumber !== null ? (

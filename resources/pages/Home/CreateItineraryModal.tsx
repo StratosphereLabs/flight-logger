@@ -60,7 +60,7 @@ export const CreateItineraryModal = (): JSX.Element => {
         {flights.length > 0 ? (
           <ItineraryFlightsCard
             isLoading={isLoading}
-            onSubmit={() => mutate(flights)}
+            onSubmit={() => mutate({ flights })}
           />
         ) : null}
         <Form

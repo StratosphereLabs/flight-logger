@@ -1,16 +1,13 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { generateUUID } from '../../common/utils';
-import {
-  AddItineraryRequest,
-  ItineraryFlight,
-} from '../../../app/schemas/itineraries';
+import { ItineraryFlight } from '../../../app/schemas/itineraries';
 
 interface ItineraryFlightsState {
   addFlight: (flight: Omit<ItineraryFlight, 'id'>) => void;
   deleteFlight: (id: string) => void;
   deleteFlightId: string | null;
-  flights: AddItineraryRequest;
+  flights: ItineraryFlight[];
   isCreateItineraryModalOpen: boolean;
   isDeleteItineraryModalOpen: boolean;
   isResetItineraryModalOpen: boolean;

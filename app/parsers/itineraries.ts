@@ -2,7 +2,7 @@ import { aircraft_type, airline, airport, FlightClass } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { isBefore } from 'date-fns';
 import { DataFetchResults } from './fetchData';
-import { AddItineraryRequest, ItineraryFlight } from '../schemas/itineraries';
+import { ItineraryFlight } from '../schemas/itineraries';
 import { WithRequiredNonNull } from '../types';
 import {
   FlightTimesResult,
@@ -13,7 +13,7 @@ import {
 } from '../utils';
 
 export interface GetItineraryDataOptions {
-  input: AddItineraryRequest;
+  flights: ItineraryFlight[];
   data: DataFetchResults;
 }
 
@@ -69,11 +69,11 @@ const getSegmentedFlights = (
   );
 
 export const getItineraryData = ({
-  input,
+  flights,
   data,
 }: GetItineraryDataOptions): ItineraryResult[] => {
-  const flightsWithTimestamps: ItineraryFlightWithTimestamps[] = input.flatMap(
-    flight => {
+  const flightsWithTimestamps: ItineraryFlightWithTimestamps[] =
+    flights.flatMap(flight => {
       const departureAirport = data.airports[flight.departureAirport?.id ?? ''];
       const arrivalAirport = data.airports[flight.arrivalAirport?.id ?? ''];
       if (departureAirport === undefined || arrivalAirport === undefined) {
@@ -96,8 +96,7 @@ export const getItineraryData = ({
           }),
         },
       ];
-    },
-  );
+    });
   const segmentedFlights = getSegmentedFlights(flightsWithTimestamps);
   return segmentedFlights.flatMap(segment => {
     const firstFlight = segment[0];

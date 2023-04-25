@@ -9,7 +9,13 @@ export const itinerariesRouter = router({
   createItinerary: procedure
     .input(addItinerarySchema)
     .mutation(async ({ input, ctx }) => {
-      if (input.length === 0) {
+      if (input.name?.length === 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: "Itinerary name can't be blank",
+        });
+      }
+      if (input.flights.length === 0) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Please add at least one flight',
@@ -17,7 +23,7 @@ export const itinerariesRouter = router({
       }
       const airportIds = [
         ...new Set(
-          input.flatMap(flight =>
+          input.flights.flatMap(flight =>
             flight.departureAirport !== null && flight.arrivalAirport !== null
               ? [flight.departureAirport.id, flight.arrivalAirport.id]
               : [],
@@ -26,14 +32,14 @@ export const itinerariesRouter = router({
       ];
       const airlineIds = [
         ...new Set(
-          input.flatMap(flight =>
+          input.flights.flatMap(flight =>
             flight.airline !== null ? [flight.airline.id] : [],
           ),
         ),
       ];
       const aircraftTypeData = [
         ...new Set(
-          input.flatMap(flight =>
+          input.flights.flatMap(flight =>
             flight.aircraftType !== null ? [flight.aircraftType.id] : [],
           ),
         ),
@@ -44,10 +50,16 @@ export const itinerariesRouter = router({
         aircraftTypeData,
         aircraftSearchType: 'id',
       });
-      const itineraryData = getItineraryData({ input, data });
+      const itineraryData = getItineraryData({ flights: input.flights, data });
+      const itineraryName =
+        input.name ??
+        `${itineraryData
+          .map(({ arrivalAirport }) => arrivalAirport.municipality)
+          .join(', ')} trip`;
       return await prisma.itinerary.create({
         data: {
           userId: ctx.user?.id,
+          name: itineraryName,
           flights: JSON.stringify(itineraryData),
         },
       });
@@ -64,6 +76,9 @@ export const itinerariesRouter = router({
         message: 'Itinerary not found',
       });
     }
-    return JSON.parse(itinerary?.flights) as ItineraryResult[];
+    return {
+      ...itinerary,
+      flights: JSON.parse(itinerary?.flights) as ItineraryResult[],
+    };
   }),
 });
