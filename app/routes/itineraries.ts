@@ -66,7 +66,7 @@ export const itinerariesRouter = router({
     if (itinerary === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Itinerary not found',
+        message: 'Itinerary not found.',
       });
     }
     return {
@@ -79,12 +79,18 @@ export const itinerariesRouter = router({
     .input(deleteItinerarySchema)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
-      const flight = await prisma.itinerary.findFirst({
+      const itinerary = await prisma.itinerary.findFirst({
         where: {
           id,
         },
       });
-      if (flight?.userId !== ctx.user.id) {
+      if (itinerary === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Itinerary not found.',
+        });
+      }
+      if (itinerary.userId !== ctx.user.id) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Unable to delete itinerary.',

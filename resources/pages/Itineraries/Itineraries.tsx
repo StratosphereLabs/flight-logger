@@ -2,6 +2,7 @@ import { getCoreRowModel } from '@tanstack/react-table';
 import { Card } from 'react-daisyui';
 import { Link, useParams } from 'react-router-dom';
 import { LoadingCard, Table } from 'stratosphere-ui';
+import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { useItinerariesPageStore } from './itinerariesPageStore';
 import { ActionsCell } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -120,6 +121,7 @@ export const Itineraries = (): JSX.Element => {
           />
         </Card.Body>
       </LoadingCard>
+      <DeleteItineraryModal />
     </>
   );
 };
