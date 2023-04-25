@@ -1,39 +1,39 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
+import { verifyAuthenticated } from '../middleware';
 import { fetchData } from '../parsers/fetchData';
 import { getItineraryData, ItineraryResult } from '../parsers/itineraries';
-import { addItinerarySchema, getItinerarySchema } from '../schemas/itineraries';
+import {
+  addItinerarySchema,
+  deleteItinerarySchema,
+  getItinerarySchema,
+} from '../schemas/itineraries';
 import { procedure, router } from '../trpc';
 
 export const itinerariesRouter = router({
   createItinerary: procedure
     .input(addItinerarySchema)
-    .mutation(async ({ input }) => {
-      if (input.length === 0) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Please add at least one flight',
-        });
-      }
+    .mutation(async ({ input, ctx }) => {
       const airportIds = [
         ...new Set(
-          input.flatMap(flight => [
-            flight.departureAirportId,
-            flight.arrivalAirportId,
-          ]),
+          input.flights.flatMap(flight =>
+            flight.departureAirport !== null && flight.arrivalAirport !== null
+              ? [flight.departureAirport.id, flight.arrivalAirport.id]
+              : [],
+          ),
         ),
       ];
       const airlineIds = [
         ...new Set(
-          input.flatMap(flight =>
-            flight.airlineId !== null ? [flight.airlineId] : [],
+          input.flights.flatMap(flight =>
+            flight.airline !== null ? [flight.airline.id] : [],
           ),
         ),
       ];
       const aircraftTypeData = [
         ...new Set(
-          input.flatMap(flight =>
-            flight.aircraftTypeId !== null ? [flight.aircraftTypeId] : [],
+          input.flights.flatMap(flight =>
+            flight.aircraftType !== null ? [flight.aircraftType.id] : [],
           ),
         ),
       ];
@@ -43,9 +43,16 @@ export const itinerariesRouter = router({
         aircraftTypeData,
         aircraftSearchType: 'id',
       });
-      const itineraryData = getItineraryData({ input, data });
+      const itineraryData = getItineraryData({ flights: input.flights, data });
+      const itineraryName =
+        input.name?.trim() ??
+        `${itineraryData
+          .map(({ arrivalAirport }) => arrivalAirport.municipality)
+          .join(', ')} trip`;
       return await prisma.itinerary.create({
         data: {
+          userId: ctx.user?.id,
+          name: itineraryName,
           flights: JSON.stringify(itineraryData),
         },
       });
@@ -59,9 +66,40 @@ export const itinerariesRouter = router({
     if (itinerary === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Itinerary not found',
+        message: 'Itinerary not found.',
       });
     }
-    return JSON.parse(itinerary?.flights) as ItineraryResult[];
+    return {
+      ...itinerary,
+      flights: JSON.parse(itinerary?.flights) as ItineraryResult[],
+    };
   }),
+  deleteItinerary: procedure
+    .use(verifyAuthenticated)
+    .input(deleteItinerarySchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+      const itinerary = await prisma.itinerary.findFirst({
+        where: {
+          id,
+        },
+      });
+      if (itinerary === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Itinerary not found.',
+        });
+      }
+      if (itinerary.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Unable to delete itinerary.',
+        });
+      }
+      return await prisma.itinerary.delete({
+        where: {
+          id,
+        },
+      });
+    }),
 });

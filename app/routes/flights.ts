@@ -1,6 +1,6 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
+import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
   deleteFlightSchema,
@@ -114,7 +114,13 @@ export const flightsRouter = router({
           id,
         },
       });
-      if (flight?.userId !== ctx.user.id) {
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      if (flight.userId !== ctx.user.id) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Unable to edit flight.',
@@ -203,7 +209,13 @@ export const flightsRouter = router({
           id,
         },
       });
-      if (flight?.userId !== ctx.user.id) {
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      if (flight.userId !== ctx.user.id) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Unable to delete flight.',
@@ -215,9 +227,6 @@ export const flightsRouter = router({
         },
       });
     }),
-  deleteFlights: procedure.use(verifyAdminTRPC).mutation(async () => {
-    await prisma.flight.deleteMany({});
-  }),
 });
 
 export type FlightsRouter = typeof flightsRouter;

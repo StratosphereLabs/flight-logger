@@ -8,7 +8,7 @@ import { trpc } from '../../utils/trpc';
 export interface AirportInputProps<Values extends FieldValues>
   extends Omit<
     TypeaheadSelectProps<airport, Values>,
-    'getItemText' | 'getItemValue' | 'onDebouncedChange' | 'options'
+    'getItemText' | 'onDebouncedChange' | 'options'
   > {}
 
 export const AirportInput = <Values extends FieldValues>(
@@ -27,7 +27,6 @@ export const AirportInput = <Values extends FieldValues>(
   return (
     <TypeaheadSelect
       getItemText={({ id, name }) => `${id} - ${name}`}
-      getItemValue={({ id }) => id}
       onDebouncedChange={setQuery}
       options={data}
       {...props}

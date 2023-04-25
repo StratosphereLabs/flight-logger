@@ -1,6 +1,7 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import { getAirports, getRoutes } from '../parsers';
+import { ItineraryResult } from '../parsers/itineraries';
 import { getUserSchema, getUsersSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -82,6 +83,12 @@ export const usersRouter = router({
           outTime: flight.outTime,
           inTime: flight.inTime,
         });
+        const flightDistance = calculateDistance(
+          flight.departureAirport.lat,
+          flight.departureAirport.lon,
+          flight.arrivalAirport.lat,
+          flight.arrivalAirport.lon,
+        );
         return {
           ...flight,
           flightNumberString:
@@ -96,12 +103,7 @@ export const usersRouter = router({
           outTimeValue,
           inTimeLocal,
           inTimeValue,
-          distance: calculateDistance(
-            flight.departureAirport.lat,
-            flight.departureAirport.lon,
-            flight.arrivalAirport.lat,
-            flight.arrivalAirport.lon,
-          ),
+          distance: Math.round(flightDistance),
         };
       });
     }),
@@ -125,6 +127,40 @@ export const usersRouter = router({
         airports,
         routes,
       };
+    }),
+  getUserItineraries: procedure
+    .input(getUserSchema.optional())
+    .query(async ({ ctx, input }) => {
+      const itineraries = await prisma.itinerary.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+        },
+      });
+      return itineraries.map(({ flights, ...itinerary }) => {
+        const itineraryFlights = JSON.parse(flights) as ItineraryResult[];
+        const flightsWithDistance = itineraryFlights.map(flight => ({
+          ...flight,
+          distance: calculateDistance(
+            flight.departureAirport.lat,
+            flight.departureAirport.lon,
+            flight.arrivalAirport.lat,
+            flight.arrivalAirport.lon,
+          ),
+        }));
+        const totalDistance = flightsWithDistance.reduce(
+          (acc, { distance }) => acc + distance,
+          0,
+        );
+        return {
+          ...itinerary,
+          flights: flightsWithDistance,
+          distance: Math.round(totalDistance),
+          numFlights: itineraryFlights.length,
+          date: itineraryFlights[0].outDate,
+        };
+      });
     }),
   getUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
     const results = await prisma.user.findMany({

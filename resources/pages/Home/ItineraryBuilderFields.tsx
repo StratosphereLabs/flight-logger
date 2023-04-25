@@ -32,7 +32,7 @@ export const ItineraryBuilderFields = forwardRef<
           isRequired
           labelText="Departure Airport"
           menuClassName="w-full"
-          name="departureAirportId"
+          name="departureAirport"
         />
         <AirportInput
           className="w-[350px] min-w-[250px]"
@@ -40,7 +40,7 @@ export const ItineraryBuilderFields = forwardRef<
           isRequired
           labelText="Arrival Airport"
           menuClassName="w-full"
-          name="arrivalAirportId"
+          name="arrivalAirport"
         />
       </div>
       <div className="flex flex-wrap justify-between gap-8">
@@ -74,7 +74,7 @@ export const ItineraryBuilderFields = forwardRef<
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Airline"
           menuClassName="w-full"
-          name="airlineId"
+          name="airline"
         />
         <FormControl
           className="w-[150px]"
@@ -87,7 +87,7 @@ export const ItineraryBuilderFields = forwardRef<
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
           menuClassName="w-full"
-          name="aircraftTypeId"
+          name="aircraftType"
         />
         <FormRadio
           className="w-[400px] min-w-[250px]"

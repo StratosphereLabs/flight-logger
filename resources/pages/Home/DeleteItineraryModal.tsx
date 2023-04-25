@@ -38,7 +38,8 @@ export const DeleteItineraryModal = (): JSX.Element => {
     >
       Are you sure you want to delete your{' '}
       <strong>
-        {flight?.departureAirportId ?? ''} - {flight?.arrivalAirportId ?? ''}
+        {flight?.departureAirport?.id ?? ''} -{' '}
+        {flight?.arrivalAirport?.id ?? ''}
       </strong>{' '}
       flight?
     </Modal>

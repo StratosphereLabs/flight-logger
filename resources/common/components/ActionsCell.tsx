@@ -8,20 +8,26 @@ import {
   LinkIcon,
   TrashIcon,
   ViewIcon,
-} from '../../common/components';
+} from './Icons';
 
 export interface ActionsCellProps {
   onCopyLink?: MouseEventHandler<HTMLElement>;
-  onDeleteFlight?: MouseEventHandler<HTMLElement>;
-  onEditFlight?: MouseEventHandler<HTMLElement>;
-  onViewFlight?: MouseEventHandler<HTMLElement>;
+  onDelete?: MouseEventHandler<HTMLElement>;
+  onEdit?: MouseEventHandler<HTMLElement>;
+  onView?: MouseEventHandler<HTMLElement>;
+  deleteMessage: string;
+  editMessage: string;
+  viewMessage: string;
 }
 
 export const ActionsCell = ({
+  deleteMessage,
+  editMessage,
   onCopyLink,
-  onDeleteFlight,
-  onEditFlight,
-  onViewFlight,
+  onDelete,
+  onEdit,
+  onView,
+  viewMessage,
 }: ActionsCellProps): JSX.Element => {
   const { username } = useParams();
   return (
@@ -31,29 +37,19 @@ export const ActionsCell = ({
           <LinkIcon />
           <span className="sr-only">Copy Link</span>
         </Button>
-        <Button className="px-1" color="info" onClick={onViewFlight} size="xs">
+        <Button className="px-1" color="info" onClick={onView} size="xs">
           <ViewIcon className="h-4 w-4" />
-          <span className="sr-only">View Flight</span>
+          <span className="sr-only">{viewMessage}</span>
         </Button>
         {username === undefined ? (
           <>
-            <Button
-              className="px-1"
-              color="success"
-              onClick={onEditFlight}
-              size="xs"
-            >
+            <Button className="px-1" color="success" onClick={onEdit} size="xs">
               <EditIcon />
-              <span className="sr-only">Edit Flight</span>
+              <span className="sr-only">{editMessage}</span>
             </Button>
-            <Button
-              className="px-1"
-              color="error"
-              onClick={onDeleteFlight}
-              size="xs"
-            >
+            <Button className="px-1" color="error" onClick={onDelete} size="xs">
               <TrashIcon />
-              <span className="sr-only">Delete Flight</span>
+              <span className="sr-only">{deleteMessage}</span>
             </Button>
           </>
         ) : null}
@@ -84,11 +80,11 @@ export const ActionsCell = ({
             },
             {
               id: 'view',
-              onClick: onViewFlight,
+              onClick: onView,
               children: (
                 <>
                   <ViewIcon className="h-4 w-4" />
-                  View Details
+                  {viewMessage}
                 </>
               ),
             },
@@ -96,21 +92,21 @@ export const ActionsCell = ({
               ? [
                   {
                     id: 'edit',
-                    onClick: onEditFlight,
+                    onClick: onEdit,
                     children: (
                       <>
                         <EditIcon />
-                        Edit Flight
+                        {editMessage}
                       </>
                     ),
                   },
                   {
                     id: 'delete',
-                    onClick: onDeleteFlight,
+                    onClick: onDelete,
                     children: (
                       <>
                         <TrashIcon />
-                        Delete Flight
+                        {deleteMessage}
                       </>
                     ),
                   },
