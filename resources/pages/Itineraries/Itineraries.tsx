@@ -1,12 +1,12 @@
 import { getCoreRowModel } from '@tanstack/react-table';
 import { Card } from 'react-daisyui';
 import { Link, useParams } from 'react-router-dom';
-import { LoadingCard, Table, useAlertMessages } from 'stratosphere-ui';
+import { LoadingCard, Table } from 'stratosphere-ui';
 import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { useItinerariesPageStore } from './itinerariesPageStore';
 import { ActionsCell } from '../../common/components';
 import { APP_URL } from '../../common/constants';
-import { useTRPCErrorHandler } from '../../common/hooks';
+import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export interface DeleteFlightData {
@@ -17,13 +17,13 @@ export interface DeleteFlightData {
 
 export const Itineraries = (): JSX.Element => {
   const { username } = useParams();
-  const { addAlertMessages } = useAlertMessages();
   const {
     setActiveItinerary,
     setIsDeleteDialogOpen,
     setIsEditDialogOpen,
     setIsViewDialogOpen,
   } = useItinerariesPageStore();
+  const copyToClipboard = useCopyToClipboard();
   const { data, error, isFetching } = trpc.users.getUserItineraries.useQuery({
     username,
   });
@@ -93,17 +93,12 @@ export const Itineraries = (): JSX.Element => {
                     deleteMessage="Delete Itinerary"
                     editMessage="Edit Itinerary"
                     viewMessage="View Itinerary"
-                    onCopyLink={async () => {
-                      await navigator.clipboard.writeText(
+                    onCopyLink={() =>
+                      copyToClipboard(
                         `${APP_URL}/itinerary/${row.original.id}`,
-                      );
-                      addAlertMessages([
-                        {
-                          status: 'success',
-                          message: 'Link copied to clipboard!',
-                        },
-                      ]);
-                    }}
+                        'Link copied to clipboard!',
+                      )
+                    }
                     onDelete={() => {
                       setActiveItinerary(row.original);
                       setIsDeleteDialogOpen(true);

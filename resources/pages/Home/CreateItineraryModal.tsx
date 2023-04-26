@@ -20,6 +20,7 @@ export const CreateItineraryModal = (): JSX.Element => {
     addFlight,
     flights,
     isCreateItineraryModalOpen,
+    resetFlights,
     setIsCreateItineraryModalOpen,
   } = useItineraryFlightsStore();
   const methods = useForm({
@@ -37,6 +38,7 @@ export const CreateItineraryModal = (): JSX.Element => {
       onSuccess: response => {
         setIsCreateItineraryModalOpen(false);
         navigate(`/itinerary/${response.id}`);
+        resetFlights();
       },
     });
   useTRPCErrorHandler(error);
