@@ -72,7 +72,7 @@ exports[`<App /> > renders login page 1`] = `
                   <input
                     aria-labelledby="label-email"
                     autocomplete="email"
-                    class="input w-full input-ghost focus:outline-offset-0 input-bordered"
+                    class="input w-full input-ghost input-bordered focus:outline-offset-0"
                     name="email"
                     type="email"
                     value=""
@@ -104,7 +104,7 @@ exports[`<App /> > renders login page 1`] = `
                   <input
                     aria-labelledby="label-password"
                     autocomplete="current-password"
-                    class="input w-full pr-10 input-ghost focus:outline-offset-0 input-bordered"
+                    class="input w-full pr-10 input-ghost input-bordered focus:outline-offset-0"
                     name="password"
                     type="password"
                     value=""

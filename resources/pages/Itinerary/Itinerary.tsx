@@ -1,13 +1,16 @@
 import classNames from 'classnames';
-import { Card, Divider, Progress } from 'react-daisyui';
+import { Button, Card, Divider, Progress } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { Badge } from 'stratosphere-ui';
 import { BADGE_COLORS_MAP, CLASS_TEXT_MAP } from './constants';
-import { AirlineLogo, RightArrowIcon } from '../../common/components';
+import { AirlineLogo, LinkIcon, RightArrowIcon } from '../../common/components';
+import { APP_URL } from '../../common/constants';
+import { useCopyToClipboard } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const Itinerary = (): JSX.Element | null => {
   const { id } = useParams();
+  const copyToClipboard = useCopyToClipboard();
   const { data, isLoading } = trpc.itineraries.getItinerary.useQuery(
     {
       id: id ?? '',
@@ -18,8 +21,21 @@ export const Itinerary = (): JSX.Element | null => {
   );
   return (
     <div className="flex flex-1 flex-col gap-3 p-3">
-      <div className="mb-4 flex justify-center">
-        <h1 className="text-3xl font-bold">{data?.name}</h1>
+      <div className="relative mb-4 flex items-center justify-center">
+        <h1 className="text-2xl font-bold sm:text-3xl">{data?.name}</h1>
+        <Button
+          startIcon={<LinkIcon />}
+          className="absolute end-0"
+          color="ghost"
+          onClick={() =>
+            copyToClipboard(
+              `${APP_URL}/itinerary/${data?.id ?? ''}`,
+              'Link copied to clipboard!',
+            )
+          }
+        >
+          <span className="hidden sm:block">Copy Link</span>
+        </Button>
       </div>
       {isLoading ? <Progress /> : null}
       {data?.flights.map((flight, index) => (
@@ -89,14 +105,14 @@ export const Itinerary = (): JSX.Element | null => {
                 <div className="opacity-60">Travel Time</div>
                 <div className="font-mono opacity-90">{flight.duration}</div>
               </div>
-              <div className="hidden flex-1 flex-col gap-1 text-sm sm:flex">
-                <div className="opacity-60">Aircraft</div>
-                <div className="opacity-90">
-                  {flight.aircraftType?.name ?? ''}
+              {flight.aircraftType !== null ? (
+                <div className="hidden flex-1 flex-col gap-1 text-sm sm:flex">
+                  <div className="opacity-60">Aircraft</div>
+                  <div className="opacity-90">{flight.aircraftType.name}</div>
                 </div>
-              </div>
-              <div className="hidden md:flex">
-                {flight.class !== null ? (
+              ) : null}
+              {flight.class !== null ? (
+                <div className="hidden md:flex">
                   <Badge
                     className="text-xs"
                     color={BADGE_COLORS_MAP[flight.class]}
@@ -104,8 +120,8 @@ export const Itinerary = (): JSX.Element | null => {
                   >
                     {CLASS_TEXT_MAP[flight.class]}
                   </Badge>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
             </Card.Body>
           </Card>
         </>
