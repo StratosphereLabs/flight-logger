@@ -1,14 +1,13 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../db';
+import { fetchFlightData, prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
-import { fetchData } from '../parsers/fetchData';
-import { getItineraryData, ItineraryResult } from '../parsers/itineraries';
 import {
   addItinerarySchema,
   deleteItinerarySchema,
   getItinerarySchema,
-} from '../schemas/itineraries';
+} from '../schemas';
 import { procedure, router } from '../trpc';
+import { getItineraryData, ItineraryResult } from '../utils';
 
 export const itinerariesRouter = router({
   createItinerary: procedure
@@ -37,7 +36,7 @@ export const itinerariesRouter = router({
           ),
         ),
       ];
-      const data = await fetchData({
+      const data = await fetchFlightData({
         airportIds,
         airlineIds,
         aircraftTypeData,
