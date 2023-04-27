@@ -1,17 +1,57 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Card } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { Form } from 'stratosphere-ui';
-import { FormFileUpload } from './FormFileUpload';
+import { Form, FormFileInput } from 'stratosphere-ui';
+import { useAccountPageStore } from './accountPageStore';
+import { WarningModal } from './WarningModal';
+import { useFlightDiaryUploadMutation } from '../../common/hooks';
+import { fileUploadSchema } from '../../../app/schemas/upload';
 
 export const Account = (): JSX.Element => {
+  const { mutate, isLoading } = useFlightDiaryUploadMutation();
+  const { setIsWarningDialogOpen } = useAccountPageStore();
   const methods = useForm({
-    defaultValues: {
-      file: '',
-    },
+    resolver: zodResolver(fileUploadSchema),
   });
-  console.log(methods.getValues());
   return (
-    <Form methods={methods}>
-      <FormFileUpload name="file" />
-    </Form>
+    <>
+      <Card>
+        <Card.Body>
+          <Card.Title>
+            Data Import{' '}
+            <span className="font-normal opacity-75">(Experimental)</span>
+          </Card.Title>
+          <Form methods={methods}>
+            <div className="flex w-full items-end justify-between">
+              <FormFileInput
+                color="info"
+                labelText="myFlightradar24"
+                name="file"
+              />
+              <Button
+                color="primary"
+                onClick={() => setIsWarningDialogOpen(true)}
+                type="button"
+              >
+                Upload
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+      </Card>
+      <WarningModal
+        isLoading={isLoading}
+        onConfirm={methods.handleSubmit(values => {
+          mutate(values.file as File, {
+            onSettled: () => setIsWarningDialogOpen(false),
+            onSuccess: () => methods.reset({ file: null }),
+            onError: () =>
+              methods.setError('file', {
+                message: 'File data invalid.',
+              }),
+          });
+        })}
+      />
+    </>
   );
 };

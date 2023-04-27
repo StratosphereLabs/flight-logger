@@ -4,7 +4,7 @@ import createHttpError from 'http-errors';
 import { findBestMatch } from 'string-similarity';
 import { fetchData } from './fetchData';
 import { prisma } from '../db';
-import { getFlightTimes } from '../utils';
+import { deleteAllUserFlights, getFlightTimes } from '../utils';
 import {
   getAircraftIcao,
   getAircraftName,
@@ -35,10 +35,15 @@ interface FlightDiaryRow {
   Aircraft_id: string;
 }
 
+interface FlightDiaryUploadResult {
+  numFlightsDeleted: number;
+  flights: Array<flight | null>;
+}
+
 export const saveFlightDiaryData = async (
   userId: number,
   file?: Express.Multer.File,
-): Promise<Array<flight | null>> => {
+): Promise<FlightDiaryUploadResult> => {
   if (file === undefined) {
     throw createHttpError(400, 'File not found');
   }
@@ -79,7 +84,8 @@ export const saveFlightDiaryData = async (
     aircraftSearchType: 'icao',
   });
 
-  return await prisma.$transaction(
+  const numFlightsDeleted = await deleteAllUserFlights(userId);
+  const flights = await prisma.$transaction(
     rows.flatMap(row => {
       const departureAirport = data.airports[row.From];
       const arrivalAirport = data.airports[row.To];
@@ -146,4 +152,6 @@ export const saveFlightDiaryData = async (
       ];
     }),
   );
+
+  return { numFlightsDeleted, flights };
 };

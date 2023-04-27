@@ -23,12 +23,8 @@ uploadRouter.post(
       return next(createHttpError(401, 'Unauthorized.'));
     }
     try {
-      const numFlightsDeleted = await deleteAllUserFlights(userId);
-      const flights = await saveFlightDiaryData(userId, file);
-      res.status(200).json({
-        numFlightsDeleted,
-        flights,
-      });
+      const result = await saveFlightDiaryData(userId, file);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
