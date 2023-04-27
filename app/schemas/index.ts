@@ -9,4 +9,5 @@ export * from './passwordReset';
 export * from './regions';
 export * from './search';
 export * from './trips';
+export * from './upload';
 export * from './users';

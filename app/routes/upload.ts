@@ -1,9 +1,11 @@
 import express from 'express';
 import { Request } from 'express-jwt';
+import createHttpError from 'http-errors';
 import multer from 'multer';
 import { UserToken } from '../context';
-import { authorizeToken, verifyAdminRest } from '../middleware';
+import { authorizeToken } from '../middleware';
 import { saveFlightDiaryData } from '../parsers';
+import { deleteAllUserFlights } from '../utils';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -11,16 +13,18 @@ const upload = multer({ storage });
 export const uploadRouter = express.Router();
 
 uploadRouter.post(
-  '/:username/flights/flightdiary',
+  '/flights/flightdiary',
   authorizeToken(true),
-  verifyAdminRest,
   upload.single('file'),
   async (req: Request<UserToken>, res, next) => {
     const { file } = req;
-    const username = req.params.username;
+    const userId = req.auth?.id;
+    if (userId === undefined) {
+      return next(createHttpError(401, 'Unauthorized.'));
+    }
     try {
-      const flights = await saveFlightDiaryData(username, file);
-      res.status(200).json(flights);
+      const result = await saveFlightDiaryData(userId, file);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }
