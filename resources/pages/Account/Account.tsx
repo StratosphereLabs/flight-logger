@@ -21,18 +21,17 @@ export const Account = (): JSX.Element => {
             Data Import{' '}
             <span className="font-normal opacity-75">(Experimental)</span>
           </Card.Title>
-          <Form methods={methods}>
+          <Form
+            methods={methods}
+            onFormSubmit={() => setIsWarningDialogOpen(true)}
+          >
             <div className="flex w-full items-end justify-between">
               <FormFileInput
                 color="info"
                 labelText="myFlightradar24"
                 name="file"
               />
-              <Button
-                color="primary"
-                onClick={() => setIsWarningDialogOpen(true)}
-                type="button"
-              >
+              <Button color="primary" type="submit">
                 Upload
               </Button>
             </div>
@@ -41,7 +40,8 @@ export const Account = (): JSX.Element => {
       </Card>
       <WarningModal
         isLoading={isLoading}
-        onConfirm={methods.handleSubmit(values => {
+        onConfirm={() => {
+          const values = methods.getValues();
           mutate(values.file as File, {
             onSettled: () => setIsWarningDialogOpen(false),
             onSuccess: () => methods.reset({ file: null }),
@@ -50,7 +50,7 @@ export const Account = (): JSX.Element => {
                 message: 'File data invalid.',
               }),
           });
-        })}
+        }}
       />
     </>
   );

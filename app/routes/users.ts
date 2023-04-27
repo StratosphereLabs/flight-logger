@@ -1,14 +1,15 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { getAirports, getRoutes } from '../parsers';
-import { ItineraryResult } from '../parsers/itineraries';
 import { getUserSchema, getUsersSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
   calculateDistance,
   excludeKeys,
   fetchGravatarUrl,
+  getAirports,
   getFlightTimestamps,
+  getRoutes,
+  ItineraryResult,
 } from '../utils';
 
 export const usersRouter = router({

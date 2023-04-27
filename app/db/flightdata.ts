@@ -1,26 +1,27 @@
 import { aircraft_type, airline, airport } from '@prisma/client';
-import { groupBy, keyBy } from 'lodash';
-import { prisma } from '../db';
+import groupBy from 'lodash.groupby';
+import keyBy from 'lodash.keyby';
+import { prisma } from './prisma';
 
-export interface DataFetchInput {
+export interface FlightDataFetchInput {
   airportIds: string[];
   airlineIds: string[];
   aircraftTypeData: string[];
   aircraftSearchType: 'id' | 'icao';
 }
 
-export interface DataFetchResults {
+export interface FlightDataFetchResults {
   airports: Record<string, airport>;
   airlines: Record<string, airline>;
   aircraftTypes: Record<string, aircraft_type[]>;
 }
 
-export const fetchData = async ({
+export const fetchFlightData = async ({
   airportIds,
   airlineIds,
   aircraftTypeData,
   aircraftSearchType,
-}: DataFetchInput): Promise<DataFetchResults> => {
+}: FlightDataFetchInput): Promise<FlightDataFetchResults> => {
   const [airports, airlines, aircraftTypes] = await prisma.$transaction([
     prisma.airport.findMany({
       where: {
