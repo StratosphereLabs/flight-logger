@@ -180,29 +180,40 @@ exports[`<App /> > renders login page 1`] = `
       </div>
     </div>
     <div
-      class="absolute top-0 right-0"
+      class="absolute right-0 top-0"
     >
-      <button
-        class="btn btn-circle btn-ghost"
+      <div
+        class="relative"
+        data-headlessui-state=""
       >
-        <svg
-          class="h-6 w-6"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
+        <button
+          aria-expanded="false"
+          aria-haspopup="menu"
+          class="btn btn-circle btn-ghost"
+          data-headlessui-state=""
+          id="headlessui-menu-button-:r0:"
+          type="button"
         >
-          <path
-            clip-rule="evenodd"
-            d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
-            fill-rule="evenodd"
-          />
-        </svg>
-        <span
-          class="sr-only"
-        >
-          Toggle Theme
-        </span>
-      </button>
+          <svg
+            class="h-5 w-5"
+            fill="currentColor"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              clip-rule="evenodd"
+              d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z"
+              fill-rule="evenodd"
+            />
+          </svg>
+          <span
+            class="sr-only"
+          >
+            Toggle Theme
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -233,7 +244,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-haspopup="menu"
               class="btn lg:hidden btn-ghost"
               data-headlessui-state=""
-              id="headlessui-menu-button-:r0:"
+              id="headlessui-menu-button-:r1:"
               type="button"
             >
               <svg
@@ -286,7 +297,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-selected="true"
               class="tab tab-active tab-lg"
               data-headlessui-state="selected"
-              id="headlessui-tabs-tab-:r1:"
+              id="headlessui-tabs-tab-:r2:"
               paths="/"
               role="tab"
               tabindex="0"
@@ -298,7 +309,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-selected="false"
               class="tab tab-lg"
               data-headlessui-state=""
-              id="headlessui-tabs-tab-:r2:"
+              id="headlessui-tabs-tab-:r3:"
               paths="/data"
               role="tab"
               tabindex="-1"
@@ -335,27 +346,38 @@ exports[`<App /> > renders profile page 1`] = `
               Search Users
             </span>
           </button>
-          <button
-            class="btn btn-circle btn-ghost"
+          <div
+            class="relative"
+            data-headlessui-state=""
           >
-            <svg
-              class="h-6 w-6"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              class="btn btn-circle btn-ghost"
+              data-headlessui-state=""
+              id="headlessui-menu-button-:r4:"
+              type="button"
             >
-              <path
-                clip-rule="evenodd"
-                d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
-                fill-rule="evenodd"
-              />
-            </svg>
-            <span
-              class="sr-only"
-            >
-              Toggle Theme
-            </span>
-          </button>
+              <svg
+                class="h-5 w-5"
+                fill="currentColor"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  clip-rule="evenodd"
+                  d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z"
+                  fill-rule="evenodd"
+                />
+              </svg>
+              <span
+                class="sr-only"
+              >
+                Toggle Theme
+              </span>
+            </button>
+          </div>
           <div
             class="flex gap-1"
           >

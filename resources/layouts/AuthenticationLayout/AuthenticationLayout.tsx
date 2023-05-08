@@ -1,7 +1,7 @@
 import { Card, Hero, Toast } from 'react-daisyui';
 import { Outlet } from 'react-router-dom';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
-import { DarkModeButton } from '../../common/components';
+import { ThemeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
@@ -32,8 +32,8 @@ export const AuthenticationLayout = (): JSX.Element => {
           <AlertMessages maxMessages={4} />
         </Toast>
       ) : null}
-      <div className="absolute top-0 right-0">
-        <DarkModeButton />
+      <div className="absolute right-0 top-0">
+        <ThemeButton />
       </div>
     </Hero>
   );

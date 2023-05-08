@@ -2,7 +2,7 @@ import { Button, Navbar } from 'react-daisyui';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DropdownMenu, Tabs } from 'stratosphere-ui';
 import {
-  DarkModeButton,
+  ThemeButton,
   LogoutIcon,
   MenuIcon,
   SearchButton,
@@ -108,7 +108,7 @@ export const MainNavbar = (): JSX.Element => {
         </div>
         <div className="navbar-end w-auto space-x-1 lg:w-1/2">
           <SearchButton />
-          <DarkModeButton />
+          <ThemeButton />
           <div className="flex gap-1">
             {isLoggedIn ? (
               <Button
