@@ -6,7 +6,7 @@ module.exports = {
     'node_modules/stratosphere-ui/dist/**/*.js',
   ],
   daisyui: {
-    themes: ['light', 'dark'],
+    themes: ['light', 'dark', 'cyberpunk'],
   },
   theme: {
     extend: {},

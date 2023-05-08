@@ -4,6 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 export enum AppTheme {
   DARK = 'dark',
   LIGHT = 'light',
+  CYBERPUNK = 'cyberpunk',
 }
 
 interface ThemeState {
