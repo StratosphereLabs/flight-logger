@@ -1,4 +1,7 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
+import { format } from 'date-fns';
+import remove from 'lodash.remove';
+import { DATE_FORMAT_MONTH } from '../constants';
 import { prisma } from '../db';
 import { getUserSchema, getUsersSchema } from '../schemas';
 import { procedure, router } from '../trpc';
@@ -25,6 +28,9 @@ export const usersRouter = router({
           user: {
             username: input?.username ?? ctx.user?.username,
           },
+          outTime: {
+            lt: new Date(),
+          },
         },
       }),
     ]);
@@ -37,6 +43,7 @@ export const usersRouter = router({
     return {
       avatar: fetchGravatarUrl(userData.email),
       flightCount,
+      creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       ...excludeKeys(
         userData,
         'password',
@@ -49,7 +56,7 @@ export const usersRouter = router({
   getUserFlights: procedure
     .input(getUserSchema.optional())
     .query(async ({ ctx, input }) => {
-      const flights = await prisma.flight.findMany({
+      const result = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
@@ -67,7 +74,7 @@ export const usersRouter = router({
           },
         ],
       });
-      return flights.map(flight => {
+      const flights = result.map(flight => {
         const {
           duration,
           inFuture,
@@ -107,6 +114,11 @@ export const usersRouter = router({
           distance: Math.round(flightDistance),
         };
       });
+      const upcomingFlights = remove(flights, ({ inFuture }) => inFuture);
+      return {
+        upcomingFlights,
+        flights,
+      };
     }),
   getUserMapData: procedure
     .input(getUserSchema)

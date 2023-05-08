@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '../db';
+import { prisma, upsertUser } from '../db';
 import { loginSchema, registerSchema } from '../schemas';
 import { procedure, router } from '../trpc';
-import { generateUserToken, upsertUser } from '../utils';
+import { generateUserToken } from '../utils';
 
 export const authRouter = router({
   login: procedure.input(loginSchema).mutation(async ({ input }) => {

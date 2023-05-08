@@ -13,26 +13,30 @@ datasource db {
 }
 
 model user {
-  id                  Int      @id @default(autoincrement())
-  username            String   @unique
+  id                  Int       @id @default(autoincrement())
+  username            String    @unique
   password            String?
-  email               String   @unique
+  email               String    @unique
   firstName           String
   lastName            String
-  admin               Boolean  @default(false)
+  admin               Boolean   @default(false)
   passwordResetToken  String?
   passwordResetAt     DateTime?
   flights             flight[]
   trips               trip[]
   itineraries         itinerary[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime? @updatedAt
 }
 
 model trip {
-  id      String   @id @default(uuid()) @db.Uuid
-  userId  Int
-  name    String
-  user    user     @relation(fields: [userId], references: [id])
-  flights flight[]
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    Int
+  name      String
+  user      user      @relation(fields: [userId], references: [id])
+  flights   flight[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model itinerary {
@@ -40,9 +44,9 @@ model itinerary {
   userId    Int?
   name      String
   flights   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
   user      user?     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model flight {
@@ -57,10 +61,10 @@ model flight {
   callsign           String?
   aircraftTypeId     String?
   tailNumber         String?
-  outTime            String
-  offTime            String?
-  onTime             String?
-  inTime             String
+  outTime            DateTime
+  offTime            DateTime?
+  onTime             DateTime?
+  inTime             DateTime
   duration           Int            @default(0)
   class              FlightClass?
   seatNumber         String?
@@ -75,6 +79,8 @@ model flight {
   operatorAirline    airline?       @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
   trip               trip?          @relation(fields: [tripId], references: [id])
   user               user           @relation(fields: [userId], references: [id])
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime?      @updatedAt
 }
 
 model aircraft_type {

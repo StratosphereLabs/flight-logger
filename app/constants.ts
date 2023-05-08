@@ -8,6 +8,7 @@ export const TIME_REGEX_24H = /^[0-9]{2}:[0-9]{2}$/;
 export const DATE_REGEX_ISO = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
 
 export const DATE_FORMAT = 'iii, MMM d, yyyy';
+export const DATE_FORMAT_MONTH = 'MMMM yyyy';
 export const DATE_FORMAT_ISO = 'yyyy-MM-dd';
 export const TIME_FORMAT_12H = 'h:mm aaa';
 export const TIME_FORMAT_24H = 'HH:mm';
