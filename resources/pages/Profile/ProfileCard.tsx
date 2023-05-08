@@ -29,7 +29,7 @@ export const ProfileCard = (): JSX.Element => {
           </Badge>
         </div>
         <p>{data?.flightCount} Flights</p>
-        <p className="text-xs opacity-50">Joined September 2022</p>
+        <p className="text-xs opacity-50">Joined {data?.creationDate}</p>
         {username !== undefined ? (
           <Button color="success" className="mt-4">
             Follow

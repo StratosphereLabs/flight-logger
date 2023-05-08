@@ -1,7 +1,8 @@
 import { CredentialResponse } from '@react-oauth/google';
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { upsertUser, verifyGoogleIdToken } from '../../utils';
+import { upsertUser } from '../../db';
+import { verifyGoogleIdToken } from '../../utils';
 
 export const verifyGoogleAuthToken = async (
   req: Request,

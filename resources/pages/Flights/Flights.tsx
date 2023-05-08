@@ -1,13 +1,19 @@
 import { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { Badge, Progress } from 'react-daisyui';
+import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Table } from 'stratosphere-ui';
+import {
+  Form,
+  FormRadioGroup,
+  FormRadioGroupOption,
+  Table,
+} from 'stratosphere-ui';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { useFlightsPageStore } from './flightsPageStore';
 import { ViewFlightModal } from './ViewFlightModal';
-import { ActionsCell } from '../../common/components';
+import { ActionsCell, Bars2Icon, Bars4Icon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -24,6 +30,11 @@ export const Flights = (): JSX.Element => {
     setIsEditDialogOpen,
     setIsViewDialogOpen,
   } = useFlightsPageStore();
+  const methods = useForm({
+    defaultValues: {
+      layout: 'compact',
+    },
+  });
   const { username } = useParams();
   const { data, error, isFetching, refetch } =
     trpc.users.getUserFlights.useQuery({
@@ -37,6 +48,16 @@ export const Flights = (): JSX.Element => {
           {username !== undefined ? `${username}'s Flights` : 'My Flights'}
         </h2>
       </article>
+      <Form className="flex w-full justify-end" methods={methods}>
+        <FormRadioGroup name="layout">
+          <FormRadioGroupOption size="sm" value="compact">
+            <Bars2Icon className="h-4 w-4" />
+          </FormRadioGroupOption>
+          <FormRadioGroupOption size="sm" value="space">
+            <Bars4Icon className="h-4 w-4" />
+          </FormRadioGroupOption>
+        </FormRadioGroup>
+      </Form>
       {isFetching ? (
         <Progress />
       ) : (
@@ -196,7 +217,7 @@ export const Flights = (): JSX.Element => {
             tailNumber: 'w-[100px] hidden lg:table-cell',
             actions: 'w-[50px] xl:w-[150px]',
           }}
-          data={data ?? []}
+          data={data?.flights ?? []}
           enableFixedWidth
           enableSorting={false}
           getCoreRowModel={getCoreRowModel()}
