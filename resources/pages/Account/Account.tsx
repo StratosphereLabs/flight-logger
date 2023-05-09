@@ -25,8 +25,9 @@ export const Account = (): JSX.Element => {
             methods={methods}
             onFormSubmit={() => setIsWarningDialogOpen(true)}
           >
-            <div className="flex w-full items-end justify-between">
+            <div className="flex w-full flex-wrap items-end justify-between gap-2">
               <FormFileInput
+                className="w-full max-w-md"
                 color="info"
                 labelText="myFlightradar24"
                 name="file"
