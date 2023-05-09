@@ -93,6 +93,7 @@ export const Flights = (): JSX.Element => {
               color: 'ghost',
               size: 'lg',
             }}
+            defaultOpen
             rounded
           >
             <UserFlightsTable data={data.flights} />
