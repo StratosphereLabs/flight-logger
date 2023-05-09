@@ -8,3 +8,4 @@ export * from './FullScreenLoader';
 export * from './Icons';
 export * from './SearchButton';
 export * from './ThemeButton';
+export * from './UserFlightsTable';

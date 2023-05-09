@@ -1,6 +1,5 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
-import remove from 'lodash.remove';
 import { DATE_FORMAT_MONTH } from '../constants';
 import { prisma } from '../db';
 import { getUserSchema, getUsersSchema } from '../schemas';
@@ -74,7 +73,7 @@ export const usersRouter = router({
           },
         ],
       });
-      const flights = result.map(flight => {
+      return result.map(flight => {
         const {
           duration,
           inFuture,
@@ -114,11 +113,6 @@ export const usersRouter = router({
           distance: Math.round(flightDistance),
         };
       });
-      const upcomingFlights = remove(flights, ({ inFuture }) => inFuture);
-      return {
-        upcomingFlights,
-        flights,
-      };
     }),
   getUserMapData: procedure
     .input(getUserSchema)
@@ -127,6 +121,9 @@ export const usersRouter = router({
         where: {
           user: {
             username: input.username ?? ctx.user?.username,
+          },
+          outTime: {
+            lt: new Date(),
           },
         },
         include: {
