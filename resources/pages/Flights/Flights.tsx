@@ -27,9 +27,10 @@ interface FlightsData {
 export const Flights = (): JSX.Element => {
   const methods = useForm({
     defaultValues: {
-      layout: 'compact',
+      layout: 'full',
     },
   });
+  const layout = methods.watch('layout');
   const { username } = useParams();
   const { data, error, isFetching, refetch } =
     trpc.users.getUserFlights.useQuery(
@@ -61,44 +62,46 @@ export const Flights = (): JSX.Element => {
       </article>
       <Form className="flex w-full justify-end" methods={methods}>
         <FormRadioGroup name="layout">
-          <FormRadioGroupOption size="sm" value="compact">
+          <FormRadioGroupOption size="sm" value="full">
             <Bars2Icon className="h-4 w-4" />
-            <span className="sr-only">Compact</span>
-          </FormRadioGroupOption>
-          <FormRadioGroupOption size="sm" value="space">
-            <Bars4Icon className="h-4 w-4" />
             <span className="sr-only">Full</span>
+          </FormRadioGroupOption>
+          <FormRadioGroupOption size="sm" value="compact">
+            <Bars4Icon className="h-4 w-4" />
+            <span className="sr-only">Compact</span>
           </FormRadioGroupOption>
         </FormRadioGroup>
       </Form>
-      {isFetching ? (
-        <Progress />
-      ) : (
+      {isFetching ? <Progress /> : null}
+      {!isFetching && data !== undefined && layout === 'full' ? (
         <>
           <Disclosure
             buttonProps={{
               children: (
-                <span>Upcoming Flights ({data?.upcomingFlights.length})</span>
+                <span>Upcoming Flights ({data.upcomingFlights.length})</span>
               ),
               color: 'ghost',
               size: 'lg',
             }}
             rounded
           >
-            <UserFlightsTable data={data?.upcomingFlights} />
+            <UserFlightsTable data={data.upcomingFlights} />
           </Disclosure>
           <Disclosure
             buttonProps={{
-              children: <span>Completed Flights ({data?.flights.length})</span>,
+              children: <span>Completed Flights ({data.flights.length})</span>,
               color: 'ghost',
               size: 'lg',
             }}
             rounded
           >
-            <UserFlightsTable data={data?.flights} />
+            <UserFlightsTable data={data.flights} />
           </Disclosure>
         </>
-      )}
+      ) : null}
+      {!isFetching && data !== undefined && layout === 'compact' ? (
+        <UserFlightsTable data={[...data.upcomingFlights, ...data.flights]} />
+      ) : null}
       <DeleteFlightModal />
       <EditFlightModal onSuccess={async () => await refetch()} />
       <ViewFlightModal />
