@@ -1,5 +1,21 @@
 import { SVGProps } from 'react';
 
+export const BusinessIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    {...props}
+  >
+    <path
+      fillRule="evenodd"
+      d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+      clipRule="evenodd"
+    />
+    <path d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z" />
+  </svg>
+);
+
 export const ChartIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -86,6 +102,15 @@ export const EllipsisVerticalIcon = (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+    />
+  </svg>
+);
+
+export const GemIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" {...props}>
+    <path
+      fill="currentColor"
+      d="M3.1.7a.5.5 0 0 1 .4-.2h9a.5.5 0 0 1 .4.2l2.976 3.974c.149.185.156.45.01.644L8.4 15.3a.5.5 0 0 1-.8 0L.1 5.3a.5.5 0 0 1 0-.6l3-4zm11.386 3.785l-1.806-2.41l-.776 2.413l2.582-.003zm-3.633.004l.961-2.989H4.186l.963 2.995l5.704-.006zM5.47 5.495L8 13.366l2.532-7.876l-5.062.005zm-1.371-.999l-.78-2.422l-1.818 2.425l2.598-.003zM1.499 5.5l5.113 6.817l-2.192-6.82L1.5 5.5zm7.889 6.817l5.123-6.83l-2.928.002l-2.195 6.828z"
     />
   </svg>
 );
@@ -250,6 +275,25 @@ export const SearchIcon = (): JSX.Element => (
       strokeLinejoin="round"
       strokeWidth={2}
       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+    />
+  </svg>
+);
+
+export const SnowflakeIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 48 48"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    {...props}
+  >
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="4"
+      d="M24 4v40M6.725 14l34.64 20M6.72 33.977l34.56-19.954M12 10l3 9l-9 2m0 6l9 2l-3 9m24-28l-3 9l9 2m0 6l-9 2l3 9M18 7l6 6l6-6M18 41l6-6l6 6"
     />
   </svg>
 );

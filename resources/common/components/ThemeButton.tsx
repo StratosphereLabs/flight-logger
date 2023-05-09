@@ -1,5 +1,13 @@
 import { DropdownMenu } from 'stratosphere-ui';
-import { CyberpunkIcon, DarkModeIcon, LightModeIcon, ThemeIcon } from './Icons';
+import {
+  BusinessIcon,
+  CyberpunkIcon,
+  DarkModeIcon,
+  GemIcon,
+  LightModeIcon,
+  SnowflakeIcon,
+  ThemeIcon,
+} from './Icons';
 import { AppTheme, useThemeStore } from '../../stores';
 
 export const ThemeButton = (): JSX.Element => {
@@ -38,11 +46,41 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
+          id: 'winter',
+          onClick: () => setTheme(AppTheme.WINTER),
+          children: (
+            <>
+              <SnowflakeIcon className="h-6 w-6" />
+              Winter
+            </>
+          ),
+        },
+        {
+          id: 'business',
+          onClick: () => setTheme(AppTheme.BUSINESS),
+          children: (
+            <>
+              <BusinessIcon className="h-6 w-6" />
+              Business
+            </>
+          ),
+        },
+        {
+          id: 'emerald',
+          onClick: () => setTheme(AppTheme.EMERALD),
+          children: (
+            <>
+              <GemIcon className="h-6 w-6" />
+              Emerald
+            </>
+          ),
+        },
+        {
           id: 'cyberpunk',
           onClick: () => setTheme(AppTheme.CYBERPUNK),
           children: (
             <>
-              <CyberpunkIcon className="h-5 w-5" />
+              <CyberpunkIcon className="h-6 w-6" />
               Cyberpunk
             </>
           ),
