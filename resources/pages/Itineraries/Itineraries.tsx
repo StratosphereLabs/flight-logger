@@ -9,12 +9,6 @@ import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export interface DeleteFlightData {
-  departureAirportId: string;
-  arrivalAirportId: string;
-  id: string;
-}
-
 export const Itineraries = (): JSX.Element => {
   const { username } = useParams();
   const {
