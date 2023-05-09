@@ -36,7 +36,10 @@ export const MapCard = (): JSX.Element => {
         options={{
           streetViewControl: false,
           gestureHandling: 'greedy',
-          styles: theme === AppTheme.DARK ? darkModeStyle : undefined,
+          styles:
+            theme === AppTheme.DARK || theme === AppTheme.BUSINESS
+              ? darkModeStyle
+              : undefined,
         }}
       >
         {data?.airports?.map(({ id, lat, lon }) => (
