@@ -30,6 +30,10 @@ export const AircraftTypesCard = (): JSX.Element => {
           Aircraft Types
         </Card.Title>
         <Table
+          cellClassNames={{
+            iata: 'w-[120px] hidden sm:table-cell',
+            icao: 'w-[120px]',
+          }}
           columns={[
             {
               id: 'iata',
@@ -47,6 +51,10 @@ export const AircraftTypesCard = (): JSX.Element => {
               id: 'name',
               accessorKey: 'name',
               header: () => 'Name',
+              cell: ({ getValue }) => {
+                const name = getValue<string>();
+                return <div className="truncate">{name}</div>;
+              },
               footer: () => null,
             },
           ]}
