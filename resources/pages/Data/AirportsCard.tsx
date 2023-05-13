@@ -50,6 +50,14 @@ export const AirportsCard = (): JSX.Element => {
           Airports
         </Card.Title>
         <Table
+          cellClassNames={{
+            iata: 'w-[120px] hidden md:table-cell',
+            id: 'w-[120px]',
+            municipality: 'hidden lg:table-cell',
+            regionId: 'w-[120px] hidden md:table-cell',
+            countryId: 'w-[120px] hidden sm:table-cell',
+            type: 'w-[120px] hidden sm:table-cell',
+          }}
           columns={[
             {
               id: 'iata',
@@ -67,12 +75,20 @@ export const AirportsCard = (): JSX.Element => {
               id: 'name',
               accessorKey: 'name',
               header: () => 'Name',
+              cell: ({ getValue }) => {
+                const name = getValue<string>();
+                return <div className="truncate">{name}</div>;
+              },
               footer: () => null,
             },
             {
               id: 'municipality',
               accessorKey: 'municipality',
               header: () => 'City',
+              cell: ({ getValue }) => {
+                const municipality = getValue<string>();
+                return <div className="truncate">{municipality}</div>;
+              },
               footer: () => null,
             },
             {

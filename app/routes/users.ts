@@ -10,6 +10,7 @@ import {
   fetchGravatarUrl,
   getAirports,
   getFlightTimestamps,
+  getHeatmap,
   getRoutes,
   ItineraryResult,
 } from '../utils';
@@ -133,8 +134,10 @@ export const usersRouter = router({
       });
       const airports = getAirports(flights);
       const routes = getRoutes(flights);
+      const heatmap = getHeatmap(flights);
       return {
         airports,
+        heatmap,
         routes,
       };
     }),

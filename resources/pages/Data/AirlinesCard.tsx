@@ -60,9 +60,18 @@ export const AirlinesCard = (): JSX.Element => {
               id: 'name',
               accessorKey: 'name',
               header: () => 'Name',
+              cell: ({ getValue }) => {
+                const name = getValue<string>();
+                return <div className="truncate">{name}</div>;
+              },
               footer: () => null,
             },
           ]}
+          cellClassNames={{
+            logo: 'w-[150px] hidden md:table-cell',
+            iata: 'w-[120px] hidden sm:table-cell',
+            icao: 'w-[120px]',
+          }}
           compact
           data={data?.results ?? []}
           enableFixedWidth
