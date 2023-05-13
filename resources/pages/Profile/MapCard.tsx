@@ -43,7 +43,7 @@ export const MapCard = (): JSX.Element => {
     [data, mapMode, showUpcoming],
   );
   useEffect(() => {
-    heatmap?.setData(heatmapData);
+    setTimeout(() => heatmap?.setData(heatmapData));
   }, [heatmap, heatmapData]);
   useTRPCErrorHandler(error);
   const { theme } = useThemeStore();
@@ -117,6 +117,7 @@ export const MapCard = (): JSX.Element => {
         <HeatmapLayerF
           data={heatmapData}
           onLoad={setHeatmap}
+          onUnmount={() => setHeatmap(null)}
           options={{
             dissipating: false,
             radius: 2,

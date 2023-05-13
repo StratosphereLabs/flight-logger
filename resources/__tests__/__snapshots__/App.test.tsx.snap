@@ -225,7 +225,7 @@ exports[`<App /> > renders profile page 1`] = `
     class="flex h-screen flex-col justify-between"
   >
     <div
-      class="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans"
+      class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
     >
       <div
         aria-label="Navbar"
