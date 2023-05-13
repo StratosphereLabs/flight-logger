@@ -5,10 +5,11 @@ import {
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
-import { Card } from 'react-daisyui';
+import classNames from 'classnames';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Form, LoadingCard, Select } from 'stratosphere-ui';
+import { Form, FormCheckbox, LoadingCard, Select } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { darkModeStyle } from '../../common/mapStyle';
 import { AppTheme, useThemeStore } from '../../stores';
@@ -19,94 +20,110 @@ export const MapCard = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
+  const [heatmap, setHeatmap] =
+    useState<google.maps.visualization.HeatmapLayer | null>(null);
   const methods = useForm({
     defaultValues: {
+      showUpcoming: false,
       mapMode: 'routes',
     },
   });
-  const mode = methods.watch('mapMode');
+  const [showUpcoming, mapMode] = methods.watch(['showUpcoming', 'mapMode']);
   const { username } = useParams();
   const { data, error, isFetching } = trpc.users.getUserMapData.useQuery({
     username,
   });
+  const heatmapData = useMemo(
+    () =>
+      mapMode === 'heatmap'
+        ? data?.heatmap.flatMap(({ inFuture, lat, lng }) =>
+            showUpcoming || !inFuture ? [new google.maps.LatLng(lat, lng)] : [],
+          ) ?? []
+        : [],
+    [data, mapMode, showUpcoming],
+  );
+  useEffect(() => {
+    heatmap?.setData(heatmapData);
+  }, [heatmap, heatmapData]);
   useTRPCErrorHandler(error);
   const { theme } = useThemeStore();
   return (
     <LoadingCard
       isLoading={!isLoaded || isFetching}
-      className="min-h-[500px] min-w-[350px] flex-1 bg-base-100 shadow-lg"
+      className="min-h-[475px] min-w-[350px] flex-1 bg-base-100 shadow-lg"
     >
-      <Card.Body className="gap-4 pb-0 pl-0 pr-0">
-        <Form className="flex justify-end pl-4 pr-4" methods={methods}>
-          <Select
-            className="w-[120px]"
-            getItemText={({ text }) => text}
-            getItemValue={({ id }) => id}
-            options={[
-              {
-                id: 'routes',
-                text: 'Routes',
-              },
-              {
-                id: 'heatmap',
-                text: 'Heatmap',
-              },
-            ]}
-            menuClassName="right-0"
-            name="mapMode"
+      <Form className="flex flex-wrap justify-end gap-4 p-3" methods={methods}>
+        <FormCheckbox
+          className={classNames(mapMode !== 'heatmap' && 'hidden')}
+          labelText="Show upcoming flights"
+          name="showUpcoming"
+        />
+        <Select
+          className="w-[120px]"
+          getItemText={({ text }) => text}
+          getItemValue={({ id }) => id}
+          options={[
+            {
+              id: 'routes',
+              text: 'Routes',
+            },
+            {
+              id: 'heatmap',
+              text: 'Heatmap',
+            },
+          ]}
+          menuClassName="right-0"
+          name="mapMode"
+        />
+      </Form>
+      <GoogleMap
+        mapContainerStyle={{
+          height: '100%',
+          width: '100%',
+        }}
+        center={{ lat: 37, lng: -122 }}
+        zoom={3}
+        options={{
+          streetViewControl: false,
+          gestureHandling: 'greedy',
+          styles:
+            theme === AppTheme.DARK || theme === AppTheme.BUSINESS
+              ? darkModeStyle
+              : undefined,
+        }}
+      >
+        {data?.airports?.map(({ id, lat, lon }) => (
+          <MarkerF
+            visible={mapMode === 'routes'}
+            key={id}
+            position={{ lat, lng: lon }}
           />
-        </Form>
-        <GoogleMap
-          mapContainerStyle={{
-            height: '100%',
-            width: '100%',
-          }}
-          center={{ lat: 37, lng: -122 }}
-          zoom={3}
-          options={{
-            streetViewControl: false,
-            gestureHandling: 'greedy',
-            styles:
-              theme === AppTheme.DARK || theme === AppTheme.BUSINESS
-                ? darkModeStyle
-                : undefined,
-          }}
-        >
-          {mode === 'routes'
-            ? data?.airports?.map(({ id, lat, lon }) => (
-                <MarkerF key={id} position={{ lat, lng: lon }} />
-              ))
-            : null}
-          {mode === 'routes'
-            ? data?.routes?.map(({ departureAirport, arrivalAirport }) => (
-                <PolylineF
-                  key={`${departureAirport.id}_${arrivalAirport.id}`}
-                  options={{
-                    strokeOpacity: 0.5,
-                    strokeColor: 'red',
-                    geodesic: true,
-                  }}
-                  path={[
-                    { lat: departureAirport.lat, lng: departureAirport.lon },
-                    { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
-                  ]}
-                />
-              ))
-            : null}
-          <HeatmapLayerF
-            data={
-              data?.heatmap.map(
-                ({ lat, lng }) => new google.maps.LatLng(lat, lng),
-              ) ?? []
-            }
+        ))}
+        {data?.routes?.map(({ departureAirport, arrivalAirport }) => (
+          <PolylineF
+            visible={mapMode === 'routes'}
+            key={`${departureAirport.id}_${arrivalAirport.id}`}
             options={{
-              dissipating: false,
-              radius: mode === 'heatmap' ? 2 : 0,
-              opacity: 0.7,
+              strokeOpacity: 0.5,
+              strokeColor: 'red',
+              geodesic: true,
             }}
+            path={[
+              { lat: departureAirport.lat, lng: departureAirport.lon },
+              { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
+            ]}
           />
-        </GoogleMap>
-      </Card.Body>
+        ))}
+        <HeatmapLayerF
+          data={heatmapData}
+          onLoad={setHeatmap}
+          options={{
+            dissipating: false,
+            radius: 2,
+            opacity: 0.7,
+          }}
+        />
+      </GoogleMap>
     </LoadingCard>
   );
 };

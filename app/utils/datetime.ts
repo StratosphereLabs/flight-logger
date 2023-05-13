@@ -32,3 +32,6 @@ export const getDurationString = (duration: number): string => {
   });
   return duration > 0 ? `${hours ?? 0}h ${minutes ?? 0}m` : '';
 };
+
+export const getInFuture = (date: string | number | Date): boolean =>
+  !isBefore(new Date(date), new Date());

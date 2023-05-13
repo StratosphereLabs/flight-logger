@@ -1,10 +1,11 @@
 import { airport } from '@prisma/client';
-import { add, isBefore } from 'date-fns';
+import { add } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import {
   getDaysToAdd,
   getDurationMinutes,
   getDurationString,
+  getInFuture,
 } from './datetime';
 import {
   DATE_FORMAT,
@@ -86,7 +87,7 @@ export const getFlightTimestamps = ({
   inTime,
 }: FlightTimestampsInput): FlightTimestampsResult => ({
   duration: getDurationString(duration),
-  inFuture: !isBefore(new Date(outTime), new Date()),
+  inFuture: getInFuture(outTime),
   outDateISO: formatInTimeZone(
     outTime,
     departureAirport.timeZone,
