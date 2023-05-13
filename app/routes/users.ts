@@ -123,9 +123,6 @@ export const usersRouter = router({
           user: {
             username: input.username ?? ctx.user?.username,
           },
-          outTime: {
-            lt: new Date(),
-          },
         },
         include: {
           departureAirport: true,

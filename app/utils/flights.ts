@@ -1,9 +1,14 @@
 import { airport, flight } from '@prisma/client';
+import { getInFuture } from './datetime';
 import { LatLng } from '../types';
 
 export interface Route {
   departureAirport: airport;
   arrivalAirport: airport;
+}
+
+export interface HeatmapResult extends LatLng {
+  inFuture: boolean;
 }
 
 export interface FlightsResult extends Array<flight & Route> {}
@@ -25,13 +30,15 @@ export const getAirports = (result?: FlightsResult): airport[] => {
   return Object.values(airportsMap);
 };
 
-export const getHeatmap = (result?: FlightsResult): LatLng[] =>
+export const getHeatmap = (result?: FlightsResult): HeatmapResult[] =>
   result?.flatMap(flight => [
     {
+      inFuture: getInFuture(flight.outTime),
       lat: flight.departureAirport.lat,
       lng: flight.departureAirport.lon,
     },
     {
+      inFuture: getInFuture(flight.inTime),
       lat: flight.arrivalAirport.lat,
       lng: flight.arrivalAirport.lon,
     },
