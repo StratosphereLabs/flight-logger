@@ -20,7 +20,7 @@ export const Itinerary = (): JSX.Element | null => {
     },
   );
   return (
-    <div className="flex flex-1 flex-col gap-3 p-3">
+    <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
       <div className="relative mb-4 flex items-center justify-center">
         <h1 className="text-2xl font-bold sm:text-3xl">{data?.name}</h1>
         <Button

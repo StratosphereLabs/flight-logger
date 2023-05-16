@@ -58,7 +58,12 @@ export const ItineraryFlightsCard = forwardRef<
             >
               <ResetIcon className="h-6 w-6" />
             </Button>
-            <Button color="primary" loading={isLoading} onClick={onSubmit}>
+            <Button
+              color="primary"
+              loading={isLoading}
+              onClick={onSubmit}
+              size="sm"
+            >
               Create
             </Button>
           </div>

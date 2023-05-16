@@ -8,8 +8,8 @@ import {
   Form,
   FormRadioGroup,
   FormRadioGroupOption,
-  useAlertMessages,
 } from 'stratosphere-ui';
+import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { useFlightsPageStore } from './flightsPageStore';
@@ -37,8 +37,8 @@ export const Flights = (): JSX.Element => {
   const layout = methods.watch('layout');
   const { username } = useParams();
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
-  const { addAlertMessages } = useAlertMessages();
-  const { rowSelection, resetRowSelection } = useFlightsPageStore();
+  const { rowSelection, resetRowSelection, setIsCreateTripDialogOpen } =
+    useFlightsPageStore();
   useEffect(() => {
     if (!isRowSelectEnabled) resetRowSelection();
   }, [isRowSelectEnabled]);
@@ -92,14 +92,7 @@ export const Flights = (): JSX.Element => {
                 <Button
                   color="primary"
                   disabled={Object.keys(rowSelection).length === 0}
-                  onClick={() =>
-                    addAlertMessages([
-                      {
-                        status: 'info',
-                        message: 'Coming soon!',
-                      },
-                    ])
-                  }
+                  onClick={() => setIsCreateTripDialogOpen(true)}
                   size="sm"
                   type="button"
                 >
@@ -163,6 +156,7 @@ export const Flights = (): JSX.Element => {
       <DeleteFlightModal />
       <EditFlightModal onSuccess={async () => await refetch()} />
       <ViewFlightModal />
+      <CreateTripModal onSuccess={() => setIsRowSelectEnabled(false)} />
     </div>
   );
 };
