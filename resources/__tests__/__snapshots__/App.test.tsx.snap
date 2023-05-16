@@ -242,7 +242,7 @@ exports[`<App /> > renders profile page 1`] = `
             <button
               aria-expanded="false"
               aria-haspopup="menu"
-              class="btn lg:hidden btn-ghost"
+              class="btn xl:hidden btn-ghost"
               data-headlessui-state=""
               id="headlessui-menu-button-:r1:"
               type="button"

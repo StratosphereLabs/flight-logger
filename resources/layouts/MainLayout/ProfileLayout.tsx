@@ -13,9 +13,9 @@ export const ProfileLayout = (): JSX.Element => {
     }
   }, [isLoggedIn, username]);
   return (
-    <div className="flex flex-1 flex-col gap-2 p-2 pt-1 overflow-y-hidden">
+    <div className="flex flex-1 flex-col gap-2 pt-1 overflow-y-hidden">
       <ProfileTabs />
-      <div className="flex flex-1 flex-col overflow-y-scroll">
+      <div className="flex flex-1 flex-col overflow-y-scroll px-2">
         <Outlet />
       </div>
     </div>

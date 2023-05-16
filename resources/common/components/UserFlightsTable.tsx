@@ -8,16 +8,20 @@ import { UsersRouterOutput } from '../../../app/routes/users';
 
 export interface UserFlightsTableProps {
   data?: UsersRouterOutput['getUserFlights'];
+  enableRowSelection?: boolean;
 }
 
 export const UserFlightsTable = ({
   data,
+  enableRowSelection,
 }: UserFlightsTableProps): JSX.Element => {
   const {
+    rowSelection,
     setActiveFlight,
     setIsDeleteDialogOpen,
     setIsEditDialogOpen,
     setIsViewDialogOpen,
+    setRowSelection,
   } = useFlightsPageStore();
   return (
     <Table
@@ -178,8 +182,11 @@ export const UserFlightsTable = ({
       }}
       data={data ?? []}
       enableFixedWidth
+      enableRowSelection={enableRowSelection}
       enableSorting={false}
       getCoreRowModel={getCoreRowModel()}
+      onRowSelectionChange={setRowSelection}
+      state={{ rowSelection }}
     />
   );
 };

@@ -1,14 +1,18 @@
-import { Progress } from 'react-daisyui';
+import { useEffect, useState } from 'react';
+import { Button, Progress } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
+  CloseIcon,
   Disclosure,
   Form,
   FormRadioGroup,
   FormRadioGroupOption,
+  useAlertMessages,
 } from 'stratosphere-ui';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
+import { useFlightsPageStore } from './flightsPageStore';
 import { ViewFlightModal } from './ViewFlightModal';
 import {
   Bars2Icon,
@@ -32,6 +36,12 @@ export const Flights = (): JSX.Element => {
   });
   const layout = methods.watch('layout');
   const { username } = useParams();
+  const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
+  const { addAlertMessages } = useAlertMessages();
+  const { rowSelection, resetRowSelection } = useFlightsPageStore();
+  useEffect(() => {
+    if (!isRowSelectEnabled) resetRowSelection();
+  }, [isRowSelectEnabled]);
   const { data, error, isFetching, refetch } =
     trpc.users.getUserFlights.useQuery(
       {
@@ -60,7 +70,45 @@ export const Flights = (): JSX.Element => {
           {username !== undefined ? `${username}'s Flights` : 'My Flights'}
         </h2>
       </article>
-      <Form className="flex w-full justify-end" methods={methods}>
+      <Form
+        className="flex w-full flex-wrap justify-between gap-2"
+        methods={methods}
+      >
+        <div className="flex gap-2">
+          {username === undefined ? (
+            <>
+              <Button
+                color={isRowSelectEnabled ? 'error' : undefined}
+                startIcon={
+                  isRowSelectEnabled ? <CloseIcon className="h-4 w-4" /> : null
+                }
+                onClick={() => setIsRowSelectEnabled(isEnabled => !isEnabled)}
+                size="sm"
+                type="button"
+              >
+                {isRowSelectEnabled ? 'Cancel' : 'Select'}
+              </Button>
+              {isRowSelectEnabled ? (
+                <Button
+                  color="primary"
+                  disabled={Object.keys(rowSelection).length === 0}
+                  onClick={() =>
+                    addAlertMessages([
+                      {
+                        status: 'info',
+                        message: 'Coming soon!',
+                      },
+                    ])
+                  }
+                  size="sm"
+                  type="button"
+                >
+                  Create trip ({Object.keys(rowSelection).length})
+                </Button>
+              ) : null}
+            </>
+          ) : null}
+        </div>
         <FormRadioGroup name="layout">
           <FormRadioGroupOption size="sm" value="full">
             <Bars2Icon className="h-4 w-4" />
@@ -85,7 +133,10 @@ export const Flights = (): JSX.Element => {
             }}
             rounded
           >
-            <UserFlightsTable data={data.upcomingFlights} />
+            <UserFlightsTable
+              data={data.upcomingFlights}
+              enableRowSelection={isRowSelectEnabled}
+            />
           </Disclosure>
           <Disclosure
             buttonProps={{
@@ -96,12 +147,18 @@ export const Flights = (): JSX.Element => {
             defaultOpen
             rounded
           >
-            <UserFlightsTable data={data.flights} />
+            <UserFlightsTable
+              data={data.flights}
+              enableRowSelection={isRowSelectEnabled}
+            />
           </Disclosure>
         </>
       ) : null}
       {!isFetching && data !== undefined && layout === 'compact' ? (
-        <UserFlightsTable data={[...data.upcomingFlights, ...data.flights]} />
+        <UserFlightsTable
+          data={[...data.upcomingFlights, ...data.flights]}
+          enableRowSelection={isRowSelectEnabled}
+        />
       ) : null}
       <DeleteFlightModal />
       <EditFlightModal onSuccess={async () => await refetch()} />

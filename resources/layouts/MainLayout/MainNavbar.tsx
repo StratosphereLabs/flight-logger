@@ -21,7 +21,7 @@ export const MainNavbar = (): JSX.Element => {
           <DropdownMenu
             buttonProps={{
               color: 'ghost',
-              className: 'lg:hidden',
+              className: 'xl:hidden',
               children: (
                 <>
                   <MenuIcon />
