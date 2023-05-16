@@ -182,9 +182,11 @@ export const UserFlightsTable = ({
       }}
       data={data ?? []}
       enableFixedWidth
+      enableRowHover={enableRowSelection}
       enableRowSelection={enableRowSelection}
       enableSorting={false}
       getCoreRowModel={getCoreRowModel()}
+      highlightWhenSelected
       onRowSelectionChange={setRowSelection}
       state={{ rowSelection }}
     />

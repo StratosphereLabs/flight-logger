@@ -45,8 +45,8 @@ export const AddFlight = (): JSX.Element => {
     setTimeout(() => methods.setFocus('departureAirportId'));
   }, []);
   return (
-    <div className="flex flex-1 flex-col gap-3 p-3">
-      <LoadingCard className="min-h-[400px] overflow-visible bg-base-100 shadow-lg">
+    <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
+      <LoadingCard className="bg-base-100 shadow-lg">
         <Card.Body>
           <Card.Title className="mb-5 justify-center text-2xl">
             Add a Flight

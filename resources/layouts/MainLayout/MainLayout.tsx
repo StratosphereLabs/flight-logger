@@ -9,9 +9,7 @@ export const MainLayout = (): JSX.Element => {
   return (
     <div className={`flex h-screen flex-col justify-between`}>
       <MainNavbar />
-      <div className="flex flex-1 flex-col overflow-y-scroll">
-        <Outlet />
-      </div>
+      <Outlet />
       <MainFooter />
       {alertMessages.length > 0 ? (
         <Toast
