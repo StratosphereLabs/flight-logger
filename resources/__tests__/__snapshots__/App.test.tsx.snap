@@ -225,7 +225,7 @@ exports[`<App /> > renders profile page 1`] = `
     class="flex h-screen flex-col justify-between"
   >
     <div
-      class="component-preview flex w-full items-center justify-center gap-2 p-3 font-sans"
+      class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
     >
       <div
         aria-label="Navbar"
@@ -242,7 +242,7 @@ exports[`<App /> > renders profile page 1`] = `
             <button
               aria-expanded="false"
               aria-haspopup="menu"
-              class="btn lg:hidden btn-ghost"
+              class="btn xl:hidden btn-ghost"
               data-headlessui-state=""
               id="headlessui-menu-button-:r1:"
               type="button"
