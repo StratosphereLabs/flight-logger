@@ -1,5 +1,9 @@
 import { aircraft_type, airline, airport } from '@prisma/client';
-import { getCoreRowModel } from '@tanstack/react-table';
+import {
+  Row,
+  RowSelectionOptions,
+  getCoreRowModel,
+} from '@tanstack/react-table';
 import { Badge } from 'react-daisyui';
 import { Table } from 'stratosphere-ui';
 import { ActionsCell } from './ActionsCell';
@@ -8,8 +12,12 @@ import { UsersRouterOutput } from '../../../app/routes/users';
 
 export interface UserFlightsTableProps {
   data?: UsersRouterOutput['getUserFlights'];
-  enableRowSelection?: boolean;
+  enableRowSelection?: RowSelectionOptions<
+    UsersRouterOutput['getUserFlights'][number]
+  >['enableRowSelection'];
 }
+
+export type FlightsTableRow = Row<UsersRouterOutput['getUserFlights'][number]>;
 
 export const UserFlightsTable = ({
   data,
@@ -105,7 +113,7 @@ export const UserFlightsTable = ({
         },
         {
           id: 'duration',
-          accessorKey: 'duration',
+          accessorKey: 'durationString',
           header: () => 'Duration',
           cell: ({ getValue }) => {
             const duration = getValue<string>();

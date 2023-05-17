@@ -9,50 +9,52 @@ import {
   excludeKeys,
   fetchGravatarUrl,
   getAirports,
-  getFlightTimestamps,
+  getFlightTimeData,
   getHeatmap,
   getRoutes,
   ItineraryResult,
 } from '../utils';
 
 export const usersRouter = router({
-  getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
-    const [userData, flightCount] = await prisma.$transaction([
-      prisma.user.findUnique({
-        where: {
-          username: input.username ?? ctx.user?.username,
-        },
-      }),
-      prisma.flight.count({
-        where: {
-          user: {
+  getUser: procedure
+    .input(getUserSchema.optional())
+    .query(async ({ ctx, input }) => {
+      const [userData, flightCount] = await prisma.$transaction([
+        prisma.user.findUnique({
+          where: {
             username: input?.username ?? ctx.user?.username,
           },
-          outTime: {
-            lt: new Date(),
+        }),
+        prisma.flight.count({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            outTime: {
+              lt: new Date(),
+            },
           },
-        },
-      }),
-    ]);
-    if (userData === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'User not found.',
-      });
-    }
-    return {
-      avatar: fetchGravatarUrl(userData.email),
-      flightCount,
-      creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
-      ...excludeKeys(
-        userData,
-        'password',
-        'id',
-        'passwordResetToken',
-        'passwordResetAt',
-      ),
-    };
-  }),
+        }),
+      ]);
+      if (userData === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found.',
+        });
+      }
+      return {
+        avatar: fetchGravatarUrl(userData.email),
+        flightCount,
+        creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
+        ...excludeKeys(
+          userData,
+          'password',
+          'id',
+          'passwordResetToken',
+          'passwordResetAt',
+        ),
+      };
+    }),
   getUserFlights: procedure
     .input(getUserSchema.optional())
     .query(async ({ ctx, input }) => {
@@ -74,54 +76,15 @@ export const usersRouter = router({
           },
         ],
       });
-      return result.map(flight => {
-        const {
-          duration,
-          inFuture,
-          outDateISO,
-          outDateLocal,
-          outTimeLocal,
-          outTimeValue,
-          inTimeLocal,
-          inTimeValue,
-        } = getFlightTimestamps({
-          departureAirport: flight.departureAirport,
-          arrivalAirport: flight.arrivalAirport,
-          duration: flight.duration,
-          outTime: flight.outTime,
-          inTime: flight.inTime,
-        });
-        const flightDistance = calculateDistance(
-          flight.departureAirport.lat,
-          flight.departureAirport.lon,
-          flight.arrivalAirport.lat,
-          flight.arrivalAirport.lon,
-        );
-        return {
-          ...flight,
-          flightNumberString:
-            flight.flightNumber !== null
-              ? `${flight.airline?.iata ?? ''} ${flight.flightNumber}`.trim()
-              : '',
-          duration,
-          inFuture,
-          outDateISO,
-          outDateLocal,
-          outTimeLocal,
-          outTimeValue,
-          inTimeLocal,
-          inTimeValue,
-          distance: Math.round(flightDistance),
-        };
-      });
+      return getFlightTimeData(result);
     }),
   getUserMapData: procedure
-    .input(getUserSchema)
+    .input(getUserSchema.optional())
     .query(async ({ ctx, input }) => {
       const flights = await prisma.flight.findMany({
         where: {
           user: {
-            username: input.username ?? ctx.user?.username,
+            username: input?.username ?? ctx.user?.username,
           },
         },
         include: {
@@ -137,6 +100,31 @@ export const usersRouter = router({
         heatmap,
         routes,
       };
+    }),
+  getUserTrips: procedure
+    .input(getUserSchema.optional())
+    .query(async ({ ctx, input }) => {
+      const trips = await prisma.trip.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+        },
+        include: {
+          flights: {
+            include: {
+              departureAirport: true,
+              arrivalAirport: true,
+              airline: true,
+              aircraftType: true,
+            },
+          },
+        },
+      });
+      return trips.map(trip => ({
+        ...trip,
+        flights: getFlightTimeData(trip.flights),
+      }));
     }),
   getUserItineraries: procedure
     .input(getUserSchema.optional())

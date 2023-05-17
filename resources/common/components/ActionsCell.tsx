@@ -48,7 +48,7 @@ export const ActionsCell = ({
               <span className="sr-only">{editMessage}</span>
             </Button>
             <Button className="px-1" color="error" onClick={onDelete} size="xs">
-              <TrashIcon />
+              <TrashIcon className="h-4 w-4" />
               <span className="sr-only">{deleteMessage}</span>
             </Button>
           </>
@@ -105,7 +105,7 @@ export const ActionsCell = ({
                     onClick: onDelete,
                     children: (
                       <>
-                        <TrashIcon />
+                        <TrashIcon className="h-4 w-4" />
                         {deleteMessage}
                       </>
                     ),

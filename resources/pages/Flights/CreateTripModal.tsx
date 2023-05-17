@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, Modal } from 'stratosphere-ui';
 import { useFlightsPageStore } from './flightsPageStore';
@@ -16,23 +17,31 @@ export interface CreateTripModalProps {
 export const CreateTripModal = ({
   onSuccess,
 }: CreateTripModalProps): JSX.Element => {
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const utils = trpc.useContext();
   const { isCreateTripDialogOpen, rowSelection, setIsCreateTripDialogOpen } =
     useFlightsPageStore();
   const methods = useForm({
     defaultValues: {
-      name: '',
+      tripName: '',
     },
     resolver: zodResolver(createTripFormSchema),
   });
   const flightIds = Object.keys(rowSelection);
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.trips.createTrip.useMutation({
-    onSuccess: () => {
-      onSuccess?.();
+    onSuccess: async () => {
+      await utils.users.getUserTrips.invalidate();
       handleSuccess('Trip Created!');
       setIsCreateTripDialogOpen(false);
+      onSuccess?.();
     },
   });
+  useEffect(() => {
+    if (isCreateTripDialogOpen) {
+      setTimeout(() => methods.setFocus('tripName'), 100);
+    }
+  }, [isCreateTripDialogOpen]);
   useTRPCErrorHandler(error);
   return (
     <Modal
@@ -46,17 +55,18 @@ export const CreateTripModal = ({
           children: 'Create',
           color: 'primary',
           loading: isLoading,
-          onClick: methods.handleSubmit(({ name }) =>
-            mutate({ name, flightIds }),
+          onClick: methods.handleSubmit(({ tripName }) =>
+            mutate({ name: tripName, flightIds }),
           ),
         },
       ]}
       onClose={() => setIsCreateTripDialogOpen(false)}
       open={isCreateTripDialogOpen}
+      ref={modalRef}
       title={`Create Trip (${flightIds.length} flights)`}
     >
       <Form className="flex flex-col gap-4" methods={methods}>
-        <FormControl isRequired labelText="Trip Name" name="name" />
+        <FormControl isRequired labelText="Trip Name" name="tripName" />
       </Form>
     </Modal>
   );

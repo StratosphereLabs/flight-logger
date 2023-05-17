@@ -1,8 +1,9 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { verifyAdminTRPC, verifyAuthenticated } from '../middleware';
-import { createTripSchema, getTripSchema } from '../schemas';
+import { verifyAuthenticated } from '../middleware';
+import { createTripSchema, deleteTripSchema, getTripSchema } from '../schemas';
 import { procedure, router } from '../trpc';
+import { getFlightTimeData } from '../utils';
 
 export const tripsRouter = router({
   getTrip: procedure.input(getTripSchema).query(async ({ input }) => {
@@ -11,6 +12,16 @@ export const tripsRouter = router({
       where: {
         id,
       },
+      include: {
+        flights: {
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+        },
+      },
     });
     if (trip === null) {
       throw new TRPCError({
@@ -18,7 +29,10 @@ export const tripsRouter = router({
         message: 'Trip not found.',
       });
     }
-    return trip;
+    return {
+      ...trip,
+      flights: getFlightTimeData(trip.flights),
+    };
   }),
   createTrip: procedure
     .use(verifyAuthenticated)
@@ -45,6 +59,12 @@ export const tripsRouter = router({
             message: 'One or more flights does not belong to current user.',
           });
         }
+        if (flight.tripId !== null) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'One or more flights already belongs to a trip.',
+          });
+        }
       });
       const trip = await prisma.trip.create({
         data: {
@@ -63,7 +83,32 @@ export const tripsRouter = router({
         },
       });
     }),
-  deleteTrips: procedure.use(verifyAdminTRPC).mutation(async () => {
-    await prisma.trip.deleteMany({});
-  }),
+  deleteTrip: procedure
+    .use(verifyAuthenticated)
+    .input(deleteTripSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+      const trip = await prisma.trip.findFirst({
+        where: {
+          id,
+        },
+      });
+      if (trip === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Trip not found.',
+        });
+      }
+      if (trip.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Unable to delete trip.',
+        });
+      }
+      return await prisma.trip.delete({
+        where: {
+          id,
+        },
+      });
+    }),
 });

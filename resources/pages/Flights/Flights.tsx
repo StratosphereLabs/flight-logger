@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Progress } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   CloseIcon,
   Disclosure,
@@ -17,6 +17,7 @@ import { ViewFlightModal } from './ViewFlightModal';
 import {
   Bars2Icon,
   Bars4Icon,
+  FlightsTableRow,
   UserFlightsTable,
 } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -29,6 +30,7 @@ interface FlightsData {
 }
 
 export const Flights = (): JSX.Element => {
+  const navigate = useNavigate();
   const methods = useForm({
     defaultValues: {
       layout: 'full',
@@ -39,9 +41,9 @@ export const Flights = (): JSX.Element => {
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const { rowSelection, resetRowSelection, setIsCreateTripDialogOpen } =
     useFlightsPageStore();
-  useEffect(() => {
-    if (!isRowSelectEnabled) resetRowSelection();
-  }, [isRowSelectEnabled]);
+  const enableRowSelection = isRowSelectEnabled
+    ? ({ original }: FlightsTableRow) => original.tripId === null
+    : false;
   const { data, error, isFetching, refetch } =
     trpc.users.getUserFlights.useQuery(
       {
@@ -60,6 +62,7 @@ export const Flights = (): JSX.Element => {
               flights: [],
             },
           ),
+        staleTime: 5 * 60 * 1000,
       },
     );
   useTRPCErrorHandler(error);
@@ -82,7 +85,12 @@ export const Flights = (): JSX.Element => {
                 startIcon={
                   isRowSelectEnabled ? <CloseIcon className="h-4 w-4" /> : null
                 }
-                onClick={() => setIsRowSelectEnabled(isEnabled => !isEnabled)}
+                onClick={() =>
+                  setIsRowSelectEnabled(isEnabled => {
+                    if (isEnabled) resetRowSelection();
+                    return !isEnabled;
+                  })
+                }
                 size="sm"
                 type="button"
               >
@@ -128,7 +136,7 @@ export const Flights = (): JSX.Element => {
           >
             <UserFlightsTable
               data={data.upcomingFlights}
-              enableRowSelection={isRowSelectEnabled}
+              enableRowSelection={enableRowSelection}
             />
           </Disclosure>
           <Disclosure
@@ -142,7 +150,7 @@ export const Flights = (): JSX.Element => {
           >
             <UserFlightsTable
               data={data.flights}
-              enableRowSelection={isRowSelectEnabled}
+              enableRowSelection={enableRowSelection}
             />
           </Disclosure>
         </>
@@ -150,13 +158,19 @@ export const Flights = (): JSX.Element => {
       {!isFetching && data !== undefined && layout === 'compact' ? (
         <UserFlightsTable
           data={[...data.upcomingFlights, ...data.flights]}
-          enableRowSelection={isRowSelectEnabled}
+          enableRowSelection={enableRowSelection}
         />
       ) : null}
       <DeleteFlightModal />
       <EditFlightModal onSuccess={async () => await refetch()} />
       <ViewFlightModal />
-      <CreateTripModal onSuccess={() => setIsRowSelectEnabled(false)} />
+      <CreateTripModal
+        onSuccess={() => {
+          setIsRowSelectEnabled(false);
+          resetRowSelection();
+          navigate('/trips');
+        }}
+      />
     </div>
   );
 };
