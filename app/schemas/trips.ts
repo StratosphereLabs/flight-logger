@@ -13,8 +13,8 @@ export const deleteTripSchema = z.object({
   id: z.string().uuid(),
 });
 
-export const createTripFormSchema = createTripSchema.pick({
-  name: true,
+export const createTripFormSchema = z.object({
+  tripName: z.string().min(1, 'Name is required.'),
 });
 
 export type GetTripRequest = z.infer<typeof getTripSchema>;

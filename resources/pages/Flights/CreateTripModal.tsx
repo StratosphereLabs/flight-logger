@@ -22,6 +22,7 @@ export const CreateTripModal = ({
   const { isCreateTripDialogOpen, rowSelection, setIsCreateTripDialogOpen } =
     useFlightsPageStore();
   const methods = useForm({
+    mode: 'onBlur',
     defaultValues: {
       tripName: '',
     },
