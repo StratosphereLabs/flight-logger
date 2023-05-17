@@ -9,6 +9,10 @@ export const createTripSchema = z.object({
   flightIds: z.array(z.string().uuid()),
 });
 
+export const deleteTripSchema = z.object({
+  id: z.string().uuid(),
+});
+
 export const createTripFormSchema = createTripSchema.pick({
   name: true,
 });

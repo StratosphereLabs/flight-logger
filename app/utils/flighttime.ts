@@ -38,7 +38,7 @@ export interface FlightTimesResult {
 }
 
 export interface FlightTimestampsResult {
-  duration: string;
+  durationString: string;
   inFuture: boolean;
   outDateISO: string;
   outDateLocal: string;
@@ -86,7 +86,7 @@ export const getFlightTimestamps = ({
   outTime,
   inTime,
 }: FlightTimestampsInput): FlightTimestampsResult => ({
-  duration: getDurationString(duration),
+  durationString: getDurationString(duration),
   inFuture: getInFuture(outTime),
   outDateISO: formatInTimeZone(
     outTime,
