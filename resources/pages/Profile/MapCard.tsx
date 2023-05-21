@@ -30,9 +30,14 @@ export const MapCard = (): JSX.Element => {
   });
   const [showUpcoming, mapMode] = methods.watch(['showUpcoming', 'mapMode']);
   const { username } = useParams();
-  const { data, error, isFetching } = trpc.users.getUserMapData.useQuery({
-    username,
-  });
+  const { data, error, isFetching } = trpc.users.getUserMapData.useQuery(
+    {
+      username,
+    },
+    {
+      staleTime: 5 * 60 * 1000,
+    },
+  );
   const heatmapData = useMemo(
     () =>
       mapMode === 'heatmap'
@@ -60,8 +65,8 @@ export const MapCard = (): JSX.Element => {
         />
         <Select
           className="w-[120px]"
+          formValueMode="id"
           getItemText={({ text }) => text}
-          getItemValue={({ id }) => id}
           options={[
             {
               id: 'routes',

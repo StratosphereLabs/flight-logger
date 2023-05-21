@@ -1,4 +1,9 @@
 import { z } from 'zod';
+import {
+  aircraft_typeSchema,
+  airlineSchema,
+  airportSchema,
+} from '../../prisma/generated/zod';
 import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
 
 export const getFlightSchema = z.object({
@@ -10,10 +15,14 @@ export const deleteFlightSchema = z.object({
 });
 
 export const addFlightSchema = z.object({
-  departureAirportId: z.string().min(1, 'Required'),
-  arrivalAirportId: z.string().min(1, 'Required'),
-  airlineId: z.string(),
-  aircraftTypeId: z.string(),
+  departureAirport: airportSchema
+    .nullable()
+    .refine(item => item !== null, 'Airport is required.'),
+  arrivalAirport: airportSchema
+    .nullable()
+    .refine(item => item !== null, 'Airport is required.'),
+  airline: airlineSchema.nullable(),
+  aircraftType: aircraft_typeSchema.nullable(),
   flightNumber: z
     .number()
     .int()

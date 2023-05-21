@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import { Button, Card, Divider, Progress } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
 import { Badge } from 'stratosphere-ui';
-import { BADGE_COLORS_MAP, CLASS_TEXT_MAP } from './constants';
 import { AirlineLogo, LinkIcon, RightArrowIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { BADGE_COLORS_MAP, CLASS_TEXT_MAP } from './constants';
 
 export const Itinerary = (): JSX.Element | null => {
   const { id } = useParams();
@@ -103,7 +103,9 @@ export const Itinerary = (): JSX.Element | null => {
               </div>
               <div className="flex w-[100px] flex-col gap-1 text-sm">
                 <div className="opacity-60">Travel Time</div>
-                <div className="font-mono opacity-90">{flight.duration}</div>
+                <div className="font-mono opacity-90">
+                  {flight.durationString}
+                </div>
               </div>
               {flight.aircraftType !== null ? (
                 <div className="hidden flex-1 flex-col gap-1 text-sm sm:flex">

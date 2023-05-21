@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
-import { useTripsPageStore } from './tripsPageStore';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { useTripsPageStore } from './tripsPageStore';
 
 export const DeleteTripModal = (): JSX.Element => {
   const utils = trpc.useContext();
@@ -15,7 +15,6 @@ export const DeleteTripModal = (): JSX.Element => {
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.trips.deleteTrip.useMutation({
     onSuccess: async ({ id }) => {
-      await utils.users.getUserFlights.invalidate();
       handleSuccess('Trip Deleted');
       setIsDeleteDialogOpen(false);
       const previousTrips = utils.users.getUserTrips.getData({
@@ -25,6 +24,7 @@ export const DeleteTripModal = (): JSX.Element => {
         { username },
         previousTrips?.filter(trip => trip.id !== id),
       );
+      await utils.users.getUserFlights.invalidate();
     },
   });
   useTRPCErrorHandler(error);

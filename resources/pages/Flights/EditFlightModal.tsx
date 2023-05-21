@@ -9,8 +9,8 @@ import {
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
-import { editFlightDefaultValues } from './constants';
-import { useFlightsPageStore } from './flightsPageStore';
+import { FlightsRouterOutput } from '../../../app/routes/flights';
+import { EditFlightRequest, editFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
   AirlineInput,
@@ -21,8 +21,8 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { FlightsRouterOutput } from '../../../app/routes/flights';
-import { EditFlightRequest, editFlightSchema } from '../../../app/schemas';
+import { editFlightDefaultValues } from './constants';
+import { useFlightsPageStore } from './flightsPageStore';
 
 export interface EditFlightProps {
   onSuccess: (data: FlightsRouterOutput['editFlight']) => void;
@@ -31,6 +31,7 @@ export interface EditFlightProps {
 export const EditFlightModal = ({
   onSuccess,
 }: EditFlightProps): JSX.Element => {
+  const utils = trpc.useContext();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const methods = useForm<EditFlightRequest>({
     defaultValues: editFlightDefaultValues,
@@ -40,27 +41,28 @@ export const EditFlightModal = ({
     useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.flights.editFlight.useMutation({
-    onSuccess: newFlight => {
+    onSuccess: async newFlight => {
       handleSuccess('Flight Edited!');
       onSuccess(newFlight);
       setIsEditDialogOpen(false);
+      await utils.users.invalidate();
     },
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
     if (isEditDialogOpen) {
       modalRef.current?.scrollTo(0, 0);
-      setTimeout(() => methods.setFocus('departureAirportId'), 100);
+      setTimeout(() => methods.setFocus('departureAirport'), 100);
     }
   }, [isEditDialogOpen]);
   useEffect(() => {
     if (activeFlight !== null) {
       methods.reset({
         id: activeFlight.id,
-        departureAirportId: activeFlight.departureAirportId,
-        arrivalAirportId: activeFlight.arrivalAirportId,
-        airlineId: activeFlight.airlineId ?? '',
-        aircraftTypeId: activeFlight.aircraftTypeId ?? '',
+        departureAirport: activeFlight.departureAirport,
+        arrivalAirport: activeFlight.arrivalAirport,
+        airline: activeFlight.airline,
+        aircraftType: activeFlight.aircraftType,
         flightNumber: activeFlight.flightNumber,
         callsign: activeFlight.callsign ?? '',
         tailNumber: activeFlight.tailNumber ?? '',
@@ -100,25 +102,17 @@ export const EditFlightModal = ({
     >
       <Form className="flex flex-col gap-4" methods={methods}>
         <AirportInput
-          defaultOptions={
-            activeFlight !== null ? [activeFlight.departureAirport] : []
-          }
-          getItemValue={({ id }) => id}
           isRequired
           labelText="Departure Airport"
           menuClassName="w-full"
-          name="departureAirportId"
+          name="departureAirport"
           showDirty
         />
         <AirportInput
-          defaultOptions={
-            activeFlight !== null ? [activeFlight.arrivalAirport] : []
-          }
-          getItemValue={({ id }) => id}
           isRequired
           labelText="Arrival Airport"
           menuClassName="w-full"
-          name="arrivalAirportId"
+          name="arrivalAirport"
           showDirty
         />
         <FormControl
@@ -147,31 +141,17 @@ export const EditFlightModal = ({
           type="time"
         />
         <AirlineInput
-          defaultOptions={
-            activeFlight?.airline !== undefined &&
-            activeFlight?.airline !== null
-              ? [activeFlight.airline]
-              : []
-          }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
-          getItemValue={({ id }) => id}
           labelText="Airline"
           menuClassName="w-full"
-          name="airlineId"
+          name="airline"
           showDirty
         />
         <AircraftTypeInput
-          defaultOptions={
-            activeFlight?.aircraftType !== undefined &&
-            activeFlight?.aircraftType !== null
-              ? [activeFlight.aircraftType]
-              : []
-          }
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
-          getItemValue={({ id }) => id}
           labelText="Aircraft Type"
           menuClassName="w-full"
-          name="aircraftTypeId"
+          name="aircraftType"
           showDirty
         />
         <FormControl
