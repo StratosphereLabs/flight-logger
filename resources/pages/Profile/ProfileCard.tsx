@@ -6,7 +6,12 @@ import { trpc } from '../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
   const { username } = useParams();
-  const { data, error, isFetching } = trpc.users.getUser.useQuery({ username });
+  const { data, error, isFetching } = trpc.users.getUser.useQuery(
+    { username },
+    {
+      staleTime: 5 * 60 * 1000,
+    },
+  );
   useTRPCErrorHandler(error);
   return (
     <LoadingCard isLoading={isFetching} className="w-80 bg-base-100 shadow-lg">

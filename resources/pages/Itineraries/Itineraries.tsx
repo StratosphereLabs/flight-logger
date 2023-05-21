@@ -2,12 +2,12 @@ import { getCoreRowModel } from '@tanstack/react-table';
 import { Progress } from 'react-daisyui';
 import { Link, useParams } from 'react-router-dom';
 import { Table } from 'stratosphere-ui';
-import { DeleteItineraryModal } from './DeleteItineraryModal';
-import { useItinerariesPageStore } from './itinerariesPageStore';
 import { ActionsCell } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { DeleteItineraryModal } from './DeleteItineraryModal';
+import { useItinerariesPageStore } from './itinerariesPageStore';
 
 export const Itineraries = (): JSX.Element => {
   const { username } = useParams();
@@ -18,9 +18,14 @@ export const Itineraries = (): JSX.Element => {
     setIsViewDialogOpen,
   } = useItinerariesPageStore();
   const copyToClipboard = useCopyToClipboard();
-  const { data, error, isFetching } = trpc.users.getUserItineraries.useQuery({
-    username,
-  });
+  const { data, error, isFetching } = trpc.users.getUserItineraries.useQuery(
+    {
+      username,
+    },
+    {
+      staleTime: 5 * 60 * 1000,
+    },
+  );
   useTRPCErrorHandler(error);
   return (
     <div className="flex flex-col items-center gap-4">

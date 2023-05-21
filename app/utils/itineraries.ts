@@ -25,7 +25,7 @@ export interface ItineraryResult {
   outTime: string;
   inTime: string;
   daysAdded: number;
-  duration: string;
+  durationString: string;
   airline: airline | null;
   flightNumber: number | null;
   aircraftType: aircraft_type | null;
@@ -119,7 +119,7 @@ export const getItineraryData = ({
           end: flight.outTime,
         }),
       );
-      const { duration, outDateLocal, outTimeLocal, inTimeLocal } =
+      const { durationString, outDateLocal, outTimeLocal, inTimeLocal } =
         getFlightTimestamps({
           departureAirport,
           arrivalAirport,
@@ -136,7 +136,7 @@ export const getItineraryData = ({
         outTime: outTimeLocal,
         inTime: inTimeLocal,
         daysAdded: flight.daysAdded,
-        duration,
+        durationString,
         airline,
         flightNumber: flight.flightNumber,
         aircraftType,

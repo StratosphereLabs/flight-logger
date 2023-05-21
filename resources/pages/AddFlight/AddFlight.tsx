@@ -10,7 +10,7 @@ import {
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
-import { addFlightDefaultValues } from './constants';
+import { addFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
   AirlineInput,
@@ -22,9 +22,10 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { addFlightSchema } from '../../../app/schemas';
+import { addFlightDefaultValues } from './constants';
 
 export const AddFlight = (): JSX.Element => {
+  const utils = trpc.useContext();
   useProtectedPage();
   const methods = useForm({
     mode: 'onBlur',
@@ -34,15 +35,16 @@ export const AddFlight = (): JSX.Element => {
   });
   const handleSuccess = useSuccessResponseHandler();
   const { error, mutate, isLoading } = trpc.flights.addFlight.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Flight Added!');
       methods.reset();
-      setTimeout(() => methods.setFocus('departureAirportId'));
+      setTimeout(() => methods.setFocus('departureAirport'));
+      await utils.users.invalidate();
     },
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
-    setTimeout(() => methods.setFocus('departureAirportId'));
+    setTimeout(() => methods.setFocus('departureAirport'));
   }, []);
   return (
     <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
@@ -61,20 +63,18 @@ export const AddFlight = (): JSX.Element => {
                 <AirportInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ id, name }) => `${id} - ${name}`}
-                  getItemValue={({ id }) => id}
                   isRequired
                   labelText="Departure Airport"
                   menuClassName="w-full"
-                  name="departureAirportId"
+                  name="departureAirport"
                 />
                 <AirportInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ id, name }) => `${id} - ${name}`}
-                  getItemValue={({ id }) => id}
                   isRequired
                   labelText="Arrival Airport"
                   menuClassName="w-full"
-                  name="arrivalAirportId"
+                  name="arrivalAirport"
                 />
               </div>
               <div className="flex flex-wrap justify-between gap-8">
@@ -108,20 +108,18 @@ export const AddFlight = (): JSX.Element => {
                   getBadgeText={({ iata, icao, name }) =>
                     `${iata}/${icao} - ${name}`
                   }
-                  getItemValue={({ id }) => id}
                   labelText="Airline"
                   menuClassName="w-full"
-                  name="airlineId"
+                  name="airline"
                 />
                 <AircraftTypeInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ iata, icao, name }) =>
                     `${iata}/${icao} - ${name}`
                   }
-                  getItemValue={({ id }) => id}
                   labelText="Aircraft Type"
                   menuClassName="w-full"
-                  name="aircraftTypeId"
+                  name="aircraftType"
                 />
               </div>
               <div className="flex flex-wrap justify-between gap-8">

@@ -18,12 +18,12 @@ export const flightsRouter = router({
       const [departureAirport, arrivalAirport] = await prisma.$transaction([
         prisma.airport.findUnique({
           where: {
-            id: input.departureAirportId,
+            id: input.departureAirport?.id,
           },
         }),
         prisma.airport.findUnique({
           where: {
-            id: input.arrivalAirportId,
+            id: input.arrivalAirport?.id,
           },
         }),
       ]);
@@ -49,27 +49,27 @@ export const flightsRouter = router({
           },
           departureAirport: {
             connect: {
-              id: input.departureAirportId,
+              id: departureAirport.id,
             },
           },
           arrivalAirport: {
             connect: {
-              id: input.arrivalAirportId,
+              id: arrivalAirport.id,
             },
           },
           airline:
-            input.airlineId !== ''
+            input.airline !== null
               ? {
                   connect: {
-                    id: input.airlineId,
+                    id: input.airline.id,
                   },
                 }
               : undefined,
           aircraftType:
-            input.aircraftTypeId !== ''
+            input.aircraftType !== null
               ? {
                   connect: {
-                    id: input.aircraftTypeId,
+                    id: input.aircraftType.id,
                   },
                 }
               : undefined,
@@ -129,12 +129,12 @@ export const flightsRouter = router({
       const [departureAirport, arrivalAirport] = await prisma.$transaction([
         prisma.airport.findUnique({
           where: {
-            id: input.departureAirportId,
+            id: input.departureAirport?.id,
           },
         }),
         prisma.airport.findUnique({
           where: {
-            id: input.arrivalAirportId,
+            id: input.arrivalAirport?.id,
           },
         }),
       ]);
@@ -158,31 +158,31 @@ export const flightsRouter = router({
         data: {
           departureAirport: {
             connect: {
-              id: input.departureAirportId,
+              id: departureAirport.id,
             },
           },
           arrivalAirport: {
             connect: {
-              id: input.arrivalAirportId,
+              id: arrivalAirport.id,
             },
           },
           airline: {
             connect:
-              input.airlineId !== ''
+              input.airline !== null
                 ? {
-                    id: input.airlineId,
+                    id: input.airline.id,
                   }
                 : undefined,
-            disconnect: input.airlineId === '' ? true : undefined,
+            disconnect: input.airline === null ? true : undefined,
           },
           aircraftType: {
             connect:
-              input.aircraftTypeId !== ''
+              input.aircraftType !== null
                 ? {
-                    id: input.aircraftTypeId,
+                    id: input.aircraftType.id,
                   }
                 : undefined,
-            disconnect: input.aircraftTypeId === '' ? true : undefined,
+            disconnect: input.aircraftType === null ? true : undefined,
           },
           flightNumber: input.flightNumber,
           callsign: input.callsign,

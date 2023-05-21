@@ -1,9 +1,9 @@
 export const editFlightDefaultValues = {
   id: '',
-  departureAirportId: '',
-  arrivalAirportId: '',
-  airlineId: '',
-  aircraftTypeId: '',
+  departureAirport: null,
+  arrivalAirport: null,
+  airline: null,
+  aircraftType: null,
   flightNumber: null,
   callsign: '',
   tailNumber: '',

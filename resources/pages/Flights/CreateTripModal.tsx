@@ -2,13 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, Modal } from 'stratosphere-ui';
-import { useFlightsPageStore } from './flightsPageStore';
+import { createTripFormSchema } from '../../../app/schemas';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { createTripFormSchema } from '../../../app/schemas';
+import { useFlightsPageStore } from './flightsPageStore';
 
 export interface CreateTripModalProps {
   onSuccess?: () => void;
@@ -32,10 +32,10 @@ export const CreateTripModal = ({
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.trips.createTrip.useMutation({
     onSuccess: async () => {
-      await utils.users.getUserTrips.invalidate();
       handleSuccess('Trip Created!');
       setIsCreateTripDialogOpen(false);
       onSuccess?.();
+      await utils.users.invalidate();
     },
   });
   useEffect(() => {

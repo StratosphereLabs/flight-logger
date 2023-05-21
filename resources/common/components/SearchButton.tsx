@@ -3,11 +3,12 @@ import { Button } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Form, TypeaheadSelect, useOutsideClick } from 'stratosphere-ui';
+import { UsersRouterOutput } from '../../../app/routes/users';
 import { trpc } from '../../utils/trpc';
 import { SearchIcon } from './Icons';
 
 export interface UserSearchFormData {
-  username: string;
+  user: UsersRouterOutput['getUsers'][number] | null;
 }
 
 export const SearchButton = (): JSX.Element => {
@@ -22,16 +23,21 @@ export const SearchButton = (): JSX.Element => {
   );
   const methods = useForm<UserSearchFormData>({
     defaultValues: {
-      username: '',
+      user: null,
     },
   });
-  const username = methods.watch('username');
+  const user = methods.watch('user');
   useEffect(() => {
-    if (username.length > 0) {
+    if (user !== null) {
       setIsSearching(false);
-      navigate(`/user/${username}`);
+      navigate(`/user/${user.username}`);
     }
-  }, [username]);
+  }, [user]);
+  useEffect(() => {
+    if (!isSearching) {
+      methods.reset();
+    }
+  }, [isSearching]);
   useOutsideClick(formRef, event => {
     const element = event.target as HTMLElement;
     if (element.tagName !== 'A') setIsSearching(false);
@@ -43,9 +49,8 @@ export const SearchButton = (): JSX.Element => {
           <TypeaheadSelect
             disableSingleSelectBadge
             getItemText={({ username }) => username}
-            getItemValue={({ username }) => username}
             menuClassName="min-w-full"
-            name="username"
+            name="user"
             onDebouncedChange={setQuery}
             onKeyDown={({ key }) => {
               if (key === 'Escape' || key === 'Tab') {
@@ -62,7 +67,7 @@ export const SearchButton = (): JSX.Element => {
           color="ghost"
           onClick={() => {
             setIsSearching(true);
-            setTimeout(() => methods.setFocus('username'));
+            setTimeout(() => methods.setFocus('user'));
           }}
           ref={buttonRef}
           shape="circle"
