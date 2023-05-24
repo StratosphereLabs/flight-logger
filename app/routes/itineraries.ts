@@ -81,18 +81,13 @@ export const itinerariesRouter = router({
       const itinerary = await prisma.itinerary.findFirst({
         where: {
           id,
+          userId: ctx.user.id,
         },
       });
       if (itinerary === null) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Itinerary not found.',
-        });
-      }
-      if (itinerary.userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Unable to delete itinerary.',
         });
       }
       return await prisma.itinerary.delete({
