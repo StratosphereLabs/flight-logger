@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Badge, Card } from 'react-daisyui';
-import { LoadingCard, Table } from 'stratosphere-ui';
+import { Table } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -44,7 +44,7 @@ export const AirportsCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard className="h-[625px] bg-base-100 shadow-lg">
+    <Card className="min-h-[625px] bg-base-100 shadow-lg">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
           Airports
@@ -129,6 +129,6 @@ export const AirportsCard = (): JSX.Element => {
           state={{ pagination, sorting }}
         />
       </Card.Body>
-    </LoadingCard>
+    </Card>
   );
 };

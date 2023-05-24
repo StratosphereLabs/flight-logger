@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Card } from 'react-daisyui';
-import { LoadingCard, Table } from 'stratosphere-ui';
+import { Table } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -24,7 +24,7 @@ export const AircraftTypesCard = (): JSX.Element => {
     });
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard className="h-[550px] bg-base-100 shadow-lg">
+    <Card className="min-h-[550px] bg-base-100 shadow-lg">
       <Card.Body>
         <Card.Title className="mb-3 justify-center" tag="h2">
           Aircraft Types
@@ -72,6 +72,6 @@ export const AircraftTypesCard = (): JSX.Element => {
           state={{ pagination, sorting }}
         />
       </Card.Body>
-    </LoadingCard>
+    </Card>
   );
 };
