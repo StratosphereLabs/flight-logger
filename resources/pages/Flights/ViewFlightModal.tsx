@@ -65,7 +65,7 @@ export const ViewFlightModal = (): JSX.Element => {
             </div>
           </div>
           <div className="flex justify-center italic opacity-50">
-            {activeFlight?.duration} ({activeFlight?.distance} nm)
+            {activeFlight?.durationString} ({activeFlight?.distance} nm)
           </div>
         </div>
         <div className="flex w-full items-center justify-center gap-12">
