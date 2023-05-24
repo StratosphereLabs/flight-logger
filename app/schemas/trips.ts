@@ -13,6 +13,10 @@ export const deleteTripSchema = z.object({
   id: z.string().uuid(),
 });
 
+export const editTripSchema = createTripSchema.extend({
+  id: z.string().uuid('Must be a valid UUID'),
+});
+
 export const createTripFormSchema = z.object({
   tripName: z.string().min(1, 'Name is required.'),
 });

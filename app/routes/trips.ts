@@ -1,9 +1,15 @@
 import { TRPCError } from '@trpc/server';
-import { prisma } from '../db';
+import difference from 'lodash.difference';
+import { prisma, validateUserFlights } from '../db';
 import { verifyAuthenticated } from '../middleware';
-import { createTripSchema, deleteTripSchema, getTripSchema } from '../schemas';
+import {
+  createTripSchema,
+  deleteTripSchema,
+  editTripSchema,
+  getTripSchema,
+} from '../schemas';
 import { procedure, router } from '../trpc';
-import { getFlightTimeData } from '../utils';
+import { transformTripData } from '../utils';
 
 export const tripsRouter = router({
   getTrip: procedure.input(getTripSchema).query(async ({ input }) => {
@@ -23,56 +29,22 @@ export const tripsRouter = router({
         },
       },
     });
-    if (trip === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Trip not found.',
-      });
-    }
-    return {
-      ...trip,
-      flights: getFlightTimeData(trip.flights),
-    };
+    return transformTripData(trip);
   }),
   createTrip: procedure
     .use(verifyAuthenticated)
     .input(createTripSchema)
     .mutation(async ({ ctx, input }) => {
       const { flightIds, name } = input;
-      const flights = await prisma.flight.findMany({
-        where: {
-          id: {
-            in: flightIds,
-          },
-        },
-      });
-      if (flights.length !== flightIds.length) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'One or more flights could not be found!',
-        });
-      }
-      flights.forEach(flight => {
-        if (flight.userId !== ctx.user.id) {
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: 'One or more flights does not belong to current user.',
-          });
-        }
-        if (flight.tripId !== null) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'One or more flights already belongs to a trip.',
-          });
-        }
-      });
+      const flights = await validateUserFlights(flightIds, ctx.user.id);
       const trip = await prisma.trip.create({
         data: {
           userId: ctx.user.id,
+          outTime: flights[0].outTime,
           name,
         },
       });
-      return await prisma.flight.updateMany({
+      await prisma.flight.updateMany({
         where: {
           id: {
             in: flightIds,
@@ -82,6 +54,92 @@ export const tripsRouter = router({
           tripId: trip.id,
         },
       });
+      const updatedTrip = await prisma.trip.findUnique({
+        where: {
+          id: trip.id,
+        },
+        include: {
+          flights: {
+            include: {
+              departureAirport: true,
+              arrivalAirport: true,
+              airline: true,
+              aircraftType: true,
+            },
+          },
+        },
+      });
+      return transformTripData(updatedTrip);
+    }),
+  editTrip: procedure
+    .use(verifyAuthenticated)
+    .input(editTripSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id, flightIds, name } = input;
+      const trip = await prisma.trip.findFirst({
+        where: {
+          id,
+          userId: ctx.user.id,
+        },
+        include: {
+          flights: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      if (trip === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Trip could not be found!',
+        });
+      }
+      const flights = await validateUserFlights(flightIds, ctx.user.id);
+      const currentFlightIds = trip.flights.map(({ id }) => id);
+      const flightIdsToRemove = difference(currentFlightIds, flightIds);
+      await prisma.$transaction([
+        prisma.flight.updateMany({
+          where: {
+            id: {
+              in: flightIdsToRemove,
+            },
+          },
+          data: {
+            tripId: null,
+          },
+        }),
+        prisma.flight.updateMany({
+          where: {
+            id: {
+              in: flightIds,
+            },
+          },
+          data: {
+            tripId: id,
+          },
+        }),
+      ]);
+      const updatedTrip = await prisma.trip.update({
+        where: {
+          id,
+        },
+        data: {
+          outTime: flights[0].outTime,
+          name,
+        },
+        include: {
+          flights: {
+            include: {
+              departureAirport: true,
+              arrivalAirport: true,
+              airline: true,
+              aircraftType: true,
+            },
+          },
+        },
+      });
+      return transformTripData(updatedTrip);
     }),
   deleteTrip: procedure
     .use(verifyAuthenticated)
@@ -91,6 +149,7 @@ export const tripsRouter = router({
       const trip = await prisma.trip.findFirst({
         where: {
           id,
+          userId: ctx.user.id,
         },
       });
       if (trip === null) {
@@ -99,16 +158,21 @@ export const tripsRouter = router({
           message: 'Trip not found.',
         });
       }
-      if (trip.userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Unable to delete trip.',
-        });
-      }
-      return await prisma.trip.delete({
+      const deletedTrip = await prisma.trip.delete({
         where: {
           id,
         },
+        include: {
+          flights: {
+            include: {
+              departureAirport: true,
+              arrivalAirport: true,
+              airline: true,
+              aircraftType: true,
+            },
+          },
+        },
       });
+      return transformTripData(deletedTrip);
     }),
 });

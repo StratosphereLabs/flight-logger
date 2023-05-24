@@ -13,6 +13,7 @@ import {
   getHeatmap,
   getRoutes,
   ItineraryResult,
+  transformTripData,
 } from '../utils';
 
 export const usersRouter = router({
@@ -121,10 +122,7 @@ export const usersRouter = router({
           },
         },
       });
-      return trips.map(trip => ({
-        ...trip,
-        flights: getFlightTimeData(trip.flights),
-      }));
+      return trips.map(transformTripData);
     }),
   getUserItineraries: procedure
     .input(getUserSchema.optional())

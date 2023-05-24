@@ -109,21 +109,16 @@ export const flightsRouter = router({
     .input(editFlightSchema)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
-      const flight = await prisma.flight.findUnique({
+      const flight = await prisma.flight.findFirst({
         where: {
           id,
+          userId: ctx.user.id,
         },
       });
       if (flight === null) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Flight not found.',
-        });
-      }
-      if (flight.userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Unable to edit flight.',
         });
       }
       const [departureAirport, arrivalAirport] = await prisma.$transaction([
@@ -207,6 +202,7 @@ export const flightsRouter = router({
       const flight = await prisma.flight.findFirst({
         where: {
           id,
+          userId: ctx.user.id,
         },
       });
       if (flight === null) {
@@ -215,17 +211,32 @@ export const flightsRouter = router({
           message: 'Flight not found.',
         });
       }
-      if (flight.userId !== ctx.user.id) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Unable to delete flight.',
-        });
-      }
-      return await prisma.flight.delete({
+      const deletedFlight = await prisma.flight.delete({
         where: {
           id,
         },
       });
+      if (deletedFlight.tripId !== null) {
+        const trip = await prisma.trip.findUnique({
+          where: {
+            id,
+          },
+          include: {
+            flights: true,
+          },
+        });
+        if (trip !== null) {
+          await prisma.trip.update({
+            where: {
+              id,
+            },
+            data: {
+              outTime: trip.flights[0].outTime,
+            },
+          });
+        }
+      }
+      return deletedFlight;
     }),
 });
 
