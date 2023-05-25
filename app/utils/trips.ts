@@ -1,5 +1,8 @@
 import { trip } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import { formatInTimeZone } from 'date-fns-tz';
+import { DATE_FORMAT_ISO } from '../constants';
+import { getDurationDays, getInFuture } from './datetime';
 import { FlightData, FlightTimeDataResult, getFlightTimeData } from './flights';
 
 export type TripWithAirports = trip & {
@@ -7,6 +10,9 @@ export type TripWithAirports = trip & {
 };
 
 export type TripWithFlightData = trip & {
+  tripDuration: string;
+  outDateISO: string;
+  inFuture: boolean;
   flights: FlightTimeDataResult[];
 };
 
@@ -21,6 +27,16 @@ export const transformTripData = (
   }
   return {
     ...trip,
+    tripDuration: getDurationDays({
+      start: trip.flights[0].outTime,
+      end: trip.flights[trip.flights.length - 1].outTime,
+    }),
+    outDateISO: formatInTimeZone(
+      trip.outTime,
+      trip.flights[0].departureAirport.timeZone,
+      DATE_FORMAT_ISO,
+    ),
+    inFuture: getInFuture(trip.outTime),
     flights: getFlightTimeData(trip.flights),
   };
 };

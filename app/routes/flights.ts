@@ -47,11 +47,14 @@ export const flightsRouter = router({
               id: ctx.user.id,
             },
           },
-          trip: {
-            connect: {
-              id: input.tripId,
-            },
-          },
+          trip:
+            input.tripId !== undefined
+              ? {
+                  connect: {
+                    id: input.tripId,
+                  },
+                }
+              : undefined,
           departureAirport: {
             connect: {
               id: departureAirport.id,

@@ -6,11 +6,12 @@ import {
 } from '@tanstack/react-table';
 import { Badge } from 'react-daisyui';
 import { Table } from 'stratosphere-ui';
-import { ActionsCell } from './ActionsCell';
-import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { UsersRouterOutput } from '../../../app/routes/users';
+import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
+import { ActionsCell } from './ActionsCell';
 
 export interface UserFlightsTableProps {
+  className?: string;
   data?: UsersRouterOutput['getUserFlights'];
   enableRowSelection?: RowSelectionOptions<
     UsersRouterOutput['getUserFlights'][number]
@@ -20,6 +21,7 @@ export interface UserFlightsTableProps {
 export type FlightsTableRow = Row<UsersRouterOutput['getUserFlights'][number]>;
 
 export const UserFlightsTable = ({
+  className,
   data,
   enableRowSelection,
 }: UserFlightsTableProps): JSX.Element => {
@@ -33,7 +35,7 @@ export const UserFlightsTable = ({
   } = useFlightsPageStore();
   return (
     <Table
-      className="table-compact xl:table-normal"
+      className={className}
       columns={[
         {
           id: 'outDateISO',
@@ -43,8 +45,8 @@ export const UserFlightsTable = ({
             const date = getValue<string>();
             return (
               <Badge
-                className="badge-sm font-semibold xl:badge-md"
-                color={row.original.inFuture ? 'secondary' : 'info'}
+                className="badge-xs font-normal opacity-80 lg:badge-sm lg:font-semibold"
+                color={row.original.inFuture ? 'secondary' : 'ghost'}
               >
                 {date}
               </Badge>
@@ -180,7 +182,7 @@ export const UserFlightsTable = ({
         },
       ]}
       cellClassNames={{
-        outDateISO: 'w-[100px] xl:w-[130px]',
+        outDateISO: 'w-[100px] lg:w-[120px]',
         airline: 'w-[135px] hidden sm:table-cell xl:w-[150px]',
         duration: 'w-[100px] hidden lg:table-cell',
         flightNumber: 'w-[100px] hidden md:table-cell xl:w-[120px]',
