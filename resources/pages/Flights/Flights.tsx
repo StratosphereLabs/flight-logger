@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Button, Progress } from 'react-daisyui';
+import { useEffect, useState } from 'react';
+import { Button, Divider, Progress } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -19,16 +19,17 @@ import {
 } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { useFlightsPageStore } from './flightsPageStore';
 import { ViewFlightModal } from './ViewFlightModal';
-import { TripsPageNavigationState } from '../Trips';
 
-interface FlightsData {
+export interface FlightsData {
   flights: UsersRouterOutput['getUserFlights'];
   upcomingFlights: UsersRouterOutput['getUserFlights'];
+  total: number;
 }
 
 export interface FlightsPageNavigationState {
@@ -71,24 +72,19 @@ export const Flights = (): JSX.Element => {
             (acc: FlightsData, flight) => {
               if (flight.inFuture) acc.upcomingFlights.push(flight);
               else acc.flights.push(flight);
+              acc.total++;
               return acc;
             },
             {
               upcomingFlights: [],
               flights: [],
+              total: 0,
             },
           ),
         staleTime: 5 * 60 * 1000,
       },
     );
   useTRPCErrorHandler(error);
-  const totalFlights = useMemo(
-    () =>
-      data !== undefined
-        ? data.flights.length + data.upcomingFlights.length
-        : 0,
-    [data],
-  );
   return (
     <div className="flex flex-col gap-4">
       <article className="prose self-center">
@@ -96,7 +92,7 @@ export const Flights = (): JSX.Element => {
           {username !== undefined ? `${username}'s Flights` : 'My Flights'}
         </h2>
       </article>
-      {totalFlights > 0 ? (
+      {data !== undefined && data.total > 0 ? (
         <Form
           className="flex w-full flex-wrap justify-between gap-2"
           methods={methods}
@@ -153,7 +149,7 @@ export const Flights = (): JSX.Element => {
       {isFetching ? <Progress /> : null}
       {!isFetching &&
       data !== undefined &&
-      totalFlights > 0 &&
+      data.total > 0 &&
       layout === 'full' ? (
         <>
           {data.upcomingFlights.length > 0 ? (
@@ -174,17 +170,19 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
+                className="table-compact xl:table-normal"
                 data={data.upcomingFlights}
                 enableRowSelection={enableRowSelection}
               />
             </Disclosure>
           ) : (
-            <div className="my-6 flex justify-center">
+            <div className="flex justify-center">
               <div className="flex flex-col items-center gap-8">
                 <p className="opacity-75">No Upcoming Flights</p>
               </div>
             </div>
           )}
+          <Divider />
           {data.flights.length > 0 ? (
             <Disclosure
               buttonProps={{
@@ -201,12 +199,13 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
+                className="table-compact xl:table-normal"
                 data={data.flights}
                 enableRowSelection={enableRowSelection}
               />
             </Disclosure>
           ) : (
-            <div className="my-6 flex justify-center">
+            <div className="flex justify-center">
               <div className="flex flex-col items-center gap-8">
                 <p className="opacity-75">No Completed Flights</p>
               </div>
@@ -217,13 +216,14 @@ export const Flights = (): JSX.Element => {
       {!isFetching &&
       data !== undefined &&
       layout === 'compact' &&
-      totalFlights > 0 ? (
+      data.total > 0 ? (
         <UserFlightsTable
+          className="table-compact xl:table-normal"
           data={[...data.upcomingFlights, ...data.flights]}
           enableRowSelection={enableRowSelection}
         />
       ) : null}
-      {!isFetching && data !== undefined && totalFlights === 0 ? (
+      {!isFetching && data !== undefined && data.total === 0 ? (
         <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>

@@ -74,11 +74,9 @@ export const usersRouter = router({
           airline: true,
           aircraftType: true,
         },
-        orderBy: [
-          {
-            outTime: 'desc',
-          },
-        ],
+        orderBy: {
+          outTime: 'desc',
+        },
       });
       return getFlightTimeData(result);
     }),
@@ -124,6 +122,9 @@ export const usersRouter = router({
             outTime: 'asc',
           },
         },
+      },
+      orderBy: {
+        outTime: 'desc',
       },
     });
     return trips.map(transformTripData);

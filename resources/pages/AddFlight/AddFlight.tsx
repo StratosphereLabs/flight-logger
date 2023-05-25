@@ -176,7 +176,7 @@ export const AddFlight = (): JSX.Element => {
                 />
                 <div className="flex min-w-[250px] max-w-[400px] flex-1 flex-col gap-4">
                   <FormControl
-                    className="w-[400px] min-w-[250px]"
+                    className="w-[200px]"
                     labelText="Seat Number"
                     name="seatNumber"
                   />

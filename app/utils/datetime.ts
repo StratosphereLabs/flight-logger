@@ -1,4 +1,10 @@
-import { add, Interval, intervalToDuration, isBefore } from 'date-fns';
+import {
+  add,
+  formatDuration,
+  Interval,
+  intervalToDuration,
+  isBefore,
+} from 'date-fns';
 
 export interface DaysToAddOptions {
   outTime: Date;
@@ -23,6 +29,15 @@ export const getDurationMinutes = (interval: Interval): number => {
     60 * (layoverDuration.hours ?? 0) +
     (layoverDuration.minutes ?? 0)
   );
+};
+
+export const getDurationDays = (interval: Interval): string => {
+  const duration = intervalToDuration(interval);
+  return formatDuration(duration, {
+    format: ['days', 'hours'],
+    zero: false,
+    delimiter: ',  ',
+  });
 };
 
 export const getDurationString = (duration: number): string => {
