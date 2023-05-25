@@ -4,6 +4,10 @@ export const getUserSchema = z.object({
   username: z.string().trim().optional(),
 });
 
+export const getUserFlightsSchema = getUserSchema.extend({
+  withTrip: z.boolean().optional(),
+});
+
 export const getUsersSchema = z.object({
   query: z.string(),
 });

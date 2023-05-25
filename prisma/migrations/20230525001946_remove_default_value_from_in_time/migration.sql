@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "trip" ALTER COLUMN "inTime" DROP DEFAULT;

@@ -15,6 +15,7 @@ export const deleteFlightSchema = z.object({
 });
 
 export const addFlightSchema = z.object({
+  tripId: z.string().uuid('Must be valid UUID').optional(),
   departureAirport: airportSchema
     .nullable()
     .refine(item => item !== null, 'Airport is required.'),

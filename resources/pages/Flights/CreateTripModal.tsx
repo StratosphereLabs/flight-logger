@@ -11,7 +11,7 @@ import { trpc } from '../../utils/trpc';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export interface CreateTripModalProps {
-  onSuccess?: () => void;
+  onSuccess?: (tripId: string) => void;
 }
 
 export const CreateTripModal = ({
@@ -31,10 +31,10 @@ export const CreateTripModal = ({
   const flightIds = Object.keys(rowSelection);
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.trips.createTrip.useMutation({
-    onSuccess: async () => {
+    onSuccess: async data => {
       handleSuccess('Trip Created!');
       setIsCreateTripDialogOpen(false);
-      onSuccess?.();
+      onSuccess?.(data.id);
       await utils.users.invalidate();
     },
   });
