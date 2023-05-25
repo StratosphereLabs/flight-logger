@@ -1,19 +1,23 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Form, Modal } from 'stratosphere-ui';
+import { itineraryFlightSchema } from '../../../app/schemas/itineraries';
+import { useTRPCErrorHandler } from '../../common/hooks';
+import { trpc } from '../../utils/trpc';
 import { itineraryBuilderDefaultValues } from './constants';
 import { DeleteItineraryModal } from './DeleteItineraryModal';
+import { HomePageNavigationState } from './Home';
 import { ItineraryBuilderFields } from './ItineraryBuilderFields';
 import { ItineraryFlightsCard } from './ItineraryFlightsCard';
 import { useItineraryFlightsStore } from './itineraryFlightsStore';
 import { ResetItineraryModal } from './ResetItineraryModal';
-import { useTRPCErrorHandler } from '../../common/hooks';
-import { trpc } from '../../utils/trpc';
-import { itineraryFlightSchema } from '../../../app/schemas/itineraries';
 
 export const CreateItineraryModal = (): JSX.Element => {
+  const { state } = useLocation() as {
+    state: HomePageNavigationState | null;
+  };
   const navigate = useNavigate();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const {
@@ -48,6 +52,12 @@ export const CreateItineraryModal = (): JSX.Element => {
       setTimeout(() => methods.setFocus('departureAirport'), 100);
     }
   }, [isCreateItineraryModalOpen]);
+  useEffect(() => {
+    if (state?.createItinerary === true) {
+      setIsCreateItineraryModalOpen(true);
+      window.history.replaceState({}, document.title);
+    }
+  }, [state?.createItinerary]);
   return (
     <Modal
       title="Create Itinerary"
