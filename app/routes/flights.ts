@@ -1,5 +1,5 @@
 import { inferRouterOutputs, TRPCError } from '@trpc/server';
-import { prisma } from '../db';
+import { prisma, updateTripAfterEditFlight } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
@@ -47,6 +47,11 @@ export const flightsRouter = router({
               id: ctx.user.id,
             },
           },
+          trip: {
+            connect: {
+              id: input.tripId,
+            },
+          },
           departureAirport: {
             connect: {
               id: departureAirport.id,
@@ -87,6 +92,7 @@ export const flightsRouter = router({
           trackingLink: input.trackingLink,
         },
       });
+      await updateTripAfterEditFlight(flight);
       return flight;
     }),
   getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
@@ -146,7 +152,7 @@ export const flightsRouter = router({
         outTimeValue: input.outTimeValue,
         inTimeValue: input.inTimeValue,
       });
-      return await prisma.flight.update({
+      const updatedFlight = await prisma.flight.update({
         where: {
           id,
         },
@@ -193,6 +199,8 @@ export const flightsRouter = router({
           trackingLink: input.trackingLink,
         },
       });
+      await updateTripAfterEditFlight(updatedFlight);
+      return updatedFlight;
     }),
   deleteFlight: procedure
     .use(verifyAuthenticated)
@@ -216,26 +224,7 @@ export const flightsRouter = router({
           id,
         },
       });
-      if (deletedFlight.tripId !== null) {
-        const trip = await prisma.trip.findUnique({
-          where: {
-            id,
-          },
-          include: {
-            flights: true,
-          },
-        });
-        if (trip !== null) {
-          await prisma.trip.update({
-            where: {
-              id,
-            },
-            data: {
-              outTime: trip.flights[0].outTime,
-            },
-          });
-        }
-      }
+      await updateTripAfterEditFlight(deletedFlight);
       return deletedFlight;
     }),
 });

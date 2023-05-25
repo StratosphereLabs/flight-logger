@@ -41,6 +41,7 @@ export const tripsRouter = router({
         data: {
           userId: ctx.user.id,
           outTime: flights[0].outTime,
+          inTime: flights[flights.length - 1].inTime,
           name,
         },
       });
@@ -126,6 +127,7 @@ export const tripsRouter = router({
         },
         data: {
           outTime: flights[0].outTime,
+          inTime: flights[flights.length - 1].inTime,
           name,
         },
         include: {

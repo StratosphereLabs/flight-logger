@@ -35,6 +35,7 @@ model trip {
   name      String
   user      user      @relation(fields: [userId], references: [id])
   outTime   DateTime
+  inTime    DateTime
   flights   flight[]
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
