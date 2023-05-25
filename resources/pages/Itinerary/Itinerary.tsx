@@ -24,7 +24,7 @@ export const Itinerary = (): JSX.Element | null => {
       <div className="relative mb-4 flex items-center justify-center">
         <h1 className="text-2xl font-bold sm:text-3xl">{data?.name}</h1>
         <Button
-          startIcon={<LinkIcon />}
+          startIcon={<LinkIcon className="h-4 w-4" />}
           className="absolute end-0"
           color="ghost"
           onClick={() =>

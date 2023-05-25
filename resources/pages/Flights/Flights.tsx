@@ -17,7 +17,11 @@ import {
   PlusIcon,
   UserFlightsTable,
 } from '../../common/components';
-import { useTRPCErrorHandler } from '../../common/hooks';
+import {
+  useCopyToClipboard,
+  useProfileLink,
+  useTRPCErrorHandler,
+} from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
@@ -37,6 +41,7 @@ export interface FlightsPageNavigationState {
 }
 
 export const Flights = (): JSX.Element => {
+  const copyToClipboard = useCopyToClipboard();
   const { state } = useLocation() as {
     state: FlightsPageNavigationState | null;
   };
@@ -47,10 +52,15 @@ export const Flights = (): JSX.Element => {
     },
   });
   const layout = methods.watch('layout');
-  const { username } = useParams();
+  const { flightId, username } = useParams();
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
-  const { rowSelection, resetRowSelection, setIsCreateTripDialogOpen } =
-    useFlightsPageStore();
+  const {
+    setActiveFlight,
+    rowSelection,
+    resetRowSelection,
+    setIsCreateTripDialogOpen,
+    setIsViewDialogOpen,
+  } = useFlightsPageStore();
   useEffect(() => {
     if (state?.createTrip === true) {
       setIsRowSelectEnabled(true);
@@ -60,6 +70,7 @@ export const Flights = (): JSX.Element => {
   const enableRowSelection = isRowSelectEnabled
     ? ({ original }: FlightsTableRow) => original.tripId === null
     : false;
+  const flightsLink = useProfileLink('flights');
   const { data, error, isFetching, refetch } =
     trpc.users.getUserFlights.useQuery(
       {
@@ -84,6 +95,16 @@ export const Flights = (): JSX.Element => {
         staleTime: 5 * 60 * 1000,
       },
     );
+  useEffect(() => {
+    if (data !== undefined && flightId !== undefined) {
+      const flight =
+        data.upcomingFlights.find(({ id }) => flightId === id) ??
+        data.flights.find(({ id }) => flightId === id) ??
+        null;
+      setActiveFlight(flight);
+      setIsViewDialogOpen(true);
+    }
+  }, [data, flightId]);
   useTRPCErrorHandler(error);
   return (
     <div className="flex flex-col gap-4">
@@ -147,10 +168,7 @@ export const Flights = (): JSX.Element => {
         </Form>
       ) : null}
       {isFetching ? <Progress /> : null}
-      {!isFetching &&
-      data !== undefined &&
-      data.total > 0 &&
-      layout === 'full' ? (
+      {layout === 'full' && data !== undefined && data.total > 0 ? (
         <>
           {data.upcomingFlights.length > 0 ? (
             <Disclosure
@@ -173,6 +191,12 @@ export const Flights = (): JSX.Element => {
                 className="table-compact xl:table-normal"
                 data={data.upcomingFlights}
                 enableRowSelection={enableRowSelection}
+                onCopyLink={({ id }) =>
+                  copyToClipboard(
+                    `${flightsLink}/${id}`,
+                    'Link copied to clipboard!',
+                  )
+                }
               />
             </Disclosure>
           ) : (
@@ -202,6 +226,12 @@ export const Flights = (): JSX.Element => {
                 className="table-compact xl:table-normal"
                 data={data.flights}
                 enableRowSelection={enableRowSelection}
+                onCopyLink={({ id }) =>
+                  copyToClipboard(
+                    `${flightsLink}/${id}`,
+                    'Link copied to clipboard!',
+                  )
+                }
               />
             </Disclosure>
           ) : (
@@ -213,17 +243,17 @@ export const Flights = (): JSX.Element => {
           )}
         </>
       ) : null}
-      {!isFetching &&
-      data !== undefined &&
-      layout === 'compact' &&
-      data.total > 0 ? (
+      {layout === 'compact' && data !== undefined && data.total > 0 ? (
         <UserFlightsTable
           className="table-compact xl:table-normal"
           data={[...data.upcomingFlights, ...data.flights]}
           enableRowSelection={enableRowSelection}
+          onCopyLink={({ id }) =>
+            copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!')
+          }
         />
       ) : null}
-      {!isFetching && data !== undefined && data.total === 0 ? (
+      {data?.total === 0 ? (
         <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
