@@ -1,20 +1,32 @@
+import { useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
-import { useFlightsPageStore } from './flightsPageStore';
 import { RightArrowIcon } from '../../common/components';
+import { useFlightsPageStore } from './flightsPageStore';
 
 export const ViewFlightModal = (): JSX.Element => {
   const { activeFlight, isViewDialogOpen, setIsViewDialogOpen } =
     useFlightsPageStore();
+  const navigate = useNavigate();
+  const { flightId, username } = useParams();
+  const onClose = useCallback(() => {
+    setIsViewDialogOpen(false);
+    if (flightId !== undefined) {
+      navigate(
+        username !== undefined ? `/user/${username}/flights` : '/flights',
+      );
+    }
+  }, [flightId, username]);
   return (
     <Modal
       actionButtons={[
         {
           children: 'Done',
           color: 'ghost',
-          onClick: () => setIsViewDialogOpen(false),
+          onClick: onClose,
         },
       ]}
-      onClose={() => setIsViewDialogOpen(false)}
+      onClose={onClose}
       open={isViewDialogOpen}
       title=""
     >

@@ -3,6 +3,7 @@ export * from './useCopyToClipboard';
 export * from './useErrorResponseHandler';
 export * from './useFlightDiaryUploadMutation';
 export * from './useGoogleLoginMutation';
+export * from './useProfileLink';
 export * from './useProtectedPage';
 export * from './useScrollBar';
 export * from './useSuccessResponseHandler';

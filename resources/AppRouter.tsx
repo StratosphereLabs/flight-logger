@@ -25,8 +25,8 @@ export const AppRouter = (): JSX.Element => (
       {['', 'user/:username'].map(path => (
         <Route key={path} path={path} element={<ProfileLayout />}>
           <Route path={path === '' ? 'profile' : ''} element={<Profile />} />
-          <Route path="flights" element={<Flights />} />
-          <Route path="trips" element={<Trips />} />
+          <Route path="flights/:flightId?" element={<Flights />} />
+          <Route path="trips/:tripId?" element={<Trips />} />
           <Route path="itineraries" element={<Itineraries />} />
           {path === '' ? <Route path="account" element={<Account />} /> : null}
         </Route>

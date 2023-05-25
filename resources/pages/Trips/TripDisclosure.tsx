@@ -1,22 +1,33 @@
+import classNames from 'classnames';
 import { Badge } from 'react-daisyui';
+import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Disclosure } from 'stratosphere-ui';
 import { UsersRouterOutput } from '../../../app/routes/users';
-import { TrashIcon, UserFlightsTable } from '../../common/components';
+import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
+import { useCopyToClipboard, useProfileLink } from '../../common/hooks';
 import { TripsPageNavigationState } from './Trips';
 import { useTripsPageStore } from './tripsPageStore';
-import classNames from 'classnames';
 
 export interface TripDisclosureProps {
   trip: UsersRouterOutput['getUserTrips'][number];
 }
 
 export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
+  const copyToClipboard = useCopyToClipboard();
+  const disclosureRef = useRef<HTMLDivElement>(null);
   const { state } = useLocation() as {
     state: TripsPageNavigationState | null;
   };
-  const { username } = useParams();
+  const { tripId, username } = useParams();
   const { setActiveTrip, setIsDeleteDialogOpen } = useTripsPageStore();
+  const flightsLink = useProfileLink('flights');
+  const tripsLink = useProfileLink('trips');
+  useEffect(() => {
+    if (tripId !== undefined && tripId === trip.id) {
+      setTimeout(() => disclosureRef.current?.scrollIntoView());
+    }
+  }, [tripId, trip.id]);
   return (
     <Disclosure
       buttonProps={{
@@ -34,10 +45,22 @@ export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
                 {trip.tripDuration}
               </span>
             </div>
-            <div className="flex justify-end sm:w-[75px]">
+            <div className="flex justify-end">
+              <a
+                className="btn-ghost btn-sm btn-circle btn sm:btn-md"
+                onClick={event => {
+                  event.stopPropagation();
+                  copyToClipboard(
+                    `${tripsLink}/${trip.id}`,
+                    'Link copied to clipboard!',
+                  );
+                }}
+              >
+                <LinkIcon className="h-5 w-5" />
+              </a>
               {username === undefined ? (
                 <a
-                  className="btn-ghost btn-circle btn"
+                  className="btn-ghost btn-sm btn-circle btn sm:btn-md"
                   onClick={event => {
                     event.stopPropagation();
                     setActiveTrip(trip);
@@ -56,10 +79,17 @@ export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
         ),
         color: 'ghost',
       }}
-      defaultOpen={trip.id === state?.tripId}
+      defaultOpen={trip.id === tripId || trip.id === state?.tripId}
+      ref={disclosureRef}
       rounded
     >
-      <UserFlightsTable className="table-compact" data={trip.flights} />
+      <UserFlightsTable
+        className="table-compact"
+        data={trip.flights}
+        onCopyLink={({ id }) =>
+          copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!')
+        }
+      />
     </Disclosure>
   );
 };

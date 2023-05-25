@@ -34,7 +34,7 @@ export const ActionsCell = ({
     <>
       <div className="hidden gap-1 xl:flex">
         <Button className="px-1" color="ghost" onClick={onCopyLink} size="xs">
-          <LinkIcon />
+          <LinkIcon className="h-4 w-4" />
           <span className="sr-only">Copy Link</span>
         </Button>
         <Button className="px-1" color="info" onClick={onView} size="xs">
@@ -73,7 +73,7 @@ export const ActionsCell = ({
               onClick: onCopyLink,
               children: (
                 <>
-                  <LinkIcon />
+                  <LinkIcon className="h-4 w-4" />
                   Copy Link
                 </>
               ),

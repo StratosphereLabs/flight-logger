@@ -16,6 +16,7 @@ export interface UserFlightsTableProps {
   enableRowSelection?: RowSelectionOptions<
     UsersRouterOutput['getUserFlights'][number]
   >['enableRowSelection'];
+  onCopyLink?: (flight: UsersRouterOutput['getUserFlights'][number]) => void;
 }
 
 export type FlightsTableRow = Row<UsersRouterOutput['getUserFlights'][number]>;
@@ -24,6 +25,7 @@ export const UserFlightsTable = ({
   className,
   data,
   enableRowSelection,
+  onCopyLink,
 }: UserFlightsTableProps): JSX.Element => {
   const {
     rowSelection,
@@ -164,6 +166,7 @@ export const UserFlightsTable = ({
               deleteMessage="Delete Flight"
               editMessage="Edit Flight"
               viewMessage="View Flight"
+              onCopyLink={() => onCopyLink?.(row.original)}
               onDelete={() => {
                 setActiveFlight(row.original);
                 setIsDeleteDialogOpen(true);
