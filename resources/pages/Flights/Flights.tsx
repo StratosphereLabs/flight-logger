@@ -224,16 +224,18 @@ export const Flights = (): JSX.Element => {
         />
       ) : null}
       {!isFetching && data !== undefined && totalFlights === 0 ? (
-        <div className="my-6 flex justify-center">
+        <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
-            <Button
-              color="primary"
-              onClick={() => navigate('/add-flight')}
-              startIcon={<PlusIcon className="h-6 w-6" />}
-            >
-              Create Flight
-            </Button>
+            {username === undefined ? (
+              <Button
+                color="primary"
+                onClick={() => navigate('/add-flight')}
+                startIcon={<PlusIcon className="h-6 w-6" />}
+              >
+                Create Flight
+              </Button>
+            ) : null}
           </div>
         </div>
       ) : null}

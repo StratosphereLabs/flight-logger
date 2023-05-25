@@ -1,15 +1,17 @@
 import { getCoreRowModel } from '@tanstack/react-table';
-import { Progress } from 'react-daisyui';
-import { Link, useParams } from 'react-router-dom';
+import { Button, Progress } from 'react-daisyui';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Table } from 'stratosphere-ui';
-import { ActionsCell } from '../../common/components';
+import { ActionsCell, PlusIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { HomePageNavigationState } from '../Home';
 import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { useItinerariesPageStore } from './itinerariesPageStore';
 
 export const Itineraries = (): JSX.Element => {
+  const navigate = useNavigate();
   const { username } = useParams();
   const {
     setActiveItinerary,
@@ -36,9 +38,31 @@ export const Itineraries = (): JSX.Element => {
             : 'My Itineraries'}
         </h2>
       </article>
-      {isFetching ? (
-        <Progress />
-      ) : (
+      {!isFetching && data?.length === 0 ? (
+        <div className="mt-12 flex justify-center">
+          <div className="flex flex-col items-center gap-8">
+            <p className="opacity-75">No Itineraries</p>
+            {username === undefined ? (
+              <Button
+                color="primary"
+                onClick={() =>
+                  navigate('/', {
+                    replace: false,
+                    state: {
+                      createItinerary: true,
+                    } as const as HomePageNavigationState,
+                  })
+                }
+                startIcon={<PlusIcon className="h-6 w-6" />}
+              >
+                Create Itinerary
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+      {isFetching ? <Progress /> : null}
+      {!isFetching && data !== undefined && data.length > 0 ? (
         <Table
           className="table-compact xl:table-normal"
           columns={[
@@ -126,7 +150,7 @@ export const Itineraries = (): JSX.Element => {
           enableSorting={false}
           getCoreRowModel={getCoreRowModel()}
         />
-      )}
+      ) : null}
       <DeleteItineraryModal />
     </div>
   );
