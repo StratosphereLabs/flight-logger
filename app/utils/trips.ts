@@ -29,7 +29,7 @@ export const transformTripData = (
     ...trip,
     tripDuration: getDurationDays({
       start: trip.flights[0].outTime,
-      end: trip.flights[trip.flights.length - 1].outTime,
+      end: trip.flights[trip.flights.length - 1].inTime,
     }),
     outDateISO: formatInTimeZone(
       trip.outTime,
