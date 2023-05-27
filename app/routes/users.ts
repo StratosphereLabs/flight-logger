@@ -73,6 +73,7 @@ export const usersRouter = router({
           arrivalAirport: true,
           airline: true,
           aircraftType: true,
+          airframe: true,
         },
         orderBy: {
           outTime: 'desc',
@@ -117,6 +118,7 @@ export const usersRouter = router({
             arrivalAirport: true,
             airline: true,
             aircraftType: true,
+            airframe: true,
           },
           orderBy: {
             outTime: 'asc',

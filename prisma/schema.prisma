@@ -63,6 +63,7 @@ model flight {
   callsign           String?
   aircraftTypeId     String?
   tailNumber         String?
+  airframeId         String?
   outTime            DateTime
   offTime            DateTime?
   onTime             DateTime?
@@ -74,6 +75,7 @@ model flight {
   reason             FlightReason?
   comments           String?
   trackingLink       String?
+  airframe           airframe?      @relation(fields: [airframeId], references: [icao24])
   aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
   airline            airline?       @relation("flights", fields: [airlineId], references: [id])
   arrivalAirport     airport        @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
@@ -109,6 +111,7 @@ model airframe {
   registrationExprDate  DateTime?     @db.Date
   builtDate             DateTime?     @db.Date
   engines               String?
+  flights               flight[]
 }
 
 model aircraft_type {

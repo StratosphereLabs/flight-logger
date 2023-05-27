@@ -13,6 +13,7 @@ import {
 import { addFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
+  AirframeInput,
   AirlineInput,
   AirportInput,
 } from '../../common/components';
@@ -134,10 +135,10 @@ export const AddFlight = (): JSX.Element => {
                   labelText="Callsign"
                   name="callsign"
                 />
-                <FormControl
+                <AirframeInput
                   className="w-[200px]"
                   labelText="Registration"
-                  name="tailNumber"
+                  name="airframe"
                 />
               </div>
               <Divider />
