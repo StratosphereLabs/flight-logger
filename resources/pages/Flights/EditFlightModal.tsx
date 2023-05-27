@@ -65,6 +65,7 @@ export const EditFlightModal = ({
         arrivalAirport: activeFlight.arrivalAirport,
         airline: activeFlight.airline,
         aircraftType: activeFlight.aircraftType,
+        airframe: activeFlight.airframe,
         flightNumber: activeFlight.flightNumber,
         callsign: activeFlight.callsign ?? '',
         tailNumber: activeFlight.tailNumber ?? '',

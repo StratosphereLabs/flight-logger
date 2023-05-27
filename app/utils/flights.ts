@@ -10,12 +10,16 @@ import { calculateDistance } from './distance';
 import { FlightTimestampsResult, getFlightTimestamps } from './flighttime';
 import { LatLng } from '../types';
 
+export interface AirframeData extends airframe {
+  operator: airline | null;
+}
+
 export interface FlightData extends flight {
   departureAirport: airport;
   arrivalAirport: airport;
   airline: airline | null;
   aircraftType: aircraft_type | null;
-  airframe: airframe | null;
+  airframe: AirframeData | null;
 }
 
 export interface Route {

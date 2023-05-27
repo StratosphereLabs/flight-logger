@@ -25,7 +25,11 @@ export const tripsRouter = router({
             arrivalAirport: true,
             airline: true,
             aircraftType: true,
-            airframe: true,
+            airframe: {
+              include: {
+                operator: true,
+              },
+            },
           },
         },
       },
@@ -67,7 +71,11 @@ export const tripsRouter = router({
               arrivalAirport: true,
               airline: true,
               aircraftType: true,
-              airframe: true,
+              airframe: {
+                include: {
+                  operator: true,
+                },
+              },
             },
           },
         },
@@ -139,7 +147,11 @@ export const tripsRouter = router({
               arrivalAirport: true,
               airline: true,
               aircraftType: true,
-              airframe: true,
+              airframe: {
+                include: {
+                  operator: true,
+                },
+              },
             },
           },
         },
@@ -174,7 +186,11 @@ export const tripsRouter = router({
               arrivalAirport: true,
               airline: true,
               aircraftType: true,
-              airframe: true,
+              airframe: {
+                include: {
+                  operator: true,
+                },
+              },
             },
           },
         },
