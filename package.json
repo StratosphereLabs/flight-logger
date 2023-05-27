@@ -12,7 +12,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
     "migrate:reset": "prisma migrate reset",
-    "seed": "prisma db seed",
+    "seed": "vite-node app/db/seeders/seedAirlines.ts",
     "build": "rm -rf prisma/generated public && npm run generate && vite build --outDir public",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -41,7 +41,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csv-parse": "^5.3.5",
-    "daisyui": "^2.51.6",
+    "daisyui": "file:../daisyui/daisyui-0.0.0-insiders.3.12.tgz",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^1.3.8",
     "debug": "^4.3.4",
@@ -129,8 +129,5 @@
     "vite-node": "^0.26.3",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^0.26.3"
-  },
-  "prisma": {
-    "seed": "vite-node app/db/seeders"
   }
 }

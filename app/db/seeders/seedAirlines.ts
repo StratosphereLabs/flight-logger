@@ -3,17 +3,22 @@ import axios from 'axios';
 import { Promise } from 'bluebird';
 import cheerio from 'cheerio';
 import { prisma } from '../prisma';
-import { PROMISE_CONCURRENCY } from './constants';
+import {
+  ICAO_AIRLINE_CODE_REGEX,
+  IATA_AIRLINE_CODE_REGEX,
+  WIKI_PROMISE_CONCURRENCY,
+} from './constants';
 import {
   getInt,
   getText,
   getWikipediaDataTable,
   parseWikipediaData,
+  seedConcurrently,
 } from './helpers';
 
 export const getAirlineDocument = async (
   href: string,
-): Promise<Prisma.airlineCreateInput | null> => {
+): Promise<Prisma.airlineUpsertArgs | null> => {
   const url = `https://en.wikipedia.org${href}`;
   try {
     const res = await axios.get<string>(url);
@@ -29,14 +34,14 @@ export const getAirlineDocument = async (
       .find('td')
       .map((i, td) => getText($(td)))
       .get();
-    const iata = infoTableCells[0] as string;
-    const icao = infoTableCells[1] as string;
-    const callsign = infoTableCells[2] as string;
+    const iata = (infoTableCells[0] as string | undefined)?.slice(0, 2) ?? '';
+    const icao = (infoTableCells[1] as string | undefined)?.slice(0, 3) ?? '';
+    const callsign = infoTableCells[2] as string | undefined;
 
     if (
       headers !== 'IATAICAOCallsign' ||
-      iata.length !== 2 ||
-      icao.length !== 3
+      !IATA_AIRLINE_CODE_REGEX.test(iata) ||
+      !ICAO_AIRLINE_CODE_REGEX.test(icao)
     ) {
       return null;
     }
@@ -49,9 +54,8 @@ export const getAirlineDocument = async (
     const src = $('.infobox-image img').eq(0).attr('src');
     const logo = src !== undefined ? `https:${src}` : '';
 
-    return {
+    const data = {
       name,
-      id,
       iata,
       icao,
       callsign,
@@ -59,6 +63,17 @@ export const getAirlineDocument = async (
       destinations,
       logo,
       wiki,
+    };
+
+    return {
+      where: {
+        id,
+      },
+      update: data,
+      create: {
+        id,
+        ...data,
+      },
     };
   } catch (err) {
     console.error(err);
@@ -68,7 +83,7 @@ export const getAirlineDocument = async (
 
 const getUpdate = (
   element: cheerio.Element,
-): Promise<Prisma.airlineCreateInput | null> | null => {
+): Promise<Prisma.airlineUpsertArgs | null> | null => {
   const $ = cheerio.load(element);
   const link = $('td').eq(2).find('a').eq(0);
   const href = link.attr('href');
@@ -80,27 +95,31 @@ const getUpdate = (
 
 const getDatabaseRows = async (
   html: string,
-): Promise<Prisma.Enumerable<Prisma.airlineCreateManyInput>> => {
+): Promise<Prisma.airlineUpsertArgs[]> => {
   const rows = getWikipediaDataTable(html);
-  const documents = await Promise.map(rows, item => getUpdate(item), {
-    concurrency: PROMISE_CONCURRENCY,
-  }).filter(document => document !== null);
-  return documents as Prisma.Enumerable<Prisma.airlineCreateManyInput>;
+  const documents = await Promise.map(
+    rows,
+    async item => await getUpdate(item),
+    {
+      concurrency: WIKI_PROMISE_CONCURRENCY,
+    },
+  ).filter(document => document !== null);
+  return documents as Prisma.airlineUpsertArgs[];
 };
 
-export const seedAirlines = async (): Promise<void> => {
+/* eslint-disable @typescript-eslint/no-floating-promises */
+(async () => {
   console.log('Seeding airlines...');
   try {
     const response = await axios.get<string>(
       'https://en.wikipedia.org/wiki/List_of_airline_codes',
     );
     const rows = await getDatabaseRows(response.data);
-    const { count } = await prisma.airline.createMany({
-      data: rows,
-      skipDuplicates: true,
-    });
-    console.log(`  Added ${count} airlines`);
+    const count = await seedConcurrently(rows, row =>
+      prisma.airline.upsert(row),
+    );
+    console.log(`Added ${count} airlines`);
   } catch (err) {
     console.error(err);
   }
-};
+})();

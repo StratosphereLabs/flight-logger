@@ -85,6 +85,32 @@ model flight {
   updatedAt          DateTime?      @updatedAt
 }
 
+model manufacturer {
+  code              String        @id
+  name              String
+  airframes         airframe[]
+}
+
+model airframe {
+  icao24                String        @id
+  registration          String
+  manufacturerCode      String
+  manufacturer          manufacturer  @relation(fields: [manufacturerCode], references: [code])
+  model                 String
+  typeCode              String
+  serialNumber          String?
+  lineNumber            String?
+  icaoAircraftType      String
+  operatorId            String?
+  operator              airline?      @relation("airframes", fields: [operatorId], references: [id])
+  owner                 String?
+  testReg               String?
+  registrationDate      DateTime?     @db.Date
+  registrationExprDate  DateTime?     @db.Date
+  builtDate             DateTime?     @db.Date
+  engines               String?
+}
+
 model aircraft_type {
   id      String   @id
   iata    String
@@ -104,8 +130,9 @@ model airline {
   destinations    Int?
   logo            String?
   wiki            String?
-  flights         flight[] @relation("flights")
-  operatorFlights flight[] @relation("operatorFlights")
+  airframes       airframe[]  @relation("airframes")
+  flights         flight[]    @relation("flights")
+  operatorFlights flight[]    @relation("operatorFlights")
 }
 
 model airport {

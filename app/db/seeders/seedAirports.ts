@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { prisma } from '../prisma';
-import { csvToJson } from './helpers';
+import { csvToJson, seedConcurrently } from './helpers';
 
 /* eslint-disable-next-line @typescript-eslint/no-var-requires */
 const { find } = require('geo-tz') as {
@@ -29,20 +29,14 @@ interface AirportResponse {
   keywords: string;
 }
 
-const getDatabaseRows = (
-  csv: string,
-): Prisma.Enumerable<Prisma.airportCreateManyInput> => {
-  const rows = csvToJson<AirportResponse>(csv).reduce<
-    Array<Record<string, unknown>>
-  >((acc, row) => {
-    if (row.iata_code === '') return acc;
-    const lat = parseFloat(row.latitude_deg);
-    const lon = parseFloat(row.longitude_deg);
-    const timeZones = find(lat, lon);
-    return [
-      ...acc,
-      {
-        id: row.ident,
+const getDatabaseRows = (csv: string): Prisma.airportUpsertArgs[] =>
+  csvToJson<AirportResponse>(csv).reduce<Prisma.airportUpsertArgs[]>(
+    (acc, row) => {
+      if (row.iata_code === '') return acc;
+      const lat = parseFloat(row.latitude_deg);
+      const lon = parseFloat(row.longitude_deg);
+      const timeZones = find(lat, lon);
+      const data = {
         type: row.type,
         name: row.name,
         lat: parseFloat(row.latitude_deg),
@@ -59,24 +53,37 @@ const getDatabaseRows = (
         gps: row.gps_code,
         iata: row.iata_code,
         local: row.local_code,
-      },
-    ];
-  }, []);
-  return rows as Prisma.Enumerable<Prisma.airportCreateManyInput>;
-};
+      };
+      return [
+        ...acc,
+        {
+          where: {
+            id: row.ident,
+          },
+          update: data,
+          create: {
+            id: row.ident,
+            ...data,
+          },
+        },
+      ];
+    },
+    [],
+  );
 
-export const seedAirports = async (): Promise<void> => {
+/* eslint-disable @typescript-eslint/no-floating-promises */
+(async () => {
   console.log('Seeding airports...');
   try {
     const response = await axios.get<string>(
       'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv',
     );
     const rows = getDatabaseRows(response.data);
-    const { count } = await prisma.airport.createMany({
-      data: rows,
-    });
+    const count = await seedConcurrently(rows, row =>
+      prisma.airport.upsert(row),
+    );
     console.log(`  Added ${count} airports`);
   } catch (err) {
     console.error(err);
   }
-};
+})();
