@@ -5,6 +5,7 @@ export const editFlightDefaultValues = {
   airline: null,
   aircraftType: null,
   flightNumber: null,
+  airframe: null,
   callsign: '',
   tailNumber: '',
   outDateISO: '',

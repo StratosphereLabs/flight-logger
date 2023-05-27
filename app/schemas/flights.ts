@@ -32,7 +32,11 @@ export const addFlightSchema = z.object({
     .nullable(),
   callsign: z.string().trim(),
   tailNumber: z.string().trim(),
-  airframe: airframeSchema.nullable(),
+  airframe: airframeSchema
+    .extend({
+      operator: airlineSchema.nullable(),
+    })
+    .nullable(),
   outDateISO: z
     .string()
     .min(1, 'Required')
