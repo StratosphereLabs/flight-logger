@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { prisma } from '../prisma';
-import { csvToJson } from './helpers';
+import { csvToJson, seedConcurrently } from './helpers';
 
 interface RegionResponse {
   id: string;
@@ -14,33 +14,39 @@ interface RegionResponse {
   keywords: string;
 }
 
-const getDatabaseRows = (
-  csv: string,
-): Prisma.Enumerable<Prisma.regionCreateManyInput> => {
-  const rows = csvToJson<RegionResponse>(csv).map<Record<string, unknown>>(
-    row => ({
-      id: row.code,
+const getDatabaseRows = (csv: string): Prisma.regionUpsertArgs[] =>
+  csvToJson<RegionResponse>(csv).map(row => {
+    const data = {
       name: row.name,
       countryId: row.iso_country,
       continent: row.continent,
       wiki: row.wikipedia_link,
-    }),
-  );
-  return rows as Prisma.Enumerable<Prisma.regionCreateManyInput>;
-};
+    };
+    return {
+      where: {
+        id: row.code,
+      },
+      update: data,
+      create: {
+        id: row.code,
+        ...data,
+      },
+    };
+  });
 
-export const seedRegions = async (): Promise<void> => {
+/* eslint-disable @typescript-eslint/no-floating-promises */
+(async () => {
   console.log('Seeding regions...');
   try {
     const response = await axios.get<string>(
       'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/regions.csv',
     );
     const rows = getDatabaseRows(response.data);
-    const { count } = await prisma.region.createMany({
-      data: rows,
-    });
+    const count = await seedConcurrently(rows, row =>
+      prisma.region.upsert(row),
+    );
     console.log(`  Added ${count} regions`);
   } catch (err) {
     console.error(err);
   }
-};
+})();

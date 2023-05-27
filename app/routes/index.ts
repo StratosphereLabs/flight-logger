@@ -1,5 +1,6 @@
 import { router } from '../trpc';
 import { aircraftTypesRouter } from './aircraftTypes';
+import { airframesRouter } from './airframes';
 import { airlinesRouter } from './airlines';
 import { airportsRouter } from './airports';
 import { authRouter } from './auth';
@@ -16,6 +17,7 @@ export * from './upload';
 
 export const trpcRouter = router({
   aircraftTypes: aircraftTypesRouter,
+  airframes: airframesRouter,
   airlines: airlinesRouter,
   airports: airportsRouter,
   auth: authRouter,

@@ -63,6 +63,7 @@ model flight {
   callsign           String?
   aircraftTypeId     String?
   tailNumber         String?
+  airframeId         String?
   outTime            DateTime
   offTime            DateTime?
   onTime             DateTime?
@@ -74,6 +75,7 @@ model flight {
   reason             FlightReason?
   comments           String?
   trackingLink       String?
+  airframe           airframe?      @relation(fields: [airframeId], references: [icao24])
   aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
   airline            airline?       @relation("flights", fields: [airlineId], references: [id])
   arrivalAirport     airport        @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
@@ -83,6 +85,33 @@ model flight {
   user               user           @relation(fields: [userId], references: [id])
   createdAt          DateTime       @default(now())
   updatedAt          DateTime?      @updatedAt
+}
+
+model manufacturer {
+  code              String        @id
+  name              String
+  airframes         airframe[]
+}
+
+model airframe {
+  icao24                String        @id
+  registration          String
+  manufacturerCode      String
+  manufacturer          manufacturer  @relation(fields: [manufacturerCode], references: [code])
+  model                 String
+  typeCode              String
+  serialNumber          String?
+  lineNumber            String?
+  icaoAircraftType      String
+  operatorId            String?
+  operator              airline?      @relation("airframes", fields: [operatorId], references: [id])
+  owner                 String?
+  testReg               String?
+  registrationDate      DateTime?     @db.Date
+  registrationExprDate  DateTime?     @db.Date
+  builtDate             DateTime?     @db.Date
+  engines               String?
+  flights               flight[]
 }
 
 model aircraft_type {
@@ -104,8 +133,9 @@ model airline {
   destinations    Int?
   logo            String?
   wiki            String?
-  flights         flight[] @relation("flights")
-  operatorFlights flight[] @relation("operatorFlights")
+  airframes       airframe[]  @relation("airframes")
+  flights         flight[]    @relation("flights")
+  operatorFlights flight[]    @relation("operatorFlights")
 }
 
 model airport {

@@ -1,4 +1,10 @@
-import { aircraft_type, airline, airport, flight } from '@prisma/client';
+import {
+  aircraft_type,
+  airframe,
+  airline,
+  airport,
+  flight,
+} from '@prisma/client';
 import { getInFuture } from './datetime';
 import { calculateDistance } from './distance';
 import { FlightTimestampsResult, getFlightTimestamps } from './flighttime';
@@ -9,6 +15,7 @@ export interface FlightData extends flight {
   arrivalAirport: airport;
   airline: airline | null;
   aircraftType: aircraft_type | null;
+  airframe: airframe | null;
 }
 
 export interface Route {
@@ -103,6 +110,7 @@ export const getFlightTimeData = (
     return {
       ...flight,
       ...timestamps,
+      tailNumber: flight.airframe?.registration ?? flight.tailNumber,
       flightNumberString:
         flight.flightNumber !== null
           ? `${flight.airline?.iata ?? ''} ${flight.flightNumber}`.trim()

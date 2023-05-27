@@ -13,6 +13,7 @@ import { FlightsRouterOutput } from '../../../app/routes/flights';
 import { EditFlightRequest, editFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
+  AirframeInput,
   AirlineInput,
   AirportInput,
 } from '../../common/components';
@@ -37,6 +38,7 @@ export const EditFlightModal = ({
     defaultValues: editFlightDefaultValues,
     resolver: zodResolver(editFlightSchema),
   });
+  const tailNumber = methods.watch('tailNumber');
   const { activeFlight, isEditDialogOpen, setIsEditDialogOpen } =
     useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
@@ -167,10 +169,10 @@ export const EditFlightModal = ({
           name="callsign"
           showDirty
         />
-        <FormControl
+        <AirframeInput
           className="w-[200px]"
-          labelText="Registration"
-          name="tailNumber"
+          labelText={`Registration (${tailNumber})`}
+          name="airframe"
           showDirty
         />
         <FormRadio

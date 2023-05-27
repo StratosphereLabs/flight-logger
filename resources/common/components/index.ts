@@ -1,5 +1,6 @@
 export * from './ActionsCell';
 export * from './AircraftTypeInput';
+export * from './AirframeInput';
 export * from './AirlineInput';
 export * from './AirlineLogo';
 export * from './AirportInput';

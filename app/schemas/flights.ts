@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
   aircraft_typeSchema,
+  airframeSchema,
   airlineSchema,
   airportSchema,
 } from '../../prisma/generated/zod';
@@ -31,6 +32,7 @@ export const addFlightSchema = z.object({
     .nullable(),
   callsign: z.string().trim(),
   tailNumber: z.string().trim(),
+  airframe: airframeSchema.nullable(),
   outDateISO: z
     .string()
     .min(1, 'Required')
