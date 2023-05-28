@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isBefore } from 'date-fns';
+import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
@@ -36,17 +36,16 @@ export const AddFlight = (): JSX.Element => {
     resolver: zodResolver(addFlightSchema),
   });
   const [departureDate, airframe] = methods.watch(['outDateISO', 'airframe']);
-  const isDepartureInPast = useMemo(
+  const shouldShowRegField = useMemo(
     () =>
       departureDate !== ''
-        ? isBefore(new Date(departureDate), new Date())
+        ? isBefore(new Date(departureDate), add(new Date(), { days: 3 }))
         : false,
     [departureDate],
   );
   useEffect(() => {
     if (typeof airframe?.operator === 'object') {
       methods.setValue('airline', airframe.operator);
-      setTimeout(() => methods.setFocus('flightNumber'), 100);
     }
   }, [airframe]);
   const handleSuccess = useSuccessResponseHandler();
@@ -118,7 +117,7 @@ export const AddFlight = (): JSX.Element => {
                 />
               </div>
               <Divider />
-              {isDepartureInPast ? (
+              {shouldShowRegField ? (
                 <div className="flex flex-wrap justify-center">
                   <AirframeInput
                     className="w-[400px] min-w-[250px]"

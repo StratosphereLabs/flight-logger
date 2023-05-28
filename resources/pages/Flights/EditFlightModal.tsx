@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isBefore } from 'date-fns';
+import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -44,10 +44,10 @@ export const EditFlightModal = ({
     'tailNumber',
     'airframe',
   ]);
-  const isDepartureInPast = useMemo(
+  const shouldShowRegField = useMemo(
     () =>
       departureDate !== ''
-        ? isBefore(new Date(departureDate), new Date())
+        ? isBefore(new Date(departureDate), add(new Date(), { days: 3 }))
         : false,
     [departureDate],
   );
@@ -159,7 +159,7 @@ export const EditFlightModal = ({
           showDirty
           type="time"
         />
-        {isDepartureInPast ? (
+        {shouldShowRegField ? (
           <AirframeInput
             labelText={`Registration (${tailNumber})`}
             menuClassName="w-full"
