@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useRef } from 'react';
+import { add, isBefore } from 'date-fns';
+import { useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -38,7 +39,18 @@ export const EditFlightModal = ({
     defaultValues: editFlightDefaultValues,
     resolver: zodResolver(editFlightSchema),
   });
-  const tailNumber = methods.watch('tailNumber');
+  const [departureDate, tailNumber, airframe] = methods.watch([
+    'outDateISO',
+    'tailNumber',
+    'airframe',
+  ]);
+  const shouldShowRegField = useMemo(
+    () =>
+      departureDate !== ''
+        ? isBefore(new Date(departureDate), add(new Date(), { days: 3 }))
+        : false,
+    [departureDate],
+  );
   const { activeFlight, isEditDialogOpen, setIsEditDialogOpen } =
     useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
@@ -51,6 +63,11 @@ export const EditFlightModal = ({
     },
   });
   useTRPCErrorHandler(error);
+  useEffect(() => {
+    if (airframe?.operator !== null && airframe?.operator !== undefined) {
+      methods.setValue('airline', airframe.operator);
+    }
+  }, [airframe]);
   useEffect(() => {
     if (isEditDialogOpen) {
       modalRef.current?.scrollTo(0, 0);
@@ -67,7 +84,6 @@ export const EditFlightModal = ({
         aircraftType: activeFlight.aircraftType,
         airframe: activeFlight.airframe,
         flightNumber: activeFlight.flightNumber,
-        callsign: activeFlight.callsign ?? '',
         tailNumber: activeFlight.tailNumber ?? '',
         outDateISO: activeFlight.outDateISO,
         outTimeValue: activeFlight.outTimeValue,
@@ -143,6 +159,14 @@ export const EditFlightModal = ({
           showDirty
           type="time"
         />
+        {shouldShowRegField ? (
+          <AirframeInput
+            labelText={`Registration (${tailNumber})`}
+            menuClassName="w-full"
+            name="airframe"
+            showDirty
+          />
+        ) : null}
         <AirlineInput
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Airline"
@@ -163,18 +187,6 @@ export const EditFlightModal = ({
           name="flightNumber"
           showDirty
           transform={integerInputTransformer}
-        />
-        <FormControl
-          className="w-[200px]"
-          labelText="Callsign"
-          name="callsign"
-          showDirty
-        />
-        <AirframeInput
-          className="w-[200px]"
-          labelText={`Registration (${tailNumber})`}
-          name="airframe"
-          showDirty
         />
         <FormRadio
           labelText="Class"

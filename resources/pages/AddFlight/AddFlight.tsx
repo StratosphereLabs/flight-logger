@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { add, isBefore } from 'date-fns';
+import { useEffect, useMemo } from 'react';
 import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import {
@@ -10,7 +11,7 @@ import {
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
-import { addFlightSchema } from '../../../app/schemas';
+import { AddFlightRequest, addFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
   AirframeInput,
@@ -28,24 +29,37 @@ import { addFlightDefaultValues } from './constants';
 export const AddFlight = (): JSX.Element => {
   const utils = trpc.useContext();
   useProtectedPage();
-  const methods = useForm({
+  const methods = useForm<AddFlightRequest>({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
     defaultValues: addFlightDefaultValues,
     resolver: zodResolver(addFlightSchema),
   });
+  const [departureDate, airframe] = methods.watch(['outDateISO', 'airframe']);
+  const shouldShowRegField = useMemo(
+    () =>
+      departureDate !== ''
+        ? isBefore(new Date(departureDate), add(new Date(), { days: 3 }))
+        : false,
+    [departureDate],
+  );
+  useEffect(() => {
+    if (typeof airframe?.operator === 'object') {
+      methods.setValue('airline', airframe.operator);
+    }
+  }, [airframe]);
   const handleSuccess = useSuccessResponseHandler();
   const { error, mutate, isLoading } = trpc.flights.addFlight.useMutation({
     onSuccess: async () => {
       handleSuccess('Flight Added!');
       methods.reset();
-      setTimeout(() => methods.setFocus('departureAirport'));
+      setTimeout(() => methods.setFocus('departureAirport'), 100);
       await utils.users.invalidate();
     },
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
-    setTimeout(() => methods.setFocus('departureAirport'));
+    setTimeout(() => methods.setFocus('departureAirport'), 100);
   }, []);
   return (
     <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
@@ -103,7 +117,17 @@ export const AddFlight = (): JSX.Element => {
                 />
               </div>
               <Divider />
-              <div className="flex flex-wrap justify-around gap-8">
+              {shouldShowRegField ? (
+                <div className="flex flex-wrap justify-center">
+                  <AirframeInput
+                    className="w-[400px] min-w-[250px]"
+                    labelText="Registration"
+                    menuClassName="w-full"
+                    name="airframe"
+                  />
+                </div>
+              ) : null}
+              <div className="flex flex-wrap justify-between gap-8">
                 <AirlineInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ iata, icao, name }) =>
@@ -113,6 +137,12 @@ export const AddFlight = (): JSX.Element => {
                   menuClassName="w-full"
                   name="airline"
                 />
+                <FormControl
+                  className="w-[200px]"
+                  labelText="Flight Number"
+                  name="flightNumber"
+                  transform={integerInputTransformer}
+                />
                 <AircraftTypeInput
                   className="w-[400px] min-w-[250px]"
                   getBadgeText={({ iata, icao, name }) =>
@@ -121,24 +151,6 @@ export const AddFlight = (): JSX.Element => {
                   labelText="Aircraft Type"
                   menuClassName="w-full"
                   name="aircraftType"
-                />
-              </div>
-              <div className="flex flex-wrap justify-between gap-8">
-                <FormControl
-                  className="w-[200px]"
-                  labelText="Flight Number"
-                  name="flightNumber"
-                  transform={integerInputTransformer}
-                />
-                <FormControl
-                  className="w-[200px]"
-                  labelText="Callsign"
-                  name="callsign"
-                />
-                <AirframeInput
-                  className="w-[200px]"
-                  labelText="Registration"
-                  name="airframe"
                 />
               </div>
               <Divider />

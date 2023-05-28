@@ -30,7 +30,6 @@ export const addFlightSchema = z.object({
     .int()
     .lte(9999, 'Must be 4 digits or less')
     .nullable(),
-  callsign: z.string().trim(),
   tailNumber: z.string().trim(),
   airframe: airframeSchema
     .extend({

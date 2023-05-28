@@ -40,7 +40,6 @@ const getDatabaseRows = (csv: string): AirframeResponse[] =>
     row =>
       row.registration !== '' &&
       row.manufacturericao !== '' &&
-      row.model !== '' &&
       row.typecode !== '' &&
       row.icaoaircrafttype !== '',
   );
@@ -54,11 +53,13 @@ const updateAirframe = async (
       icao: row.operatoricao,
     },
   });
-  if (airlines.length === 0) return null;
-  const { bestMatchIndex } = findBestMatch(
-    row.operator,
-    airlines.map(({ name }) => name),
-  );
+  const bestMatchIndex =
+    airlines.length > 0
+      ? findBestMatch(
+          row.operator,
+          airlines.map(({ name }) => name),
+        ).bestMatchIndex
+      : 0;
   const airframeUpdate = {
     registration: row.registration,
     manufacturer: {
@@ -72,16 +73,19 @@ const updateAirframe = async (
         },
       },
     },
-    model: row.model,
+    model: row.model !== '' ? row.model : null,
     typeCode: row.typecode,
     serialNumber: row.serialnumber !== '' ? row.serialnumber : null,
     lineNumber: row.linenumber !== '' ? row.linenumber : null,
     icaoAircraftType: row.icaoaircrafttype,
-    operator: {
-      connect: {
-        id: airlines[bestMatchIndex].id,
-      },
-    },
+    operator:
+      airlines.length > 0
+        ? {
+            connect: {
+              id: airlines[bestMatchIndex].id,
+            },
+          }
+        : undefined,
     owner: row.owner !== '' ? row.owner : null,
     testReg: row.testreg !== '' ? row.testreg : null,
     registrationDate:
