@@ -43,6 +43,9 @@ export const airframesRouter = router({
       include: {
         operator: true,
       },
+      orderBy: {
+        operatorId: 'asc',
+      },
     });
     return airframes.map(airframe => ({
       id: airframe.icao24,

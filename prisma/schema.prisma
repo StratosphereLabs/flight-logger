@@ -98,7 +98,7 @@ model airframe {
   registration          String
   manufacturerCode      String
   manufacturer          manufacturer  @relation(fields: [manufacturerCode], references: [code])
-  model                 String
+  model                 String?
   typeCode              String
   serialNumber          String?
   lineNumber            String?

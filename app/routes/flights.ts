@@ -90,7 +90,6 @@ export const flightsRouter = router({
                 }
               : undefined,
           flightNumber: input.flightNumber,
-          callsign: input.callsign,
           tailNumber: input.airframe?.registration ?? input.tailNumber,
           outTime: outTime.toISOString(),
           inTime: inTime.toISOString(),
@@ -206,7 +205,6 @@ export const flightsRouter = router({
             disconnect: input.airframe === null ? true : undefined,
           },
           flightNumber: input.flightNumber,
-          callsign: input.callsign,
           tailNumber: input.airframe?.registration ?? input.tailNumber,
           outTime: outTime.toISOString(),
           inTime: inTime.toISOString(),

@@ -84,8 +84,11 @@ export const ViewFlightModal = (): JSX.Element => {
           <div className="max-w-[150px] sm:max-w-[200px]">
             {activeFlight?.aircraftType?.name}
           </div>
-          <div className="max-w-[150px] font-mono text-lg sm:max-w-[200px]">
-            {activeFlight?.tailNumber}
+          <div className="flex items-center gap-2 font-mono text-lg">
+            {activeFlight?.airframe?.registration ?? activeFlight?.tailNumber}
+            <div className="text-xs opacity-75">
+              {activeFlight?.airframe?.icao24}
+            </div>
           </div>
         </div>
       </div>

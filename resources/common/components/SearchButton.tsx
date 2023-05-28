@@ -67,7 +67,7 @@ export const SearchButton = (): JSX.Element => {
           color="ghost"
           onClick={() => {
             setIsSearching(true);
-            setTimeout(() => methods.setFocus('user'));
+            setTimeout(() => methods.setFocus('user'), 100);
           }}
           ref={buttonRef}
           shape="circle"
