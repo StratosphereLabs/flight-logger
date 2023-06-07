@@ -67,7 +67,7 @@ export const Itineraries = (): JSX.Element => {
       ) : null}
       {!isFetching && data !== undefined && data.length > 0 ? (
         <Table
-          className="table-compact xl:table-normal"
+          className="table-sm table-fixed xl:table-md"
           columns={[
             {
               id: 'name',
@@ -143,7 +143,7 @@ export const Itineraries = (): JSX.Element => {
             },
           ]}
           cellClassNames={{
-            date: 'w-[200px] hidden sm:table-cell',
+            date: 'w-[150px]',
             numFlights: 'w-[150px] hidden md:table-cell',
             distance: 'w-[150px] hidden lg:table-cell',
             actions: 'w-[50px] xl:w-[150px]',

@@ -119,6 +119,7 @@ export const MainNavbar = (): JSX.Element => {
               </Button>
             ) : null}
             <Button
+              color="neutral"
               onClick={isLoggedIn ? logout : () => navigate('/auth/login')}
             >
               {isLoggedIn ? <LogoutIcon /> : 'Login'}

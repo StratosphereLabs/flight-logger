@@ -4,7 +4,8 @@ import {
   RowSelectionOptions,
   getCoreRowModel,
 } from '@tanstack/react-table';
-import { Badge, Table } from 'stratosphere-ui';
+import classNames from 'classnames';
+import { Badge, Table, TableSize } from 'stratosphere-ui';
 import { UsersRouterOutput } from '../../../app/routes/users';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { ActionsCell } from './ActionsCell';
@@ -16,6 +17,7 @@ export interface UserFlightsTableProps {
     UsersRouterOutput['getUserFlights'][number]
   >['enableRowSelection'];
   onCopyLink?: (flight: UsersRouterOutput['getUserFlights'][number]) => void;
+  size?: TableSize;
 }
 
 export type FlightsTableRow = Row<UsersRouterOutput['getUserFlights'][number]>;
@@ -25,6 +27,7 @@ export const UserFlightsTable = ({
   data,
   enableRowSelection,
   onCopyLink,
+  size,
 }: UserFlightsTableProps): JSX.Element => {
   const {
     rowSelection,
@@ -36,7 +39,7 @@ export const UserFlightsTable = ({
   } = useFlightsPageStore();
   return (
     <Table
-      className={className}
+      className={classNames('table-fixed', className)}
       columns={[
         {
           id: 'outDateISO',
@@ -199,6 +202,7 @@ export const UserFlightsTable = ({
       getCoreRowModel={getCoreRowModel()}
       highlightWhenSelected
       onRowSelectionChange={setRowSelection}
+      size={size}
       state={{ rowSelection }}
     />
   );

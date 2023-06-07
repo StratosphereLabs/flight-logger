@@ -83,11 +83,11 @@ export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
       rounded
     >
       <UserFlightsTable
-        className="table-compact"
         data={trip.flights}
         onCopyLink={({ id }) =>
           copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!')
         }
+        size="sm"
       />
     </Disclosure>
   );
