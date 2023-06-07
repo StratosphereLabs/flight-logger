@@ -21,8 +21,8 @@ export const GoogleLoginButton = ({
         onError={() => {
           addAlertMessages([
             {
-              status: 'error',
-              message: 'Unable to fetch Google Auth token',
+              color: 'error',
+              title: 'Unable to fetch Google Auth token',
             },
           ]);
         }}

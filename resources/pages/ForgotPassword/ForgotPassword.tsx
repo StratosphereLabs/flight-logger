@@ -1,9 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { Button, Card, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Form, FormControl } from 'stratosphere-ui';
+import { Button, Form, FormControl } from 'stratosphere-ui';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { forgotPasswordSchema } from './schema';
@@ -26,14 +25,14 @@ export const ForgotPassword = (): JSX.Element => {
   if (resetLinkSent) {
     return (
       <>
-        <Card.Title>Check your email</Card.Title>
+        <h2 className="card-title">Check your email</h2>
         <p>Password reset link sent!</p>
       </>
     );
   }
   return (
     <>
-      <Card.Title>Forgot Password</Card.Title>
+      <h2 className="card-title">Forgot Password</h2>
       <Form
         methods={methods}
         onFormSubmit={values =>
@@ -51,15 +50,14 @@ export const ForgotPassword = (): JSX.Element => {
             type="email"
           />
           <label className="label">
-            <Link
+            <a
               onClick={handleBackToLogin}
-              className="label-text-alt"
-              hover
+              className="link-hover label-text-alt link"
               href="#"
               tabIndex={0}
             >
               Back to Login
-            </Link>
+            </a>
           </label>
         </fieldset>
         <div className="mt-6 flex flex-col">

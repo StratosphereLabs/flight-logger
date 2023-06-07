@@ -1,14 +1,14 @@
-import { Button, Card, Hero } from 'react-daisyui';
-import { useItineraryFlightsStore } from './itineraryFlightsStore';
+import { Button } from 'stratosphere-ui';
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
+import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
 export const WelcomeCard = (): JSX.Element => {
   const { setIsCreateItineraryModalOpen } = useItineraryFlightsStore();
   return (
-    <Card className="min-h-[75vh] bg-base-100 shadow-lg">
-      <Card.Body className="justify-center">
-        <Hero>
-          <Hero.Content className="text-center">
+    <div className="card min-h-[75vh] bg-base-100 shadow-lg">
+      <div className="card-body justify-center">
+        <div className="hero">
+          <div className="hero-content text-center">
             <div className="max-w-md">
               <h1 className="text-5xl font-bold">Welcome!</h1>
               <p className="py-4">
@@ -36,9 +36,9 @@ export const WelcomeCard = (): JSX.Element => {
                 Get Started
               </Button>
             </div>
-          </Hero.Content>
-        </Hero>
-      </Card.Body>
-    </Card>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

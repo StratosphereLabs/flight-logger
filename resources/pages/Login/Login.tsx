@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Form, FormControl, PasswordInput } from 'stratosphere-ui';
+import { Button, Form, FormControl, PasswordInput } from 'stratosphere-ui';
+import { loginSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
-import { loginSchema } from '../../../app/schemas';
 
 export const Login = (): JSX.Element => {
   useAuthPage();
@@ -28,7 +27,7 @@ export const Login = (): JSX.Element => {
   const handleRegister = useLinkClickHandler('/auth/register');
   return (
     <>
-      <Card.Title>Sign In</Card.Title>
+      <h2 className="card-title">Sign In</h2>
       <Form methods={methods} onFormSubmit={data => mutate(data)}>
         <fieldset disabled={isLoading}>
           <FormControl
@@ -45,24 +44,22 @@ export const Login = (): JSX.Element => {
             name="password"
           />
           <label className="label">
-            <Link
+            <a
               onClick={handleForgotPassword}
               href="#"
-              className="label-text-alt"
-              hover
+              className="link-hover label-text-alt link"
               tabIndex={0}
             >
               Forgot password?
-            </Link>
-            <Link
+            </a>
+            <a
               onClick={handleRegister}
               href="#"
-              className="label-text-alt"
-              hover
+              className="link-hover label-text-alt link"
               tabIndex={0}
             >
               Register
-            </Link>
+            </a>
           </label>
         </fieldset>
         <div className="mt-6 flex flex-col">

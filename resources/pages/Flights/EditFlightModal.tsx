@@ -113,7 +113,7 @@ export const EditFlightModal = ({
           onClick: methods.handleSubmit(values => mutate(values)),
         },
       ]}
-      className="overflow-x-hidden"
+      className="overflow-y-scroll overflow-x-hidden scrollbar-none"
       onClose={() => setIsEditDialogOpen(false)}
       open={isEditDialogOpen}
       ref={modalRef}

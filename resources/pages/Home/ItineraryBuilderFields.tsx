@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { forwardRef, HTMLProps } from 'react';
-import { Button, Divider } from 'react-daisyui';
 import {
+  Button,
   FormControl,
   FormRadio,
   integerInputTransformer,
@@ -67,7 +67,7 @@ export const ItineraryBuilderFields = forwardRef<
           type="time"
         />
       </div>
-      <Divider />
+      <div className="divider" />
       <div className="flex flex-wrap justify-between gap-8">
         <AirlineInput
           className="w-[350px] min-w-[250px]"

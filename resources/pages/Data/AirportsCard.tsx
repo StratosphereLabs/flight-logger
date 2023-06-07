@@ -4,14 +4,11 @@ import {
   SortingState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { Badge, Card } from 'react-daisyui';
-import { Table } from 'stratosphere-ui';
+import { Badge, BadgeColor, Table } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-const getAirportTypeBadgeColor = (
-  type: string,
-): 'error' | 'primary' | 'ghost' | 'secondary' | 'info' | 'success' => {
+const getAirportTypeBadgeColor = (type: string): BadgeColor => {
   switch (type) {
     case 'closed':
       return 'error';
@@ -44,11 +41,9 @@ export const AirportsCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <Card className="min-h-[550px] bg-base-100 shadow-lg">
-      <Card.Body>
-        <Card.Title className="mb-3 justify-center" tag="h2">
-          Airports
-        </Card.Title>
+    <div className="card min-h-[550px] bg-base-100 shadow-lg">
+      <div className="card-body">
+        <h2 className="mb-3 justify-center">Airports</h2>
         <Table
           cellClassNames={{
             iata: 'w-[120px] hidden md:table-cell',
@@ -115,9 +110,7 @@ export const AirportsCard = (): JSX.Element => {
               footer: () => null,
             },
           ]}
-          compact
           data={data?.results ?? []}
-          enableFixedWidth
           enableRowHover
           getCoreRowModel={getCoreRowModel()}
           isLoading={isFetching}
@@ -126,9 +119,10 @@ export const AirportsCard = (): JSX.Element => {
           onPaginationChange={setPagination}
           onSortingChange={setSorting}
           pageCount={data?.metadata?.pageCount}
+          size="sm"
           state={{ pagination, sorting }}
         />
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 };

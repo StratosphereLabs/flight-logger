@@ -4,8 +4,7 @@ import {
   RowSelectionOptions,
   getCoreRowModel,
 } from '@tanstack/react-table';
-import { Badge } from 'react-daisyui';
-import { Table } from 'stratosphere-ui';
+import { Badge, Table } from 'stratosphere-ui';
 import { UsersRouterOutput } from '../../../app/routes/users';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { ActionsCell } from './ActionsCell';
@@ -194,7 +193,6 @@ export const UserFlightsTable = ({
         actions: 'w-[50px] xl:w-[150px]',
       }}
       data={data ?? []}
-      enableFixedWidth
       enableRowHover={enableRowSelection}
       enableRowSelection={enableRowSelection}
       enableSorting={false}

@@ -13,8 +13,8 @@ export const useErrorResponseHandler = (
       if (errorMessage !== undefined) {
         addAlertMessages([
           {
-            status: 'error',
-            message: errorMessage,
+            color: 'error',
+            title: errorMessage,
           },
         ]);
       } else if (defaultMessage !== undefined) {

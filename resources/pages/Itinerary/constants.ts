@@ -1,6 +1,6 @@
-import { BadgeProps } from 'react-daisyui';
+import { BadgeColor } from 'stratosphere-ui';
 
-export const BADGE_COLORS_MAP: Record<string, BadgeProps['color']> = {
+export const BADGE_COLORS_MAP: Record<string, BadgeColor> = {
   BASIC: 'primary',
   ECONOMY: 'primary',
   PREMIUM: 'secondary',
