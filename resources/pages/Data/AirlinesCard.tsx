@@ -4,7 +4,6 @@ import {
   SortingState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { Card } from 'react-daisyui';
 import { Table } from 'stratosphere-ui';
 import { AirlineLogo } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -24,11 +23,9 @@ export const AirlinesCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <Card className="min-h-[625px] bg-base-100 shadow-lg">
-      <Card.Body>
-        <Card.Title className="mb-3 justify-center" tag="h2">
-          Airlines
-        </Card.Title>
+    <div className="card min-h-[625px] bg-base-100 shadow-lg">
+      <div className="card-body">
+        <h2 className="card-title mb-3 justify-center">Airlines</h2>
         <Table
           columns={[
             {
@@ -72,9 +69,7 @@ export const AirlinesCard = (): JSX.Element => {
             iata: 'w-[120px] hidden sm:table-cell',
             icao: 'w-[120px]',
           }}
-          compact
           data={data?.results ?? []}
-          enableFixedWidth
           enableRowHover
           getCoreRowModel={getCoreRowModel()}
           isLoading={isFetching}
@@ -83,9 +78,10 @@ export const AirlinesCard = (): JSX.Element => {
           onPaginationChange={setPagination}
           onSortingChange={setSorting}
           pageCount={data?.metadata?.pageCount}
+          size="sm"
           state={{ pagination, sorting }}
         />
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 };

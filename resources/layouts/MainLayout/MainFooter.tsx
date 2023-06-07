@@ -1,7 +1,5 @@
-import { Footer } from 'react-daisyui';
-
 export const MainFooter = (): JSX.Element => (
-  <Footer className="flex justify-between bg-neutral p-5 text-neutral-content">
+  <footer className="footer flex justify-between bg-neutral p-5 text-neutral-content">
     <div className="truncate">
       <p>
         <span className="hidden sm:inline-block">Copyright</span> ©{' '}
@@ -18,5 +16,5 @@ export const MainFooter = (): JSX.Element => (
       <span className="hidden sm:inline-block">Version</span> {APP_VERSION}{' '}
       <span className="opacity-50">{APP_BUILD_NUMBER}</span>
     </div>
-  </Footer>
+  </footer>
 );

@@ -1,4 +1,3 @@
-import { Toast } from 'react-daisyui';
 import { Outlet } from 'react-router-dom';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 import { MainFooter } from './MainFooter';
@@ -12,13 +11,9 @@ export const MainLayout = (): JSX.Element => {
       <Outlet />
       <MainFooter />
       {alertMessages.length > 0 ? (
-        <Toast
-          className="z-50 w-1/2 min-w-[400px]"
-          horizontal="end"
-          vertical="top"
-        >
+        <div className="toast-end toast toast-top z-50 w-1/2 min-w-[400px]">
           <AlertMessages maxMessages={4} />
-        </Toast>
+        </div>
       ) : null}
     </div>
   );

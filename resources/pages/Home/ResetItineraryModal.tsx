@@ -21,7 +21,6 @@ export const ResetItineraryModal = ({
           children: 'Cancel',
           color: 'secondary',
           onClick: onClose,
-          type: 'button',
         },
         {
           children: 'Reset',

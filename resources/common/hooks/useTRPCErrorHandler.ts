@@ -15,22 +15,22 @@ export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(
         Object.entries(zodError.fieldErrors).flatMap(
           ([field, errors]) =>
             errors?.map(message => ({
-              status: 'error',
-              message: `[${field}]: ${message}`,
+              color: 'error',
+              title: `[${field}]: ${message}`,
             })) ?? [],
         ),
       );
       addAlertMessages(
         zodError.formErrors.map(message => ({
-          status: 'error',
-          message,
+          color: 'error',
+          title: message,
         })),
       );
     } else if (errorMessage !== null) {
       addAlertMessages([
         {
-          status: 'error',
-          message: errorMessage,
+          color: 'error',
+          title: errorMessage,
         },
       ]);
     }

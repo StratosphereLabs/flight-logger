@@ -1,8 +1,7 @@
 import classNames from 'classnames';
-import { Badge } from 'react-daisyui';
 import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { Disclosure } from 'stratosphere-ui';
+import { Badge, Disclosure } from 'stratosphere-ui';
 import { UsersRouterOutput } from '../../../app/routes/users';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
 import { useCopyToClipboard, useProfileLink } from '../../common/hooks';

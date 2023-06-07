@@ -5,8 +5,8 @@ export const useSuccessResponseHandler = (): ((message: string) => void) => {
   return message => {
     addAlertMessages([
       {
-        status: 'success',
-        message,
+        color: 'success',
+        title: message,
       },
     ]);
   };

@@ -1,7 +1,6 @@
 import classNames from 'classnames';
-import { Button, Card, Divider, Progress } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { Badge } from 'stratosphere-ui';
+import { Badge, Button } from 'stratosphere-ui';
 import { AirlineLogo, LinkIcon, RightArrowIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard } from '../../common/hooks';
@@ -24,7 +23,6 @@ export const Itinerary = (): JSX.Element | null => {
       <div className="relative mb-4 flex items-center justify-center">
         <h1 className="text-2xl font-bold sm:text-3xl">{data?.name}</h1>
         <Button
-          startIcon={<LinkIcon className="h-4 w-4" />}
           className="absolute end-0"
           color="ghost"
           onClick={() =>
@@ -34,10 +32,15 @@ export const Itinerary = (): JSX.Element | null => {
             )
           }
         >
+          <LinkIcon className="h-4 w-4" />
           <span className="hidden sm:block">Copy Link</span>
         </Button>
       </div>
-      {isLoading ? <Progress /> : null}
+      {isLoading ? (
+        <div className="flex flex-1 justify-center pt-8">
+          <span className="loading loading-spinner" />
+        </div>
+      ) : null}
       {data?.flights.map((flight, index) => (
         <>
           {flight.segmentTitle !== '' ? (
@@ -52,13 +55,13 @@ export const Itinerary = (): JSX.Element | null => {
             </div>
           ) : null}
           {flight.layoverDuration.length > 0 ? (
-            <Divider className="opacity-90">
+            <div className="divider opacity-90">
               Layover at {flight.departureAirport.iata} (
               {flight.layoverDuration})
-            </Divider>
+            </div>
           ) : null}
-          <Card key={index} className="bg-base-100 shadow-lg">
-            <Card.Body className="flex-row items-center justify-between gap-4">
+          <div key={index} className="card bg-base-100 shadow-lg">
+            <div className="card-body flex-row items-center justify-between gap-4">
               {flight.airline !== null ? (
                 <AirlineLogo
                   alt="Airline Logo"
@@ -124,8 +127,8 @@ export const Itinerary = (): JSX.Element | null => {
                   </Badge>
                 </div>
               ) : null}
-            </Card.Body>
-          </Card>
+            </div>
+          </div>
         </>
       ))}
     </div>

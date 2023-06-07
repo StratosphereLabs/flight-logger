@@ -1,7 +1,6 @@
 import { MouseEventHandler } from 'react';
-import { Button } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { DropdownMenu } from 'stratosphere-ui';
+import { Button, DropdownMenu } from 'stratosphere-ui';
 import {
   EditIcon,
   EllipsisVerticalIcon,

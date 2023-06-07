@@ -66,7 +66,6 @@ export const CreateItineraryModal = (): JSX.Element => {
       actionButtons={[]}
       className="w-full max-w-full overflow-x-hidden md:w-[75%]"
       ref={modalRef}
-      responsive={false}
     >
       <div className="flex flex-col gap-4">
         {flights.length > 0 ? (

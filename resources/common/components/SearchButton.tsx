@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Form, TypeaheadSelect, useOutsideClick } from 'stratosphere-ui';
+import {
+  Button,
+  Form,
+  TypeaheadSelect,
+  useOutsideClick,
+} from 'stratosphere-ui';
 import { UsersRouterOutput } from '../../../app/routes/users';
 import { trpc } from '../../utils/trpc';
 import { SearchIcon } from './Icons';

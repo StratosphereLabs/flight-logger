@@ -1,12 +1,10 @@
 import classNames from 'classnames';
-import { forwardRef } from 'react';
-import { Breadcrumbs, Button, Card, ToastProps } from 'react-daisyui';
-import { Badge } from 'stratosphere-ui';
-import { useItineraryFlightsStore } from './itineraryFlightsStore';
+import { HTMLProps, forwardRef } from 'react';
+import { Badge, Button } from 'stratosphere-ui';
 import { ResetIcon } from '../../common/components';
+import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
-export interface ItineraryFlightsCardProps
-  extends Omit<ToastProps, 'horizontal' | 'vertical'> {
+export interface ItineraryFlightsCardProps extends HTMLProps<HTMLDivElement> {
   isLoading?: boolean;
   onSubmit: () => void;
 }
@@ -26,29 +24,34 @@ export const ItineraryFlightsCard = forwardRef<
       setIsResetItineraryModalOpen,
     } = useItineraryFlightsStore();
     return (
-      <Card
-        className={classNames('bg-base-100 text-center shadow-lg', className)}
+      <div
+        className={classNames(
+          'card bg-base-100 text-center shadow-lg',
+          className,
+        )}
         ref={ref}
         {...props}
       >
-        <Card.Body className="flex-row justify-between gap-2">
-          <Breadcrumbs className="flex flex-1 items-center">
-            {flights.map(({ arrivalAirport, departureAirport, id }) => (
-              <Breadcrumbs.Item key={id}>
-                <Badge
-                  className="font-mono"
-                  color="info"
-                  dismissable
-                  onDismiss={() => {
-                    setDeleteFlightId(id);
-                    setIsDeleteItineraryModalOpen(true);
-                  }}
-                >
-                  {departureAirport?.iata}/{arrivalAirport?.iata}
-                </Badge>
-              </Breadcrumbs.Item>
-            ))}
-          </Breadcrumbs>
+        <div className="card-body flex-row justify-between gap-2">
+          <div className="breadcrumbs flex flex-1 items-center text-sm">
+            <ul>
+              {flights.map(({ arrivalAirport, departureAirport, id }) => (
+                <li key={id}>
+                  <Badge
+                    className="font-mono"
+                    color="info"
+                    dismissable
+                    onDismiss={() => {
+                      setDeleteFlightId(id);
+                      setIsDeleteItineraryModalOpen(true);
+                    }}
+                  >
+                    {departureAirport?.iata}/{arrivalAirport?.iata}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="flex flex-wrap items-center gap-3">
             <Button
               color="ghost"
@@ -67,8 +70,8 @@ export const ItineraryFlightsCard = forwardRef<
               Create
             </Button>
           </div>
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
     );
   },
 );

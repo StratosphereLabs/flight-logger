@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo } from 'react';
-import { Button, Card, Divider } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import {
+  Button,
   Form,
   FormControl,
   FormRadio,
@@ -64,10 +64,10 @@ export const AddFlight = (): JSX.Element => {
   return (
     <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
       <LoadingCard className="bg-base-100 shadow-lg">
-        <Card.Body>
-          <Card.Title className="mb-5 justify-center text-2xl">
+        <div className="card-body">
+          <h2 className="card-title mb-5 justify-center text-2xl">
             Add a Flight
-          </Card.Title>
+          </h2>
           <Form
             className="w-full"
             methods={methods}
@@ -116,7 +116,7 @@ export const AddFlight = (): JSX.Element => {
                   type="time"
                 />
               </div>
-              <Divider />
+              <div className="divider" />
               {shouldShowRegField ? (
                 <div className="flex flex-wrap justify-center">
                   <AirframeInput
@@ -153,7 +153,7 @@ export const AddFlight = (): JSX.Element => {
                   name="aircraftType"
                 />
               </div>
-              <Divider />
+              <div className="divider" />
               <div className="flex flex-wrap justify-between gap-12">
                 <FormRadio
                   className="w-[400px] min-w-[250px]"
@@ -237,7 +237,7 @@ export const AddFlight = (): JSX.Element => {
                   ]}
                 />
               </div>
-              <Divider />
+              <div className="divider" />
               <div className="mb-8 flex flex-wrap gap-8">
                 <FormControl
                   className="min-w-[250px] flex-1"
@@ -262,7 +262,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
           </Form>
-        </Card.Body>
+        </div>
       </LoadingCard>
     </div>
   );

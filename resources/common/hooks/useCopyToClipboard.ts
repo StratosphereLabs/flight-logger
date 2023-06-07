@@ -10,8 +10,8 @@ export const useCopyToClipboard = (): ((
     await navigator.clipboard.writeText(text);
     addAlertMessages([
       {
-        status: 'success',
-        message: successMessage ?? 'Copied to clipboard!',
+        color: 'success',
+        title: successMessage ?? 'Copied to clipboard!',
       },
     ]);
   }, []);

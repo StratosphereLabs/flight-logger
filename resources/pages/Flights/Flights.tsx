@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Button, Divider, Progress } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
+  Button,
   CloseIcon,
   Disclosure,
   Form,
@@ -123,13 +123,6 @@ export const Flights = (): JSX.Element => {
               <>
                 <Button
                   color={isRowSelectEnabled ? 'error' : 'secondary'}
-                  startIcon={
-                    isRowSelectEnabled ? (
-                      <CloseIcon className="h-4 w-4" />
-                    ) : (
-                      <PlusIcon className="h-4 w-4" />
-                    )
-                  }
                   onClick={() =>
                     setIsRowSelectEnabled(isEnabled => {
                       if (isEnabled) resetRowSelection();
@@ -137,8 +130,12 @@ export const Flights = (): JSX.Element => {
                     })
                   }
                   size="sm"
-                  type="button"
                 >
+                  {isRowSelectEnabled ? (
+                    <CloseIcon className="h-4 w-4" />
+                  ) : (
+                    <PlusIcon className="h-4 w-4" />
+                  )}
                   {isRowSelectEnabled ? 'Cancel' : 'New Trip'}
                 </Button>
                 {isRowSelectEnabled ? (
@@ -147,7 +144,6 @@ export const Flights = (): JSX.Element => {
                     disabled={Object.keys(rowSelection).length === 0}
                     onClick={() => setIsCreateTripDialogOpen(true)}
                     size="sm"
-                    type="button"
                   >
                     Create ({Object.keys(rowSelection).length})
                   </Button>
@@ -167,7 +163,11 @@ export const Flights = (): JSX.Element => {
           </FormRadioGroup>
         </Form>
       ) : null}
-      {isFetching ? <Progress /> : null}
+      {isFetching ? (
+        <div className="flex flex-1 justify-center pt-8">
+          <span className="loading loading-spinner" />
+        </div>
+      ) : null}
       {layout === 'full' && data !== undefined && data.total > 0 ? (
         <>
           {data.upcomingFlights.length > 0 ? (
@@ -206,7 +206,7 @@ export const Flights = (): JSX.Element => {
               </div>
             </div>
           )}
-          <Divider />
+          <div className="divider" />
           {data.flights.length > 0 ? (
             <Disclosure
               buttonProps={{
@@ -258,11 +258,8 @@ export const Flights = (): JSX.Element => {
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
             {username === undefined ? (
-              <Button
-                color="primary"
-                onClick={() => navigate('/add-flight')}
-                startIcon={<PlusIcon className="h-6 w-6" />}
-              >
+              <Button color="primary" onClick={() => navigate('/add-flight')}>
+                <PlusIcon className="h-6 w-6" />
                 Create Flight
               </Button>
             ) : null}

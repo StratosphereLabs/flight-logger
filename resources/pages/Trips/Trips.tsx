@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { Button, Divider, Progress } from 'react-daisyui';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Button } from 'stratosphere-ui';
 import { UsersRouterOutput } from '../../../app/routes/users';
 import { PlusIcon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -55,7 +55,11 @@ export const Trips = (): JSX.Element => {
       <article className="prose self-center">
         <h2>{username !== undefined ? `${username}'s Trips` : 'My Trips'}</h2>
       </article>
-      {isFetching ? <Progress /> : null}
+      {isFetching ? (
+        <div className="flex flex-1 justify-center pt-8">
+          <span className="loading loading-spinner" />
+        </div>
+      ) : null}
       {data !== undefined && data.total > 0 ? (
         <>
           {data.upcomingTrips.length > 0 ? (
@@ -69,7 +73,7 @@ export const Trips = (): JSX.Element => {
               </div>
             </div>
           )}
-          <Divider />
+          <div className="divider" />
           {data.trips.length > 0 ? (
             data.trips.map(trip => <TripDisclosure key={trip.id} trip={trip} />)
           ) : (
@@ -96,8 +100,8 @@ export const Trips = (): JSX.Element => {
                     } as const as FlightsPageNavigationState,
                   })
                 }
-                startIcon={<PlusIcon className="h-6 w-6" />}
               >
+                <PlusIcon className="h-6 w-6" />
                 Create Trip
               </Button>
             ) : null}

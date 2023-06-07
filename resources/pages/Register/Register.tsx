@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card, Link } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Form, FormControl, PasswordInput } from 'stratosphere-ui';
+import { Button, Form, FormControl, PasswordInput } from 'stratosphere-ui';
+import { registerSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
-import { registerSchema } from '../../../app/schemas';
 
 export const Register = (): JSX.Element => {
   useAuthPage();
@@ -31,7 +30,7 @@ export const Register = (): JSX.Element => {
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>
-      <Card.Title>Register</Card.Title>
+      <h2 className="card-title">Register</h2>
       <Form methods={methods} onFormSubmit={values => mutate(values)}>
         <fieldset disabled={isLoading}>
           <FormControl
@@ -70,15 +69,14 @@ export const Register = (): JSX.Element => {
             name="confirmPassword"
           />
           <label className="label">
-            <Link
+            <a
               onClick={handleClick}
-              className="label-text-alt"
-              hover
+              className="link-hover label-text-alt link"
               href="#"
               tabIndex={0}
             >
               Already registered? Login
-            </Link>
+            </a>
           </label>
         </fieldset>
         <div className="mt-6 flex flex-col">

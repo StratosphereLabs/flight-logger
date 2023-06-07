@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card } from 'react-daisyui';
 import { useForm } from 'react-hook-form';
-import { Form, FormFileInput } from 'stratosphere-ui';
+import { Button, Form, FormFileInput } from 'stratosphere-ui';
+import { fileUploadSchema } from '../../../app/schemas/upload';
+import { useFlightDiaryUploadMutation } from '../../common/hooks';
 import { useAccountPageStore } from './accountPageStore';
 import { WarningModal } from './WarningModal';
-import { useFlightDiaryUploadMutation } from '../../common/hooks';
-import { fileUploadSchema } from '../../../app/schemas/upload';
 
 export const Account = (): JSX.Element => {
   const { mutate, isLoading } = useFlightDiaryUploadMutation();
@@ -15,12 +14,12 @@ export const Account = (): JSX.Element => {
   });
   return (
     <>
-      <Card>
-        <Card.Body>
-          <Card.Title>
+      <div className="card">
+        <div className="card-body">
+          <h2 className="card-title">
             Data Import{' '}
             <span className="font-normal opacity-75">(Experimental)</span>
-          </Card.Title>
+          </h2>
           <Form
             methods={methods}
             onFormSubmit={() => setIsWarningDialogOpen(true)}
@@ -37,8 +36,8 @@ export const Account = (): JSX.Element => {
               </Button>
             </div>
           </Form>
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
       <WarningModal
         isLoading={isLoading}
         onConfirm={() => {

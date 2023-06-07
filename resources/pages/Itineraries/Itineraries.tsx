@@ -1,7 +1,6 @@
 import { getCoreRowModel } from '@tanstack/react-table';
-import { Button, Progress } from 'react-daisyui';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Table } from 'stratosphere-ui';
+import { Button, Table } from 'stratosphere-ui';
 import { ActionsCell, PlusIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
@@ -53,15 +52,19 @@ export const Itineraries = (): JSX.Element => {
                     } as const as HomePageNavigationState,
                   })
                 }
-                startIcon={<PlusIcon className="h-6 w-6" />}
               >
+                <PlusIcon className="h-6 w-6" />
                 Create Itinerary
               </Button>
             ) : null}
           </div>
         </div>
       ) : null}
-      {isFetching ? <Progress /> : null}
+      {isFetching ? (
+        <div className="flex flex-1 justify-center pt-8">
+          <span className="loading loading-spinner" />
+        </div>
+      ) : null}
       {!isFetching && data !== undefined && data.length > 0 ? (
         <Table
           className="table-compact xl:table-normal"
@@ -146,7 +149,6 @@ export const Itineraries = (): JSX.Element => {
             actions: 'w-[50px] xl:w-[150px]',
           }}
           data={data ?? []}
-          enableFixedWidth
           enableSorting={false}
           getCoreRowModel={getCoreRowModel()}
         />

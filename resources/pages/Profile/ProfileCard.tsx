@@ -1,6 +1,5 @@
-import { Badge, Button, Card } from 'react-daisyui';
 import { useParams } from 'react-router-dom';
-import { LoadingCard } from 'stratosphere-ui';
+import { Badge, Button, LoadingCard } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -15,10 +14,10 @@ export const ProfileCard = (): JSX.Element => {
   useTRPCErrorHandler(error);
   return (
     <LoadingCard isLoading={isFetching} className="w-80 bg-base-100 shadow-lg">
-      <Card.Body className="items-center">
-        <Card.Title className="text-2xl font-medium">{`${
+      <div className="card-body items-center">
+        <h2 className="card-title text-2xl font-medium">{`${
           data?.firstName ?? ''
-        } ${data?.lastName ?? ''}`}</Card.Title>
+        } ${data?.lastName ?? ''}`}</h2>
         <p className="text-md opacity-75">{`@${data?.username ?? ''}`}</p>
         <div className="avatar">
           <div className="h-32 w-32">
@@ -40,7 +39,7 @@ export const ProfileCard = (): JSX.Element => {
             Follow
           </Button>
         ) : null}
-      </Card.Body>
+      </div>
     </LoadingCard>
   );
 };
