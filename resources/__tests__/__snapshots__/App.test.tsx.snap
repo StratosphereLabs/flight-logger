@@ -378,7 +378,7 @@ exports[`<App /> > renders profile page 1`] = `
             class="flex gap-1"
           >
             <button
-              class="btn"
+              class="btn btn-neutral"
               type="button"
             >
               Login
