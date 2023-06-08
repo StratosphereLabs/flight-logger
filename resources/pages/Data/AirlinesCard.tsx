@@ -27,6 +27,7 @@ export const AirlinesCard = (): JSX.Element => {
       <div className="card-body">
         <h2 className="card-title mb-3 justify-center">Airlines</h2>
         <Table
+          className="table-fixed"
           columns={[
             {
               id: 'logo',

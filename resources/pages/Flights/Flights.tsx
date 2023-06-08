@@ -188,7 +188,7 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
-                className="table-compact xl:table-normal"
+                className="table-sm xl:table-md"
                 data={data.upcomingFlights}
                 enableRowSelection={enableRowSelection}
                 onCopyLink={({ id }) =>
@@ -223,7 +223,7 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
-                className="table-compact xl:table-normal"
+                className="table-sm xl:table-md"
                 data={data.flights}
                 enableRowSelection={enableRowSelection}
                 onCopyLink={({ id }) =>
@@ -245,7 +245,7 @@ export const Flights = (): JSX.Element => {
       ) : null}
       {layout === 'compact' && data !== undefined && data.total > 0 ? (
         <UserFlightsTable
-          className="table-compact xl:table-normal"
+          className="table-sm xl:table-md"
           data={[...data.upcomingFlights, ...data.flights]}
           enableRowSelection={enableRowSelection}
           onCopyLink={({ id }) =>
