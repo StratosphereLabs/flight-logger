@@ -1,4 +1,4 @@
-import { inferRouterOutputs, TRPCError } from '@trpc/server';
+import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
 import { DATE_FORMAT_MONTH } from '../constants';
 import { prisma } from '../db';
@@ -16,7 +16,7 @@ import {
   getFlightTimeData,
   getHeatmap,
   getRoutes,
-  ItineraryResult,
+  type ItineraryResult,
   transformTripData,
 } from '../utils';
 

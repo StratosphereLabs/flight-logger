@@ -1,8 +1,12 @@
-import { InitialEntry } from 'history';
-import React, { ReactElement } from 'react';
-import { render, RenderOptions, RenderResult } from '@testing-library/react';
-import { AppWrapper } from '../AppWrapper';
+import {
+  render,
+  type RenderOptions,
+  type RenderResult,
+} from '@testing-library/react';
+import { type InitialEntry } from 'history';
+import React, { type ReactElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { AppWrapper } from '../AppWrapper';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialEntries?: InitialEntry[];

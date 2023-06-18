@@ -13,7 +13,9 @@ export const ResetItineraryModal = ({
     resetFlights,
     setIsResetItineraryModalOpen,
   } = useItineraryFlightsStore();
-  const onClose = (): void => setIsResetItineraryModalOpen(false);
+  const onClose = (): void => {
+    setIsResetItineraryModalOpen(false);
+  };
   return (
     <Modal
       actionButtons={[
@@ -32,6 +34,7 @@ export const ResetItineraryModal = ({
           },
         },
       ]}
+      className="bg-base-200"
       onClose={onClose}
       open={isResetItineraryModalOpen}
       title="Reset Itinerary"

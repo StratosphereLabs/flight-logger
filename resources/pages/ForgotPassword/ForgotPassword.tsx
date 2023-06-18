@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Button, Form, FormControl } from 'stratosphere-ui';
+import { Button, CardTitle, Form, FormControl } from 'stratosphere-ui';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { forgotPasswordSchema } from './schema';
@@ -25,21 +25,23 @@ export const ForgotPassword = (): JSX.Element => {
   if (resetLinkSent) {
     return (
       <>
-        <h2 className="card-title">Check your email</h2>
+        <CardTitle>Check your email</CardTitle>
         <p>Password reset link sent!</p>
       </>
     );
   }
   return (
     <>
-      <h2 className="card-title">Forgot Password</h2>
+      <CardTitle>Forgot Password</CardTitle>
       <Form
         methods={methods}
-        onFormSubmit={values =>
+        onFormSubmit={values => {
           mutate(values, {
-            onSuccess: () => setResetLinkSent(true),
-          })
-        }
+            onSuccess: () => {
+              setResetLinkSent(true);
+            },
+          });
+        }}
       >
         <fieldset disabled={isLoading}>
           <FormControl

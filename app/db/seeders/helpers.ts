@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import { Promise } from 'bluebird';
 import cheerio from 'cheerio';
 import { parse } from 'csv-parse/sync';

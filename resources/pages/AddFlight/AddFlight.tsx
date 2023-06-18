@@ -4,6 +4,8 @@ import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
+  CardBody,
+  CardTitle,
   Form,
   FormControl,
   FormRadio,
@@ -11,7 +13,7 @@ import {
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
-import { AddFlightRequest, addFlightSchema } from '../../../app/schemas';
+import { type AddFlightRequest, addFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
   AirframeInput,
@@ -53,25 +55,31 @@ export const AddFlight = (): JSX.Element => {
     onSuccess: async () => {
       handleSuccess('Flight Added!');
       methods.reset();
-      setTimeout(() => methods.setFocus('departureAirport'), 100);
+      setTimeout(() => {
+        methods.setFocus('departureAirport');
+      }, 100);
       await utils.users.invalidate();
     },
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
-    setTimeout(() => methods.setFocus('departureAirport'), 100);
+    setTimeout(() => {
+      methods.setFocus('departureAirport');
+    }, 100);
   }, []);
   return (
     <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
-      <LoadingCard className="bg-base-100 shadow-lg">
-        <div className="card-body">
-          <h2 className="card-title mb-5 justify-center text-2xl">
+      <LoadingCard className="bg-base-200 shadow-md">
+        <CardBody>
+          <CardTitle className="mb-5 justify-center text-2xl">
             Add a Flight
-          </h2>
+          </CardTitle>
           <Form
             className="w-full"
             methods={methods}
-            onFormSubmit={values => mutate(values)}
+            onFormSubmit={values => {
+              mutate(values);
+            }}
           >
             <div className="flex flex-col gap-8">
               <div className="flex flex-wrap justify-around gap-8">
@@ -262,7 +270,7 @@ export const AddFlight = (): JSX.Element => {
               </div>
             </div>
           </Form>
-        </div>
+        </CardBody>
       </LoadingCard>
     </div>
   );

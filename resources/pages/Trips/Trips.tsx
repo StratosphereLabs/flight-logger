@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
-import { UsersRouterOutput } from '../../../app/routes/users';
+import { type UsersRouterOutput } from '../../../app/routes/users';
 import { PlusIcon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { FlightsPageNavigationState, ViewFlightModal } from '../Flights';
+import { type FlightsPageNavigationState, ViewFlightModal } from '../Flights';
 import { DeleteTripModal } from './DeleteTripModal';
 import { TripDisclosure } from './TripDisclosure';
 
@@ -92,14 +92,14 @@ export const Trips = (): JSX.Element => {
             {username === undefined ? (
               <Button
                 color="primary"
-                onClick={() =>
+                onClick={() => {
                   navigate('/flights', {
                     replace: false,
                     state: {
                       createTrip: true,
                     } as const as FlightsPageNavigationState,
-                  })
-                }
+                  });
+                }}
               >
                 <PlusIcon className="h-6 w-6" />
                 Create Trip

@@ -1,12 +1,12 @@
-import { Button } from 'stratosphere-ui';
+import { Button, Card, CardBody } from 'stratosphere-ui';
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
 import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
 export const WelcomeCard = (): JSX.Element => {
   const { setIsCreateItineraryModalOpen } = useItineraryFlightsStore();
   return (
-    <div className="card min-h-[75vh] bg-base-100 shadow-lg">
-      <div className="card-body justify-center">
+    <Card className="min-h-[75vh] bg-base-200 shadow-md">
+      <CardBody className="justify-center">
         <div className="hero">
           <div className="hero-content text-center">
             <div className="max-w-md">
@@ -31,14 +31,16 @@ export const WelcomeCard = (): JSX.Element => {
               <Button
                 className="mt-4"
                 color="info"
-                onClick={() => setIsCreateItineraryModalOpen(true)}
+                onClick={() => {
+                  setIsCreateItineraryModalOpen(true);
+                }}
               >
                 Get Started
               </Button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   );
 };

@@ -1,4 +1,4 @@
-import { airport } from '@prisma/client';
+import { type airport } from '@prisma/client';
 import { add } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import {

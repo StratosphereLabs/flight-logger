@@ -1,4 +1,4 @@
-import { aircraft_type, airline, airport } from '@prisma/client';
+import { type aircraft_type, type airline, type airport } from '@prisma/client';
 import groupBy from 'lodash.groupby';
 import keyBy from 'lodash.keyby';
 import { prisma } from './prisma';

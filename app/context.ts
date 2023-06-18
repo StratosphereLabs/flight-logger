@@ -1,11 +1,10 @@
-import { user } from '@prisma/client';
-import * as trpcExpress from '@trpc/server/adapters/express';
+import { type user } from '@prisma/client';
+import type * as trpcExpress from '@trpc/server/adapters/express';
 import jwt from 'jsonwebtoken';
 
 export type UserToken = Pick<user, 'id' | 'username' | 'admin'>;
 
 export interface Context {
-  [key: string]: unknown;
   user?: UserToken;
   origin?: string;
 }

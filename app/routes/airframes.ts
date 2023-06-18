@@ -1,4 +1,4 @@
-import { TRPCError, inferRouterOutputs } from '@trpc/server';
+import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import { prisma } from '../db';
 import { getAirframeSchema, searchSchema } from '../schemas';
 import { procedure, router } from '../trpc';

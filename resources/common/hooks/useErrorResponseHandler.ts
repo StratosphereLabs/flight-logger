@@ -1,7 +1,7 @@
-import { AxiosResponse } from 'axios';
+import { type AxiosResponse } from 'axios';
 import { useCallback } from 'react';
-import { AlertMessage, useAlertMessages } from 'stratosphere-ui';
-import { ErrorResponse } from '../types';
+import { type AlertMessage, useAlertMessages } from 'stratosphere-ui';
+import { type ErrorResponse } from '../types';
 
 export const useErrorResponseHandler = (
   defaultMessage?: AlertMessage,

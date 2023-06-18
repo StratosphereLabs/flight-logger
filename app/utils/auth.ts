@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import { OAuth2Client, type TokenPayload } from 'google-auth-library';
 
 const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
 

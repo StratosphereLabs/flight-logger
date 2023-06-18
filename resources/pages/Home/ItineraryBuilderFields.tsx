@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { forwardRef, HTMLProps } from 'react';
+import { forwardRef, type HTMLProps } from 'react';
 import {
   Button,
   FormControl,

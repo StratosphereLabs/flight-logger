@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
-import { useItinerariesPageStore } from './itinerariesPageStore';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { useItinerariesPageStore } from './itinerariesPageStore';
 
 export const DeleteItineraryModal = (): JSX.Element => {
   const utils = trpc.useContext();
@@ -34,17 +34,23 @@ export const DeleteItineraryModal = (): JSX.Element => {
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: () => setIsDeleteDialogOpen(false),
+          onClick: () => {
+            setIsDeleteDialogOpen(false);
+          },
         },
         {
           children: 'Delete',
           color: 'primary',
           loading: isLoading,
-          onClick: () =>
-            activeItinerary !== null && mutate({ id: activeItinerary.id }),
+          onClick: () => {
+            activeItinerary !== null && mutate({ id: activeItinerary.id });
+          },
         },
       ]}
-      onClose={() => setIsDeleteDialogOpen(false)}
+      className="bg-base-200"
+      onClose={() => {
+        setIsDeleteDialogOpen(false);
+      }}
       open={isDeleteDialogOpen}
       title="Delete Itinerary"
     >

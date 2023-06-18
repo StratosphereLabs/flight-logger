@@ -1,5 +1,4 @@
-import { airframe } from '@prisma/client';
-import { Promise } from 'bluebird';
+import { type airframe } from '@prisma/client';
 import fs from 'fs';
 import { findBestMatch } from 'string-similarity';
 import { prisma } from '../prisma';

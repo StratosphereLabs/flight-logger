@@ -1,7 +1,7 @@
-import { TRPCClientErrorBase } from '@trpc/client';
+import { type TRPCClientErrorBase } from '@trpc/client';
 import { useEffect } from 'react';
 import { useAlertMessages } from 'stratosphere-ui';
-import { DefaultErrorShape } from '../types';
+import { type DefaultErrorShape } from '../types';
 
 export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(
   trpcError?: TRPCClientErrorBase<TShape> | null,

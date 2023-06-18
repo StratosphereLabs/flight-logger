@@ -15,7 +15,7 @@ export const MainNavbar = (): JSX.Element => {
   const navigate = useNavigate();
   return (
     <div className="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans">
-      <div className="navbar rounded-box justify-between bg-base-200 shadow-xl lg:justify-start">
+      <div className="navbar rounded-box justify-between bg-base-200 shadow-lg lg:justify-start">
         <div className="navbar-start w-auto lg:w-1/2">
           <DropdownMenu
             buttonProps={{
@@ -32,26 +32,34 @@ export const MainNavbar = (): JSX.Element => {
               {
                 id: 'home',
                 children: 'Home',
-                onClick: () => navigate('/'),
+                onClick: () => {
+                  navigate('/');
+                },
               },
               ...(isLoggedIn
                 ? [
                     {
                       id: 'myProfile',
                       children: 'My Profile',
-                      onClick: () => navigate('/profile'),
+                      onClick: () => {
+                        navigate('/profile');
+                      },
                     },
                     {
                       id: 'addFlight',
                       children: 'Add Flight',
-                      onClick: () => navigate('/add-flight'),
+                      onClick: () => {
+                        navigate('/add-flight');
+                      },
                     },
                   ]
                 : []),
               {
                 id: 'data',
                 children: 'Data',
-                onClick: () => navigate('/data'),
+                onClick: () => {
+                  navigate('/data');
+                },
               },
             ]}
             menuClassName="rounded-box p-2 w-48"
@@ -59,7 +67,9 @@ export const MainNavbar = (): JSX.Element => {
           <Button
             className="hidden text-xl normal-case sm:inline-flex"
             color="ghost"
-            onClick={() => navigate('/')}
+            onClick={() => {
+              navigate('/');
+            }}
           >
             <div className="font-title text-3xl text-primary transition-all duration-200">
               <span>Flight</span>
@@ -71,9 +81,9 @@ export const MainNavbar = (): JSX.Element => {
           <Tabs
             boxed
             className="p-0"
-            onChange={({ paths }) =>
-              paths?.[0] !== undefined && navigate(paths[0])
-            }
+            onChange={({ paths }) => {
+              paths?.[0] !== undefined && navigate(paths[0]);
+            }}
             pathname={location.pathname}
             size="lg"
             tabs={[
@@ -113,14 +123,22 @@ export const MainNavbar = (): JSX.Element => {
               <Button
                 className="hidden xl:block"
                 color="ghost"
-                onClick={() => navigate('/add-flight')}
+                onClick={() => {
+                  navigate('/add-flight');
+                }}
               >
                 Add Flight
               </Button>
             ) : null}
             <Button
               color="neutral"
-              onClick={isLoggedIn ? logout : () => navigate('/auth/login')}
+              onClick={
+                isLoggedIn
+                  ? logout
+                  : () => {
+                      navigate('/auth/login');
+                    }
+              }
             >
               {isLoggedIn ? <LogoutIcon /> : 'Login'}
               <span className="sr-only">{isLoggedIn ? 'Logout' : null}</span>

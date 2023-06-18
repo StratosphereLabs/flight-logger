@@ -34,17 +34,23 @@ export const DeleteFlightModal = (): JSX.Element => {
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: () => setIsDeleteDialogOpen(false),
+          onClick: () => {
+            setIsDeleteDialogOpen(false);
+          },
         },
         {
           children: 'Delete',
           color: 'primary',
           loading: isLoading,
-          onClick: () =>
-            activeFlight !== null && mutate({ id: activeFlight.id }),
+          onClick: () => {
+            activeFlight !== null && mutate({ id: activeFlight.id });
+          },
         },
       ]}
-      onClose={() => setIsDeleteDialogOpen(false)}
+      className="bg-base-200"
+      onClose={() => {
+        setIsDeleteDialogOpen(false);
+      }}
       open={isDeleteDialogOpen}
       title="Delete Flight"
     >

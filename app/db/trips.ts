@@ -1,4 +1,4 @@
-import { flight } from '@prisma/client';
+import { type flight } from '@prisma/client';
 import { prisma } from './prisma';
 
 export const updateTripAfterEditFlight = async (

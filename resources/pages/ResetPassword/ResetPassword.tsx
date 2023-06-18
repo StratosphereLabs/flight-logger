@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Form, PasswordInput } from 'stratosphere-ui';
+import { Button, CardTitle, Form, PasswordInput } from 'stratosphere-ui';
 import { resetPasswordSchema } from '../../../app/schemas';
 import {
   useAuthPage,
@@ -35,8 +35,13 @@ export const ResetPassword = (): JSX.Element => {
   useTRPCErrorHandler(error);
   return (
     <>
-      <h2 className="card-title">Reset Password</h2>
-      <Form methods={methods} onFormSubmit={data => mutate(data)}>
+      <CardTitle>Reset Password</CardTitle>
+      <Form
+        methods={methods}
+        onFormSubmit={data => {
+          mutate(data);
+        }}
+      >
         <fieldset disabled={isLoading}>
           <PasswordInput
             autoComplete="new-password"

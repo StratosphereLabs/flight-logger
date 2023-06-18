@@ -1,4 +1,4 @@
-import { PaginationState, SortingState } from '@tanstack/react-table';
+import { type PaginationState, type SortingState } from '@tanstack/react-table';
 
 export const getPaginationQueryString = ({
   pageIndex,

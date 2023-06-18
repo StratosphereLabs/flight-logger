@@ -26,6 +26,7 @@ export const ViewFlightModal = (): JSX.Element => {
           onClick: onClose,
         },
       ]}
+      className="bg-base-200"
       onClose={onClose}
       open={isViewDialogOpen}
       title=""

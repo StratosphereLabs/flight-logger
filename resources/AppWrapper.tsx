@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { AlertMessagesProvider } from 'stratosphere-ui';
 import { TRPCProvider } from './providers';
 

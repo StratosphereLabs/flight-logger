@@ -15,9 +15,11 @@ export const ProfileTabs = (): JSX.Element => {
   const { username } = useParams();
   return (
     <Tabs
-      className="w-full flex-nowrap"
+      className="w-full flex-nowrap px-2"
       lifted
-      onChange={({ paths }) => paths?.[0] !== undefined && navigate(paths[0])}
+      onChange={({ paths }) => {
+        paths?.[0] !== undefined && navigate(paths[0]);
+      }}
       pathname={location.pathname}
       size="lg"
       tabs={[

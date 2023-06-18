@@ -22,11 +22,14 @@ export const useThemeStore = create<ThemeState>()(
       theme: window.matchMedia?.('(prefers-color-scheme: dark)').matches
         ? AppTheme.DARK
         : AppTheme.LIGHT,
-      setTheme: (theme: AppTheme) => set({ theme }),
-      toggleTheme: () =>
+      setTheme: (theme: AppTheme) => {
+        set({ theme });
+      },
+      toggleTheme: () => {
         set({
           theme: get().theme === AppTheme.DARK ? AppTheme.LIGHT : AppTheme.DARK,
-        }),
+        });
+      },
     }),
     {
       name: 'flight-logger-theme',

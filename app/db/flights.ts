@@ -1,4 +1,4 @@
-import { flight } from '@prisma/client';
+import { type flight } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { prisma } from './prisma';
 

@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server';
-import { NextFunction, RequestHandler, Response } from 'express';
-import { expressjwt, Request as JwtRequest } from 'express-jwt';
+import { type NextFunction, type RequestHandler, type Response } from 'express';
+import { expressjwt, type Request as JwtRequest } from 'express-jwt';
 import createHttpError from 'http-errors';
-import { UserToken } from '../../context';
+import { type UserToken } from '../../context';
 import { middleware } from '../../trpc';
 
 export const authorizeToken = (credentialsRequired?: boolean): RequestHandler =>
@@ -18,7 +18,8 @@ export const verifyAdminRest = (
   next: NextFunction,
 ): void => {
   if (req.auth?.admin !== true) {
-    return next(createHttpError(401, 'Unauthorized'));
+    next(createHttpError(401, 'Unauthorized'));
+    return;
   }
   next();
 };

@@ -1,10 +1,17 @@
 import {
   getCoreRowModel,
-  PaginationState,
-  SortingState,
+  type PaginationState,
+  type SortingState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { Badge, BadgeColor, Table } from 'stratosphere-ui';
+import {
+  Badge,
+  type BadgeColor,
+  Table,
+  Card,
+  CardBody,
+  CardTitle,
+} from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -41,9 +48,9 @@ export const AirportsCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <div className="card min-h-[550px] bg-base-100 shadow-lg">
-      <div className="card-body">
-        <h2 className="mb-3 justify-center">Airports</h2>
+    <Card className="min-h-[550px] bg-base-200 shadow-md">
+      <CardBody>
+        <CardTitle className="mb-3 justify-center">Airports</CardTitle>
         <Table
           cellClassNames={{
             iata: 'w-[120px] hidden md:table-cell',
@@ -53,7 +60,7 @@ export const AirportsCard = (): JSX.Element => {
             countryId: 'w-[120px] hidden sm:table-cell',
             type: 'w-[120px] hidden sm:table-cell',
           }}
-          className="table-fixed"
+          className="table-fixed bg-base-100"
           columns={[
             {
               id: 'iata',
@@ -123,7 +130,7 @@ export const AirportsCard = (): JSX.Element => {
           size="sm"
           state={{ pagination, sorting }}
         />
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   );
 };
