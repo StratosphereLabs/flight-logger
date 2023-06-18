@@ -7,7 +7,7 @@ import {
   TypeaheadSelect,
   useOutsideClick,
 } from 'stratosphere-ui';
-import { UsersRouterOutput } from '../../../app/routes/users';
+import { type UsersRouterOutput } from '../../../app/routes/users';
 import { trpc } from '../../utils/trpc';
 import { SearchIcon } from './Icons';
 
@@ -71,7 +71,9 @@ export const SearchButton = (): JSX.Element => {
           color="ghost"
           onClick={() => {
             setIsSearching(true);
-            setTimeout(() => methods.setFocus('user'), 100);
+            setTimeout(() => {
+              methods.setFocus('user');
+            }, 100);
           }}
           ref={buttonRef}
           shape="circle"

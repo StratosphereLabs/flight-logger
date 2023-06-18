@@ -1,5 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
+import {
+  AlertMessages,
+  Card,
+  CardBody,
+  useAlertMessages,
+} from 'stratosphere-ui';
 import { ThemeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => {
@@ -16,11 +21,11 @@ export const AuthenticationLayout = (): JSX.Element => {
             Welcome! Please login to access your flights and trips
           </p>
         </div>
-        <div className="card mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-2xl">
-          <div className="card-body">
+        <Card className="mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-2xl">
+          <CardBody>
             <Outlet />
-          </div>
-        </div>
+          </CardBody>
+        </Card>
       </div>
       {alertMessages.length > 0 ? (
         <div className="toast-end toast toast-top z-50 w-1/2 min-w-[400px]">

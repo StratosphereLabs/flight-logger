@@ -1,4 +1,5 @@
 import { DropdownMenu } from 'stratosphere-ui';
+import { AppTheme, useThemeStore } from '../../stores';
 import {
   BusinessIcon,
   CyberpunkIcon,
@@ -8,7 +9,6 @@ import {
   SnowflakeIcon,
   ThemeIcon,
 } from './Icons';
-import { AppTheme, useThemeStore } from '../../stores';
 
 export const ThemeButton = (): JSX.Element => {
   const { setTheme } = useThemeStore();
@@ -27,60 +27,72 @@ export const ThemeButton = (): JSX.Element => {
       items={[
         {
           id: 'light',
-          onClick: () => setTheme(AppTheme.LIGHT),
+          onClick: () => {
+            setTheme(AppTheme.LIGHT);
+          },
           children: (
             <>
-              <LightModeIcon />
+              <LightModeIcon className="h-4 w-4" />
               Light
             </>
           ),
         },
         {
           id: 'dark',
-          onClick: () => setTheme(AppTheme.DARK),
+          onClick: () => {
+            setTheme(AppTheme.DARK);
+          },
           children: (
             <>
-              <DarkModeIcon />
+              <DarkModeIcon className="h-4 w-4" />
               Dark
             </>
           ),
         },
         {
           id: 'winter',
-          onClick: () => setTheme(AppTheme.WINTER),
+          onClick: () => {
+            setTheme(AppTheme.WINTER);
+          },
           children: (
             <>
-              <SnowflakeIcon className="h-6 w-6" />
+              <SnowflakeIcon className="h-4 w-4" />
               Winter
             </>
           ),
         },
         {
           id: 'business',
-          onClick: () => setTheme(AppTheme.BUSINESS),
+          onClick: () => {
+            setTheme(AppTheme.BUSINESS);
+          },
           children: (
             <>
-              <BusinessIcon className="h-6 w-6" />
+              <BusinessIcon className="h-4 w-4" />
               Business
             </>
           ),
         },
         {
           id: 'emerald',
-          onClick: () => setTheme(AppTheme.EMERALD),
+          onClick: () => {
+            setTheme(AppTheme.EMERALD);
+          },
           children: (
             <>
-              <GemIcon className="h-6 w-6" />
+              <GemIcon className="h-4 w-4" />
               Emerald
             </>
           ),
         },
         {
           id: 'cyberpunk',
-          onClick: () => setTheme(AppTheme.CYBERPUNK),
+          onClick: () => {
+            setTheme(AppTheme.CYBERPUNK);
+          },
           children: (
             <>
-              <CyberpunkIcon className="h-6 w-6" />
+              <CyberpunkIcon className="h-4 w-4" />
               Cyberpunk
             </>
           ),

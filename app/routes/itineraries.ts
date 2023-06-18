@@ -7,7 +7,7 @@ import {
   getItinerarySchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { getItineraryData, ItineraryResult } from '../utils';
+import { getItineraryData, type ItineraryResult } from '../utils';
 
 export const itinerariesRouter = router({
   createItinerary: procedure

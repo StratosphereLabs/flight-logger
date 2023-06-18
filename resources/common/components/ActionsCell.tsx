@@ -1,4 +1,4 @@
-import { MouseEventHandler } from 'react';
+import { type MouseEventHandler } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, DropdownMenu } from 'stratosphere-ui';
 import {

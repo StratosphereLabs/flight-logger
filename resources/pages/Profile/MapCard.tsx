@@ -55,7 +55,7 @@ export const MapCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={!isLoaded || isFetching}
-      className="min-h-[475px] min-w-[350px] flex-1 bg-base-100 shadow-lg"
+      className="min-h-[475px] min-w-[350px] flex-1 shadow-md"
     >
       <Form className="flex flex-wrap justify-end gap-4 p-3" methods={methods}>
         <FormCheckbox
@@ -64,7 +64,8 @@ export const MapCard = (): JSX.Element => {
           name="showUpcoming"
         />
         <Select
-          className="w-[120px]"
+          buttonColor="neutral"
+          className="w-[150px]"
           formValueMode="id"
           getItemText={({ text }) => text}
           options={[
@@ -122,7 +123,9 @@ export const MapCard = (): JSX.Element => {
         <HeatmapLayerF
           data={heatmapData}
           onLoad={setHeatmap}
-          onUnmount={() => setHeatmap(null)}
+          onUnmount={() => {
+            setHeatmap(null);
+          }}
           options={{
             dissipating: false,
             radius: 2,

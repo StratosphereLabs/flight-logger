@@ -34,16 +34,23 @@ export const DeleteTripModal = (): JSX.Element => {
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: () => setIsDeleteDialogOpen(false),
+          onClick: () => {
+            setIsDeleteDialogOpen(false);
+          },
         },
         {
           children: 'Delete',
           color: 'primary',
           loading: isLoading,
-          onClick: () => activeTrip !== null && mutate({ id: activeTrip.id }),
+          onClick: () => {
+            activeTrip !== null && mutate({ id: activeTrip.id });
+          },
         },
       ]}
-      onClose={() => setIsDeleteDialogOpen(false)}
+      className="bg-base-200"
+      onClose={() => {
+        setIsDeleteDialogOpen(false);
+      }}
       open={isDeleteDialogOpen}
       title="Delete Trip"
     >

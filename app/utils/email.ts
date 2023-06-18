@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { SentMessageInfo } from 'nodemailer/lib/smtp-transport';
+import { type SentMessageInfo } from 'nodemailer/lib/smtp-transport';
 
 export interface SendEmailOptions {
   address: string;

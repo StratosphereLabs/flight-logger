@@ -2,10 +2,10 @@ import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Badge, Disclosure } from 'stratosphere-ui';
-import { UsersRouterOutput } from '../../../app/routes/users';
+import { type UsersRouterOutput } from '../../../app/routes/users';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
 import { useCopyToClipboard, useProfileLink } from '../../common/hooks';
-import { TripsPageNavigationState } from './Trips';
+import { type TripsPageNavigationState } from './Trips';
 import { useTripsPageStore } from './tripsPageStore';
 
 export interface TripDisclosureProps {
@@ -84,9 +84,9 @@ export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
     >
       <UserFlightsTable
         data={trip.flights}
-        onCopyLink={({ id }) =>
-          copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!')
-        }
+        onCopyLink={({ id }) => {
+          copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!');
+        }}
         size="sm"
       />
     </Disclosure>

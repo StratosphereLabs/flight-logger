@@ -1,10 +1,10 @@
 import {
   getCoreRowModel,
-  PaginationState,
-  SortingState,
+  type PaginationState,
+  type SortingState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { Table } from 'stratosphere-ui';
+import { Card, CardBody, CardTitle, Table } from 'stratosphere-ui';
 import { AirlineLogo } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
@@ -23,11 +23,11 @@ export const AirlinesCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <div className="card min-h-[625px] bg-base-100 shadow-lg">
-      <div className="card-body">
-        <h2 className="card-title mb-3 justify-center">Airlines</h2>
+    <Card className="min-h-[625px] bg-base-200 shadow-md">
+      <CardBody>
+        <CardTitle className="mb-3 justify-center">Airlines</CardTitle>
         <Table
-          className="table-fixed"
+          className="table-fixed bg-base-100"
           columns={[
             {
               id: 'logo',
@@ -82,7 +82,7 @@ export const AirlinesCard = (): JSX.Element => {
           size="sm"
           state={{ pagination, sorting }}
         />
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   );
 };

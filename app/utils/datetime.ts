@@ -1,7 +1,7 @@
 import {
   add,
   formatDuration,
-  Interval,
+  type Interval,
   intervalToDuration,
   isBefore,
 } from 'date-fns';

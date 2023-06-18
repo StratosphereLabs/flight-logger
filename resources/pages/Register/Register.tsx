@@ -1,7 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
-import { Button, Form, FormControl, PasswordInput } from 'stratosphere-ui';
+import {
+  Button,
+  CardTitle,
+  Form,
+  FormControl,
+  PasswordInput,
+} from 'stratosphere-ui';
 import { registerSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore } from '../../stores';
@@ -24,14 +30,21 @@ export const Register = (): JSX.Element => {
     resolver: zodResolver(registerSchema),
   });
   const { error, isLoading, mutate } = trpc.auth.register.useMutation({
-    onSuccess: ({ token }) => setToken(token),
+    onSuccess: ({ token }) => {
+      setToken(token);
+    },
   });
   useTRPCErrorHandler(error);
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>
-      <h2 className="card-title">Register</h2>
-      <Form methods={methods} onFormSubmit={values => mutate(values)}>
+      <CardTitle>Register</CardTitle>
+      <Form
+        methods={methods}
+        onFormSubmit={values => {
+          mutate(values);
+        }}
+      >
         <fieldset disabled={isLoading}>
           <FormControl
             autoComplete="email"

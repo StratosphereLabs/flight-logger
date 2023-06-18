@@ -1,4 +1,4 @@
-import { inferRouterOutputs, TRPCError } from '@trpc/server';
+import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { prisma, updateTripAfterEditFlight } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {

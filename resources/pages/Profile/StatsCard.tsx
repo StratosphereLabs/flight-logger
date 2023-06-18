@@ -1,5 +1,5 @@
 export const StatsCard = (): JSX.Element => (
-  <div className="stats bg-base-100 font-sans shadow-lg">
+  <div className="stats bg-base-100 font-sans shadow-md">
     <div className="stat">
       <div className="stat-figure text-primary">
         <svg

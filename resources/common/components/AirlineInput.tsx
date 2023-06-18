@@ -1,7 +1,7 @@
-import { airline } from '@prisma/client';
+import { type airline } from '@prisma/client';
 import { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { TypeaheadSelect, TypeaheadSelectProps } from 'stratosphere-ui';
+import { type FieldValues } from 'react-hook-form';
+import { TypeaheadSelect, type TypeaheadSelectProps } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 

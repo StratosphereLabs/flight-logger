@@ -17,7 +17,9 @@ export const WarningModal = ({
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: () => setIsWarningDialogOpen(false),
+          onClick: () => {
+            setIsWarningDialogOpen(false);
+          },
         },
         {
           children: isLoading ? 'Uploading...' : 'Continue',
@@ -26,7 +28,10 @@ export const WarningModal = ({
           onClick: onConfirm,
         },
       ]}
-      onClose={() => setIsWarningDialogOpen(false)}
+      className="bg-base-200"
+      onClose={() => {
+        setIsWarningDialogOpen(false);
+      }}
       open={isWarningDialogOpen}
       title="Warning"
     >

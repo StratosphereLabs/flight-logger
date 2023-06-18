@@ -1,15 +1,20 @@
-import { aircraft_type, airline, airport, FlightClass } from '@prisma/client';
+import {
+  type aircraft_type,
+  type airline,
+  type airport,
+  type FlightClass,
+} from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { isBefore } from 'date-fns';
 import { getDurationMinutes, getDurationString } from './datetime';
 import {
-  FlightTimesResult,
+  type FlightTimesResult,
   getFlightTimes,
   getFlightTimestamps,
 } from './flighttime';
-import { FlightDataFetchResults } from '../db';
-import { ItineraryFlight } from '../schemas';
-import { WithRequiredNonNull } from '../types';
+import { type FlightDataFetchResults } from '../db';
+import { type ItineraryFlight } from '../schemas';
+import { type WithRequiredNonNull } from '../types';
 
 export interface GetItineraryDataOptions {
   flights: ItineraryFlight[];

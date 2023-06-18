@@ -1,9 +1,9 @@
-import { airport } from '@prisma/client';
+import { type airport } from '@prisma/client';
 import { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { TypeaheadSelect, TypeaheadSelectProps } from 'stratosphere-ui';
-import { useTRPCErrorHandler } from '../hooks';
+import { type FieldValues } from 'react-hook-form';
+import { TypeaheadSelect, type TypeaheadSelectProps } from 'stratosphere-ui';
 import { trpc } from '../../utils/trpc';
+import { useTRPCErrorHandler } from '../hooks';
 
 export interface AirportInputProps<Values extends FieldValues>
   extends Omit<

@@ -14,7 +14,9 @@ export const DeleteItineraryModal = (): JSX.Element => {
     () => flights.find(({ id }) => id === deleteFlightId),
     [deleteFlightId, flights],
   );
-  const onClose = (): void => setIsDeleteItineraryModalOpen(false);
+  const onClose = (): void => {
+    setIsDeleteItineraryModalOpen(false);
+  };
   return (
     <Modal
       actionButtons={[
@@ -32,6 +34,7 @@ export const DeleteItineraryModal = (): JSX.Element => {
           },
         },
       ]}
+      className="bg-base-200"
       onClose={onClose}
       open={isDeleteItineraryModalOpen}
       title="Delete Flight"

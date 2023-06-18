@@ -1,4 +1,4 @@
-import { BadgeColor } from 'stratosphere-ui';
+import { type BadgeColor } from 'stratosphere-ui';
 
 export const BADGE_COLORS_MAP: Record<string, BadgeColor> = {
   BASIC: 'primary',

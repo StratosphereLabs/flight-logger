@@ -1,11 +1,11 @@
-import { CredentialResponse as GoogleLoginRequest } from '@react-oauth/google';
-import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { type CredentialResponse as GoogleLoginRequest } from '@react-oauth/google';
+import { useMutation, type UseMutationResult } from '@tanstack/react-query';
+import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import { useAlertMessages } from 'stratosphere-ui';
-import { REST_API_URL } from '../constants';
-import { useErrorResponseHandler } from '.';
-import { ErrorResponse } from '../types';
 import { useAuthStore } from '../../stores';
+import { REST_API_URL } from '../constants';
+import { type ErrorResponse } from '../types';
+import { useErrorResponseHandler } from './useErrorResponseHandler';
 
 export interface GoogleLoginResponse {
   token: string;
@@ -28,7 +28,9 @@ export const useGoogleLoginMutation = (): UseMutationResult<
       onSuccess: ({ data }) => {
         setToken(data.token);
       },
-      onError: ({ response }) => onErrorResponse(response),
+      onError: ({ response }) => {
+        onErrorResponse(response);
+      },
     },
   );
 };

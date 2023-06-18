@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Button, Form, FormFileInput } from 'stratosphere-ui';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardTitle,
+  Form,
+  FormFileInput,
+} from 'stratosphere-ui';
 import { fileUploadSchema } from '../../../app/schemas/upload';
 import { useFlightDiaryUploadMutation } from '../../common/hooks';
 import { useAccountPageStore } from './accountPageStore';
@@ -14,15 +21,17 @@ export const Account = (): JSX.Element => {
   });
   return (
     <>
-      <div className="card">
-        <div className="card-body">
-          <h2 className="card-title">
+      <Card>
+        <CardBody>
+          <CardTitle>
             Data Import{' '}
             <span className="font-normal opacity-75">(Experimental)</span>
-          </h2>
+          </CardTitle>
           <Form
             methods={methods}
-            onFormSubmit={() => setIsWarningDialogOpen(true)}
+            onFormSubmit={() => {
+              setIsWarningDialogOpen(true);
+            }}
           >
             <div className="flex w-full flex-wrap items-end justify-between gap-2">
               <FormFileInput
@@ -36,19 +45,24 @@ export const Account = (): JSX.Element => {
               </Button>
             </div>
           </Form>
-        </div>
-      </div>
+        </CardBody>
+      </Card>
       <WarningModal
         isLoading={isLoading}
         onConfirm={() => {
           const values = methods.getValues();
           mutate(values.file as File, {
-            onSettled: () => setIsWarningDialogOpen(false),
-            onSuccess: () => methods.reset({ file: null }),
-            onError: () =>
+            onSettled: () => {
+              setIsWarningDialogOpen(false);
+            },
+            onSuccess: () => {
+              methods.reset({ file: null });
+            },
+            onError: () => {
               methods.setError('file', {
                 message: 'File data invalid.',
-              }),
+              });
+            },
           });
         }}
       />

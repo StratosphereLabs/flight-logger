@@ -1,7 +1,7 @@
-import { user } from '@prisma/client';
+import { type user } from '@prisma/client';
 import { url } from 'gravatar';
 import jwt from 'jsonwebtoken';
-import { UserToken } from '../context';
+import { type UserToken } from '../context';
 
 export const fetchGravatarUrl = (email: string): string =>
   url(email, { s: '200' }, true);

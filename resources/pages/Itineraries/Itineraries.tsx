@@ -5,7 +5,7 @@ import { ActionsCell, PlusIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { HomePageNavigationState } from '../Home';
+import { type HomePageNavigationState } from '../Home';
 import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { useItinerariesPageStore } from './itinerariesPageStore';
 
@@ -44,14 +44,14 @@ export const Itineraries = (): JSX.Element => {
             {username === undefined ? (
               <Button
                 color="primary"
-                onClick={() =>
+                onClick={() => {
                   navigate('/', {
                     replace: false,
                     state: {
                       createItinerary: true,
                     } as const as HomePageNavigationState,
-                  })
-                }
+                  });
+                }}
               >
                 <PlusIcon className="h-6 w-6" />
                 Create Itinerary
@@ -119,12 +119,12 @@ export const Itineraries = (): JSX.Element => {
                   deleteMessage="Delete Itinerary"
                   editMessage="Edit Itinerary"
                   viewMessage="View Itinerary"
-                  onCopyLink={() =>
+                  onCopyLink={() => {
                     copyToClipboard(
                       `${APP_URL}/itinerary/${row.original.id}`,
                       'Link copied to clipboard!',
-                    )
-                  }
+                    );
+                  }}
                   onDelete={() => {
                     setActiveItinerary(row.original);
                     setIsDeleteDialogOpen(true);

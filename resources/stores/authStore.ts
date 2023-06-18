@@ -11,8 +11,12 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       token: null,
-      logout: () => set({ token: null }),
-      setToken: token => set({ token }),
+      logout: () => {
+        set({ token: null });
+      },
+      setToken: token => {
+        set({ token });
+      },
     }),
     {
       name: 'flight-logger-token',

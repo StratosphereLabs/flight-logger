@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
-import { Badge, Button } from 'stratosphere-ui';
+import { Badge, Button, Card, CardBody } from 'stratosphere-ui';
 import { AirlineLogo, LinkIcon, RightArrowIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard } from '../../common/hooks';
@@ -25,12 +25,12 @@ export const Itinerary = (): JSX.Element | null => {
         <Button
           className="absolute end-0"
           color="ghost"
-          onClick={() =>
+          onClick={() => {
             copyToClipboard(
               `${APP_URL}/itinerary/${data?.id ?? ''}`,
               'Link copied to clipboard!',
-            )
-          }
+            );
+          }}
         >
           <LinkIcon className="h-4 w-4" />
           <span className="hidden sm:block">Copy Link</span>
@@ -60,8 +60,8 @@ export const Itinerary = (): JSX.Element | null => {
               {flight.layoverDuration})
             </div>
           ) : null}
-          <div key={index} className="card bg-base-100 shadow-lg">
-            <div className="card-body flex-row items-center justify-between gap-4">
+          <Card key={index} className="bg-base-200 shadow-md">
+            <CardBody className="flex-row items-center justify-between gap-4">
               {flight.airline !== null ? (
                 <AirlineLogo
                   alt="Airline Logo"
@@ -127,8 +127,8 @@ export const Itinerary = (): JSX.Element | null => {
                   </Badge>
                 </div>
               ) : null}
-            </div>
-          </div>
+            </CardBody>
+          </Card>
         </>
       ))}
     </div>

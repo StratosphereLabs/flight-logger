@@ -1,12 +1,12 @@
-import { aircraft_type, airline, airport } from '@prisma/client';
+import { type aircraft_type, type airline, type airport } from '@prisma/client';
 import {
-  Row,
-  RowSelectionOptions,
+  type Row,
+  type RowSelectionOptions,
   getCoreRowModel,
 } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { Badge, Table, TableSize } from 'stratosphere-ui';
-import { UsersRouterOutput } from '../../../app/routes/users';
+import { Badge, Table, type TableSize } from 'stratosphere-ui';
+import { type UsersRouterOutput } from '../../../app/routes/users';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { ActionsCell } from './ActionsCell';
 

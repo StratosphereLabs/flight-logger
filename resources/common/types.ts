@@ -1,9 +1,9 @@
 import {
-  TRPCErrorShape,
-  TRPC_ERROR_CODE_KEY,
-  TRPC_ERROR_CODE_NUMBER,
+  type TRPCErrorShape,
+  type TRPC_ERROR_CODE_KEY,
+  type TRPC_ERROR_CODE_NUMBER,
 } from '@trpc/server/rpc';
-import { typeToFlattenedError } from 'zod';
+import { type typeToFlattenedError } from 'zod';
 
 export interface ErrorResponse {
   status: number;

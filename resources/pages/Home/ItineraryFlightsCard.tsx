@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { HTMLProps, forwardRef } from 'react';
-import { Badge, Button } from 'stratosphere-ui';
+import { type HTMLProps, forwardRef } from 'react';
+import { Badge, Button, Card, CardBody } from 'stratosphere-ui';
 import { ResetIcon } from '../../common/components';
 import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
@@ -24,15 +24,12 @@ export const ItineraryFlightsCard = forwardRef<
       setIsResetItineraryModalOpen,
     } = useItineraryFlightsStore();
     return (
-      <div
-        className={classNames(
-          'card bg-base-100 text-center shadow-lg',
-          className,
-        )}
+      <Card
+        className={classNames('bg-base-100 text-center', className)}
         ref={ref}
         {...props}
       >
-        <div className="card-body flex-row justify-between gap-2">
+        <CardBody className="flex-row justify-between gap-2">
           <div className="breadcrumbs flex flex-1 items-center text-sm">
             <ul>
               {flights.map(({ arrivalAirport, departureAirport, id }) => (
@@ -55,7 +52,9 @@ export const ItineraryFlightsCard = forwardRef<
           <div className="flex flex-wrap items-center gap-3">
             <Button
               color="ghost"
-              onClick={() => setIsResetItineraryModalOpen(true)}
+              onClick={() => {
+                setIsResetItineraryModalOpen(true);
+              }}
               shape="circle"
               size="sm"
             >
@@ -70,8 +69,8 @@ export const ItineraryFlightsCard = forwardRef<
               Create
             </Button>
           </div>
-        </div>
-      </div>
+        </CardBody>
+      </Card>
     );
   },
 );

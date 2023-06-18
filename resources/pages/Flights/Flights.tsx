@@ -9,11 +9,11 @@ import {
   FormRadioGroup,
   FormRadioGroupOption,
 } from 'stratosphere-ui';
-import { UsersRouterOutput } from '../../../app/routes/users';
+import { type UsersRouterOutput } from '../../../app/routes/users';
 import {
   Bars2Icon,
   Bars4Icon,
-  FlightsTableRow,
+  type FlightsTableRow,
   PlusIcon,
   UserFlightsTable,
 } from '../../common/components';
@@ -23,7 +23,7 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { TripsPageNavigationState } from '../Trips';
+import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
@@ -123,12 +123,12 @@ export const Flights = (): JSX.Element => {
               <>
                 <Button
                   color={isRowSelectEnabled ? 'error' : 'secondary'}
-                  onClick={() =>
+                  onClick={() => {
                     setIsRowSelectEnabled(isEnabled => {
                       if (isEnabled) resetRowSelection();
                       return !isEnabled;
-                    })
-                  }
+                    });
+                  }}
                   size="sm"
                 >
                   {isRowSelectEnabled ? (
@@ -142,7 +142,9 @@ export const Flights = (): JSX.Element => {
                   <Button
                     color="primary"
                     disabled={Object.keys(rowSelection).length === 0}
-                    onClick={() => setIsCreateTripDialogOpen(true)}
+                    onClick={() => {
+                      setIsCreateTripDialogOpen(true);
+                    }}
                     size="sm"
                   >
                     Create ({Object.keys(rowSelection).length})
@@ -226,12 +228,12 @@ export const Flights = (): JSX.Element => {
                 className="table-sm xl:table-md"
                 data={data.flights}
                 enableRowSelection={enableRowSelection}
-                onCopyLink={({ id }) =>
+                onCopyLink={({ id }) => {
                   copyToClipboard(
                     `${flightsLink}/${id}`,
                     'Link copied to clipboard!',
-                  )
-                }
+                  );
+                }}
               />
             </Disclosure>
           ) : (
@@ -248,9 +250,12 @@ export const Flights = (): JSX.Element => {
           className="table-sm xl:table-md"
           data={[...data.upcomingFlights, ...data.flights]}
           enableRowSelection={enableRowSelection}
-          onCopyLink={({ id }) =>
-            copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!')
-          }
+          onCopyLink={({ id }) => {
+            copyToClipboard(
+              `${flightsLink}/${id}`,
+              'Link copied to clipboard!',
+            );
+          }}
         />
       ) : null}
       {data?.total === 0 ? (
@@ -258,7 +263,12 @@ export const Flights = (): JSX.Element => {
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
             {username === undefined ? (
-              <Button color="primary" onClick={() => navigate('/add-flight')}>
+              <Button
+                color="primary"
+                onClick={() => {
+                  navigate('/add-flight');
+                }}
+              >
                 <PlusIcon className="h-6 w-6" />
                 Create Flight
               </Button>

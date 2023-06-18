@@ -1,14 +1,14 @@
 import {
-  aircraft_type,
-  airframe,
-  airline,
-  airport,
-  flight,
+  type aircraft_type,
+  type airframe,
+  type airline,
+  type airport,
+  type flight,
 } from '@prisma/client';
 import { getInFuture } from './datetime';
 import { calculateDistance } from './distance';
-import { FlightTimestampsResult, getFlightTimestamps } from './flighttime';
-import { LatLng } from '../types';
+import { type FlightTimestampsResult, getFlightTimestamps } from './flighttime';
+import { type LatLng } from '../types';
 
 export interface AirframeData extends airframe {
   operator: airline | null;

@@ -1,6 +1,6 @@
-import { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
+import { type OnChangeFn, type RowSelectionState } from '@tanstack/react-table';
 import { create } from 'zustand';
-import { UsersRouterOutput } from '../../../app/routes/users';
+import { type UsersRouterOutput } from '../../../app/routes/users';
 
 interface FlightsPageState {
   activeFlight: UsersRouterOutput['getUserFlights'][number] | null;

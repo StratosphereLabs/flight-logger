@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { type ItineraryFlight } from '../../../app/schemas/itineraries';
 import { generateUUID } from '../../common/utils';
-import { ItineraryFlight } from '../../../app/schemas/itineraries';
 
 interface ItineraryFlightsState {
   addFlight: (flight: Omit<ItineraryFlight, 'id'>) => void;

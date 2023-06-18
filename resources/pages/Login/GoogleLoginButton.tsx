@@ -17,7 +17,9 @@ export const GoogleLoginButton = ({
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <GoogleLogin
-        onSuccess={credentialResponse => mutate(credentialResponse)}
+        onSuccess={credentialResponse => {
+          mutate(credentialResponse);
+        }}
         onError={() => {
           addAlertMessages([
             {

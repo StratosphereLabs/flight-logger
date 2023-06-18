@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { UsersRouterOutput } from '../../../app/routes/users';
+import { type UsersRouterOutput } from '../../../app/routes/users';
 
 interface ItinerariesPageState {
   activeItinerary: UsersRouterOutput['getUserItineraries'][number] | null;

@@ -10,8 +10,8 @@ import {
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
-import { FlightsRouterOutput } from '../../../app/routes/flights';
-import { EditFlightRequest, editFlightSchema } from '../../../app/schemas';
+import { type FlightsRouterOutput } from '../../../app/routes/flights';
+import { type EditFlightRequest, editFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
   AirframeInput,
@@ -71,7 +71,9 @@ export const EditFlightModal = ({
   useEffect(() => {
     if (isEditDialogOpen) {
       modalRef.current?.scrollTo(0, 0);
-      setTimeout(() => methods.setFocus('departureAirport'), 100);
+      setTimeout(() => {
+        methods.setFocus('departureAirport');
+      }, 100);
     }
   }, [isEditDialogOpen]);
   useEffect(() => {
@@ -103,18 +105,24 @@ export const EditFlightModal = ({
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: () => setIsEditDialogOpen(false),
+          onClick: () => {
+            setIsEditDialogOpen(false);
+          },
         },
         {
           children: 'Save',
           color: 'primary',
           disabled: !methods.formState.isDirty,
           loading: isLoading,
-          onClick: methods.handleSubmit(values => mutate(values)),
+          onClick: methods.handleSubmit(values => {
+            mutate(values);
+          }),
         },
       ]}
-      className="overflow-y-scroll overflow-x-hidden scrollbar-none"
-      onClose={() => setIsEditDialogOpen(false)}
+      className="overflow-x-hidden overflow-y-scroll bg-base-200 scrollbar-none"
+      onClose={() => {
+        setIsEditDialogOpen(false);
+      }}
       open={isEditDialogOpen}
       ref={modalRef}
       title="Edit Flight"

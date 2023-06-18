@@ -1,9 +1,9 @@
 import express from 'express';
-import { Request } from 'express-jwt';
+import { type Request } from 'express-jwt';
 import createHttpError from 'http-errors';
 import multer from 'multer';
 import { findBestMatch } from 'string-similarity';
-import { UserToken } from '../context';
+import { type UserToken } from '../context';
 import { deleteAllUserFlights, fetchFlightData, prisma } from '../db';
 import { authorizeToken } from '../middleware';
 import { getFlightTimes } from '../utils';
@@ -27,7 +27,8 @@ uploadRouter.post(
     const { file } = req;
     const userId = req.auth?.id;
     if (userId === undefined) {
-      return next(createHttpError(401, 'Unauthorized.'));
+      next(createHttpError(401, 'Unauthorized.'));
+      return;
     }
     try {
       const rows = parseFlightDiaryFile(file);

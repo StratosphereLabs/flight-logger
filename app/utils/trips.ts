@@ -1,9 +1,13 @@
-import { trip } from '@prisma/client';
+import { type trip } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { getDurationDays, getInFuture } from './datetime';
-import { FlightData, FlightTimeDataResult, getFlightTimeData } from './flights';
+import {
+  type FlightData,
+  type FlightTimeDataResult,
+  getFlightTimeData,
+} from './flights';
 
 export type TripWithAirports = trip & {
   flights: FlightData[];

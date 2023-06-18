@@ -40,7 +40,9 @@ export const CreateTripModal = ({
   });
   useEffect(() => {
     if (isCreateTripDialogOpen) {
-      setTimeout(() => methods.setFocus('tripName'), 100);
+      setTimeout(() => {
+        methods.setFocus('tripName');
+      }, 100);
     }
   }, [isCreateTripDialogOpen]);
   useTRPCErrorHandler(error);
@@ -50,18 +52,23 @@ export const CreateTripModal = ({
         {
           children: 'Cancel',
           color: 'secondary',
-          onClick: () => setIsCreateTripDialogOpen(false),
+          onClick: () => {
+            setIsCreateTripDialogOpen(false);
+          },
         },
         {
           children: 'Create',
           color: 'primary',
           loading: isLoading,
-          onClick: methods.handleSubmit(({ tripName }) =>
-            mutate({ name: tripName, flightIds }),
-          ),
+          onClick: methods.handleSubmit(({ tripName }) => {
+            mutate({ name: tripName, flightIds });
+          }),
         },
       ]}
-      onClose={() => setIsCreateTripDialogOpen(false)}
+      className="bg-base-200"
+      onClose={() => {
+        setIsCreateTripDialogOpen(false);
+      }}
       open={isCreateTripDialogOpen}
       ref={modalRef}
       title={`Create Trip (${flightIds.length} flights)`}

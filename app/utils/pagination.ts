@@ -1,5 +1,5 @@
-import { PaginatedResults } from 'stratosphere-ui';
-import { PaginationRequest } from '../schemas';
+import { type PaginatedResults } from 'stratosphere-ui';
+import { type PaginationRequest } from '../schemas';
 
 export interface PaginationData {
   skip: number;

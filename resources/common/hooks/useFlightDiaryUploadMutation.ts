@@ -1,11 +1,11 @@
-import { flight } from '@prisma/client';
-import { UseMutationResult, useMutation } from '@tanstack/react-query';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { type flight } from '@prisma/client';
+import { type UseMutationResult, useMutation } from '@tanstack/react-query';
+import axios, { type AxiosError, type AxiosResponse } from 'axios';
+import { useAuthStore } from '../../stores';
+import { REST_API_URL } from '../constants';
+import { type ErrorResponse } from '../types';
 import useErrorResponseHandler from './useErrorResponseHandler';
 import { useSuccessResponseHandler } from './useSuccessResponseHandler';
-import { REST_API_URL } from '../constants';
-import { ErrorResponse } from '../types';
-import { useAuthStore } from '../../stores';
 
 interface FlightDiaryUploadResponse {
   numFlightsDeleted: number;
@@ -36,11 +36,14 @@ export const useFlightDiaryUploadMutation = (): UseMutationResult<
       );
     },
     {
-      onError: ({ response }) => onErrorResponse(response),
-      onSuccess: response =>
+      onError: ({ response }) => {
+        onErrorResponse(response);
+      },
+      onSuccess: response => {
         handleSuccess(
           `Successfully added ${response.data.flights.length} flights!`,
-        ),
+        );
+      },
     },
   );
 };
