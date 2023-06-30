@@ -21,7 +21,7 @@ export const AuthenticationLayout = (): JSX.Element => {
             Welcome! Please login to access your flights and trips
           </p>
         </div>
-        <Card className="mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-2xl">
+        <Card className="mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg">
           <CardBody>
             <Outlet />
           </CardBody>
@@ -32,7 +32,7 @@ export const AuthenticationLayout = (): JSX.Element => {
           <AlertMessages maxMessages={4} />
         </div>
       ) : null}
-      <div className="absolute right-0 top-0">
+      <div className="absolute right-0 top-0 p-1">
         <ThemeButton />
       </div>
     </div>

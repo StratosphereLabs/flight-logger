@@ -45,6 +45,7 @@ export const Login = (): JSX.Element => {
         <fieldset disabled={isLoading}>
           <FormControl
             autoComplete="email"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Email"
             name="email"
@@ -52,6 +53,7 @@ export const Login = (): JSX.Element => {
           />
           <PasswordInput
             autoComplete="current-password"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Password"
             name="password"

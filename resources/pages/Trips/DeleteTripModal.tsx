@@ -47,7 +47,6 @@ export const DeleteTripModal = (): JSX.Element => {
           },
         },
       ]}
-      className="bg-base-200"
       onClose={() => {
         setIsDeleteDialogOpen(false);
       }}

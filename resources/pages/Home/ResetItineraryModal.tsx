@@ -34,7 +34,6 @@ export const ResetItineraryModal = ({
           },
         },
       ]}
-      className="bg-base-200"
       onClose={onClose}
       open={isResetItineraryModalOpen}
       title="Reset Itinerary"

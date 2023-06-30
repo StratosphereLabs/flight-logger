@@ -8,7 +8,7 @@ import { useTRPCErrorHandler } from '../hooks';
 export interface AirportInputProps<Values extends FieldValues>
   extends Omit<
     TypeaheadSelectProps<airport, Values>,
-    'getItemText' | 'onDebouncedChange' | 'options'
+    'dropdownInputClassName' | 'getItemText' | 'onDebouncedChange' | 'options'
   > {}
 
 export const AirportInput = <Values extends FieldValues>(
@@ -26,6 +26,7 @@ export const AirportInput = <Values extends FieldValues>(
   useTRPCErrorHandler(error);
   return (
     <TypeaheadSelect
+      dropdownInputClassName="bg-base-200"
       getItemText={({ id, name }) => `${id} - ${name}`}
       onDebouncedChange={setQuery}
       options={data}

@@ -119,7 +119,7 @@ export const EditFlightModal = ({
           }),
         },
       ]}
-      className="overflow-x-hidden overflow-y-scroll bg-base-200 scrollbar-none"
+      className="overflow-x-hidden overflow-y-scroll scrollbar-none"
       onClose={() => {
         setIsEditDialogOpen(false);
       }}
@@ -131,6 +131,7 @@ export const EditFlightModal = ({
         <AirportInput
           isRequired
           labelText="Departure Airport"
+          inputClassName="bg-base-200"
           menuClassName="w-full"
           name="departureAirport"
           showDirty
@@ -138,6 +139,7 @@ export const EditFlightModal = ({
         <AirportInput
           isRequired
           labelText="Arrival Airport"
+          inputClassName="bg-base-200"
           menuClassName="w-full"
           name="arrivalAirport"
           showDirty
@@ -146,6 +148,7 @@ export const EditFlightModal = ({
           className="w-[200px]"
           isRequired
           labelText="Departure Date"
+          inputClassName="bg-base-200"
           name="outDateISO"
           showDirty
           type="date"
@@ -154,6 +157,7 @@ export const EditFlightModal = ({
           className="w-[200px]"
           isRequired
           labelText="Departure Time (Local)"
+          inputClassName="bg-base-200"
           name="outTimeValue"
           showDirty
           transform={nullEmptyStringTransformer}
@@ -163,6 +167,7 @@ export const EditFlightModal = ({
           className="w-[200px]"
           isRequired
           labelText="Arrival Time (Local)"
+          inputClassName="bg-base-200"
           name="inTimeValue"
           showDirty
           type="time"
@@ -170,6 +175,7 @@ export const EditFlightModal = ({
         {shouldShowRegField ? (
           <AirframeInput
             labelText={`Registration (${tailNumber})`}
+            inputClassName="bg-base-200"
             menuClassName="w-full"
             name="airframe"
             showDirty
@@ -178,6 +184,7 @@ export const EditFlightModal = ({
         <AirlineInput
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Airline"
+          inputClassName="bg-base-200"
           menuClassName="w-full"
           name="airline"
           showDirty
@@ -185,6 +192,7 @@ export const EditFlightModal = ({
         <AircraftTypeInput
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
+          inputClassName="bg-base-200"
           menuClassName="w-full"
           name="aircraftType"
           showDirty
@@ -192,6 +200,7 @@ export const EditFlightModal = ({
         <FormControl
           className="w-[200px]"
           labelText="Flight Number"
+          inputClassName="bg-base-200"
           name="flightNumber"
           showDirty
           transform={integerInputTransformer}
@@ -231,6 +240,7 @@ export const EditFlightModal = ({
         <FormControl
           className="w-[200px]"
           labelText="Seat Number"
+          inputClassName="bg-base-200"
           name="seatNumber"
           showDirty
         />
@@ -277,8 +287,18 @@ export const EditFlightModal = ({
           ]}
           showDirty
         />
-        <FormControl labelText="Comments" name="comments" showDirty />
-        <FormControl labelText="Tracking Link" name="trackingLink" showDirty />
+        <FormControl
+          labelText="Comments"
+          inputClassName="bg-base-200"
+          name="comments"
+          showDirty
+        />
+        <FormControl
+          labelText="Tracking Link"
+          inputClassName="bg-base-200"
+          name="trackingLink"
+          showDirty
+        />
       </Form>
     </Modal>
   );

@@ -6,7 +6,7 @@ import { MainNavbar } from './MainNavbar';
 export const MainLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   return (
-    <div className={`flex h-screen flex-col justify-between`}>
+    <div className="flex h-screen flex-col justify-between bg-base-200">
       <MainNavbar />
       <Outlet />
       <MainFooter />

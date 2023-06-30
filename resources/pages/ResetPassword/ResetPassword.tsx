@@ -45,12 +45,14 @@ export const ResetPassword = (): JSX.Element => {
         <fieldset disabled={isLoading}>
           <PasswordInput
             autoComplete="new-password"
+            inputClassName="bg-base-200"
             isRequired
             labelText="New Password"
             name="password"
           />
           <PasswordInput
             autoComplete="new-password"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Confirm New Password"
             name="confirmPassword"

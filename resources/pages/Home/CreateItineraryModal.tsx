@@ -70,7 +70,7 @@ export const CreateItineraryModal = (): JSX.Element => {
         setIsCreateItineraryModalOpen(false);
       }}
       actionButtons={[]}
-      className="w-full max-w-full overflow-x-hidden md:w-[75%] bg-base-200"
+      className="w-full max-w-full overflow-x-hidden md:w-[75%]"
       ref={modalRef}
     >
       <div className="flex flex-col gap-4">

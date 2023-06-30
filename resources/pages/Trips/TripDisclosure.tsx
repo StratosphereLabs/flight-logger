@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Badge, Disclosure } from 'stratosphere-ui';
@@ -72,12 +71,10 @@ export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
             </div>
           </div>
         ),
-        className: classNames(
-          'btn-md sm:btn-lg',
-          trip.inFuture ? 'glass' : undefined,
-        ),
+        className: 'btn-md sm:btn-lg',
         color: 'ghost',
       }}
+      className={trip.inFuture ? 'bg-info/10' : 'bg-success/10'}
       defaultOpen={trip.id === tripId || trip.id === state?.tripId}
       ref={disclosureRef}
       rounded

@@ -186,6 +186,7 @@ export const Flights = (): JSX.Element => {
                 color: 'ghost',
                 size: 'lg',
               }}
+              className="bg-info/10"
               defaultOpen={isRowSelectEnabled}
               rounded
             >
@@ -193,12 +194,12 @@ export const Flights = (): JSX.Element => {
                 className="table-sm xl:table-md"
                 data={data.upcomingFlights}
                 enableRowSelection={enableRowSelection}
-                onCopyLink={({ id }) =>
+                onCopyLink={({ id }) => {
                   copyToClipboard(
                     `${flightsLink}/${id}`,
                     'Link copied to clipboard!',
-                  )
-                }
+                  );
+                }}
               />
             </Disclosure>
           ) : (
@@ -221,6 +222,7 @@ export const Flights = (): JSX.Element => {
                 color: 'ghost',
                 size: 'lg',
               }}
+              className="bg-success/10"
               defaultOpen
               rounded
             >
@@ -247,7 +249,7 @@ export const Flights = (): JSX.Element => {
       ) : null}
       {layout === 'compact' && data !== undefined && data.total > 0 ? (
         <UserFlightsTable
-          className="table-sm xl:table-md"
+          className="table-sm bg-base-200 xl:table-md"
           data={[...data.upcomingFlights, ...data.flights]}
           enableRowSelection={enableRowSelection}
           onCopyLink={({ id }) => {

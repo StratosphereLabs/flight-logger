@@ -47,7 +47,6 @@ export const DeleteFlightModal = (): JSX.Element => {
           },
         },
       ]}
-      className="bg-base-200"
       onClose={() => {
         setIsDeleteDialogOpen(false);
       }}
