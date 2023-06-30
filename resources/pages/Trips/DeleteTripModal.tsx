@@ -33,7 +33,6 @@ export const DeleteTripModal = (): JSX.Element => {
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'secondary',
           onClick: () => {
             setIsDeleteDialogOpen(false);
           },

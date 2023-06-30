@@ -21,7 +21,6 @@ export const ResetItineraryModal = ({
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'secondary',
           onClick: onClose,
         },
         {

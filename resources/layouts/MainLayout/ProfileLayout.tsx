@@ -16,7 +16,7 @@ export const ProfileLayout = (): JSX.Element => {
   return (
     <Card className="m-2 flex-1 overflow-y-hidden bg-base-100 pt-2 shadow-md">
       <ProfileTabs />
-      <div className="flex flex-1 flex-col overflow-y-scroll p-2 pt-1">
+      <div className="flex flex-1 flex-col overflow-y-scroll p-2">
         <Outlet />
       </div>
     </Card>

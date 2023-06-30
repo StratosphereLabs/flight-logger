@@ -51,7 +51,6 @@ export const CreateTripModal = ({
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'secondary',
           onClick: () => {
             setIsCreateTripDialogOpen(false);
           },
