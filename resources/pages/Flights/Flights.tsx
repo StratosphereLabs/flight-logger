@@ -249,7 +249,7 @@ export const Flights = (): JSX.Element => {
       ) : null}
       {layout === 'compact' && data !== undefined && data.total > 0 ? (
         <UserFlightsTable
-          className="table-sm bg-base-200 xl:table-md"
+          className="table-sm shadow-md xl:table-md"
           data={[...data.upcomingFlights, ...data.flights]}
           enableRowSelection={enableRowSelection}
           onCopyLink={({ id }) => {

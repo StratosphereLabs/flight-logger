@@ -19,7 +19,10 @@ export const ProfileCard = (): JSX.Element => {
   );
   useTRPCErrorHandler(error);
   return (
-    <LoadingCard isLoading={isFetching} className="w-80 bg-base-200 shadow-md">
+    <LoadingCard
+      isLoading={isFetching}
+      className="card-bordered w-80 shadow-md"
+    >
       <CardBody className="items-center">
         <CardTitle className="text-2xl font-medium">{`${
           data?.firstName ?? ''

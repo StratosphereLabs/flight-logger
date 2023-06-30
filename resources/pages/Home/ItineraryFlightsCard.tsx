@@ -49,7 +49,7 @@ export const ItineraryFlightsCard = forwardRef<
               ))}
             </ul>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               color="ghost"
               onClick={() => {

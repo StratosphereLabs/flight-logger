@@ -55,11 +55,12 @@ export const MapCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={!isLoaded || isFetching}
-      className="min-h-[475px] min-w-[350px] flex-1 bg-base-200 shadow-md"
+      className="card-bordered min-h-[475px] min-w-[350px] flex-1 shadow-md"
     >
       <Form className="flex flex-wrap justify-end gap-4 p-3" methods={methods}>
         <FormCheckbox
           className={classNames(mapMode !== 'heatmap' && 'hidden')}
+          inputClassName="bg-base-200"
           labelText="Show upcoming flights"
           name="showUpcoming"
         />
@@ -83,6 +84,7 @@ export const MapCard = (): JSX.Element => {
         />
       </Form>
       <GoogleMap
+        mapContainerClassName="rounded-b-2xl"
         mapContainerStyle={{
           height: '100%',
           width: '100%',
