@@ -104,7 +104,6 @@ export const EditFlightModal = ({
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'secondary',
           onClick: () => {
             setIsEditDialogOpen(false);
           },

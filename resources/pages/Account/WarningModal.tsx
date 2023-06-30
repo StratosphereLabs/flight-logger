@@ -16,7 +16,6 @@ export const WarningModal = ({
       actionButtons={[
         {
           children: 'Cancel',
-          color: 'secondary',
           onClick: () => {
             setIsWarningDialogOpen(false);
           },
