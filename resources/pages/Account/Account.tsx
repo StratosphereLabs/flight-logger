@@ -20,7 +20,10 @@ export const Account = (): JSX.Element => {
     resolver: zodResolver(fileUploadSchema),
   });
   return (
-    <>
+    <div className="flex flex-col gap-4">
+      <article className="prose self-center">
+        <h2>My Account</h2>
+      </article>
       <Card>
         <CardBody>
           <CardTitle>
@@ -66,6 +69,6 @@ export const Account = (): JSX.Element => {
           });
         }}
       />
-    </>
+    </div>
   );
 };

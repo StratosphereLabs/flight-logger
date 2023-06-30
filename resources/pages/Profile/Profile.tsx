@@ -1,10 +1,9 @@
 import { MapCard } from './MapCard';
 import { ProfileCard } from './ProfileCard';
-import { DashboardContainer } from '../../common/components';
 
 export const Profile = (): JSX.Element => (
-  <DashboardContainer>
+  <div className="flex flex-row flex-wrap justify-center gap-4">
     <ProfileCard />
     <MapCard />
-  </DashboardContainer>
+  </div>
 );

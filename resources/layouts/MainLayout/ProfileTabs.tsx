@@ -15,7 +15,7 @@ export const ProfileTabs = (): JSX.Element => {
   const { username } = useParams();
   return (
     <Tabs
-      className="w-full flex-nowrap px-2"
+      className="w-full flex-nowrap p-1 sm:p-2"
       lifted
       onChange={({ paths }) => {
         paths?.[0] !== undefined && navigate(paths[0]);

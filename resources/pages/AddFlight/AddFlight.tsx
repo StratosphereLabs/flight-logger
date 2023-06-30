@@ -68,7 +68,7 @@ export const AddFlight = (): JSX.Element => {
     }, 100);
   }, []);
   return (
-    <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
+    <div className="flex flex-1 flex-col overflow-y-scroll p-2 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:p-3 sm:scrollbar">
       <LoadingCard className="bg-base-100 shadow-md">
         <CardBody>
           <CardTitle className="mb-5 justify-center text-2xl">
