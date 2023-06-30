@@ -34,7 +34,6 @@ export const DeleteItineraryModal = (): JSX.Element => {
           },
         },
       ]}
-      className="bg-base-200"
       onClose={onClose}
       open={isDeleteItineraryModalOpen}
       title="Delete Flight"

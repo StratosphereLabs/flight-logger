@@ -46,6 +46,7 @@ export const ForgotPassword = (): JSX.Element => {
         <fieldset disabled={isLoading}>
           <FormControl
             autoComplete="email"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Email"
             name="email"

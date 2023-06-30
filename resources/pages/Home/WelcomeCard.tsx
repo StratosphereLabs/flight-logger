@@ -5,7 +5,7 @@ import { useItineraryFlightsStore } from './itineraryFlightsStore';
 export const WelcomeCard = (): JSX.Element => {
   const { setIsCreateItineraryModalOpen } = useItineraryFlightsStore();
   return (
-    <Card className="min-h-[75vh] bg-base-200 shadow-md">
+    <Card className="min-h-[75vh] bg-base-100 shadow-md">
       <CardBody className="justify-center">
         <div className="hero">
           <div className="hero-content text-center">

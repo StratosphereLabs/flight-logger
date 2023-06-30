@@ -48,7 +48,7 @@ export const AirportsCard = (): JSX.Element => {
   });
   useTRPCErrorHandler(error);
   return (
-    <Card className="min-h-[550px] bg-base-200 shadow-md">
+    <Card className="min-h-[550px] bg-base-100 shadow-md">
       <CardBody>
         <CardTitle className="mb-3 justify-center">Airports</CardTitle>
         <Table

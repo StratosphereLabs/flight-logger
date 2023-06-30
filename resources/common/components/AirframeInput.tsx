@@ -11,7 +11,7 @@ export interface AirframeInputProps<Values extends FieldValues>
       AirframesRouterOutput['searchAirframes'][number],
       Values
     >,
-    'getItemText' | 'onDebouncedChange' | 'options'
+    'dropdownInputClassName' | 'getItemText' | 'onDebouncedChange' | 'options'
   > {}
 
 export const AirframeInput = <Values extends FieldValues>(
@@ -29,6 +29,7 @@ export const AirframeInput = <Values extends FieldValues>(
   useTRPCErrorHandler(error);
   return (
     <TypeaheadSelect
+      dropdownInputClassName="bg-base-200"
       getItemText={({ registration, operator }) =>
         `${registration}${operator !== null ? ` (${operator.name})` : ''}`
       }

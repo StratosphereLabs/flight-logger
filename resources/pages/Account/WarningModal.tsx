@@ -28,7 +28,6 @@ export const WarningModal = ({
           onClick: onConfirm,
         },
       ]}
-      className="bg-base-200"
       onClose={() => {
         setIsWarningDialogOpen(false);
       }}

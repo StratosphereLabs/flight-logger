@@ -31,7 +31,7 @@ exports[`<App /> > renders login page 1`] = `
         </p>
       </div>
       <div
-        class="card mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-2xl"
+        class="card mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg"
         data-testid="card"
       >
         <div
@@ -71,7 +71,7 @@ exports[`<App /> > renders login page 1`] = `
                   <input
                     aria-labelledby="label-email"
                     autocomplete="email"
-                    class="input w-full input-bordered"
+                    class="input w-full bg-base-200"
                     name="email"
                     type="email"
                     value=""
@@ -103,7 +103,7 @@ exports[`<App /> > renders login page 1`] = `
                   <input
                     aria-labelledby="label-password"
                     autocomplete="current-password"
-                    class="input w-full input-bordered pr-10"
+                    class="input w-full pr-10 bg-base-200"
                     name="password"
                     type="password"
                     value=""
@@ -177,7 +177,7 @@ exports[`<App /> > renders login page 1`] = `
       </div>
     </div>
     <div
-      class="absolute right-0 top-0"
+      class="absolute right-0 top-0 p-1"
     >
       <div
         class="relative"
@@ -219,13 +219,13 @@ exports[`<App /> > renders login page 1`] = `
 exports[`<App /> > renders profile page 1`] = `
 <div>
   <div
-    class="flex h-screen flex-col justify-between"
+    class="flex h-screen flex-col justify-between bg-base-200"
   >
     <div
       class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
     >
       <div
-        class="navbar rounded-box justify-between bg-base-200 shadow-lg lg:justify-start"
+        class="navbar rounded-box justify-between bg-base-100 shadow-md lg:justify-start"
       >
         <div
           class="navbar-start w-auto lg:w-1/2"
@@ -286,7 +286,7 @@ exports[`<App /> > renders profile page 1`] = `
         >
           <div
             aria-orientation="horizontal"
-            class="tabs tabs-boxed p-0"
+            class="tabs tabs-boxed bg-base-100 p-0"
             role="tablist"
           >
             <button
@@ -395,7 +395,7 @@ exports[`<App /> > renders profile page 1`] = `
       class="flex flex-1 flex-col gap-3 p-3"
     >
       <div
-        class="card min-h-[75vh] bg-base-200 shadow-md"
+        class="card min-h-[75vh] bg-base-100 shadow-md"
         data-testid="card"
       >
         <div

@@ -65,7 +65,6 @@ export const CreateTripModal = ({
           }),
         },
       ]}
-      className="bg-base-200"
       onClose={() => {
         setIsCreateTripDialogOpen(false);
       }}
@@ -74,7 +73,12 @@ export const CreateTripModal = ({
       title={`Create Trip (${flightIds.length} flights)`}
     >
       <Form className="flex flex-col gap-4" methods={methods}>
-        <FormControl isRequired labelText="Trip Name" name="tripName" />
+        <FormControl
+          isRequired
+          inputClassName="bg-base-200"
+          labelText="Trip Name"
+          name="tripName"
+        />
       </Form>
     </Modal>
   );

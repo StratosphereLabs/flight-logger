@@ -48,6 +48,7 @@ export const Register = (): JSX.Element => {
         <fieldset disabled={isLoading}>
           <FormControl
             autoComplete="email"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Email"
             name="email"
@@ -55,28 +56,33 @@ export const Register = (): JSX.Element => {
           />
           <FormControl
             autoComplete="username"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Username"
             name="username"
           />
           <FormControl
             autoComplete="first-name"
+            inputClassName="bg-base-200"
             labelText="First Name"
             name="firstName"
           />
           <FormControl
             autoComplete="last-name"
+            inputClassName="bg-base-200"
             labelText="Last Name"
             name="lastName"
           />
           <PasswordInput
             autoComplete="new-password"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Password"
             name="password"
           />
           <PasswordInput
             autoComplete="new-password"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Confirm Password"
             name="confirmPassword"

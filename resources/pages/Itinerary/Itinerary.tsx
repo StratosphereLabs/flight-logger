@@ -21,7 +21,7 @@ export const Itinerary = (): JSX.Element | null => {
   return (
     <div className="flex flex-1 flex-col gap-3 overflow-y-scroll p-3">
       <div className="relative mb-4 flex items-center justify-center">
-        <h1 className="text-2xl font-bold sm:text-3xl">{data?.name}</h1>
+        <h1 className="text-xl font-bold sm:text-2xl">{data?.name}</h1>
         <Button
           className="absolute end-0"
           color="ghost"
@@ -60,7 +60,7 @@ export const Itinerary = (): JSX.Element | null => {
               {flight.layoverDuration})
             </div>
           ) : null}
-          <Card key={index} className="bg-base-200 shadow-md">
+          <Card key={index} className="bg-base-100 shadow-md">
             <CardBody className="flex-row items-center justify-between gap-4">
               {flight.airline !== null ? (
                 <AirlineLogo

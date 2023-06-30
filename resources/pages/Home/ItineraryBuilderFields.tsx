@@ -29,6 +29,7 @@ export const ItineraryBuilderFields = forwardRef<
         <AirportInput
           className="w-[350px] min-w-[250px]"
           getBadgeText={({ id, name }) => `${id} - ${name}`}
+          inputClassName="bg-base-200"
           isRequired
           labelText="Departure Airport"
           menuClassName="w-full"
@@ -37,6 +38,7 @@ export const ItineraryBuilderFields = forwardRef<
         <AirportInput
           className="w-[350px] min-w-[250px]"
           getBadgeText={({ id, name }) => `${id} - ${name}`}
+          inputClassName="bg-base-200"
           isRequired
           labelText="Arrival Airport"
           menuClassName="w-full"
@@ -46,6 +48,7 @@ export const ItineraryBuilderFields = forwardRef<
       <div className="flex flex-wrap justify-between gap-8">
         <FormControl
           className="w-[200px]"
+          inputClassName="bg-base-200"
           isRequired
           labelText="Departure Date"
           name="outDateISO"
@@ -53,6 +56,7 @@ export const ItineraryBuilderFields = forwardRef<
         />
         <FormControl
           className="w-[200px]"
+          inputClassName="bg-base-200"
           isRequired
           labelText="Departure Time (Local)"
           name="outTimeValue"
@@ -61,6 +65,7 @@ export const ItineraryBuilderFields = forwardRef<
         />
         <FormControl
           className="w-[200px]"
+          inputClassName="bg-base-200"
           isRequired
           labelText="Arrival Time (Local)"
           name="inTimeValue"
@@ -72,6 +77,7 @@ export const ItineraryBuilderFields = forwardRef<
         <AirlineInput
           className="w-[350px] min-w-[250px]"
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
+          inputClassName="bg-base-200"
           labelText="Airline"
           menuClassName="w-full"
           name="airline"
@@ -79,6 +85,7 @@ export const ItineraryBuilderFields = forwardRef<
         <FormControl
           className="w-[150px]"
           labelText="Flight Number"
+          inputClassName="bg-base-200"
           name="flightNumber"
           transform={integerInputTransformer}
         />
@@ -86,6 +93,7 @@ export const ItineraryBuilderFields = forwardRef<
           className="w-[350px] min-w-[250px]"
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
+          inputClassName="bg-base-200"
           menuClassName="w-full"
           name="aircraftType"
         />

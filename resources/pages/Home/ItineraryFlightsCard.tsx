@@ -25,7 +25,7 @@ export const ItineraryFlightsCard = forwardRef<
     } = useItineraryFlightsStore();
     return (
       <Card
-        className={classNames('bg-base-100 text-center', className)}
+        className={classNames('bg-info/20 text-center', className)}
         ref={ref}
         {...props}
       >
