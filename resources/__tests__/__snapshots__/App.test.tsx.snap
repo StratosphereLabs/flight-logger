@@ -222,7 +222,7 @@ exports[`<App /> > renders profile page 1`] = `
     class="flex h-screen flex-col justify-between bg-base-200"
   >
     <div
-      class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
+      class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans sm:p-3"
     >
       <div
         class="navbar rounded-box justify-between bg-base-100 shadow-md lg:justify-start"
@@ -392,7 +392,7 @@ exports[`<App /> > renders profile page 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-1 flex-col gap-3 p-3"
+      class="flex flex-1 flex-col p-2 sm:p-3"
     >
       <div
         class="card min-h-[75vh] bg-base-100 shadow-md"

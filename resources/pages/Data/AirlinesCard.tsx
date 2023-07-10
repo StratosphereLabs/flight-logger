@@ -27,7 +27,7 @@ export const AirlinesCard = (): JSX.Element => {
       <CardBody>
         <CardTitle className="mb-3 justify-center">Airlines</CardTitle>
         <Table
-          className="table-fixed bg-base-100"
+          className="table-fixed border-separate bg-base-100"
           columns={[
             {
               id: 'logo',

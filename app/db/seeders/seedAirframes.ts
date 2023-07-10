@@ -35,17 +35,34 @@ interface AirframeResponse {
 }
 
 const getDatabaseRows = (csv: string): AirframeResponse[] =>
-  csvToJson<AirframeResponse>(csv, true).filter(
-    row =>
+  csvToJson<AirframeResponse>(csv, true).filter(row => {
+    const isAdded =
       row.registration !== '' &&
-      row.manufacturericao !== '' &&
+      (row.manufacturericao !== '' || row.manufacturername !== '') &&
       row.typecode !== '' &&
-      row.icaoaircrafttype !== '',
-  );
+      row.icaoaircrafttype !== '';
+    return (
+      !isAdded &&
+      row.registration !== '' &&
+      (row.manufacturericao !== '' || row.manufacturername !== '')
+    );
+  });
 
 const updateAirframe = async (
   row: AirframeResponse,
 ): Promise<airframe | null> => {
+  const manufacturer = await prisma.manufacturer.findFirst({
+    where: {
+      code: {
+        equals:
+          row.manufacturericao !== ''
+            ? row.manufacturericao
+            : row.manufacturername,
+        mode: 'insensitive',
+      },
+    },
+  });
+  if (manufacturer === null) return null;
   const airlines = await prisma.airline.findMany({
     where: {
       iata: row.operatoriata !== '' ? row.operatoriata : undefined,
@@ -62,21 +79,15 @@ const updateAirframe = async (
   const airframeUpdate = {
     registration: row.registration,
     manufacturer: {
-      connectOrCreate: {
-        where: {
-          code: row.manufacturericao,
-        },
-        create: {
-          code: row.manufacturericao,
-          name: row.manufacturername,
-        },
+      connect: {
+        code: manufacturer.code,
       },
     },
     model: row.model !== '' ? row.model : null,
-    typeCode: row.typecode,
+    typeCode: row.typecode !== '' ? row.typecode : null,
     serialNumber: row.serialnumber !== '' ? row.serialnumber : null,
     lineNumber: row.linenumber !== '' ? row.linenumber : null,
-    icaoAircraftType: row.icaoaircrafttype,
+    icaoAircraftType: row.icaoaircrafttype !== '' ? row.icaoaircrafttype : null,
     operator:
       airlines.length > 0
         ? {
@@ -111,7 +122,7 @@ const updateAirframe = async (
   console.log('Seeding airframes...');
   try {
     const data = fs
-      .readFileSync('./app/db/seeders/data/aircraftDatabase-2023-05.csv')
+      .readFileSync('./app/db/seeders/data/aircraftDatabase-2023-06.csv')
       .toString();
     const rows = getDatabaseRows(data);
     console.log(`Attempting to add ${rows.length} airframes`);
