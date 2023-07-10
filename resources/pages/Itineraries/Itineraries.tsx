@@ -67,7 +67,7 @@ export const Itineraries = (): JSX.Element => {
       ) : null}
       {!isFetching && data !== undefined && data.length > 0 ? (
         <Table
-          className="table-sm table-fixed shadow-md xl:table-md"
+          className="table-sm table-fixed border-separate shadow-md xl:table-md"
           columns={[
             {
               id: 'name',

@@ -39,7 +39,7 @@ export const UserFlightsTable = ({
   } = useFlightsPageStore();
   return (
     <Table
-      className={classNames('table-fixed', className)}
+      className={classNames('table-fixed border-separate', className)}
       columns={[
         {
           id: 'outDateISO',

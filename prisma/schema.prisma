@@ -98,10 +98,10 @@ model airframe {
   manufacturerCode      String
   manufacturer          manufacturer  @relation(fields: [manufacturerCode], references: [code])
   model                 String?
-  typeCode              String
+  typeCode              String?
   serialNumber          String?
   lineNumber            String?
-  icaoAircraftType      String
+  icaoAircraftType      String?
   operatorId            String?
   operator              airline?      @relation("airframes", fields: [operatorId], references: [id])
   owner                 String?
