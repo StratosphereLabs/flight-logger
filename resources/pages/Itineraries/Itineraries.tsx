@@ -103,6 +103,12 @@ export const Itineraries = (): JSX.Element => {
               footer: () => null,
             },
             {
+              id: 'travelTime',
+              accessorKey: 'travelTime',
+              header: () => 'Travel Time',
+              footer: () => null,
+            },
+            {
               id: 'distance',
               accessorKey: 'distance',
               header: () => 'Distance',
@@ -143,8 +149,9 @@ export const Itineraries = (): JSX.Element => {
             },
           ]}
           cellClassNames={{
-            date: 'w-[150px]',
+            date: 'w-[200px]',
             numFlights: 'w-[150px] hidden md:table-cell',
+            travelTime: 'w-[150px] hidden md:table-cell',
             distance: 'w-[150px] hidden lg:table-cell',
             actions: 'w-[50px] xl:w-[150px]',
           }}
