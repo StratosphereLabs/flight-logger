@@ -31,9 +31,18 @@ export const tripsRouter = router({
               },
             },
           },
+          orderBy: {
+            outTime: 'asc',
+          },
         },
       },
     });
+    if (trip === null) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Trip not found.',
+      });
+    }
     return transformTripData(trip);
   }),
   createTrip: procedure
@@ -77,9 +86,18 @@ export const tripsRouter = router({
                 },
               },
             },
+            orderBy: {
+              outTime: 'asc',
+            },
           },
         },
       });
+      if (updatedTrip === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Trip not found.',
+        });
+      }
       return transformTripData(updatedTrip);
     }),
   editTrip: procedure

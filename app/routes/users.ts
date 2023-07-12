@@ -9,14 +9,13 @@ import {
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
-  calculateDistance,
   excludeKeys,
   fetchGravatarUrl,
   getAirports,
   getFlightTimeData,
   getHeatmap,
+  transformItineraryData,
   getRoutes,
-  type ItineraryResult,
   transformTripData,
 } from '../utils';
 
@@ -148,30 +147,24 @@ export const usersRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
         },
+        include: {
+          flights: {
+            include: {
+              departureAirport: true,
+              arrivalAirport: true,
+              airline: true,
+              aircraftType: true,
+            },
+            orderBy: {
+              outTime: 'asc',
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
-      return itineraries.map(({ flights, ...itinerary }) => {
-        const itineraryFlights = JSON.parse(flights) as ItineraryResult[];
-        const flightsWithDistance = itineraryFlights.map(flight => ({
-          ...flight,
-          distance: calculateDistance(
-            flight.departureAirport.lat,
-            flight.departureAirport.lon,
-            flight.arrivalAirport.lat,
-            flight.arrivalAirport.lon,
-          ),
-        }));
-        const totalDistance = flightsWithDistance.reduce(
-          (acc, { distance }) => acc + distance,
-          0,
-        );
-        return {
-          ...itinerary,
-          flights: flightsWithDistance,
-          distance: Math.round(totalDistance),
-          numFlights: itineraryFlights.length,
-          date: itineraryFlights[0].outDate,
-        };
-      });
+      return itineraries.map(transformItineraryData);
     }),
   getUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
     const results = await prisma.user.findMany({

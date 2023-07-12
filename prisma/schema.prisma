@@ -64,7 +64,7 @@ model itinerary_flight {
   onTime             DateTime?
   inTime             DateTime
   duration           Int            @default(0)
-  itinerary          itinerary      @relation(fields: [itineraryId], references: [id])
+  itinerary          itinerary      @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
   aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
   airline            airline?       @relation("itineraryFlights", fields: [airlineId], references: [id])
   arrivalAirport     airport        @relation("arrivalItineraryFlights", fields: [arrivalAirportId], references: [id])

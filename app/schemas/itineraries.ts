@@ -33,9 +33,6 @@ export const itineraryFlightSchema = z.object({
     .int()
     .lte(9999, 'Must be 4 digits or less')
     .nullable(),
-  class: z
-    .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
-    .nullable(),
 });
 
 export const getItinerarySchema = z.object({

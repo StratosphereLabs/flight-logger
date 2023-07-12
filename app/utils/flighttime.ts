@@ -34,7 +34,6 @@ export interface FlightTimesResult {
   duration: number;
   outTime: Date;
   inTime: Date;
-  daysAdded: number;
 }
 
 export interface FlightTimestampsResult {
@@ -75,7 +74,6 @@ export const getFlightTimes = ({
     duration,
     outTime: outTimeUtc,
     inTime: correctedInTime,
-    daysAdded,
   };
 };
 

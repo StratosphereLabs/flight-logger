@@ -1,11 +1,10 @@
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
-import { Badge, Button, Card, CardBody } from 'stratosphere-ui';
+import { Button, Card, CardBody } from 'stratosphere-ui';
 import { AirlineLogo, LinkIcon, RightArrowIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { BADGE_COLORS_MAP, CLASS_TEXT_MAP } from './constants';
 
 export const Itinerary = (): JSX.Element | null => {
   const { id } = useParams();
@@ -111,20 +110,9 @@ export const Itinerary = (): JSX.Element | null => {
                 </div>
               </div>
               {flight.aircraftType !== null ? (
-                <div className="hidden flex-1 flex-col gap-1 text-sm sm:flex">
+                <div className="flex flex-1 flex-col gap-1 text-sm">
                   <div className="opacity-60">Aircraft</div>
                   <div className="opacity-90">{flight.aircraftType.name}</div>
-                </div>
-              ) : null}
-              {flight.class !== null ? (
-                <div className="hidden md:flex">
-                  <Badge
-                    className="text-xs"
-                    color={BADGE_COLORS_MAP[flight.class]}
-                    size="sm"
-                  >
-                    {CLASS_TEXT_MAP[flight.class]}
-                  </Badge>
                 </div>
               ) : null}
             </CardBody>
