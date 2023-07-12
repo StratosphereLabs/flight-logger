@@ -52,89 +52,110 @@ export const MapCard = (): JSX.Element => {
   }, [heatmap, heatmapData]);
   useTRPCErrorHandler(error);
   const { theme } = useThemeStore();
-  return (
-    <LoadingCard
-      isLoading={!isLoaded || isFetching}
-      className="card-bordered min-h-[475px] min-w-[350px] flex-1 shadow-md"
-    >
-      <Form className="flex flex-wrap justify-end gap-4 p-3" methods={methods}>
-        <FormCheckbox
-          className={classNames(mapMode !== 'heatmap' && 'hidden')}
-          inputClassName="bg-base-200"
-          labelText="Show upcoming flights"
-          name="showUpcoming"
-        />
-        <Select
-          buttonColor="neutral"
-          className="w-[150px]"
-          formValueMode="id"
-          getItemText={({ text }) => text}
-          options={[
-            {
-              id: 'routes',
-              text: 'Routes',
-            },
-            {
-              id: 'heatmap',
-              text: 'Heatmap',
-            },
-          ]}
-          menuClassName="right-0"
-          name="mapMode"
-        />
-      </Form>
-      <GoogleMap
-        mapContainerClassName="rounded-b-2xl"
-        mapContainerStyle={{
-          height: '100%',
-          width: '100%',
-        }}
-        center={{ lat: 37, lng: -122 }}
-        zoom={3}
-        options={{
-          streetViewControl: false,
-          gestureHandling: 'greedy',
-          styles:
-            theme === AppTheme.DARK || theme === AppTheme.BUSINESS
-              ? darkModeStyle
-              : undefined,
-        }}
+  const mapOptions = useMemo(
+    () => ({
+      center: { lat: 37, lng: -122 },
+      minZoom: 2,
+      mapTypeControl: false,
+      zoomControl: false,
+      streetViewControl: false,
+      gestureHandling: 'greedy',
+      styles:
+        theme === AppTheme.DARK || theme === AppTheme.BUSINESS
+          ? darkModeStyle
+          : undefined,
+    }),
+    [darkModeStyle, theme],
+  );
+  return useMemo(
+    () => (
+      <LoadingCard
+        isLoading={!isLoaded || isFetching}
+        className="card-bordered min-h-[450px] min-w-[350px] flex-1 shadow-md relative"
       >
-        {data?.airports?.map(({ id, lat, lon }) => (
-          <MarkerF
-            visible={mapMode === 'routes'}
-            key={id}
-            position={{ lat, lng: lon }}
-          />
-        ))}
-        {data?.routes?.map(({ departureAirport, arrivalAirport }) => (
-          <PolylineF
-            visible={mapMode === 'routes'}
-            key={`${departureAirport.id}_${arrivalAirport.id}`}
-            options={{
-              strokeOpacity: 0.5,
-              strokeColor: 'red',
-              geodesic: true,
+        <GoogleMap
+          mapContainerClassName="rounded-2xl"
+          mapContainerStyle={{
+            height: '100%',
+            width: '100%',
+          }}
+          zoom={3}
+          options={mapOptions}
+        >
+          {data?.airports?.map(({ id, lat, lon }) => (
+            <MarkerF
+              visible={mapMode === 'routes'}
+              key={id}
+              position={{ lat, lng: lon }}
+            />
+          ))}
+          {data?.routes?.map(({ departureAirport, arrivalAirport }) => (
+            <PolylineF
+              visible={mapMode === 'routes'}
+              key={`${departureAirport.id}_${arrivalAirport.id}`}
+              options={{
+                strokeOpacity: 0.5,
+                strokeColor: 'red',
+                geodesic: true,
+              }}
+              path={[
+                { lat: departureAirport.lat, lng: departureAirport.lon },
+                { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
+              ]}
+            />
+          ))}
+          <HeatmapLayerF
+            data={heatmapData}
+            onLoad={setHeatmap}
+            onUnmount={() => {
+              setHeatmap(null);
             }}
-            path={[
-              { lat: departureAirport.lat, lng: departureAirport.lon },
-              { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
-            ]}
+            options={{
+              dissipating: false,
+              radius: 2,
+              opacity: 0.7,
+            }}
           />
-        ))}
-        <HeatmapLayerF
-          data={heatmapData}
-          onLoad={setHeatmap}
-          onUnmount={() => {
-            setHeatmap(null);
-          }}
-          options={{
-            dissipating: false,
-            radius: 2,
-            opacity: 0.7,
-          }}
-        />
-      </GoogleMap>
-    </LoadingCard>
+        </GoogleMap>
+        <Form className="flex flex-wrap gap-4 p-3 absolute" methods={methods}>
+          <Select
+            buttonColor="neutral"
+            className="w-[150px]"
+            formValueMode="id"
+            getItemText={({ text }) => text}
+            options={[
+              {
+                id: 'routes',
+                text: 'Routes',
+              },
+              {
+                id: 'heatmap',
+                text: 'Heatmap',
+              },
+            ]}
+            menuClassName="right-0"
+            name="mapMode"
+          />
+          <FormCheckbox
+            className={classNames(
+              'bg-base-100/70 rounded-xl px-2',
+              mapMode !== 'heatmap' && 'hidden',
+            )}
+            inputClassName="bg-base-200"
+            labelText="Show upcoming flights"
+            name="showUpcoming"
+          />
+        </Form>
+      </LoadingCard>
+    ),
+    [
+      darkModeStyle,
+      heatmapData,
+      isLoaded,
+      isFetching,
+      mapMode,
+      mapOptions,
+      showUpcoming,
+    ],
   );
 };
