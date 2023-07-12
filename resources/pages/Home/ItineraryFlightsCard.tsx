@@ -56,7 +56,6 @@ export const ItineraryFlightsCard = forwardRef<
                 setIsResetItineraryModalOpen(true);
               }}
               shape="circle"
-              size="sm"
             >
               <ResetIcon className="h-6 w-6" />
             </Button>
@@ -64,7 +63,6 @@ export const ItineraryFlightsCard = forwardRef<
               color="primary"
               loading={isLoading}
               onClick={onSubmit}
-              size="sm"
             >
               Create
             </Button>

@@ -7,5 +7,4 @@ export const itineraryBuilderDefaultValues = {
   airline: null,
   aircraftType: null,
   flightNumber: null,
-  class: null,
 };

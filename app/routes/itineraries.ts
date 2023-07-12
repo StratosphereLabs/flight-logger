@@ -148,7 +148,7 @@ export const itinerariesRouter = router({
           });
         }),
       );
-      return await prisma.itinerary.findUnique({
+      const updatedItinerary = await prisma.itinerary.findUnique({
         where: {
           id: itinerary.id,
         },
@@ -166,6 +166,13 @@ export const itinerariesRouter = router({
           },
         },
       });
+      if (updatedItinerary === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Itinerary not found.',
+        });
+      }
+      return updatedItinerary;
     }),
   deleteItinerary: procedure
     .use(verifyAuthenticated)

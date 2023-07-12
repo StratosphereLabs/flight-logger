@@ -19,6 +19,7 @@ export const CreateItineraryModal = (): JSX.Element => {
     state: HomePageNavigationState | null;
   };
   const navigate = useNavigate();
+  const utils = trpc.useContext();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const {
     addFlight,
@@ -41,10 +42,11 @@ export const CreateItineraryModal = (): JSX.Element => {
   };
   const { error, isLoading, mutate } =
     trpc.itineraries.createItinerary.useMutation({
-      onSuccess: response => {
+      onSuccess: async response => {
         setIsCreateItineraryModalOpen(false);
         navigate(`/itinerary/${response.id}`);
         resetFlights();
+        await utils.users.invalidate();
       },
     });
   useTRPCErrorHandler(error);

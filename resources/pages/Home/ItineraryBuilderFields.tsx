@@ -3,7 +3,6 @@ import { forwardRef, type HTMLProps } from 'react';
 import {
   Button,
   FormControl,
-  FormRadio,
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
@@ -97,39 +96,8 @@ export const ItineraryBuilderFields = forwardRef<
           menuClassName="w-full"
           name="aircraftType"
         />
-        <FormRadio
-          className="w-[400px] min-w-[250px]"
-          labelText="Class"
-          name="class"
-          options={[
-            {
-              id: 'BASIC',
-              label: 'Basic Economy',
-              value: 'BASIC',
-            },
-            {
-              id: 'ECONOMY',
-              label: 'Economy',
-              value: 'ECONOMY',
-            },
-            {
-              id: 'PREMIUM',
-              label: 'Premium Economy',
-              value: 'PREMIUM',
-            },
-            {
-              id: 'BUSINESS',
-              label: 'Business',
-              value: 'BUSINESS',
-            },
-            {
-              id: 'FIRST',
-              label: 'First',
-              value: 'FIRST',
-            },
-          ]}
-        />
       </div>
+      <div className="divider" />
       <div className="text-center">
         <Button color="primary" className="w-full max-w-md" type="submit">
           Add Flight
