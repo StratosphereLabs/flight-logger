@@ -14,7 +14,7 @@ export const MainNavbar = (): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
   return (
-    <div className="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans sm:p-3">
+    <div className="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans sm:px-3">
       <div className="navbar rounded-box justify-between bg-base-100 shadow-md lg:justify-start">
         <div className="navbar-start w-auto lg:w-1/2">
           <DropdownMenu
