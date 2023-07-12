@@ -1,8 +1,10 @@
 import {
+  itinerary,
   type aircraft_type,
   type airline,
   type airport,
   type FlightClass,
+  itinerary_flight,
 } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { isBefore } from 'date-fns';
@@ -15,6 +17,17 @@ import {
 import { type FlightDataFetchResults } from '../db';
 import { type ItineraryFlight } from '../schemas';
 import { type WithRequiredNonNull } from '../types';
+
+export interface ItineraryFlightData extends itinerary_flight {
+  departureAirport: airport;
+  arrivalAirport: airport;
+  airline: airline | null;
+  aircraftType: aircraft_type | null;
+}
+
+export type Itinerary = itinerary & {
+  flights: ItineraryFlightData[]
+}
 
 export interface GetItineraryDataOptions {
   flights: ItineraryFlight[];
@@ -150,3 +163,26 @@ export const getItineraryData = ({
     });
   });
 };
+
+export const transformUserItineraryData = ({ flights, ...itinerary }):  => {
+  const flightsWithDistance = flights.map(flight => ({
+    ...flight,
+    distance: calculateDistance(
+      flight.departureAirport.lat,
+      flight.departureAirport.lon,
+      flight.arrivalAirport.lat,
+      flight.arrivalAirport.lon,
+    ),
+  }));
+  const totalDistance = flightsWithDistance.reduce(
+    (acc, { distance }) => acc + distance,
+    0,
+  );
+  return {
+    ...itinerary,
+    flights: flightsWithDistance,
+    distance: Math.round(totalDistance),
+    numFlights: flights.length,
+    date: flights[0].outTime,
+  };
+}

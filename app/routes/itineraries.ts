@@ -7,7 +7,7 @@ import {
   getItinerarySchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { getItineraryData, type ItineraryResult } from '../utils';
+import { getFlightTimes } from '../utils';
 
 export const itinerariesRouter = router({
   createItinerary: procedure
@@ -42,17 +42,101 @@ export const itinerariesRouter = router({
         aircraftTypeData,
         aircraftSearchType: 'id',
       });
-      const itineraryData = getItineraryData({ flights: input.flights, data });
       const itineraryName =
         input.name?.trim() ??
-        `${itineraryData
-          .map(({ arrivalAirport }) => arrivalAirport.municipality)
-          .join(', ')} trip`;
-      return await prisma.itinerary.create({
+        `${input.flights[0].arrivalAirport?.municipality ?? ''} trip`;
+      const itinerary = await prisma.itinerary.create({
         data: {
-          userId: ctx.user?.id,
+          user:
+            ctx.user !== undefined
+              ? {
+                  connect: {
+                    id: ctx.user?.id,
+                  },
+                }
+              : undefined,
           name: itineraryName,
-          flights: JSON.stringify(itineraryData),
+        },
+      });
+      await prisma.$transaction(
+        input.flights.flatMap(flight => {
+          if (
+            flight.departureAirport === null ||
+            flight.arrivalAirport === null
+          )
+            return [];
+          const departureAirport = data.airports[flight.departureAirport.id];
+          const arrivalAirport = data.airports[flight.arrivalAirport.id];
+          const airline =
+            flight.airline !== null ? data.airlines[flight.airline.id] : null;
+          const aircraftTypes =
+            flight.aircraftType !== null
+              ? data.aircraftTypes[flight.aircraftType.id]
+              : null;
+          const { outTime, inTime, duration } = getFlightTimes({
+            departureAirport,
+            arrivalAirport,
+            outDateISO: flight.outDateISO,
+            outTimeValue: flight.outTimeValue,
+            inTimeValue: flight.inTimeValue,
+          });
+          return prisma.itinerary_flight.create({
+            data: {
+              itinerary: {
+                connect: {
+                  id: itinerary.id,
+                },
+              },
+              departureAirport: {
+                connect: {
+                  id: departureAirport.id,
+                },
+              },
+              arrivalAirport: {
+                connect: {
+                  id: arrivalAirport.id,
+                },
+              },
+              airline:
+                airline !== null
+                  ? {
+                      connect: {
+                        id: airline.id,
+                      },
+                    }
+                  : undefined,
+              aircraftType:
+                aircraftTypes !== null && aircraftTypes.length > 0
+                  ? {
+                      connect: {
+                        id: aircraftTypes[0].id,
+                      },
+                    }
+                  : undefined,
+              flightNumber: flight.flightNumber,
+              outTime: outTime.toISOString(),
+              inTime: inTime.toISOString(),
+              duration,
+            },
+          });
+        }),
+      );
+      return await prisma.itinerary.findUnique({
+        where: {
+          id: itinerary.id,
+        },
+        include: {
+          flights: {
+            include: {
+              departureAirport: true,
+              arrivalAirport: true,
+              airline: true,
+              aircraftType: true,
+            },
+            orderBy: {
+              outTime: 'asc',
+            },
+          },
         },
       });
     }),
@@ -61,6 +145,19 @@ export const itinerariesRouter = router({
       where: {
         id: input.id,
       },
+      include: {
+        flights: {
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          orderBy: {
+            outTime: 'asc',
+          },
+        },
+      },
     });
     if (itinerary === null) {
       throw new TRPCError({
@@ -68,10 +165,7 @@ export const itinerariesRouter = router({
         message: 'Itinerary not found.',
       });
     }
-    return {
-      ...itinerary,
-      flights: JSON.parse(itinerary?.flights) as ItineraryResult[],
-    };
+    return itinerary;
   }),
   deleteItinerary: procedure
     .use(verifyAuthenticated)
