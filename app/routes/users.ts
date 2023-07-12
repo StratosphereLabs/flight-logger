@@ -14,7 +14,7 @@ import {
   getAirports,
   getFlightTimeData,
   getHeatmap,
-  getItineraryData,
+  transformItineraryData,
   getRoutes,
   transformTripData,
 } from '../utils';
@@ -152,6 +152,8 @@ export const usersRouter = router({
             include: {
               departureAirport: true,
               arrivalAirport: true,
+              airline: true,
+              aircraftType: true,
             },
             orderBy: {
               outTime: 'asc',
@@ -162,7 +164,7 @@ export const usersRouter = router({
           createdAt: 'desc',
         },
       });
-      return getItineraryData;
+      return itineraries.map(transformItineraryData);
     }),
   getUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
     const results = await prisma.user.findMany({

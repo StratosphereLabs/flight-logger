@@ -88,8 +88,8 @@ export const Itineraries = (): JSX.Element => {
             },
             {
               id: 'date',
-              accessorKey: 'date',
-              header: () => 'Trip Date',
+              accessorKey: 'outDateLocal',
+              header: () => 'Date',
               cell: ({ getValue }) => {
                 const date = getValue<string>();
                 return <span className="opacity-75">{date}</span>;
@@ -103,9 +103,9 @@ export const Itineraries = (): JSX.Element => {
               footer: () => null,
             },
             {
-              id: 'travelTime',
-              accessorKey: 'travelTime',
-              header: () => 'Travel Time',
+              id: 'duration',
+              accessorKey: 'itineraryDuration',
+              header: () => 'Duration',
               footer: () => null,
             },
             {
@@ -151,7 +151,7 @@ export const Itineraries = (): JSX.Element => {
           cellClassNames={{
             date: 'w-[200px]',
             numFlights: 'w-[150px] hidden md:table-cell',
-            travelTime: 'w-[150px] hidden md:table-cell',
+            duration: 'w-[150px] hidden md:table-cell',
             distance: 'w-[150px] hidden lg:table-cell',
             actions: 'w-[50px] xl:w-[150px]',
           }}

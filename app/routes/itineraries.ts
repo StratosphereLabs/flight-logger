@@ -7,9 +7,36 @@ import {
   getItinerarySchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { getFlightTimes } from '../utils';
+import { getFlightTimes, transformItineraryData } from '../utils';
 
 export const itinerariesRouter = router({
+  getItinerary: procedure.input(getItinerarySchema).query(async ({ input }) => {
+    const itinerary = await prisma.itinerary.findUnique({
+      where: {
+        id: input.id,
+      },
+      include: {
+        flights: {
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          orderBy: {
+            outTime: 'asc',
+          },
+        },
+      },
+    });
+    if (itinerary === null) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Itinerary not found.',
+      });
+    }
+    return transformItineraryData(itinerary);
+  }),
   createItinerary: procedure
     .input(addItinerarySchema)
     .mutation(async ({ input, ctx }) => {
@@ -140,33 +167,6 @@ export const itinerariesRouter = router({
         },
       });
     }),
-  getItinerary: procedure.input(getItinerarySchema).query(async ({ input }) => {
-    const itinerary = await prisma.itinerary.findUnique({
-      where: {
-        id: input.id,
-      },
-      include: {
-        flights: {
-          include: {
-            departureAirport: true,
-            arrivalAirport: true,
-            airline: true,
-            aircraftType: true,
-          },
-          orderBy: {
-            outTime: 'asc',
-          },
-        },
-      },
-    });
-    if (itinerary === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Itinerary not found.',
-      });
-    }
-    return itinerary;
-  }),
   deleteItinerary: procedure
     .use(verifyAuthenticated)
     .input(deleteItinerarySchema)
