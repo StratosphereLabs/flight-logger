@@ -1,11 +1,11 @@
 import {
   GoogleMap,
   HeatmapLayerF,
+  InfoWindowF,
   MarkerF,
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
-import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
@@ -14,12 +14,16 @@ import { useTRPCErrorHandler } from '../../common/hooks';
 import { darkModeStyle } from '../../common/mapStyle';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { getAirports } from './utils';
 
 export const MapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
+  const [center, setCenter] = useState({ lat: 37, lng: -122 });
+  const [activeAirportId, setActiveAirportId] = useState<string | null>(null);
+  const [isFrozen, setIsFrozen] = useState(false);
   const [heatmap, setHeatmap] =
     useState<google.maps.visualization.HeatmapLayer | null>(null);
   const methods = useForm({
@@ -35,17 +39,30 @@ export const MapCard = (): JSX.Element => {
       username,
     },
     {
+      select: mapData => {
+        const filteredHeatmapData = mapData.heatmap.flatMap(
+          ({ inFuture, lat, lng }) =>
+            showUpcoming || !inFuture ? [new google.maps.LatLng(lat, lng)] : [],
+        );
+        const filteredRoutes = mapData.routes.filter(
+          ({ inFuture, departureAirport, arrivalAirport }) =>
+            (activeAirportId === null ||
+              activeAirportId === departureAirport.id ||
+              activeAirportId === arrivalAirport.id) &&
+            (showUpcoming || !inFuture),
+        );
+        return {
+          heatmap: filteredHeatmapData,
+          routes: filteredRoutes,
+          airports: getAirports(filteredRoutes),
+        };
+      },
       staleTime: 5 * 60 * 1000,
     },
   );
   const heatmapData = useMemo(
-    () =>
-      mapMode === 'heatmap'
-        ? data?.heatmap.flatMap(({ inFuture, lat, lng }) =>
-            showUpcoming || !inFuture ? [new google.maps.LatLng(lat, lng)] : [],
-          ) ?? []
-        : [],
-    [data, mapMode, showUpcoming],
+    () => (mapMode === 'heatmap' ? data?.heatmap ?? [] : []),
+    [data?.heatmap, mapMode],
   );
   useEffect(() => {
     setTimeout(() => heatmap?.setData(heatmapData));
@@ -54,7 +71,7 @@ export const MapCard = (): JSX.Element => {
   const { theme } = useThemeStore();
   const mapOptions = useMemo(
     () => ({
-      center: { lat: 37, lng: -122 },
+      center,
       minZoom: 2,
       mapTypeControl: false,
       zoomControl: false,
@@ -65,7 +82,7 @@ export const MapCard = (): JSX.Element => {
           ? darkModeStyle
           : undefined,
     }),
-    [darkModeStyle, theme],
+    [center, theme],
   );
   return useMemo(
     () => (
@@ -82,17 +99,58 @@ export const MapCard = (): JSX.Element => {
           zoom={3}
           options={mapOptions}
         >
-          {data?.airports?.map(({ id, lat, lon }) => (
+          {data?.airports?.map(({ id, lat, lon, name }) => (
             <MarkerF
               visible={mapMode === 'routes'}
               key={id}
               position={{ lat, lng: lon }}
-            />
+              title={id}
+              onClick={() => {
+                setIsFrozen(true);
+                setCenter({ lat, lng: lon });
+              }}
+              onMouseOver={() => {
+                if (!isFrozen) {
+                  setActiveAirportId(id);
+                }
+              }}
+              onMouseOut={() => {
+                if (!isFrozen) {
+                  setActiveAirportId(null);
+                }
+              }}
+              options={{
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  fillColor: activeAirportId === id ? 'yellow' : 'white',
+                  fillOpacity: 0.8,
+                  scale: activeAirportId === id ? 8 : 5,
+                  strokeColor: 'black',
+                  strokeWeight: 2,
+                  strokeOpacity: 1,
+                },
+              }}
+            >
+              {activeAirportId === id ? (
+                <InfoWindowF
+                  onCloseClick={() => {
+                    setIsFrozen(false);
+                    setActiveAirportId(null);
+                  }}
+                  position={{ lat, lng: lon }}
+                >
+                  <div className="flex flex-col max-w-[150px]">
+                    <div className="font-bold">{id}</div>
+                    <div className="text-wrap">{name}</div>
+                  </div>
+                </InfoWindowF>
+              ) : null}
+            </MarkerF>
           ))}
-          {data?.routes?.map(({ departureAirport, arrivalAirport }) => (
+          {data?.routes?.map(({ departureAirport, arrivalAirport }, index) => (
             <PolylineF
               visible={mapMode === 'routes'}
-              key={`${departureAirport.id}_${arrivalAirport.id}`}
+              key={index}
               options={{
                 strokeOpacity: 0.5,
                 strokeColor: 'red',
@@ -119,7 +177,6 @@ export const MapCard = (): JSX.Element => {
         </GoogleMap>
         <Form className="flex flex-wrap gap-4 p-3 absolute" methods={methods}>
           <Select
-            buttonColor="neutral"
             className="w-[150px]"
             formValueMode="id"
             getItemText={({ text }) => text}
@@ -137,10 +194,7 @@ export const MapCard = (): JSX.Element => {
             name="mapMode"
           />
           <FormCheckbox
-            className={classNames(
-              'bg-base-100/70 rounded-xl px-2',
-              mapMode !== 'heatmap' && 'hidden',
-            )}
+            className="bg-base-100/70 rounded-xl px-2"
             inputClassName="bg-base-200"
             labelText="Show upcoming flights"
             name="showUpcoming"
@@ -149,13 +203,15 @@ export const MapCard = (): JSX.Element => {
       </LoadingCard>
     ),
     [
-      darkModeStyle,
+      activeAirportId,
+      data,
       heatmapData,
-      isLoaded,
       isFetching,
+      isFrozen,
+      isLoaded,
       mapMode,
       mapOptions,
-      showUpcoming,
+      methods,
     ],
   );
 };

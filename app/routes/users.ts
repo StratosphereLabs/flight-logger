@@ -11,7 +11,6 @@ import { procedure, router } from '../trpc';
 import {
   excludeKeys,
   fetchGravatarUrl,
-  getAirports,
   getFlightTimeData,
   getHeatmap,
   transformItineraryData,
@@ -98,11 +97,9 @@ export const usersRouter = router({
           arrivalAirport: true,
         },
       });
-      const airports = getAirports(flights);
       const routes = getRoutes(flights);
       const heatmap = getHeatmap(flights);
       return {
-        airports,
         heatmap,
         routes,
       };
