@@ -5,10 +5,10 @@ import {
   type airport,
   type flight,
 } from '@prisma/client';
+import { type LatLng } from '../types';
 import { getInFuture } from './datetime';
 import { calculateDistance } from './distance';
 import { type FlightTimestampsResult, getFlightTimestamps } from './flighttime';
-import { type LatLng } from '../types';
 
 export interface AirframeData extends airframe {
   operator: airline | null;
@@ -27,6 +27,10 @@ export interface Route {
   arrivalAirport: airport;
 }
 
+export interface RouteResult extends Route {
+  inFuture: boolean;
+}
+
 export interface HeatmapResult extends LatLng {
   inFuture: boolean;
 }
@@ -39,23 +43,6 @@ export interface FlightTimeDataResult
   distance: number;
   flightNumberString: string;
 }
-
-export const getAirports = (result?: FlightsResult): airport[] => {
-  const departureAirports =
-    result?.map(({ departureAirport }) => departureAirport) ?? [];
-  const arrivalAirports =
-    result?.map(({ arrivalAirport }) => arrivalAirport) ?? [];
-  const airportsMap = [...departureAirports, ...arrivalAirports].reduce<
-    Record<string, airport>
-  >(
-    (acc, airport) => ({
-      ...acc,
-      [airport.id]: airport,
-    }),
-    {},
-  );
-  return Object.values(airportsMap);
-};
 
 export const getHeatmap = (result?: FlightsResult): HeatmapResult[] =>
   result?.flatMap(flight => [
@@ -71,28 +58,15 @@ export const getHeatmap = (result?: FlightsResult): HeatmapResult[] =>
     },
   ]) ?? [];
 
-export const getRoutes = (result?: FlightsResult): Route[] =>
-  result?.reduce((acc: Route[], flight) => {
-    const { departureAirport, arrivalAirport } = flight;
-    if (
-      acc.find(
-        route =>
-          (route.departureAirport.id === departureAirport.id &&
-            route.arrivalAirport.id === arrivalAirport.id) ||
-          (route.departureAirport.id === arrivalAirport.id &&
-            route.arrivalAirport.id === departureAirport.id),
-      ) !== undefined
-    ) {
-      return acc;
-    }
-    return [
-      ...acc,
-      {
-        departureAirport,
-        arrivalAirport,
-      },
-    ];
-  }, []) ?? [];
+export const getRoutes = (result?: FlightsResult): RouteResult[] =>
+  result?.map(
+    ({ outTime, departureAirport, arrivalAirport }) => ({
+      inFuture: getInFuture(outTime),
+      departureAirport,
+      arrivalAirport,
+    }),
+    [],
+  ) ?? [];
 
 export const getFlightTimeData = (
   flights: FlightData[],
