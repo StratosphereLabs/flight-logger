@@ -1,7 +1,6 @@
 import {
   GoogleMap,
   HeatmapLayerF,
-  InfoWindowF,
   MarkerF,
   PolylineF,
   useJsApiLoader,
@@ -106,8 +105,10 @@ export const MapCard = (): JSX.Element => {
               position={{ lat, lng: lon }}
               title={id}
               onClick={() => {
-                setIsFrozen(true);
-                setCenter({ lat, lng: lon });
+                if (!isFrozen) {
+                  setCenter({ lat, lng: lon });
+                }
+                setIsFrozen(currentIsFrozen => !currentIsFrozen);
               }}
               onMouseOver={() => {
                 if (!isFrozen) {
@@ -130,22 +131,7 @@ export const MapCard = (): JSX.Element => {
                   strokeOpacity: 1,
                 },
               }}
-            >
-              {activeAirportId === id ? (
-                <InfoWindowF
-                  onCloseClick={() => {
-                    setIsFrozen(false);
-                    setActiveAirportId(null);
-                  }}
-                  position={{ lat, lng: lon }}
-                >
-                  <div className="flex flex-col max-w-[150px]">
-                    <div className="font-bold">{id}</div>
-                    <div className="text-wrap">{name}</div>
-                  </div>
-                </InfoWindowF>
-              ) : null}
-            </MarkerF>
+            />
           ))}
           {data?.routes?.map(({ departureAirport, arrivalAirport }, index) => (
             <PolylineF
