@@ -3,6 +3,7 @@ import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  Button,
   Form,
   FormControl,
   FormRadio,
@@ -101,21 +102,7 @@ export const EditFlightModal = ({
   }, [activeFlight]);
   return (
     <Modal
-      actionButtons={[
-        {
-          children: 'Cancel',
-          onClick: () => {
-            setIsEditDialogOpen(false);
-          },
-        },
-        {
-          children: 'Save',
-          color: 'primary',
-          disabled: !methods.formState.isDirty,
-          loading: isLoading,
-          type: 'submit',
-        },
-      ]}
+      actionButtons={[]}
       className="overflow-x-hidden overflow-y-scroll scrollbar-none"
       onClose={() => {
         setIsEditDialogOpen(false);
@@ -303,6 +290,23 @@ export const EditFlightModal = ({
           showDirty
         />
       </Form>
+      <div className="modal-action">
+        <Button
+          onClick={() => {
+            setIsEditDialogOpen(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          color="primary"
+          disabled={!methods.formState.isDirty}
+          loading={isLoading}
+          type="submit"
+        >
+          Save
+        </Button>
+      </div>
     </Modal>
   );
 };

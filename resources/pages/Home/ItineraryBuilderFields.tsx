@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import { forwardRef, type HTMLProps } from 'react';
 import {
-  Button,
   FormControl,
   integerInputTransformer,
   nullEmptyStringTransformer,
@@ -96,12 +95,6 @@ export const ItineraryBuilderFields = forwardRef<
           menuClassName="w-full"
           name="aircraftType"
         />
-      </div>
-      <div className="divider" />
-      <div className="text-center">
-        <Button color="primary" className="w-full max-w-md" type="submit">
-          Add Flight
-        </Button>
       </div>
     </div>
   ),

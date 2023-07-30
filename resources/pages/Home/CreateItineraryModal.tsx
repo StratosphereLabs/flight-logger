@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Form, Modal } from 'stratosphere-ui';
+import { Button, Form, Modal } from 'stratosphere-ui';
 import { itineraryFlightSchema } from '../../../app/schemas/itineraries';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
@@ -65,38 +65,44 @@ export const CreateItineraryModal = (): JSX.Element => {
     }
   }, [state?.createItinerary]);
   return (
-    <Modal
-      title="Create Itinerary"
-      open={isCreateItineraryModalOpen}
-      onClose={() => {
-        setIsCreateItineraryModalOpen(false);
-      }}
-      actionButtons={[]}
-      className="w-full max-w-full overflow-x-hidden md:w-[75%]"
-      ref={modalRef}
-    >
-      <div className="flex flex-col gap-4">
-        {flights.length > 0 ? (
-          <ItineraryFlightsCard
-            isLoading={isLoading}
-            onSubmit={() => {
-              mutate({ flights });
-            }}
-          />
-        ) : null}
+    <>
+      <Modal
+        title="Create Itinerary"
+        open={isCreateItineraryModalOpen}
+        onClose={() => {
+          setIsCreateItineraryModalOpen(false);
+        }}
+        actionButtons={[]}
+        className="w-full max-w-full overflow-x-hidden md:w-[75%]"
+        ref={modalRef}
+      >
         <Form
-          className="w-full"
+          className="flex flex-col gap-4 w-full"
           methods={methods}
           onFormSubmit={data => {
             addFlight(data);
             resetForm();
           }}
         >
+          {flights.length > 0 ? (
+            <ItineraryFlightsCard
+              isLoading={isLoading}
+              onSubmit={() => {
+                mutate({ flights });
+              }}
+            />
+          ) : null}
           <ItineraryBuilderFields />
+          <div className="divider" />
+          <div className="modal-action justify-center">
+            <Button color="primary" className="w-full max-w-md" type="submit">
+              Add Flight
+            </Button>
+          </div>
         </Form>
-        <DeleteItineraryModal />
-        <ResetItineraryModal onSubmit={resetForm} />
-      </div>
-    </Modal>
+      </Modal>
+      <DeleteItineraryModal />
+      <ResetItineraryModal onSubmit={resetForm} />
+    </>
   );
 };
