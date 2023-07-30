@@ -59,9 +59,7 @@ export const CreateTripModal = ({
           children: 'Create',
           color: 'primary',
           loading: isLoading,
-          onClick: methods.handleSubmit(({ tripName }) => {
-            mutate({ name: tripName, flightIds });
-          }),
+          type: 'submit',
         },
       ]}
       onClose={() => {
@@ -71,7 +69,13 @@ export const CreateTripModal = ({
       ref={modalRef}
       title={`Create Trip (${flightIds.length} flights)`}
     >
-      <Form className="flex flex-col gap-4" methods={methods}>
+      <Form
+        className="flex flex-col gap-4"
+        methods={methods}
+        onFormSubmit={({ tripName }) => {
+          mutate({ name: tripName, flightIds });
+        }}
+      >
         <FormControl
           isRequired
           inputClassName="bg-base-200"

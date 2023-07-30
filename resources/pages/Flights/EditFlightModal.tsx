@@ -113,9 +113,7 @@ export const EditFlightModal = ({
           color: 'primary',
           disabled: !methods.formState.isDirty,
           loading: isLoading,
-          onClick: methods.handleSubmit(values => {
-            mutate(values);
-          }),
+          type: 'submit',
         },
       ]}
       className="overflow-x-hidden overflow-y-scroll scrollbar-none"
@@ -126,7 +124,13 @@ export const EditFlightModal = ({
       ref={modalRef}
       title="Edit Flight"
     >
-      <Form className="flex flex-col gap-4" methods={methods}>
+      <Form
+        className="flex flex-col gap-4"
+        methods={methods}
+        onFormSubmit={values => {
+          mutate(values);
+        }}
+      >
         <AirportInput
           isRequired
           labelText="Departure Airport"
