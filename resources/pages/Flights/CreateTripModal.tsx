@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, Modal } from 'stratosphere-ui';
+import { Button, Form, FormControl, Modal } from 'stratosphere-ui';
 import { createTripFormSchema } from '../../../app/schemas';
 import {
   useSuccessResponseHandler,
@@ -48,20 +48,7 @@ export const CreateTripModal = ({
   useTRPCErrorHandler(error);
   return (
     <Modal
-      actionButtons={[
-        {
-          children: 'Cancel',
-          onClick: () => {
-            setIsCreateTripDialogOpen(false);
-          },
-        },
-        {
-          children: 'Create',
-          color: 'primary',
-          loading: isLoading,
-          type: 'submit',
-        },
-      ]}
+      actionButtons={[]}
       onClose={() => {
         setIsCreateTripDialogOpen(false);
       }}
@@ -82,6 +69,18 @@ export const CreateTripModal = ({
           labelText="Trip Name"
           name="tripName"
         />
+        <div className="modal-action">
+          <Button
+            onClick={() => {
+              setIsCreateTripDialogOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button color="primary" loading={isLoading} type="submit">
+            Create
+          </Button>
+        </div>
       </Form>
     </Modal>
   );
