@@ -132,13 +132,13 @@ export const GlobeIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   </svg>
 );
 
-export const HomeIcon = (): JSX.Element => (
+export const HomeIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
+    {...props}
   >
     <path
       strokeLinecap="round"
@@ -194,14 +194,14 @@ export const ListIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   </svg>
 );
 
-export const LogoutIcon = (): JSX.Element => (
+export const LogoutIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="h-6 w-6"
+    {...props}
   >
     <path
       strokeLinecap="round"

@@ -22,6 +22,8 @@ export const DeleteItineraryModal = (): JSX.Element => {
       actionButtons={[
         {
           children: 'Cancel',
+          color: 'secondary',
+          outline: true,
           onClick: onClose,
         },
         {
