@@ -33,6 +33,8 @@ export const DeleteFlightModal = (): JSX.Element => {
       actionButtons={[
         {
           children: 'Cancel',
+          color: 'secondary',
+          outline: true,
           onClick: () => {
             setIsDeleteDialogOpen(false);
           },

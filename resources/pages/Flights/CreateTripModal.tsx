@@ -71,6 +71,8 @@ export const CreateTripModal = ({
         />
         <div className="modal-action">
           <Button
+            color="secondary"
+            outline
             onClick={() => {
               setIsCreateTripDialogOpen(false);
             }}

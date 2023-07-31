@@ -222,7 +222,7 @@ exports[`<App /> > renders profile page 1`] = `
     class="flex h-screen flex-col justify-between bg-base-200"
   >
     <div
-      class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans sm:px-3"
+      class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
     >
       <div
         class="navbar rounded-box justify-between bg-base-100 shadow-md lg:justify-start"
@@ -237,7 +237,7 @@ exports[`<App /> > renders profile page 1`] = `
             <button
               aria-expanded="false"
               aria-haspopup="menu"
-              class="btn btn-ghost xl:hidden"
+              class="btn btn-ghost"
               data-headlessui-state=""
               id="headlessui-menu-button-:r1:"
               type="button"
@@ -263,6 +263,10 @@ exports[`<App /> > renders profile page 1`] = `
               </span>
             </button>
           </div>
+        </div>
+        <div
+          class="navbar-center hidden lg:flex"
+        >
           <button
             class="btn btn-ghost hidden text-xl normal-case sm:inline-flex"
             type="button"
@@ -280,41 +284,6 @@ exports[`<App /> > renders profile page 1`] = `
               </span>
             </div>
           </button>
-        </div>
-        <div
-          class="navbar-center hidden lg:flex"
-        >
-          <div
-            aria-orientation="horizontal"
-            class="tabs tabs-boxed bg-base-100 p-0"
-            role="tablist"
-          >
-            <button
-              aria-selected="true"
-              class="tab tab-active tab-lg"
-              data-headlessui-state="selected"
-              id="headlessui-tabs-tab-:r2:"
-              paths="/"
-              role="tab"
-              tabindex="0"
-              type="button"
-            >
-              Home
-            </button>
-            <button
-              aria-selected="false"
-              class="tab tab-lg"
-              data-headlessui-state=""
-              id="headlessui-tabs-tab-:r3:"
-              paths="/data"
-              role="tab"
-              tabindex="-1"
-              type="button"
-            >
-              Data
-            </button>
-          </div>
-          <div />
         </div>
         <div
           class="navbar-end w-auto space-x-1 lg:w-1/2"
@@ -352,7 +321,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-haspopup="menu"
               class="btn btn-ghost btn-circle"
               data-headlessui-state=""
-              id="headlessui-menu-button-:r4:"
+              id="headlessui-menu-button-:r2:"
               type="button"
             >
               <svg
@@ -375,24 +344,43 @@ exports[`<App /> > renders profile page 1`] = `
               </span>
             </button>
           </div>
+          <button
+            class="btn"
+            type="button"
+          >
+            Login
+          </button>
           <div
-            class="flex gap-1"
+            class="relative hidden"
+            data-headlessui-state=""
           >
             <button
-              class="btn btn-neutral"
+              aria-expanded="false"
+              aria-haspopup="menu"
+              class="btn btn-ghost btn-circle"
+              data-headlessui-state=""
+              id="headlessui-menu-button-:r3:"
               type="button"
             >
-              Login
-              <span
-                class="sr-only"
-              />
+              <div
+                class="avatar"
+              >
+                <div
+                  class="w-9 h-9 rounded-full"
+                >
+                  <img />
+                </div>
+              </div>
             </button>
           </div>
         </div>
       </div>
     </div>
     <div
-      class="flex flex-1 flex-col p-2 sm:p-3"
+      style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
+    />
+    <div
+      class="flex flex-1 flex-col p-2"
     >
       <div
         class="card min-h-[75vh] bg-base-100 shadow-md"

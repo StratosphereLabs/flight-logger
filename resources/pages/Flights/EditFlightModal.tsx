@@ -292,6 +292,8 @@ export const EditFlightModal = ({
       </Form>
       <div className="modal-action">
         <Button
+          color="secondary"
+          outline
           onClick={() => {
             setIsEditDialogOpen(false);
           }}

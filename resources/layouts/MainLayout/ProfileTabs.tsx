@@ -28,7 +28,7 @@ export const ProfileTabs = (): JSX.Element => {
           paths: [username !== undefined ? `/user/${username}` : '/profile'],
           children: (
             <>
-              <HomeIcon />
+              <HomeIcon className="w-5 h-5" />
               <div className="hidden md:block">Profile</div>
             </>
           ),
