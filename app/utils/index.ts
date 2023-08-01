@@ -1,4 +1,5 @@
 export * from './auth';
+export * from './coordinates';
 export * from './datetime';
 export * from './distance';
 export * from './email';

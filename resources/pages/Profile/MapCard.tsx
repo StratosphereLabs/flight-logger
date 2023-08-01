@@ -14,6 +14,7 @@ import { darkModeStyle } from '../../common/mapStyle';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
+import { DEFAULT_COORDINATES } from './constants';
 import { getAirports } from './utils';
 
 export const MapCard = (): JSX.Element => {
@@ -21,7 +22,7 @@ export const MapCard = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
-  const [center] = useState({ lat: 37, lng: -122 });
+  const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
     null,
@@ -71,6 +72,7 @@ export const MapCard = (): JSX.Element => {
             : [],
         );
         return {
+          ...mapData,
           heatmap: filteredHeatmapData,
           routes: filteredRoutes,
           airports: getAirports(filteredRoutes),
@@ -86,6 +88,9 @@ export const MapCard = (): JSX.Element => {
   useEffect(() => {
     setTimeout(() => heatmap?.setData(heatmapData));
   }, [heatmap, heatmapData]);
+  useEffect(() => {
+    if (data !== undefined) setCenter(data.centerpoint);
+  }, [data?.centerpoint]);
   useTRPCErrorHandler(error);
   const { theme } = useThemeStore();
   const mapOptions = useMemo(
