@@ -16,6 +16,7 @@ import {
   transformItineraryData,
   getRoutes,
   transformTripData,
+  getCenterpoint,
 } from '../utils';
 
 export const usersRouter = router({
@@ -97,11 +98,10 @@ export const usersRouter = router({
           arrivalAirport: true,
         },
       });
-      const routes = getRoutes(flights);
-      const heatmap = getHeatmap(flights);
       return {
-        heatmap,
-        routes,
+        centerpoint: getCenterpoint(flights),
+        heatmap: getHeatmap(flights),
+        routes: getRoutes(flights),
       };
     }),
   getUserTrips: procedure.input(getUserSchema).query(async ({ ctx, input }) => {

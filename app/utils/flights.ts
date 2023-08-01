@@ -6,6 +6,7 @@ import {
   type flight,
 } from '@prisma/client';
 import { type LatLng } from '../types';
+import { calculateCenterPoint, type Coordinates } from './coordinates';
 import { getInFuture } from './datetime';
 import { calculateDistance } from './distance';
 import { type FlightTimestampsResult, getFlightTimestamps } from './flighttime';
@@ -43,6 +44,25 @@ export interface FlightTimeDataResult
   distance: number;
   flightNumberString: string;
 }
+
+export const getCenterpoint = (result?: FlightsResult): Coordinates => {
+  const airports = Object.values(
+    result?.reduce(
+      (acc: Record<string, airport>, { departureAirport, arrivalAirport }) => ({
+        ...acc,
+        [departureAirport.id]: departureAirport,
+        [arrivalAirport.id]: arrivalAirport,
+      }),
+      {},
+    ) ?? {},
+  );
+  return airports.length > 0
+    ? calculateCenterPoint(airports.map(({ lat, lon }) => ({ lat, lng: lon })))
+    : {
+        lat: 0,
+        lng: 0,
+      };
+};
 
 export const getHeatmap = (result?: FlightsResult): HeatmapResult[] =>
   result?.flatMap(flight => [
