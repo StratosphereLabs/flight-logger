@@ -52,19 +52,52 @@ export const airportsRouter = router({
     });
     return airports;
   }),
-  getAirport: procedure.input(getAirportSchema).query(async ({ input }) => {
-    const { id } = input;
-    const airport = await prisma.airport.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (airport === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Airport not found.',
+  getAirport: procedure
+    .input(getAirportSchema)
+    .query(async ({ ctx, input }) => {
+      const { id } = input;
+      const username = input?.username ?? ctx.user?.username;
+      const airport = await prisma.airport.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          _count: {
+            select: {
+              departureFlights: {
+                where: {
+                  user: {
+                    username,
+                  },
+                  outTime: {
+                    lt: new Date(),
+                  },
+                },
+              },
+              arrivalFlights: {
+                where: {
+                  user: {
+                    username,
+                  },
+                  inTime: {
+                    lt: new Date(),
+                  },
+                },
+              },
+            },
+          },
+        },
       });
-    }
-    return airport;
-  }),
+      if (airport === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Airport not found.',
+        });
+      }
+      return {
+        ...airport,
+        numFlights:
+          airport._count.departureFlights + airport._count.arrivalFlights,
+      };
+    }),
 });
