@@ -13,6 +13,7 @@ import { useTRPCErrorHandler } from '../../common/hooks';
 import { darkModeStyle } from '../../common/mapStyle';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { getAirports } from './utils';
 
 export const MapCard = (): JSX.Element => {
@@ -20,18 +21,25 @@ export const MapCard = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
-  const [center, setCenter] = useState({ lat: 37, lng: -122 });
-  const [activeAirportId, setActiveAirportId] = useState<string | null>(null);
-  const [isFrozen, setIsFrozen] = useState(false);
+  const [center] = useState({ lat: 37, lng: -122 });
+  const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
+  const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
+    null,
+  );
   const [heatmap, setHeatmap] =
     useState<google.maps.visualization.HeatmapLayer | null>(null);
   const methods = useForm({
     defaultValues: {
       showUpcoming: false,
+      showCompleted: true,
       mapMode: 'routes',
     },
   });
-  const [showUpcoming, mapMode] = methods.watch(['showUpcoming', 'mapMode']);
+  const [showUpcoming, showCompleted, mapMode] = methods.watch([
+    'showUpcoming',
+    'showCompleted',
+    'mapMode',
+  ]);
   const { username } = useParams();
   const { data, error, isFetching } = trpc.users.getUserMapData.useQuery(
     {
@@ -41,14 +49,13 @@ export const MapCard = (): JSX.Element => {
       select: mapData => {
         const filteredHeatmapData = mapData.heatmap.flatMap(
           ({ inFuture, lat, lng }) =>
-            showUpcoming || !inFuture ? [new google.maps.LatLng(lat, lng)] : [],
+            (showUpcoming || !inFuture) && (showCompleted || inFuture)
+              ? [new google.maps.LatLng(lat, lng)]
+              : [],
         );
         const filteredRoutes = mapData.routes.filter(
-          ({ inFuture, departureAirport, arrivalAirport }) =>
-            (activeAirportId === null ||
-              activeAirportId === departureAirport.id ||
-              activeAirportId === arrivalAirport.id) &&
-            (showUpcoming || !inFuture),
+          ({ inFuture }) =>
+            (showUpcoming || !inFuture) && (showCompleted || inFuture),
         );
         return {
           heatmap: filteredHeatmapData,
@@ -72,6 +79,7 @@ export const MapCard = (): JSX.Element => {
     () => ({
       center,
       minZoom: 2,
+      fullscreenControl: false,
       mapTypeControl: false,
       zoomControl: false,
       streetViewControl: false,
@@ -97,35 +105,35 @@ export const MapCard = (): JSX.Element => {
           }}
           zoom={3}
           options={mapOptions}
+          onClick={() => {
+            setSelectedAirportId(null);
+          }}
         >
-          {data?.airports?.map(({ id, lat, lon, name }) => (
+          {data?.airports?.map(({ id, lat, lon }) => (
             <MarkerF
               visible={mapMode === 'routes'}
               key={id}
               position={{ lat, lng: lon }}
               title={id}
               onClick={() => {
-                if (!isFrozen) {
-                  setCenter({ lat, lng: lon });
-                }
-                setIsFrozen(currentIsFrozen => !currentIsFrozen);
+                setSelectedAirportId(id);
               }}
               onMouseOver={() => {
-                if (!isFrozen) {
-                  setActiveAirportId(id);
-                }
+                setHoverAirportId(id);
               }}
               onMouseOut={() => {
-                if (!isFrozen) {
-                  setActiveAirportId(null);
-                }
+                setHoverAirportId(null);
               }}
               options={{
                 icon: {
                   path: google.maps.SymbolPath.CIRCLE,
-                  fillColor: activeAirportId === id ? 'yellow' : 'white',
+                  fillColor:
+                    selectedAirportId === id || hoverAirportId === id
+                      ? 'yellow'
+                      : 'white',
                   fillOpacity: 0.8,
-                  scale: activeAirportId === id ? 8 : 5,
+                  scale:
+                    selectedAirportId === id || hoverAirportId === id ? 8 : 5,
                   strokeColor: 'black',
                   strokeWeight: 2,
                   strokeOpacity: 1,
@@ -133,21 +141,36 @@ export const MapCard = (): JSX.Element => {
               }}
             />
           ))}
-          {data?.routes?.map(({ departureAirport, arrivalAirport }, index) => (
-            <PolylineF
-              visible={mapMode === 'routes'}
-              key={index}
-              options={{
-                strokeOpacity: 0.5,
-                strokeColor: 'red',
-                geodesic: true,
-              }}
-              path={[
-                { lat: departureAirport.lat, lng: departureAirport.lon },
-                { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
-              ]}
-            />
-          ))}
+          {data?.routes?.map(
+            ({ departureAirport, arrivalAirport, inFuture }, index) => {
+              const isHover = [departureAirport.id, arrivalAirport.id].includes(
+                hoverAirportId ?? '',
+              );
+              const isSelected = [
+                departureAirport.id,
+                arrivalAirport.id,
+              ].includes(selectedAirportId ?? '');
+              const isActive = isSelected || isHover;
+              return (
+                <PolylineF
+                  visible={mapMode === 'routes'}
+                  key={index}
+                  options={{
+                    strokeOpacity:
+                      selectedAirportId === null || isSelected ? 0.5 : 0.1,
+                    strokeColor: isActive ? 'blue' : inFuture ? 'white' : 'red',
+                    strokeWeight: isActive ? 4 : 2,
+                    zIndex: isActive ? 10 : inFuture ? 5 : undefined,
+                    geodesic: true,
+                  }}
+                  path={[
+                    { lat: departureAirport.lat, lng: departureAirport.lon },
+                    { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
+                  ]}
+                />
+              );
+            },
+          )}
           <HeatmapLayerF
             data={heatmapData}
             onLoad={setHeatmap}
@@ -161,9 +184,27 @@ export const MapCard = (): JSX.Element => {
             }}
           />
         </GoogleMap>
-        <Form className="flex flex-wrap gap-4 p-3 absolute" methods={methods}>
+        <Form
+          className="flex justify-between gap-2 p-3 absolute w-full pointer-events-none"
+          methods={methods}
+        >
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col bg-base-100/70 rounded-xl px-2 pointer-events-auto">
+              <FormCheckbox
+                inputClassName="bg-base-200"
+                labelText="Show upcoming"
+                name="showUpcoming"
+              />
+              <FormCheckbox
+                inputClassName="bg-base-200"
+                labelText="Show completed"
+                name="showCompleted"
+              />
+            </div>
+            <AirportInfoOverlay airportId={selectedAirportId} />
+          </div>
           <Select
-            className="w-[150px]"
+            className="w-[150px] pointer-events-auto"
             formValueMode="id"
             getItemText={({ text }) => text}
             options={[
@@ -176,24 +217,18 @@ export const MapCard = (): JSX.Element => {
                 text: 'Heatmap',
               },
             ]}
-            menuClassName="right-0"
+            menuClassName="right-0 w-full"
             name="mapMode"
-          />
-          <FormCheckbox
-            className="bg-base-100/70 rounded-xl px-2"
-            inputClassName="bg-base-200"
-            labelText="Show upcoming flights"
-            name="showUpcoming"
           />
         </Form>
       </LoadingCard>
     ),
     [
-      activeAirportId,
+      selectedAirportId,
       data,
       heatmapData,
+      hoverAirportId,
       isFetching,
-      isFrozen,
       isLoaded,
       mapMode,
       mapOptions,
