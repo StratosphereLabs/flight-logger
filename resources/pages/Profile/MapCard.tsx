@@ -53,9 +53,22 @@ export const MapCard = (): JSX.Element => {
               ? [new google.maps.LatLng(lat, lng)]
               : [],
         );
-        const filteredRoutes = mapData.routes.filter(
-          ({ inFuture }) =>
-            (showUpcoming || !inFuture) && (showCompleted || inFuture),
+        const filteredRoutes = mapData.routes.flatMap(route =>
+          (showUpcoming || !route.inFuture) && (showCompleted || route.inFuture)
+            ? [
+                {
+                  ...route,
+                  isHover: [
+                    route.departureAirport.id,
+                    route.arrivalAirport.id,
+                  ].includes(hoverAirportId ?? ''),
+                  isSelected: [
+                    route.departureAirport.id,
+                    route.arrivalAirport.id,
+                  ].includes(selectedAirportId ?? ''),
+                },
+              ]
+            : [],
         );
         return {
           heatmap: filteredHeatmapData,
@@ -109,47 +122,54 @@ export const MapCard = (): JSX.Element => {
             setSelectedAirportId(null);
           }}
         >
-          {data?.airports?.map(({ id, lat, lon }) => (
-            <MarkerF
-              visible={mapMode === 'routes'}
-              key={id}
-              position={{ lat, lng: lon }}
-              title={id}
-              onClick={() => {
-                setSelectedAirportId(id);
-              }}
-              onMouseOver={() => {
-                setHoverAirportId(id);
-              }}
-              onMouseOut={() => {
-                setHoverAirportId(null);
-              }}
-              options={{
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  fillColor:
-                    selectedAirportId === id || hoverAirportId === id
-                      ? 'yellow'
-                      : 'white',
-                  fillOpacity: 0.8,
-                  scale:
-                    selectedAirportId === id || hoverAirportId === id ? 8 : 5,
-                  strokeColor: 'black',
-                  strokeWeight: 2,
-                  strokeOpacity: 1,
-                },
-              }}
-            />
-          ))}
+          {data?.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
+            const isActive = selectedAirportId === id || hoverAirportId === id;
+            return (
+              <MarkerF
+                visible={mapMode === 'routes'}
+                key={id}
+                position={{ lat, lng: lon }}
+                title={id}
+                onClick={() => {
+                  setSelectedAirportId(id);
+                }}
+                onMouseOver={() => {
+                  setHoverAirportId(id);
+                }}
+                onMouseOut={() => {
+                  setHoverAirportId(null);
+                }}
+                options={{
+                  icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: isActive ? 'yellow' : 'white',
+                    fillOpacity:
+                      hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
+                    scale: isActive ? 8 : 5,
+                    strokeColor: 'black',
+                    strokeWeight: isActive ? 3 : 2,
+                    strokeOpacity:
+                      hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
+                  },
+                  zIndex:
+                    hasSelectedRoute || selectedAirportId === null
+                      ? 10
+                      : undefined,
+                }}
+              />
+            );
+          })}
           {data?.routes?.map(
-            ({ departureAirport, arrivalAirport, inFuture }, index) => {
-              const isHover = [departureAirport.id, arrivalAirport.id].includes(
-                hoverAirportId ?? '',
-              );
-              const isSelected = [
-                departureAirport.id,
-                arrivalAirport.id,
-              ].includes(selectedAirportId ?? '');
+            (
+              {
+                departureAirport,
+                arrivalAirport,
+                inFuture,
+                isHover,
+                isSelected,
+              },
+              index,
+            ) => {
               const isActive = isSelected || isHover;
               return (
                 <PolylineF

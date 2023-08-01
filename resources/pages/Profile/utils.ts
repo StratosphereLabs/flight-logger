@@ -1,19 +1,37 @@
 import { type airport } from '@prisma/client';
 import { type UsersRouterOutput } from '../../../app/routes/users';
 
-export const getAirports = (
-  result: UsersRouterOutput['getUserMapData']['routes'],
-): airport[] => {
+export type RouteInput =
+  UsersRouterOutput['getUserMapData']['routes'][number] & {
+    isHover: boolean;
+    isSelected: boolean;
+  };
+
+export type AirportResult = airport & {
+  hasSelectedRoute: boolean;
+};
+
+export const getAirports = (result: RouteInput[]): AirportResult[] => {
   const departureAirports =
     result?.map(({ departureAirport }) => departureAirport) ?? [];
   const arrivalAirports =
     result?.map(({ arrivalAirport }) => arrivalAirport) ?? [];
+  const selectedAirportIds = [
+    ...new Set(
+      result?.flatMap(({ isSelected, departureAirport, arrivalAirport }) =>
+        isSelected ? [departureAirport.id, arrivalAirport.id] : [],
+      ),
+    ),
+  ];
   const airportsMap = [...departureAirports, ...arrivalAirports].reduce<
-    Record<string, airport>
+    Record<string, AirportResult>
   >(
     (acc, airport) => ({
       ...acc,
-      [airport.id]: airport,
+      [airport.id]: {
+        ...airport,
+        hasSelectedRoute: selectedAirportIds.includes(airport.id),
+      },
     }),
     {},
   );
