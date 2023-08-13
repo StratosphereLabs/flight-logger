@@ -112,7 +112,7 @@ export const EditFlightModal = ({
       title="Edit Flight"
     >
       <Form
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-4 pt-4"
         methods={methods}
         onFormSubmit={values => {
           mutate(values);
@@ -289,26 +289,26 @@ export const EditFlightModal = ({
           name="trackingLink"
           showDirty
         />
+        <div className="modal-action">
+          <Button
+            color="secondary"
+            outline
+            onClick={() => {
+              setIsEditDialogOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            disabled={!methods.formState.isDirty}
+            loading={isLoading}
+            type="submit"
+          >
+            Save
+          </Button>
+        </div>
       </Form>
-      <div className="modal-action">
-        <Button
-          color="secondary"
-          outline
-          onClick={() => {
-            setIsEditDialogOpen(false);
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          color="primary"
-          disabled={!methods.formState.isDirty}
-          loading={isLoading}
-          type="submit"
-        >
-          Save
-        </Button>
-      </div>
     </Modal>
   );
 };

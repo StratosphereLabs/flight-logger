@@ -35,8 +35,10 @@ export const WarningModal = ({
       open={isWarningDialogOpen}
       title="Warning"
     >
-      All of your flights will be deleted and replaced with the ones inside the
-      selected file. Are you sure you wish to continue?
+      <div className="pt-4">
+        All of your flights will be deleted and replaced with the ones inside
+        the selected file. Are you sure you wish to continue?
+      </div>
     </Modal>
   );
 };

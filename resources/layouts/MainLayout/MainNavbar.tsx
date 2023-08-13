@@ -190,7 +190,10 @@ export const MainNavbar = (): JSX.Element => {
         open={isLogoutDialogOpen}
         title="Are you sure?"
       >
-        Please press confirm to sign out of <strong>{data?.username}</strong>?
+        <div className="pt-4">
+          Please press <strong>Log Out</strong> to sign out of{' '}
+          <strong>{data?.username}</strong>
+        </div>
       </Modal>
     </>
   );

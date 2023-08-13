@@ -39,7 +39,9 @@ export const ResetItineraryModal = ({
       open={isResetItineraryModalOpen}
       title="Reset Itinerary"
     >
-      Are you sure you want to clear your entered flights?
+      <div className="pt-4">
+        Are you sure you want to clear your entered flights?
+      </div>
     </Modal>
   );
 };
