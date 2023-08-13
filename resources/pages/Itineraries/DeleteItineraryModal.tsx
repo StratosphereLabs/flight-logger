@@ -54,8 +54,10 @@ export const DeleteItineraryModal = (): JSX.Element => {
       open={isDeleteDialogOpen}
       title="Delete Itinerary"
     >
-      Are you sure you want to delete{' '}
-      <span className="font-bold">{activeItinerary?.name}</span>?
+      <div className="pt-4">
+        Are you sure you want to delete{' '}
+        <span className="font-bold">{activeItinerary?.name}</span>?
+      </div>
     </Modal>
   );
 };

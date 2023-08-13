@@ -77,7 +77,7 @@ export const CreateItineraryModal = (): JSX.Element => {
         ref={modalRef}
       >
         <Form
-          className="flex flex-col gap-4 w-full"
+          className="flex flex-col gap-4 w-full pt-4"
           methods={methods}
           onFormSubmit={data => {
             addFlight(data);

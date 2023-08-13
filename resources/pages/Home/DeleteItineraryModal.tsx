@@ -39,12 +39,14 @@ export const DeleteItineraryModal = (): JSX.Element => {
       open={isDeleteItineraryModalOpen}
       title="Delete Flight"
     >
-      Are you sure you want to delete your{' '}
-      <strong>
-        {flight?.departureAirport?.id ?? ''} -{' '}
-        {flight?.arrivalAirport?.id ?? ''}
-      </strong>{' '}
-      flight?
+      <div className="pt-4">
+        Are you sure you want to delete your{' '}
+        <strong>
+          {flight?.departureAirport?.id ?? ''} -{' '}
+          {flight?.arrivalAirport?.id ?? ''}
+        </strong>{' '}
+        flight?
+      </div>
     </Modal>
   );
 };

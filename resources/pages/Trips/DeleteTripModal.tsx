@@ -54,9 +54,11 @@ export const DeleteTripModal = (): JSX.Element => {
       open={isDeleteDialogOpen}
       title="Delete Trip"
     >
-      Are you sure you want to delete{' '}
-      <span className="font-bold">{activeTrip?.name}</span>? This will not
-      delete the flights associated with this trip.
+      <div className="pt-4">
+        Are you sure you want to delete{' '}
+        <span className="font-bold">{activeTrip?.name}</span>? This will not
+        delete the flights associated with this trip.
+      </div>
     </Modal>
   );
 };

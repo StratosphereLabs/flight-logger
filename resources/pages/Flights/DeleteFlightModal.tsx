@@ -54,12 +54,14 @@ export const DeleteFlightModal = (): JSX.Element => {
       open={isDeleteDialogOpen}
       title="Delete Flight"
     >
-      Are you sure you want to delete your{' '}
-      <strong>
-        {activeFlight?.departureAirportId ?? ''} -{' '}
-        {activeFlight?.arrivalAirportId ?? ''}
-      </strong>{' '}
-      flight?
+      <div className="pt-4">
+        Are you sure you want to delete your{' '}
+        <strong>
+          {activeFlight?.departureAirportId ?? ''} -{' '}
+          {activeFlight?.arrivalAirportId ?? ''}
+        </strong>{' '}
+        flight?
+      </div>
     </Modal>
   );
 };

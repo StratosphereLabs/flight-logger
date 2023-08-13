@@ -57,7 +57,7 @@ export const CreateTripModal = ({
       title={`Create Trip (${flightIds.length} flights)`}
     >
       <Form
-        className="flex flex-col gap-4"
+        className="flex flex-col pt-4"
         methods={methods}
         onFormSubmit={({ tripName }) => {
           mutate({ name: tripName, flightIds });
