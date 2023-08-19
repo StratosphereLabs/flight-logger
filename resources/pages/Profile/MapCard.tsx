@@ -6,7 +6,7 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Form, FormCheckbox, LoadingCard, Select } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -16,6 +16,12 @@ import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { DEFAULT_COORDINATES } from './constants';
 import { getAirports } from './utils';
+
+export interface MapCardFormData {
+  showUpcoming: boolean;
+  showCompleted: boolean;
+  mapMode: 'routes' | 'heatmap';
+}
 
 export const MapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({
@@ -29,18 +35,20 @@ export const MapCard = (): JSX.Element => {
   );
   const [heatmap, setHeatmap] =
     useState<google.maps.visualization.HeatmapLayer | null>(null);
-  const methods = useForm({
+  const methods = useForm<MapCardFormData>({
     defaultValues: {
       showUpcoming: false,
       showCompleted: true,
       mapMode: 'routes',
     },
   });
-  const [showUpcoming, showCompleted, mapMode] = methods.watch([
-    'showUpcoming',
-    'showCompleted',
-    'mapMode',
-  ]);
+  const [showUpcoming, showCompleted, mapMode] = useWatch<
+    MapCardFormData,
+    ['showUpcoming', 'showCompleted', 'mapMode']
+  >({
+    control: methods.control,
+    name: ['showUpcoming', 'showCompleted', 'mapMode'],
+  });
   const { username } = useParams();
   const { data, error, isFetching } = trpc.users.getUserMapData.useQuery(
     {

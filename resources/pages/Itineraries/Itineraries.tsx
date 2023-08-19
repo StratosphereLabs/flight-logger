@@ -12,12 +12,8 @@ import { useItinerariesPageStore } from './itinerariesPageStore';
 export const Itineraries = (): JSX.Element => {
   const navigate = useNavigate();
   const { username } = useParams();
-  const {
-    setActiveItinerary,
-    setIsDeleteDialogOpen,
-    setIsEditDialogOpen,
-    setIsViewDialogOpen,
-  } = useItinerariesPageStore();
+  const { setActiveItinerary, setIsDeleteDialogOpen, setIsEditDialogOpen } =
+    useItinerariesPageStore();
   const copyToClipboard = useCopyToClipboard();
   const { data, error, isFetching } = trpc.users.getUserItineraries.useQuery(
     {
@@ -140,8 +136,7 @@ export const Itineraries = (): JSX.Element => {
                     setIsEditDialogOpen(true);
                   }}
                   onView={() => {
-                    setActiveItinerary(row.original);
-                    setIsViewDialogOpen(true);
+                    navigate(`/itinerary/${row.original.id}`);
                   }}
                 />
               ),

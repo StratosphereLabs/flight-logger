@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import {
   Button,
   Form,
@@ -40,11 +40,13 @@ export const EditFlightModal = ({
     defaultValues: editFlightDefaultValues,
     resolver: zodResolver(editFlightSchema),
   });
-  const [departureDate, tailNumber, airframe] = methods.watch([
-    'outDateISO',
-    'tailNumber',
-    'airframe',
-  ]);
+  const [departureDate, tailNumber, airframe] = useWatch<
+    EditFlightRequest,
+    ['outDateISO', 'tailNumber', 'airframe']
+  >({
+    control: methods.control,
+    name: ['outDateISO', 'tailNumber', 'airframe'],
+  });
   const shouldShowRegField = useMemo(
     () =>
       departureDate !== ''

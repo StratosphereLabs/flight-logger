@@ -93,7 +93,7 @@ export const CreateItineraryModal = (): JSX.Element => {
             />
           ) : null}
           <ItineraryBuilderFields />
-          <div className="divider" />
+          <div className="divider my-2" />
           <div className="modal-action justify-center">
             <Button color="primary" className="w-full max-w-md" type="submit">
               Add Flight

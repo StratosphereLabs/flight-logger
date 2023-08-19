@@ -17,12 +17,21 @@ export const DeleteTripModal = (): JSX.Element => {
     onSuccess: async ({ id }) => {
       handleSuccess('Trip Deleted');
       setIsDeleteDialogOpen(false);
-      const previousTrips = utils.users.getUserTrips.getData({
-        username,
-      });
-      utils.users.getUserTrips.setData(
-        { username },
-        previousTrips?.filter(trip => trip.id !== id),
+      utils.users.getUserTrips.setData({ username }, previousTrips =>
+        previousTrips !== undefined
+          ? {
+              upcomingTrips: previousTrips.upcomingTrips.filter(
+                trip => trip.id !== id,
+              ),
+              currentTrips: previousTrips.currentTrips.filter(
+                trip => trip.id !== id,
+              ),
+              completedTrips: previousTrips.completedTrips.filter(
+                trip => trip.id !== id,
+              ),
+              total: previousTrips.total - 1,
+            }
+          : undefined,
       );
       await utils.users.getUserFlights.invalidate();
     },

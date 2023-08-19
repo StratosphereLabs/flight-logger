@@ -8,10 +8,14 @@ import { type TripsPageNavigationState } from './Trips';
 import { useTripsPageStore } from './tripsPageStore';
 
 export interface TripDisclosureProps {
-  trip: UsersRouterOutput['getUserTrips'][number];
+  defaultOpen?: boolean;
+  trip: UsersRouterOutput['getUserTrips']['upcomingTrips'][number];
 }
 
-export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
+export const TripDisclosure = ({
+  defaultOpen,
+  trip,
+}: TripDisclosureProps): JSX.Element => {
   const copyToClipboard = useCopyToClipboard();
   const disclosureRef = useRef<HTMLDivElement>(null);
   const { state } = useLocation() as {
@@ -75,12 +79,15 @@ export const TripDisclosure = ({ trip }: TripDisclosureProps): JSX.Element => {
         color: 'ghost',
       }}
       className={trip.inFuture ? 'bg-info/10' : 'bg-success/10'}
-      defaultOpen={trip.id === tripId || trip.id === state?.tripId}
+      defaultOpen={
+        trip.id === tripId || trip.id === state?.tripId || defaultOpen
+      }
       ref={disclosureRef}
       rounded
     >
       <UserFlightsTable
         data={trip.flights}
+        dateBadgeColor={({ inFuture }) => (inFuture ? 'secondary' : 'ghost')}
         onCopyLink={({ id }) => {
           copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!');
         }}

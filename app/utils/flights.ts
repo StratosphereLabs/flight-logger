@@ -88,31 +88,30 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] =>
     [],
   ) ?? [];
 
-export const getFlightTimeData = (
-  flights: FlightData[],
-): FlightTimeDataResult[] =>
-  flights.map(flight => {
-    const timestamps = getFlightTimestamps({
-      departureAirport: flight.departureAirport,
-      arrivalAirport: flight.arrivalAirport,
-      duration: flight.duration,
-      outTime: flight.outTime,
-      inTime: flight.inTime,
-    });
-    const flightDistance = calculateDistance(
-      flight.departureAirport.lat,
-      flight.departureAirport.lon,
-      flight.arrivalAirport.lat,
-      flight.arrivalAirport.lon,
-    );
-    return {
-      ...flight,
-      ...timestamps,
-      tailNumber: flight.airframe?.registration ?? flight.tailNumber,
-      flightNumberString:
-        flight.flightNumber !== null
-          ? `${flight.airline?.iata ?? ''} ${flight.flightNumber}`.trim()
-          : '',
-      distance: Math.round(flightDistance),
-    };
+export const transformFlightData = (
+  flight: FlightData,
+): FlightTimeDataResult => {
+  const timestamps = getFlightTimestamps({
+    departureAirport: flight.departureAirport,
+    arrivalAirport: flight.arrivalAirport,
+    duration: flight.duration,
+    outTime: flight.outTime,
+    inTime: flight.inTime,
   });
+  const flightDistance = calculateDistance(
+    flight.departureAirport.lat,
+    flight.departureAirport.lon,
+    flight.arrivalAirport.lat,
+    flight.arrivalAirport.lon,
+  );
+  return {
+    ...flight,
+    ...timestamps,
+    tailNumber: flight.airframe?.registration ?? flight.tailNumber,
+    flightNumberString:
+      flight.flightNumber !== null
+        ? `${flight.airline?.iata ?? ''} ${flight.flightNumber}`.trim()
+        : '',
+    distance: Math.round(flightDistance),
+  };
+};

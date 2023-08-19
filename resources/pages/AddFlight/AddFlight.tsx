@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import {
   Button,
   CardBody,
@@ -37,7 +37,13 @@ export const AddFlight = (): JSX.Element => {
     defaultValues: addFlightDefaultValues,
     resolver: zodResolver(addFlightSchema),
   });
-  const [departureDate, airframe] = methods.watch(['outDateISO', 'airframe']);
+  const [departureDate, airframe] = useWatch<
+    AddFlightRequest,
+    ['outDateISO', 'airframe']
+  >({
+    control: methods.control,
+    name: ['outDateISO', 'airframe'],
+  });
   const shouldShowRegField = useMemo(
     () =>
       departureDate !== ''
@@ -129,7 +135,7 @@ export const AddFlight = (): JSX.Element => {
                   type="time"
                 />
               </div>
-              <div className="divider" />
+              <div className="divider my-2" />
               {shouldShowRegField ? (
                 <div className="flex flex-wrap justify-center">
                   <AirframeInput
@@ -170,7 +176,7 @@ export const AddFlight = (): JSX.Element => {
                   name="aircraftType"
                 />
               </div>
-              <div className="divider" />
+              <div className="divider my-2" />
               <div className="flex flex-wrap justify-between gap-12">
                 <FormRadio
                   className="w-[400px] min-w-[250px]"
@@ -255,7 +261,7 @@ export const AddFlight = (): JSX.Element => {
                   ]}
                 />
               </div>
-              <div className="divider" />
+              <div className="divider my-2" />
               <div className="mb-8 flex flex-wrap gap-8">
                 <FormControl
                   className="min-w-[250px] flex-1"

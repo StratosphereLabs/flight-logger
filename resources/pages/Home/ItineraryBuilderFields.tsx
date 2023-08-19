@@ -70,7 +70,7 @@ export const ItineraryBuilderFields = forwardRef<
           type="time"
         />
       </div>
-      <div className="divider" />
+      <div className="divider my-2" />
       <div className="flex flex-wrap justify-between gap-8">
         <AirlineInput
           className="w-[350px] min-w-[250px]"

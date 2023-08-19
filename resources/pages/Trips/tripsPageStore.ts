@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { type UsersRouterOutput } from '../../../app/routes/users';
 
 interface TripsPageState {
-  activeTrip: UsersRouterOutput['getUserTrips'][number] | null;
+  activeTrip: UsersRouterOutput['getUserTrips']['upcomingTrips'][number] | null;
   isDeleteDialogOpen: boolean;
   isEditDialogOpen: boolean;
   isViewDialogOpen: boolean;
   setActiveTrip: (
-    flight: UsersRouterOutput['getUserTrips'][number] | null,
+    trip: UsersRouterOutput['getUserTrips']['upcomingTrips'][number] | null,
   ) => void;
   setIsDeleteDialogOpen: (open: boolean) => void;
   setIsEditDialogOpen: (open: boolean) => void;

@@ -11,10 +11,10 @@ import { procedure, router } from '../trpc';
 import {
   excludeKeys,
   fetchGravatarUrl,
-  getFlightTimeData,
   getHeatmap,
-  transformItineraryData,
   getRoutes,
+  transformFlightData,
+  transformItineraryData,
   transformTripData,
   getCenterpoint,
 } from '../utils';
@@ -60,29 +60,77 @@ export const usersRouter = router({
   getUserFlights: procedure
     .input(getUserFlightsSchema)
     .query(async ({ ctx, input }) => {
-      const result = await prisma.flight.findMany({
-        where: {
-          user: {
-            username: input?.username ?? ctx.user?.username,
+      const includeObj = {
+        departureAirport: true,
+        arrivalAirport: true,
+        airline: true,
+        aircraftType: true,
+        airframe: {
+          include: {
+            operator: true,
           },
-          tripId: input?.withTrip === false ? null : undefined,
         },
-        include: {
-          departureAirport: true,
-          arrivalAirport: true,
-          airline: true,
-          aircraftType: true,
-          airframe: {
-            include: {
-              operator: true,
+      };
+      const [upcomingFlights, currentFlights, completedFlights] =
+        await prisma.$transaction([
+          prisma.flight.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              tripId: input?.withTrip === false ? null : undefined,
+              outTime: {
+                gt: new Date(),
+              },
             },
-          },
-        },
-        orderBy: {
-          outTime: 'desc',
-        },
-      });
-      return getFlightTimeData(result);
+            include: includeObj,
+            orderBy: {
+              outTime: input.layout === 'full' ? 'asc' : 'desc',
+            },
+          }),
+          prisma.flight.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              tripId: input?.withTrip === false ? null : undefined,
+              inTime: {
+                gt: new Date(),
+              },
+              outTime: {
+                lte: new Date(),
+              },
+            },
+            include: includeObj,
+            orderBy: {
+              outTime: input.layout === 'full' ? 'asc' : 'desc',
+            },
+          }),
+          prisma.flight.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              tripId: input?.withTrip === false ? null : undefined,
+              inTime: {
+                lte: new Date(),
+              },
+            },
+            include: includeObj,
+            orderBy: {
+              outTime: 'desc',
+            },
+          }),
+        ]);
+      return {
+        upcomingFlights: upcomingFlights.map(transformFlightData),
+        currentFlights: currentFlights.map(transformFlightData),
+        completedFlights: completedFlights.map(transformFlightData),
+        total:
+          upcomingFlights.length +
+          currentFlights.length +
+          completedFlights.length,
+      };
     }),
   getUserMapData: procedure
     .input(getUserSchema)
@@ -105,35 +153,78 @@ export const usersRouter = router({
       };
     }),
   getUserTrips: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
-    const trips = await prisma.trip.findMany({
-      where: {
-        user: {
-          username: input?.username ?? ctx.user?.username,
-        },
-      },
-      include: {
-        flights: {
-          include: {
-            departureAirport: true,
-            arrivalAirport: true,
-            airline: true,
-            aircraftType: true,
-            airframe: {
-              include: {
-                operator: true,
-              },
+    const includeObj = {
+      flights: {
+        include: {
+          departureAirport: true,
+          arrivalAirport: true,
+          airline: true,
+          aircraftType: true,
+          airframe: {
+            include: {
+              operator: true,
             },
           },
+        },
+        orderBy: {
+          outTime: 'asc' as const,
+        },
+      },
+    };
+    const [upcomingTrips, currentTrips, completedTrips] =
+      await prisma.$transaction([
+        prisma.trip.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            outTime: {
+              gt: new Date(),
+            },
+          },
+          include: includeObj,
           orderBy: {
             outTime: 'asc',
           },
-        },
-      },
-      orderBy: {
-        outTime: 'desc',
-      },
-    });
-    return trips.map(transformTripData);
+        }),
+        prisma.trip.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              gt: new Date(),
+            },
+            outTime: {
+              lte: new Date(),
+            },
+          },
+          include: includeObj,
+          orderBy: {
+            outTime: 'asc',
+          },
+        }),
+        prisma.trip.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              lte: new Date(),
+            },
+          },
+          include: includeObj,
+          orderBy: {
+            outTime: 'desc',
+          },
+        }),
+      ]);
+    return {
+      upcomingTrips: upcomingTrips.map(transformTripData),
+      currentTrips: currentTrips.map(transformTripData),
+      completedTrips: completedTrips.map(transformTripData),
+      total: upcomingTrips.length + currentTrips.length + completedTrips.length,
+    };
   }),
   getUserItineraries: procedure
     .input(getUserSchema)
