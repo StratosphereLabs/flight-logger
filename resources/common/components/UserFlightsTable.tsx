@@ -5,26 +5,36 @@ import {
   getCoreRowModel,
 } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { Badge, Table, type TableSize } from 'stratosphere-ui';
+import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
 import { type UsersRouterOutput } from '../../../app/routes/users';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { ActionsCell } from './ActionsCell';
 
 export interface UserFlightsTableProps {
   className?: string;
-  data?: UsersRouterOutput['getUserFlights'];
+  data?: UsersRouterOutput['getUserFlights']['upcomingFlights'];
+  dateBadgeColor?:
+    | ((
+        flight: UsersRouterOutput['getUserFlights']['upcomingFlights'][number],
+      ) => BadgeColor)
+    | BadgeColor;
   enableRowSelection?: RowSelectionOptions<
-    UsersRouterOutput['getUserFlights'][number]
+    UsersRouterOutput['getUserFlights']['upcomingFlights'][number]
   >['enableRowSelection'];
-  onCopyLink?: (flight: UsersRouterOutput['getUserFlights'][number]) => void;
+  onCopyLink?: (
+    flight: UsersRouterOutput['getUserFlights']['upcomingFlights'][number],
+  ) => void;
   size?: TableSize;
 }
 
-export type FlightsTableRow = Row<UsersRouterOutput['getUserFlights'][number]>;
+export type FlightsTableRow = Row<
+  UsersRouterOutput['getUserFlights']['upcomingFlights'][number]
+>;
 
 export const UserFlightsTable = ({
   className,
   data,
+  dateBadgeColor,
   enableRowSelection,
   onCopyLink,
   size,
@@ -50,7 +60,11 @@ export const UserFlightsTable = ({
             return (
               <Badge
                 className="badge-xs font-normal opacity-80 lg:badge-sm lg:font-semibold"
-                color={row.original.inFuture ? 'secondary' : 'ghost'}
+                color={
+                  typeof dateBadgeColor === 'function'
+                    ? dateBadgeColor(row.original)
+                    : dateBadgeColor
+                }
               >
                 {date}
               </Badge>

@@ -6,6 +6,7 @@ export const getUserSchema = z.object({
 
 export const getUserFlightsSchema = getUserSchema.extend({
   withTrip: z.boolean().optional(),
+  layout: z.enum(['full', 'compact']),
 });
 
 export const getUsersSchema = z.object({

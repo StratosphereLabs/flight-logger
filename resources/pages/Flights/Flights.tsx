@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
@@ -9,7 +9,6 @@ import {
   FormRadioGroup,
   FormRadioGroupOption,
 } from 'stratosphere-ui';
-import { type UsersRouterOutput } from '../../../app/routes/users';
 import {
   Bars2Icon,
   Bars4Icon,
@@ -30,14 +29,12 @@ import { EditFlightModal } from './EditFlightModal';
 import { useFlightsPageStore } from './flightsPageStore';
 import { ViewFlightModal } from './ViewFlightModal';
 
-export interface FlightsData {
-  flights: UsersRouterOutput['getUserFlights'];
-  upcomingFlights: UsersRouterOutput['getUserFlights'];
-  total: number;
-}
-
 export interface FlightsPageNavigationState {
   createTrip: boolean | undefined;
+}
+
+export interface FlightsFormData {
+  layout: 'full' | 'compact';
 }
 
 export const Flights = (): JSX.Element => {
@@ -46,12 +43,15 @@ export const Flights = (): JSX.Element => {
     state: FlightsPageNavigationState | null;
   };
   const navigate = useNavigate();
-  const methods = useForm({
+  const methods = useForm<FlightsFormData>({
     defaultValues: {
       layout: 'full',
     },
   });
-  const layout = methods.watch('layout');
+  const layout = useWatch<FlightsFormData, 'layout'>({
+    control: methods.control,
+    name: 'layout',
+  });
   const { flightId, username } = useParams();
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const {
@@ -76,22 +76,9 @@ export const Flights = (): JSX.Element => {
       {
         username,
         withTrip: !isRowSelectEnabled,
+        layout,
       },
       {
-        select: flights =>
-          flights.reduce(
-            (acc: FlightsData, flight) => {
-              if (flight.inFuture) acc.upcomingFlights.push(flight);
-              else acc.flights.push(flight);
-              acc.total++;
-              return acc;
-            },
-            {
-              upcomingFlights: [],
-              flights: [],
-              total: 0,
-            },
-          ),
         staleTime: 5 * 60 * 1000,
       },
     );
@@ -99,7 +86,8 @@ export const Flights = (): JSX.Element => {
     if (data !== undefined && flightId !== undefined) {
       const flight =
         data.upcomingFlights.find(({ id }) => flightId === id) ??
-        data.flights.find(({ id }) => flightId === id) ??
+        data.currentFlights.find(({ id }) => flightId === id) ??
+        data.completedFlights.find(({ id }) => flightId === id) ??
         null;
       setActiveFlight(flight);
       setIsViewDialogOpen(true);
@@ -113,58 +101,69 @@ export const Flights = (): JSX.Element => {
           {username !== undefined ? `${username}'s Flights` : 'My Flights'}
         </h2>
       </article>
-      {data !== undefined && data.total > 0 ? (
-        <Form
-          className="flex w-full flex-wrap justify-between gap-2"
-          methods={methods}
-        >
-          <div className="flex gap-2">
-            {username === undefined ? (
-              <>
+      <Form
+        className="flex w-full flex-wrap justify-between gap-2"
+        methods={methods}
+      >
+        <div className="flex gap-2">
+          {username === undefined ? (
+            <>
+              <Button
+                color={isRowSelectEnabled ? 'error' : 'secondary'}
+                onClick={() => {
+                  setIsRowSelectEnabled(isEnabled => {
+                    if (isEnabled) resetRowSelection();
+                    return !isEnabled;
+                  });
+                }}
+                outline
+                size="sm"
+              >
+                {isRowSelectEnabled ? (
+                  <CloseIcon className="h-4 w-4" />
+                ) : (
+                  <PlusIcon className="h-4 w-4" />
+                )}
+                {isRowSelectEnabled ? 'Cancel' : 'Add Trip'}
+              </Button>
+              {!isRowSelectEnabled ? (
                 <Button
-                  color={isRowSelectEnabled ? 'error' : 'secondary'}
+                  color="primary"
                   onClick={() => {
-                    setIsRowSelectEnabled(isEnabled => {
-                      if (isEnabled) resetRowSelection();
-                      return !isEnabled;
-                    });
+                    navigate('/add-flight');
                   }}
                   size="sm"
                 >
-                  {isRowSelectEnabled ? (
-                    <CloseIcon className="h-4 w-4" />
-                  ) : (
-                    <PlusIcon className="h-4 w-4" />
-                  )}
-                  {isRowSelectEnabled ? 'Cancel' : 'New Trip'}
+                  <PlusIcon className="h-4 w-4" />
+                  Add Flight
                 </Button>
-                {isRowSelectEnabled ? (
-                  <Button
-                    color="primary"
-                    disabled={Object.keys(rowSelection).length === 0}
-                    onClick={() => {
-                      setIsCreateTripDialogOpen(true);
-                    }}
-                    size="sm"
-                  >
-                    Create ({Object.keys(rowSelection).length})
-                  </Button>
-                ) : null}
-              </>
-            ) : null}
-          </div>
-          <FormRadioGroup name="layout">
-            <FormRadioGroupOption size="sm" value="full">
-              <Bars2Icon className="h-4 w-4" />
-              <span className="sr-only">Full</span>
-            </FormRadioGroupOption>
-            <FormRadioGroupOption size="sm" value="compact">
-              <Bars4Icon className="h-4 w-4" />
-              <span className="sr-only">Compact</span>
-            </FormRadioGroupOption>
-          </FormRadioGroup>
-        </Form>
-      ) : null}
+              ) : null}
+              {isRowSelectEnabled ? (
+                <Button
+                  color="primary"
+                  disabled={Object.keys(rowSelection).length === 0}
+                  onClick={() => {
+                    setIsCreateTripDialogOpen(true);
+                  }}
+                  size="sm"
+                >
+                  Create ({Object.keys(rowSelection).length})
+                </Button>
+              ) : null}
+            </>
+          ) : null}
+        </div>
+        <FormRadioGroup name="layout">
+          <FormRadioGroupOption size="sm" value="full">
+            <Bars2Icon className="h-4 w-4" />
+            <span className="sr-only">Full</span>
+          </FormRadioGroupOption>
+          <FormRadioGroupOption size="sm" value="compact">
+            <Bars4Icon className="h-4 w-4" />
+            <span className="sr-only">Compact</span>
+          </FormRadioGroupOption>
+        </FormRadioGroup>
+      </Form>
       {isFetching ? (
         <div className="flex flex-1 justify-center pt-8">
           <span className="loading loading-spinner" />
@@ -193,6 +192,7 @@ export const Flights = (): JSX.Element => {
               <UserFlightsTable
                 className="table-sm xl:table-md"
                 data={data.upcomingFlights}
+                dateBadgeColor="secondary"
                 enableRowSelection={enableRowSelection}
                 onCopyLink={({ id }) => {
                   copyToClipboard(
@@ -209,14 +209,46 @@ export const Flights = (): JSX.Element => {
               </div>
             </div>
           )}
-          <div className="divider" />
-          {data.flights.length > 0 ? (
+          <div className="divider my-2" />
+          {data.currentFlights.length > 0 ? (
+            <>
+              <Disclosure
+                buttonProps={{
+                  children: <span>Current Flight</span>,
+                  color: 'ghost',
+                  size: 'lg',
+                }}
+                className="bg-accent/10"
+                defaultOpen={
+                  isRowSelectEnabled || data.currentFlights.length > 0
+                }
+                rounded
+              >
+                <UserFlightsTable
+                  className="table-sm border-separate xl:table-md"
+                  data={data.currentFlights}
+                  dateBadgeColor="accent"
+                  enableRowSelection={enableRowSelection}
+                  onCopyLink={({ id }) => {
+                    copyToClipboard(
+                      `${flightsLink}/${id}`,
+                      'Link copied to clipboard!',
+                    );
+                  }}
+                />
+              </Disclosure>
+              <div className="divider my-2" />
+            </>
+          ) : null}
+          {data.completedFlights.length > 0 ? (
             <Disclosure
               buttonProps={{
                 children: (
                   <span>
                     Completed Flights{' '}
-                    {!isRowSelectEnabled ? `(${data.flights.length})` : ''}
+                    {!isRowSelectEnabled
+                      ? `(${data.completedFlights.length})`
+                      : ''}
                   </span>
                 ),
                 color: 'ghost',
@@ -228,7 +260,8 @@ export const Flights = (): JSX.Element => {
             >
               <UserFlightsTable
                 className="table-sm xl:table-md"
-                data={data.flights}
+                data={data.completedFlights}
+                dateBadgeColor="ghost"
                 enableRowSelection={enableRowSelection}
                 onCopyLink={({ id }) => {
                   copyToClipboard(
@@ -249,8 +282,13 @@ export const Flights = (): JSX.Element => {
       ) : null}
       {layout === 'compact' && data !== undefined && data.total > 0 ? (
         <UserFlightsTable
-          className="table-sm shadow-md xl:table-md"
-          data={[...data.upcomingFlights, ...data.flights]}
+          className="shadow-md"
+          data={[
+            ...data.upcomingFlights,
+            ...data.currentFlights,
+            ...data.completedFlights,
+          ]}
+          dateBadgeColor={({ inFuture }) => (inFuture ? 'secondary' : 'ghost')}
           enableRowSelection={enableRowSelection}
           onCopyLink={({ id }) => {
             copyToClipboard(
@@ -258,6 +296,7 @@ export const Flights = (): JSX.Element => {
               'Link copied to clipboard!',
             );
           }}
+          size="sm"
         />
       ) : null}
       {data?.total === 0 ? (
@@ -278,7 +317,10 @@ export const Flights = (): JSX.Element => {
           </div>
         </div>
       ) : null}
-      <DeleteFlightModal />
+      <DeleteFlightModal
+        formControl={methods.control}
+        isRowSelectEnabled={isRowSelectEnabled}
+      />
       <EditFlightModal onSuccess={async () => await refetch()} />
       <ViewFlightModal />
       <CreateTripModal

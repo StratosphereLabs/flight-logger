@@ -5,7 +5,7 @@ import { getDurationDays, getInFuture } from './datetime';
 import {
   type FlightData,
   type FlightTimeDataResult,
-  getFlightTimeData,
+  transformFlightData,
 } from './flights';
 
 export interface TripWithData extends trip {
@@ -31,5 +31,5 @@ export const transformTripData = (trip: TripWithData): TripResult => ({
     DATE_FORMAT_ISO,
   ),
   inFuture: getInFuture(trip.outTime),
-  flights: getFlightTimeData(trip.flights),
+  flights: trip.flights.map(transformFlightData),
 });

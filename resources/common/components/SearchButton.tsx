@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -30,7 +30,10 @@ export const SearchButton = (): JSX.Element => {
       user: null,
     },
   });
-  const user = methods.watch('user');
+  const user = useWatch<UserSearchFormData, 'user'>({
+    control: methods.control,
+    name: 'user',
+  });
   useEffect(() => {
     if (user !== null) {
       setIsSearching(false);

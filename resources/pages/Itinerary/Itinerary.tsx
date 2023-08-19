@@ -54,7 +54,7 @@ export const Itinerary = (): JSX.Element | null => {
             </div>
           ) : null}
           {flight.layoverDuration.length > 0 ? (
-            <div className="divider opacity-90">
+            <div className="divider my-2 opacity-90">
               Layover at {flight.departureAirport.iata} (
               {flight.layoverDuration})
             </div>

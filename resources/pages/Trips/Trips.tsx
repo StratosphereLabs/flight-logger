@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
-import { type UsersRouterOutput } from '../../../app/routes/users';
 import { PlusIcon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
@@ -9,38 +8,21 @@ import { type FlightsPageNavigationState, ViewFlightModal } from '../Flights';
 import { DeleteTripModal } from './DeleteTripModal';
 import { TripDisclosure } from './TripDisclosure';
 
-export interface TripsData {
-  trips: UsersRouterOutput['getUserTrips'];
-  upcomingTrips: UsersRouterOutput['getUserTrips'];
-  total: number;
-}
-
 export interface TripsPageNavigationState {
   tripId: string | undefined;
 }
 
 export const Trips = (): JSX.Element => {
   const navigate = useNavigate();
-  const { username } = useParams();
+  const { tripId, username } = useParams();
+  const { state } = useLocation() as {
+    state: TripsPageNavigationState | null;
+  };
   const { data, error, isFetching } = trpc.users.getUserTrips.useQuery(
     {
       username,
     },
     {
-      select: trips =>
-        trips.reduce(
-          (acc: TripsData, trip) => {
-            if (trip.inFuture) acc.upcomingTrips.push(trip);
-            else acc.trips.push(trip);
-            acc.total++;
-            return acc;
-          },
-          {
-            upcomingTrips: [],
-            trips: [],
-            total: 0,
-          },
-        ),
       staleTime: 5 * 60 * 1000,
     },
   );
@@ -62,9 +44,15 @@ export const Trips = (): JSX.Element => {
       ) : null}
       {data !== undefined && data.total > 0 ? (
         <>
-          {data.upcomingTrips.length > 0 ? (
-            data.upcomingTrips.map(trip => (
-              <TripDisclosure key={trip.id} trip={trip} />
+          {data.upcomingTrips.length + data.currentTrips.length > 0 ? (
+            [...data.currentTrips, ...data.upcomingTrips].map((trip, index) => (
+              <TripDisclosure
+                defaultOpen={
+                  trip.id !== tripId && trip.id !== state?.tripId && index === 0
+                }
+                key={trip.id}
+                trip={trip}
+              />
             ))
           ) : (
             <div className="flex justify-center">
@@ -73,9 +61,11 @@ export const Trips = (): JSX.Element => {
               </div>
             </div>
           )}
-          <div className="divider" />
-          {data.trips.length > 0 ? (
-            data.trips.map(trip => <TripDisclosure key={trip.id} trip={trip} />)
+          <div className="divider my-2" />
+          {data.completedTrips.length > 0 ? (
+            data.completedTrips.map(trip => (
+              <TripDisclosure key={trip.id} trip={trip} />
+            ))
           ) : (
             <div className="flex justify-center">
               <div className="flex flex-col items-center gap-8">
