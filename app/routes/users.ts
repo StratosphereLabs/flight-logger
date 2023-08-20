@@ -61,6 +61,7 @@ export const usersRouter = router({
     .input(getUserFlightsSchema)
     .query(async ({ ctx, input }) => {
       const includeObj = {
+        user: true,
         departureAirport: true,
         arrivalAirport: true,
         airline: true,
@@ -154,8 +155,10 @@ export const usersRouter = router({
     }),
   getUserTrips: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
     const includeObj = {
+      user: true,
       flights: {
         include: {
+          user: true,
           departureAirport: true,
           arrivalAirport: true,
           airline: true,

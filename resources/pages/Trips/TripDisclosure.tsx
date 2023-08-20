@@ -3,7 +3,8 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Badge, Disclosure } from 'stratosphere-ui';
 import { type UsersRouterOutput } from '../../../app/routes/users';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
-import { useCopyToClipboard, useProfileLink } from '../../common/hooks';
+import { APP_URL } from '../../common/constants';
+import { useCopyToClipboard } from '../../common/hooks';
 import { type TripsPageNavigationState } from './Trips';
 import { useTripsPageStore } from './tripsPageStore';
 
@@ -23,8 +24,6 @@ export const TripDisclosure = ({
   };
   const { tripId, username } = useParams();
   const { setActiveTrip, setIsDeleteDialogOpen } = useTripsPageStore();
-  const flightsLink = useProfileLink('flights');
-  const tripsLink = useProfileLink('trips');
   useEffect(() => {
     if (tripId !== undefined && tripId === trip.id) {
       setTimeout(() => disclosureRef.current?.scrollIntoView());
@@ -53,7 +52,7 @@ export const TripDisclosure = ({
                 onClick={event => {
                   event.stopPropagation();
                   copyToClipboard(
-                    `${tripsLink}/${trip.id}`,
+                    `${APP_URL}${trip.link}`,
                     'Link copied to clipboard!',
                   );
                 }}
@@ -88,8 +87,8 @@ export const TripDisclosure = ({
       <UserFlightsTable
         data={trip.flights}
         dateBadgeColor={({ inFuture }) => (inFuture ? 'secondary' : 'ghost')}
-        onCopyLink={({ id }) => {
-          copyToClipboard(`${flightsLink}/${id}`, 'Link copied to clipboard!');
+        onCopyLink={({ link }) => {
+          copyToClipboard(`${APP_URL}${link}`, 'Link copied to clipboard!');
         }}
         size="sm"
       />

@@ -16,11 +16,8 @@ import {
   PlusIcon,
   UserFlightsTable,
 } from '../../common/components';
-import {
-  useCopyToClipboard,
-  useProfileLink,
-  useTRPCErrorHandler,
-} from '../../common/hooks';
+import { APP_URL } from '../../common/constants';
+import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
@@ -70,7 +67,6 @@ export const Flights = (): JSX.Element => {
   const enableRowSelection = isRowSelectEnabled
     ? ({ original }: FlightsTableRow) => original.tripId === null
     : false;
-  const flightsLink = useProfileLink('flights');
   const { data, error, isFetching, refetch } =
     trpc.users.getUserFlights.useQuery(
       {
@@ -194,9 +190,9 @@ export const Flights = (): JSX.Element => {
                 data={data.upcomingFlights}
                 dateBadgeColor="secondary"
                 enableRowSelection={enableRowSelection}
-                onCopyLink={({ id }) => {
+                onCopyLink={({ link }) => {
                   copyToClipboard(
-                    `${flightsLink}/${id}`,
+                    `${APP_URL}${link}`,
                     'Link copied to clipboard!',
                   );
                 }}
@@ -229,9 +225,9 @@ export const Flights = (): JSX.Element => {
                   data={data.currentFlights}
                   dateBadgeColor="accent"
                   enableRowSelection={enableRowSelection}
-                  onCopyLink={({ id }) => {
+                  onCopyLink={({ link }) => {
                     copyToClipboard(
-                      `${flightsLink}/${id}`,
+                      `${APP_URL}${link}`,
                       'Link copied to clipboard!',
                     );
                   }}
@@ -263,9 +259,9 @@ export const Flights = (): JSX.Element => {
                 data={data.completedFlights}
                 dateBadgeColor="ghost"
                 enableRowSelection={enableRowSelection}
-                onCopyLink={({ id }) => {
+                onCopyLink={({ link }) => {
                   copyToClipboard(
-                    `${flightsLink}/${id}`,
+                    `${APP_URL}${link}`,
                     'Link copied to clipboard!',
                   );
                 }}
@@ -290,11 +286,8 @@ export const Flights = (): JSX.Element => {
           ]}
           dateBadgeColor={({ inFuture }) => (inFuture ? 'secondary' : 'ghost')}
           enableRowSelection={enableRowSelection}
-          onCopyLink={({ id }) => {
-            copyToClipboard(
-              `${flightsLink}/${id}`,
-              'Link copied to clipboard!',
-            );
+          onCopyLink={({ link }) => {
+            copyToClipboard(`${APP_URL}${link}`, 'Link copied to clipboard!');
           }}
           size="sm"
         />

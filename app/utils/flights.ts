@@ -4,6 +4,7 @@ import {
   type airline,
   type airport,
   type flight,
+  type user,
 } from '@prisma/client';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
@@ -16,6 +17,7 @@ export interface AirframeData extends airframe {
 }
 
 export interface FlightData extends flight {
+  user: user;
   departureAirport: airport;
   arrivalAirport: airport;
   airline: airline | null;
@@ -43,6 +45,7 @@ export interface FlightTimeDataResult
     FlightTimestampsResult {
   distance: number;
   flightNumberString: string;
+  link: string;
 }
 
 export const getCenterpoint = (result?: FlightsResult): Coordinates => {
@@ -113,5 +116,6 @@ export const transformFlightData = (
         ? `${flight.airline?.iata ?? ''} ${flight.flightNumber}`.trim()
         : '',
     distance: Math.round(flightDistance),
+    link: `/user/${flight.user.username}/flights/${flight.id}`,
   };
 };
