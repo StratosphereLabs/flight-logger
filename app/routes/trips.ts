@@ -19,8 +19,10 @@ export const tripsRouter = router({
         id,
       },
       include: {
+        user: true,
         flights: {
           include: {
+            user: true,
             departureAirport: true,
             arrivalAirport: true,
             airline: true,
@@ -74,8 +76,10 @@ export const tripsRouter = router({
           id: trip.id,
         },
         include: {
+          user: true,
           flights: {
             include: {
+              user: true,
               departureAirport: true,
               arrivalAirport: true,
               airline: true,
@@ -159,8 +163,10 @@ export const tripsRouter = router({
           name,
         },
         include: {
+          user: true,
           flights: {
             include: {
+              user: true,
               departureAirport: true,
               arrivalAirport: true,
               airline: true,
@@ -198,8 +204,10 @@ export const tripsRouter = router({
           id,
         },
         include: {
+          user: true,
           flights: {
             include: {
+              user: true,
               departureAirport: true,
               arrivalAirport: true,
               airline: true,

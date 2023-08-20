@@ -1,4 +1,4 @@
-import { type trip } from '@prisma/client';
+import { type trip, type user } from '@prisma/client';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { getDurationDays, getInFuture } from './datetime';
@@ -9,14 +9,17 @@ import {
 } from './flights';
 
 export interface TripWithData extends trip {
+  user: user;
   flights: FlightData[];
 }
 
 export interface TripResult extends trip {
+  user: user;
   tripDuration: string;
   outDateISO: string;
   inFuture: boolean;
   flights: FlightTimeDataResult[];
+  link: string;
 }
 
 export const transformTripData = (trip: TripWithData): TripResult => ({
@@ -32,4 +35,5 @@ export const transformTripData = (trip: TripWithData): TripResult => ({
   ),
   inFuture: getInFuture(trip.outTime),
   flights: trip.flights.map(transformFlightData),
+  link: `/user/${trip.user.username}/trips/${trip.id}`,
 });
