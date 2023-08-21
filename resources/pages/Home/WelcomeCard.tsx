@@ -17,15 +17,15 @@ export const WelcomeCard = (): JSX.Element => {
               <ul className="space-y-1 py-4 text-sm text-gray-500">
                 <li className="flex justify-center gap-2">
                   <ListIcon className="h-5 w-5" />
-                  Log detailed flight information and organize them by trip
+                  Log detailed trip and flight information
                 </li>
                 <li className="flex justify-center gap-2">
                   <GlobeIcon className="h-5 w-5" />
-                  Create itineraries and share with family and friends easily
+                  Create and share itineraries with family and friends
                 </li>
                 <li className="flex justify-center gap-2">
                   <ChartIcon />
-                  Advanced data analytics
+                  View advanced data analytics
                 </li>
               </ul>
               <Button
