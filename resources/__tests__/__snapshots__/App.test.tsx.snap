@@ -428,7 +428,7 @@ exports[`<App /> > renders profile page 1`] = `
                         stroke-linejoin="round"
                       />
                     </svg>
-                    Log detailed flight information and organize them by trip
+                    Log detailed trip and flight information
                   </li>
                   <li
                     class="flex justify-center gap-2"
@@ -447,7 +447,7 @@ exports[`<App /> > renders profile page 1`] = `
                         stroke-linejoin="round"
                       />
                     </svg>
-                    Create itineraries and share with family and friends easily
+                    Create and share itineraries with family and friends
                   </li>
                   <li
                     class="flex justify-center gap-2"
@@ -466,7 +466,7 @@ exports[`<App /> > renders profile page 1`] = `
                         stroke-linejoin="round"
                       />
                     </svg>
-                    Advanced data analytics
+                    View advanced data analytics
                   </li>
                 </ul>
                 <button
