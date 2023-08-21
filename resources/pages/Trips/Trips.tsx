@@ -42,7 +42,7 @@ export const Trips = (): JSX.Element => {
           <span className="loading loading-spinner" />
         </div>
       ) : null}
-      {data !== undefined && data.total > 0 ? (
+      {!isFetching && data !== undefined && data.total > 0 ? (
         <>
           {data.upcomingTrips.length + data.currentTrips.length > 0 ? (
             [...data.currentTrips, ...data.upcomingTrips].map((trip, index) => (
@@ -75,7 +75,7 @@ export const Trips = (): JSX.Element => {
           )}
         </>
       ) : null}
-      {data?.total === 0 ? (
+      {!isFetching && data?.total === 0 ? (
         <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Trips</p>

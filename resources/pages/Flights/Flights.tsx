@@ -165,7 +165,10 @@ export const Flights = (): JSX.Element => {
           <span className="loading loading-spinner" />
         </div>
       ) : null}
-      {layout === 'full' && data !== undefined && data.total > 0 ? (
+      {layout === 'full' &&
+      !isFetching &&
+      data !== undefined &&
+      data.total > 0 ? (
         <>
           {data.upcomingFlights.length > 0 ? (
             <Disclosure
@@ -276,7 +279,10 @@ export const Flights = (): JSX.Element => {
           )}
         </>
       ) : null}
-      {layout === 'compact' && data !== undefined && data.total > 0 ? (
+      {layout === 'compact' &&
+      !isFetching &&
+      data !== undefined &&
+      data.total > 0 ? (
         <UserFlightsTable
           className="shadow-md"
           data={[
@@ -292,7 +298,7 @@ export const Flights = (): JSX.Element => {
           size="sm"
         />
       ) : null}
-      {data?.total === 0 ? (
+      {!isFetching && data?.total === 0 ? (
         <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
