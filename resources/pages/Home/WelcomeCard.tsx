@@ -1,9 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardBody } from 'stratosphere-ui';
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
-import { useItineraryFlightsStore } from './itineraryFlightsStore';
 
 export const WelcomeCard = (): JSX.Element => {
-  const { setIsCreateItineraryModalOpen } = useItineraryFlightsStore();
+  const navigate = useNavigate();
   return (
     <Card className="min-h-[75vh] bg-base-100 shadow-md">
       <CardBody className="justify-center">
@@ -32,7 +32,7 @@ export const WelcomeCard = (): JSX.Element => {
                 className="mt-4"
                 color="info"
                 onClick={() => {
-                  setIsCreateItineraryModalOpen(true);
+                  navigate('/create-itinerary');
                 }}
               >
                 Get Started

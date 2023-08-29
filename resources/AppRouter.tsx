@@ -1,7 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
+  Account,
   AddFlight,
+  CreateItinerary,
   Data,
   Flights,
   ForgotPassword,
@@ -13,7 +15,6 @@ import {
   Register,
   Profile,
   Trips,
-  Account,
 } from './pages';
 
 export const AppRouter = (): JSX.Element => (
@@ -21,6 +22,7 @@ export const AppRouter = (): JSX.Element => (
     <Route path="/" element={<MainLayout />}>
       <Route path="" element={<Home />} />
       <Route path="data" element={<Data />} />
+      <Route path="create-itinerary" element={<CreateItinerary />} />
       <Route path="add-flight" element={<AddFlight />} />
       {['', 'user/:username'].map(path => (
         <Route key={path} path={path} element={<ProfileLayout />}>

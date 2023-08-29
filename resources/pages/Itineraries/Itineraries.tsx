@@ -5,7 +5,6 @@ import { ActionsCell, PlusIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { type HomePageNavigationState } from '../Home';
 import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { useItinerariesPageStore } from './itinerariesPageStore';
 
@@ -41,12 +40,7 @@ export const Itineraries = (): JSX.Element => {
               <Button
                 color="primary"
                 onClick={() => {
-                  navigate('/', {
-                    replace: false,
-                    state: {
-                      createItinerary: true,
-                    } as const as HomePageNavigationState,
-                  });
+                  navigate('/create-itinerary');
                 }}
               >
                 <PlusIcon className="h-6 w-6" />
