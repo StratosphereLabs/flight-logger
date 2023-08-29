@@ -54,7 +54,9 @@ export const MainNavbar = (): JSX.Element => {
                 {
                   id: 'add-itinerary',
                   children: 'Create Itinerary',
-                  onClick: () => null,
+                  onClick: () => {
+                    navigate('/create-itinerary');
+                  },
                 },
                 {
                   id: 'data',

@@ -1,5 +1,6 @@
 export * from './Account';
 export * from './AddFlight';
+export * from './CreateItinerary';
 export * from './Data';
 export * from './Flights';
 export * from './ForgotPassword';
