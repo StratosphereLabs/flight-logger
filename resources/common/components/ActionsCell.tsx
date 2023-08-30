@@ -66,6 +66,9 @@ export const ActionsCell = ({
         ...(username === undefined ? protectedOptions : []),
       ]}
       collapseAt="xl"
+      dropdownMenuProps={{
+        menuClassName: 'rounded-xl w-48 right-0',
+      }}
       withTooltips
     />
   );
