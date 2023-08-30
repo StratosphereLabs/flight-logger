@@ -1,19 +1,13 @@
-import { type MouseEventHandler } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, DropdownMenu } from 'stratosphere-ui';
-import {
-  EditIcon,
-  EllipsisVerticalIcon,
-  LinkIcon,
-  TrashIcon,
-  ViewIcon,
-} from './Icons';
+import { ButtonArray, type ButtonOptions } from 'stratosphere-ui';
+import { EditIcon, LinkIcon, TrashIcon, ViewIcon } from './Icons';
 
 export interface ActionsCellProps {
-  onCopyLink?: MouseEventHandler<HTMLElement>;
-  onDelete?: MouseEventHandler<HTMLElement>;
-  onEdit?: MouseEventHandler<HTMLElement>;
-  onView?: MouseEventHandler<HTMLElement>;
+  onCopyLink?: () => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
+  onView?: () => void;
   deleteMessage: string;
   editMessage: string;
   viewMessage: string;
@@ -29,92 +23,50 @@ export const ActionsCell = ({
   viewMessage,
 }: ActionsCellProps): JSX.Element => {
   const { username } = useParams();
+  const protectedOptions: ButtonOptions[] = useMemo(
+    () => [
+      {
+        color: 'success',
+        icon: EditIcon,
+        key: 'edit',
+        menuText: editMessage,
+        onClick: () => onEdit?.(),
+        size: 'xs',
+      },
+      {
+        color: 'error',
+        icon: TrashIcon,
+        key: 'edit',
+        menuText: deleteMessage,
+        onClick: () => onDelete?.(),
+        size: 'xs',
+      },
+    ],
+    [deleteMessage, editMessage, onDelete, onEdit],
+  );
   return (
-    <>
-      <div className="hidden gap-1 xl:flex">
-        <Button className="px-1" color="ghost" onClick={onCopyLink} size="xs">
-          <LinkIcon className="h-4 w-4" />
-          <span className="sr-only">Copy Link</span>
-        </Button>
-        <Button className="px-1" color="info" onClick={onView} size="xs">
-          <ViewIcon className="h-4 w-4" />
-          <span className="sr-only">{viewMessage}</span>
-        </Button>
-        {username === undefined ? (
-          <>
-            <Button className="px-1" color="success" onClick={onEdit} size="xs">
-              <EditIcon />
-              <span className="sr-only">{editMessage}</span>
-            </Button>
-            <Button className="px-1" color="error" onClick={onDelete} size="xs">
-              <TrashIcon className="h-4 w-4" />
-              <span className="sr-only">{deleteMessage}</span>
-            </Button>
-          </>
-        ) : null}
-      </div>
-      <div className="flex xl:hidden">
-        <DropdownMenu
-          buttonProps={{
-            shape: 'circle',
-            color: 'ghost',
-            size: 'sm',
-            children: (
-              <>
-                <EllipsisVerticalIcon className="h-5 w-5" />
-                <span className="sr-only">Actions Menu</span>
-              </>
-            ),
-          }}
-          items={[
-            {
-              id: 'copy',
-              onClick: onCopyLink,
-              children: (
-                <>
-                  <LinkIcon className="h-4 w-4" />
-                  Copy Link
-                </>
-              ),
-            },
-            {
-              id: 'view',
-              onClick: onView,
-              children: (
-                <>
-                  <ViewIcon className="h-4 w-4" />
-                  {viewMessage}
-                </>
-              ),
-            },
-            ...(username === undefined
-              ? [
-                  {
-                    id: 'edit',
-                    onClick: onEdit,
-                    children: (
-                      <>
-                        <EditIcon />
-                        {editMessage}
-                      </>
-                    ),
-                  },
-                  {
-                    id: 'delete',
-                    onClick: onDelete,
-                    children: (
-                      <>
-                        <TrashIcon className="h-4 w-4" />
-                        {deleteMessage}
-                      </>
-                    ),
-                  },
-                ]
-              : []),
-          ]}
-          menuClassName="rounded-box p-2 w-48 right-0"
-        />
-      </div>
-    </>
+    <ButtonArray
+      buttonOptions={[
+        {
+          color: 'ghost',
+          icon: LinkIcon,
+          key: 'copy-link',
+          menuText: 'Copy Link',
+          onClick: () => onCopyLink?.(),
+          size: 'xs',
+        },
+        {
+          color: 'info',
+          icon: ViewIcon,
+          key: 'view',
+          menuText: viewMessage,
+          onClick: () => onView?.(),
+          size: 'xs',
+        },
+        ...(username === undefined ? protectedOptions : []),
+      ]}
+      collapseAt="xl"
+      withTooltips
+    />
   );
 };
