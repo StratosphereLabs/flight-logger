@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import {
+  Avatar,
   Badge,
   Button,
   CardBody,
@@ -23,26 +24,33 @@ export const ProfileCard = (): JSX.Element => {
       isLoading={isFetching}
       className="card-bordered w-80 shadow-md"
     >
-      <CardBody className="items-center">
-        <CardTitle className="text-2xl font-medium">{`${
-          data?.firstName ?? ''
-        } ${data?.lastName ?? ''}`}</CardTitle>
-        <p className="text-md opacity-75">{`@${data?.username ?? ''}`}</p>
-        <div className="avatar">
-          <div className="h-32 w-32">
-            <img alt="Avatar" src={data?.avatar ?? undefined} />
+      <CardBody className="items-center justify-between">
+        <div className="flex flex-col items-center gap-1">
+          <CardTitle className="text-2xl font-medium">{`${
+            data?.firstName ?? ''
+          } ${data?.lastName ?? ''}`}</CardTitle>
+          <div className="text-md opacity-75">{`@${data?.username ?? ''}`}</div>
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <Avatar shapeClassName="h-40 w-40 rounded-full">
+            <img src={data?.avatar} />
+          </Avatar>
+          <div className="inline space-x-2 font-bold">
+            <Badge outline size="sm" color="info">
+              <span className="text-semibold">0</span> followers
+            </Badge>
+            <Badge size="sm" color="info">
+              <span className="text-semibold">0</span> following
+            </Badge>
           </div>
         </div>
-        <div className="inline space-x-2 font-bold">
-          <Badge size="sm" color="primary">
-            0 followers
-          </Badge>
-          <Badge size="sm" color="secondary">
-            0 following
-          </Badge>
+        <div className="flex flex-col items-center">
+          <span className="text-lg">{data?.completedFlightCount} Flights</span>
+          <span className="opacity-60 text-sm font-semibold">
+            {data?.upcomingFlightCount} Upcoming
+          </span>
         </div>
-        <p>{data?.flightCount} Flights</p>
-        <p className="text-xs opacity-50">Joined {data?.creationDate}</p>
+        <div className="text-xs opacity-50">Joined {data?.creationDate}</div>
         {username !== undefined ? (
           <Button color="success" className="mt-4">
             Follow
