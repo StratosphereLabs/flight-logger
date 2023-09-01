@@ -21,23 +21,34 @@ import {
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
-    const [userData, flightCount] = await prisma.$transaction([
-      prisma.user.findUnique({
-        where: {
-          username: input?.username ?? ctx.user?.username,
-        },
-      }),
-      prisma.flight.count({
-        where: {
-          user: {
+    const [userData, completedFlightCount, upcomingFlightCount] =
+      await prisma.$transaction([
+        prisma.user.findUnique({
+          where: {
             username: input?.username ?? ctx.user?.username,
           },
-          outTime: {
-            lt: new Date(),
+        }),
+        prisma.flight.count({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              lte: new Date(),
+            },
           },
-        },
-      }),
-    ]);
+        }),
+        prisma.flight.count({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              gt: new Date(),
+            },
+          },
+        }),
+      ]);
     if (userData === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -46,7 +57,8 @@ export const usersRouter = router({
     }
     return {
       avatar: fetchGravatarUrl(userData.email),
-      flightCount,
+      completedFlightCount,
+      upcomingFlightCount,
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       ...excludeKeys(
         userData,
