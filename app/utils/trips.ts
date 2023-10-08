@@ -24,13 +24,16 @@ export interface TripResult extends trip {
 
 export const transformTripData = (trip: TripWithData): TripResult => ({
   ...trip,
-  tripDuration: getDurationDays({
-    start: trip.flights[0].outTime,
-    end: trip.flights[trip.flights.length - 1].inTime,
-  }),
+  tripDuration:
+    trip.flights.length > 0
+      ? getDurationDays({
+          start: trip.flights[0].outTime,
+          end: trip.flights[trip.flights.length - 1].inTime,
+        })
+      : '',
   outDateISO: formatInTimeZone(
     trip.outTime,
-    trip.flights[0].departureAirport.timeZone,
+    trip.flights[0]?.departureAirport.timeZone ?? '',
     DATE_FORMAT_ISO,
   ),
   inFuture: getInFuture(trip.outTime),
