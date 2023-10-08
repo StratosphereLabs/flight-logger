@@ -1,22 +1,23 @@
-import { type flight } from '@prisma/client';
 import { prisma } from './prisma';
 
-export const updateTripAfterEditFlight = async (
-  flight: flight,
-): Promise<void> => {
-  if (flight.tripId !== null) {
+export const updateTripTimes = async (tripId: string | null): Promise<void> => {
+  if (tripId !== null) {
     const trip = await prisma.trip.findUnique({
       where: {
-        id: flight.tripId,
+        id: tripId,
       },
       include: {
-        flights: true,
+        flights: {
+          orderBy: {
+            outTime: 'asc',
+          },
+        },
       },
     });
-    if (trip !== null) {
+    if (trip !== null && trip.flights.length > 0) {
       await prisma.trip.update({
         where: {
-          id: flight.tripId,
+          id: tripId,
         },
         data: {
           outTime: trip.flights[0].outTime,

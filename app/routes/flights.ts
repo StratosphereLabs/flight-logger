@@ -1,5 +1,5 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
-import { prisma, updateTripAfterEditFlight } from '../db';
+import { prisma, updateTripTimes } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
@@ -102,7 +102,7 @@ export const flightsRouter = router({
           trackingLink: input.trackingLink,
         },
       });
-      await updateTripAfterEditFlight(flight);
+      await updateTripTimes(flight.tripId);
       return flight;
     }),
   getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
@@ -217,7 +217,7 @@ export const flightsRouter = router({
           trackingLink: input.trackingLink,
         },
       });
-      await updateTripAfterEditFlight(updatedFlight);
+      await updateTripTimes(updatedFlight.tripId);
       return updatedFlight;
     }),
   deleteFlight: procedure
@@ -242,7 +242,7 @@ export const flightsRouter = router({
           id,
         },
       });
-      await updateTripAfterEditFlight(deletedFlight);
+      await updateTripTimes(deletedFlight.tripId);
       return deletedFlight;
     }),
 });

@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import difference from 'lodash.difference';
-import { prisma, validateUserFlights } from '../db';
+import { prisma, updateTripTimes, validateUserFlights } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
   createTripSchema,
@@ -119,6 +119,9 @@ export const tripsRouter = router({
             select: {
               id: true,
             },
+            orderBy: {
+              outTime: 'asc',
+            },
           },
         },
       });
@@ -128,7 +131,7 @@ export const tripsRouter = router({
           message: 'Trip could not be found!',
         });
       }
-      const flights = await validateUserFlights(flightIds, ctx.user.id);
+      await validateUserFlights(flightIds, ctx.user.id);
       const currentFlightIds = trip.flights.map(({ id }) => id);
       const flightIdsToRemove = difference(currentFlightIds, flightIds);
       await prisma.$transaction([
@@ -153,13 +156,12 @@ export const tripsRouter = router({
           },
         }),
       ]);
+      await updateTripTimes(id);
       const updatedTrip = await prisma.trip.update({
         where: {
           id,
         },
         data: {
-          outTime: flights[0].outTime,
-          inTime: flights[flights.length - 1].inTime,
           name,
         },
         include: {
@@ -176,6 +178,9 @@ export const tripsRouter = router({
                   operator: true,
                 },
               },
+            },
+            orderBy: {
+              outTime: 'asc',
             },
           },
         },
@@ -217,6 +222,9 @@ export const tripsRouter = router({
                   operator: true,
                 },
               },
+            },
+            orderBy: {
+              outTime: 'asc',
             },
           },
         },
