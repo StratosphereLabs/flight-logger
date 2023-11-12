@@ -5,7 +5,16 @@ module.exports = {
     'node_modules/stratosphere-ui/dist/**/*.js',
   ],
   daisyui: {
-    themes: ['light', 'dark', 'winter', 'emerald', 'business', 'cyberpunk'],
+    themes: [
+      'light',
+      'dark',
+      'winter',
+      'emerald',
+      'business',
+      'cyberpunk',
+      'nord',
+      'sunset',
+    ],
   },
   theme: {
     extend: {},
