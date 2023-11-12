@@ -7,6 +7,7 @@ import {
   GemIcon,
   LightModeIcon,
   SnowflakeIcon,
+  SunsetIcon,
   ThemeIcon,
 } from './Icons';
 
@@ -50,14 +51,14 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: 'winter',
+          id: 'nord',
           onClick: () => {
-            setTheme(AppTheme.WINTER);
+            setTheme(AppTheme.NORD);
           },
           children: (
             <>
               <SnowflakeIcon className="h-4 w-4" />
-              Winter
+              Nord
             </>
           ),
         },
@@ -82,6 +83,18 @@ export const ThemeButton = (): JSX.Element => {
             <>
               <GemIcon className="h-4 w-4" />
               Emerald
+            </>
+          ),
+        },
+        {
+          id: 'sunset',
+          onClick: () => {
+            setTheme(AppTheme.SUNSET);
+          },
+          children: (
+            <>
+              <SunsetIcon className="h-4 w-4" />
+              Sunset
             </>
           ),
         },

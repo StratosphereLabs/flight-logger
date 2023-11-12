@@ -7,6 +7,8 @@ export enum AppTheme {
   DARK = 'dark',
   EMERALD = 'emerald',
   LIGHT = 'light',
+  NORD = 'nord',
+  SUNSET = 'sunset',
   WINTER = 'winter',
 }
 
