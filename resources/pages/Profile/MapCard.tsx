@@ -111,7 +111,9 @@ export const MapCard = (): JSX.Element => {
       streetViewControl: false,
       gestureHandling: 'greedy',
       styles:
-        theme === AppTheme.DARK || theme === AppTheme.BUSINESS
+        theme === AppTheme.DARK ||
+        theme === AppTheme.BUSINESS ||
+        theme === AppTheme.SUNSET
           ? darkModeStyle
           : undefined,
     }),
