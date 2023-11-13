@@ -115,7 +115,7 @@ const updateAirframe = async (
   console.log('Seeding airframes...');
   try {
     const data = fs
-      .readFileSync('./app/db/seeders/data/aircraftDatabase-2023-08.csv')
+      .readFileSync('./app/db/seeders/data/aircraftDatabase-2023-11.csv')
       .toString();
     const rows = getDatabaseRows(data);
     console.log(`Attempting to add ${rows.length} airframes`);
