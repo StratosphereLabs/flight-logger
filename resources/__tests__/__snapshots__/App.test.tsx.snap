@@ -147,14 +147,14 @@ exports[`<App /> > renders login page 1`] = `
                 class="label"
               >
                 <a
-                  class="link-hover label-text-alt link"
+                  class="link-hover link label-text-alt"
                   href="#"
                   tabindex="0"
                 >
                   Forgot password?
                 </a>
                 <a
-                  class="link-hover label-text-alt link"
+                  class="link-hover link label-text-alt"
                   href="#"
                   tabindex="0"
                 >
@@ -225,7 +225,7 @@ exports[`<App /> > renders profile page 1`] = `
       class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
     >
       <div
-        class="navbar rounded-box justify-between bg-base-100 shadow-md lg:justify-start"
+        class="navbar justify-between rounded-box bg-base-100 shadow-md lg:justify-start"
       >
         <div
           class="navbar-start w-auto lg:w-1/2"
