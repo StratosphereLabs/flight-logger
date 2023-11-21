@@ -1,5 +1,6 @@
+import { Outlet } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card } from 'stratosphere-ui';
 import { useAuthStore } from '../../stores';
 import { ProfileTabs } from './ProfileTabs';

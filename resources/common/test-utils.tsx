@@ -4,8 +4,7 @@ import {
   type RenderResult,
 } from '@testing-library/react';
 import { type InitialEntry } from 'history';
-import React, { type ReactElement } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { type ReactElement } from 'react';
 import { AppWrapper } from '../AppWrapper';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
@@ -17,11 +16,7 @@ const customRender = (
   options?: CustomRenderOptions,
 ): RenderResult =>
   render(ui, {
-    wrapper: ({ children }) => (
-      <MemoryRouter initialEntries={options?.initialEntries}>
-        <AppWrapper>{children}</AppWrapper>
-      </MemoryRouter>
-    ),
+    wrapper: AppWrapper,
     ...options,
   });
 

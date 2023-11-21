@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet } from '@tanstack/react-router';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
