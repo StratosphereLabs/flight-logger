@@ -123,7 +123,7 @@ export const MapCard = (): JSX.Element => {
     () => (
       <LoadingCard
         isLoading={!isLoaded || isFetching}
-        className="card-bordered min-h-[450px] min-w-[350px] flex-1 shadow-md relative"
+        className="card-bordered relative min-h-[450px] min-w-[350px] flex-1 shadow-md"
       >
         <GoogleMap
           mapContainerClassName="rounded-2xl"
@@ -220,11 +220,11 @@ export const MapCard = (): JSX.Element => {
           />
         </GoogleMap>
         <Form
-          className="flex justify-between gap-2 p-3 absolute w-full pointer-events-none"
+          className="pointer-events-none absolute flex w-full justify-between gap-2 p-3"
           methods={methods}
         >
           <div className="flex flex-col gap-2">
-            <div className="flex flex-col bg-base-100/70 rounded-xl px-2 pointer-events-auto">
+            <div className="pointer-events-auto flex flex-col rounded-xl bg-base-100/70 px-2">
               <FormCheckbox
                 inputClassName="bg-base-200"
                 labelText="Show upcoming"
@@ -239,7 +239,7 @@ export const MapCard = (): JSX.Element => {
             <AirportInfoOverlay airportId={selectedAirportId} />
           </div>
           <Select
-            className="w-[150px] pointer-events-auto"
+            className="pointer-events-auto w-[150px]"
             formValueMode="id"
             getItemText={({ text }) => text}
             options={[

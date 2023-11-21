@@ -90,7 +90,7 @@ export const Register = (): JSX.Element => {
           <label className="label">
             <a
               onClick={handleClick}
-              className="link-hover label-text-alt link"
+              className="link-hover link label-text-alt"
               href="#"
               tabIndex={0}
             >

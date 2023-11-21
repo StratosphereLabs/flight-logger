@@ -31,7 +31,7 @@ export const MainNavbar = (): JSX.Element => {
   return (
     <>
       <div className="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans">
-        <div className="navbar rounded-box justify-between bg-base-100 shadow-md lg:justify-start">
+        <div className="navbar justify-between rounded-box bg-base-100 shadow-md lg:justify-start">
           <div className="navbar-start w-auto lg:w-1/2">
             <DropdownMenu
               buttonProps={{
@@ -114,7 +114,7 @@ export const MainNavbar = (): JSX.Element => {
                   className: 'rounded-lg',
                   children: (
                     <>
-                      <HomeIcon className="w-4 h-4" />
+                      <HomeIcon className="h-4 w-4" />
                       My Profile
                     </>
                   ),
@@ -127,7 +127,7 @@ export const MainNavbar = (): JSX.Element => {
                   className: 'rounded-lg',
                   children: (
                     <>
-                      <PlusIcon className="w-4 h-4" />
+                      <PlusIcon className="h-4 w-4" />
                       Add Flight
                     </>
                   ),
@@ -140,7 +140,7 @@ export const MainNavbar = (): JSX.Element => {
                   className: 'rounded-lg',
                   children: (
                     <>
-                      <CogIcon className="w-4 h-4" />
+                      <CogIcon className="h-4 w-4" />
                       Settings
                     </>
                   ),
@@ -153,7 +153,7 @@ export const MainNavbar = (): JSX.Element => {
                   className: 'rounded-lg bg-red-500/25 font-semibold',
                   children: (
                     <>
-                      <LogoutIcon className="w-4 h-4" />
+                      <LogoutIcon className="h-4 w-4" />
                       Logout
                     </>
                   ),

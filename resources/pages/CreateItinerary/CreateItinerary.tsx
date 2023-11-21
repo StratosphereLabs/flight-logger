@@ -63,7 +63,7 @@ export const CreateItinerary = (): JSX.Element => {
               Create Itinerary
             </CardTitle>
             <Form
-              className="flex flex-col gap-4 w-full"
+              className="flex w-full flex-col gap-4"
               methods={methods}
               onFormSubmit={data => {
                 addFlight(data);

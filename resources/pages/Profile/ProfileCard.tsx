@@ -46,7 +46,7 @@ export const ProfileCard = (): JSX.Element => {
         </div>
         <div className="flex flex-col items-center">
           <span className="text-lg">{data?.completedFlightCount} Flights</span>
-          <span className="opacity-60 text-sm font-semibold">
+          <span className="text-sm font-semibold opacity-60">
             {data?.upcomingFlightCount} Upcoming
           </span>
         </div>
