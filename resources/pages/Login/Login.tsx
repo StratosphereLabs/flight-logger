@@ -62,7 +62,7 @@ export const Login = (): JSX.Element => {
             <a
               onClick={handleForgotPassword}
               href="#"
-              className="link-hover label-text-alt link"
+              className="link-hover link label-text-alt"
               tabIndex={0}
             >
               Forgot password?
@@ -70,7 +70,7 @@ export const Login = (): JSX.Element => {
             <a
               onClick={handleRegister}
               href="#"
-              className="link-hover label-text-alt link"
+              className="link-hover link label-text-alt"
               tabIndex={0}
             >
               Register

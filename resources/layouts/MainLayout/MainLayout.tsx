@@ -11,7 +11,7 @@ export const MainLayout = (): JSX.Element => {
       <Outlet />
       <MainFooter />
       {alertMessages.length > 0 ? (
-        <div className="toast-end toast toast-top z-50 w-1/2 min-w-[400px]">
+        <div className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]">
           <AlertMessages maxMessages={4} />
         </div>
       ) : null}

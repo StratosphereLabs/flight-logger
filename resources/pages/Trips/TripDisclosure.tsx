@@ -48,7 +48,7 @@ export const TripDisclosure = ({
             </div>
             <div className="flex justify-end">
               <a
-                className="btn-ghost btn-sm btn-circle btn sm:btn-md"
+                className="btn btn-circle btn-ghost btn-sm sm:btn-md"
                 onClick={event => {
                   event.stopPropagation();
                   copyToClipboard(
@@ -61,7 +61,7 @@ export const TripDisclosure = ({
               </a>
               {username === undefined ? (
                 <a
-                  className="btn-ghost btn-sm btn-circle btn sm:btn-md"
+                  className="btn btn-circle btn-ghost btn-sm sm:btn-md"
                   onClick={event => {
                     event.stopPropagation();
                     setActiveTrip(trip);

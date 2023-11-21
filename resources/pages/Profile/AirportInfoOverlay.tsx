@@ -20,13 +20,13 @@ export const AirportInfoOverlay = ({
   useTRPCErrorHandler(error);
   if (airportId === null) return null;
   return (
-    <div className="flex flex-col bg-base-100/70 rounded-xl p-2 items-center pointer-events-auto">
+    <div className="pointer-events-auto flex flex-col items-center rounded-xl bg-base-100/70 p-2">
       {isFetching ? <Loading /> : null}
       {!isFetching && data !== undefined ? (
         <>
           <p className="font-semibold">{data?.id}</p>
-          <p className="text-xs opacity-70 text-center">{data?.municipality}</p>
-          <p className="text-xs opacity-70 text-center">
+          <p className="text-center text-xs opacity-70">{data?.municipality}</p>
+          <p className="text-center text-xs opacity-70">
             {data.numFlights} {data.numFlights === 1 ? 'flight' : 'flights'}
           </p>
         </>

@@ -55,7 +55,7 @@ export const ForgotPassword = (): JSX.Element => {
           <label className="label">
             <a
               onClick={handleBackToLogin}
-              className="link-hover label-text-alt link"
+              className="link-hover link label-text-alt"
               href="#"
               tabIndex={0}
             >
