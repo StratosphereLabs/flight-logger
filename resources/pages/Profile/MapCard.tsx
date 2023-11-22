@@ -5,9 +5,9 @@ import {
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
+import { useParams } from '@tanstack/react-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { Form, FormCheckbox, LoadingCard, Select } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { darkModeStyle } from '../../common/mapStyle';

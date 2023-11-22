@@ -1,6 +1,6 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Form,
@@ -37,7 +37,7 @@ export const SearchButton = (): JSX.Element => {
   useEffect(() => {
     if (user !== null) {
       setIsSearching(false);
-      navigate(`/user/${user.username}`);
+      // void navigate({ to: `/user/${user.username}` });
     }
   }, [user]);
   useEffect(() => {

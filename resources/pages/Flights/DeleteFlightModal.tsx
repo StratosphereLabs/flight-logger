@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router';
 import { type Control, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
 import {
   useSuccessResponseHandler,
@@ -18,8 +18,8 @@ export const DeleteFlightModal = ({
   formControl,
   isRowSelectEnabled,
 }: DeleteFlightModelProps): JSX.Element => {
-  const utils = trpc.useContext();
-  const { username } = useParams();
+  const utils = trpc.useUtils();
+  const { username } = useParams({});
   const { activeFlight, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useFlightsPageStore();
   const layout = useWatch<FlightsFormData, 'layout'>({

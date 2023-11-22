@@ -1,5 +1,5 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 import { PlusIcon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -15,7 +15,7 @@ export interface TripsPageNavigationState {
 export const Trips = (): JSX.Element => {
   const navigate = useNavigate();
   const { tripId, username } = useParams();
-  const { state } = useLocation() as {
+  const { state } = window.location as {
     state: TripsPageNavigationState | null;
   };
   const { data, error, isFetching } = trpc.users.getUserTrips.useQuery(
@@ -82,14 +82,7 @@ export const Trips = (): JSX.Element => {
             {username === undefined ? (
               <Button
                 color="primary"
-                onClick={() => {
-                  navigate('/flights', {
-                    replace: false,
-                    state: {
-                      createTrip: true,
-                    } as const as FlightsPageNavigationState,
-                  });
-                }}
+                onClick={() => navigate({ to: '/flights' })}
               >
                 <PlusIcon className="h-6 w-6" />
                 Create Trip

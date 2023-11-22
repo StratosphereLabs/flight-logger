@@ -1,14 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useLinkClickHandler } from 'react-router-dom';
 import { Button, CardTitle, Form, FormControl } from 'stratosphere-ui';
-import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
+import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { forgotPasswordSchema } from './schema';
 
 export const ForgotPassword = (): JSX.Element => {
-  useAuthPage();
   const [resetLinkSent, setResetLinkSent] = useState(false);
   const methods = useForm({
     mode: 'onBlur',
@@ -18,7 +17,7 @@ export const ForgotPassword = (): JSX.Element => {
     },
     resolver: zodResolver(forgotPasswordSchema),
   });
-  const handleBackToLogin = useLinkClickHandler('/auth/login');
+  const navigate = useNavigate();
   const { error, isLoading, mutate } =
     trpc.passwordReset.forgotPassword.useMutation();
   useTRPCErrorHandler(error);
@@ -54,7 +53,7 @@ export const ForgotPassword = (): JSX.Element => {
           />
           <label className="label">
             <a
-              onClick={handleBackToLogin}
+              onClick={() => navigate({ to: '/auth/login' })}
               className="link-hover link label-text-alt"
               href="#"
               tabIndex={0}

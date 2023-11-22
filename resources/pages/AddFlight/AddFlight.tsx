@@ -21,7 +21,6 @@ import {
   AirportInput,
 } from '../../common/components';
 import {
-  useProtectedPage,
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
@@ -29,8 +28,7 @@ import { trpc } from '../../utils/trpc';
 import { addFlightDefaultValues } from './constants';
 
 export const AddFlight = (): JSX.Element => {
-  const utils = trpc.useContext();
-  useProtectedPage();
+  const utils = trpc.useUtils();
   const methods = useForm<AddFlightRequest>({
     mode: 'onBlur',
     shouldUseNativeValidation: false,

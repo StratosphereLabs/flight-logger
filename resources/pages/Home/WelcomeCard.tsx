@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, Card, CardBody } from 'stratosphere-ui';
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
 
@@ -31,9 +31,7 @@ export const WelcomeCard = (): JSX.Element => {
               <Button
                 className="mt-4"
                 color="info"
-                onClick={() => {
-                  navigate('/create-itinerary');
-                }}
+                onClick={() => navigate({ to: '/create-itinerary' })}
               >
                 Get Started
               </Button>

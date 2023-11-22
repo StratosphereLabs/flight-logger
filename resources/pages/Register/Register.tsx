@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { useLinkClickHandler } from 'react-router-dom';
 import {
   Button,
   CardTitle,
@@ -9,13 +9,13 @@ import {
   PasswordInput,
 } from 'stratosphere-ui';
 import { registerSchema } from '../../../app/schemas';
-import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
+import { useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
 export const Register = (): JSX.Element => {
-  useAuthPage();
   const { setToken } = useAuthStore();
+  const navigate = useNavigate();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -35,7 +35,6 @@ export const Register = (): JSX.Element => {
     },
   });
   useTRPCErrorHandler(error);
-  const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>
       <CardTitle>Register</CardTitle>
@@ -89,7 +88,7 @@ export const Register = (): JSX.Element => {
           />
           <label className="label">
             <a
-              onClick={handleClick}
+              onClick={() => navigate({ to: '/auth/login' })}
               className="link-hover link label-text-alt"
               href="#"
               tabIndex={0}

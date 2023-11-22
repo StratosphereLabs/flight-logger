@@ -1,5 +1,5 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
 import { RightArrowIcon } from '../../common/components';
 import { useFlightsPageStore } from './flightsPageStore';
@@ -9,12 +9,12 @@ export const ViewFlightModal = (): JSX.Element => {
     useFlightsPageStore();
   const navigate = useNavigate();
   const { flightId, username } = useParams();
-  const onClose = useCallback(() => {
+  const onClose = useCallback(async () => {
     setIsViewDialogOpen(false);
     if (flightId !== undefined) {
-      navigate(
-        username !== undefined ? `/user/${username}/flights` : '/flights',
-      );
+      await navigate({
+        to: '/flights',
+      });
     }
   }, [flightId, username]);
   return (

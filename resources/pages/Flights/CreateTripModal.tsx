@@ -18,7 +18,7 @@ export const CreateTripModal = ({
   onSuccess,
 }: CreateTripModalProps): JSX.Element => {
   const modalRef = useRef<HTMLDivElement | null>(null);
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const { isCreateTripDialogOpen, rowSelection, setIsCreateTripDialogOpen } =
     useFlightsPageStore();
   const methods = useForm({

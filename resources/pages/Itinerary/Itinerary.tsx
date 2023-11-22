@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { useParams } from 'react-router-dom';
 import { Button, Card, CardBody } from 'stratosphere-ui';
 import { AirlineLogo, LinkIcon, RightArrowIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';

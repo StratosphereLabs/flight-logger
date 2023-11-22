@@ -1,5 +1,5 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tabs } from 'stratosphere-ui';
 import {
   CogIcon,
@@ -10,7 +10,6 @@ import {
 } from '../../common/components';
 
 export const ProfileTabs = (): JSX.Element => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { username } = useParams();
   return (
@@ -18,9 +17,11 @@ export const ProfileTabs = (): JSX.Element => {
       className="w-full flex-nowrap p-1 sm:p-2"
       lifted
       onChange={({ paths }) => {
-        paths?.[0] !== undefined && navigate(paths[0]);
+        if (paths?.[0] !== undefined) {
+          void navigate({ to: paths[0] });
+        }
       }}
-      pathname={location.pathname}
+      pathname={window.location.pathname}
       size="lg"
       tabs={[
         {

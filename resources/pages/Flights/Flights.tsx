@@ -1,6 +1,6 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   CloseIcon,
@@ -36,7 +36,7 @@ export interface FlightsFormData {
 
 export const Flights = (): JSX.Element => {
   const copyToClipboard = useCopyToClipboard();
-  const { state } = useLocation() as {
+  const { state } = {} as {
     state: FlightsPageNavigationState | null;
   };
   const navigate = useNavigate();

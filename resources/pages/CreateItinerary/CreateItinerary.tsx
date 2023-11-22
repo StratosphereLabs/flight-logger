@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
 import { itineraryFlightSchema } from '../../../app/schemas';
 import { useTRPCErrorHandler } from '../../common/hooks';
@@ -22,7 +22,7 @@ export const CreateItinerary = (): JSX.Element => {
     setIsCreateItineraryModalOpen,
   } = useItineraryFlightsStore();
   const navigate = useNavigate();
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const methods = useForm({
     mode: 'onBlur',
@@ -40,7 +40,7 @@ export const CreateItinerary = (): JSX.Element => {
     trpc.itineraries.createItinerary.useMutation({
       onSuccess: async response => {
         setIsCreateItineraryModalOpen(false);
-        navigate(`/itinerary/${response.id}`);
+        await navigate({ to: `/itinerary/$id`, params: { id: response.id } });
         resetFlights();
         await utils.users.invalidate();
       },

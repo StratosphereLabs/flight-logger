@@ -1,6 +1,6 @@
+import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, DropdownMenu, Loading, Modal } from 'stratosphere-ui';
 import {
   ThemeButton,
@@ -47,23 +47,17 @@ export const MainNavbar = (): JSX.Element => {
                 {
                   id: 'home',
                   children: 'Home',
-                  onClick: () => {
-                    navigate('/');
-                  },
+                  onClick: () => navigate({ to: '/' }),
                 },
                 {
                   id: 'add-itinerary',
                   children: 'Create Itinerary',
-                  onClick: () => {
-                    navigate('/create-itinerary');
-                  },
+                  onClick: () => navigate({ to: '/create-itinerary' }),
                 },
                 {
                   id: 'data',
                   children: 'Data',
-                  onClick: () => {
-                    navigate('/data');
-                  },
+                  onClick: () => navigate({ to: '/data' }),
                 },
               ]}
               menuClassName="rounded-box w-48 bg-base-200"
@@ -73,9 +67,7 @@ export const MainNavbar = (): JSX.Element => {
             <Button
               className="hidden text-xl normal-case sm:inline-flex"
               color="ghost"
-              onClick={() => {
-                navigate('/');
-              }}
+              onClick={() => navigate({ to: '/' })}
             >
               <div className="font-title text-3xl text-primary transition-all duration-200">
                 <span>Flight</span>
@@ -88,9 +80,7 @@ export const MainNavbar = (): JSX.Element => {
             <ThemeButton />
             <Button
               className={classNames(isLoggedIn && 'hidden')}
-              onClick={() => {
-                navigate('/auth/login');
-              }}
+              onClick={() => navigate({ to: '/auth/login' })}
             >
               Login
             </Button>
@@ -119,7 +109,7 @@ export const MainNavbar = (): JSX.Element => {
                     </>
                   ),
                   onClick: () => {
-                    navigate('/profile');
+                    // navigate({ to: '/profile' });
                   },
                 },
                 {
@@ -131,9 +121,7 @@ export const MainNavbar = (): JSX.Element => {
                       Add Flight
                     </>
                   ),
-                  onClick: () => {
-                    navigate('/add-flight');
-                  },
+                  onClick: () => navigate({ to: '/add-flight' }),
                 },
                 {
                   id: 'settings',
@@ -145,7 +133,7 @@ export const MainNavbar = (): JSX.Element => {
                     </>
                   ),
                   onClick: () => {
-                    navigate('/account');
+                    // navigate('/account');
                   },
                 },
                 {

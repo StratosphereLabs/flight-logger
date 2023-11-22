@@ -1,5 +1,5 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Table } from 'stratosphere-ui';
 import { ActionsCell, PlusIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
@@ -39,9 +39,7 @@ export const Itineraries = (): JSX.Element => {
             {username === undefined ? (
               <Button
                 color="primary"
-                onClick={() => {
-                  navigate('/create-itinerary');
-                }}
+                onClick={() => navigate({ to: '/create-itinerary' })}
               >
                 <PlusIcon className="h-6 w-6" />
                 Create Itinerary
@@ -129,9 +127,7 @@ export const Itineraries = (): JSX.Element => {
                     setActiveItinerary(row.original);
                     setIsEditDialogOpen(true);
                   }}
-                  onView={() => {
-                    navigate(`/itinerary/${row.original.id}`);
-                  }}
+                  onView={() => navigate({ to: `/itinerary` })}
                 />
               ),
               footer: () => null,

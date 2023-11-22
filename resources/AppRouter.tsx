@@ -1,21 +1,21 @@
 import { Outlet, RootRoute, Route, Router } from '@tanstack/react-router';
 import { lazy } from 'react';
-import { AuthenticationLayout, MainLayout } from './layouts';
+import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
-  // Account,
+  Account,
   AddFlight,
   CreateItinerary,
   Data,
-  // Flights,
+  Flights,
   ForgotPassword,
   Home,
-  // Itineraries,
-  // Itinerary,
+  Itineraries,
+  Itinerary,
   Login,
+  Profile,
   ResetPassword,
   Register,
-  // Profile,
-  // Trips,
+  Trips,
 } from './pages';
 
 const TanStackRouterDevtools =
@@ -66,6 +66,48 @@ const addFlightRoute = new Route({
   component: AddFlight,
 });
 
+const userProfileRoute = new Route({
+  getParentRoute: () => indexRoute,
+  path: 'user/$username',
+  component: ProfileLayout,
+});
+
+const userProfileHomeRoute = new Route({
+  getParentRoute: () => userProfileRoute,
+  path: '/',
+  component: Profile,
+});
+
+const userProfileFlightsRoute = new Route({
+  getParentRoute: () => userProfileRoute,
+  path: 'flights',
+  component: Flights,
+});
+
+const userProfileTripsRoute = new Route({
+  getParentRoute: () => userProfileRoute,
+  path: 'trips',
+  component: Trips,
+});
+
+const userProfileItinerariesRoute = new Route({
+  getParentRoute: () => userProfileRoute,
+  path: 'itineraries',
+  component: Itineraries,
+});
+
+const userProfileAccountRoute = new Route({
+  getParentRoute: () => userProfileRoute,
+  path: 'account',
+  component: Account,
+});
+
+const itineraryRoute = new Route({
+  getParentRoute: () => indexRoute,
+  path: 'itinerary/$id',
+  component: Itinerary,
+});
+
 const authRoute = new Route({
   getParentRoute: () => rootRoute,
   path: 'auth',
@@ -102,6 +144,18 @@ const routeTree = rootRoute.addChildren([
     dataRoute,
     createItineraryRoute,
     addFlightRoute,
+    userProfileHomeRoute,
+    userProfileFlightsRoute,
+    userProfileTripsRoute,
+    userProfileItinerariesRoute,
+    userProfileRoute.addChildren([
+      userProfileHomeRoute,
+      userProfileFlightsRoute,
+      userProfileTripsRoute,
+      userProfileItinerariesRoute,
+      userProfileAccountRoute,
+    ]),
+    itineraryRoute,
   ]),
   authRoute.addChildren([
     loginRoute,

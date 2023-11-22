@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams } from '@tanstack/react-router';
 import { Modal } from 'stratosphere-ui';
 import {
   useSuccessResponseHandler,
@@ -8,7 +8,7 @@ import { trpc } from '../../utils/trpc';
 import { useTripsPageStore } from './tripsPageStore';
 
 export const DeleteTripModal = (): JSX.Element => {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const { username } = useParams();
   const { activeTrip, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useTripsPageStore();

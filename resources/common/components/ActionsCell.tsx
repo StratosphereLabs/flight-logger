@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 import { ButtonArray, type ButtonOptions } from 'stratosphere-ui';
 import { EditIcon, LinkIcon, TrashIcon, ViewIcon } from './Icons';
 
@@ -22,7 +21,6 @@ export const ActionsCell = ({
   onView,
   viewMessage,
 }: ActionsCellProps): JSX.Element => {
-  const { username } = useParams();
   const protectedOptions: ButtonOptions[] = useMemo(
     () => [
       {
@@ -63,7 +61,7 @@ export const ActionsCell = ({
           onClick: () => onView?.(),
           size: 'xs',
         },
-        ...(username === undefined ? protectedOptions : []),
+        ...protectedOptions,
       ]}
       collapseAt="xl"
       dropdownMenuProps={{

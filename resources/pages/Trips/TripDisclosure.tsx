@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import { Badge, Disclosure } from 'stratosphere-ui';
 import { type UsersRouterOutput } from '../../../app/routes/users';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
@@ -19,7 +19,7 @@ export const TripDisclosure = ({
 }: TripDisclosureProps): JSX.Element => {
   const copyToClipboard = useCopyToClipboard();
   const disclosureRef = useRef<HTMLDivElement>(null);
-  const { state } = useLocation() as {
+  const { state } = window.location as {
     state: TripsPageNavigationState | null;
   };
   const { tripId, username } = useParams();
