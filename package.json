@@ -18,7 +18,8 @@
     "test:watch": "vitest --watch",
     "coverage": "vitest --coverage",
     "preview": "vite preview",
-    "format": "prettier --config ./.prettierrc -w app resources vite.config.ts"
+    "format": "prettier --config ./.prettierrc -w app resources vite.config.ts",
+    "update-flight-times": "vite-node app/commands/updateFlightTimes.ts"
   },
   "dependencies": {
     "@headlessui/react": "1.7.17",
