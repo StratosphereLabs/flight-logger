@@ -88,9 +88,13 @@ model flight {
   tailNumber         String?
   airframeId         String?
   outTime            DateTime
+  outTimeActual      DateTime?
   offTime            DateTime?
+  offTimeActual      DateTime?
   onTime             DateTime?
+  onTimeActual       DateTime?
   inTime             DateTime
+  inTimeActual       DateTime?
   duration           Int            @default(0)
   class              FlightClass?
   seatNumber         String?
