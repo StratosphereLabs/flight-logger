@@ -49,7 +49,7 @@ export const updateFlightTimes = async (): Promise<void> => {
   });
   if (flights.length === 0) {
     console.log('No flights to update.');
-    process.exit(0);
+    return;
   }
   const groupedFlights = groupBy(
     flights,
