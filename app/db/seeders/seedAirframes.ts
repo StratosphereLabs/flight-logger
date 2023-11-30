@@ -1,10 +1,8 @@
 import { type airframe } from '@prisma/client';
 import fs from 'fs';
 import { findBestMatch } from 'string-similarity';
-import { seedConcurrently } from '../../utils';
 import { prisma } from '../prisma';
-import { DB_PROMISE_CONCURRENCY } from './constants';
-import { csvToJson } from './helpers';
+import { csvToJson, seedConcurrently } from './helpers';
 
 interface AirframeResponse {
   icao24: string;
@@ -121,11 +119,7 @@ const updateAirframe = async (
       .toString();
     const rows = getDatabaseRows(data);
     console.log(`Attempting to add ${rows.length} airframes`);
-    const count = await seedConcurrently(
-      rows,
-      updateAirframe,
-      DB_PROMISE_CONCURRENCY,
-    );
+    const count = await seedConcurrently(rows, updateAirframe);
     console.log(`  Added ${count} airframes`);
   } catch (err) {
     console.error(err);

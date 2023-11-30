@@ -2,19 +2,18 @@ import { type Prisma } from '@prisma/client';
 import axios from 'axios';
 import { Promise } from 'bluebird';
 import cheerio from 'cheerio';
-import { seedConcurrently } from '../../utils';
 import { prisma } from '../prisma';
 import {
   ICAO_AIRLINE_CODE_REGEX,
   IATA_AIRLINE_CODE_REGEX,
   WIKI_PROMISE_CONCURRENCY,
-  DB_PROMISE_CONCURRENCY,
 } from './constants';
 import {
   getInt,
   getText,
   getWikipediaDataTable,
   parseWikipediaData,
+  seedConcurrently,
 } from './helpers';
 
 export const getAirlineDocument = async (
@@ -116,10 +115,8 @@ const getDatabaseRows = async (
       'https://en.wikipedia.org/wiki/List_of_airline_codes',
     );
     const rows = await getDatabaseRows(response.data);
-    const count = await seedConcurrently(
-      rows,
-      row => prisma.airline.upsert(row),
-      DB_PROMISE_CONCURRENCY,
+    const count = await seedConcurrently(rows, row =>
+      prisma.airline.upsert(row),
     );
     console.log(`Added ${count} airlines`);
   } catch (err) {

@@ -1,10 +1,9 @@
 import { type Prisma } from '@prisma/client';
 import axios from 'axios';
 import cheerio from 'cheerio';
-import { seedConcurrently } from '../../utils';
 import { prisma } from '../prisma';
-import { DB_PROMISE_CONCURRENCY, FREIGHTER_AIRCRAFT_REGEX } from './constants';
-import { getText, getWikipediaDataTable } from './helpers';
+import { FREIGHTER_AIRCRAFT_REGEX } from './constants';
+import { getText, getWikipediaDataTable, seedConcurrently } from './helpers';
 
 const getUpdate = (
   element: cheerio.Element,
@@ -55,10 +54,8 @@ const getDatabaseRows = (html: string): Prisma.aircraft_typeUpsertArgs[] => {
       'https://en.wikipedia.org/wiki/List_of_aircraft_type_designators',
     );
     const rows = getDatabaseRows(response.data);
-    const count = await seedConcurrently(
-      rows,
-      row => prisma.aircraft_type.upsert(row),
-      DB_PROMISE_CONCURRENCY,
+    const count = await seedConcurrently(rows, row =>
+      prisma.aircraft_type.upsert(row),
     );
     console.log(`  Added ${count} aircraft types`);
   } catch (err) {

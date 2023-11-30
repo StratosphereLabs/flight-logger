@@ -1,9 +1,9 @@
 import axios from 'axios';
+import { Promise } from 'bluebird';
 import cheerio from 'cheerio';
 import { add, differenceInMinutes, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 import { prisma } from '../db';
-import { seedConcurrently } from '../utils';
 import { UPDATE_CONCURRENCY, HEADERS } from './constants';
 import type { FlightAwareDataResponse } from './types';
 import { createNewDate } from './utils';
@@ -54,7 +54,7 @@ export const updateFlightTimes = async (): Promise<void> => {
     flights,
     ({ airline, flightNumber }) => `${airline?.icao}${flightNumber}`,
   );
-  await seedConcurrently(
+  await Promise.map(
     Object.entries(groupedFlights),
     async ([callsign, flights]) => {
       console.log(`Updating flight ${callsign}...`);
@@ -106,7 +106,9 @@ export const updateFlightTimes = async (): Promise<void> => {
         },
       });
     },
-    UPDATE_CONCURRENCY,
+    {
+      concurrency: UPDATE_CONCURRENCY,
+    },
   );
   console.log(
     `  ${flights.length} flight${
