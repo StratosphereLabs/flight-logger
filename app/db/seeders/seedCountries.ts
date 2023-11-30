@@ -1,7 +1,9 @@
 import { type Prisma } from '@prisma/client';
 import axios from 'axios';
+import { seedConcurrently } from '../../utils';
 import { prisma } from '../prisma';
-import { csvToJson, seedConcurrently } from './helpers';
+import { DB_PROMISE_CONCURRENCY } from './constants';
+import { csvToJson } from './helpers';
 
 interface CountryResponse {
   id: string;
@@ -39,8 +41,10 @@ const getDatabaseRows = (csv: string): Prisma.countryUpsertArgs[] =>
       'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/countries.csv',
     );
     const rows = getDatabaseRows(response.data);
-    const count = await seedConcurrently(rows, row =>
-      prisma.country.upsert(row),
+    const count = await seedConcurrently(
+      rows,
+      row => prisma.country.upsert(row),
+      DB_PROMISE_CONCURRENCY,
     );
     console.log(`  Added ${count} countries`);
   } catch (err) {

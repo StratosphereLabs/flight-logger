@@ -1,7 +1,9 @@
 import { type Prisma } from '@prisma/client';
 import axios from 'axios';
+import { seedConcurrently } from '../../utils';
 import { prisma } from '../prisma';
-import { csvToJson, seedConcurrently } from './helpers';
+import { DB_PROMISE_CONCURRENCY } from './constants';
+import { csvToJson } from './helpers';
 
 /* eslint-disable-next-line @typescript-eslint/no-var-requires */
 const { find } = require('geo-tz') as {
@@ -79,8 +81,10 @@ const getDatabaseRows = (csv: string): Prisma.airportUpsertArgs[] =>
       'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv',
     );
     const rows = getDatabaseRows(response.data);
-    const count = await seedConcurrently(rows, row =>
-      prisma.airport.upsert(row),
+    const count = await seedConcurrently(
+      rows,
+      row => prisma.airport.upsert(row),
+      DB_PROMISE_CONCURRENCY,
     );
     console.log(`  Added ${count} airports`);
   } catch (err) {

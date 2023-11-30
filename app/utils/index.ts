@@ -7,6 +7,7 @@ export * from './flights';
 export * from './flighttime';
 export * from './itineraries';
 export * from './pagination';
+export * from './seedConcurrently';
 export * from './server';
 export * from './trips';
 export * from './users';
