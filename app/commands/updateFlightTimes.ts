@@ -3,6 +3,7 @@ import { Promise } from 'bluebird';
 import cheerio from 'cheerio';
 import { add, differenceInMinutes, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
+import { scheduleJob } from 'node-schedule';
 import { prisma } from '../db';
 import { UPDATE_CONCURRENCY, HEADERS } from './constants';
 import type { FlightAwareDataResponse } from './types';
@@ -118,5 +119,5 @@ export const updateFlightTimes = async (): Promise<void> => {
 };
 
 (() => {
-  void updateFlightTimes();
+  scheduleJob('0 * * * *', updateFlightTimes);
 })();
