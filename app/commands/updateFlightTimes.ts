@@ -10,6 +10,8 @@ import type { FlightAwareDataResponse } from './types';
 import { createNewDate } from './utils';
 
 const SCRIPT_BEGIN = 'var trackpollBootstrap = ';
+const KEY_DELIMITER = ' ';
+const ROUTE_DELIMITER = '-';
 
 export const fetchFlightAwareData = async (
   callsign: string,
@@ -53,11 +55,15 @@ export const updateFlightTimes = async (): Promise<void> => {
   }
   const groupedFlights = groupBy(
     flights,
-    ({ airline, flightNumber }) => `${airline?.icao}${flightNumber}`,
+    ({ airline, flightNumber, departureAirportId, arrivalAirportId }) =>
+      `${airline?.icao}${flightNumber}${KEY_DELIMITER}${departureAirportId}${ROUTE_DELIMITER}${arrivalAirportId}`,
   );
   await Promise.map(
     Object.entries(groupedFlights),
-    async ([callsign, flights]) => {
+    async ([key, flights]) => {
+      const [callsign, route] = key.split(KEY_DELIMITER);
+      const [departureAirportId, arrivalAirportId] =
+        route.split(ROUTE_DELIMITER);
       console.log(`Updating flight ${callsign}...`);
       const data = await fetchFlightAwareData(callsign);
       if (data === null) {
@@ -68,6 +74,14 @@ export const updateFlightTimes = async (): Promise<void> => {
       const outTimeScheduled = createNewDate(
         flightAwareFlightData.gateDepartureTimes.scheduled,
       );
+      if (flightAwareFlightData.origin.icao !== departureAirportId) {
+        console.error('  Departure airport does not match.');
+        return;
+      }
+      if (flightAwareFlightData.destination.icao !== arrivalAirportId) {
+        console.error('  Arrival airport does not match.');
+        return;
+      }
       const timeDiff = Math.abs(
         differenceInMinutes(flights[0].outTime, outTimeScheduled),
       );
