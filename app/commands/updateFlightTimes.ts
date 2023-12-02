@@ -133,5 +133,5 @@ export const updateFlightTimes = async (): Promise<void> => {
 };
 
 (() => {
-  scheduleJob('0 * * * *', updateFlightTimes);
+  scheduleJob('*/30 * * * *', updateFlightTimes);
 })();
