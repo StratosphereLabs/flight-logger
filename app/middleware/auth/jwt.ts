@@ -25,7 +25,7 @@ export const verifyAdminRest = (
 };
 
 export const verifyAuthenticated = middleware(async ({ ctx, next }) => {
-  if (ctx.user === undefined) {
+  if (ctx.user === null) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
   return await next({

@@ -75,10 +75,10 @@ export const itinerariesRouter = router({
       const itinerary = await prisma.itinerary.create({
         data: {
           user:
-            ctx.user !== undefined
+            ctx.user !== null
               ? {
                   connect: {
-                    id: ctx.user?.id,
+                    id: ctx.user.id,
                   },
                 }
               : undefined,

@@ -56,6 +56,9 @@ export const airportsRouter = router({
     .input(getAirportSchema)
     .query(async ({ ctx, input }) => {
       const { id } = input;
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
       const username = input?.username ?? ctx.user?.username;
       const airport = await prisma.airport.findUnique({
         where: {
