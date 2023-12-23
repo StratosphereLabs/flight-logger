@@ -5,22 +5,22 @@ import jwt from 'jsonwebtoken';
 export type UserToken = Pick<user, 'id' | 'username' | 'admin'>;
 
 export interface Context {
-  user?: UserToken;
+  user: UserToken | null;
   origin?: string;
 }
 
 export const createContext = ({
   req,
 }: trpcExpress.CreateExpressContextOptions): Context => {
-  const getUserFromHeader = (): UserToken | undefined => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (token !== undefined) {
-      const result = jwt.verify(
-        token,
+  const getUserFromHeader = (): UserToken | null => {
+    if (req.headers.authorization !== undefined) {
+      const user = jwt.verify(
+        req.headers.authorization.split(' ')[1],
         process.env.JWT_SECRET ?? '',
       ) as UserToken;
-      return result;
+      return user;
     }
+    return null;
   };
   return {
     user: getUserFromHeader(),

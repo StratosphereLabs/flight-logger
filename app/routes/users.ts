@@ -21,6 +21,9 @@ import {
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
+    if (input.username === undefined && ctx.user === null) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
     const [userData, completedFlightCount, upcomingFlightCount] =
       await prisma.$transaction([
         prisma.user.findUnique({
@@ -72,6 +75,9 @@ export const usersRouter = router({
   getUserFlights: procedure
     .input(getUserFlightsSchema)
     .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
       const includeObj = {
         user: true,
         departureAirport: true,
@@ -148,6 +154,9 @@ export const usersRouter = router({
   getUserMapData: procedure
     .input(getUserSchema)
     .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
       const flights = await prisma.flight.findMany({
         where: {
           user: {
@@ -166,6 +175,9 @@ export const usersRouter = router({
       };
     }),
   getUserTrips: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
+    if (input.username === undefined && ctx.user === null) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
     const includeObj = {
       user: true,
       flights: {
@@ -244,6 +256,9 @@ export const usersRouter = router({
   getUserItineraries: procedure
     .input(getUserSchema)
     .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
       const itineraries = await prisma.itinerary.findMany({
         where: {
           user: {
