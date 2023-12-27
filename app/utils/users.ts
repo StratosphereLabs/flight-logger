@@ -6,7 +6,10 @@ import { type UserToken } from '../context';
 export const fetchGravatarUrl = (email: string): string =>
   url(email, { s: '200' }, true);
 
-export const generateUserToken = (user: user): string => {
+export const generateUserToken = (user: user): string | null => {
   const { id, username, admin }: UserToken = user;
-  return jwt.sign({ id, username, admin }, process.env.JWT_SECRET as string);
+  const secret = process.env.JWT_SECRET;
+  return secret !== undefined
+    ? jwt.sign({ id, username, admin }, secret)
+    : null;
 };

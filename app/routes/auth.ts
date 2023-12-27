@@ -33,9 +33,14 @@ export const authRouter = router({
         message: 'Incorrect password.',
       });
     }
-    return {
-      token: generateUserToken(user),
-    };
+    const token = generateUserToken(user);
+    if (token === null) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Missing JWT secret.',
+      });
+    }
+    return { token };
   }),
   register: procedure.input(registerSchema).mutation(async ({ input }) => {
     const { confirmPassword, password } = input;
@@ -46,6 +51,12 @@ export const authRouter = router({
       });
     }
     const token = await upsertUser(input);
+    if (token === null) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Missing JWT secret.',
+      });
+    }
     return { token };
   }),
 });

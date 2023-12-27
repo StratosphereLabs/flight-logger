@@ -10,7 +10,9 @@ export interface UpsertUserParams {
   lastName?: string;
 }
 
-export const upsertUser = async (params: UpsertUserParams): Promise<string> => {
+export const upsertUser = async (
+  params: UpsertUserParams,
+): Promise<string | null> => {
   const user = await prisma.user.upsert({
     where: {
       email: params.email,

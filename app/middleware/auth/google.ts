@@ -17,7 +17,7 @@ export const verifyGoogleAuthToken = async (
   try {
     const user = await verifyGoogleIdToken(response.credential);
     if (user?.email === undefined) {
-      next(createHttpError(401, ''));
+      next(createHttpError(401, 'Invalid token.'));
       return;
     }
     const token = await upsertUser({
@@ -25,6 +25,10 @@ export const verifyGoogleAuthToken = async (
       firstName: user?.given_name,
       lastName: user?.family_name,
     });
+    if (token === null) {
+      next(createHttpError(500, 'Missing JWT secret.'));
+      return;
+    }
     res.status(200).json({ token });
   } catch (err) {
     next(err);
