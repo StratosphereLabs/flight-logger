@@ -1,7 +1,9 @@
 import { type airframe } from '@prisma/client';
-import fs from 'fs';
+import axios from 'axios';
+import fs, { type ReadStream } from 'fs';
 import { findBestMatch } from 'string-similarity';
 import { prisma } from '../prisma';
+import { AIRFRAMES_CSV_PATH, AIRFRAMES_CSV_URL } from './constants';
 import { csvToJson, seedConcurrently } from './helpers';
 
 interface AirframeResponse {
@@ -110,13 +112,19 @@ const updateAirframe = async (
   });
 };
 
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(async () => {
+export const seedAirframes = async (): Promise<void> => {
   console.log('Seeding airframes...');
   try {
-    const data = fs
-      .readFileSync('./app/db/seeders/data/aircraftDatabase.csv')
-      .toString();
+    const response = await axios.get<ReadStream>(AIRFRAMES_CSV_URL, {
+      responseType: 'stream',
+    });
+    await new Promise((resolve, reject) => {
+      const writer = fs.createWriteStream(AIRFRAMES_CSV_PATH);
+      response.data.pipe(writer);
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+    const data = fs.readFileSync(AIRFRAMES_CSV_PATH).toString();
     const rows = getDatabaseRows(data);
     console.log(`Attempting to add ${rows.length} airframes`);
     const count = await seedConcurrently(rows, updateAirframe);
@@ -124,4 +132,9 @@ const updateAirframe = async (
   } catch (err) {
     console.error(err);
   }
+};
+
+/* eslint-disable @typescript-eslint/no-floating-promises */
+(() => {
+  seedAirframes();
 })();
