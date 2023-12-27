@@ -64,6 +64,14 @@ const updateAirframe = async (
       icao: row.operatoricao,
     },
   });
+  const aircraftType =
+    row.icaoaircrafttype.length > 0
+      ? await prisma.aircraft_type.findFirst({
+          where: {
+            icao: row.icaoaircrafttype,
+          },
+        })
+      : null;
   const bestMatchIndex =
     airlines.length > 0
       ? findBestMatch(
@@ -98,6 +106,14 @@ const updateAirframe = async (
     registrationExprDate:
       row.reguntil !== '' ? new Date(row.reguntil).toISOString() : null,
     builtDate: row.built !== '' ? new Date(row.built).toISOString() : null,
+    aircraftType:
+      aircraftType !== null
+        ? {
+            connect: {
+              id: aircraftType.id,
+            },
+          }
+        : undefined,
     engines: row.engines !== '' ? row.engines : null,
   };
   return await prisma.airframe.upsert({

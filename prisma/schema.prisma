@@ -121,23 +121,25 @@ model manufacturer {
 }
 
 model airframe {
-  icao24                String        @id
+  icao24                String          @id
   registration          String
   manufacturerCode      String
-  manufacturer          manufacturer  @relation(fields: [manufacturerCode], references: [code])
+  manufacturer          manufacturer    @relation(fields: [manufacturerCode], references: [code])
   model                 String?
   typeCode              String?
   serialNumber          String?
   lineNumber            String?
   icaoAircraftType      String?
   operatorId            String?
-  operator              airline?      @relation("airframes", fields: [operatorId], references: [id])
+  operator              airline?        @relation(fields: [operatorId], references: [id])
   owner                 String?
   testReg               String?
-  registrationDate      DateTime?     @db.Date
-  registrationExprDate  DateTime?     @db.Date
-  builtDate             DateTime?     @db.Date
+  registrationDate      DateTime?       @db.Date
+  registrationExprDate  DateTime?       @db.Date
+  builtDate             DateTime?       @db.Date
   engines               String?
+  aircraftTypeId        String?
+  aircraftType          aircraft_type?  @relation(fields: [aircraftTypeId], references: [id])
   flights               flight[]
 }
 
@@ -149,6 +151,7 @@ model aircraft_type {
   class             String
   flights           flight[]
   itineraryFlights  itinerary_flight[]
+  airframes         airframe[]
 }
 
 model airline {
@@ -161,7 +164,7 @@ model airline {
   destinations              Int?
   logo                      String?
   wiki                      String?
-  airframes                 airframe[]          @relation("airframes")
+  airframes                 airframe[]
   flights                   flight[]            @relation("flights")
   operatorFlights           flight[]            @relation("operatorFlights")
   itineraryFlights          itinerary_flight[]  @relation("itineraryFlights")
