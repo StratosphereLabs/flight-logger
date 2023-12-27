@@ -34,6 +34,7 @@ export const addFlightSchema = z.object({
   airframe: airframeSchema
     .extend({
       operator: airlineSchema.nullable(),
+      aircraftType: aircraft_typeSchema.nullable(),
     })
     .nullable(),
   outDateISO: z

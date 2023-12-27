@@ -67,6 +67,12 @@ export const EditFlightModal = ({
   });
   useTRPCErrorHandler(error);
   useEffect(() => {
+    if (
+      airframe?.aircraftType !== null &&
+      airframe?.aircraftType !== undefined
+    ) {
+      methods.setValue('aircraftType', airframe.aircraftType);
+    }
     if (airframe?.operator !== null && airframe?.operator !== undefined) {
       methods.setValue('airline', airframe.operator);
     }

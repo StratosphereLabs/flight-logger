@@ -42,6 +42,7 @@ export const airframesRouter = router({
       },
       include: {
         operator: true,
+        aircraftType: true,
       },
       orderBy: {
         operatorId: 'asc',
