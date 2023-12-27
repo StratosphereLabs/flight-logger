@@ -12,7 +12,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
     "migrate:reset": "prisma migrate reset",
-    "seed": "vite-node app/db/seeders/seedAirframes.ts",
+    "seed": "vite-node app/db/seeders/seedAirlines.ts",
     "build": "rm -rf prisma/generated public && npm run generate && vite build --outDir public",
     "test": "vitest",
     "test:watch": "vitest --watch",
