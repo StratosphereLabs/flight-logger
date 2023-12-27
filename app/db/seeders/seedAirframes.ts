@@ -133,8 +133,3 @@ export const seedAirframes = async (): Promise<void> => {
     console.error(err);
   }
 };
-
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(() => {
-  seedAirframes();
-})();
