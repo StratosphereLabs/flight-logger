@@ -1,6 +1,6 @@
 import { differenceInMinutes } from 'date-fns';
 import { prisma } from '../../db';
-import { type FlightWithData } from '../updateFlights';
+import { type FlightWithData } from '../updateData';
 import { createNewDate } from '../utils';
 import { fetchFlightAwareData } from './fetchFlightAwareData';
 

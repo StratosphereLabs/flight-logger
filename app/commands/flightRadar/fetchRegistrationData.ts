@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { HEADERS } from '../constants';
-import { type FlightWithData } from '../updateFlights';
+import { type FlightWithData } from '../updateData';
 import { createNewDate } from '../utils';
 import type { RegistrationData } from './types';
 

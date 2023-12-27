@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "concurrently \"vite-node app/server.ts\" \"npm run update-flights\" \"npm run update-airframes\"",
+    "start": "concurrently \"vite-node app/server.ts\" \"npm run update-data\"",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon --watch app --watch routes --exec \"npm start\"",
     "dev:client": "vite",
@@ -19,8 +19,7 @@
     "coverage": "vitest --coverage",
     "preview": "vite preview",
     "format": "prettier --config ./.prettierrc -w app resources vite.config.ts",
-    "update-airframes": "vite-node app/commands/updateAirframes.ts",
-    "update-flights": "vite-node app/commands/updateFlights.ts"
+    "update-data": "vite-node app/commands/updateData.ts"
   },
   "dependencies": {
     "@headlessui/react": "1.7.17",

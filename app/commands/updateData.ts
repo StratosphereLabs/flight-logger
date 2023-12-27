@@ -4,6 +4,7 @@ import { add, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 import { scheduleJob } from 'node-schedule';
 import { prisma } from '../db';
+import { seedAirframes } from '../db/seeders/seedAirframes';
 import { UPDATE_CONCURRENCY } from './constants';
 import { updateFlightTimes } from './flightAware';
 import { updateFlightRegistrations } from './flightRadar';
@@ -19,7 +20,7 @@ export type FlightWithData = flight & {
   };
 };
 
-export const updateFlights = async (): Promise<void> => {
+const updateFlights = async (): Promise<void> => {
   const flightsToUpdate = await prisma.flight.findMany({
     where: {
       outTime: {
@@ -72,4 +73,5 @@ export const updateFlights = async (): Promise<void> => {
 
 (() => {
   scheduleJob('*/30 * * * *', updateFlights);
+  scheduleJob('0 0 1 * *', seedAirframes);
 })();
