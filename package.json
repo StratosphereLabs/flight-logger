@@ -6,7 +6,7 @@
   "scripts": {
     "start": "concurrently \"vite-node app/server.ts\" \"npm run update-data\"",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "nodemon --watch app --watch routes --exec \"npm start\"",
+    "dev:server": "nodemon --watch app --watch routes --exec \"vite-node app/server.ts\"",
     "dev:client": "vite",
     "generate": "prisma generate",
     "migrate:deploy": "prisma migrate deploy",
