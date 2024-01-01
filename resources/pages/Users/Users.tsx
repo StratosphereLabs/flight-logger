@@ -1,5 +1,6 @@
 import { getCoreRowModel } from '@tanstack/react-table';
-import { useForm, useWatch } from 'react-hook-form';
+import { pickBy } from 'lodash';
+import { useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
@@ -11,6 +12,7 @@ import {
   Link,
   Loading,
   Table,
+  useFormWithQueryParams,
 } from 'stratosphere-ui';
 import { SearchIcon } from '../../common/components';
 import { trpc } from '../../utils/trpc';
@@ -21,17 +23,25 @@ export interface SearchUsersFormData {
 
 export const Users = (): JSX.Element => {
   const navigate = useNavigate();
-  const methods = useForm<SearchUsersFormData>({
-    defaultValues: {
-      searchQuery: '',
-    },
+  const methods = useFormWithQueryParams<SearchUsersFormData>({
+    getDefaultValues: ({ searchQuery }) => ({
+      searchQuery: searchQuery ?? '',
+    }),
+    getSearchParams: ([searchQuery]) =>
+      pickBy(
+        {
+          searchQuery,
+        },
+        value => value.length > 0,
+      ),
+    includeKeys: ['searchQuery'],
   });
-  const searchQuery = useWatch<SearchUsersFormData, 'searchQuery'>({
+  const query = useWatch<SearchUsersFormData, 'searchQuery'>({
     control: methods.control,
     name: 'searchQuery',
   });
   const { data, isFetching } = trpc.users.searchUsers.useQuery({
-    query: searchQuery,
+    query,
   });
   return (
     <Card className="m-2 mt-1 flex-1 overflow-y-hidden bg-base-100 shadow-md">
