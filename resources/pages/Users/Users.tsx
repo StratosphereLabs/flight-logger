@@ -30,10 +30,9 @@ export const Users = (): JSX.Element => {
     control: methods.control,
     name: 'searchQuery',
   });
-  const { data, isFetching } = trpc.users.searchUsers.useQuery(
-    { query: searchQuery },
-    { enabled: searchQuery.length > 0 },
-  );
+  const { data, isFetching } = trpc.users.searchUsers.useQuery({
+    query: searchQuery,
+  });
   return (
     <Card className="m-2 mt-1 flex-1 overflow-y-hidden bg-base-100 shadow-md">
       <CardBody>

@@ -64,7 +64,7 @@ export const MainNavbar = (): JSX.Element => {
   const tabsToPathsMap: Record<string, string> = useMemo(
     () => ({
       home: '/',
-      profile: username !== undefined ? `/user/${username}` : '/profile',
+      profile: '/profile',
       users: '/users',
       data: '/data',
     }),

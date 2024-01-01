@@ -293,6 +293,11 @@ export const usersRouter = router({
           mode: 'insensitive',
         },
       },
+      orderBy: {
+        flights: {
+          _count: 'desc',
+        },
+      },
     });
     return results.map(user => ({
       id: user.username,
@@ -325,6 +330,11 @@ export const usersRouter = router({
               },
             },
           },
+        },
+      },
+      orderBy: {
+        flights: {
+          _count: 'desc',
         },
       },
     });
