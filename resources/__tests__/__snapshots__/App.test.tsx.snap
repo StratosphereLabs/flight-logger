@@ -225,13 +225,13 @@ exports[`<App /> > renders profile page 1`] = `
       class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
     >
       <div
-        class="navbar justify-between rounded-box bg-base-100 shadow-md lg:justify-start"
+        class="navbar rounded-box bg-base-100 shadow-xl"
       >
         <div
-          class="navbar-start w-auto lg:w-1/2"
+          class="navbar-start"
         >
           <div
-            class="relative"
+            class="relative lg:hidden"
             data-headlessui-state=""
           >
             <button
@@ -263,10 +263,6 @@ exports[`<App /> > renders profile page 1`] = `
               </span>
             </button>
           </div>
-        </div>
-        <div
-          class="navbar-center hidden lg:flex"
-        >
           <button
             class="btn btn-ghost hidden text-xl normal-case sm:inline-flex"
             type="button"
@@ -286,7 +282,40 @@ exports[`<App /> > renders profile page 1`] = `
           </button>
         </div>
         <div
-          class="navbar-end w-auto space-x-1 lg:w-1/2"
+          class="navbar-center hidden lg:flex"
+        >
+          <div
+            aria-orientation="horizontal"
+            class="tabs tabs-lg tabs-boxed bg-base-100 p-0"
+            role="tablist"
+          >
+            <button
+              aria-selected="true"
+              class="tab tab-active"
+              data-headlessui-state="selected"
+              id="headlessui-tabs-tab-:r2:"
+              role="tab"
+              tabindex="0"
+              type="button"
+            >
+              Home
+            </button>
+            <button
+              aria-selected="false"
+              class="tab"
+              data-headlessui-state=""
+              id="headlessui-tabs-tab-:r3:"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              Data
+            </button>
+          </div>
+          <div />
+        </div>
+        <div
+          class="navbar-end gap-1"
         >
           <button
             class="btn btn-ghost btn-circle"
@@ -321,7 +350,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-haspopup="menu"
               class="btn btn-ghost btn-circle"
               data-headlessui-state=""
-              id="headlessui-menu-button-:r2:"
+              id="headlessui-menu-button-:r4:"
               type="button"
             >
               <svg
@@ -359,7 +388,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-haspopup="menu"
               class="btn btn-ghost btn-circle"
               data-headlessui-state=""
-              id="headlessui-menu-button-:r3:"
+              id="headlessui-menu-button-:r5:"
               type="button"
             >
               <div

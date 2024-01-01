@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Tabs } from 'stratosphere-ui';
 import {
@@ -10,22 +11,54 @@ import {
 } from '../../common/components';
 
 export const ProfileTabs = (): JSX.Element => {
-  const location = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams();
+  const pathsToTabsMap: Record<string, string> = useMemo(
+    () => ({
+      ...(username !== undefined
+        ? {
+            [`/user/${username}`]: 'profile',
+            [`/user/${username}/flights`]: 'flights',
+            [`/user/${username}/trips`]: 'trips',
+            [`/user/${username}/itineraries`]: 'itineraries',
+          }
+        : {
+            '/profile': 'profile',
+            '/flights': 'flights',
+            '/trips': 'trips',
+            '/itineraries': 'itineraries',
+          }),
+      '/account': 'account',
+    }),
+    [username],
+  );
+  const tabsToPathsMap: Record<string, string> = useMemo(
+    () => ({
+      profile: username !== undefined ? `/user/${username}` : '/profile',
+      flights:
+        username !== undefined ? `/user/${username}/flights` : '/flights',
+      trips: username !== undefined ? `/user/${username}/trips` : '/trips',
+      itineraries:
+        username !== undefined
+          ? `/user/${username}/itineraries`
+          : '/itineraries',
+      account: '/account',
+    }),
+    [username],
+  );
   return (
     <Tabs
       className="w-full flex-nowrap p-1 sm:p-2"
       lifted
-      onChange={({ paths }) => {
-        paths?.[0] !== undefined && navigate(paths[0]);
+      onChange={({ id }) => {
+        navigate(tabsToPathsMap[id]);
       }}
-      pathname={location.pathname}
+      selectedTabId={pathsToTabsMap[pathname]}
       size="lg"
       tabs={[
         {
           id: 'profile',
-          paths: [username !== undefined ? `/user/${username}` : '/profile'],
           children: (
             <>
               <HomeIcon className="h-5 w-5" />
@@ -36,9 +69,6 @@ export const ProfileTabs = (): JSX.Element => {
         },
         {
           id: 'flights',
-          paths: [
-            username !== undefined ? `/user/${username}/flights` : '/flights',
-          ],
           children: (
             <>
               <PlaneIcon />
@@ -49,9 +79,6 @@ export const ProfileTabs = (): JSX.Element => {
         },
         {
           id: 'trips',
-          paths: [
-            username !== undefined ? `/user/${username}/trips` : '/trips',
-          ],
           children: (
             <>
               <GlobeIcon className="h-5 w-5" />
@@ -62,11 +89,6 @@ export const ProfileTabs = (): JSX.Element => {
         },
         {
           id: 'itineraries',
-          paths: [
-            username !== undefined
-              ? `/user/${username}/itineraries`
-              : '/itineraries',
-          ],
           children: (
             <>
               <ListIcon className="h-5 w-5" />
@@ -77,7 +99,6 @@ export const ProfileTabs = (): JSX.Element => {
         },
         {
           id: 'account',
-          paths: [username !== undefined ? '' : '/account'],
           children: (
             <>
               <CogIcon className="h-5 w-5" />

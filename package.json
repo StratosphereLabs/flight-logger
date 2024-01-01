@@ -69,7 +69,7 @@
     "react-hook-form": "^7.49.2",
     "react-router-dom": "^6.21.1",
     "reflect-metadata": "^0.2.1",
-    "stratosphere-ui": "^1.4.1",
+    "stratosphere-ui": "^1.5.1",
     "string-similarity": "^4.0.4",
     "zod": "3.22.4",
     "zod-prisma-types": "^3.1.6",

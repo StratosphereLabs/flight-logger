@@ -1,15 +1,23 @@
 import classNames from 'classnames';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Avatar, Button, DropdownMenu, Loading, Modal } from 'stratosphere-ui';
+import { useMemo, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
-  ThemeButton,
-  MenuIcon,
-  SearchButton,
-  LogoutIcon,
-  HomeIcon,
-  PlusIcon,
+  Avatar,
+  Button,
+  DropdownMenu,
+  Loading,
+  Modal,
+  Tabs,
+  type TabData,
+} from 'stratosphere-ui';
+import {
   CogIcon,
+  HomeIcon,
+  LogoutIcon,
+  MenuIcon,
+  PlusIcon,
+  SearchButton,
+  ThemeButton,
 } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore } from '../../stores';
@@ -19,7 +27,9 @@ export const MainNavbar = (): JSX.Element => {
   const isLoggedIn = useAuthStore(({ token }) => token !== null);
   const { logout } = useAuthStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { username } = useParams();
   const { data, error, isFetching } = trpc.users.getUser.useQuery(
     { username: undefined },
     {
@@ -27,12 +37,71 @@ export const MainNavbar = (): JSX.Element => {
       staleTime: 5 * 60 * 1000,
     },
   );
+  const pathsToTabsMap: Record<string, string> = useMemo(
+    () => ({
+      '/': 'home',
+      ...(username !== undefined
+        ? {
+            [`/user/${username}`]: 'profile',
+            [`/user/${username}/flights`]: 'profile',
+            [`/user/${username}/trips`]: 'profile',
+            [`/user/${username}/itineraries`]: 'profile',
+          }
+        : {
+            '/profile': 'profile',
+            '/flights': 'profile',
+            '/trips': 'profile',
+            '/itineraries': 'profile',
+          }),
+      '/account': 'profile',
+      '/data': 'data',
+    }),
+    [username],
+  );
+  const tabsToPathsMap: Record<string, string> = useMemo(
+    () => ({
+      home: '/',
+      profile: username !== undefined ? `/user/${username}` : '/profile',
+      data: '/data',
+    }),
+    [username],
+  );
+  const tabs: TabData[] = useMemo(
+    () => [
+      {
+        id: 'home',
+        children: 'Home',
+        onClick: () => {
+          navigate(tabsToPathsMap.home);
+        },
+      },
+      ...(isLoggedIn
+        ? [
+            {
+              id: 'profile',
+              children: 'Profile',
+              onClick: () => {
+                navigate(tabsToPathsMap.profile);
+              },
+            },
+          ]
+        : []),
+      {
+        id: 'data',
+        children: 'Data',
+        onClick: () => {
+          navigate(tabsToPathsMap.data);
+        },
+      },
+    ],
+    [isLoggedIn, tabsToPathsMap],
+  );
   useTRPCErrorHandler(error);
   return (
     <>
       <div className="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans">
-        <div className="navbar justify-between rounded-box bg-base-100 shadow-md lg:justify-start">
-          <div className="navbar-start w-auto lg:w-1/2">
+        <div className="navbar rounded-box bg-base-100 shadow-xl">
+          <div className="navbar-start">
             <DropdownMenu
               buttonProps={{
                 color: 'ghost',
@@ -43,33 +112,10 @@ export const MainNavbar = (): JSX.Element => {
                   </>
                 ),
               }}
-              items={[
-                {
-                  id: 'home',
-                  children: 'Home',
-                  onClick: () => {
-                    navigate('/');
-                  },
-                },
-                {
-                  id: 'add-itinerary',
-                  children: 'Create Itinerary',
-                  onClick: () => {
-                    navigate('/create-itinerary');
-                  },
-                },
-                {
-                  id: 'data',
-                  children: 'Data',
-                  onClick: () => {
-                    navigate('/data');
-                  },
-                },
-              ]}
+              className="lg:hidden"
+              items={tabs}
               menuClassName="rounded-box w-48 bg-base-200"
             />
-          </div>
-          <div className="navbar-center hidden lg:flex">
             <Button
               className="hidden text-xl normal-case sm:inline-flex"
               color="ghost"
@@ -83,7 +129,18 @@ export const MainNavbar = (): JSX.Element => {
               </div>
             </Button>
           </div>
-          <div className="navbar-end w-auto space-x-1 lg:w-1/2">
+          <div className="navbar-center hidden lg:flex">
+            <Tabs
+              className="tabs-boxed bg-base-100 p-0"
+              onChange={({ id }) => {
+                navigate(tabsToPathsMap[id]);
+              }}
+              selectedTabId={pathsToTabsMap[pathname]}
+              size="lg"
+              tabs={tabs}
+            />
+          </div>
+          <div className="navbar-end gap-1">
             <SearchButton />
             <ThemeButton />
             <Button
