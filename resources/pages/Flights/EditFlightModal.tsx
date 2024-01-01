@@ -34,7 +34,7 @@ export interface EditFlightProps {
 export const EditFlightModal = ({
   onSuccess,
 }: EditFlightProps): JSX.Element => {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const methods = useForm<EditFlightRequest>({
     defaultValues: editFlightDefaultValues,

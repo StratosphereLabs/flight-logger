@@ -30,7 +30,7 @@ export const WelcomeCard = (): JSX.Element => {
               </ul>
               <Button
                 className="mt-4"
-                color="info"
+                color="accent"
                 onClick={() => {
                   navigate('/create-itinerary');
                 }}

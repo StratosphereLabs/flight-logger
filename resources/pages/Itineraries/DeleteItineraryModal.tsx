@@ -8,7 +8,7 @@ import { trpc } from '../../utils/trpc';
 import { useItinerariesPageStore } from './itinerariesPageStore';
 
 export const DeleteItineraryModal = (): JSX.Element => {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const { username } = useParams();
   const { activeItinerary, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useItinerariesPageStore();

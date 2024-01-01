@@ -15,6 +15,7 @@ import {
   Register,
   Profile,
   Trips,
+  Users,
 } from './pages';
 
 export const AppRouter = (): JSX.Element => (
@@ -22,6 +23,7 @@ export const AppRouter = (): JSX.Element => (
     <Route path="/" element={<MainLayout />}>
       <Route path="" element={<Home />} />
       <Route path="data" element={<Data />} />
+      <Route path="users" element={<Users />} />
       <Route path="create-itinerary" element={<CreateItinerary />} />
       <Route path="add-flight" element={<AddFlight />} />
       {['', 'user/:username'].map(path => (

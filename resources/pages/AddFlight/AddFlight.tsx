@@ -29,7 +29,7 @@ import { trpc } from '../../utils/trpc';
 import { addFlightDefaultValues } from './constants';
 
 export const AddFlight = (): JSX.Element => {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   useProtectedPage();
   const methods = useForm<AddFlightRequest>({
     mode: 'onBlur',
