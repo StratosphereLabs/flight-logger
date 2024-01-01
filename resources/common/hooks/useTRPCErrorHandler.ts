@@ -34,5 +34,5 @@ export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(
         },
       ]);
     }
-  }, [trpcError]);
+  }, [addAlertMessages, trpcError]);
 };

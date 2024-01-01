@@ -98,7 +98,7 @@ export const MapCard = (): JSX.Element => {
   }, [heatmap, heatmapData]);
   useEffect(() => {
     if (data !== undefined) setCenter(data.centerpoint);
-  }, [data?.centerpoint]);
+  }, [data]);
   useTRPCErrorHandler(error);
   const { theme } = useThemeStore();
   const mapOptions = useMemo(

@@ -12,7 +12,7 @@ export const ProfileLayout = (): JSX.Element => {
     if (!isLoggedIn && username === undefined) {
       navigate('/');
     }
-  }, [isLoggedIn, username]);
+  }, [isLoggedIn, navigate, username]);
   return (
     <Card className="m-2 mt-1 flex-1 overflow-y-hidden bg-base-100 shadow-md">
       <ProfileTabs />

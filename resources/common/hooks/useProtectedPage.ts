@@ -7,5 +7,5 @@ export const useProtectedPage = (): void => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!isLoggedIn) navigate('/');
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 };

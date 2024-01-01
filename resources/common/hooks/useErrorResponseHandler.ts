@@ -21,7 +21,7 @@ export const useErrorResponseHandler = (
         addAlertMessages([defaultMessage]);
       }
     },
-    [defaultMessage],
+    [addAlertMessages, defaultMessage],
   );
 };
 
