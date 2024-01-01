@@ -8,7 +8,7 @@ import { trpc } from '../../utils/trpc';
 import { useTripsPageStore } from './tripsPageStore';
 
 export const DeleteTripModal = (): JSX.Element => {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const { username } = useParams();
   const { activeTrip, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useTripsPageStore();

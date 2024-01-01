@@ -14,7 +14,7 @@ export const ProfileLayout = (): JSX.Element => {
     }
   }, [isLoggedIn, username]);
   return (
-    <Card className="m-2 flex-1 overflow-y-hidden bg-base-100 shadow-md">
+    <Card className="m-2 mt-1 flex-1 overflow-y-hidden bg-base-100 shadow-md">
       <ProfileTabs />
       <div className="flex flex-1 flex-col overflow-y-scroll p-2 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:scrollbar">
         <Outlet />

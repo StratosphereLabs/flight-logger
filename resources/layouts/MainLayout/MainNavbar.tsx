@@ -42,17 +42,20 @@ export const MainNavbar = (): JSX.Element => {
       '/': 'home',
       ...(username !== undefined
         ? {
-            [`/user/${username}`]: 'profile',
-            [`/user/${username}/flights`]: 'profile',
-            [`/user/${username}/trips`]: 'profile',
-            [`/user/${username}/itineraries`]: 'profile',
+            [`/user/${username}`]: 'users',
+            [`/user/${username}/flights`]: 'users',
+            [`/user/${username}/trips`]: 'users',
+            [`/user/${username}/itineraries`]: 'users',
           }
         : {
             '/profile': 'profile',
             '/flights': 'profile',
             '/trips': 'profile',
             '/itineraries': 'profile',
+            '/add-flight': 'profile',
+            '/create-itinerary': 'profile',
           }),
+      '/users': 'users',
       '/account': 'profile',
       '/data': 'data',
     }),
@@ -62,6 +65,7 @@ export const MainNavbar = (): JSX.Element => {
     () => ({
       home: '/',
       profile: username !== undefined ? `/user/${username}` : '/profile',
+      users: '/users',
       data: '/data',
     }),
     [username],
@@ -86,6 +90,13 @@ export const MainNavbar = (): JSX.Element => {
             },
           ]
         : []),
+      {
+        id: 'users',
+        children: 'Users',
+        onClick: () => {
+          navigate(tabsToPathsMap.users);
+        },
+      },
       {
         id: 'data',
         children: 'Data',
@@ -145,6 +156,7 @@ export const MainNavbar = (): JSX.Element => {
             <ThemeButton />
             <Button
               className={classNames(isLoggedIn && 'hidden')}
+              color="neutral"
               onClick={() => {
                 navigate('/auth/login');
               }}

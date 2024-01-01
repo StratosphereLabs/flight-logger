@@ -18,7 +18,7 @@ export const DeleteFlightModal = ({
   formControl,
   isRowSelectEnabled,
 }: DeleteFlightModelProps): JSX.Element => {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const { username } = useParams();
   const { activeFlight, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useFlightsPageStore();

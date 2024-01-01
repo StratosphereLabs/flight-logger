@@ -22,7 +22,7 @@ export const CreateItinerary = (): JSX.Element => {
     setIsCreateItineraryModalOpen,
   } = useItineraryFlightsStore();
   const navigate = useNavigate();
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const methods = useForm({
     mode: 'onBlur',

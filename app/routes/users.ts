@@ -294,7 +294,53 @@ export const usersRouter = router({
         },
       },
     });
-    return results;
+    return results.map(user => ({
+      id: user.username,
+      ...excludeKeys(
+        user,
+        'password',
+        'id',
+        'passwordResetToken',
+        'passwordResetAt',
+      ),
+    }));
+  }),
+  searchUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
+    const results = await prisma.user.findMany({
+      take: 10,
+      where: {
+        username: {
+          contains: input.query,
+          mode: 'insensitive',
+        },
+      },
+      include: {
+        _count: {
+          select: {
+            flights: {
+              where: {
+                inTime: {
+                  lte: new Date(),
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    return results.map(user => ({
+      id: user.username,
+      avatar: fetchGravatarUrl(user.email),
+      numFlights: user._count.flights,
+      ...excludeKeys(
+        user,
+        'password',
+        'id',
+        'passwordResetToken',
+        'passwordResetAt',
+        '_count',
+      ),
+    }));
   }),
 });
 

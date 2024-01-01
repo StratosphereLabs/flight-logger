@@ -12,3 +12,4 @@ export * from './Profile';
 export * from './Register';
 export * from './ResetPassword';
 export * from './Trips';
+export * from './Users';

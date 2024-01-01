@@ -309,6 +309,17 @@ exports[`<App /> > renders profile page 1`] = `
               tabindex="-1"
               type="button"
             >
+              Users
+            </button>
+            <button
+              aria-selected="false"
+              class="tab"
+              data-headlessui-state=""
+              id="headlessui-tabs-tab-:r4:"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
               Data
             </button>
           </div>
@@ -350,7 +361,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-haspopup="menu"
               class="btn btn-ghost btn-circle"
               data-headlessui-state=""
-              id="headlessui-menu-button-:r4:"
+              id="headlessui-menu-button-:r5:"
               type="button"
             >
               <svg
@@ -374,7 +385,7 @@ exports[`<App /> > renders profile page 1`] = `
             </button>
           </div>
           <button
-            class="btn"
+            class="btn btn-neutral"
             type="button"
           >
             Login
@@ -388,7 +399,7 @@ exports[`<App /> > renders profile page 1`] = `
               aria-haspopup="menu"
               class="btn btn-ghost btn-circle"
               data-headlessui-state=""
-              id="headlessui-menu-button-:r5:"
+              id="headlessui-menu-button-:r6:"
               type="button"
             >
               <div
@@ -499,7 +510,7 @@ exports[`<App /> > renders profile page 1`] = `
                   </li>
                 </ul>
                 <button
-                  class="btn btn-info mt-4"
+                  class="btn btn-accent mt-4"
                   type="button"
                 >
                   Get Started

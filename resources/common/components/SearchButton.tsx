@@ -83,7 +83,7 @@ export const SearchButton = (): JSX.Element => {
           ref={buttonRef}
           shape="circle"
         >
-          <SearchIcon />
+          <SearchIcon className="h-5 w-5" />
           <span className="sr-only">Search Users</span>
         </Button>
       )}
