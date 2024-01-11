@@ -4,7 +4,6 @@ export const addFlightDefaultValues = {
   airline: null,
   aircraftType: null,
   flightNumber: null,
-  tailNumber: '',
   airframe: null,
   outDateISO: '',
   outTimeValue: '',

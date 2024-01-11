@@ -40,12 +40,12 @@ export const EditFlightModal = ({
     defaultValues: editFlightDefaultValues,
     resolver: zodResolver(editFlightSchema),
   });
-  const [departureDate, tailNumber, airframe] = useWatch<
+  const [departureDate, airframe] = useWatch<
     EditFlightRequest,
-    ['outDateISO', 'tailNumber', 'airframe']
+    ['outDateISO', 'airframe']
   >({
     control: methods.control,
-    name: ['outDateISO', 'tailNumber', 'airframe'],
+    name: ['outDateISO', 'airframe'],
   });
   const shouldShowRegField = useMemo(
     () =>
@@ -95,7 +95,6 @@ export const EditFlightModal = ({
         aircraftType: activeFlight.aircraftType,
         airframe: activeFlight.airframe,
         flightNumber: activeFlight.flightNumber,
-        tailNumber: activeFlight.tailNumber ?? '',
         outDateISO: activeFlight.outDateISO,
         outTimeValue: activeFlight.outTimeValue,
         inTimeValue: activeFlight.inTimeValue,
@@ -172,7 +171,7 @@ export const EditFlightModal = ({
         />
         {shouldShowRegField ? (
           <AirframeInput
-            labelText={`Registration (${tailNumber})`}
+            labelText="Registration"
             inputClassName="bg-base-200"
             menuClassName="w-full"
             name="airframe"

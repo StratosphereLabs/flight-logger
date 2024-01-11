@@ -49,6 +49,7 @@ export const airframesRouter = router({
       },
     });
     return airframes.map(airframe => ({
+      type: 'existing',
       id: airframe.icao24,
       ...airframe,
     }));

@@ -41,12 +41,6 @@ export const updateFlightRegistrations = async (
       registration: flight.registration,
     },
   });
-  if (airframe === null) {
-    console.error(
-      `  Unable to find registration ${flight.registration} in database. Please try again later.`,
-    );
-    return;
-  }
   await prisma.flight.updateMany({
     where: {
       id: {
@@ -54,7 +48,8 @@ export const updateFlightRegistrations = async (
       },
     },
     data: {
-      airframeId: airframe.icao24,
+      airframeId: airframe !== null ? airframe.icao24 : undefined,
+      tailNumber: flight.registration,
     },
   });
 };
