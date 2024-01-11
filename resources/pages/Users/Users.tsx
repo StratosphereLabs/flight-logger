@@ -12,6 +12,7 @@ import {
   Link,
   Loading,
   Table,
+  useDebouncedValue,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
 import { SearchIcon } from '../../common/components';
@@ -40,8 +41,9 @@ export const Users = (): JSX.Element => {
     control: methods.control,
     name: 'searchQuery',
   });
+  const { debouncedValue } = useDebouncedValue(query, 400);
   const { data, isFetching } = trpc.users.searchUsers.useQuery({
-    query,
+    query: query !== '' ? debouncedValue : query,
   });
   return (
     <Card className="m-2 mt-1 flex-1 overflow-y-hidden bg-base-100 shadow-md">

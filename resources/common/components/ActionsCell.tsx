@@ -36,7 +36,7 @@ export const ActionsCell = ({
       {
         color: 'error',
         icon: TrashIcon,
-        key: 'edit',
+        key: 'delete',
         menuText: deleteMessage,
         onClick: () => onDelete?.(),
         size: 'xs',

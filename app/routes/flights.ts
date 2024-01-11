@@ -205,7 +205,7 @@ export const flightsRouter = router({
             disconnect: input.airframe?.type !== 'existing' ? true : undefined,
           },
           flightNumber: input.flightNumber,
-          tailNumber: input.airframe?.registration,
+          tailNumber: input.airframe?.registration ?? null,
           outTime: outTime.toISOString(),
           inTime: inTime.toISOString(),
           duration,

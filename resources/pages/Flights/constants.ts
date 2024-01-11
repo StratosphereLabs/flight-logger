@@ -16,3 +16,25 @@ export const editFlightDefaultValues = {
   comments: '',
   trackingLink: '',
 };
+
+export const customAirframe = {
+  type: 'custom' as const,
+  icao24: '',
+  registration: '',
+  manufacturerCode: '',
+  model: '',
+  typeCode: '',
+  serialNumber: '',
+  lineNumber: '',
+  icaoAircraftType: '',
+  owner: '',
+  testReg: '',
+  registrationDate: null,
+  registrationExprDate: null,
+  builtDate: null,
+  engines: '',
+  aircraftTypeId: '',
+  operatorId: '',
+  aircraftType: null,
+  operator: null,
+};
