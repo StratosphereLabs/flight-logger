@@ -21,3 +21,7 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+.cesium-viewer {
+  border-radius: 1rem;
+}

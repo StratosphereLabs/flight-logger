@@ -6,13 +6,16 @@ export const useCopyToClipboard = (): ((
   successMessage?: string,
 ) => void) => {
   const { addAlertMessages } = useAlertMessages();
-  return useCallback(async (text, successMessage) => {
-    await navigator.clipboard.writeText(text);
-    addAlertMessages([
-      {
-        color: 'success',
-        title: successMessage ?? 'Copied to clipboard!',
-      },
-    ]);
-  }, []);
+  return useCallback(
+    async (text, successMessage) => {
+      await navigator.clipboard.writeText(text);
+      addAlertMessages([
+        {
+          color: 'success',
+          title: successMessage ?? 'Copied to clipboard!',
+        },
+      ]);
+    },
+    [addAlertMessages],
+  );
 };

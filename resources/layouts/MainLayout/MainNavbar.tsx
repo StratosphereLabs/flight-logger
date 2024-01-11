@@ -68,7 +68,7 @@ export const MainNavbar = (): JSX.Element => {
       users: '/users',
       data: '/data',
     }),
-    [username],
+    [],
   );
   const tabs: TabData[] = useMemo(
     () => [
@@ -105,7 +105,7 @@ export const MainNavbar = (): JSX.Element => {
         },
       },
     ],
-    [isLoggedIn, tabsToPathsMap],
+    [isLoggedIn, navigate, tabsToPathsMap],
   );
   useTRPCErrorHandler(error);
   return (

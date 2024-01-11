@@ -55,7 +55,7 @@ export const AddFlight = (): JSX.Element => {
     if (typeof airframe?.operator === 'object') {
       methods.setValue('airline', airframe.operator);
     }
-  }, [airframe]);
+  }, [airframe, methods]);
   const handleSuccess = useSuccessResponseHandler();
   const { error, mutate, isLoading } = trpc.flights.addFlight.useMutation({
     onSuccess: async () => {
@@ -72,7 +72,7 @@ export const AddFlight = (): JSX.Element => {
     setTimeout(() => {
       methods.setFocus('departureAirport');
     }, 100);
-  }, []);
+  }, [methods]);
   return (
     <div className="flex flex-1 flex-col overflow-y-scroll p-2 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:scrollbar">
       <LoadingCard className="bg-base-100 shadow-md">

@@ -7,5 +7,5 @@ export const useAuthPage = (redirectPath?: string): void => {
   const navigate = useNavigate();
   useEffect(() => {
     if (isLoggedIn) navigate(redirectPath ?? '/profile');
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate, redirectPath]);
 };

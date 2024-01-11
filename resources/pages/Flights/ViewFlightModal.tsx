@@ -16,7 +16,7 @@ export const ViewFlightModal = (): JSX.Element => {
         username !== undefined ? `/user/${username}/flights` : '/flights',
       );
     }
-  }, [flightId, username]);
+  }, [flightId, navigate, setIsViewDialogOpen, username]);
   return (
     <Modal
       actionButtons={[

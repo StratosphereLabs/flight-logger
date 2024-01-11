@@ -53,7 +53,7 @@ export const CreateItinerary = (): JSX.Element => {
         methods.setFocus('departureAirport');
       }, 100);
     }
-  }, [isCreateItineraryModalOpen]);
+  }, [isCreateItineraryModalOpen, methods]);
   return (
     <>
       <div className="flex flex-1 flex-col overflow-y-scroll p-2 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:scrollbar">

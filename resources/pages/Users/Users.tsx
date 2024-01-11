@@ -23,7 +23,7 @@ export interface SearchUsersFormData {
 
 export const Users = (): JSX.Element => {
   const navigate = useNavigate();
-  const methods = useFormWithQueryParams<SearchUsersFormData>({
+  const methods = useFormWithQueryParams<SearchUsersFormData, ['searchQuery']>({
     getDefaultValues: ({ searchQuery }) => ({
       searchQuery: searchQuery ?? '',
     }),

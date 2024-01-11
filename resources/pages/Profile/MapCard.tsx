@@ -1,46 +1,48 @@
-import {
-  GoogleMap,
-  HeatmapLayerF,
-  MarkerF,
-  PolylineF,
-  useJsApiLoader,
-} from '@react-google-maps/api';
 import { useEffect, useMemo, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Form, FormCheckbox, LoadingCard, Select } from 'stratosphere-ui';
+import {
+  Form,
+  FormCheckbox,
+  LoadingCard,
+  Select,
+  useFormWithQueryParams,
+} from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../common/hooks';
-import { darkModeStyle } from '../../common/mapStyle';
-import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
+import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
+import { GoogleMap } from './GoogleMap';
 import { getAirports } from './utils';
 
 export interface MapCardFormData {
   showUpcoming: boolean;
   showCompleted: boolean;
-  mapMode: 'routes' | 'heatmap';
+  mapMode: 'routes' | 'heatmap' | '3d';
 }
 
 export const MapCard = (): JSX.Element => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
-    libraries: ['visualization'],
-  });
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
     null,
   );
-  const [heatmap, setHeatmap] =
-    useState<google.maps.visualization.HeatmapLayer | null>(null);
-  const methods = useForm<MapCardFormData>({
-    defaultValues: {
-      showUpcoming: false,
-      showCompleted: true,
-      mapMode: 'routes',
-    },
+  const methods = useFormWithQueryParams<
+    MapCardFormData,
+    ['mapMode', 'showCompleted', 'showUpcoming']
+  >({
+    getDefaultValues: ({ mapMode, showCompleted, showUpcoming }) => ({
+      showUpcoming: showUpcoming === 'true',
+      showCompleted: showCompleted === 'true',
+      mapMode: mapMode as MapCardFormData['mapMode'],
+    }),
+    getSearchParams: ([mapMode, showCompleted, showUpcoming]) => ({
+      mapMode,
+      showCompleted: showCompleted.toString(),
+      showUpcoming: showUpcoming.toString(),
+    }),
+    includeKeys: ['mapMode', 'showCompleted', 'showUpcoming'],
   });
   const [showUpcoming, showCompleted, mapMode] = useWatch<
     MapCardFormData,
@@ -59,7 +61,7 @@ export const MapCard = (): JSX.Element => {
         const filteredHeatmapData = mapData.heatmap.flatMap(
           ({ inFuture, lat, lng }) =>
             (showUpcoming || !inFuture) && (showCompleted || inFuture)
-              ? [new google.maps.LatLng(lat, lng)]
+              ? [{ lat, lng }]
               : [],
         );
         const filteredRoutes = mapData.routes.flatMap(route =>
@@ -89,136 +91,37 @@ export const MapCard = (): JSX.Element => {
       staleTime: 5 * 60 * 1000,
     },
   );
-  const heatmapData = useMemo(
-    () => (mapMode === 'heatmap' ? data?.heatmap ?? [] : []),
-    [data?.heatmap, mapMode],
-  );
   useEffect(() => {
-    setTimeout(() => heatmap?.setData(heatmapData));
-  }, [heatmap, heatmapData]);
-  useEffect(() => {
-    if (data !== undefined) setCenter(data.centerpoint);
+    if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint]);
   useTRPCErrorHandler(error);
-  const { theme } = useThemeStore();
-  const mapOptions = useMemo(
-    () => ({
-      center,
-      minZoom: 2,
-      fullscreenControl: false,
-      mapTypeControl: false,
-      zoomControl: false,
-      streetViewControl: false,
-      gestureHandling: 'greedy',
-      styles:
-        theme === AppTheme.DARK ||
-        theme === AppTheme.BUSINESS ||
-        theme === AppTheme.SUNSET
-          ? darkModeStyle
-          : undefined,
-    }),
-    [center, theme],
-  );
   return useMemo(
     () => (
       <LoadingCard
-        isLoading={!isLoaded || isFetching}
+        isLoading={isFetching}
         className="card-bordered relative min-h-[450px] min-w-[350px] flex-1 shadow-md"
       >
-        <GoogleMap
-          mapContainerClassName="rounded-2xl"
-          mapContainerStyle={{
-            height: '100%',
-            width: '100%',
-          }}
-          zoom={3}
-          options={mapOptions}
-          onClick={() => {
-            setSelectedAirportId(null);
-          }}
-        >
-          {data?.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
-            const isActive = selectedAirportId === id || hoverAirportId === id;
-            return (
-              <MarkerF
-                visible={mapMode === 'routes'}
-                key={id}
-                position={{ lat, lng: lon }}
-                title={id}
-                onClick={() => {
-                  setSelectedAirportId(id);
-                }}
-                onMouseOver={() => {
-                  setHoverAirportId(id);
-                }}
-                onMouseOut={() => {
-                  setHoverAirportId(null);
-                }}
-                options={{
-                  icon: {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    fillColor: isActive ? 'yellow' : 'white',
-                    fillOpacity:
-                      hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
-                    scale: isActive ? 8 : 5,
-                    strokeColor: 'black',
-                    strokeWeight: isActive ? 3 : 2,
-                    strokeOpacity:
-                      hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
-                  },
-                  zIndex:
-                    hasSelectedRoute || selectedAirportId === null
-                      ? 10
-                      : undefined,
-                }}
-              />
-            );
-          })}
-          {data?.routes?.map(
-            (
-              {
-                departureAirport,
-                arrivalAirport,
-                inFuture,
-                isHover,
-                isSelected,
-              },
-              index,
-            ) => {
-              const isActive = isSelected || isHover;
-              return (
-                <PolylineF
-                  visible={mapMode === 'routes'}
-                  key={index}
-                  options={{
-                    strokeOpacity:
-                      selectedAirportId === null || isSelected ? 0.5 : 0.1,
-                    strokeColor: isActive ? 'blue' : inFuture ? 'white' : 'red',
-                    strokeWeight: isActive ? 4 : 2,
-                    zIndex: isActive ? 10 : inFuture ? 5 : undefined,
-                    geodesic: true,
-                  }}
-                  path={[
-                    { lat: departureAirport.lat, lng: departureAirport.lon },
-                    { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
-                  ]}
-                />
-              );
-            },
-          )}
-          <HeatmapLayerF
-            data={heatmapData}
-            onLoad={setHeatmap}
-            onUnmount={() => {
-              setHeatmap(null);
-            }}
-            options={{
-              dissipating: false,
-              radius: 2,
-              opacity: 0.7,
-            }}
+        {mapMode === 'routes' || mapMode === 'heatmap' ? (
+          <GoogleMap
+            center={center}
+            data={data}
+            hoverAirportId={hoverAirportId}
+            mapMode={mapMode}
+            selectedAirportId={selectedAirportId}
+            setSelectedAirportId={setSelectedAirportId}
+            setHoverAirportId={setHoverAirportId}
           />
-        </GoogleMap>
+        ) : null}
+        {mapMode === '3d' ? (
+          <CesiumMap
+            center={center}
+            data={data}
+            hoverAirportId={hoverAirportId}
+            selectedAirportId={selectedAirportId}
+            setHoverAirportId={setHoverAirportId}
+            setSelectedAirportId={setSelectedAirportId}
+          />
+        ) : null}
         <Form
           className="pointer-events-none absolute flex w-full justify-between gap-2 p-3"
           methods={methods}
@@ -251,6 +154,10 @@ export const MapCard = (): JSX.Element => {
                 id: 'heatmap',
                 text: 'Heatmap',
               },
+              {
+                id: '3d',
+                text: '3D',
+              },
             ]}
             menuClassName="right-0 w-full"
             name="mapMode"
@@ -259,15 +166,13 @@ export const MapCard = (): JSX.Element => {
       </LoadingCard>
     ),
     [
-      selectedAirportId,
+      center,
       data,
-      heatmapData,
       hoverAirportId,
       isFetching,
-      isLoaded,
       mapMode,
-      mapOptions,
       methods,
+      selectedAirportId,
     ],
   );
 };

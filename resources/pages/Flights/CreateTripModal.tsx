@@ -44,7 +44,7 @@ export const CreateTripModal = ({
         methods.setFocus('tripName');
       }, 100);
     }
-  }, [isCreateTripDialogOpen]);
+  }, [isCreateTripDialogOpen, methods]);
   useTRPCErrorHandler(error);
   return (
     <Modal

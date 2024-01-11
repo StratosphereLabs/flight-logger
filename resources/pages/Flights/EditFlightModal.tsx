@@ -76,7 +76,7 @@ export const EditFlightModal = ({
     if (airframe?.operator !== null && airframe?.operator !== undefined) {
       methods.setValue('airline', airframe.operator);
     }
-  }, [airframe]);
+  }, [airframe, methods]);
   useEffect(() => {
     if (isEditDialogOpen) {
       modalRef.current?.scrollTo(0, 0);
@@ -84,7 +84,7 @@ export const EditFlightModal = ({
         methods.setFocus('departureAirport');
       }, 100);
     }
-  }, [isEditDialogOpen]);
+  }, [isEditDialogOpen, methods]);
   useEffect(() => {
     if (activeFlight !== null) {
       methods.reset({
@@ -107,7 +107,7 @@ export const EditFlightModal = ({
         trackingLink: activeFlight.trackingLink ?? '',
       });
     }
-  }, [activeFlight]);
+  }, [activeFlight, methods]);
   return (
     <Modal
       actionButtons={[]}

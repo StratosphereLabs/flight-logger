@@ -88,7 +88,7 @@ export const Flights = (): JSX.Element => {
       setActiveFlight(flight);
       setIsViewDialogOpen(true);
     }
-  }, [data, flightId]);
+  }, [data, flightId, setActiveFlight, setIsViewDialogOpen]);
   useTRPCErrorHandler(error);
   return (
     <div className="flex flex-col gap-4">

@@ -39,12 +39,12 @@ export const SearchButton = (): JSX.Element => {
       setIsSearching(false);
       navigate(`/user/${user.username}`);
     }
-  }, [user]);
+  }, [navigate, user]);
   useEffect(() => {
     if (!isSearching) {
       methods.reset();
     }
-  }, [isSearching]);
+  }, [isSearching, methods]);
   useOutsideClick(formRef, event => {
     const element = event.target as HTMLElement;
     if (element.tagName !== 'A') setIsSearching(false);
