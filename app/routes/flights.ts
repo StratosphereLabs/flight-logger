@@ -82,7 +82,7 @@ export const flightsRouter = router({
                 }
               : undefined,
           airframe:
-            input.airframe !== null
+            input.airframe?.type === 'existing'
               ? {
                   connect: {
                     icao24: input.airframe.icao24,
@@ -90,7 +90,7 @@ export const flightsRouter = router({
                 }
               : undefined,
           flightNumber: input.flightNumber,
-          tailNumber: input.airframe?.registration ?? input.tailNumber,
+          tailNumber: input.airframe?.registration,
           outTime: outTime.toISOString(),
           inTime: inTime.toISOString(),
           duration,
@@ -197,15 +197,15 @@ export const flightsRouter = router({
           },
           airframe: {
             connect:
-              input.airframe !== null
+              input.airframe?.type === 'existing'
                 ? {
                     icao24: input.airframe.icao24,
                   }
                 : undefined,
-            disconnect: input.airframe === null ? true : undefined,
+            disconnect: input.airframe?.type !== 'existing' ? true : undefined,
           },
           flightNumber: input.flightNumber,
-          tailNumber: input.airframe?.registration ?? input.tailNumber,
+          tailNumber: input.airframe?.registration,
           outTime: outTime.toISOString(),
           inTime: inTime.toISOString(),
           duration,

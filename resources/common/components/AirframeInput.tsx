@@ -34,7 +34,34 @@ export const AirframeInput = <Values extends FieldValues>(
         `${registration}${operator !== null ? ` (${operator.name})` : ''}`
       }
       onDebouncedChange={setQuery}
-      options={data}
+      options={
+        data?.length === 0
+          ? [
+              {
+                type: 'custom',
+                id: query.toUpperCase(),
+                icao24: '',
+                registration: query.toUpperCase(),
+                manufacturerCode: '',
+                model: '',
+                typeCode: '',
+                serialNumber: '',
+                lineNumber: '',
+                icaoAircraftType: '',
+                owner: '',
+                testReg: '',
+                registrationDate: null,
+                registrationExprDate: null,
+                builtDate: null,
+                engines: '',
+                aircraftTypeId: '',
+                operatorId: '',
+                aircraftType: null,
+                operator: null,
+              },
+            ]
+          : data
+      }
       {...props}
     />
   );

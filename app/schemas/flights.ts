@@ -30,9 +30,9 @@ export const addFlightSchema = z.object({
     .int()
     .lte(9999, 'Must be 4 digits or less')
     .nullable(),
-  tailNumber: z.string().trim(),
   airframe: airframeSchema
     .extend({
+      type: z.enum(['existing', 'custom']),
       operator: airlineSchema.nullable(),
       aircraftType: aircraft_typeSchema.nullable(),
     })
