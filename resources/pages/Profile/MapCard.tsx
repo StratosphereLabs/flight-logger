@@ -72,14 +72,12 @@ export const MapCard = (): JSX.Element => {
             ? [
                 {
                   ...route,
-                  isHover: [
-                    route.departureAirport.id,
-                    route.arrivalAirport.id,
-                  ].includes(hoverAirportId ?? ''),
-                  isSelected: [
-                    route.departureAirport.id,
-                    route.arrivalAirport.id,
-                  ].includes(selectedAirportId ?? ''),
+                  isHover: route.airports.some(
+                    ({ id }) => id === hoverAirportId,
+                  ),
+                  isSelected: route.airports.some(
+                    ({ id }) => id === selectedAirportId,
+                  ),
                 },
               ]
             : [],

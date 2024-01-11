@@ -6,6 +6,7 @@ import {
   type flight,
   type user,
 } from '@prisma/client';
+import groupBy from 'lodash.groupby';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
 import { getInFuture } from './datetime';
@@ -30,7 +31,9 @@ export interface Route {
   arrivalAirport: airport;
 }
 
-export interface RouteResult extends Route {
+export interface RouteResult {
+  airports: [airport, airport];
+  frequency: number;
   inFuture: boolean;
 }
 
@@ -81,15 +84,18 @@ export const getHeatmap = (result?: FlightsResult): HeatmapResult[] =>
     },
   ]) ?? [];
 
-export const getRoutes = (result?: FlightsResult): RouteResult[] =>
-  result?.map(
-    ({ outTime, departureAirport, arrivalAirport }) => ({
-      inFuture: getInFuture(outTime),
-      departureAirport,
-      arrivalAirport,
-    }),
-    [],
-  ) ?? [];
+export const getRoutes = (result?: FlightsResult): RouteResult[] => {
+  const groupedFlights = groupBy(
+    result,
+    ({ departureAirport, arrivalAirport }) =>
+      [departureAirport.id, arrivalAirport.id].sort().join('-'),
+  );
+  return Object.values(groupedFlights).map(flights => ({
+    airports: [flights[0].departureAirport, flights[0].arrivalAirport],
+    frequency: flights.length,
+    inFuture: flights.some(({ outTime }) => getInFuture(outTime)),
+  }));
+};
 
 export const transformFlightData = (
   flight: FlightData,
