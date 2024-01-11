@@ -73,7 +73,14 @@ export const airportsRouter = router({
                     username,
                   },
                   outTime: {
-                    lt: new Date(),
+                    gt:
+                      input.showUpcoming && !input.showCompleted
+                        ? new Date()
+                        : undefined,
+                    lt:
+                      input.showCompleted && !input.showUpcoming
+                        ? new Date()
+                        : undefined,
                   },
                 },
               },
@@ -82,8 +89,15 @@ export const airportsRouter = router({
                   user: {
                     username,
                   },
-                  inTime: {
-                    lt: new Date(),
+                  outTime: {
+                    gt:
+                      input.showUpcoming && !input.showCompleted
+                        ? new Date()
+                        : undefined,
+                    lt:
+                      input.showCompleted && !input.showUpcoming
+                        ? new Date()
+                        : undefined,
                   },
                 },
               },
@@ -100,7 +114,9 @@ export const airportsRouter = router({
       return {
         ...airport,
         numFlights:
-          airport._count.departureFlights + airport._count.arrivalFlights,
+          input.showUpcoming || input.showCompleted
+            ? airport._count.departureFlights + airport._count.arrivalFlights
+            : 0,
       };
     }),
 });

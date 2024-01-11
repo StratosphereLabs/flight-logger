@@ -141,7 +141,11 @@ export const MapCard = (): JSX.Element => {
                 name="showCompleted"
               />
             </div>
-            <AirportInfoOverlay airportId={selectedAirportId} />
+            <AirportInfoOverlay
+              airportId={selectedAirportId}
+              showUpcoming={showUpcoming}
+              showCompleted={showCompleted}
+            />
           </div>
           <Select
             className="pointer-events-auto w-[150px]"
@@ -174,6 +178,8 @@ export const MapCard = (): JSX.Element => {
       isFetching,
       mapMode,
       methods,
+      showCompleted,
+      showUpcoming,
       selectedAirportId,
     ],
   );
