@@ -12,6 +12,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { darkModeStyle } from '../../common/mapStyle';
 import { AppTheme, useThemeStore } from '../../stores';
 import { type MapCardFormData } from './MapCard';
@@ -21,7 +22,7 @@ export interface GoogleMapProps {
   center: MapCoords;
   data: FilteredMapData;
   hoverAirportId: string | null;
-  mapMode: MapCardFormData['mapMode'];
+  methods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
   setHoverAirportId: Dispatch<SetStateAction<string | null>>;
   setSelectedAirportId: Dispatch<SetStateAction<string | null>>;
@@ -31,7 +32,7 @@ export const GoogleMap = ({
   center,
   data,
   hoverAirportId,
-  mapMode,
+  methods,
   selectedAirportId,
   setSelectedAirportId,
   setHoverAirportId,
@@ -39,6 +40,13 @@ export const GoogleMap = ({
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
+  });
+  const [showCompleted, showUpcoming, mapMode] = useWatch<
+    MapCardFormData,
+    ['showCompleted', 'showUpcoming', 'mapMode']
+  >({
+    control: methods.control,
+    name: ['showCompleted', 'showUpcoming', 'mapMode'],
   });
   const [heatmap, setHeatmap] =
     useState<google.maps.visualization.HeatmapLayer | null>(null);
@@ -122,7 +130,7 @@ export const GoogleMap = ({
         );
       })}
       {data.routes?.map(
-        ({ airports, inFuture, isHover, isSelected }, index) => {
+        ({ airports, isCompleted, inFuture, isHover, isSelected }, index) => {
           const isActive = isSelected || isHover;
           return (
             <PolylineF
@@ -131,7 +139,11 @@ export const GoogleMap = ({
               options={{
                 strokeOpacity:
                   selectedAirportId === null || isSelected ? 0.5 : 0.1,
-                strokeColor: isActive ? 'blue' : inFuture ? 'white' : 'red',
+                strokeColor: isActive
+                  ? 'blue'
+                  : isCompleted && (!showUpcoming || showCompleted)
+                    ? 'red'
+                    : 'white',
                 strokeWeight: isActive ? 4 : 2,
                 zIndex: isActive ? 10 : inFuture ? 5 : undefined,
                 geodesic: true,

@@ -68,7 +68,8 @@ export const MapCard = (): JSX.Element => {
               : [],
         );
         const filteredRoutes = mapData.routes.flatMap(route =>
-          (showUpcoming || !route.inFuture) && (showCompleted || route.inFuture)
+          (showUpcoming && route.inFuture) ||
+          (showCompleted && route.isCompleted)
             ? [
                 {
                   ...route,
@@ -108,7 +109,7 @@ export const MapCard = (): JSX.Element => {
             center={center}
             data={data}
             hoverAirportId={hoverAirportId}
-            mapMode={mapMode}
+            methods={methods}
             selectedAirportId={selectedAirportId}
             setSelectedAirportId={setSelectedAirportId}
             setHoverAirportId={setHoverAirportId}
@@ -119,6 +120,7 @@ export const MapCard = (): JSX.Element => {
             center={center}
             data={data}
             hoverAirportId={hoverAirportId}
+            methods={methods}
             selectedAirportId={selectedAirportId}
             setHoverAirportId={setHoverAirportId}
             setSelectedAirportId={setSelectedAirportId}
