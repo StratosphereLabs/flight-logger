@@ -34,6 +34,7 @@ export interface Route {
 export interface RouteResult {
   airports: [airport, airport];
   frequency: number;
+  isCompleted: boolean;
   inFuture: boolean;
 }
 
@@ -93,6 +94,7 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
   return Object.values(groupedFlights).map(flights => ({
     airports: [flights[0].departureAirport, flights[0].arrivalAirport],
     frequency: flights.length,
+    isCompleted: flights.some(({ outTime }) => !getInFuture(outTime)),
     inFuture: flights.some(({ outTime }) => getInFuture(outTime)),
   }));
 };

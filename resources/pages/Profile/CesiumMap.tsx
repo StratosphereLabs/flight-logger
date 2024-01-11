@@ -1,12 +1,15 @@
 import { Cartesian3, Color, type Viewer as ViewerType } from 'cesium';
 import { useRef, type Dispatch, type SetStateAction, useEffect } from 'react';
+import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { type CesiumComponentRef, Entity, Viewer } from 'resium';
+import { type MapCardFormData } from './MapCard';
 import { type FilteredMapData, type MapCoords } from './utils';
 
 export interface CesiumMapProps {
   center: MapCoords;
   data: FilteredMapData;
   hoverAirportId: string | null;
+  methods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
   setHoverAirportId: Dispatch<SetStateAction<string | null>>;
   setSelectedAirportId: Dispatch<SetStateAction<string | null>>;
@@ -16,11 +19,19 @@ export const CesiumMap = ({
   center,
   data,
   hoverAirportId,
+  methods,
   selectedAirportId,
   setSelectedAirportId,
   setHoverAirportId,
 }: CesiumMapProps): JSX.Element => {
   const viewerRef = useRef<CesiumComponentRef<ViewerType> | null>(null);
+  const [showCompleted, showUpcoming] = useWatch<
+    MapCardFormData,
+    ['showCompleted', 'showUpcoming']
+  >({
+    control: methods.control,
+    name: ['showCompleted', 'showUpcoming'],
+  });
   useEffect(() => {
     viewerRef.current?.cesiumElement?.camera.setView({
       destination: Cartesian3.fromDegrees(center.lng, center.lat, 0),
@@ -48,7 +59,7 @@ export const CesiumMap = ({
       timeline={false}
     >
       {data.routes?.map(
-        ({ airports, inFuture, isHover, isSelected }, index) => {
+        ({ airports, inFuture, isCompleted, isHover, isSelected }, index) => {
           const isActive = isSelected || isHover;
           return (
             <Entity
@@ -56,7 +67,11 @@ export const CesiumMap = ({
               polyline={{
                 clampToGround: true,
                 material: Color.fromAlpha(
-                  isActive ? Color.BLUE : inFuture ? Color.WHITE : Color.RED,
+                  isActive
+                    ? Color.BLUE
+                    : isCompleted && (!showUpcoming || showCompleted)
+                      ? Color.RED
+                      : Color.WHITE,
                   selectedAirportId === null || isSelected ? 0.5 : 0.1,
                 ),
                 positions: [
