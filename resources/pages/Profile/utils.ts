@@ -26,25 +26,23 @@ export type FilteredMapData = Omit<
 };
 
 export const getAirports = (result: RouteInput[]): AirportResult[] => {
-  const departureAirports =
-    result?.map(({ departureAirport }) => departureAirport) ?? [];
-  const arrivalAirports =
-    result?.map(({ arrivalAirport }) => arrivalAirport) ?? [];
   const selectedAirportIds = [
     ...new Set(
-      result?.flatMap(({ isSelected, departureAirport, arrivalAirport }) =>
-        isSelected ? [departureAirport.id, arrivalAirport.id] : [],
+      result?.flatMap(({ isSelected, airports }) =>
+        isSelected ? airports.map(({ id }) => id) : [],
       ),
     ),
   ];
-  const airportsMap = [...departureAirports, ...arrivalAirports].reduce<
-    Record<string, AirportResult>
-  >(
+  const airportsMap = result.reduce<Record<string, AirportResult>>(
     (acc, airport) => ({
       ...acc,
-      [airport.id]: {
-        ...airport,
-        hasSelectedRoute: selectedAirportIds.includes(airport.id),
+      [airport.airports[0].id]: {
+        ...airport.airports[0],
+        hasSelectedRoute: selectedAirportIds.includes(airport.airports[0].id),
+      },
+      [airport.airports[1].id]: {
+        ...airport.airports[1],
+        hasSelectedRoute: selectedAirportIds.includes(airport.airports[1].id),
       },
     }),
     {},

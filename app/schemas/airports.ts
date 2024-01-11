@@ -3,6 +3,8 @@ import { paginationSchema } from './pagination';
 
 export const getAirportSchema = z.object({
   id: z.string().min(1, 'Required'),
+  showCompleted: z.boolean(),
+  showUpcoming: z.boolean(),
   username: z.string().trim().optional(),
 });
 

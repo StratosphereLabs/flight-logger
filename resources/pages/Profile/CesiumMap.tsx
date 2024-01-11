@@ -48,10 +48,7 @@ export const CesiumMap = ({
       timeline={false}
     >
       {data.routes?.map(
-        (
-          { departureAirport, arrivalAirport, inFuture, isHover, isSelected },
-          index,
-        ) => {
+        ({ airports, inFuture, isHover, isSelected }, index) => {
           const isActive = isSelected || isHover;
           return (
             <Entity
@@ -63,18 +60,10 @@ export const CesiumMap = ({
                   selectedAirportId === null || isSelected ? 0.5 : 0.1,
                 ),
                 positions: [
-                  Cartesian3.fromDegrees(
-                    departureAirport.lon,
-                    departureAirport.lat,
-                    0,
-                  ),
-                  Cartesian3.fromDegrees(
-                    arrivalAirport.lon,
-                    arrivalAirport.lat,
-                    0,
-                  ),
+                  Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
+                  Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
                 ],
-                width: isActive ? 3 : 1.5,
+                width: isActive ? 4 : 2,
                 zIndex: isActive ? 10 : inFuture ? 5 : undefined,
               }}
             />

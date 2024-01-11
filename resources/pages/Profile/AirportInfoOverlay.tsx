@@ -5,14 +5,18 @@ import { trpc } from '../../utils/trpc';
 
 export interface AirportInfoOverlayProps {
   airportId: string | null;
+  showCompleted: boolean;
+  showUpcoming: boolean;
 }
 
 export const AirportInfoOverlay = ({
   airportId,
+  showCompleted,
+  showUpcoming,
 }: AirportInfoOverlayProps): JSX.Element | null => {
   const { username } = useParams();
   const { data, error, isFetching } = trpc.airports.getAirport.useQuery(
-    { id: airportId ?? '', username },
+    { id: airportId ?? '', showCompleted, showUpcoming, username },
     {
       enabled: airportId !== null,
     },

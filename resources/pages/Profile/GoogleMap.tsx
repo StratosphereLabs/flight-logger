@@ -122,10 +122,7 @@ export const GoogleMap = ({
         );
       })}
       {data.routes?.map(
-        (
-          { departureAirport, arrivalAirport, inFuture, isHover, isSelected },
-          index,
-        ) => {
+        ({ airports, inFuture, isHover, isSelected }, index) => {
           const isActive = isSelected || isHover;
           return (
             <PolylineF
@@ -140,8 +137,8 @@ export const GoogleMap = ({
                 geodesic: true,
               }}
               path={[
-                { lat: departureAirport.lat, lng: departureAirport.lon },
-                { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
+                { lat: airports[0].lat, lng: airports[0].lon },
+                { lat: airports[1].lat, lng: airports[1].lon },
               ]}
             />
           );
