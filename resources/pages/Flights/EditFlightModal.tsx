@@ -23,8 +23,9 @@ import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
+import { createNullableDate } from '../../utils/datetime';
 import { trpc } from '../../utils/trpc';
-import { editFlightDefaultValues } from './constants';
+import { customAirframe, editFlightDefaultValues } from './constants';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export interface EditFlightProps {
@@ -93,7 +94,25 @@ export const EditFlightModal = ({
         arrivalAirport: activeFlight.arrivalAirport,
         airline: activeFlight.airline,
         aircraftType: activeFlight.aircraftType,
-        airframe: activeFlight.airframe,
+        airframe:
+          activeFlight.airframe !== null
+            ? {
+                ...activeFlight.airframe,
+                type: 'existing',
+                registrationDate: createNullableDate(
+                  activeFlight.airframe.registrationDate,
+                ),
+                registrationExprDate: createNullableDate(
+                  activeFlight.airframe.registrationExprDate,
+                ),
+                builtDate: createNullableDate(activeFlight.airframe.builtDate),
+              }
+            : activeFlight.tailNumber !== null
+              ? {
+                  ...customAirframe,
+                  registration: activeFlight.tailNumber,
+                }
+              : null,
         flightNumber: activeFlight.flightNumber,
         outDateISO: activeFlight.outDateISO,
         outTimeValue: activeFlight.outTimeValue,
