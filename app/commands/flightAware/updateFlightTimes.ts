@@ -1,7 +1,8 @@
 import { differenceInMinutes } from 'date-fns';
 import { prisma } from '../../db';
+import { getDurationMinutes } from '../../utils';
 import { type FlightWithData } from '../updateData';
-import { createNewDate } from '../utils';
+import { createNewDate, getGroupedFlightsKey } from '../utils';
 import { fetchFlightAwareData } from './fetchFlightAwareData';
 
 export const updateFlightTimes = async (
@@ -9,28 +10,48 @@ export const updateFlightTimes = async (
 ): Promise<void> => {
   const data = await fetchFlightAwareData(flights[0]);
   if (data === null) {
-    console.error('  Unable to fetch flight data. Please try again later.');
+    console.error(
+      `  Unable to fetch flight data for ${getGroupedFlightsKey(
+        flights[0],
+      )}. Please try again later.`,
+    );
     return;
   }
-  const flightAwareFlightData = Object.values(data.flights)[0];
-  const outTimeScheduled = createNewDate(
+  const flightAwareFlightData = Object.values(
+    data.flights,
+  )[0].activityLog.flights.find(
+    ({ destination, origin, gateDepartureTimes }) => {
+      const timeDiff = Math.abs(
+        differenceInMinutes(
+          createNewDate(gateDepartureTimes.scheduled),
+          flights[0].outTime,
+        ),
+      );
+      return (
+        origin.icao === flights[0].departureAirportId &&
+        destination.icao === flights[0].arrivalAirportId &&
+        timeDiff < 720
+      );
+    },
+  );
+  if (flightAwareFlightData === undefined) {
+    console.error(
+      `  Flight times data not found for ${getGroupedFlightsKey(
+        flights[0],
+      )}. Please try again later.`,
+    );
+    return;
+  }
+  const outTime = createNewDate(
     flightAwareFlightData.gateDepartureTimes.scheduled,
   );
-  if (flightAwareFlightData.origin.icao !== flights[0].departureAirportId) {
-    console.error('  Departure airport does not match.');
-    return;
-  }
-  if (flightAwareFlightData.destination.icao !== flights[0].arrivalAirportId) {
-    console.error('  Arrival airport does not match.');
-    return;
-  }
-  const timeDiff = Math.abs(
-    differenceInMinutes(flights[0].outTime, outTimeScheduled),
+  const inTime = createNewDate(
+    flightAwareFlightData.gateArrivalTimes.scheduled,
   );
-  if (timeDiff >= 720) {
-    console.error('  Flight must be within 12 hours.');
-    return;
-  }
+  const duration = getDurationMinutes({
+    start: outTime,
+    end: inTime,
+  });
   await prisma.flight.updateMany({
     where: {
       id: {
@@ -38,7 +59,8 @@ export const updateFlightTimes = async (
       },
     },
     data: {
-      outTime: outTimeScheduled,
+      duration,
+      outTime,
       outTimeActual: createNewDate(
         flightAwareFlightData.gateDepartureTimes.actual ??
           flightAwareFlightData.gateDepartureTimes.estimated,
@@ -53,7 +75,7 @@ export const updateFlightTimes = async (
         flightAwareFlightData.landingTimes.actual ??
           flightAwareFlightData.landingTimes.estimated,
       ),
-      inTime: createNewDate(flightAwareFlightData.gateArrivalTimes.scheduled),
+      inTime,
       inTimeActual: createNewDate(
         flightAwareFlightData.gateArrivalTimes.actual ??
           flightAwareFlightData.gateArrivalTimes.estimated,

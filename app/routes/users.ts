@@ -86,6 +86,7 @@ export const usersRouter = router({
         aircraftType: true,
         airframe: {
           include: {
+            aircraftType: true,
             operator: true,
           },
         },
