@@ -1,6 +1,11 @@
 import { type airport } from '@prisma/client';
 import { type UsersRouterOutput } from '../../../app/routes/users';
 
+export interface MapCoords {
+  lat: number;
+  lng: number;
+}
+
 export type RouteInput =
   UsersRouterOutput['getUserMapData']['routes'][number] & {
     isHover: boolean;
@@ -9,6 +14,15 @@ export type RouteInput =
 
 export type AirportResult = airport & {
   hasSelectedRoute: boolean;
+};
+
+export type FilteredMapData = Omit<
+  UsersRouterOutput['getUserMapData'],
+  'heatmap' | 'routes' | 'airports'
+> & {
+  heatmap: MapCoords[];
+  routes: RouteInput[];
+  airports: AirportResult[];
 };
 
 export const getAirports = (result: RouteInput[]): AirportResult[] => {
