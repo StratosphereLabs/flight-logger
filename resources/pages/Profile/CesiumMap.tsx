@@ -34,7 +34,7 @@ export const CesiumMap = ({
   });
   useEffect(() => {
     viewerRef.current?.cesiumElement?.camera.setView({
-      destination: Cartesian3.fromDegrees(center.lng, center.lat, 0),
+      destination: Cartesian3.fromDegrees(center.lng, center.lat, 10000000),
     });
   }, [center]);
   return (

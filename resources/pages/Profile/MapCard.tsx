@@ -94,6 +94,14 @@ export const MapCard = (): JSX.Element => {
     },
   );
   useEffect(() => {
+    if (
+      selectedAirportId !== null &&
+      data?.airports.every(({ id }) => id !== selectedAirportId) === true
+    ) {
+      setSelectedAirportId(null);
+    }
+  }, [data?.airports, selectedAirportId]);
+  useEffect(() => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint]);
   useTRPCErrorHandler(error);
