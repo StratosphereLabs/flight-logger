@@ -19,7 +19,7 @@ import { type FilteredMapData, type MapCoords } from './utils';
 
 export interface GoogleMapProps {
   center: MapCoords;
-  data: FilteredMapData | undefined;
+  data: FilteredMapData;
   hoverAirportId: string | null;
   mapMode: MapCardFormData['mapMode'];
   selectedAirportId: string | null;
@@ -45,11 +45,11 @@ export const GoogleMap = ({
   const heatmapData = useMemo(
     () =>
       mapMode === 'heatmap'
-        ? data?.heatmap.map(
+        ? data.heatmap.map(
             ({ lat, lng }) => new google.maps.LatLng(lat, lng),
           ) ?? []
         : [],
-    [data?.heatmap, mapMode],
+    [data.heatmap, mapMode],
   );
   useEffect(() => {
     setTimeout(() => heatmap?.setData(heatmapData));
@@ -86,7 +86,7 @@ export const GoogleMap = ({
         setSelectedAirportId(null);
       }}
     >
-      {data?.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
+      {data.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
         const isActive = selectedAirportId === id || hoverAirportId === id;
         return (
           <MarkerF
@@ -121,7 +121,7 @@ export const GoogleMap = ({
           />
         );
       })}
-      {data?.routes?.map(
+      {data.routes?.map(
         (
           { departureAirport, arrivalAirport, inFuture, isHover, isSelected },
           index,
