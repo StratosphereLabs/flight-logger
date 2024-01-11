@@ -25,3 +25,11 @@ input[type='number'] {
 .cesium-viewer {
   border-radius: 1rem;
 }
+
+.cesium-infoBox {
+  display: none;
+}
+
+.cesium-selection-wrapper-visible {
+  display: none;
+}

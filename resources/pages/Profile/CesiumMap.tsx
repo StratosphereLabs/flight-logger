@@ -36,6 +36,11 @@ export const CesiumMap = ({
       geocoder={false}
       homeButton={false}
       navigationHelpButton={false}
+      onClick={() => {
+        if (selectedAirportId !== null) {
+          setSelectedAirportId(null);
+        }
+      }}
       scene3DOnly
       style={{
         borderRadius: '1rem',
@@ -52,7 +57,7 @@ export const CesiumMap = ({
             <Entity
               key={index}
               polyline={{
-                width: isActive ? 3 : 1.5,
+                clampToGround: true,
                 material: Color.fromAlpha(
                   isActive ? Color.BLUE : inFuture ? Color.WHITE : Color.RED,
                   selectedAirportId === null || isSelected ? 0.5 : 0.1,
@@ -69,6 +74,8 @@ export const CesiumMap = ({
                     0,
                   ),
                 ],
+                width: isActive ? 3 : 1.5,
+                zIndex: isActive ? 10 : inFuture ? 5 : undefined,
               }}
             />
           );
@@ -98,8 +105,8 @@ export const CesiumMap = ({
                 Color.BLACK,
                 hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
               ),
-              outlineWidth: 1.5,
-              pixelSize: 6,
+              outlineWidth: isActive ? 2.5 : 1.5,
+              pixelSize: isActive ? 9 : 6,
             }}
           />
         );
