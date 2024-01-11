@@ -34,8 +34,11 @@ export const MapCard = (): JSX.Element => {
   >({
     getDefaultValues: ({ mapMode, showCompleted, showUpcoming }) => ({
       showUpcoming: showUpcoming === 'true',
-      showCompleted: showCompleted === 'true',
-      mapMode: mapMode as MapCardFormData['mapMode'],
+      showCompleted:
+        showCompleted !== null && showCompleted !== undefined
+          ? showCompleted === 'true'
+          : true,
+      mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
     }),
     getSearchParams: ([mapMode, showCompleted, showUpcoming]) => ({
       mapMode,
@@ -101,7 +104,8 @@ export const MapCard = (): JSX.Element => {
         isLoading={isFetching}
         className="card-bordered relative min-h-[450px] min-w-[350px] flex-1 shadow-md"
       >
-        {mapMode === 'routes' || mapMode === 'heatmap' ? (
+        {data !== undefined &&
+        (mapMode === 'routes' || mapMode === 'heatmap') ? (
           <GoogleMap
             center={center}
             data={data}
@@ -112,7 +116,7 @@ export const MapCard = (): JSX.Element => {
             setHoverAirportId={setHoverAirportId}
           />
         ) : null}
-        {mapMode === '3d' ? (
+        {data !== undefined && mapMode === '3d' ? (
           <CesiumMap
             center={center}
             data={data}

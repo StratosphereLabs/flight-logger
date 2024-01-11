@@ -1,11 +1,11 @@
 import { Cartesian3, Color, type Viewer as ViewerType } from 'cesium';
-import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
-import { type CesiumComponentRef, Viewer, Entity } from 'resium';
+import { useRef, type Dispatch, type SetStateAction, useEffect } from 'react';
+import { type CesiumComponentRef, Entity, Viewer } from 'resium';
 import { type FilteredMapData, type MapCoords } from './utils';
 
 export interface CesiumMapProps {
   center: MapCoords;
-  data: FilteredMapData | undefined;
+  data: FilteredMapData;
   hoverAirportId: string | null;
   selectedAirportId: string | null;
   setHoverAirportId: Dispatch<SetStateAction<string | null>>;
@@ -20,7 +20,7 @@ export const CesiumMap = ({
   setSelectedAirportId,
   setHoverAirportId,
 }: CesiumMapProps): JSX.Element => {
-  const viewerRef = useRef<CesiumComponentRef<ViewerType>>(null);
+  const viewerRef = useRef<CesiumComponentRef<ViewerType> | null>(null);
   useEffect(() => {
     viewerRef.current?.cesiumElement?.camera.setView({
       destination: Cartesian3.fromDegrees(center.lng, center.lat, 0),
@@ -42,7 +42,7 @@ export const CesiumMap = ({
       }}
       timeline={false}
     >
-      {data?.routes?.map(
+      {data.routes?.map(
         (
           { departureAirport, arrivalAirport, inFuture, isHover, isSelected },
           index,
@@ -52,6 +52,7 @@ export const CesiumMap = ({
             <Entity
               key={index}
               polyline={{
+                width: isActive ? 3 : 1.5,
                 material: Color.fromAlpha(
                   isActive ? Color.BLUE : inFuture ? Color.WHITE : Color.RED,
                   selectedAirportId === null || isSelected ? 0.5 : 0.1,
@@ -73,7 +74,7 @@ export const CesiumMap = ({
           );
         },
       )}
-      {data?.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
+      {data.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
         const isActive = selectedAirportId === id || hoverAirportId === id;
         return (
           <Entity
