@@ -51,7 +51,7 @@ export const UpcomingFlights = (): JSX.Element => {
                 <div className="flex w-[50px] justify-center">
                   <img
                     alt={`${airlineData.name} Logo`}
-                    className="max-h-[35px] max-w-[75px]"
+                    className="max-h-[20px] max-w-[75px]"
                     src={airlineData.logo}
                   />
                 </div>
