@@ -16,7 +16,7 @@ export interface PaginatedResultsOptions<DataItem> {
 }
 
 export const parsePaginationRequest = ({
-  page: currentPage,
+  cursor: currentPage,
   limit,
 }: PaginationRequest): PaginationData => {
   const page = currentPage ?? 1;

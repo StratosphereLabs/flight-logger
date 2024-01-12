@@ -17,7 +17,7 @@ export const AirlinesCard = (): JSX.Element => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { data, error, isFetching } = trpc.airlines.getAirlines.useQuery({
     limit: pagination.pageSize,
-    page: pagination.pageIndex + 1,
+    cursor: pagination.pageIndex + 1,
     sort: sorting[0]?.desc ? 'desc' : 'asc',
     sortKey: sorting[0]?.id,
   });

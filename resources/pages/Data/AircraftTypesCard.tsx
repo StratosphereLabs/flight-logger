@@ -17,7 +17,7 @@ export const AircraftTypesCard = (): JSX.Element => {
   const { data, error, isFetching } =
     trpc.aircraftTypes.getAircraftTypes.useQuery({
       limit: pagination.pageSize,
-      page: pagination.pageIndex + 1,
+      cursor: pagination.pageIndex + 1,
       sort: sorting[0]?.desc ? 'desc' : 'asc',
       sortKey: sorting[0]?.id,
     });

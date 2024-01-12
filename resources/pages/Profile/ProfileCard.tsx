@@ -42,10 +42,10 @@ export const ProfileCard = (): JSX.Element => {
           </div>
         </div>
         <div className="flex justify-center gap-4">
-          <Badge outline size="sm" color="info">
+          <Badge outline color="info">
             <span className="text-semibold">0</span> followers
           </Badge>
-          <Badge size="sm" color="info">
+          <Badge color="info">
             <span className="text-semibold">0</span> following
           </Badge>
         </div>
