@@ -4,9 +4,6 @@ import { useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
-  Card,
-  CardBody,
-  CardTitle,
   Form,
   FormControl,
   Link,
@@ -46,9 +43,11 @@ export const Users = (): JSX.Element => {
     query: query !== '' ? debouncedValue : query,
   });
   return (
-    <Card className="m-2 mt-1 flex-1 overflow-y-hidden bg-base-100 shadow-md">
-      <CardBody>
-        <CardTitle>Search Users</CardTitle>
+    <div className="flex flex-1 flex-col items-center">
+      <div className="flex w-full max-w-[1000px] flex-col justify-center">
+        <article className="prose self-center">
+          <h2>Search Users</h2>
+        </article>
         <Form className="mt-2" methods={methods}>
           <FormControl
             elementLeft={<SearchIcon className="ml-1 h-5 w-5" />}
@@ -119,7 +118,7 @@ export const Users = (): JSX.Element => {
             size="sm"
           />
         ) : null}
-      </CardBody>
-    </Card>
+      </div>
+    </div>
   );
 };

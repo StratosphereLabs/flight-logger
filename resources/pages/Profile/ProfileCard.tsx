@@ -22,7 +22,7 @@ export const ProfileCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={isFetching}
-      className="card-bordered w-80 shadow-md"
+      className="card-bordered w-80 bg-base-200 shadow-md"
     >
       <CardBody className="items-center justify-between">
         <div className="flex flex-col items-center gap-1">

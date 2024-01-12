@@ -1,7 +1,7 @@
-import { WelcomeCard } from './WelcomeCard';
+import { WelcomeHero } from './WelcomeHero';
 
 export const Home = (): JSX.Element => (
-  <div className="flex flex-1 flex-col p-2">
-    <WelcomeCard />
+  <div className="flex flex-1 flex-col justify-center">
+    <WelcomeHero />
   </div>
 );

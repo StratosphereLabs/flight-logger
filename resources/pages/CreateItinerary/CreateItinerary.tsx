@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
+import { Button, Form } from 'stratosphere-ui';
 import { itineraryFlightSchema } from '../../../app/schemas';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
@@ -56,43 +56,33 @@ export const CreateItinerary = (): JSX.Element => {
   }, [isCreateItineraryModalOpen, methods]);
   return (
     <>
-      <div className="flex flex-1 flex-col overflow-y-scroll p-2 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:scrollbar">
-        <Card className="bg-base-100 shadow-md">
-          <CardBody className="justify-center">
-            <CardTitle className="mb-5 justify-center text-2xl">
-              Create Itinerary
-            </CardTitle>
-            <Form
-              className="flex w-full flex-col gap-4"
-              methods={methods}
-              onFormSubmit={data => {
-                addFlight(data);
-                resetForm();
-              }}
-            >
-              {flights.length > 0 ? (
-                <ItineraryFlightsCard
-                  isLoading={isLoading}
-                  onSubmit={() => {
-                    mutate({ flights });
-                  }}
-                />
-              ) : null}
-              <ItineraryBuilderFields />
-              <div className="divider my-2" />
-              <div className="modal-action justify-center">
-                <Button
-                  color="primary"
-                  className="w-full max-w-md"
-                  type="submit"
-                >
-                  Add Flight
-                </Button>
-              </div>
-            </Form>
-          </CardBody>
-        </Card>
-      </div>
+      <article className="prose self-center">
+        <h2>Create Itinerary</h2>
+      </article>
+      <Form
+        className="flex w-full flex-col gap-4"
+        methods={methods}
+        onFormSubmit={data => {
+          addFlight(data);
+          resetForm();
+        }}
+      >
+        {flights.length > 0 ? (
+          <ItineraryFlightsCard
+            isLoading={isLoading}
+            onSubmit={() => {
+              mutate({ flights });
+            }}
+          />
+        ) : null}
+        <ItineraryBuilderFields />
+        <div className="divider my-2" />
+        <div className="modal-action justify-center">
+          <Button color="primary" className="w-full max-w-md" type="submit">
+            Add Flight
+          </Button>
+        </div>
+      </Form>
       <DeleteItineraryModal />
       <ResetItineraryModal onSubmit={resetForm} />
     </>
