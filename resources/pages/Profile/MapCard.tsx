@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
+  Button,
   Form,
   FormCheckbox,
   LoadingCard,
   Select,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
+import { ExpandIcon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
@@ -109,7 +111,7 @@ export const MapCard = (): JSX.Element => {
     () => (
       <LoadingCard
         isLoading={isFetching}
-        className="card-bordered relative min-h-[450px] min-w-[350px] flex-1 shadow-md"
+        className="card-bordered relative h-[300px] min-w-[350px] flex-1 shadow-md"
       >
         {data !== undefined &&
         (mapMode === 'routes' || mapMode === 'heatmap') ? (
@@ -179,6 +181,11 @@ export const MapCard = (): JSX.Element => {
             name="mapMode"
           />
         </Form>
+        <div className="absolute bottom-0 p-1">
+          <Button className="px-3">
+            <ExpandIcon className="h-6 w-6" />
+          </Button>
+        </div>
       </LoadingCard>
     ),
     [

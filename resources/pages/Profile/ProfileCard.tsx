@@ -22,40 +22,50 @@ export const ProfileCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={isFetching}
-      className="card-bordered w-80 bg-base-200 shadow-md"
+      className="card-bordered card-compact h-[300px] w-[350px] bg-base-200 shadow-md"
     >
-      <CardBody className="items-center justify-between">
-        <div className="flex flex-col items-center gap-1">
-          <CardTitle className="text-2xl font-medium">{`${
-            data?.firstName ?? ''
-          } ${data?.lastName ?? ''}`}</CardTitle>
-          <div className="text-md opacity-75">{`@${data?.username ?? ''}`}</div>
-        </div>
-        <div className="flex flex-col items-center gap-2">
-          <Avatar shapeClassName="h-40 w-40 rounded-full">
+      <CardBody className="justify-between gap-2">
+        <div className="flex flex-row items-center gap-4">
+          <Avatar shapeClassName="h-20 w-20 rounded-full">
             <img src={data?.avatar} />
           </Avatar>
-          <div className="inline space-x-2 font-bold">
-            <Badge outline size="sm" color="info">
-              <span className="text-semibold">0</span> followers
-            </Badge>
-            <Badge size="sm" color="info">
-              <span className="text-semibold">0</span> following
-            </Badge>
+          <div className="flex flex-1 flex-col">
+            <CardTitle className="text-2xl font-medium">{`${
+              data?.firstName ?? ''
+            } ${data?.lastName ?? ''}`}</CardTitle>
+            <div className="text-md opacity-75">{`@${
+              data?.username ?? ''
+            }`}</div>
+            <div className="mt-1 text-xs opacity-50">
+              Joined {data?.creationDate}
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="text-lg">{data?.completedFlightCount} Flights</span>
-          <span className="text-sm font-semibold opacity-60">
-            {data?.upcomingFlightCount} Upcoming
-          </span>
+        <div className="flex justify-center gap-4">
+          <Badge outline size="sm" color="info">
+            <span className="text-semibold">0</span> followers
+          </Badge>
+          <Badge size="sm" color="info">
+            <span className="text-semibold">0</span> following
+          </Badge>
         </div>
-        <div className="text-xs opacity-50">Joined {data?.creationDate}</div>
         {username !== undefined ? (
-          <Button color="success" className="mt-4">
+          <Button size="sm" color="success">
             Follow
           </Button>
         ) : null}
+        <div className="stats flex bg-base-200">
+          <div className="stat flex-1 place-items-center">
+            <div className="stat-title">Flights</div>
+            <div className="stat-value text-secondary">
+              {data?.completedFlightCount}
+            </div>
+          </div>
+          <div className="stat flex-1 place-items-center">
+            <div className="stat-title">Upcoming</div>
+            <div className="stat-value">{data?.upcomingFlightCount}</div>
+          </div>
+        </div>
       </CardBody>
     </LoadingCard>
   );
