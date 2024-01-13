@@ -21,7 +21,7 @@ export const CompletedFlights = (): JSX.Element => {
       <article className="prose flex min-w-[350px] max-w-[650px] items-end justify-between p-1">
         <h4>Recent Flights</h4>
         <Link
-          to={`/flights`}
+          to={username !== undefined ? `/user/${username}/flights` : '/flights'}
           className="link-hover link flex items-center gap-1 text-xs opacity-75"
         >
           View All ({data?.pages[0].count})
