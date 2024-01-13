@@ -1,9 +1,11 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
-import { DATE_FORMAT_MONTH } from '../constants';
+import { formatInTimeZone } from 'date-fns-tz';
+import { DATE_FORMAT_MONTH, DATE_FORMAT_SHORT } from '../constants';
 import { prisma } from '../db';
 import {
   getUserFlightsSchema,
+  getUserProfileFlightsSchema,
   getUserSchema,
   getUsersSchema,
 } from '../schemas';
@@ -11,12 +13,14 @@ import { procedure, router } from '../trpc';
 import {
   excludeKeys,
   fetchGravatarUrl,
+  getCenterpoint,
+  getDurationString,
   getHeatmap,
   getRoutes,
+  parsePaginationRequest,
   transformFlightData,
   transformItineraryData,
   transformTripData,
-  getCenterpoint,
 } from '../utils';
 
 export const usersRouter = router({
@@ -24,7 +28,7 @@ export const usersRouter = router({
     if (input.username === undefined && ctx.user === null) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
-    const [userData, completedFlightCount, upcomingFlightCount] =
+    const [userData, completedFlightCount, upcomingFlightCount, tripCount] =
       await prisma.$transaction([
         prisma.user.findUnique({
           where: {
@@ -51,6 +55,16 @@ export const usersRouter = router({
             },
           },
         }),
+        prisma.trip.count({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              lte: new Date(),
+            },
+          },
+        }),
       ]);
     if (userData === null) {
       throw new TRPCError({
@@ -62,6 +76,7 @@ export const usersRouter = router({
       avatar: fetchGravatarUrl(userData.email),
       completedFlightCount,
       upcomingFlightCount,
+      tripCount,
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       ...excludeKeys(
         userData,
@@ -150,6 +165,100 @@ export const usersRouter = router({
           upcomingFlights.length +
           currentFlights.length +
           completedFlights.length,
+      };
+    }),
+  getUserCompletedFlights: procedure
+    .input(getUserProfileFlightsSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const whereObj = {
+        user: {
+          username: input?.username ?? ctx.user?.username,
+        },
+        outTime: {
+          lte: new Date(),
+        },
+      };
+      const { skip, take } = parsePaginationRequest(input);
+      const [results, count] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          skip,
+          take,
+          orderBy: {
+            outTime: 'desc',
+          },
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return {
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+        })),
+        count,
+      };
+    }),
+  getUserUpcomingFlights: procedure
+    .input(getUserProfileFlightsSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const whereObj = {
+        user: {
+          username: input?.username ?? ctx.user?.username,
+        },
+        outTime: {
+          gt: new Date(),
+        },
+      };
+      const { skip, take } = parsePaginationRequest(input);
+      const [results, count] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          skip,
+          take,
+          orderBy: {
+            outTime: 'asc',
+          },
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return {
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+        })),
+        count,
       };
     }),
   getUserMapData: procedure

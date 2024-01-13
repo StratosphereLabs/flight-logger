@@ -55,7 +55,6 @@ export const SearchButton = (): JSX.Element => {
         <Form methods={methods} onFormSubmit={() => null} formRef={formRef}>
           <TypeaheadSelect
             disableSingleSelectBadge
-            dropdownInputClassName="bg-base-200"
             getItemText={({ username }) => username}
             inputClassName="bg-base-200"
             menuClassName="min-w-full"

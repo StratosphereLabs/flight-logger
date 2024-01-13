@@ -46,15 +46,14 @@ exports[`<App /> > renders login page 1`] = `
             novalidate=""
           >
             <fieldset>
-              <div
+              <label
                 class="form-control"
               >
-                <label
-                  class="label font-semibold"
-                  id="label-email"
+                <div
+                  class="label"
                 >
                   <span
-                    class="label-text"
+                    class="label-text font-semibold"
                   >
                     Email
                      
@@ -64,12 +63,11 @@ exports[`<App /> > renders login page 1`] = `
                       *
                     </span>
                   </span>
-                </label>
+                </div>
                 <div
                   class="relative inline-flex"
                 >
                   <input
-                    aria-labelledby="label-email"
                     autocomplete="email"
                     class="input w-full bg-base-200"
                     name="email"
@@ -77,16 +75,15 @@ exports[`<App /> > renders login page 1`] = `
                     value=""
                   />
                 </div>
-              </div>
-              <div
+              </label>
+              <label
                 class="form-control"
               >
-                <label
-                  class="label font-semibold"
-                  id="label-password"
+                <div
+                  class="label"
                 >
                   <span
-                    class="label-text"
+                    class="label-text font-semibold"
                   >
                     Password
                      
@@ -96,12 +93,11 @@ exports[`<App /> > renders login page 1`] = `
                       *
                     </span>
                   </span>
-                </label>
+                </div>
                 <div
                   class="relative inline-flex"
                 >
                   <input
-                    aria-labelledby="label-password"
                     autocomplete="current-password"
                     class="input w-full pr-10 bg-base-200"
                     name="password"
@@ -142,7 +138,7 @@ exports[`<App /> > renders login page 1`] = `
                     </button>
                   </div>
                 </div>
-              </div>
+              </label>
               <label
                 class="label"
               >
@@ -219,117 +215,24 @@ exports[`<App /> > renders login page 1`] = `
 exports[`<App /> > renders profile page 1`] = `
 <div>
   <div
-    class="flex h-screen flex-col justify-between bg-base-200"
+    class="flex h-screen flex-col justify-between"
   >
     <div
-      class="component-preview flex w-full items-center justify-center gap-2 p-2 font-sans"
+      class="navbar z-10 bg-base-300 shadow-xl"
     >
       <div
-        class="navbar rounded-box bg-base-100 shadow-xl"
+        class="navbar-start"
       >
         <div
-          class="navbar-start"
+          class="relative lg:hidden"
+          data-headlessui-state=""
         >
-          <div
-            class="relative lg:hidden"
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            class="btn btn-ghost"
             data-headlessui-state=""
-          >
-            <button
-              aria-expanded="false"
-              aria-haspopup="menu"
-              class="btn btn-ghost"
-              data-headlessui-state=""
-              id="headlessui-menu-button-:r1:"
-              type="button"
-            >
-              <svg
-                class="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 6h16M4 12h8m-8 6h16"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                />
-              </svg>
-              <span
-                class="sr-only"
-              >
-                Navigation Menu
-              </span>
-            </button>
-          </div>
-          <button
-            class="btn btn-ghost hidden text-xl normal-case sm:inline-flex"
-            type="button"
-          >
-            <div
-              class="font-title text-3xl text-primary transition-all duration-200"
-            >
-              <span>
-                Flight
-              </span>
-              <span
-                class="text-base-content"
-              >
-                Logger
-              </span>
-            </div>
-          </button>
-        </div>
-        <div
-          class="navbar-center hidden lg:flex"
-        >
-          <div
-            aria-orientation="horizontal"
-            class="tabs tabs-lg tabs-boxed bg-base-100 p-0"
-            role="tablist"
-          >
-            <button
-              aria-selected="true"
-              class="tab tab-active"
-              data-headlessui-state="selected"
-              id="headlessui-tabs-tab-:r2:"
-              role="tab"
-              tabindex="0"
-              type="button"
-            >
-              Home
-            </button>
-            <button
-              aria-selected="false"
-              class="tab"
-              data-headlessui-state=""
-              id="headlessui-tabs-tab-:r3:"
-              role="tab"
-              tabindex="-1"
-              type="button"
-            >
-              Users
-            </button>
-            <button
-              aria-selected="false"
-              class="tab"
-              data-headlessui-state=""
-              id="headlessui-tabs-tab-:r4:"
-              role="tab"
-              tabindex="-1"
-              type="button"
-            >
-              Data
-            </button>
-          </div>
-          <div />
-        </div>
-        <div
-          class="navbar-end gap-1"
-        >
-          <button
-            class="btn btn-ghost btn-circle"
+            id="headlessui-menu-button-:r1:"
             type="button"
           >
             <svg
@@ -340,7 +243,7 @@ exports[`<App /> > renders profile page 1`] = `
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                d="M4 6h16M4 12h8m-8 6h16"
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
@@ -349,70 +252,159 @@ exports[`<App /> > renders profile page 1`] = `
             <span
               class="sr-only"
             >
-              Search Users
+              Navigation Menu
             </span>
           </button>
+        </div>
+        <button
+          class="btn btn-ghost hidden text-xl normal-case sm:inline-flex"
+          type="button"
+        >
           <div
-            class="relative"
-            data-headlessui-state=""
+            class="font-title text-3xl text-primary transition-all duration-200"
           >
-            <button
-              aria-expanded="false"
-              aria-haspopup="menu"
-              class="btn btn-ghost btn-circle"
-              data-headlessui-state=""
-              id="headlessui-menu-button-:r5:"
-              type="button"
+            <span>
+              Flight
+            </span>
+            <span
+              class="text-base-content"
             >
-              <svg
-                class="h-5 w-5"
-                fill="currentColor"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z"
-                  fill-rule="evenodd"
-                />
-              </svg>
-              <span
-                class="sr-only"
-              >
-                Toggle Theme
-              </span>
-            </button>
+              Logger
+            </span>
           </div>
+        </button>
+      </div>
+      <div
+        class="navbar-center hidden lg:flex"
+      >
+        <div
+          aria-orientation="horizontal"
+          class="tabs tabs-lg tabs-boxed bg-base-300 p-0"
+          role="tablist"
+        >
           <button
-            class="btn btn-neutral"
+            aria-selected="true"
+            class="tab tab-active"
+            data-headlessui-state="selected"
+            id="headlessui-tabs-tab-:r2:"
+            role="tab"
+            tabindex="0"
             type="button"
           >
-            Login
+            Home
           </button>
-          <div
-            class="relative hidden"
+          <button
+            aria-selected="false"
+            class="tab"
             data-headlessui-state=""
+            id="headlessui-tabs-tab-:r3:"
+            role="tab"
+            tabindex="-1"
+            type="button"
           >
-            <button
-              aria-expanded="false"
-              aria-haspopup="menu"
-              class="btn btn-ghost btn-circle"
-              data-headlessui-state=""
-              id="headlessui-menu-button-:r6:"
-              type="button"
+            Users
+          </button>
+          <button
+            aria-selected="false"
+            class="tab"
+            data-headlessui-state=""
+            id="headlessui-tabs-tab-:r4:"
+            role="tab"
+            tabindex="-1"
+            type="button"
+          >
+            Data
+          </button>
+        </div>
+        <div />
+      </div>
+      <div
+        class="navbar-end gap-1"
+      >
+        <button
+          class="btn btn-ghost btn-circle"
+          type="button"
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+          <span
+            class="sr-only"
+          >
+            Search Users
+          </span>
+        </button>
+        <div
+          class="relative"
+          data-headlessui-state=""
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            class="btn btn-ghost btn-circle"
+            data-headlessui-state=""
+            id="headlessui-menu-button-:r5:"
+            type="button"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="currentColor"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                clip-rule="evenodd"
+                d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z"
+                fill-rule="evenodd"
+              />
+            </svg>
+            <span
+              class="sr-only"
+            >
+              Toggle Theme
+            </span>
+          </button>
+        </div>
+        <button
+          class="btn btn-neutral"
+          type="button"
+        >
+          Login
+        </button>
+        <div
+          class="relative hidden"
+          data-headlessui-state=""
+        >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            class="btn btn-ghost btn-circle"
+            data-headlessui-state=""
+            id="headlessui-menu-button-:r6:"
+            type="button"
+          >
+            <div
+              class="avatar"
             >
               <div
-                class="avatar"
+                class="w-9 h-9 rounded-full"
               >
-                <div
-                  class="w-9 h-9 rounded-full"
-                >
-                  <img />
-                </div>
+                <img />
               </div>
-            </button>
-          </div>
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -420,102 +412,97 @@ exports[`<App /> > renders profile page 1`] = `
       style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
     />
     <div
-      class="flex flex-1 flex-col p-2"
+      class="flex flex-1 flex-col overflow-y-scroll bg-base-100 p-3 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:scrollbar"
     >
       <div
-        class="card min-h-[75vh] bg-base-100 shadow-md"
-        data-testid="card"
+        class="flex flex-1 flex-col justify-center"
       >
         <div
-          class="card-body justify-center"
+          class="hero"
         >
           <div
-            class="hero"
+            class="hero-content text-center"
           >
             <div
-              class="hero-content text-center"
+              class="max-w-md"
             >
-              <div
-                class="max-w-md"
+              <h1
+                class="text-5xl font-bold"
               >
-                <h1
-                  class="text-5xl font-bold"
+                Welcome!
+              </h1>
+              <p
+                class="py-4"
+              >
+                Your all-in-one personal flight logbook and trip planner
+              </p>
+              <ul
+                class="space-y-1 py-4 text-sm text-gray-500"
+              >
+                <li
+                  class="flex justify-center gap-2"
                 >
-                  Welcome!
-                </h1>
-                <p
-                  class="py-4"
-                >
-                  Your all-in-one personal flight logbook and trip planner
-                </p>
-                <ul
-                  class="space-y-1 py-4 text-sm text-gray-500"
-                >
-                  <li
-                    class="flex justify-center gap-2"
+                  <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <svg
-                      class="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    Log detailed trip and flight information
-                  </li>
-                  <li
-                    class="flex justify-center gap-2"
-                  >
-                    <svg
-                      class="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    Create and share itineraries with family and friends
-                  </li>
-                  <li
-                    class="flex justify-center gap-2"
-                  >
-                    <svg
-                      class="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                    View advanced data analytics
-                  </li>
-                </ul>
-                <button
-                  class="btn btn-accent mt-4"
-                  type="button"
+                    <path
+                      d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Log detailed trip and flight information
+                </li>
+                <li
+                  class="flex justify-center gap-2"
                 >
-                  Get Started
-                </button>
-              </div>
+                  <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Create and share itineraries with family and friends
+                </li>
+                <li
+                  class="flex justify-center gap-2"
+                >
+                  <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  View advanced data analytics
+                </li>
+              </ul>
+              <button
+                class="btn btn-accent mt-4"
+                type="button"
+              >
+                Get Started
+              </button>
             </div>
           </div>
         </div>

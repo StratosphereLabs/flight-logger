@@ -17,7 +17,11 @@ module.exports = {
     ],
   },
   theme: {
-    extend: {},
+    extend: {
+      transitionProperty: {
+        height: 'height',
+      },
+    },
   },
   plugins: [
     require('@tailwindcss/typography'),

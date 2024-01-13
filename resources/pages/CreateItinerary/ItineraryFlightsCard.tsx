@@ -58,6 +58,7 @@ export const ItineraryFlightsCard = forwardRef<
               shape="circle"
             >
               <ResetIcon className="h-6 w-6" />
+              <span className="sr-only">Reset Itinerary</span>
             </Button>
             <Button color="primary" loading={isLoading} onClick={onSubmit}>
               Create

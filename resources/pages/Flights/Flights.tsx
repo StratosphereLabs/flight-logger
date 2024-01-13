@@ -91,7 +91,7 @@ export const Flights = (): JSX.Element => {
   }, [data, flightId, setActiveFlight, setIsViewDialogOpen]);
   useTRPCErrorHandler(error);
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-4">
       <article className="prose self-center">
         <h2>
           {username !== undefined ? `${username}'s Flights` : 'My Flights'}
@@ -150,11 +150,19 @@ export const Flights = (): JSX.Element => {
           ) : null}
         </div>
         <FormRadioGroup name="layout">
-          <FormRadioGroupOption size="sm" value="full">
+          <FormRadioGroupOption
+            color={layout === 'full' ? 'info' : undefined}
+            size="sm"
+            value="full"
+          >
             <Bars2Icon className="h-4 w-4" />
             <span className="sr-only">Full</span>
           </FormRadioGroupOption>
-          <FormRadioGroupOption size="sm" value="compact">
+          <FormRadioGroupOption
+            color={layout === 'compact' ? 'info' : undefined}
+            size="sm"
+            value="compact"
+          >
             <Bars4Icon className="h-4 w-4" />
             <span className="sr-only">Compact</span>
           </FormRadioGroupOption>

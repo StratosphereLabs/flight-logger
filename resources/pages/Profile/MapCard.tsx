@@ -1,13 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
+  Avatar,
+  Button,
   Form,
   FormCheckbox,
   LoadingCard,
   Select,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
+import {
+  CollapseIcon,
+  ExpandIcon,
+  UserOutlineIcon,
+  UserSolidIcon,
+} from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
@@ -22,7 +36,15 @@ export interface MapCardFormData {
   mapMode: 'routes' | 'heatmap' | '3d';
 }
 
-export const MapCard = (): JSX.Element => {
+export interface MapCardProps {
+  isMapFullScreen: boolean;
+  setIsMapFullScreen: Dispatch<SetStateAction<boolean>>;
+}
+
+export const MapCard = ({
+  isMapFullScreen,
+  setIsMapFullScreen,
+}: MapCardProps): JSX.Element => {
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
@@ -55,6 +77,12 @@ export const MapCard = (): JSX.Element => {
     name: ['showUpcoming', 'showCompleted', 'mapMode'],
   });
   const { username } = useParams();
+  const { data: userData } = trpc.users.getUser.useQuery(
+    { username },
+    {
+      staleTime: 5 * 60 * 1000,
+    },
+  );
   const { data, error, isFetching } = trpc.users.getUserMapData.useQuery(
     {
       username,
@@ -88,6 +116,10 @@ export const MapCard = (): JSX.Element => {
           heatmap: filteredHeatmapData,
           routes: filteredRoutes,
           airports: getAirports(filteredRoutes),
+          numFlights: filteredRoutes.reduce(
+            (acc, { frequency }) => acc + frequency,
+            0,
+          ),
         };
       },
       staleTime: 5 * 60 * 1000,
@@ -109,7 +141,9 @@ export const MapCard = (): JSX.Element => {
     () => (
       <LoadingCard
         isLoading={isFetching}
-        className="card-bordered relative min-h-[450px] min-w-[350px] flex-1 shadow-md"
+        className={`card-bordered relative min-w-[350px] flex-1 shadow-md transition-size duration-500 ${
+          isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[300px]'
+        }`}
       >
         {data !== undefined &&
         (mapMode === 'routes' || mapMode === 'heatmap') ? (
@@ -139,7 +173,40 @@ export const MapCard = (): JSX.Element => {
           methods={methods}
         >
           <div className="flex flex-col gap-2">
-            <div className="pointer-events-auto flex flex-col rounded-xl bg-base-100/70 px-2">
+            {isMapFullScreen ? (
+              <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-3 py-2">
+                <div className="flex flex-row items-center gap-4">
+                  <Avatar shapeClassName="h-16 w-16 rounded-full">
+                    <img src={userData?.avatar} alt="User Avatar" />
+                  </Avatar>
+                  <div className="flex flex-1 flex-col">
+                    <div className="text-xl font-medium">{`${
+                      userData?.firstName ?? ''
+                    } ${userData?.lastName ?? ''}`}</div>
+                    <div className="text-xs opacity-75">{`@${
+                      userData?.username ?? ''
+                    }`}</div>
+                    <div className="mt-1 flex gap-4 text-sm">
+                      <div className="flex items-center">
+                        <Button color="ghost" size="xs" shape="circle">
+                          <UserOutlineIcon className="h-3 w-3 text-info" />
+                          <span className="sr-only">Following</span>
+                        </Button>
+                        0
+                      </div>
+                      <div className="flex items-center">
+                        <Button color="ghost" size="xs" shape="circle">
+                          <UserSolidIcon className="h-3 w-3 text-info" />
+                          <span className="sr-only">Followers</span>
+                        </Button>
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-2">
               <FormCheckbox
                 inputClassName="bg-base-200"
                 labelText="Show upcoming"
@@ -179,6 +246,29 @@ export const MapCard = (): JSX.Element => {
             name="mapMode"
           />
         </Form>
+        <div className="absolute bottom-0 p-1">
+          {isMapFullScreen ? (
+            <Button
+              className="px-3"
+              onClick={() => {
+                setIsMapFullScreen(false);
+              }}
+            >
+              <CollapseIcon className="h-6 w-6" />
+              <span className="sr-only">Collapse Map</span>
+            </Button>
+          ) : (
+            <Button
+              className="px-3"
+              onClick={() => {
+                setIsMapFullScreen(true);
+              }}
+            >
+              <ExpandIcon className="h-6 w-6" />
+              <span className="sr-only">Expand Map</span>
+            </Button>
+          )}
+        </div>
       </LoadingCard>
     ),
     [
@@ -186,11 +276,14 @@ export const MapCard = (): JSX.Element => {
       data,
       hoverAirportId,
       isFetching,
+      isMapFullScreen,
       mapMode,
       methods,
       showCompleted,
       showUpcoming,
       selectedAirportId,
+      setIsMapFullScreen,
+      userData,
     ],
   );
 };
