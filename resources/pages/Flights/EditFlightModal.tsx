@@ -107,7 +107,8 @@ export const EditFlightModal = ({
                 ),
                 builtDate: createNullableDate(activeFlight.airframe.builtDate),
               }
-            : activeFlight.tailNumber !== null
+            : activeFlight.tailNumber !== null &&
+                activeFlight.tailNumber.length > 0
               ? {
                   ...customAirframe,
                   registration: activeFlight.tailNumber,

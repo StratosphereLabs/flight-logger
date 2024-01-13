@@ -1,17 +1,22 @@
-import { useParams } from 'react-router-dom';
-import {
-  Avatar,
-  Badge,
-  Button,
-  CardBody,
-  CardTitle,
-  LoadingCard,
-} from 'stratosphere-ui';
+import { useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Avatar, Button, CardBody, LoadingCard } from 'stratosphere-ui';
+import { UserOutlineIcon, UserSolidIcon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
+import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
+  const isLoggedIn = useAuthStore(({ token }) => token !== null);
+  const navigate = useNavigate();
   const { username } = useParams();
+  const { data: currentUserData } = trpc.users.getUser.useQuery(
+    { username: undefined },
+    {
+      enabled: isLoggedIn,
+      staleTime: 5 * 60 * 1000,
+    },
+  );
   const { data, error, isFetching } = trpc.users.getUser.useQuery(
     { username },
     {
@@ -19,6 +24,10 @@ export const ProfileCard = (): JSX.Element => {
     },
   );
   useTRPCErrorHandler(error);
+  const onOwnProfile = useMemo(
+    () => username === undefined || username === currentUserData?.username,
+    [currentUserData?.username, username],
+  );
   return (
     <LoadingCard
       isLoading={isFetching}
@@ -27,33 +36,51 @@ export const ProfileCard = (): JSX.Element => {
       <CardBody className="justify-between gap-2">
         <div className="flex flex-row items-center gap-4">
           <Avatar shapeClassName="h-20 w-20 rounded-full">
-            <img src={data?.avatar} />
+            <img src={data?.avatar} alt="User Avatar" />
           </Avatar>
           <div className="flex flex-1 flex-col">
-            <CardTitle className="text-2xl font-medium">{`${
-              data?.firstName ?? ''
-            } ${data?.lastName ?? ''}`}</CardTitle>
-            <div className="text-md opacity-75">{`@${
+            <div className="text-2xl font-medium">{`${data?.firstName ?? ''} ${
+              data?.lastName ?? ''
+            }`}</div>
+            <div className="text-sm opacity-75">{`@${
               data?.username ?? ''
             }`}</div>
             <div className="mt-1 text-xs opacity-50">
               Joined {data?.creationDate}
             </div>
+            <div className="mt-1 flex gap-4">
+              <div className="flex items-center">
+                <Button color="ghost" size="xs" shape="circle">
+                  <UserOutlineIcon className="h-3 w-3 text-info" />
+                  <span className="sr-only">Following</span>
+                </Button>
+                0
+              </div>
+              <div className="flex items-center">
+                <Button color="ghost" size="xs" shape="circle">
+                  <UserSolidIcon className="h-3 w-3 text-info" />
+                  <span className="sr-only">Followers</span>
+                </Button>
+                0
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex justify-center gap-4">
-          <Badge outline color="info">
-            <span className="text-semibold">0</span> followers
-          </Badge>
-          <Badge color="info">
-            <span className="text-semibold">0</span> following
-          </Badge>
-        </div>
-        {username !== undefined ? (
+        {onOwnProfile ? (
+          <Button
+            size="sm"
+            color="neutral"
+            onClick={() => {
+              navigate('/account');
+            }}
+          >
+            Edit Profile
+          </Button>
+        ) : (
           <Button size="sm" color="success">
             Follow
           </Button>
-        ) : null}
+        )}
         <div className="stats flex bg-base-200">
           <div className="stat flex-1 place-items-center">
             <div className="stat-title">Flights</div>

@@ -58,6 +58,7 @@ export const TripDisclosure = ({
                 }}
               >
                 <LinkIcon className="h-5 w-5" />
+                <span className="sr-only">Copy Link</span>
               </a>
               {username === undefined ? (
                 <a
@@ -69,6 +70,7 @@ export const TripDisclosure = ({
                   }}
                 >
                   <TrashIcon className="h-5 w-5" />
+                  <span className="sr-only">Delete Trip</span>
                 </a>
               ) : null}
             </div>

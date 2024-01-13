@@ -141,7 +141,7 @@ export const MapCard = (): JSX.Element => {
           methods={methods}
         >
           <div className="flex flex-col gap-2">
-            <div className="pointer-events-auto flex flex-col rounded-xl bg-base-100/70 px-2">
+            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-2">
               <FormCheckbox
                 inputClassName="bg-base-200"
                 labelText="Show upcoming"
@@ -184,6 +184,7 @@ export const MapCard = (): JSX.Element => {
         <div className="absolute bottom-0 p-1">
           <Button className="px-3">
             <ExpandIcon className="h-6 w-6" />
+            <span className="sr-only">Expand Map</span>
           </Button>
         </div>
       </LoadingCard>

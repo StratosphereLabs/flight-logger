@@ -15,7 +15,7 @@ export const UpcomingFlights = (): JSX.Element => {
   const flattenedData = useMemo(() => data?.pages.flat(), [data?.pages]);
   return (
     <div className="flex flex-1 flex-col">
-      <article className="prose pl-2">
+      <article className="prose p-2">
         <h4>Upcoming Flights</h4>
       </article>
       <Table
@@ -25,12 +25,12 @@ export const UpcomingFlights = (): JSX.Element => {
           departureAirport: 'w-[50px]',
           arrivalAirport: 'w-[50px]',
         }}
-        className="min-w-[500px] table-fixed border-separate bg-base-200"
+        className="min-w-[500px] max-w-[650px] table-fixed border-separate bg-base-200"
         columns={[
           {
             id: 'date',
             accessorKey: 'outTimeDate',
-            header: () => '',
+            header: () => 'Date',
             cell: ({ getValue }) => {
               const outTimeDate = getValue<string>();
               return (
@@ -43,15 +43,15 @@ export const UpcomingFlights = (): JSX.Element => {
           {
             id: 'airline',
             accessorKey: 'airline',
-            header: () => '',
+            header: () => 'Airline',
             cell: ({ getValue }) => {
               const airlineData = getValue<airline>();
               return airlineData?.logo !== null &&
                 airlineData?.logo !== undefined ? (
-                <div className="flex w-[50px] justify-center">
+                <div className="flex justify-start">
                   <img
                     alt={`${airlineData.name} Logo`}
-                    className="max-h-[20px] max-w-[75px]"
+                    className="max-h-[20px] max-w-[68px]"
                     src={airlineData.logo}
                   />
                 </div>
