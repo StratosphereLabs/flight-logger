@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
@@ -9,7 +15,7 @@ import {
   Select,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
-import { ExpandIcon } from '../../common/components';
+import { CollapseIcon, ExpandIcon } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
@@ -24,7 +30,15 @@ export interface MapCardFormData {
   mapMode: 'routes' | 'heatmap' | '3d';
 }
 
-export const MapCard = (): JSX.Element => {
+export interface MapCardProps {
+  isMapFullScreen: boolean;
+  setIsMapFullScreen: Dispatch<SetStateAction<boolean>>;
+}
+
+export const MapCard = ({
+  isMapFullScreen,
+  setIsMapFullScreen,
+}: MapCardProps): JSX.Element => {
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
@@ -111,7 +125,9 @@ export const MapCard = (): JSX.Element => {
     () => (
       <LoadingCard
         isLoading={isFetching}
-        className="card-bordered relative h-[300px] min-w-[350px] flex-1 shadow-md"
+        className={`card-bordered relative min-w-[350px] flex-1 shadow-md ${
+          isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[300px]'
+        }`}
       >
         {data !== undefined &&
         (mapMode === 'routes' || mapMode === 'heatmap') ? (
@@ -182,10 +198,27 @@ export const MapCard = (): JSX.Element => {
           />
         </Form>
         <div className="absolute bottom-0 p-1">
-          <Button className="px-3">
-            <ExpandIcon className="h-6 w-6" />
-            <span className="sr-only">Expand Map</span>
-          </Button>
+          {isMapFullScreen ? (
+            <Button
+              className="px-3"
+              onClick={() => {
+                setIsMapFullScreen(false);
+              }}
+            >
+              <CollapseIcon className="h-6 w-6" />
+              <span className="sr-only">Collapse Map</span>
+            </Button>
+          ) : (
+            <Button
+              className="px-3"
+              onClick={() => {
+                setIsMapFullScreen(true);
+              }}
+            >
+              <ExpandIcon className="h-6 w-6" />
+              <span className="sr-only">Expand Map</span>
+            </Button>
+          )}
         </div>
       </LoadingCard>
     ),
@@ -194,11 +227,13 @@ export const MapCard = (): JSX.Element => {
       data,
       hoverAirportId,
       isFetching,
+      isMapFullScreen,
       mapMode,
       methods,
       showCompleted,
       showUpcoming,
       selectedAirportId,
+      setIsMapFullScreen,
     ],
   );
 };
