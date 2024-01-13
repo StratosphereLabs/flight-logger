@@ -125,7 +125,7 @@ export const MapCard = ({
     () => (
       <LoadingCard
         isLoading={isFetching}
-        className={`card-bordered relative min-w-[350px] flex-1 shadow-md ${
+        className={`transition-height card-bordered relative min-w-[350px] flex-1 shadow-md duration-500 ${
           isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[300px]'
         }`}
       >
