@@ -28,7 +28,7 @@ export const usersRouter = router({
     if (input.username === undefined && ctx.user === null) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
-    const [userData, completedFlightCount, upcomingFlightCount] =
+    const [userData, completedFlightCount, upcomingFlightCount, tripCount] =
       await prisma.$transaction([
         prisma.user.findUnique({
           where: {
@@ -55,6 +55,16 @@ export const usersRouter = router({
             },
           },
         }),
+        prisma.trip.count({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              lte: new Date(),
+            },
+          },
+        }),
       ]);
     if (userData === null) {
       throw new TRPCError({
@@ -66,6 +76,7 @@ export const usersRouter = router({
       avatar: fetchGravatarUrl(userData.email),
       completedFlightCount,
       upcomingFlightCount,
+      tripCount,
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       ...excludeKeys(
         userData,
@@ -171,29 +182,37 @@ export const usersRouter = router({
         },
       };
       const { skip, take } = parsePaginationRequest(input);
-      const results = await prisma.flight.findMany({
-        where: whereObj,
-        include: {
-          departureAirport: true,
-          arrivalAirport: true,
-          airline: true,
-          aircraftType: true,
-        },
-        skip,
-        take,
-        orderBy: {
-          outTime: 'desc',
-        },
-      });
-      return results.map(flight => ({
-        ...flight,
-        outTimeDate: formatInTimeZone(
-          flight.outTime,
-          flight.departureAirport.timeZone,
-          DATE_FORMAT_SHORT,
-        ),
-        durationString: getDurationString(flight.duration),
-      }));
+      const [results, count] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          skip,
+          take,
+          orderBy: {
+            outTime: 'desc',
+          },
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return {
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+        })),
+        count,
+      };
     }),
   getUserUpcomingFlights: procedure
     .input(getUserProfileFlightsSchema)
@@ -210,29 +229,37 @@ export const usersRouter = router({
         },
       };
       const { skip, take } = parsePaginationRequest(input);
-      const results = await prisma.flight.findMany({
-        where: whereObj,
-        include: {
-          departureAirport: true,
-          arrivalAirport: true,
-          airline: true,
-          aircraftType: true,
-        },
-        skip,
-        take,
-        orderBy: {
-          outTime: 'asc',
-        },
-      });
-      return results.map(flight => ({
-        ...flight,
-        outTimeDate: formatInTimeZone(
-          flight.outTime,
-          flight.departureAirport.timeZone,
-          DATE_FORMAT_SHORT,
-        ),
-        durationString: getDurationString(flight.duration),
-      }));
+      const [results, count] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          skip,
+          take,
+          orderBy: {
+            outTime: 'asc',
+          },
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return {
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+        })),
+        count,
+      };
     }),
   getUserMapData: procedure
     .input(getUserSchema)

@@ -8,6 +8,7 @@ import {
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
+  Avatar,
   Button,
   Form,
   FormCheckbox,
@@ -15,7 +16,12 @@ import {
   Select,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
-import { CollapseIcon, ExpandIcon } from '../../common/components';
+import {
+  CollapseIcon,
+  ExpandIcon,
+  UserOutlineIcon,
+  UserSolidIcon,
+} from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
@@ -71,6 +77,12 @@ export const MapCard = ({
     name: ['showUpcoming', 'showCompleted', 'mapMode'],
   });
   const { username } = useParams();
+  const { data: userData } = trpc.users.getUser.useQuery(
+    { username },
+    {
+      staleTime: 5 * 60 * 1000,
+    },
+  );
   const { data, error, isFetching } = trpc.users.getUserMapData.useQuery(
     {
       username,
@@ -104,6 +116,10 @@ export const MapCard = ({
           heatmap: filteredHeatmapData,
           routes: filteredRoutes,
           airports: getAirports(filteredRoutes),
+          numFlights: filteredRoutes.reduce(
+            (acc, { frequency }) => acc + frequency,
+            0,
+          ),
         };
       },
       staleTime: 5 * 60 * 1000,
@@ -125,7 +141,7 @@ export const MapCard = ({
     () => (
       <LoadingCard
         isLoading={isFetching}
-        className={`transition-height card-bordered relative min-w-[350px] flex-1 shadow-md duration-500 ${
+        className={`card-bordered relative min-w-[350px] flex-1 shadow-md transition-size duration-500 ${
           isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[300px]'
         }`}
       >
@@ -157,6 +173,39 @@ export const MapCard = ({
           methods={methods}
         >
           <div className="flex flex-col gap-2">
+            {isMapFullScreen ? (
+              <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-3 py-2">
+                <div className="flex flex-row items-center gap-4">
+                  <Avatar shapeClassName="h-16 w-16 rounded-full">
+                    <img src={userData?.avatar} alt="User Avatar" />
+                  </Avatar>
+                  <div className="flex flex-1 flex-col">
+                    <div className="text-xl font-medium">{`${
+                      userData?.firstName ?? ''
+                    } ${userData?.lastName ?? ''}`}</div>
+                    <div className="text-xs opacity-75">{`@${
+                      userData?.username ?? ''
+                    }`}</div>
+                    <div className="mt-1 flex gap-4 text-sm">
+                      <div className="flex items-center">
+                        <Button color="ghost" size="xs" shape="circle">
+                          <UserOutlineIcon className="h-3 w-3 text-info" />
+                          <span className="sr-only">Following</span>
+                        </Button>
+                        0
+                      </div>
+                      <div className="flex items-center">
+                        <Button color="ghost" size="xs" shape="circle">
+                          <UserSolidIcon className="h-3 w-3 text-info" />
+                          <span className="sr-only">Followers</span>
+                        </Button>
+                        0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
             <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-2">
               <FormCheckbox
                 inputClassName="bg-base-200"
@@ -234,6 +283,7 @@ export const MapCard = ({
       showUpcoming,
       selectedAirportId,
       setIsMapFullScreen,
+      userData,
     ],
   );
 };

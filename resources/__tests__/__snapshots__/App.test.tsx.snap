@@ -46,15 +46,14 @@ exports[`<App /> > renders login page 1`] = `
             novalidate=""
           >
             <fieldset>
-              <div
+              <label
                 class="form-control"
               >
-                <label
-                  class="label font-semibold"
-                  id="label-email"
+                <div
+                  class="label"
                 >
                   <span
-                    class="label-text"
+                    class="label-text font-semibold"
                   >
                     Email
                      
@@ -64,12 +63,11 @@ exports[`<App /> > renders login page 1`] = `
                       *
                     </span>
                   </span>
-                </label>
+                </div>
                 <div
                   class="relative inline-flex"
                 >
                   <input
-                    aria-labelledby="label-email"
                     autocomplete="email"
                     class="input w-full bg-base-200"
                     name="email"
@@ -77,16 +75,15 @@ exports[`<App /> > renders login page 1`] = `
                     value=""
                   />
                 </div>
-              </div>
-              <div
+              </label>
+              <label
                 class="form-control"
               >
-                <label
-                  class="label font-semibold"
-                  id="label-password"
+                <div
+                  class="label"
                 >
                   <span
-                    class="label-text"
+                    class="label-text font-semibold"
                   >
                     Password
                      
@@ -96,12 +93,11 @@ exports[`<App /> > renders login page 1`] = `
                       *
                     </span>
                   </span>
-                </label>
+                </div>
                 <div
                   class="relative inline-flex"
                 >
                   <input
-                    aria-labelledby="label-password"
                     autocomplete="current-password"
                     class="input w-full pr-10 bg-base-200"
                     name="password"
@@ -142,7 +138,7 @@ exports[`<App /> > renders login page 1`] = `
                     </button>
                   </div>
                 </div>
-              </div>
+              </label>
               <label
                 class="label"
               >

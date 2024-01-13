@@ -1,7 +1,7 @@
 import type { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Table } from 'stratosphere-ui';
 import { trpc } from '../../utils/trpc';
 
@@ -12,20 +12,31 @@ export const CompletedFlights = (): JSX.Element => {
       limit: 5,
       username,
     });
-  const flattenedData = useMemo(() => data?.pages.flat(), [data?.pages]);
+  const flattenedData = useMemo(
+    () => data?.pages.flatMap(({ results }) => results),
+    [data?.pages],
+  );
   return (
     <div className="flex flex-1 flex-col">
-      <article className="prose p-2">
+      <article className="prose flex min-w-[350px] max-w-[650px] items-end justify-between p-1">
         <h4>Recent Flights</h4>
+        <Link
+          to={`/flights`}
+          className="link-hover link flex items-center gap-1 text-xs opacity-75"
+        >
+          View All ({data?.pages[0].count})
+        </Link>
       </article>
       <Table
         cellClassNames={{
           date: 'w-[60px]',
           airline: 'w-[80px]',
           departureAirport: 'w-[50px]',
+          duration: 'hidden sm:table-cell',
+          aircraftType: 'hidden sm:table-cell',
           arrivalAirport: 'w-[50px]',
         }}
-        className="min-w-[500px] max-w-[650px] table-fixed border-separate bg-base-200"
+        className="min-w-[350px] max-w-[650px] table-fixed border-separate bg-base-200"
         columns={[
           {
             id: 'date',

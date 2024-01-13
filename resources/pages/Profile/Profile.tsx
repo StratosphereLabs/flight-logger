@@ -24,7 +24,7 @@ export const Profile = (): JSX.Element => {
         isMapFullScreen={isMapFullScreen}
         setIsMapFullScreen={setIsMapFullScreen}
       />
-      <div className="flex flex-row flex-wrap gap-4">
+      <div className="flex flex-row flex-wrap gap-6">
         <CompletedFlights />
         <UpcomingFlights />
       </div>

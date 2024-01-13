@@ -83,14 +83,37 @@ export const ProfileCard = (): JSX.Element => {
         )}
         <div className="stats flex bg-base-200">
           <div className="stat flex-1 place-items-center">
+            <div className="stat-title">Trips</div>
+            <div
+              className="stat-value cursor-pointer text-success"
+              onClick={() => {
+                navigate('/trips');
+              }}
+            >
+              {data?.tripCount}
+            </div>
+          </div>
+          <div className="stat flex-1 place-items-center">
             <div className="stat-title">Flights</div>
-            <div className="stat-value text-secondary">
+            <div
+              className="stat-value cursor-pointer text-secondary"
+              onClick={() => {
+                navigate('/flights');
+              }}
+            >
               {data?.completedFlightCount}
             </div>
           </div>
           <div className="stat flex-1 place-items-center">
             <div className="stat-title">Upcoming</div>
-            <div className="stat-value">{data?.upcomingFlightCount}</div>
+            <div
+              className="stat-value cursor-pointer"
+              onClick={() => {
+                navigate('/flights');
+              }}
+            >
+              {data?.upcomingFlightCount}
+            </div>
           </div>
         </div>
       </CardBody>
