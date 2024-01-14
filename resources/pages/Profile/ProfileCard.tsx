@@ -87,7 +87,9 @@ export const ProfileCard = (): JSX.Element => {
             <div
               className="stat-value cursor-pointer text-success"
               onClick={() => {
-                navigate('/trips');
+                navigate(
+                  username !== undefined ? `/user/${username}/trips` : '/trips',
+                );
               }}
             >
               {data?.tripCount}
@@ -98,7 +100,11 @@ export const ProfileCard = (): JSX.Element => {
             <div
               className="stat-value cursor-pointer text-secondary"
               onClick={() => {
-                navigate('/flights');
+                navigate(
+                  username !== undefined
+                    ? `/user/${username}/flights`
+                    : '/flights',
+                );
               }}
             >
               {data?.completedFlightCount}
@@ -109,7 +115,11 @@ export const ProfileCard = (): JSX.Element => {
             <div
               className="stat-value cursor-pointer"
               onClick={() => {
-                navigate('/flights');
+                navigate(
+                  username !== undefined
+                    ? `/user/${username}/flights`
+                    : '/flights',
+                );
               }}
             >
               {data?.upcomingFlightCount}
