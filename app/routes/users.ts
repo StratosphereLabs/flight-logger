@@ -50,7 +50,7 @@ export const usersRouter = router({
             user: {
               username: input?.username ?? ctx.user?.username,
             },
-            inTime: {
+            outTime: {
               gt: new Date(),
             },
           },
@@ -177,7 +177,7 @@ export const usersRouter = router({
         user: {
           username: input?.username ?? ctx.user?.username,
         },
-        outTime: {
+        inTime: {
           lte: new Date(),
         },
       };
