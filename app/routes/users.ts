@@ -16,6 +16,7 @@ import {
   getCenterpoint,
   getDurationMinutes,
   getDurationString,
+  getFlightTimestamps,
   getHeatmap,
   getRoutes,
   parsePaginationRequest,
@@ -322,8 +323,19 @@ export const usersRouter = router({
         start: departureTime,
         end: new Date(),
       });
+      const durationRemaining = totalDuration - currentDuration;
+      const timestamps = getFlightTimestamps({
+        departureAirport: flight.departureAirport,
+        arrivalAirport: flight.arrivalAirport,
+        duration: flight.duration,
+        outTime: flight.outTime,
+        inTime: flight.inTime,
+      });
       return {
         ...flight,
+        ...timestamps,
+        durationRemaining,
+        durationRemainingString: getDurationString(durationRemaining),
         progress: currentDuration / totalDuration,
       };
     }),

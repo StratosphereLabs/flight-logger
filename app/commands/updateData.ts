@@ -72,6 +72,6 @@ const updateFlights = async (): Promise<void> => {
 };
 
 (() => {
-  scheduleJob('*/30 * * * *', updateFlights);
+  scheduleJob('*/15 * * * *', updateFlights);
   scheduleJob('0 0 1 * *', seedAirframes);
 })();

@@ -17,7 +17,7 @@ export const UpcomingFlights = (): JSX.Element => {
     [data?.pages],
   );
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-col">
       <article className="prose flex min-w-[350px] max-w-[650px] items-end justify-between p-1">
         <h4>Upcoming Flights</h4>
         <Link
