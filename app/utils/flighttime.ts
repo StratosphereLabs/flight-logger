@@ -19,7 +19,9 @@ export interface FlightTimesInput {
   arrivalAirport: airport;
   outDateISO: string;
   outTimeValue: string;
+  outTimeActualValue?: string;
   inTimeValue: string;
+  inTimeActualValue?: string;
 }
 
 export interface FlightTimestampsInput {
@@ -33,7 +35,9 @@ export interface FlightTimestampsInput {
 export interface FlightTimesResult {
   duration: number;
   outTime: Date;
+  outTimeActual?: Date;
   inTime: Date;
+  inTimeActual?: Date;
 }
 
 export interface FlightTimestampsResult {
@@ -52,20 +56,49 @@ export const getFlightTimes = ({
   arrivalAirport,
   outDateISO,
   outTimeValue,
+  outTimeActualValue,
   inTimeValue,
+  inTimeActualValue,
 }: FlightTimesInput): FlightTimesResult => {
   const outTimeUtc = zonedTimeToUtc(
     `${outDateISO} ${outTimeValue}`,
     departureAirport.timeZone,
   );
+  const outTimeActualUtc =
+    outTimeActualValue !== undefined
+      ? zonedTimeToUtc(
+          `${outDateISO} ${outTimeActualValue}`,
+          departureAirport.timeZone,
+        )
+      : undefined;
   const inTimeUtc = zonedTimeToUtc(
     `${outDateISO} ${inTimeValue}`,
     arrivalAirport.timeZone,
   );
+  const inTimeActualUtc =
+    inTimeActualValue !== undefined
+      ? zonedTimeToUtc(
+          `${outDateISO} ${inTimeActualValue}`,
+          arrivalAirport.timeZone,
+        )
+      : undefined;
   const daysAdded = getDaysToAdd({ outTime: outTimeUtc, inTime: inTimeUtc });
+  const daysAddedActual =
+    inTimeActualUtc !== undefined
+      ? getDaysToAdd({
+          outTime: outTimeUtc,
+          inTime: inTimeActualUtc,
+        })
+      : undefined;
   const correctedInTime = add(inTimeUtc, {
     days: daysAdded,
   });
+  const correctedInTimeActual =
+    inTimeActualUtc !== undefined
+      ? add(inTimeActualUtc, {
+          days: daysAddedActual,
+        })
+      : undefined;
   const duration = getDurationMinutes({
     start: outTimeUtc,
     end: correctedInTime,
@@ -73,7 +106,9 @@ export const getFlightTimes = ({
   return {
     duration,
     outTime: outTimeUtc,
+    outTimeActual: outTimeActualUtc,
     inTime: correctedInTime,
+    inTimeActual: correctedInTimeActual,
   };
 };
 

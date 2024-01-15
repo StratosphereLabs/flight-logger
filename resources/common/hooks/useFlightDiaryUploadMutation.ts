@@ -8,7 +8,6 @@ import useErrorResponseHandler from './useErrorResponseHandler';
 import { useSuccessResponseHandler } from './useSuccessResponseHandler';
 
 interface FlightDiaryUploadResponse {
-  numFlightsDeleted: number;
   flights: flight[];
 }
 

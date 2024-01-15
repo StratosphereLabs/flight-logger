@@ -65,7 +65,9 @@ export const itinerariesRouter = router({
       ];
       const data = await fetchFlightData({
         airportIds,
+        airportSearchType: 'id',
         airlineIds,
+        airlineSearchType: 'id',
         aircraftTypeData,
         aircraftSearchType: 'id',
       });

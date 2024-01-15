@@ -14,12 +14,12 @@ export const getAirportId = (text: string): string | null => {
   return match[0].split('/')[1].split(')')[0];
 };
 
-export const getAirlineId = (text: string): string | null => {
+export const getAirlineIcao = (text: string): string | null => {
   const match = text.match(AIRLINE_ID_REGEX);
   if (match === null) {
     return null;
   }
-  return match[0].split('(')[1].split(')')[0];
+  return match[0].split('(')[1].split(')')[0].split('/')[1];
 };
 
 export const getAircraftName = (text: string): string =>
@@ -74,7 +74,7 @@ export const parseFlightDiaryFile = (
       ...row,
       From: getAirportId(row.From) ?? '',
       To: getAirportId(row.To) ?? '',
-      Airline: getAirlineId(row.Airline) ?? '',
+      Airline: getAirlineIcao(row.Airline) ?? '',
     }));
   } catch (err) {
     throw createHttpError(400, 'Invalid myFlightradar24 data file.');
