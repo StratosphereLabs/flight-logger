@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CompletedFlights } from './CompletedFlights';
+import { CurrentFlightCard } from './CurrentFlightCard';
 import { MapCard } from './MapCard';
 import { ProfileCard } from './ProfileCard';
 import { UpcomingFlights } from './UpcomingFlights';
@@ -18,13 +19,16 @@ export const Profile = (): JSX.Element => {
     }));
   }, [isMapFullScreen, setSearchParams]);
   return (
-    <div className="flex flex-row flex-wrap gap-4">
-      {!isMapFullScreen ? <ProfileCard /> : null}
-      <MapCard
-        isMapFullScreen={isMapFullScreen}
-        setIsMapFullScreen={setIsMapFullScreen}
-      />
-      <div className="flex flex-row flex-wrap gap-6">
+    <div className="flex flex-1 flex-col gap-4">
+      <div className="flex flex-wrap gap-4">
+        {!isMapFullScreen ? <ProfileCard /> : null}
+        <MapCard
+          isMapFullScreen={isMapFullScreen}
+          setIsMapFullScreen={setIsMapFullScreen}
+        />
+      </div>
+      <CurrentFlightCard />
+      <div className="flex flex-wrap gap-6">
         <CompletedFlights />
         <UpcomingFlights />
       </div>
