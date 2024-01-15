@@ -14,7 +14,9 @@ import {
   excludeKeys,
   fetchGravatarUrl,
   getCenterpoint,
+  getDurationMinutes,
   getDurationString,
+  getFlightTimestamps,
   getHeatmap,
   getRoutes,
   parsePaginationRequest,
@@ -259,6 +261,82 @@ export const usersRouter = router({
           durationString: getDurationString(flight.duration),
         })),
         count,
+      };
+    }),
+  getUserCurrentFlight: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const flight = await prisma.flight.findFirst({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          AND: [
+            {
+              OR: [
+                {
+                  inTimeActual: {
+                    gt: new Date(),
+                  },
+                },
+                {
+                  inTime: {
+                    gt: new Date(),
+                  },
+                },
+              ],
+            },
+            {
+              OR: [
+                {
+                  outTimeActual: {
+                    lte: new Date(),
+                  },
+                },
+                {
+                  outTime: {
+                    lte: new Date(),
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        include: {
+          departureAirport: true,
+          arrivalAirport: true,
+          airline: true,
+          aircraftType: true,
+        },
+      });
+      if (flight === null) return null;
+      const departureTime = flight.outTimeActual ?? flight.outTime;
+      const arrivalTime = flight.inTimeActual ?? flight.inTime;
+      const totalDuration = getDurationMinutes({
+        start: departureTime,
+        end: arrivalTime,
+      });
+      const currentDuration = getDurationMinutes({
+        start: departureTime,
+        end: new Date(),
+      });
+      const durationRemaining = totalDuration - currentDuration;
+      const timestamps = getFlightTimestamps({
+        departureAirport: flight.departureAirport,
+        arrivalAirport: flight.arrivalAirport,
+        duration: flight.duration,
+        outTime: flight.outTime,
+        inTime: flight.inTime,
+      });
+      return {
+        ...flight,
+        ...timestamps,
+        durationRemaining,
+        durationRemainingString: getDurationString(durationRemaining),
+        progress: currentDuration / totalDuration,
       };
     }),
   getUserMapData: procedure
