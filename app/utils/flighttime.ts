@@ -28,8 +28,10 @@ export interface FlightTimestampsInput {
   departureAirport: airport;
   arrivalAirport: airport;
   duration: number;
-  outTime: string | number | Date;
-  inTime: string | number | Date;
+  outTime: number | Date;
+  outTimeActual?: number | Date;
+  inTime: number | Date;
+  inTimeActual?: number | Date;
 }
 
 export interface FlightTimesResult {
@@ -47,8 +49,16 @@ export interface FlightTimestampsResult {
   outDateLocal: string;
   outTimeLocal: string;
   outTimeValue: string;
+  outTimeActualLocal: string | null;
+  outTimeActualValue: string | null;
   inTimeLocal: string;
   inTimeValue: string;
+  inTimeActualLocal: string | null;
+  inTimeActualValue: string | null;
+  departureDelay: string | null;
+  departureDelayValue: number | null;
+  arrivalDelay: string | null;
+  arrivalDelayValue: number | null;
 }
 
 export const getFlightTimes = ({
@@ -117,38 +127,94 @@ export const getFlightTimestamps = ({
   arrivalAirport,
   duration,
   outTime,
+  outTimeActual,
   inTime,
-}: FlightTimestampsInput): FlightTimestampsResult => ({
-  durationString: getDurationString(duration),
-  inFuture: getInFuture(outTime),
-  outDateISO: formatInTimeZone(
-    outTime,
-    departureAirport.timeZone,
-    DATE_FORMAT_ISO,
-  ),
-  outDateLocal: formatInTimeZone(
-    outTime,
-    departureAirport.timeZone,
-    DATE_FORMAT,
-  ),
-  outTimeLocal: formatInTimeZone(
-    outTime,
-    departureAirport.timeZone,
-    TIME_FORMAT_12H,
-  ),
-  outTimeValue: formatInTimeZone(
-    outTime,
-    departureAirport.timeZone,
-    TIME_FORMAT_24H,
-  ),
-  inTimeLocal: formatInTimeZone(
-    inTime,
-    arrivalAirport.timeZone,
-    TIME_FORMAT_12H,
-  ),
-  inTimeValue: formatInTimeZone(
-    inTime,
-    arrivalAirport.timeZone,
-    TIME_FORMAT_24H,
-  ),
-});
+  inTimeActual,
+}: FlightTimestampsInput): FlightTimestampsResult => {
+  const departureDelay =
+    outTimeActual !== undefined
+      ? getDurationMinutes({
+          start: outTime,
+          end: outTimeActual,
+        })
+      : null;
+  const arrivalDelay =
+    inTimeActual !== undefined
+      ? getDurationMinutes({
+          start: inTime,
+          end: inTimeActual,
+        })
+      : null;
+  return {
+    durationString: getDurationString(duration),
+    inFuture: getInFuture(outTime),
+    outDateISO: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      DATE_FORMAT_ISO,
+    ),
+    outDateLocal: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      DATE_FORMAT,
+    ),
+    outTimeLocal: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      TIME_FORMAT_12H,
+    ),
+    outTimeValue: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      TIME_FORMAT_24H,
+    ),
+    outTimeActualLocal:
+      outTimeActual !== undefined
+        ? formatInTimeZone(
+            outTimeActual,
+            departureAirport.timeZone,
+            TIME_FORMAT_12H,
+          )
+        : null,
+    outTimeActualValue:
+      outTimeActual !== undefined
+        ? formatInTimeZone(
+            outTimeActual,
+            departureAirport.timeZone,
+            TIME_FORMAT_24H,
+          )
+        : null,
+    inTimeLocal: formatInTimeZone(
+      inTime,
+      arrivalAirport.timeZone,
+      TIME_FORMAT_12H,
+    ),
+    inTimeValue: formatInTimeZone(
+      inTime,
+      arrivalAirport.timeZone,
+      TIME_FORMAT_24H,
+    ),
+    inTimeActualLocal:
+      inTimeActual !== undefined
+        ? formatInTimeZone(
+            inTimeActual,
+            arrivalAirport.timeZone,
+            TIME_FORMAT_12H,
+          )
+        : null,
+    inTimeActualValue:
+      inTimeActual !== undefined
+        ? formatInTimeZone(
+            inTimeActual,
+            arrivalAirport.timeZone,
+            TIME_FORMAT_24H,
+          )
+        : null,
+    departureDelay:
+      departureDelay !== null ? getDurationString(departureDelay) : null,
+    departureDelayValue: departureDelay,
+    arrivalDelay:
+      arrivalDelay !== null ? getDurationString(arrivalDelay) : null,
+    arrivalDelayValue: arrivalDelay,
+  };
+};

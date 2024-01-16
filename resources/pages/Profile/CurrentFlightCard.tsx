@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
 import { Card, CardBody } from 'stratosphere-ui';
 import { PlaneSolidIcon } from '../../common/components';
@@ -12,10 +13,10 @@ export const CurrentFlightCard = (): JSX.Element | null => {
     return null;
   }
   return (
-    <Card className="bg-base-200 shadow-md">
+    <Card className="card-compact bg-base-200 shadow-md sm:card-normal">
       <CardBody>
-        <div className="flex w-full justify-between text-sm">
-          <div className="flex gap-4 font-mono">
+        <div className="flex w-full justify-between text-xs sm:text-sm">
+          <div className="flex items-center gap-4 font-mono">
             <img
               alt={`${data.airline?.name} Logo`}
               className="max-h-[25px] max-w-[100px]"
@@ -57,14 +58,59 @@ export const CurrentFlightCard = (): JSX.Element | null => {
           </div>
           <div>{data.arrivalAirport.iata}</div>
         </div>
-        <div className="flex w-full justify-between font-mono text-sm opacity-75">
-          <div className="flex flex-col">{data?.outTimeLocal}</div>
-          <div>
-            {data !== undefined && data.durationRemaining > 0
+        <div className="flex w-full justify-between gap-2 font-mono opacity-75">
+          <div className="flex flex-wrap items-center">
+            <div
+              className={classNames(
+                data.outTimeActualLocal !== null
+                  ? 'mr-2 text-xs line-through'
+                  : 'text-xs sm:text-sm',
+              )}
+            >
+              {data.outTimeLocal}
+            </div>
+            {data.outTimeActualLocal !== null ? (
+              <div
+                className={classNames(
+                  'text-xs font-bold sm:text-sm',
+                  data.departureDelayValue !== null &&
+                    data.departureDelayValue > 45
+                    ? 'text-error'
+                    : 'text-green-600',
+                )}
+              >
+                {data.outTimeActualLocal}
+              </div>
+            ) : null}
+          </div>
+          <div className="flex-1 text-center text-xs sm:text-sm">
+            {data.durationRemaining > 0
               ? `${data.durationRemainingString} remaining`
               : ''}
           </div>
-          <div className="flex flex-col">{data?.inTimeLocal}</div>
+          <div className="flex flex-wrap items-center justify-end">
+            <div
+              className={classNames(
+                data.outTimeActualLocal !== null
+                  ? 'text-xs line-through'
+                  : 'text-xs sm:text-sm',
+              )}
+            >
+              {data.inTimeLocal}
+            </div>
+            {data.inTimeActualLocal !== null ? (
+              <div
+                className={classNames(
+                  'ml-2 text-xs font-bold sm:text-sm',
+                  data.arrivalDelayValue !== null && data.arrivalDelayValue > 45
+                    ? 'text-error'
+                    : 'text-green-600',
+                )}
+              >
+                {data.inTimeActualLocal}
+              </div>
+            ) : null}
+          </div>
         </div>
       </CardBody>
     </Card>

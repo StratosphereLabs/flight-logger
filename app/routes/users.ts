@@ -323,20 +323,24 @@ export const usersRouter = router({
         start: departureTime,
         end: new Date(),
       });
+      const progress =
+        totalDuration >= currentDuration ? currentDuration / totalDuration : 1;
       const durationRemaining = totalDuration - currentDuration;
       const timestamps = getFlightTimestamps({
         departureAirport: flight.departureAirport,
         arrivalAirport: flight.arrivalAirport,
         duration: flight.duration,
         outTime: flight.outTime,
+        outTimeActual: flight.outTimeActual ?? undefined,
         inTime: flight.inTime,
+        inTimeActual: flight.inTimeActual ?? undefined,
       });
       return {
         ...flight,
         ...timestamps,
         durationRemaining,
         durationRemainingString: getDurationString(durationRemaining),
-        progress: currentDuration / totalDuration,
+        progress,
       };
     }),
   getUserMapData: procedure
