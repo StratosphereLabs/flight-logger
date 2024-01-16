@@ -22,7 +22,7 @@ import {
   UserOutlineIcon,
   UserSolidIcon,
 } from '../../common/components';
-import { useTRPCErrorHandler } from '../../common/hooks';
+import { useProfilePage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
@@ -45,6 +45,7 @@ export const MapCard = ({
   isMapFullScreen,
   setIsMapFullScreen,
 }: MapCardProps): JSX.Element => {
+  const enabled = useProfilePage();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
@@ -80,6 +81,7 @@ export const MapCard = ({
   const { data: userData } = trpc.users.getUser.useQuery(
     { username },
     {
+      enabled,
       staleTime: 5 * 60 * 1000,
     },
   );
@@ -88,6 +90,7 @@ export const MapCard = ({
       username,
     },
     {
+      enabled,
       select: mapData => {
         const filteredHeatmapData = mapData.heatmap.flatMap(
           ({ inFuture, lat, lng }) =>
@@ -141,7 +144,7 @@ export const MapCard = ({
     () => (
       <LoadingCard
         isLoading={isFetching}
-        className={`card-bordered relative min-w-[350px] flex-1 shadow-md transition-size duration-500 ${
+        className={`transition-size card-bordered relative min-w-[350px] flex-1 shadow-md duration-500 ${
           isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[300px]'
         }`}
       >

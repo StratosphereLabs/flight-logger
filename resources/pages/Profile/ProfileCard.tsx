@@ -2,11 +2,12 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Button, CardBody, LoadingCard } from 'stratosphere-ui';
 import { UserOutlineIcon, UserSolidIcon } from '../../common/components';
-import { useTRPCErrorHandler } from '../../common/hooks';
+import { useProfilePage, useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
+  const enabled = useProfilePage();
   const isLoggedIn = useAuthStore(({ token }) => token !== null);
   const navigate = useNavigate();
   const { username } = useParams();
@@ -20,6 +21,7 @@ export const ProfileCard = (): JSX.Element => {
   const { data, error, isFetching } = trpc.users.getUser.useQuery(
     { username },
     {
+      enabled,
       staleTime: 5 * 60 * 1000,
     },
   );

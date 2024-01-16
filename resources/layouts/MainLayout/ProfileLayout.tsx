@@ -8,7 +8,7 @@ export const ProfileLayout = (): JSX.Element => {
   const { username } = useParams();
   useEffect(() => {
     if (!isLoggedIn && username === undefined) {
-      navigate('/');
+      navigate('/auth/login');
     }
   }, [isLoggedIn, navigate, username]);
   return <Outlet />;

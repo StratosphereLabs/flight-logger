@@ -3,15 +3,20 @@ import { getCoreRowModel } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Table } from 'stratosphere-ui';
+import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const CompletedFlights = (): JSX.Element => {
+  const enabled = useProfilePage();
   const { username } = useParams();
   const { data, isFetching } =
-    trpc.users.getUserCompletedFlights.useInfiniteQuery({
-      limit: 5,
-      username,
-    });
+    trpc.users.getUserCompletedFlights.useInfiniteQuery(
+      {
+        limit: 5,
+        username,
+      },
+      { enabled },
+    );
   const flattenedData = useMemo(
     () => data?.pages.flatMap(({ results }) => results),
     [data?.pages],

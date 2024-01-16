@@ -17,7 +17,11 @@ import {
   UserFlightsTable,
 } from '../../common/components';
 import { APP_URL } from '../../common/constants';
-import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
+import {
+  useCopyToClipboard,
+  useProfilePage,
+  useTRPCErrorHandler,
+} from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
@@ -35,6 +39,7 @@ export interface FlightsFormData {
 }
 
 export const Flights = (): JSX.Element => {
+  const enabled = useProfilePage();
   const copyToClipboard = useCopyToClipboard();
   const { state } = useLocation() as {
     state: FlightsPageNavigationState | null;
@@ -75,6 +80,7 @@ export const Flights = (): JSX.Element => {
         layout,
       },
       {
+        enabled,
         staleTime: 5 * 60 * 1000,
       },
     );
