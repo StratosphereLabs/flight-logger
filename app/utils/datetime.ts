@@ -5,11 +5,33 @@ import {
   intervalToDuration,
   isBefore,
 } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import { DATE_FORMAT_ISO } from '../constants';
 
 export interface DaysToAddOptions {
-  outTime: Date;
-  inTime: Date;
+  outTime: Date | number;
+  inTime: Date | number;
 }
+
+export interface DaysAddedOptions extends DaysToAddOptions {
+  outTimeZone: string;
+  inTimeZone: string;
+}
+
+export const getDaysAdded = ({
+  outTime,
+  inTime,
+  outTimeZone,
+  inTimeZone,
+}: DaysAddedOptions): number | null => {
+  const outDate = formatInTimeZone(outTime, outTimeZone, DATE_FORMAT_ISO);
+  const inDate = formatInTimeZone(inTime, inTimeZone, DATE_FORMAT_ISO);
+  const { days } = intervalToDuration({
+    start: new Date(outDate),
+    end: new Date(inDate),
+  });
+  return days ?? null;
+};
 
 export const getDaysToAdd = ({ outTime, inTime }: DaysToAddOptions): number => {
   const inTimePlusOneDay = add(inTime, {

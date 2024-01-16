@@ -18,6 +18,7 @@ import {
   getDurationString,
   getFlightTimestamps,
   getHeatmap,
+  getInFuture,
   getRoutes,
   parsePaginationRequest,
   transformFlightData,
@@ -327,10 +328,12 @@ export const usersRouter = router({
         start: departureTime,
         end: arrivalTime,
       });
-      const currentDuration = getDurationMinutes({
-        start: departureTime,
-        end: new Date(),
-      });
+      const currentDuration = !getInFuture(departureTime)
+        ? getDurationMinutes({
+            start: departureTime,
+            end: new Date(),
+          })
+        : 0;
       const progress =
         totalDuration >= currentDuration ? currentDuration / totalDuration : 1;
       const durationRemaining = totalDuration - currentDuration;

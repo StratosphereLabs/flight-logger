@@ -32,6 +32,7 @@ export const fetchRegistrationData = async (
     const tableCells = $(row).find('td.hidden-xs.hidden-sm');
     const offTimeTimestamp = tableCells.eq(7).attr('data-timestamp');
     const onTimeTimestamp = tableCells.eq(10).attr('data-timestamp');
+    const onTimeText = tableCells.eq(10).text();
     const registration = $(row)
       .find('td.visible-xs.visible-sm .col-xs-3 .row')
       .eq(0)
@@ -41,11 +42,15 @@ export const fetchRegistrationData = async (
       registrationData.push({
         departureTime,
         offTimeActual:
-          offTimeTimestamp !== undefined
+          offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
             ? createNewDate(parseInt(offTimeTimestamp, 10))
             : undefined,
         onTimeActual:
-          onTimeTimestamp !== undefined
+          onTimeTimestamp !== undefined &&
+          onTimeTimestamp.length > 0 &&
+          (onTimeText.includes('Landed') ||
+            (onTimeText.includes('Estimated') &&
+              !onTimeText.includes('departure')))
             ? createNewDate(parseInt(onTimeTimestamp, 10))
             : undefined,
         departureAirportIATA,

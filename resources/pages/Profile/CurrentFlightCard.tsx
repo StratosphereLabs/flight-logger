@@ -40,7 +40,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             </Link>
           </div>
           <div className="flex flex-wrap items-center justify-end font-semibold">
-            <div>{data.aircraftType?.name}</div>
+            <div className="opacity-75">{data.aircraftType?.name}</div>
             {data.tailNumber !== null && data.tailNumber.length > 0 ? (
               <Link
                 className="ml-3 pt-[1px] font-mono"
@@ -103,7 +103,8 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               >
                 {data.outTimeLocal}
               </div>
-              {data.outTimeActualLocal !== null ? (
+              {data.outTimeActualLocal !== null &&
+              data.outTimeActualDaysAdded !== null ? (
                 <div
                   className={classNames(
                     'text-xs font-bold sm:text-sm',
@@ -114,13 +115,18 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   )}
                 >
                   {data.outTimeActualLocal}
+                  {data.outTimeActualDaysAdded > 0 ? (
+                    <sup>+{data.outTimeActualDaysAdded}</sup>
+                  ) : null}
                 </div>
               ) : null}
             </div>
           </div>
-          <div className="flex flex-1 items-center justify-center text-center text-xs italic sm:text-sm">
+          <div className="flex flex-1 items-center justify-center text-center text-xs italic sm:items-start sm:text-sm">
             {data.durationRemaining > 0
-              ? `${data.durationRemainingString} remaining`
+              ? `${data.durationRemainingString} ${
+                  data.progress > 0 ? 'remaining' : ''
+                }`
               : ''}
           </div>
           <div className="flex flex-col">
@@ -139,8 +145,12 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 )}
               >
                 {data.inTimeLocal}
+                {data.inTimeDaysAdded > 0 ? (
+                  <sup>+{data.inTimeDaysAdded}</sup>
+                ) : null}
               </div>
-              {data.inTimeActualLocal !== null ? (
+              {data.inTimeActualLocal !== null &&
+              data.inTimeActualDaysAdded !== null ? (
                 <div
                   className={classNames(
                     'ml-2 text-xs font-bold sm:text-sm',
@@ -151,6 +161,9 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   )}
                 >
                   {data.inTimeActualLocal}
+                  {data.inTimeActualDaysAdded > 0 ? (
+                    <sup>+{data.inTimeActualDaysAdded}</sup>
+                  ) : null}
                 </div>
               ) : null}
             </div>
