@@ -210,15 +210,15 @@ uploadRouter.post(
           const airline = data.airlines[row.airline_id];
           const aircraftTypes = data.aircraftTypes[row.aircraft_type_icao];
           const airframe = data.airframes[row.registration];
-          const { outTime, outTimeActual, inTime, inTimeActual, duration } =
+          const { outTime, offTimeActual, inTime, onTimeActual, duration } =
             getFlightTimes({
               departureAirport,
               arrivalAirport,
               outDateISO: row.date,
               outTimeValue: row.dep_time,
-              outTimeActualValue: row.dep_time_actual,
+              offTimeActualValue: row.dep_time_actual,
               inTimeValue: row.arr_time,
-              inTimeActualValue: row.arr_time_actual,
+              onTimeActualValue: row.arr_time_actual,
             });
           return [
             prisma.flight.create({
@@ -265,8 +265,8 @@ uploadRouter.post(
                 flightNumber: parseInt(row.flight_number, 10),
                 tailNumber: row.registration,
                 outTime: outTime.toISOString(),
-                outTimeActual: outTimeActual?.toISOString() ?? undefined,
-                onTimeActual: inTimeActual?.toISOString() ?? undefined,
+                offTimeActual: offTimeActual?.toISOString() ?? undefined,
+                onTimeActual: onTimeActual?.toISOString() ?? undefined,
                 inTime: inTime.toISOString(),
                 duration,
               },

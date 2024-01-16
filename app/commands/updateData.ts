@@ -53,22 +53,26 @@ const updateFlights = async (): Promise<void> => {
     return;
   }
   const groupedFlights = groupBy(flightsToUpdate, getGroupedFlightsKey);
-  await Promise.map(
-    Object.entries(groupedFlights),
-    async ([key, flights]) => {
-      console.log(`Updating flight ${key}...`);
-      await updateFlightTimes(flights);
-      await updateFlightRegistrations(flights);
-    },
-    {
-      concurrency: UPDATE_CONCURRENCY,
-    },
-  );
-  console.log(
-    `  ${flightsToUpdate.length} flight${
-      flightsToUpdate.length > 1 ? 's' : ''
-    } updated successfully.`,
-  );
+  try {
+    await Promise.map(
+      Object.entries(groupedFlights),
+      async ([key, flights]) => {
+        console.log(`Updating flight ${key}...`);
+        await updateFlightTimes(flights);
+        await updateFlightRegistrations(flights);
+      },
+      {
+        concurrency: UPDATE_CONCURRENCY,
+      },
+    );
+    console.log(
+      `  ${flightsToUpdate.length} flight${
+        flightsToUpdate.length > 1 ? 's' : ''
+      } updated successfully.`,
+    );
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 (() => {

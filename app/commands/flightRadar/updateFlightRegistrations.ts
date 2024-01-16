@@ -50,6 +50,8 @@ export const updateFlightRegistrations = async (
     data: {
       airframeId: airframe !== null ? airframe.icao24 : undefined,
       tailNumber: flight.registration,
+      offTimeActual: flight.offTimeActual,
+      onTimeActual: flight.onTimeActual,
     },
   });
 };
