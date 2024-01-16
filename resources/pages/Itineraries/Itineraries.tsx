@@ -3,12 +3,17 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Table } from 'stratosphere-ui';
 import { ActionsCell, PlusIcon } from '../../common/components';
 import { APP_URL } from '../../common/constants';
-import { useCopyToClipboard, useTRPCErrorHandler } from '../../common/hooks';
+import {
+  useCopyToClipboard,
+  useProfilePage,
+  useTRPCErrorHandler,
+} from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { DeleteItineraryModal } from './DeleteItineraryModal';
 import { useItinerariesPageStore } from './itinerariesPageStore';
 
 export const Itineraries = (): JSX.Element => {
+  const enabled = useProfilePage();
   const navigate = useNavigate();
   const { username } = useParams();
   const { setActiveItinerary, setIsDeleteDialogOpen, setIsEditDialogOpen } =
@@ -19,6 +24,7 @@ export const Itineraries = (): JSX.Element => {
       username,
     },
     {
+      enabled,
       staleTime: 5 * 60 * 1000,
     },
   );

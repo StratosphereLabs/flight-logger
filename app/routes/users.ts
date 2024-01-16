@@ -306,8 +306,16 @@ export const usersRouter = router({
           ],
         },
         include: {
-          departureAirport: true,
-          arrivalAirport: true,
+          departureAirport: {
+            include: {
+              region: true,
+            },
+          },
+          arrivalAirport: {
+            include: {
+              region: true,
+            },
+          },
           airline: true,
           aircraftType: true,
         },

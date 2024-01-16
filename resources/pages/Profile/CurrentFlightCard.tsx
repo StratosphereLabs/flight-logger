@@ -1,16 +1,19 @@
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
-import { Card, CardBody } from 'stratosphere-ui';
+import { Card, CardBody, Link } from 'stratosphere-ui';
 import { PlaneSolidIcon } from '../../common/components';
+import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export const CurrentFlightCard = (): JSX.Element | null => {
+  const enabled = useProfilePage();
   const { username } = useParams();
   const { data } = trpc.users.getUserCurrentFlight.useQuery(
     {
       username,
     },
     {
+      enabled,
       refetchInterval: 60000,
     },
   );
@@ -19,17 +22,36 @@ export const CurrentFlightCard = (): JSX.Element | null => {
   }
   return (
     <Card className="card-compact bg-base-200 shadow-md sm:card-normal">
-      <CardBody>
-        <div className="flex w-full justify-between text-xs sm:text-sm">
-          <div className="flex items-center gap-4 font-mono">
+      <CardBody className="gap-0">
+        <div className="mb-3 flex w-full justify-between gap-3 text-xs sm:text-sm">
+          <div className="flex items-center gap-4">
             <img
               alt={`${data.airline?.name} Logo`}
               className="max-h-[25px] max-w-[100px]"
               src={data.airline?.logo ?? ''}
             />
-            {data.airline?.iata} {data.flightNumber}
+            <Link
+              className="font-mono"
+              hover
+              href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
+              target="_blank"
+            >
+              {data.airline?.iata} {data.flightNumber}
+            </Link>
           </div>
-          <div className="flex font-semibold">{data.aircraftType?.name}</div>
+          <div className="flex flex-wrap items-center justify-end font-semibold">
+            <div>{data.aircraftType?.name}</div>
+            {data.tailNumber !== null && data.tailNumber.length > 0 ? (
+              <Link
+                className="ml-3 pt-[1px] font-mono"
+                hover
+                href={`https://www.flightaware.com/resources/registration/${data.tailNumber}`}
+                target="_blank"
+              >
+                {data.tailNumber}
+              </Link>
+            ) : null}
+          </div>
         </div>
         <div className="flex w-full items-center justify-between gap-3 font-mono text-xl font-semibold">
           <div>{data.departureAirport.iata}</div>
@@ -63,58 +85,75 @@ export const CurrentFlightCard = (): JSX.Element | null => {
           </div>
           <div>{data.arrivalAirport.iata}</div>
         </div>
-        <div className="flex w-full justify-between gap-2 font-mono opacity-75">
-          <div className="flex flex-wrap items-center">
-            <div
-              className={classNames(
-                data.outTimeActualLocal !== null
-                  ? 'mr-2 text-xs line-through'
-                  : 'text-xs sm:text-sm',
-              )}
-            >
-              {data.outTimeLocal}
+        <div className="flex w-full justify-between gap-4 opacity-75">
+          <div className="flex flex-col">
+            <div className="text-sm sm:text-base">
+              {data.departureAirport.municipality},{' '}
+              {data.departureAirport.countryId === 'US'
+                ? data.departureAirport.region.name
+                : data.departureAirport.countryId}
             </div>
-            {data.outTimeActualLocal !== null ? (
+            <div className="flex flex-wrap items-center font-mono">
               <div
                 className={classNames(
-                  'text-xs font-bold sm:text-sm',
-                  data.departureDelayValue !== null &&
-                    data.departureDelayValue > 45
-                    ? 'text-error'
-                    : 'text-green-600',
+                  data.outTimeActualLocal !== null
+                    ? 'mr-2 text-xs line-through'
+                    : 'text-xs sm:text-sm',
                 )}
               >
-                {data.outTimeActualLocal}
+                {data.outTimeLocal}
               </div>
-            ) : null}
+              {data.outTimeActualLocal !== null ? (
+                <div
+                  className={classNames(
+                    'text-xs font-bold sm:text-sm',
+                    data.departureDelayValue !== null &&
+                      data.departureDelayValue > 45
+                      ? 'text-error'
+                      : 'text-green-600',
+                  )}
+                >
+                  {data.outTimeActualLocal}
+                </div>
+              ) : null}
+            </div>
           </div>
-          <div className="flex-1 text-center text-xs sm:text-sm">
+          <div className="flex flex-1 items-center justify-center text-center text-xs italic sm:text-sm">
             {data.durationRemaining > 0
               ? `${data.durationRemainingString} remaining`
               : ''}
           </div>
-          <div className="flex flex-wrap items-center justify-end">
-            <div
-              className={classNames(
-                data.outTimeActualLocal !== null
-                  ? 'text-xs line-through'
-                  : 'text-xs sm:text-sm',
-              )}
-            >
-              {data.inTimeLocal}
+          <div className="flex flex-col">
+            <div className="text-right text-sm sm:text-base">
+              {data.arrivalAirport.municipality},{' '}
+              {data.arrivalAirport.countryId === 'US'
+                ? data.arrivalAirport.region.name
+                : data.arrivalAirport.countryId}
             </div>
-            {data.inTimeActualLocal !== null ? (
+            <div className="flex flex-wrap items-center justify-end font-mono">
               <div
                 className={classNames(
-                  'ml-2 text-xs font-bold sm:text-sm',
-                  data.arrivalDelayValue !== null && data.arrivalDelayValue > 45
-                    ? 'text-error'
-                    : 'text-green-600',
+                  data.outTimeActualLocal !== null
+                    ? 'text-xs line-through'
+                    : 'text-xs sm:text-sm',
                 )}
               >
-                {data.inTimeActualLocal}
+                {data.inTimeLocal}
               </div>
-            ) : null}
+              {data.inTimeActualLocal !== null ? (
+                <div
+                  className={classNames(
+                    'ml-2 text-xs font-bold sm:text-sm',
+                    data.arrivalDelayValue !== null &&
+                      data.arrivalDelayValue > 45
+                      ? 'text-error'
+                      : 'text-green-600',
+                  )}
+                >
+                  {data.inTimeActualLocal}
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </CardBody>
