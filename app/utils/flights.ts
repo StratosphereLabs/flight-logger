@@ -107,7 +107,9 @@ export const transformFlightData = (
     arrivalAirport: flight.arrivalAirport,
     duration: flight.duration,
     outTime: flight.outTime,
+    outTimeActual: flight.outTimeActual ?? undefined,
     inTime: flight.inTime,
+    inTimeActual: flight.inTimeActual ?? undefined,
   });
   const flightDistance = calculateDistance(
     flight.departureAirport.lat,
