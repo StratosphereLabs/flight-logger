@@ -6,9 +6,14 @@ import { trpc } from '../../utils/trpc';
 
 export const CurrentFlightCard = (): JSX.Element | null => {
   const { username } = useParams();
-  const { data } = trpc.users.getUserCurrentFlight.useQuery({
-    username,
-  });
+  const { data } = trpc.users.getUserCurrentFlight.useQuery(
+    {
+      username,
+    },
+    {
+      refetchInterval: 60000,
+    },
+  );
   if (data === null || data === undefined) {
     return null;
   }
@@ -46,7 +51,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 <PlaneSolidIcon
                   className="absolute right-0 h-10 w-10 text-success"
                   style={{
-                    transform: 'translate(50%, -15%)',
+                    transform: 'translate(41%, -15%)',
                   }}
                 />
               </div>
