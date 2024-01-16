@@ -2,6 +2,7 @@ import { type airport } from '@prisma/client';
 import { add } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import {
+  getDaysAdded,
   getDaysToAdd,
   getDurationMinutes,
   getDurationString,
@@ -51,10 +52,13 @@ export interface FlightTimestampsResult {
   outTimeValue: string;
   outTimeActualLocal: string | null;
   outTimeActualValue: string | null;
+  outTimeActualDaysAdded: number | null;
   inTimeLocal: string;
   inTimeValue: string;
+  inTimeDaysAdded: number;
   inTimeActualLocal: string | null;
   inTimeActualValue: string | null;
+  inTimeActualDaysAdded: number | null;
   departureDelay: string | null;
   departureDelayValue: number | null;
   arrivalDelay: string | null;
@@ -184,6 +188,15 @@ export const getFlightTimestamps = ({
             TIME_FORMAT_24H,
           )
         : null,
+    outTimeActualDaysAdded:
+      outTimeActual !== undefined
+        ? getDaysAdded({
+            outTime,
+            inTime: outTimeActual,
+            outTimeZone: departureAirport.timeZone,
+            inTimeZone: departureAirport.timeZone,
+          })
+        : null,
     inTimeLocal: formatInTimeZone(
       inTime,
       arrivalAirport.timeZone,
@@ -194,6 +207,13 @@ export const getFlightTimestamps = ({
       arrivalAirport.timeZone,
       TIME_FORMAT_24H,
     ),
+    inTimeDaysAdded:
+      getDaysAdded({
+        outTime,
+        inTime,
+        outTimeZone: departureAirport.timeZone,
+        inTimeZone: arrivalAirport.timeZone,
+      }) ?? 0,
     inTimeActualLocal:
       inTimeActual !== undefined
         ? formatInTimeZone(
@@ -209,6 +229,15 @@ export const getFlightTimestamps = ({
             arrivalAirport.timeZone,
             TIME_FORMAT_24H,
           )
+        : null,
+    inTimeActualDaysAdded:
+      inTimeActual !== undefined
+        ? getDaysAdded({
+            outTime,
+            inTime: inTimeActual,
+            outTimeZone: departureAirport.timeZone,
+            inTimeZone: arrivalAirport.timeZone,
+          })
         : null,
     departureDelay:
       departureDelay !== null ? getDurationString(departureDelay) : null,
