@@ -1,14 +1,14 @@
 import { differenceInMinutes } from 'date-fns';
 import { prisma } from '../../db';
 import { getDurationMinutes } from '../../utils';
+import { fetchFlightStatsData } from '../flightStats';
 import { type FlightWithData } from '../updateData';
-import { createNewDate, getGroupedFlightsKey } from '../utils';
-import { fetchFlightAwareData } from './fetchFlightAwareData';
+import { getGroupedFlightsKey } from '../utils';
 
 export const updateFlightTimes = async (
   flights: FlightWithData[],
 ): Promise<void> => {
-  const data = await fetchFlightAwareData(flights[0]);
+  const data = await fetchFlightStatsData(flights[0]);
   if (data === null) {
     console.error(
       `  Unable to fetch flight data for ${getGroupedFlightsKey(
@@ -17,24 +17,19 @@ export const updateFlightTimes = async (
     );
     return;
   }
-  const flightAwareFlightData = Object.values(
-    data.flights,
-  )[0].activityLog.flights.find(
-    ({ destination, origin, gateDepartureTimes }) => {
+  const flightStatsFlightData = data.props.initialState.flightTracker.otherDays
+    .flatMap(day => day.flights)
+    .find(({ arrivalAirport, departureAirport, sortTime }) => {
       const timeDiff = Math.abs(
-        differenceInMinutes(
-          createNewDate(gateDepartureTimes.scheduled),
-          flights[0].outTime,
-        ),
+        differenceInMinutes(new Date(sortTime), flights[0].outTime),
       );
       return (
-        origin.icao === flights[0].departureAirportId &&
-        destination.icao === flights[0].arrivalAirportId &&
+        departureAirport.iata === flights[0].departureAirport.iata &&
+        arrivalAirport.iata === flights[0].arrivalAirport.iata &&
         timeDiff < 720
       );
-    },
-  );
-  if (flightAwareFlightData === undefined) {
+    });
+  if (flightStatsFlightData === undefined) {
     console.error(
       `  Flight times data not found for ${getGroupedFlightsKey(
         flights[0],
@@ -42,12 +37,23 @@ export const updateFlightTimes = async (
     );
     return;
   }
-  const outTime = createNewDate(
-    flightAwareFlightData.gateDepartureTimes.scheduled,
+  const flightData = await fetchFlightStatsData(
+    flights[0],
+    flightStatsFlightData.url,
   );
-  const inTime = createNewDate(
-    flightAwareFlightData.gateArrivalTimes.scheduled,
-  );
+  if (flightData === null) {
+    console.error(
+      `  Flight times data not found for ${getGroupedFlightsKey(
+        flights[0],
+      )}. Please try again later.`,
+    );
+    return;
+  }
+  const { schedule } = flightData.props.initialState.flightTracker.flight;
+  const outTime = new Date(schedule.scheduledDepartureUTC);
+  const outTimeActual = new Date(schedule.estimatedActualDepartureUTC);
+  const inTime = new Date(schedule.scheduledArrivalUTC);
+  const inTimeActual = new Date(schedule.estimatedActualArrivalUTC);
   const duration = getDurationMinutes({
     start: outTime,
     end: inTime,
@@ -61,25 +67,9 @@ export const updateFlightTimes = async (
     data: {
       duration,
       outTime,
-      outTimeActual: createNewDate(
-        flightAwareFlightData.gateDepartureTimes.actual ??
-          flightAwareFlightData.gateDepartureTimes.estimated,
-      ),
-      offTime: createNewDate(flightAwareFlightData.takeoffTimes.scheduled),
-      offTimeActual: createNewDate(
-        flightAwareFlightData.takeoffTimes.actual ??
-          flightAwareFlightData.takeoffTimes.estimated,
-      ),
-      onTime: createNewDate(flightAwareFlightData.landingTimes.scheduled),
-      onTimeActual: createNewDate(
-        flightAwareFlightData.landingTimes.actual ??
-          flightAwareFlightData.landingTimes.estimated,
-      ),
+      outTimeActual,
       inTime,
-      inTimeActual: createNewDate(
-        flightAwareFlightData.gateArrivalTimes.actual ??
-          flightAwareFlightData.gateArrivalTimes.estimated,
-      ),
+      inTimeActual,
     },
   });
 };

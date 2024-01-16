@@ -19,9 +19,9 @@ export interface FlightTimesInput {
   arrivalAirport: airport;
   outDateISO: string;
   outTimeValue: string;
-  outTimeActualValue?: string;
+  offTimeActualValue?: string;
   inTimeValue: string;
-  inTimeActualValue?: string;
+  onTimeActualValue?: string;
 }
 
 export interface FlightTimestampsInput {
@@ -35,9 +35,9 @@ export interface FlightTimestampsInput {
 export interface FlightTimesResult {
   duration: number;
   outTime: Date;
-  outTimeActual?: Date;
+  offTimeActual?: Date;
   inTime: Date;
-  inTimeActual?: Date;
+  onTimeActual?: Date;
 }
 
 export interface FlightTimestampsResult {
@@ -56,18 +56,18 @@ export const getFlightTimes = ({
   arrivalAirport,
   outDateISO,
   outTimeValue,
-  outTimeActualValue,
+  offTimeActualValue,
   inTimeValue,
-  inTimeActualValue,
+  onTimeActualValue,
 }: FlightTimesInput): FlightTimesResult => {
   const outTimeUtc = zonedTimeToUtc(
     `${outDateISO} ${outTimeValue}`,
     departureAirport.timeZone,
   );
-  const outTimeActualUtc =
-    outTimeActualValue !== undefined
+  const offTimeActualUtc =
+    offTimeActualValue !== undefined
       ? zonedTimeToUtc(
-          `${outDateISO} ${outTimeActualValue}`,
+          `${outDateISO} ${offTimeActualValue}`,
           departureAirport.timeZone,
         )
       : undefined;
@@ -75,27 +75,27 @@ export const getFlightTimes = ({
     `${outDateISO} ${inTimeValue}`,
     arrivalAirport.timeZone,
   );
-  const inTimeActualUtc =
-    inTimeActualValue !== undefined
+  const onTimeActualUtc =
+    onTimeActualValue !== undefined
       ? zonedTimeToUtc(
-          `${outDateISO} ${inTimeActualValue}`,
+          `${outDateISO} ${onTimeActualValue}`,
           arrivalAirport.timeZone,
         )
       : undefined;
   const daysAdded = getDaysToAdd({ outTime: outTimeUtc, inTime: inTimeUtc });
   const daysAddedActual =
-    inTimeActualUtc !== undefined
+    onTimeActualUtc !== undefined
       ? getDaysToAdd({
           outTime: outTimeUtc,
-          inTime: inTimeActualUtc,
+          inTime: onTimeActualUtc,
         })
       : undefined;
   const correctedInTime = add(inTimeUtc, {
     days: daysAdded,
   });
-  const correctedInTimeActual =
-    inTimeActualUtc !== undefined
-      ? add(inTimeActualUtc, {
+  const correctedOnTimeActual =
+    onTimeActualUtc !== undefined
+      ? add(onTimeActualUtc, {
           days: daysAddedActual,
         })
       : undefined;
@@ -106,9 +106,9 @@ export const getFlightTimes = ({
   return {
     duration,
     outTime: outTimeUtc,
-    outTimeActual: outTimeActualUtc,
+    offTimeActual: offTimeActualUtc,
     inTime: correctedInTime,
-    inTimeActual: correctedInTimeActual,
+    onTimeActual: correctedOnTimeActual,
   };
 };
 
