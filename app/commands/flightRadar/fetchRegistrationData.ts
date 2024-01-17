@@ -30,6 +30,14 @@ export const fetchRegistrationData = async (
       .split(')')[0];
     const arrivalAirportIATA = arrivalAirportText.split('(')[1].split(')')[0];
     const tableCells = $(row).find('td.hidden-xs.hidden-sm');
+    const aircraftTypeCode = tableCells
+      .eq(4)
+      .clone()
+      .children()
+      .remove()
+      .end()
+      .text()
+      .trim();
     const offTimeTimestamp = tableCells.eq(7).attr('data-timestamp');
     const onTimeTimestamp = tableCells.eq(10).attr('data-timestamp');
     const onTimeText = tableCells.eq(10).text();
@@ -55,6 +63,7 @@ export const fetchRegistrationData = async (
             : undefined,
         departureAirportIATA,
         arrivalAirportIATA,
+        aircraftTypeCode,
         registration,
       });
     }

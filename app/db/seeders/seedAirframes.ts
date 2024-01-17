@@ -65,10 +65,10 @@ const updateAirframe = async (
     },
   });
   const aircraftType =
-    row.icaoaircrafttype.length > 0
+    row.typecode.length > 0
       ? await prisma.aircraft_type.findFirst({
           where: {
-            icao: row.icaoaircrafttype,
+            icao: row.typecode,
           },
         })
       : null;
@@ -116,15 +116,33 @@ const updateAirframe = async (
         : undefined,
     engines: row.engines !== '' ? row.engines : null,
   };
-  return await prisma.airframe.upsert({
+  const airframe = await prisma.airframe.findUnique({
     where: {
       icao24: row.icao24,
     },
-    update: airframeUpdate,
-    create: {
+  });
+  if (airframe === null) {
+    const newAirframe = await prisma.airframe.create({
+      data: {
+        icao24: row.icao24,
+        ...airframeUpdate,
+      },
+    });
+    await prisma.flight.updateMany({
+      where: {
+        tailNumber: newAirframe.registration,
+      },
+      data: {
+        airframeId: newAirframe.icao24,
+      },
+    });
+    return newAirframe;
+  }
+  return await prisma.airframe.update({
+    where: {
       icao24: row.icao24,
-      ...airframeUpdate,
     },
+    data: airframeUpdate,
   });
 };
 

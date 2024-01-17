@@ -4,5 +4,6 @@ export interface RegistrationData {
   arrivalAirportIATA: string;
   offTimeActual: Date | undefined;
   onTimeActual: Date | undefined;
+  aircraftTypeCode: string;
   registration: string;
 }

@@ -41,6 +41,23 @@ export const updateFlightRegistrations = async (
       registration: flight.registration,
     },
   });
+  const aircraftType =
+    flight.aircraftTypeCode.length >= 3 &&
+    (airframe?.aircraftTypeId === null ||
+      airframe?.aircraftTypeId === undefined)
+      ? await prisma.aircraft_type.findFirst({
+          where: {
+            OR: [
+              {
+                icao: flight.aircraftTypeCode,
+              },
+              {
+                iata: flight.aircraftTypeCode,
+              },
+            ],
+          },
+        })
+      : null;
   await prisma.flight.updateMany({
     where: {
       id: {
@@ -52,6 +69,7 @@ export const updateFlightRegistrations = async (
       tailNumber: flight.registration,
       offTimeActual: flight.offTimeActual,
       onTimeActual: flight.onTimeActual,
+      aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
     },
   });
 };
