@@ -69,11 +69,7 @@ export const updateFlightRegistrations = async (
       tailNumber: flight.registration,
       offTimeActual: flight.offTimeActual,
       onTimeActual: flight.onTimeActual,
-      aircraftTypeId:
-        airframe?.aircraftTypeId !== null &&
-        airframe?.aircraftTypeId !== undefined
-          ? airframe.aircraftTypeId
-          : aircraftType?.id ?? undefined,
+      aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
     },
   });
 };
