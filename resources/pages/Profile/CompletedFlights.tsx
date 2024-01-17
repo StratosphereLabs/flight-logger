@@ -61,7 +61,7 @@ export const CompletedFlights = (): JSX.Element => {
             accessorKey: 'airline',
             header: () => 'Airline',
             cell: ({ getValue }) => {
-              const airlineData = getValue<airline>();
+              const airlineData = getValue<airline | null>();
               return airlineData?.logo !== null &&
                 airlineData?.logo !== undefined ? (
                 <div className="flex justify-start">
@@ -123,9 +123,9 @@ export const CompletedFlights = (): JSX.Element => {
             id: 'aircraftType',
             accessorKey: 'aircraftType',
             header: () => 'Acft',
-            cell: ({ getValue, row }) => {
-              const aircraftType = getValue<aircraft_type>();
-              return <div className="opacity-75">{aircraftType.icao}</div>;
+            cell: ({ getValue }) => {
+              const aircraftType = getValue<aircraft_type | null>();
+              return <div className="opacity-75">{aircraftType?.icao}</div>;
             },
             footer: () => null,
           },
