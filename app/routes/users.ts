@@ -319,6 +319,11 @@ export const usersRouter = router({
           },
           airline: true,
           aircraftType: true,
+          airframe: {
+            include: {
+              aircraftType: true,
+            },
+          },
         },
       });
       if (flight === null) return null;
