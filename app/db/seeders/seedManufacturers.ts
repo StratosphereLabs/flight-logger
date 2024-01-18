@@ -23,8 +23,8 @@ const getDatabaseRows = (csv: string): Prisma.manufacturerUpsertArgs[] =>
     },
   }));
 
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(async () => {
+export const seedManufacturers = async (): Promise<void> => {
+  console.log('Seeding manufacturers...');
   try {
     const response = await axios.get<string>(
       'https://opensky-network.org/datasets/metadata/doc8643Manufacturers.csv',
@@ -37,4 +37,4 @@ const getDatabaseRows = (csv: string): Prisma.manufacturerUpsertArgs[] =>
   } catch (err) {
     console.error(err);
   }
-})();
+};

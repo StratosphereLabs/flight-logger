@@ -107,8 +107,7 @@ const getDatabaseRows = async (
   return documents as Prisma.airlineUpsertArgs[];
 };
 
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(async () => {
+export const seedAirlines = async (): Promise<void> => {
   console.log('Seeding airlines...');
   try {
     const response = await axios.get<string>(
@@ -122,4 +121,4 @@ const getDatabaseRows = async (
   } catch (err) {
     console.error(err);
   }
-})();
+};

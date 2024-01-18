@@ -4,7 +4,13 @@ import { add, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 import { scheduleJob } from 'node-schedule';
 import { prisma } from '../db';
-import { seedAirframes } from '../db/seeders/seedAirframes';
+import {
+  seedAircraftTypes,
+  seedAirframes,
+  seedAirlines,
+  seedAirports,
+  seedManufacturers,
+} from '../db/seeders';
 import { UPDATE_CONCURRENCY } from './constants';
 import { updateFlightTimes } from './flightAware';
 import { updateFlightRegistrations } from './flightRadar';
@@ -77,5 +83,11 @@ const updateFlights = async (): Promise<void> => {
 
 (() => {
   scheduleJob('*/15 * * * *', updateFlights);
-  scheduleJob('0 0 1 * *', seedAirframes);
+  scheduleJob('0 0 1 * *', async () => {
+    await seedManufacturers();
+    await seedAircraftTypes();
+    await seedAirlines();
+    await seedAirframes();
+    await seedAirports();
+  });
 })();

@@ -71,8 +71,7 @@ const getDatabaseRows = (csv: string): Prisma.airportUpsertArgs[] =>
     [],
   );
 
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(async () => {
+export const seedAirports = async (): Promise<void> => {
   console.log('Seeding airports...');
   try {
     const response = await axios.get<string>(
@@ -86,4 +85,4 @@ const getDatabaseRows = (csv: string): Prisma.airportUpsertArgs[] =>
   } catch (err) {
     console.error(err);
   }
-})();
+};
