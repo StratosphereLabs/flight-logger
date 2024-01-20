@@ -67,7 +67,9 @@ export const getDurationString = (duration: number): string => {
     start: 0,
     end: duration * 60 * 1000,
   });
-  return duration > 0 ? `${hours ?? 0}h ${minutes ?? 0}m` : '';
+  return duration > 0
+    ? `${hours !== undefined && hours > 0 ? `${hours}h ` : ''}${minutes ?? 0}m`
+    : '';
 };
 
 export const getInFuture = (date: string | number | Date): boolean =>
