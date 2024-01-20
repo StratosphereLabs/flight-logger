@@ -46,8 +46,7 @@ const getDatabaseRows = (html: string): Prisma.aircraft_typeUpsertArgs[] => {
   return documents as Prisma.aircraft_typeUpsertArgs[];
 };
 
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(async () => {
+export const seedAircraftTypes = async (): Promise<void> => {
   console.log('Seeding aircraft types...');
   try {
     const response = await axios.get<string>(
@@ -61,4 +60,4 @@ const getDatabaseRows = (html: string): Prisma.aircraft_typeUpsertArgs[] => {
   } catch (err) {
     console.error(err);
   }
-})();
+};

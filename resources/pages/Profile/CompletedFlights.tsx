@@ -23,7 +23,7 @@ export const CompletedFlights = (): JSX.Element => {
   );
   return (
     <div className="flex flex-col">
-      <article className="prose flex min-w-[350px] max-w-[650px] items-end justify-between p-1">
+      <article className="prose flex min-w-[350px] max-w-[550px] items-end justify-between p-1">
         <h4>Recent Flights</h4>
         <Link
           to={username !== undefined ? `/user/${username}/flights` : '/flights'}
@@ -34,14 +34,14 @@ export const CompletedFlights = (): JSX.Element => {
       </article>
       <Table
         cellClassNames={{
-          date: 'w-[60px]',
+          date: 'w-[50px]',
           airline: 'w-[80px]',
           departureAirport: 'w-[50px]',
           duration: 'hidden sm:table-cell',
           aircraftType: 'hidden sm:table-cell',
           arrivalAirport: 'w-[50px]',
         }}
-        className="min-w-[350px] max-w-[650px] table-fixed border-separate bg-base-200"
+        className="min-w-[350px] max-w-[550px] table-fixed border-separate bg-base-200"
         columns={[
           {
             id: 'date',
@@ -113,10 +113,14 @@ export const CompletedFlights = (): JSX.Element => {
           {
             id: 'duration',
             accessorKey: 'durationString',
-            header: () => 'Dur',
+            header: () => <div className="w-full text-right">Duration</div>,
             cell: ({ getValue }) => {
               const duration = getValue<string>();
-              return <div className="font-mono opacity-75">{duration}</div>;
+              return (
+                <div className="text-right font-mono opacity-75">
+                  {duration}
+                </div>
+              );
             },
           },
           {

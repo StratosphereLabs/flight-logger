@@ -87,7 +87,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
         </div>
         <div className="flex w-full justify-between gap-4 opacity-75">
           <div className="flex flex-col">
-            <div className="text-sm sm:text-base">
+            <div className="text-xs sm:text-sm">
               {data.departureAirport.municipality},{' '}
               {data.departureAirport.countryId === 'US'
                 ? data.departureAirport.region.name
@@ -123,14 +123,20 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             </div>
           </div>
           <div className="flex flex-1 items-center justify-center text-center text-xs italic sm:items-start sm:text-sm">
-            {data.durationRemaining > 0
-              ? `${data.durationRemainingString} ${
+            {data.progress > 0 && data.progress < 1
+              ? `${data.durationToArrivalString} ${
                   data.progress > 0 ? 'remaining' : ''
                 }`
-              : ''}
+              : null}
+            {data.progress === 0
+              ? `Departs in ${data.durationToDepartureString}`
+              : null}
+            {data.progress === 1
+              ? `Arrived ${data.durationToArrivalString} ago`
+              : null}
           </div>
           <div className="flex flex-col">
-            <div className="text-right text-sm sm:text-base">
+            <div className="text-right text-xs sm:text-sm">
               {data.arrivalAirport.municipality},{' '}
               {data.arrivalAirport.countryId === 'US'
                 ? data.arrivalAirport.region.name
@@ -139,7 +145,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             <div className="flex flex-wrap items-center justify-end font-mono">
               <div
                 className={classNames(
-                  data.outTimeActualLocal !== null
+                  data.inTimeActualLocal !== null
                     ? 'text-xs line-through'
                     : 'text-xs sm:text-sm',
                 )}

@@ -51,9 +51,15 @@ export const updateFlightTimes = async (
   }
   const { schedule } = flightData.props.initialState.flightTracker.flight;
   const outTime = new Date(schedule.scheduledDepartureUTC);
-  const outTimeActual = new Date(schedule.estimatedActualDepartureUTC);
+  const outTimeActual =
+    schedule.estimatedActualDepartureUTC !== null
+      ? new Date(schedule.estimatedActualDepartureUTC)
+      : null;
   const inTime = new Date(schedule.scheduledArrivalUTC);
-  const inTimeActual = new Date(schedule.estimatedActualArrivalUTC);
+  const inTimeActual =
+    schedule.estimatedActualArrivalUTC !== null
+      ? new Date(schedule.estimatedActualArrivalUTC)
+      : null;
   const duration = getDurationMinutes({
     start: outTime,
     end: inTime,

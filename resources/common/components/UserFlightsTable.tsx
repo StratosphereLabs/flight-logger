@@ -125,6 +125,9 @@ export const UserFlightsTable = ({
                 </div>
                 <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
                   {row.original.inTimeLocal}
+                  {row.original.inTimeDaysAdded > 0 ? (
+                    <sup>+{row.original.inTimeDaysAdded}</sup>
+                  ) : null}
                 </div>
               </div>
             );

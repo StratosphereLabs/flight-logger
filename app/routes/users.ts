@@ -1,5 +1,5 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
-import { format } from 'date-fns';
+import { add, format, isAfter, isBefore, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_MONTH, DATE_FORMAT_SHORT } from '../constants';
 import { prisma } from '../db';
@@ -270,7 +270,7 @@ export const usersRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      const flight = await prisma.flight.findFirst({
+      const flights = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
@@ -280,12 +280,12 @@ export const usersRouter = router({
               OR: [
                 {
                   inTimeActual: {
-                    gt: new Date(),
+                    gt: sub(new Date(), { hours: 12 }),
                   },
                 },
                 {
                   inTime: {
-                    gt: new Date(),
+                    gt: sub(new Date(), { hours: 12 }),
                   },
                 },
               ],
@@ -294,12 +294,12 @@ export const usersRouter = router({
               OR: [
                 {
                   outTimeActual: {
-                    lte: new Date(),
+                    lte: add(new Date(), { hours: 12 }),
                   },
                 },
                 {
                   outTime: {
-                    lte: new Date(),
+                    lte: add(new Date(), { hours: 12 }),
                   },
                 },
               ],
@@ -325,23 +325,50 @@ export const usersRouter = router({
             },
           },
         },
+        orderBy: {
+          outTime: 'asc',
+        },
       });
-      if (flight === null) return null;
+      const flight = flights.find((currentFlight, index, allFlights) => {
+        const departureTime =
+          currentFlight.outTimeActual ?? currentFlight.outTime;
+        const arrivalTime = currentFlight.inTimeActual ?? currentFlight.inTime;
+        if (
+          isBefore(departureTime, new Date()) &&
+          isAfter(arrivalTime, new Date())
+        ) {
+          return true;
+        }
+        const nextFlight = allFlights[index + 1];
+        if (nextFlight === undefined) return true;
+        const nextFlightTime = nextFlight.outTimeActual ?? nextFlight.outTime;
+        const midTime = new Date(
+          (arrivalTime.getTime() + nextFlightTime.getTime()) / 2,
+        );
+        return isAfter(midTime, new Date());
+      });
+      if (flight === undefined) return null;
       const departureTime = flight.outTimeActual ?? flight.outTime;
       const arrivalTime = flight.inTimeActual ?? flight.inTime;
+      const hasDeparted = !getInFuture(departureTime);
+      const hasArrived = !getInFuture(arrivalTime);
       const totalDuration = getDurationMinutes({
         start: departureTime,
         end: arrivalTime,
       });
-      const currentDuration = !getInFuture(departureTime)
-        ? getDurationMinutes({
-            start: departureTime,
-            end: new Date(),
-          })
+      const minutesToDeparture = getDurationMinutes({
+        start: departureTime,
+        end: new Date(),
+      });
+      const minutesToArrival = getDurationMinutes({
+        start: new Date(),
+        end: arrivalTime,
+      });
+      const currentDuration = hasDeparted
+        ? !hasArrived
+          ? minutesToDeparture
+          : totalDuration
         : 0;
-      const progress =
-        totalDuration >= currentDuration ? currentDuration / totalDuration : 1;
-      const durationRemaining = totalDuration - currentDuration;
       const timestamps = getFlightTimestamps({
         departureAirport: flight.departureAirport,
         arrivalAirport: flight.arrivalAirport,
@@ -354,9 +381,11 @@ export const usersRouter = router({
       return {
         ...flight,
         ...timestamps,
-        durationRemaining,
-        durationRemainingString: getDurationString(durationRemaining),
-        progress,
+        minutesToDeparture,
+        minutesToArrival,
+        durationToDepartureString: getDurationString(minutesToDeparture),
+        durationToArrivalString: getDurationString(minutesToArrival),
+        progress: currentDuration / totalDuration,
       };
     }),
   getUserMapData: procedure
