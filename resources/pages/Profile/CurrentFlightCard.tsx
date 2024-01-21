@@ -22,14 +22,9 @@ export const CurrentFlightCard = (): JSX.Element | null => {
     return null;
   }
   return (
-    <Card
-      className={classNames(
-        'card-compact shadow-md sm:card-normal',
-        CARD_COLORS[data.delayStatus],
-      )}
-    >
-      <CardBody className="gap-0">
-        <div className="mb-2 flex w-full justify-between gap-3 text-xs sm:text-sm">
+    <Card className={classNames('shadow-md', CARD_COLORS[data.delayStatus])}>
+      <CardBody className="gap-0 p-[1rem] sm:p-[1.25rem]">
+        <div className="mb-1 flex w-full justify-between gap-3 text-xs sm:text-sm">
           <div className="flex flex-col sm:gap-1">
             <div
               className={classNames(
@@ -49,7 +44,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 src={data.airline?.logo ?? ''}
               />
               <Link
-                className="font-mono"
+                className="pt-1 font-mono"
                 hover
                 href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
                 target="_blank"
@@ -58,7 +53,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               </Link>
             </div>
           </div>
-          <div className="flex flex-col items-end sm:gap-1">
+          <div className="flex flex-col items-end">
             <div className="opacity-75">{data.aircraftType?.name}</div>
             {data.tailNumber !== null && data.tailNumber.length > 0 ? (
               <Link
@@ -93,7 +88,10 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 }}
               >
                 <PlaneSolidIcon
-                  className="absolute right-0 h-9 w-9 text-info"
+                  className={classNames(
+                    'absolute right-0 h-9 w-9',
+                    TEXT_COLORS[data.delayStatus],
+                  )}
                   style={{
                     transform: 'translate(42%, -6%)',
                   }}
