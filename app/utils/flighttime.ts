@@ -15,6 +15,8 @@ import {
   TIME_FORMAT_24H,
 } from '../constants';
 
+export type FlightDelayStatus = 'severe' | 'moderate' | 'none';
+
 export interface FlightTimesInput {
   departureAirport: airport;
   arrivalAirport: airport;
@@ -61,8 +63,10 @@ export interface FlightTimestampsResult {
   inTimeActualDaysAdded: number | null;
   departureDelay: string | null;
   departureDelayValue: number | null;
+  departureDelayStatus: FlightDelayStatus;
   arrivalDelay: string | null;
   arrivalDelayValue: number | null;
+  arrivalDelayStatus: FlightDelayStatus;
 }
 
 export const getFlightTimes = ({
@@ -149,6 +153,18 @@ export const getFlightTimestamps = ({
           end: inTimeActual,
         })
       : null;
+  const departureDelayStatus =
+    departureDelay !== null && departureDelay > 60
+      ? 'severe'
+      : departureDelay !== null && departureDelay > 15
+        ? 'moderate'
+        : 'none';
+  const arrivalDelayStatus =
+    arrivalDelay !== null && arrivalDelay > 60
+      ? 'severe'
+      : arrivalDelay !== null && arrivalDelay > 15
+        ? 'moderate'
+        : 'none';
   return {
     durationString: getDurationString(duration),
     inFuture: getInFuture(outTime),
@@ -245,5 +261,7 @@ export const getFlightTimestamps = ({
     arrivalDelay:
       arrivalDelay !== null ? getDurationString(arrivalDelay) : null,
     arrivalDelayValue: arrivalDelay,
+    departureDelayStatus,
+    arrivalDelayStatus,
   };
 };
