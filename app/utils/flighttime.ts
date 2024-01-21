@@ -1,5 +1,5 @@
 import { type airport } from '@prisma/client';
-import { add } from 'date-fns';
+import { add, isBefore } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import {
   getDaysAdded,
@@ -140,14 +140,14 @@ export const getFlightTimestamps = ({
   inTimeActual,
 }: FlightTimestampsInput): FlightTimestampsResult => {
   const departureDelay =
-    outTimeActual !== undefined
+    outTimeActual !== undefined && isBefore(outTime, outTimeActual)
       ? getDurationMinutes({
           start: outTime,
           end: outTimeActual,
         })
       : null;
   const arrivalDelay =
-    inTimeActual !== undefined
+    inTimeActual !== undefined && isBefore(inTime, inTimeActual)
       ? getDurationMinutes({
           start: inTime,
           end: inTimeActual,
@@ -258,10 +258,10 @@ export const getFlightTimestamps = ({
     departureDelay:
       departureDelay !== null ? getDurationString(departureDelay) : null,
     departureDelayValue: departureDelay,
+    departureDelayStatus,
     arrivalDelay:
       arrivalDelay !== null ? getDurationString(arrivalDelay) : null,
     arrivalDelayValue: arrivalDelay,
-    departureDelayStatus,
     arrivalDelayStatus,
   };
 };
