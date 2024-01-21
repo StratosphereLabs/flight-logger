@@ -44,7 +44,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 src={data.airline?.logo ?? ''}
               />
               <Link
-                className="font-mono"
+                className="pt-1 font-mono"
                 hover
                 href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
                 target="_blank"
