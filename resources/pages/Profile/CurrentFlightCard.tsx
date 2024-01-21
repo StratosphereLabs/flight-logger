@@ -5,8 +5,15 @@ import { PlaneSolidIcon } from '../../common/components';
 import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { CARD_COLORS, PROGRESS_BAR_COLORS, TEXT_COLORS } from './constants';
+import { RouteTimeline } from './RouteTimeline';
 
-export const CurrentFlightCard = (): JSX.Element | null => {
+export interface CurrentFlightCardProps {
+  isMapFullScreen: boolean;
+}
+
+export const CurrentFlightCard = ({
+  isMapFullScreen,
+}: CurrentFlightCardProps): JSX.Element | null => {
   const enabled = useProfilePage();
   const { username } = useParams();
   const { data } = trpc.users.getUserCurrentFlight.useQuery(
@@ -23,7 +30,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
   }
   return (
     <Card className={classNames('shadow-md', CARD_COLORS[data.delayStatus])}>
-      <CardBody className="gap-0 p-[1rem] sm:p-[1.25rem]">
+      <CardBody className="gap-0 p-[1rem] sm:px-[1.25rem]">
         <div className="mb-1 flex w-full justify-between gap-3 text-xs sm:text-sm">
           <div className="flex flex-col sm:gap-1">
             <div
@@ -193,6 +200,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             </div>
           </div>
         </div>
+        {!isMapFullScreen ? <RouteTimeline className="mb-[-15px]" /> : null}
       </CardBody>
     </Card>
   );

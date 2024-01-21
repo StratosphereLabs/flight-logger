@@ -29,6 +29,7 @@ import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
 import { GoogleMap } from './GoogleMap';
+import { RouteTimeline } from './RouteTimeline';
 import { getAirports } from './utils';
 
 export interface MapCardFormData {
@@ -229,51 +230,50 @@ export const MapCard = ({
               showCompleted={showCompleted}
             />
           </div>
-          <Select
-            className="pointer-events-auto w-[150px]"
-            formValueMode="id"
-            getItemText={({ text }) => text}
-            options={[
-              {
-                id: 'routes',
-                text: 'Routes',
-              },
-              {
-                id: 'heatmap',
-                text: 'Heatmap',
-              },
-              {
-                id: '3d',
-                text: '3D',
-              },
-            ]}
-            menuClassName="right-0 w-full"
-            name="mapMode"
-          />
+          <div className="flex gap-2">
+            <Select
+              className="pointer-events-auto w-[150px]"
+              formValueMode="id"
+              getItemText={({ text }) => text}
+              options={[
+                {
+                  id: 'routes',
+                  text: 'Routes',
+                },
+                {
+                  id: 'heatmap',
+                  text: 'Heatmap',
+                },
+                {
+                  id: '3d',
+                  text: '3D',
+                },
+              ]}
+              menuClassName="right-0 w-full"
+              name="mapMode"
+            />
+            <Button
+              className="pointer-events-auto px-3"
+              onClick={() => {
+                setIsMapFullScreen(isFullScreen => !isFullScreen);
+              }}
+            >
+              {isMapFullScreen ? (
+                <CollapseIcon className="h-6 w-6" />
+              ) : (
+                <ExpandIcon className="h-6 w-6" />
+              )}
+              <span className="sr-only">
+                {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
+              </span>
+            </Button>
+          </div>
         </Form>
-        <div className="absolute bottom-0 p-1">
-          {isMapFullScreen ? (
-            <Button
-              className="px-3"
-              onClick={() => {
-                setIsMapFullScreen(false);
-              }}
-            >
-              <CollapseIcon className="h-6 w-6" />
-              <span className="sr-only">Collapse Map</span>
-            </Button>
-          ) : (
-            <Button
-              className="px-3"
-              onClick={() => {
-                setIsMapFullScreen(true);
-              }}
-            >
-              <ExpandIcon className="h-6 w-6" />
-              <span className="sr-only">Expand Map</span>
-            </Button>
-          )}
-        </div>
+        {isMapFullScreen ? (
+          <div className="absolute bottom-0 flex w-full px-2 py-6">
+            <RouteTimeline className="rounded-xl bg-base-100/70 px-2" />
+          </div>
+        ) : null}
       </LoadingCard>
     ),
     [
