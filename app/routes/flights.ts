@@ -1,4 +1,5 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
+import { isEqual } from 'date-fns';
 import { prisma, updateTripTimes } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
@@ -162,6 +163,8 @@ export const flightsRouter = router({
         outTimeValue: input.outTimeValue,
         inTimeValue: input.inTimeValue,
       });
+      const clearFlightData =
+        !isEqual(outTime, flight.outTime) || !isEqual(inTime, flight.inTime);
       const updatedFlight = await prisma.flight.update({
         where: {
           id,
@@ -202,12 +205,24 @@ export const flightsRouter = router({
                     icao24: input.airframe.icao24,
                   }
                 : undefined,
-            disconnect: input.airframe?.type !== 'existing' ? true : undefined,
+            disconnect:
+              clearFlightData || input.airframe?.type !== 'existing'
+                ? true
+                : undefined,
           },
           flightNumber: input.flightNumber,
-          tailNumber: input.airframe?.registration ?? null,
+          tailNumber:
+            !clearFlightData && input.airframe !== null
+              ? input.airframe.registration
+              : null,
           outTime: outTime.toISOString(),
+          outTimeActual: clearFlightData ? null : undefined,
+          offTime: clearFlightData ? null : undefined,
+          offTimeActual: clearFlightData ? null : undefined,
+          onTime: clearFlightData ? null : undefined,
+          onTimeActual: clearFlightData ? null : undefined,
           inTime: inTime.toISOString(),
+          inTimeActual: clearFlightData ? null : undefined,
           duration,
           class: input.class,
           seatNumber: input.seatNumber,
