@@ -213,6 +213,7 @@ export const usersRouter = router({
             DATE_FORMAT_SHORT,
           ),
           durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
         })),
         count,
       };
@@ -260,6 +261,7 @@ export const usersRouter = router({
             DATE_FORMAT_SHORT,
           ),
           durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
         })),
         count,
       };
