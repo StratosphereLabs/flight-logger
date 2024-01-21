@@ -30,7 +30,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
     >
       <CardBody className="gap-0">
         <div className="mb-2 flex w-full justify-between gap-3 text-xs sm:text-sm">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col sm:gap-1">
             <div
               className={classNames(
                 'flex',
@@ -58,7 +58,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               </Link>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-col items-end sm:gap-1">
             <div className="opacity-75">{data.aircraftType?.name}</div>
             {data.tailNumber !== null && data.tailNumber.length > 0 ? (
               <Link
@@ -72,7 +72,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             ) : null}
           </div>
         </div>
-        <div className="flex w-full items-center justify-between gap-3 font-mono text-xl font-semibold sm:text-2xl">
+        <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-xl font-semibold sm:text-2xl">
           <div>{data.departureAirport.iata}</div>
           <div className="relative h-full flex-1">
             <div className="absolute left-0 top-0 flex h-full w-full items-center px-2 opacity-50">

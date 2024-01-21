@@ -41,7 +41,7 @@ export const CompletedFlights = (): JSX.Element => {
           aircraftType: 'hidden sm:table-cell',
           arrivalAirport: 'w-[50px]',
         }}
-        className="min-w-[350px] max-w-[550px] table-fixed border-separate bg-base-200"
+        className="min-w-[350px] max-w-[550px] table-fixed border-separate bg-base-200 shadow-md"
         columns={[
           {
             id: 'date',
