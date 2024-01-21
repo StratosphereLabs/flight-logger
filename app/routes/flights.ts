@@ -200,7 +200,7 @@ export const flightsRouter = router({
           },
           airframe: {
             connect:
-              input.airframe?.type === 'existing'
+              !clearFlightData && input.airframe?.type === 'existing'
                 ? {
                     icao24: input.airframe.icao24,
                   }
