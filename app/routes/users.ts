@@ -378,6 +378,17 @@ export const usersRouter = router({
         inTime: flight.inTime,
         inTimeActual: flight.inTimeActual ?? undefined,
       });
+      const progress = currentDuration / totalDuration;
+      const delayStatus =
+        progress > 0
+          ? timestamps.arrivalDelayStatus
+          : timestamps.departureDelayStatus;
+      const delayValue =
+        progress > 0
+          ? timestamps.arrivalDelayValue
+          : timestamps.departureDelayValue;
+      const delay =
+        progress > 0 ? timestamps.arrivalDelay : timestamps.departureDelay;
       return {
         ...flight,
         ...timestamps,
@@ -385,7 +396,10 @@ export const usersRouter = router({
         minutesToArrival,
         durationToDepartureString: getDurationString(minutesToDeparture),
         durationToArrivalString: getDurationString(minutesToArrival),
-        progress: currentDuration / totalDuration,
+        progress,
+        delay,
+        delayValue,
+        delayStatus,
       };
     }),
   getUserMapData: procedure

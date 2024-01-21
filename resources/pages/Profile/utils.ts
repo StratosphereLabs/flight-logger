@@ -6,6 +6,8 @@ export interface MapCoords {
   lng: number;
 }
 
+export type FlightDelayStatus = 'severe' | 'moderate' | 'none';
+
 export type RouteInput =
   UsersRouterOutput['getUserMapData']['routes'][number] & {
     isHover: boolean;

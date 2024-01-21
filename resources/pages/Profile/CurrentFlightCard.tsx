@@ -4,6 +4,7 @@ import { Card, CardBody, Link } from 'stratosphere-ui';
 import { PlaneSolidIcon } from '../../common/components';
 import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { CARD_COLORS, PROGRESS_BAR_COLORS, TEXT_COLORS } from './constants';
 
 export const CurrentFlightCard = (): JSX.Element | null => {
   const enabled = useProfilePage();
@@ -21,29 +22,47 @@ export const CurrentFlightCard = (): JSX.Element | null => {
     return null;
   }
   return (
-    <Card className="card-compact bg-base-200 shadow-md sm:card-normal">
+    <Card
+      className={classNames(
+        'card-compact shadow-md sm:card-normal',
+        CARD_COLORS[data.delayStatus],
+      )}
+    >
       <CardBody className="gap-0">
-        <div className="mb-3 flex w-full justify-between gap-3 text-xs sm:text-sm">
-          <div className="flex items-center gap-4">
-            <img
-              alt={`${data.airline?.name} Logo`}
-              className="max-h-[25px] max-w-[100px]"
-              src={data.airline?.logo ?? ''}
-            />
-            <Link
-              className="font-mono"
-              hover
-              href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
-              target="_blank"
+        <div className="mb-2 flex w-full justify-between gap-3 text-xs sm:text-sm">
+          <div className="flex flex-col gap-1">
+            <div
+              className={classNames(
+                'flex',
+                data.delayStatus !== 'none' && 'font-semibold',
+                TEXT_COLORS[data.delayStatus],
+              )}
             >
-              {data.airline?.iata} {data.flightNumber}
-            </Link>
+              {data.delayStatus !== 'none'
+                ? `Delayed ${data.delay}`
+                : 'On Time'}
+            </div>
+            <div className="flex items-center gap-4">
+              <img
+                alt={`${data.airline?.name} Logo`}
+                className="max-h-[25px] max-w-[100px]"
+                src={data.airline?.logo ?? ''}
+              />
+              <Link
+                className="font-mono"
+                hover
+                href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
+                target="_blank"
+              >
+                {data.airline?.iata} {data.flightNumber}
+              </Link>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center justify-end font-semibold">
+          <div className="flex flex-col items-end gap-1">
             <div className="opacity-75">{data.aircraftType?.name}</div>
             {data.tailNumber !== null && data.tailNumber.length > 0 ? (
               <Link
-                className="ml-3 pt-[1px] font-mono"
+                className="ml-3 pt-[1px] font-mono font-semibold"
                 hover
                 href={`https://www.flightaware.com/resources/registration/${data.tailNumber}`}
                 target="_blank"
@@ -53,12 +72,15 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             ) : null}
           </div>
         </div>
-        <div className="flex w-full items-center justify-between gap-3 font-mono text-xl font-semibold">
+        <div className="flex w-full items-center justify-between gap-3 font-mono text-xl font-semibold sm:text-2xl">
           <div>{data.departureAirport.iata}</div>
           <div className="relative h-full flex-1">
             <div className="absolute left-0 top-0 flex h-full w-full items-center px-2 opacity-50">
               <progress
-                className="progress progress-primary left-0 top-0 flex-1"
+                className={classNames(
+                  'progress left-0 top-0 flex-1',
+                  PROGRESS_BAR_COLORS[data.delayStatus],
+                )}
                 value={100 * data.progress}
                 max="100"
               />
@@ -71,9 +93,9 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 }}
               >
                 <PlaneSolidIcon
-                  className="absolute right-0 h-10 w-10 text-success"
+                  className="absolute right-0 h-9 w-9 text-info"
                   style={{
-                    transform: 'translate(41%, -15%)',
+                    transform: 'translate(42%, -6%)',
                   }}
                 />
               </div>
@@ -94,24 +116,23 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 : data.departureAirport.countryId}
             </div>
             <div className="flex flex-wrap items-center font-mono">
-              <div
-                className={classNames(
-                  data.outTimeActualLocal !== null
-                    ? 'mr-2 text-xs line-through'
-                    : 'text-xs sm:text-sm',
-                )}
-              >
-                {data.outTimeLocal}
-              </div>
+              {data.outTimeActualValue !== data.outTimeValue ? (
+                <div
+                  className={classNames(
+                    data.outTimeActualLocal !== null
+                      ? 'mr-2 text-xs line-through'
+                      : 'text-xs sm:text-sm',
+                  )}
+                >
+                  {data.outTimeLocal}
+                </div>
+              ) : null}
               {data.outTimeActualLocal !== null &&
               data.outTimeActualDaysAdded !== null ? (
                 <div
                   className={classNames(
                     'text-xs font-bold sm:text-sm',
-                    data.departureDelayValue !== null &&
-                      data.departureDelayValue > 45
-                      ? 'text-error'
-                      : 'text-green-600',
+                    TEXT_COLORS[data.departureDelayStatus],
                   )}
                 >
                   {data.outTimeActualLocal}
@@ -122,7 +143,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               ) : null}
             </div>
           </div>
-          <div className="flex flex-1 items-center justify-center text-center text-xs italic sm:items-start sm:text-sm">
+          <div className="flex flex-1 items-center justify-center text-center text-xs italic sm:text-sm">
             {data.progress > 0 && data.progress < 1
               ? `${data.durationToArrivalString} ${
                   data.progress > 0 ? 'remaining' : ''
@@ -143,27 +164,26 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 : data.arrivalAirport.countryId}
             </div>
             <div className="flex flex-wrap items-center justify-end font-mono">
-              <div
-                className={classNames(
-                  data.inTimeActualLocal !== null
-                    ? 'text-xs line-through'
-                    : 'text-xs sm:text-sm',
-                )}
-              >
-                {data.inTimeLocal}
-                {data.inTimeDaysAdded > 0 ? (
-                  <sup>+{data.inTimeDaysAdded}</sup>
-                ) : null}
-              </div>
+              {data.inTimeActualValue !== data.inTimeValue ? (
+                <div
+                  className={classNames(
+                    data.inTimeActualLocal !== null
+                      ? 'text-xs line-through'
+                      : 'text-xs sm:text-sm',
+                  )}
+                >
+                  {data.inTimeLocal}
+                  {data.inTimeDaysAdded > 0 ? (
+                    <sup>+{data.inTimeDaysAdded}</sup>
+                  ) : null}
+                </div>
+              ) : null}
               {data.inTimeActualLocal !== null &&
               data.inTimeActualDaysAdded !== null ? (
                 <div
                   className={classNames(
                     'ml-2 text-xs font-bold sm:text-sm',
-                    data.arrivalDelayValue !== null &&
-                      data.arrivalDelayValue > 45
-                      ? 'text-error'
-                      : 'text-green-600',
+                    TEXT_COLORS[data.arrivalDelayStatus],
                   )}
                 >
                   {data.inTimeActualLocal}
