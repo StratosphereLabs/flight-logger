@@ -13,35 +13,35 @@ export const RouteTimeline = ({
         PDX
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-warning" />
+        <div className="h-4 w-4 rounded-full bg-error" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className="mr-2 text-xs line-through">7:30am</div>
-        <div className={classNames('text-xs font-bold', 'text-warning')}>
+        <div className={classNames('text-xs font-bold', 'text-error')}>
           8:11am
         </div>
       </div>
-      <hr className="rounded-none bg-warning" />
+      <hr className="rounded-none bg-error" />
     </li>
     <li className="flex-1">
-      <hr className="rounded-none bg-warning" />
+      <hr className="rounded-none bg-error" />
       <div className="timeline-middle" />
       <div className="timeline-end timeline-box whitespace-nowrap border-none bg-transparent text-xs opacity-60">
         5h 30m
       </div>
-      <hr className="rounded-none bg-warning" />
+      <hr className="rounded-none bg-error" />
     </li>
     <li>
-      <hr className="rounded-none bg-warning" />
+      <hr className="rounded-none bg-error" />
       <div className="timeline-start timeline-box m-0 border-none bg-transparent font-mono">
         HNL
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-warning" />
+        <div className="h-4 w-4 rounded-full bg-error" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className="mr-2 text-xs line-through">11:35am</div>
-        <div className={classNames('text-xs font-bold', 'text-warning')}>
+        <div className={classNames('text-xs font-bold', 'text-error')}>
           12:32pm
         </div>
       </div>
