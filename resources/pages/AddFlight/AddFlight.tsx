@@ -55,13 +55,13 @@ export const AddFlight = (): JSX.Element => {
   }, [airframe, methods]);
   const handleSuccess = useSuccessResponseHandler();
   const { error, mutate, isLoading } = trpc.flights.addFlight.useMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       handleSuccess('Flight Added!');
       methods.reset();
       setTimeout(() => {
         methods.setFocus('departureAirport');
       }, 100);
-      await utils.users.invalidate();
+      void utils.users.invalidate();
     },
   });
   useTRPCErrorHandler(error);

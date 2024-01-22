@@ -14,7 +14,7 @@ export const DeleteTripModal = (): JSX.Element => {
     useTripsPageStore();
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.trips.deleteTrip.useMutation({
-    onSuccess: async ({ id }) => {
+    onSuccess: ({ id }) => {
       handleSuccess('Trip Deleted');
       setIsDeleteDialogOpen(false);
       utils.users.getUserTrips.setData({ username }, previousTrips =>
@@ -33,7 +33,7 @@ export const DeleteTripModal = (): JSX.Element => {
             }
           : undefined,
       );
-      await utils.users.getUserFlights.invalidate();
+      void utils.users.getUserFlights.invalidate();
     },
   });
   useTRPCErrorHandler(error);

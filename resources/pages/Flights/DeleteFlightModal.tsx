@@ -28,7 +28,7 @@ export const DeleteFlightModal = ({
   });
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
-    onSuccess: async ({ id }) => {
+    onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
       setIsDeleteDialogOpen(false);
       const previousFlights = utils.users.getUserFlights.getData({
@@ -53,7 +53,7 @@ export const DeleteFlightModal = ({
             }
           : undefined,
       );
-      await utils.users.getUserTrips.invalidate();
+      void utils.users.getUserTrips.invalidate();
     },
   });
   useTRPCErrorHandler(error);
