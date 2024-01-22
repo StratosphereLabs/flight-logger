@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Button, CardBody, LoadingCard } from 'stratosphere-ui';
 import { UserOutlineIcon, UserSolidIcon } from '../../common/components';
@@ -8,7 +8,9 @@ import { trpc } from '../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
   const enabled = useProfilePage();
+  const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(({ token }) => token !== null);
+  const [confirmUnfollow, setConfirmUnfollow] = useState(false);
   const navigate = useNavigate();
   const { username } = useParams();
   const { data: currentUserData } = trpc.users.getUser.useQuery(
@@ -25,6 +27,43 @@ export const ProfileCard = (): JSX.Element => {
       staleTime: 5 * 60 * 1000,
     },
   );
+  const { mutate: addFollower, isLoading: isAddFollowerLoading } =
+    trpc.users.addFollower.useMutation({
+      onSuccess: () => {
+        utils.users.getUser.setData({ username }, oldUser =>
+          oldUser !== undefined
+            ? {
+                ...oldUser,
+                isFollowing: true,
+                _count: {
+                  ...oldUser._count,
+                  followedBy:
+                    oldUser !== undefined ? oldUser._count.followedBy + 1 : 0,
+                },
+              }
+            : undefined,
+        );
+      },
+    });
+  const { mutate: removeFollower, isLoading: isRemoveFollowingLoading } =
+    trpc.users.removeFollower.useMutation({
+      onSuccess: () => {
+        setConfirmUnfollow(false);
+        utils.users.getUser.setData({ username }, oldUser =>
+          oldUser !== undefined
+            ? {
+                ...oldUser,
+                isFollowing: false,
+                _count: {
+                  ...oldUser._count,
+                  followedBy:
+                    oldUser !== undefined ? oldUser._count.followedBy - 1 : 0,
+                },
+              }
+            : undefined,
+        );
+      },
+    });
   useTRPCErrorHandler(error);
   const onOwnProfile = useMemo(
     () => username === undefined || username === currentUserData?.username,
@@ -56,14 +95,14 @@ export const ProfileCard = (): JSX.Element => {
                   <UserOutlineIcon className="h-3 w-3 text-info" />
                   <span className="sr-only">Following</span>
                 </Button>
-                0
+                {data?._count.following ?? 0}
               </div>
               <div className="flex items-center">
                 <Button color="ghost" size="xs" shape="circle">
                   <UserSolidIcon className="h-3 w-3 text-info" />
                   <span className="sr-only">Followers</span>
                 </Button>
-                0
+                {data?._count.followedBy ?? 0}
               </div>
             </div>
           </div>
@@ -78,9 +117,44 @@ export const ProfileCard = (): JSX.Element => {
           >
             Edit Profile
           </Button>
+        ) : confirmUnfollow ? (
+          <div className="flex gap-2">
+            <Button
+              className="flex-1"
+              size="sm"
+              color="error"
+              onClick={() => {
+                setConfirmUnfollow(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="flex-1"
+              size="sm"
+              color="neutral"
+              onClick={() => {
+                if (username !== undefined) removeFollower({ username });
+              }}
+              loading={isRemoveFollowingLoading}
+            >
+              Unfollow
+            </Button>
+          </div>
         ) : (
-          <Button size="sm" color="success">
-            Follow
+          <Button
+            size="sm"
+            color={data?.isFollowing === true ? 'neutral' : 'success'}
+            loading={isAddFollowerLoading}
+            onClick={() => {
+              if (data?.isFollowing === true) {
+                setConfirmUnfollow(true);
+              } else if (username !== undefined) {
+                addFollower({ username });
+              }
+            }}
+          >
+            {data?.isFollowing === true ? 'Following' : 'Follow'}
           </Button>
         )}
         <div className="stats flex bg-base-200">

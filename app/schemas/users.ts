@@ -18,6 +18,10 @@ export const getUsersSchema = z.object({
   query: z.string(),
 });
 
+export const addFollowerSchema = z.object({
+  username: z.string().trim(),
+});
+
 export type GetUserRequest = z.infer<typeof getUserSchema>;
 
 export type GetUserFlightsRequest = z.infer<typeof getUserFlightsSchema>;

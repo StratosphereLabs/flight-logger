@@ -26,6 +26,8 @@ model user {
   itineraries         itinerary[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime? @updatedAt
+  followedBy          user[]    @relation("UserFollows")
+  following           user[]    @relation("UserFollows")
 }
 
 model trip {
