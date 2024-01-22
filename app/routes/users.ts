@@ -11,19 +11,24 @@ import {
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
+  type FlightDataWithTimestamps,
   excludeKeys,
   fetchGravatarUrl,
+  flightIncludeObj,
   getCenterpoint,
+  getCurrentFlight,
   getDurationMinutes,
   getDurationString,
   getFlightTimestamps,
   getHeatmap,
   getInFuture,
   getRoutes,
+  itinerariesIncludeObj,
   parsePaginationRequest,
   transformFlightData,
   transformItineraryData,
   transformTripData,
+  tripIncludeObj,
 } from '../utils';
 
 export const usersRouter = router({
@@ -83,6 +88,7 @@ export const usersRouter = router({
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       ...excludeKeys(
         userData,
+        'admin',
         'password',
         'id',
         'passwordResetToken',
@@ -96,19 +102,6 @@ export const usersRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      const includeObj = {
-        user: true,
-        departureAirport: true,
-        arrivalAirport: true,
-        airline: true,
-        aircraftType: true,
-        airframe: {
-          include: {
-            aircraftType: true,
-            operator: true,
-          },
-        },
-      };
       const [upcomingFlights, currentFlights, completedFlights] =
         await prisma.$transaction([
           prisma.flight.findMany({
@@ -121,7 +114,7 @@ export const usersRouter = router({
                 gt: new Date(),
               },
             },
-            include: includeObj,
+            include: flightIncludeObj,
             orderBy: {
               outTime: input.layout === 'full' ? 'asc' : 'desc',
             },
@@ -139,7 +132,7 @@ export const usersRouter = router({
                 lte: new Date(),
               },
             },
-            include: includeObj,
+            include: flightIncludeObj,
             orderBy: {
               outTime: input.layout === 'full' ? 'asc' : 'desc',
             },
@@ -154,7 +147,7 @@ export const usersRouter = router({
                 lte: new Date(),
               },
             },
-            include: includeObj,
+            include: flightIncludeObj,
             orderBy: {
               outTime: 'desc',
             },
@@ -213,6 +206,7 @@ export const usersRouter = router({
             DATE_FORMAT_SHORT,
           ),
           durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
         })),
         count,
       };
@@ -260,6 +254,7 @@ export const usersRouter = router({
             DATE_FORMAT_SHORT,
           ),
           durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
         })),
         count,
       };
@@ -306,47 +301,12 @@ export const usersRouter = router({
             },
           ],
         },
-        include: {
-          departureAirport: {
-            include: {
-              region: true,
-            },
-          },
-          arrivalAirport: {
-            include: {
-              region: true,
-            },
-          },
-          airline: true,
-          aircraftType: true,
-          airframe: {
-            include: {
-              aircraftType: true,
-            },
-          },
-        },
+        include: flightIncludeObj,
         orderBy: {
           outTime: 'asc',
         },
       });
-      const flight = flights.find((currentFlight, index, allFlights) => {
-        const departureTime =
-          currentFlight.outTimeActual ?? currentFlight.outTime;
-        const arrivalTime = currentFlight.inTimeActual ?? currentFlight.inTime;
-        if (
-          isBefore(departureTime, new Date()) &&
-          isAfter(arrivalTime, new Date())
-        ) {
-          return true;
-        }
-        const nextFlight = allFlights[index + 1];
-        if (nextFlight === undefined) return true;
-        const nextFlightTime = nextFlight.outTimeActual ?? nextFlight.outTime;
-        const midTime = new Date(
-          (arrivalTime.getTime() + nextFlightTime.getTime()) / 2,
-        );
-        return isAfter(midTime, new Date());
-      });
+      const flight = getCurrentFlight(flights);
       if (flight === undefined) return null;
       const departureTime = flight.outTimeActual ?? flight.outTime;
       const arrivalTime = flight.inTimeActual ?? flight.inTime;
@@ -369,29 +329,14 @@ export const usersRouter = router({
           ? minutesToDeparture
           : totalDuration
         : 0;
-      const timestamps = getFlightTimestamps({
-        departureAirport: flight.departureAirport,
-        arrivalAirport: flight.arrivalAirport,
-        duration: flight.duration,
-        outTime: flight.outTime,
-        outTimeActual: flight.outTimeActual ?? undefined,
-        inTime: flight.inTime,
-        inTimeActual: flight.inTimeActual ?? undefined,
-      });
       const progress = currentDuration / totalDuration;
       const delayStatus =
-        progress > 0
-          ? timestamps.arrivalDelayStatus
-          : timestamps.departureDelayStatus;
+        progress > 0 ? flight.arrivalDelayStatus : flight.departureDelayStatus;
       const delayValue =
-        progress > 0
-          ? timestamps.arrivalDelayValue
-          : timestamps.departureDelayValue;
-      const delay =
-        progress > 0 ? timestamps.arrivalDelay : timestamps.departureDelay;
+        progress > 0 ? flight.arrivalDelayValue : flight.departureDelayValue;
+      const delay = progress > 0 ? flight.arrivalDelay : flight.departureDelay;
       return {
         ...flight,
-        ...timestamps,
         minutesToDeparture,
         minutesToArrival,
         durationToDepartureString: getDurationString(minutesToDeparture),
@@ -400,6 +345,79 @@ export const usersRouter = router({
         delay,
         delayValue,
         delayStatus,
+      };
+    }),
+  getUserCurrentRoute: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const flights = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            lte: add(new Date(), { days: 1 }),
+          },
+          inTime: {
+            gte: sub(new Date(), { days: 1 }),
+          },
+        },
+        include: flightIncludeObj,
+        orderBy: {
+          outTime: 'asc',
+        },
+      });
+      const currentFlight = getCurrentFlight(flights);
+      if (currentFlight === undefined) return [];
+      const sortedFlights = flights.reduce<{
+        completedFlights: FlightDataWithTimestamps[];
+        upcomingFlights: FlightDataWithTimestamps[];
+      }>(
+        (acc, flight) => {
+          const timestamps = getFlightTimestamps({
+            departureAirport: flight.departureAirport,
+            arrivalAirport: flight.arrivalAirport,
+            duration: flight.duration,
+            outTime: flight.outTime,
+            outTimeActual: flight.outTimeActual ?? undefined,
+            inTime: flight.inTime,
+            inTimeActual: flight.inTimeActual ?? undefined,
+          });
+          return isAfter(flight.outTime, currentFlight.outTime)
+            ? {
+                ...acc,
+                upcomingFlights: [
+                  ...acc.upcomingFlights,
+                  {
+                    ...flight,
+                    ...timestamps,
+                  },
+                ],
+              }
+            : isBefore(flight.outTime, currentFlight.outTime)
+              ? {
+                  ...acc,
+                  completedFlights: [
+                    ...acc.completedFlights,
+                    {
+                      ...flight,
+                      ...timestamps,
+                    },
+                  ],
+                }
+              : acc;
+        },
+        {
+          completedFlights: [],
+          upcomingFlights: [],
+        },
+      );
+      return {
+        ...sortedFlights,
+        currentFlight,
       };
     }),
   getUserMapData: procedure
@@ -429,26 +447,6 @@ export const usersRouter = router({
     if (input.username === undefined && ctx.user === null) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
-    const includeObj = {
-      user: true,
-      flights: {
-        include: {
-          user: true,
-          departureAirport: true,
-          arrivalAirport: true,
-          airline: true,
-          aircraftType: true,
-          airframe: {
-            include: {
-              operator: true,
-            },
-          },
-        },
-        orderBy: {
-          outTime: 'asc' as const,
-        },
-      },
-    };
     const [upcomingTrips, currentTrips, completedTrips] =
       await prisma.$transaction([
         prisma.trip.findMany({
@@ -460,7 +458,7 @@ export const usersRouter = router({
               gt: new Date(),
             },
           },
-          include: includeObj,
+          include: tripIncludeObj,
           orderBy: {
             outTime: 'asc',
           },
@@ -477,7 +475,7 @@ export const usersRouter = router({
               lte: new Date(),
             },
           },
-          include: includeObj,
+          include: tripIncludeObj,
           orderBy: {
             outTime: 'asc',
           },
@@ -491,7 +489,7 @@ export const usersRouter = router({
               lte: new Date(),
             },
           },
-          include: includeObj,
+          include: tripIncludeObj,
           orderBy: {
             outTime: 'desc',
           },
@@ -516,19 +514,7 @@ export const usersRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
         },
-        include: {
-          flights: {
-            include: {
-              departureAirport: true,
-              arrivalAirport: true,
-              airline: true,
-              aircraftType: true,
-            },
-            orderBy: {
-              outTime: 'asc',
-            },
-          },
-        },
+        include: itinerariesIncludeObj,
         orderBy: {
           createdAt: 'desc',
         },
@@ -554,6 +540,7 @@ export const usersRouter = router({
       id: user.username,
       ...excludeKeys(
         user,
+        'admin',
         'password',
         'id',
         'passwordResetToken',
@@ -595,6 +582,7 @@ export const usersRouter = router({
       numFlights: user._count.flights,
       ...excludeKeys(
         user,
+        'admin',
         'password',
         'id',
         'passwordResetToken',

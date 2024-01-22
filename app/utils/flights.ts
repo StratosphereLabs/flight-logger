@@ -4,23 +4,53 @@ import {
   type airline,
   type airport,
   type flight,
+  type region,
   type user,
 } from '@prisma/client';
+import { isAfter, isBefore } from 'date-fns';
 import groupBy from 'lodash.groupby';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
 import { getInFuture } from './datetime';
 import { calculateDistance } from './distance';
 import { type FlightTimestampsResult, getFlightTimestamps } from './flighttime';
+import { excludeKeys } from './server';
+
+export const flightIncludeObj = {
+  user: true,
+  departureAirport: {
+    include: {
+      region: true,
+    },
+  },
+  arrivalAirport: {
+    include: {
+      region: true,
+    },
+  },
+  airline: true,
+  aircraftType: true,
+  airframe: {
+    include: {
+      aircraftType: true,
+      operator: true,
+    },
+  },
+};
 
 export interface AirframeData extends airframe {
+  aircraftType: aircraft_type | null;
   operator: airline | null;
+}
+
+export interface AirportData extends airport {
+  region: region;
 }
 
 export interface FlightData extends flight {
   user: user;
-  departureAirport: airport;
-  arrivalAirport: airport;
+  departureAirport: AirportData;
+  arrivalAirport: AirportData;
   airline: airline | null;
   aircraftType: aircraft_type | null;
   airframe: AirframeData | null;
@@ -30,6 +60,10 @@ export interface Route {
   departureAirport: airport;
   arrivalAirport: airport;
 }
+
+export type FlightWithAirports = flight & Route;
+
+export type FlightDataWithTimestamps = FlightData & FlightTimestampsResult;
 
 export interface RouteResult {
   airports: [airport, airport];
@@ -42,11 +76,15 @@ export interface HeatmapResult extends LatLng {
   inFuture: boolean;
 }
 
-export interface FlightsResult extends Array<flight & Route> {}
+export interface FlightsResult extends Array<FlightWithAirports> {}
 
 export interface FlightTimeDataResult
-  extends FlightData,
+  extends Omit<FlightData, 'user'>,
     FlightTimestampsResult {
+  user: Omit<
+    user,
+    'admin' | 'password' | 'id' | 'passwordResetToken' | 'passwordResetAt'
+  >;
   distance: number;
   flightNumberString: string;
   link: string;
@@ -54,8 +92,8 @@ export interface FlightTimeDataResult
 
 export const getCenterpoint = (result?: FlightsResult): Coordinates => {
   const airports = Object.values(
-    result?.reduce(
-      (acc: Record<string, airport>, { departureAirport, arrivalAirport }) => ({
+    result?.reduce<Record<string, airport>>(
+      (acc, { departureAirport, arrivalAirport }) => ({
         ...acc,
         [departureAirport.id]: departureAirport,
         [arrivalAirport.id]: arrivalAirport,
@@ -120,6 +158,14 @@ export const transformFlightData = (
   return {
     ...flight,
     ...timestamps,
+    user: excludeKeys(
+      flight.user,
+      'admin',
+      'password',
+      'id',
+      'passwordResetToken',
+      'passwordResetAt',
+    ),
     tailNumber: flight.airframe?.registration ?? flight.tailNumber,
     flightNumberString:
       flight.flightNumber !== null
@@ -128,4 +174,29 @@ export const transformFlightData = (
     distance: Math.round(flightDistance),
     link: `/user/${flight.user.username}/flights/${flight.id}`,
   };
+};
+
+export const getCurrentFlight = (
+  flights: FlightData[],
+): FlightTimeDataResult | undefined => {
+  const currentFlight = flights.find((currentFlight, index, allFlights) => {
+    const departureTime = currentFlight.outTimeActual ?? currentFlight.outTime;
+    const arrivalTime = currentFlight.inTimeActual ?? currentFlight.inTime;
+    if (
+      isBefore(departureTime, new Date()) &&
+      isAfter(arrivalTime, new Date())
+    ) {
+      return true;
+    }
+    const nextFlight = allFlights[index + 1];
+    if (nextFlight === undefined) return true;
+    const nextFlightTime = nextFlight.outTimeActual ?? nextFlight.outTime;
+    const midTime = new Date(
+      (arrivalTime.getTime() + nextFlightTime.getTime()) / 2,
+    );
+    return isAfter(midTime, new Date());
+  });
+  return currentFlight !== undefined
+    ? transformFlightData(currentFlight)
+    : undefined;
 };

@@ -5,6 +5,5 @@ export * from './useFlightDiaryUploadMutation';
 export * from './useGoogleLoginMutation';
 export * from './useProfilePage';
 export * from './useProtectedPage';
-export * from './useScrollBar';
 export * from './useSuccessResponseHandler';
 export * from './useTRPCErrorHandler';

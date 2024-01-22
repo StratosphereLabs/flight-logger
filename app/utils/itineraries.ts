@@ -19,6 +19,20 @@ import {
 import { calculateDistance } from './distance';
 import { getFlightTimestamps } from './flighttime';
 
+export const itinerariesIncludeObj = {
+  flights: {
+    include: {
+      departureAirport: true,
+      arrivalAirport: true,
+      airline: true,
+      aircraftType: true,
+    },
+    orderBy: {
+      outTime: 'asc' as const,
+    },
+  },
+};
+
 export interface ItineraryFlightData extends itinerary_flight {
   departureAirport: airport;
   arrivalAirport: airport;
@@ -53,8 +67,8 @@ export interface ItineraryResult extends itinerary {
 const getSegmentedFlights = (
   flights: ItineraryFlightData[],
 ): ItineraryFlightData[][] =>
-  flights.reduce(
-    (acc: ItineraryFlightData[][], flight, index) => {
+  flights.reduce<ItineraryFlightData[][]>(
+    (acc, flight, index) => {
       const prevFlight = flights[index - 1];
       if (
         prevFlight !== undefined &&

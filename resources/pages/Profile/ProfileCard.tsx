@@ -33,7 +33,7 @@ export const ProfileCard = (): JSX.Element => {
   return (
     <LoadingCard
       isLoading={isFetching}
-      className="card-bordered card-compact h-[275px] w-[350px] bg-base-200 shadow-md"
+      className="card-bordered card-compact h-[275px] w-full bg-base-200 shadow-md md:w-[350px]"
     >
       <CardBody className="justify-between gap-2">
         <div className="flex flex-row items-center gap-4">

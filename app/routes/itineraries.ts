@@ -7,7 +7,11 @@ import {
   getItinerarySchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { getFlightTimes, transformItineraryData } from '../utils';
+import {
+  getFlightTimes,
+  itinerariesIncludeObj,
+  transformItineraryData,
+} from '../utils';
 
 export const itinerariesRouter = router({
   getItinerary: procedure.input(getItinerarySchema).query(async ({ input }) => {
@@ -15,19 +19,7 @@ export const itinerariesRouter = router({
       where: {
         id: input.id,
       },
-      include: {
-        flights: {
-          include: {
-            departureAirport: true,
-            arrivalAirport: true,
-            airline: true,
-            aircraftType: true,
-          },
-          orderBy: {
-            outTime: 'asc',
-          },
-        },
-      },
+      include: itinerariesIncludeObj,
     });
     if (itinerary === null) {
       throw new TRPCError({
@@ -154,19 +146,7 @@ export const itinerariesRouter = router({
         where: {
           id: itinerary.id,
         },
-        include: {
-          flights: {
-            include: {
-              departureAirport: true,
-              arrivalAirport: true,
-              airline: true,
-              aircraftType: true,
-            },
-            orderBy: {
-              outTime: 'asc',
-            },
-          },
-        },
+        include: itinerariesIncludeObj,
       });
       if (updatedItinerary === null) {
         throw new TRPCError({
@@ -174,7 +154,7 @@ export const itinerariesRouter = router({
           message: 'Itinerary not found.',
         });
       }
-      return updatedItinerary;
+      return transformItineraryData(updatedItinerary);
     }),
   deleteItinerary: procedure
     .use(verifyAuthenticated)
@@ -186,6 +166,7 @@ export const itinerariesRouter = router({
           id,
           userId: ctx.user.id,
         },
+        include: itinerariesIncludeObj,
       });
       if (itinerary === null) {
         throw new TRPCError({
@@ -193,10 +174,18 @@ export const itinerariesRouter = router({
           message: 'Itinerary not found.',
         });
       }
-      return await prisma.itinerary.delete({
+      await prisma.itinerary_flight.deleteMany({
+        where: {
+          id: {
+            in: itinerary.flights.map(({ id }) => id),
+          },
+        },
+      });
+      await prisma.itinerary.delete({
         where: {
           id,
         },
       });
+      return transformItineraryData(itinerary);
     }),
 });
