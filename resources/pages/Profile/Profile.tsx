@@ -28,7 +28,7 @@ export const Profile = (): JSX.Element => {
         />
       </div>
       <CurrentFlightCard />
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap-reverse gap-4">
         <CompletedFlights />
         <UpcomingFlights />
       </div>

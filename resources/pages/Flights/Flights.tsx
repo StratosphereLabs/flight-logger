@@ -32,6 +32,7 @@ import { ViewFlightModal } from './ViewFlightModal';
 
 export interface FlightsPageNavigationState {
   createTrip: boolean | undefined;
+  defaultOpen?: 'upcoming' | 'completed';
 }
 
 export interface FlightsFormData {
@@ -199,7 +200,9 @@ export const Flights = (): JSX.Element => {
                 size: 'lg',
               }}
               className="bg-info/10"
-              defaultOpen={isRowSelectEnabled}
+              defaultOpen={
+                state?.defaultOpen === 'upcoming' || isRowSelectEnabled
+              }
               rounded
             >
               <UserFlightsTable
@@ -268,7 +271,7 @@ export const Flights = (): JSX.Element => {
                 size: 'lg',
               }}
               className="bg-success/10"
-              defaultOpen
+              defaultOpen={state?.defaultOpen !== 'upcoming'}
               rounded
             >
               <UserFlightsTable
