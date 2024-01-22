@@ -17,7 +17,7 @@ export const RouteTimeline = ({
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className="mr-2 text-xs line-through">7:30am</div>
-        <div className={classNames('text-xs font-bold', 'text-error')}>
+        <div className={classNames('text-xs font-bold', 'text-warning')}>
           8:11am
         </div>
       </div>

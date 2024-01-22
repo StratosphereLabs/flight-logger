@@ -5,7 +5,6 @@ import { PlaneSolidIcon } from '../../common/components';
 import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { CARD_COLORS, PROGRESS_BAR_COLORS, TEXT_COLORS } from './constants';
-import { RouteTimeline } from './RouteTimeline';
 
 export interface CurrentFlightCardProps {
   isMapFullScreen: boolean;
@@ -30,9 +29,9 @@ export const CurrentFlightCard = ({
   }
   return (
     <Card className={classNames('shadow-md', CARD_COLORS[data.delayStatus])}>
-      <CardBody className="gap-0 p-[1rem] sm:px-[1.25rem]">
-        <div className="mb-1 flex w-full justify-between gap-3 text-xs sm:text-sm">
-          <div className="flex flex-col sm:gap-1">
+      <CardBody className="gap-0 px-[0.75rem] py-[0.5rem] sm:px-[1.25rem] sm:pt-[0.75rem]">
+        <div className="flex w-full justify-between gap-3 text-xs sm:text-sm">
+          <div className="flex flex-col">
             <div
               className={classNames(
                 'flex',
@@ -200,7 +199,6 @@ export const CurrentFlightCard = ({
             </div>
           </div>
         </div>
-        {!isMapFullScreen ? <RouteTimeline className="mb-[-15px]" /> : null}
       </CardBody>
     </Card>
   );
