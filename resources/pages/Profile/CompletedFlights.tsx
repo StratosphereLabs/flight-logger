@@ -4,7 +4,7 @@ import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { FlightsTable } from './FlightsTable';
 
-export const CompletedFlights = (): JSX.Element => {
+export const CompletedFlights = (): JSX.Element | null => {
   const enabled = useProfilePage();
   const { username } = useParams();
   const { data, isFetching } =
@@ -19,12 +19,13 @@ export const CompletedFlights = (): JSX.Element => {
     () => data?.pages.flatMap(({ results }) => results) ?? [],
     [data?.pages],
   );
+  if (flattenedData.length === 0) return null;
   return (
     <FlightsTable
       count={data?.pages[0].count ?? 0}
       data={flattenedData}
       isFetching={isFetching}
-      title="Recent Flights"
+      type="completed"
     />
   );
 };

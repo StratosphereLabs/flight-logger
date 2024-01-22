@@ -8,23 +8,28 @@ export interface FlightsTableProps {
   count: number;
   data: Array<UsersRouterOutput['getUserCompletedFlights']['results'][number]>;
   isFetching: boolean;
-  title: string;
+  type: 'upcoming' | 'completed';
 }
 
 export const FlightsTable = ({
   count,
   data,
   isFetching,
-  title,
+  type,
 }: FlightsTableProps): JSX.Element => {
   const { username } = useParams();
   return (
     <div className="flex flex-col">
       <article className="prose flex min-w-[350px] max-w-[550px] items-end justify-between p-1">
-        <h4>{title}</h4>
+        <h4 className="m-0">
+          {type === 'upcoming' ? 'Upcoming' : 'Completed'} Flights
+        </h4>
         <Link
           to={username !== undefined ? `/user/${username}/flights` : '/flights'}
           className="link-hover link flex items-center gap-1 text-xs opacity-75"
+          state={{
+            defaultOpen: type,
+          }}
         >
           View All ({count})
         </Link>
