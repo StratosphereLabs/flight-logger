@@ -6,13 +6,7 @@ import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { CARD_COLORS, PROGRESS_BAR_COLORS, TEXT_COLORS } from './constants';
 
-export interface CurrentFlightCardProps {
-  isMapFullScreen: boolean;
-}
-
-export const CurrentFlightCard = ({
-  isMapFullScreen,
-}: CurrentFlightCardProps): JSX.Element | null => {
+export const CurrentFlightCard = (): JSX.Element | null => {
   const enabled = useProfilePage();
   const { username } = useParams();
   const { data } = trpc.users.getUserCurrentFlight.useQuery(
