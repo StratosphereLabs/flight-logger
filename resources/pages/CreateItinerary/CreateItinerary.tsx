@@ -38,11 +38,11 @@ export const CreateItinerary = (): JSX.Element => {
   };
   const { error, isLoading, mutate } =
     trpc.itineraries.createItinerary.useMutation({
-      onSuccess: async response => {
+      onSuccess: response => {
         setIsCreateItineraryModalOpen(false);
         navigate(`/itinerary/${response.id}`);
         resetFlights();
-        await utils.users.invalidate();
+        void utils.users.invalidate();
       },
     });
   useTRPCErrorHandler(error);

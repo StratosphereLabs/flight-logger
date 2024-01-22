@@ -13,7 +13,7 @@ export const UpcomingFlights = (): JSX.Element => {
         limit: 5,
         username,
       },
-      { enabled },
+      { enabled, staleTime: 5 * 60 * 1000 },
     );
   const flattenedData = useMemo(
     () => data?.pages.flatMap(({ results }) => results) ?? [],

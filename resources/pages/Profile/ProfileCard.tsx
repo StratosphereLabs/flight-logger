@@ -37,12 +37,12 @@ export const ProfileCard = (): JSX.Element => {
                 isFollowing: true,
                 _count: {
                   ...oldUser._count,
-                  followedBy:
-                    oldUser !== undefined ? oldUser._count.followedBy + 1 : 0,
+                  followedBy: oldUser._count.followedBy + 1,
                 },
               }
             : undefined,
         );
+        void utils.users.getUser.invalidate({ username: undefined });
       },
     });
   const { mutate: removeFollower, isLoading: isRemoveFollowingLoading } =
@@ -56,12 +56,12 @@ export const ProfileCard = (): JSX.Element => {
                 isFollowing: false,
                 _count: {
                   ...oldUser._count,
-                  followedBy:
-                    oldUser !== undefined ? oldUser._count.followedBy - 1 : 0,
+                  followedBy: oldUser._count.followedBy - 1,
                 },
               }
             : undefined,
         );
+        void utils.users.getUser.invalidate({ username: undefined });
       },
     });
   useTRPCErrorHandler(error);

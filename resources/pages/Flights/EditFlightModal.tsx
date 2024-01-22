@@ -59,11 +59,11 @@ export const EditFlightModal = ({
     useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.flights.editFlight.useMutation({
-    onSuccess: async newFlight => {
+    onSuccess: newFlight => {
       handleSuccess('Flight Edited!');
       onSuccess(newFlight);
       setIsEditDialogOpen(false);
-      await utils.users.invalidate();
+      void utils.users.invalidate();
     },
   });
   useTRPCErrorHandler(error);

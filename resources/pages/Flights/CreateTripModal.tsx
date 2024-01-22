@@ -31,11 +31,11 @@ export const CreateTripModal = ({
   const flightIds = Object.keys(rowSelection);
   const handleSuccess = useSuccessResponseHandler();
   const { error, isLoading, mutate } = trpc.trips.createTrip.useMutation({
-    onSuccess: async data => {
+    onSuccess: data => {
       handleSuccess('Trip Created!');
       setIsCreateTripDialogOpen(false);
       onSuccess?.(data.id);
-      await utils.users.invalidate();
+      void utils.users.invalidate();
     },
   });
   useEffect(() => {
