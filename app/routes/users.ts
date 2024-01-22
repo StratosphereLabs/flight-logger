@@ -3,7 +3,9 @@ import { add, format, isAfter, isBefore, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_MONTH, DATE_FORMAT_SHORT } from '../constants';
 import { prisma } from '../db';
+import { verifyAuthenticated } from '../middleware';
 import {
+  addFollowerSchema,
   getUserFlightsSchema,
   getUserProfileFlightsSchema,
   getUserSchema,
@@ -41,6 +43,15 @@ export const usersRouter = router({
         prisma.user.findUnique({
           where: {
             username: input?.username ?? ctx.user?.username,
+          },
+          include: {
+            followedBy: true,
+            _count: {
+              select: {
+                following: true,
+                followedBy: true,
+              },
+            },
           },
         }),
         prisma.flight.count({
@@ -80,17 +91,22 @@ export const usersRouter = router({
         message: 'User not found.',
       });
     }
+    const isFollowing =
+      userData.followedBy.find(user => user.username === ctx.user?.username) !==
+      undefined;
     return {
       avatar: fetchGravatarUrl(userData.email),
       completedFlightCount,
       upcomingFlightCount,
       tripCount,
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
+      isFollowing,
       ...excludeKeys(
         userData,
         'admin',
-        'password',
+        'followedBy',
         'id',
+        'password',
         'passwordResetToken',
         'passwordResetAt',
       ),
@@ -591,6 +607,56 @@ export const usersRouter = router({
       ),
     }));
   }),
+  addFollower: procedure
+    .use(verifyAuthenticated)
+    .input(addFollowerSchema)
+    .mutation(async ({ ctx, input }) => {
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: ctx.user.id,
+        },
+        data: {
+          following: {
+            connect: {
+              username: input.username,
+            },
+          },
+        },
+      });
+      return excludeKeys(
+        updatedUser,
+        'admin',
+        'password',
+        'id',
+        'passwordResetToken',
+        'passwordResetAt',
+      );
+    }),
+  removeFollower: procedure
+    .use(verifyAuthenticated)
+    .input(addFollowerSchema)
+    .mutation(async ({ ctx, input }) => {
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: ctx.user.id,
+        },
+        data: {
+          following: {
+            disconnect: {
+              username: input.username,
+            },
+          },
+        },
+      });
+      return excludeKeys(
+        updatedUser,
+        'admin',
+        'password',
+        'id',
+        'passwordResetToken',
+        'passwordResetAt',
+      );
+    }),
 });
 
 export type UsersRouter = typeof usersRouter;
