@@ -1,5 +1,5 @@
 import { differenceInMinutes } from 'date-fns';
-import { prisma } from '../../db';
+import { prisma, updateTripTimes } from '../../db';
 import { getDurationMinutes } from '../../utils';
 import { fetchFlightStatsData } from '../flightStats';
 import { type FlightWithData } from '../updateData';
@@ -78,4 +78,9 @@ export const updateFlightTimes = async (
       inTimeActual,
     },
   });
+  await Promise.all(
+    flights.flatMap(({ tripId }) =>
+      tripId !== null ? updateTripTimes(tripId) : [],
+    ),
+  );
 };

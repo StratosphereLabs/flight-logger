@@ -5,8 +5,20 @@ import { getDurationDays, getInFuture } from './datetime';
 import {
   type FlightData,
   type FlightTimeDataResult,
+  flightIncludeObj,
   transformFlightData,
 } from './flights';
+import { excludeKeys } from './server';
+
+export const tripIncludeObj = {
+  user: true,
+  flights: {
+    include: flightIncludeObj,
+    orderBy: {
+      outTime: 'asc' as const,
+    },
+  },
+};
 
 export interface TripWithData extends trip {
   user: user;
@@ -14,7 +26,10 @@ export interface TripWithData extends trip {
 }
 
 export interface TripResult extends trip {
-  user: user;
+  user: Omit<
+    user,
+    'admin' | 'password' | 'id' | 'passwordResetToken' | 'passwordResetAt'
+  >;
   tripDuration: string;
   outDateISO: string;
   inFuture: boolean;
@@ -24,6 +39,14 @@ export interface TripResult extends trip {
 
 export const transformTripData = (trip: TripWithData): TripResult => ({
   ...trip,
+  user: excludeKeys(
+    trip.user,
+    'admin',
+    'password',
+    'id',
+    'passwordResetToken',
+    'passwordResetAt',
+  ),
   tripDuration:
     trip.flights.length > 0
       ? getDurationDays({

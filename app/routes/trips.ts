@@ -9,7 +9,7 @@ import {
   getTripSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { transformTripData } from '../utils';
+import { transformTripData, tripIncludeObj } from '../utils';
 
 export const tripsRouter = router({
   getTrip: procedure.input(getTripSchema).query(async ({ input }) => {
@@ -18,26 +18,7 @@ export const tripsRouter = router({
       where: {
         id,
       },
-      include: {
-        user: true,
-        flights: {
-          include: {
-            user: true,
-            departureAirport: true,
-            arrivalAirport: true,
-            airline: true,
-            aircraftType: true,
-            airframe: {
-              include: {
-                operator: true,
-              },
-            },
-          },
-          orderBy: {
-            outTime: 'asc',
-          },
-        },
-      },
+      include: tripIncludeObj,
     });
     if (trip === null) {
       throw new TRPCError({
@@ -75,26 +56,7 @@ export const tripsRouter = router({
         where: {
           id: trip.id,
         },
-        include: {
-          user: true,
-          flights: {
-            include: {
-              user: true,
-              departureAirport: true,
-              arrivalAirport: true,
-              airline: true,
-              aircraftType: true,
-              airframe: {
-                include: {
-                  operator: true,
-                },
-              },
-            },
-            orderBy: {
-              outTime: 'asc',
-            },
-          },
-        },
+        include: tripIncludeObj,
       });
       if (updatedTrip === null) {
         throw new TRPCError({
@@ -164,26 +126,7 @@ export const tripsRouter = router({
         data: {
           name,
         },
-        include: {
-          user: true,
-          flights: {
-            include: {
-              user: true,
-              departureAirport: true,
-              arrivalAirport: true,
-              airline: true,
-              aircraftType: true,
-              airframe: {
-                include: {
-                  operator: true,
-                },
-              },
-            },
-            orderBy: {
-              outTime: 'asc',
-            },
-          },
-        },
+        include: tripIncludeObj,
       });
       return transformTripData(updatedTrip);
     }),
@@ -208,26 +151,7 @@ export const tripsRouter = router({
         where: {
           id,
         },
-        include: {
-          user: true,
-          flights: {
-            include: {
-              user: true,
-              departureAirport: true,
-              arrivalAirport: true,
-              airline: true,
-              aircraftType: true,
-              airframe: {
-                include: {
-                  operator: true,
-                },
-              },
-            },
-            orderBy: {
-              outTime: 'asc',
-            },
-          },
-        },
+        include: tripIncludeObj,
       });
       return transformTripData(deletedTrip);
     }),
