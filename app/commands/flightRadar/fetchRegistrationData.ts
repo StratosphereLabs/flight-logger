@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { HEADERS } from '../constants';
-import { type FlightWithData } from '../updateData';
 import { createNewDate } from '../utils';
 import type { RegistrationData } from './types';
 
 export const fetchRegistrationData = async (
-  flight: FlightWithData,
+  airlineIata: string,
+  flightNumber: number,
 ): Promise<RegistrationData[]> => {
-  const url = `https://www.flightradar24.com/data/flights/${flight.airline?.iata}${flight.flightNumber}`;
+  const url = `https://www.flightradar24.com/data/flights/${airlineIata}${flightNumber}`;
   const response = await axios.get<string>(url, { headers: HEADERS });
   const $ = load(response.data);
   const registrationData: RegistrationData[] = [];

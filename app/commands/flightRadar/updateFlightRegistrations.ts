@@ -7,7 +7,14 @@ import { fetchRegistrationData } from './fetchRegistrationData';
 export const updateFlightRegistrations = async (
   flights: FlightWithData[],
 ): Promise<void> => {
-  const registrationData = await fetchRegistrationData(flights[0]);
+  if (flights[0].airline === null || flights[0].flightNumber === null) {
+    console.error('Airline and flight number are required.');
+    return;
+  }
+  const registrationData = await fetchRegistrationData(
+    flights[0].airline.iata,
+    flights[0].flightNumber,
+  );
   if (registrationData.length === 0) {
     console.error(
       `  Unable to fetch registration data for ${getGroupedFlightsKey(

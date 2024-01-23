@@ -1,3 +1,6 @@
+import { format } from 'date-fns';
+import { DATE_FORMAT_ISO } from '../../../app/constants';
+import { type FetchFlightsByFlightNumberRequest } from '../../../app/schemas';
 import { type FlightDelayStatus } from './utils';
 
 export const DEFAULT_COORDINATES = {
@@ -22,3 +25,10 @@ export const PROGRESS_BAR_COLORS: Record<FlightDelayStatus, string> = {
   moderate: 'progress-warning',
   severe: 'progress-error',
 };
+
+export const flightSearchFormDefaultValues: FetchFlightsByFlightNumberRequest =
+  {
+    outDateISO: format(new Date(), DATE_FORMAT_ISO),
+    airline: null,
+    flightNumber: null,
+  };

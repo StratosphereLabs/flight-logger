@@ -8,7 +8,14 @@ import { getGroupedFlightsKey } from '../utils';
 export const updateFlightTimes = async (
   flights: FlightWithData[],
 ): Promise<void> => {
-  const data = await fetchFlightStatsData(flights[0]);
+  if (flights[0].airline === null || flights[0].flightNumber === null) {
+    console.error('Airline and flight number are required.');
+    return;
+  }
+  const data = await fetchFlightStatsData(
+    flights[0].airline.iata,
+    flights[0].flightNumber,
+  );
   if (data === null) {
     console.error(
       `  Unable to fetch flight data for ${getGroupedFlightsKey(
@@ -17,18 +24,22 @@ export const updateFlightTimes = async (
     );
     return;
   }
-  const flightStatsFlightData = data.props.initialState.flightTracker.otherDays
-    .flatMap(day => day.flights)
-    .find(({ arrivalAirport, departureAirport, sortTime }) => {
-      const timeDiff = Math.abs(
-        differenceInMinutes(new Date(sortTime), flights[0].outTime),
-      );
-      return (
-        departureAirport.iata === flights[0].departureAirport.iata &&
-        arrivalAirport.iata === flights[0].arrivalAirport.iata &&
-        timeDiff < 720
-      );
-    });
+  const { otherDays } = data.props.initialState.flightTracker;
+  const flightStatsFlightData =
+    typeof otherDays === 'object'
+      ? otherDays
+          .flatMap(day => day.flights)
+          .find(({ arrivalAirport, departureAirport, sortTime }) => {
+            const timeDiff = Math.abs(
+              differenceInMinutes(new Date(sortTime), flights[0].outTime),
+            );
+            return (
+              departureAirport.iata === flights[0].departureAirport.iata &&
+              arrivalAirport.iata === flights[0].arrivalAirport.iata &&
+              timeDiff < 720
+            );
+          })
+      : undefined;
   if (flightStatsFlightData === undefined) {
     console.error(
       `  Flight times data not found for ${getGroupedFlightsKey(
@@ -38,7 +49,8 @@ export const updateFlightTimes = async (
     return;
   }
   const flightData = await fetchFlightStatsData(
-    flights[0],
+    flights[0].airline.iata,
+    flights[0].flightNumber,
     flightStatsFlightData.url,
   );
   if (flightData === null) {
