@@ -269,11 +269,14 @@ export const MapCard = ({
             </Button>
           </div>
         </Form>
-        {isMapFullScreen ? (
-          <div className="absolute bottom-0 flex w-full px-2 py-6">
-            <RouteTimeline className="rounded-xl bg-base-100/70 px-2" />
-          </div>
-        ) : null}
+        <div
+          className={classNames(
+            'absolute bottom-0 flex w-full px-2 py-6 transition-opacity duration-500',
+            isMapFullScreen ? 'opacity-100' : 'pointer-events-none opacity-0',
+          )}
+        >
+          <RouteTimeline className="rounded-xl bg-base-100/70 px-2" />
+        </div>
       </LoadingCard>
     ),
     [
