@@ -20,9 +20,11 @@ export type FlightWithData = flight & {
   airline: airline | null;
   departureAirport: {
     iata: string;
+    timeZone: string;
   };
   arrivalAirport: {
     iata: string;
+    timeZone: string;
   };
 };
 
@@ -30,8 +32,8 @@ const updateFlights = async (): Promise<void> => {
   const flightsToUpdate = await prisma.flight.findMany({
     where: {
       outTime: {
-        gt: sub(new Date(), { hours: 12 }),
-        lt: add(new Date(), { hours: 12 }),
+        gt: sub(new Date(), { days: 1 }),
+        lt: add(new Date(), { days: 1 }),
       },
       airline: {
         isNot: null,
@@ -45,11 +47,13 @@ const updateFlights = async (): Promise<void> => {
       departureAirport: {
         select: {
           iata: true,
+          timeZone: true,
         },
       },
       arrivalAirport: {
         select: {
           iata: true,
+          timeZone: true,
         },
       },
     },

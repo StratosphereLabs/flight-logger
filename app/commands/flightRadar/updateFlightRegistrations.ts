@@ -31,7 +31,7 @@ export const updateFlightRegistrations = async (
       return (
         departureAirportIATA === flights[0].departureAirport.iata &&
         arrivalAirportIATA === flights[0].arrivalAirport.iata &&
-        timeDiff < 720
+        timeDiff < 360
       );
     },
   );

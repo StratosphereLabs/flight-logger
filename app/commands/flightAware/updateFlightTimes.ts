@@ -36,7 +36,7 @@ export const updateFlightTimes = async (
             return (
               departureAirport.iata === flights[0].departureAirport.iata &&
               arrivalAirport.iata === flights[0].arrivalAirport.iata &&
-              timeDiff < 720
+              timeDiff < 360
             );
           })
       : undefined;
