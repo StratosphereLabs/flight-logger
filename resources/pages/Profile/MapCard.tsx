@@ -87,6 +87,14 @@ export const MapCard = ({
       staleTime: 5 * 60 * 1000,
     },
   );
+  const { data: currentFlightData } = trpc.users.getUserCurrentFlight.useQuery(
+    {
+      username,
+    },
+    {
+      enabled,
+    },
+  );
   const { data, error, isFetching } = trpc.users.getUserMapData.useQuery(
     {
       username,
@@ -130,6 +138,18 @@ export const MapCard = ({
       staleTime: 5 * 60 * 1000,
     },
   );
+  const currentFlight = useMemo(
+    () =>
+      currentFlightData !== undefined && currentFlightData !== null
+        ? {
+            lat: currentFlightData.estimatedLocation[0],
+            lng: currentFlightData.estimatedLocation[1],
+            heading: currentFlightData.estimatedHeading,
+            delayStatus: currentFlightData.delayStatus,
+          }
+        : undefined,
+    [currentFlightData],
+  );
   useEffect(() => {
     if (
       selectedAirportId !== null &&
@@ -147,7 +167,7 @@ export const MapCard = ({
       <LoadingCard
         isLoading={isFetching}
         className={classNames(
-          'transition-size card-bordered relative min-w-[350px] flex-1 shadow-md duration-500',
+          'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-md duration-500',
           isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[275px]',
         )}
       >
@@ -155,6 +175,7 @@ export const MapCard = ({
         (mapMode === 'routes' || mapMode === 'heatmap') ? (
           <GoogleMap
             center={center}
+            currentFlight={currentFlight}
             data={data}
             hoverAirportId={hoverAirportId}
             methods={methods}
@@ -166,6 +187,7 @@ export const MapCard = ({
         {data !== undefined && mapMode === '3d' ? (
           <CesiumMap
             center={center}
+            currentFlight={currentFlight}
             data={data}
             hoverAirportId={hoverAirportId}
             methods={methods}
@@ -269,15 +291,19 @@ export const MapCard = ({
             </Button>
           </div>
         </Form>
-        {isMapFullScreen ? (
-          <div className="absolute bottom-0 flex w-full px-2 py-6">
-            <RouteTimeline className="rounded-xl bg-base-100/70 px-2" />
-          </div>
-        ) : null}
+        <div
+          className={classNames(
+            'absolute bottom-0 flex w-full px-2 py-6 transition-opacity duration-500',
+            isMapFullScreen ? 'opacity-100' : 'pointer-events-none opacity-0',
+          )}
+        >
+          <RouteTimeline className="rounded-xl bg-base-100/70 px-2" />
+        </div>
       </LoadingCard>
     ),
     [
       center,
+      currentFlight,
       data,
       hoverAirportId,
       isFetching,

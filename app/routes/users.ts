@@ -17,6 +17,7 @@ import {
   excludeKeys,
   fetchGravatarUrl,
   flightIncludeObj,
+  getBearing,
   getCenterpoint,
   getCurrentFlight,
   getDurationMinutes,
@@ -24,6 +25,7 @@ import {
   getFlightTimestamps,
   getHeatmap,
   getInFuture,
+  getProjectedCoords,
   getRoutes,
   itinerariesIncludeObj,
   parsePaginationRequest,
@@ -346,6 +348,25 @@ export const usersRouter = router({
           : totalDuration
         : 0;
       const progress = currentDuration / totalDuration;
+      const distanceTraveled = progress * flight.distance;
+      const initialHeading = getBearing(
+        flight.departureAirport.lat,
+        flight.departureAirport.lon,
+        flight.arrivalAirport.lat,
+        flight.arrivalAirport.lon,
+      );
+      const estimatedLocation = getProjectedCoords(
+        flight.departureAirport.lat,
+        flight.departureAirport.lon,
+        distanceTraveled,
+        initialHeading,
+      );
+      const estimatedHeading = getBearing(
+        estimatedLocation[0],
+        estimatedLocation[1],
+        flight.arrivalAirport.lat,
+        flight.arrivalAirport.lon,
+      );
       const delayStatus =
         progress > 0 ? flight.arrivalDelayStatus : flight.departureDelayStatus;
       const delayValue =
@@ -361,6 +382,8 @@ export const usersRouter = router({
         delay,
         delayValue,
         delayStatus,
+        estimatedLocation,
+        estimatedHeading,
       };
     }),
   getUserCurrentRoute: procedure

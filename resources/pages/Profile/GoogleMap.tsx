@@ -2,9 +2,12 @@ import {
   GoogleMap as GoogleMapComponent,
   HeatmapLayerF,
   MarkerF,
+  OverlayView,
+  OverlayViewF,
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
+import classNames from 'classnames';
 import {
   type Dispatch,
   type SetStateAction,
@@ -13,13 +16,15 @@ import {
   useState,
 } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
+import { PlaneSolidIcon } from '../../common/components';
 import { darkModeStyle } from '../../common/mapStyle';
 import { AppTheme, useThemeStore } from '../../stores';
 import { type MapCardFormData } from './MapCard';
-import { type FilteredMapData, type MapCoords } from './utils';
+import { type MapFlight, type FilteredMapData, type MapCoords } from './utils';
 
 export interface GoogleMapProps {
   center: MapCoords;
+  currentFlight?: MapFlight;
   data: FilteredMapData;
   hoverAirportId: string | null;
   methods: UseFormReturn<MapCardFormData>;
@@ -30,6 +35,7 @@ export interface GoogleMapProps {
 
 export const GoogleMap = ({
   center,
+  currentFlight,
   data,
   hoverAirportId,
   methods,
@@ -52,9 +58,9 @@ export const GoogleMap = ({
     useState<google.maps.visualization.HeatmapLayer | null>(null);
   const heatmapData = useMemo(
     () =>
-      mapMode === 'heatmap'
+      window.google !== undefined && mapMode === 'heatmap'
         ? data.heatmap.map(
-            ({ lat, lng }) => new google.maps.LatLng(lat, lng),
+            ({ lat, lng }) => new window.google.maps.LatLng(lat, lng),
           ) ?? []
         : [],
     [data.heatmap, mapMode],
@@ -81,6 +87,12 @@ export const GoogleMap = ({
     }),
     [center, theme],
   );
+  const aircraftColor =
+    theme === AppTheme.DARK ||
+    theme === AppTheme.BUSINESS ||
+    theme === AppTheme.SUNSET
+      ? 'text-blue-500'
+      : 'text-[#0000ff]';
   return isLoaded ? (
     <GoogleMapComponent
       mapContainerClassName="rounded-2xl"
@@ -112,17 +124,24 @@ export const GoogleMap = ({
               setHoverAirportId(null);
             }}
             options={{
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: isActive ? 'yellow' : 'white',
-                fillOpacity:
-                  hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
-                scale: isActive ? 8 : 5,
-                strokeColor: 'black',
-                strokeWeight: isActive ? 3 : 2,
-                strokeOpacity:
-                  hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
-              },
+              icon:
+                window.google !== undefined
+                  ? {
+                      path: window.google.maps.SymbolPath.CIRCLE,
+                      fillColor: isActive ? 'yellow' : 'white',
+                      fillOpacity:
+                        hasSelectedRoute || selectedAirportId === null
+                          ? 1
+                          : 0.2,
+                      scale: isActive ? 8 : 5,
+                      strokeColor: 'black',
+                      strokeWeight: isActive ? 3 : 2,
+                      strokeOpacity:
+                        hasSelectedRoute || selectedAirportId === null
+                          ? 1
+                          : 0.2,
+                    }
+                  : null,
               zIndex:
                 hasSelectedRoute || selectedAirportId === null ? 10 : undefined,
             }}
@@ -156,6 +175,26 @@ export const GoogleMap = ({
           );
         },
       )}
+      {currentFlight !== undefined ? (
+        <OverlayViewF
+          position={{
+            lat: currentFlight.lat,
+            lng: currentFlight.lng,
+          }}
+          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+          getPixelPositionOffset={(width, height) => ({
+            x: -(width / 2),
+            y: -(height / 2),
+          })}
+        >
+          <PlaneSolidIcon
+            className={classNames('h-6 w-6', aircraftColor)}
+            style={{
+              transform: `rotate(${Math.round(currentFlight.heading - 90)}deg)`,
+            }}
+          />
+        </OverlayViewF>
+      ) : null}
       <HeatmapLayerF
         data={heatmapData}
         onLoad={setHeatmap}

@@ -6,6 +6,11 @@ export interface MapCoords {
   lng: number;
 }
 
+export interface MapFlight extends MapCoords {
+  heading: number;
+  delayStatus: FlightDelayStatus;
+}
+
 export type FlightDelayStatus = 'severe' | 'moderate' | 'none';
 
 export type RouteInput =

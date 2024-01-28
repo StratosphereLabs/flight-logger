@@ -79,10 +79,10 @@ export const ProfileCard = (): JSX.Element => {
           <Avatar shapeClassName="h-20 w-20 rounded-full">
             <img src={data?.avatar} alt="User Avatar" />
           </Avatar>
-          <div className="flex flex-1 flex-col">
-            <div className="text-2xl font-medium">{`${data?.firstName ?? ''} ${
-              data?.lastName ?? ''
-            }`}</div>
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="truncate text-2xl font-medium">{`${
+              data?.firstName ?? ''
+            } ${data?.lastName ?? ''}`}</div>
             <div className="text-sm opacity-75">{`@${
               data?.username ?? ''
             }`}</div>

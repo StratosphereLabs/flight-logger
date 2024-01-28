@@ -4,6 +4,7 @@ export * from './airlines';
 export * from './airports';
 export * from './auth';
 export * from './countries';
+export * from './flightData';
 export * from './flights';
 export * from './itineraries';
 export * from './pagination';
