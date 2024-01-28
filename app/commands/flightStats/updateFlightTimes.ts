@@ -1,9 +1,9 @@
 import { differenceInMinutes } from 'date-fns';
 import { prisma, updateTripTimes } from '../../db';
 import { getDurationMinutes } from '../../utils';
-import { fetchFlightStatsData } from '../flightStats';
 import { type FlightWithData } from '../updateData';
 import { getGroupedFlightsKey } from '../utils';
+import { fetchFlightStatsData } from './fetchFlightStatsData';
 
 export const updateFlightTimes = async (
   flights: FlightWithData[],
@@ -61,21 +61,17 @@ export const updateFlightTimes = async (
     );
     return;
   }
-  const { schedule } = flightData.props.initialState.flightTracker.flight;
-  const outTime = new Date(schedule.scheduledDepartureUTC);
+  const { flight } = flightData.props.initialState.flightTracker;
+  const outTime = new Date(flight.schedule.scheduledDepartureUTC);
   const outTimeActual =
-    schedule.estimatedActualDepartureUTC !== null
-      ? new Date(schedule.estimatedActualDepartureUTC)
+    flight.schedule.estimatedActualDepartureUTC !== null
+      ? new Date(flight.schedule.estimatedActualDepartureUTC)
       : null;
-  const inTime = new Date(schedule.scheduledArrivalUTC);
+  const inTime = new Date(flight.schedule.scheduledArrivalUTC);
   const inTimeActual =
-    schedule.estimatedActualArrivalUTC !== null
-      ? new Date(schedule.estimatedActualArrivalUTC)
+    flight.schedule.estimatedActualArrivalUTC !== null
+      ? new Date(flight.schedule.estimatedActualArrivalUTC)
       : null;
-  const duration = getDurationMinutes({
-    start: outTime,
-    end: inTime,
-  });
   await prisma.flight.updateMany({
     where: {
       id: {
@@ -83,11 +79,19 @@ export const updateFlightTimes = async (
       },
     },
     data: {
-      duration,
+      duration: getDurationMinutes({
+        start: outTime,
+        end: inTime,
+      }),
       outTime,
       outTimeActual,
       inTime,
       inTimeActual,
+      departureGate: flight.departureAirport.gate ?? undefined,
+      arrivalGate: flight.arrivalAirport.gate ?? undefined,
+      departureTerminal: flight.departureAirport.terminal ?? undefined,
+      arrivalTerminal: flight.arrivalAirport.terminal ?? undefined,
+      arrivalBaggage: flight.arrivalAirport.baggage ?? undefined,
     },
   });
   await Promise.all(
