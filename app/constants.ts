@@ -13,3 +13,5 @@ export const DATE_FORMAT_SHORT = 'M/d';
 export const DATE_FORMAT_ISO = 'yyyy-MM-dd';
 export const TIME_FORMAT_12H = 'h:mm aaa';
 export const TIME_FORMAT_24H = 'HH:mm';
+
+export const EARTH_RADIUS_NM = 3440.065;

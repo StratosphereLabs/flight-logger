@@ -2,11 +2,13 @@ import { Cartesian3, Color, type Viewer as ViewerType } from 'cesium';
 import { useRef, type Dispatch, type SetStateAction, useEffect } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { type CesiumComponentRef, Entity, Viewer } from 'resium';
+import planeIconUrl from '../../assets/plane.svg';
 import { type MapCardFormData } from './MapCard';
-import { type FilteredMapData, type MapCoords } from './utils';
+import { type MapFlight, type FilteredMapData, type MapCoords } from './utils';
 
 export interface CesiumMapProps {
   center: MapCoords;
+  currentFlight?: MapFlight;
   data: FilteredMapData;
   hoverAirportId: string | null;
   methods: UseFormReturn<MapCardFormData>;
@@ -17,6 +19,7 @@ export interface CesiumMapProps {
 
 export const CesiumMap = ({
   center,
+  currentFlight,
   data,
   hoverAirportId,
   methods,
@@ -52,6 +55,7 @@ export const CesiumMap = ({
           setSelectedAirportId(null);
         }
       }}
+      resolutionScale={2}
       scene3DOnly
       style={{
         borderRadius: '1rem',
@@ -99,7 +103,7 @@ export const CesiumMap = ({
             onMouseLeave={() => {
               setHoverAirportId(null);
             }}
-            position={Cartesian3.fromDegrees(lon, lat, 100)}
+            position={Cartesian3.fromDegrees(lon, lat, 10)}
             point={{
               color: Color.fromAlpha(
                 isActive ? Color.YELLOW : Color.WHITE,
@@ -115,6 +119,20 @@ export const CesiumMap = ({
           />
         );
       })}
+      {currentFlight !== undefined ? (
+        <Entity
+          position={Cartesian3.fromDegrees(
+            currentFlight.lng,
+            currentFlight.lat,
+            1000,
+          )}
+          billboard={{
+            image: planeIconUrl,
+            scale: 0.15,
+            rotation: -(currentFlight.heading - 90) * (Math.PI / 180),
+          }}
+        />
+      ) : null}
     </Viewer>
   );
 };
