@@ -98,6 +98,11 @@ model flight {
   inTime             DateTime
   inTimeActual       DateTime?
   duration           Int            @default(0)
+  departureGate      String?
+  arrivalGate        String?
+  departureTerminal  String?
+  arrivalTerminal    String?
+  arrivalBaggage     String?
   class              FlightClass?
   seatNumber         String?
   seatPosition       SeatPosition?

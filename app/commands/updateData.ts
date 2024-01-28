@@ -12,8 +12,8 @@ import {
   seedManufacturers,
 } from '../db/seeders';
 import { UPDATE_CONCURRENCY } from './constants';
-import { updateFlightTimes } from './flightAware';
 import { updateFlightRegistrations } from './flightRadar';
+import { updateFlightTimes } from './flightStats';
 import { getGroupedFlightsKey } from './utils';
 
 export type FlightWithData = flight & {

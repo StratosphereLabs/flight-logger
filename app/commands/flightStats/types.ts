@@ -7,9 +7,8 @@ export interface FlightStatsAirport {
   country: string;
   timeZoneRegionName: string;
   regionName: string;
-  gate: string;
-  terminal: string;
-  baggage: string;
+  gate: string | null;
+  terminal: string | null;
   times: {
     scheduled: {
       time: string;
@@ -104,7 +103,9 @@ export interface FlightStatsFlight {
     };
     flightDuration: string;
   };
-  arrivalAirport: FlightStatsAirport;
+  arrivalAirport: FlightStatsAirport & {
+    baggage: string | null;
+  };
   codeshares: FlightStatsCodeshare[];
   departureAirport: FlightStatsAirport;
   divertedAirport: null;
