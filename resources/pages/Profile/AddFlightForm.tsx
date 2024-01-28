@@ -45,7 +45,7 @@ export const AddFlightForm = (): JSX.Element => {
       >
         <div className="flex flex-1 flex-wrap gap-4">
           <FormControl
-            className="w-[150px]"
+            className="min-w-[150px] max-w-[250px] flex-1"
             inputClassName="bg-base-100"
             isRequired
             labelText="Departure Date"
@@ -65,7 +65,7 @@ export const AddFlightForm = (): JSX.Element => {
             size="sm"
           />
           <FormControl
-            className="w-[120px]"
+            className="min-w-[120px] max-w-[250px] flex-1"
             labelText="Flight No."
             inputClassName="bg-base-100"
             isRequired
@@ -76,7 +76,7 @@ export const AddFlightForm = (): JSX.Element => {
           />
         </div>
         <Button
-          className="mt-9 flex"
+          className="mt-9 flex w-[120px]"
           color="neutral"
           loading={isFetching}
           disabled={!methods.formState.isDirty}

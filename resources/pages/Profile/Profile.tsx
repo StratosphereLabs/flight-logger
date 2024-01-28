@@ -32,14 +32,16 @@ export const Profile = (): JSX.Element => {
       </div>
       <CurrentFlightCard />
       <div className="flex flex-wrap-reverse gap-4">
-        <CompletedFlights />
-        <UpcomingFlights />
+        <div className="flex flex-col gap-4">
+          <CompletedFlights />
+          <UpcomingFlights />
+        </div>
         {username === undefined ? (
           <div className="flex flex-1 flex-col">
             <article className="prose p-1">
               <h4 className="m-0">Add Flight</h4>
             </article>
-            <Card className="w-full bg-base-200 shadow-md" compact>
+            <Card className="bg-base-200 shadow-md" compact>
               <CardBody className="flex-row gap-4">
                 <AddFlightForm />
               </CardBody>
