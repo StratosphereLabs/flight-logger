@@ -76,6 +76,22 @@ export const FlightsTable = ({
             footer: () => null,
           },
           {
+            id: 'flightNumber',
+            accessorKey: 'flightNumber',
+            header: () => 'Flt #',
+            cell: ({ getValue, row }) => {
+              const airline = row.original.airline;
+              const flightNumber = getValue<number | null>();
+              return (
+                <div className="flex gap-1 opacity-75">
+                  <div className="hidden sm:block">{airline?.iata}</div>
+                  {flightNumber}
+                </div>
+              );
+            },
+            footer: () => null,
+          },
+          {
             id: 'departureAirport',
             accessorKey: 'departureAirport',
             header: () => 'Dep',
@@ -92,22 +108,6 @@ export const FlightsTable = ({
             cell: ({ getValue }) => {
               const airport = getValue<airport>();
               return <div className="font-bold">{airport.iata}</div>;
-            },
-            footer: () => null,
-          },
-          {
-            id: 'flightNumber',
-            accessorKey: 'flightNumber',
-            header: () => 'Flt #',
-            cell: ({ getValue, row }) => {
-              const airline = row.original.airline;
-              const flightNumber = getValue<number | null>();
-              return (
-                <div className="flex gap-1 opacity-75">
-                  <div className="hidden sm:block">{airline?.iata}</div>
-                  {flightNumber}
-                </div>
-              );
             },
             footer: () => null,
           },
