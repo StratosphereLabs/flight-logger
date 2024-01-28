@@ -110,8 +110,8 @@ export const flightsRouter = router({
           airline: true,
         },
       });
-      await updateTripTimes(flight.tripId);
       await updateFlightTimes([flight]);
+      await updateTripTimes(flight.tripId);
       await updateFlightRegistrations([flight]);
       return flight;
     }),
