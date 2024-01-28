@@ -1,19 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-// import type { aircraft_type, airline, airport } from '@prisma/client';
+import type { airport } from '@prisma/client';
+import { getCoreRowModel } from '@tanstack/react-table';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
   Form,
   FormControl,
-  // Table,
+  Table,
   integerInputTransformer,
 } from 'stratosphere-ui';
 import {
   fetchFlightsByFlightNumberSchema,
   type FetchFlightsByFlightNumberRequest,
 } from '../../../app/schemas';
-import { AirlineInput, SearchIcon } from '../../common/components';
+import { AirlineInput, PlusIcon, SearchIcon } from '../../common/components';
 import { trpc } from '../../utils/trpc';
 import { flightSearchFormDefaultValues } from './constants';
 
@@ -32,12 +33,11 @@ export const AddFlightForm = (): JSX.Element => {
         enabled: currentFormData !== null,
       },
     );
-  console.log({ data });
   return (
     <>
       <Form
         methods={methods}
-        className="mt-[-12px] flex w-full flex-wrap justify-end gap-4"
+        className="mt-[-12px] flex w-full flex-wrap justify-end"
         onFormSubmit={values => {
           setCurrentFormData(values);
           methods.reset(values);
@@ -54,7 +54,7 @@ export const AddFlightForm = (): JSX.Element => {
             type="date"
           />
           <AirlineInput
-            className="min-w-[175px] max-w-[500px] flex-1"
+            className="min-w-[175px] max-w-[500px] flex-[2]"
             dropdownInputClassName="input-sm"
             getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
             inputClassName="bg-base-100"
@@ -76,7 +76,7 @@ export const AddFlightForm = (): JSX.Element => {
           />
         </div>
         <Button
-          className="mt-9 flex w-[120px]"
+          className="ml-4 mt-9 flex w-[120px]"
           color="neutral"
           loading={isFetching}
           disabled={!methods.formState.isDirty}
@@ -91,97 +91,139 @@ export const AddFlightForm = (): JSX.Element => {
           Search
         </Button>
       </Form>
-      {/* <Table
-        columns={[
-          {
-            id: 'airline',
-            accessorKey: 'airline',
-            header: () => 'Airline',
-            cell: ({ getValue }) => {
-              const airlineData = getValue<airline | null>();
-              return airlineData?.logo !== null &&
-                airlineData?.logo !== undefined ? (
-                <div className="flex justify-start">
-                  <img
-                    alt={`${airlineData.name} Logo`}
-                    className="max-h-[20px] max-w-[68px] sm:max-h-[28px]"
-                    src={airlineData.logo}
-                  />
-                </div>
-              ) : null;
-            },
-            footer: () => null,
-          },
-          {
-            id: 'flightNumber',
-            accessorKey: 'flightNumber',
-            header: () => 'Flt #',
-            cell: ({ getValue, row }) => {
-              const airline = row.original.airline;
-              const flightNumber = getValue<number | null>();
-              return (
-                <div className="flex gap-1 opacity-75">
-                  <div className="hidden sm:block">{airline?.iata}</div>
-                  {flightNumber}
-                </div>
-              );
-            },
-            footer: () => null,
-          },
-          {
-            id: 'departureAirport',
-            accessorKey: 'departureAirport',
-            header: () => 'Dep',
-            cell: ({ getValue }) => {
-              const airport = getValue<airport>();
-              return <div className="font-bold">{airport.iata}</div>;
-            },
-            footer: () => null,
-          },
-          {
-            id: 'arrivalAirport',
-            accessorKey: 'arrivalAirport',
-            header: () => 'Arr',
-            cell: ({ getValue }) => {
-              const airport = getValue<airport>();
-              return <div className="font-bold">{airport.iata}</div>;
-            },
-            footer: () => null,
-          },
-          {
-            id: 'duration',
-            accessorKey: 'durationString',
-            header: () => (
-              <div className="w-full">
-                <div className="sm:hidden">Dur</div>
-                <div className="hidden sm:block">Duration</div>
-              </div>
-            ),
-            cell: ({ getValue, row }) => {
-              const duration = getValue<string>();
-              return (
-                <div className="font-mono opacity-75">
-                  <div className="sm:hidden">
-                    {row.original.durationStringAbbreviated}
+      {data !== undefined && !isFetching ? (
+        <Table
+          cellClassNames={{
+            date: 'w-[50px]',
+            airline: 'w-[80px] py-[2px] sm:py-1 hidden sm:table-cell',
+            flightNumber: 'w-[100px] hidden sm:table-cell',
+            departureAirport: 'min-w-[76px]',
+            arrivalAirport: 'min-w-[76px]',
+            duration: 'w-[100px]',
+            actions: 'max-w-[175px]',
+          }}
+          className="table-xs bg-base-100 sm:table-sm"
+          columns={[
+            {
+              id: 'date',
+              accessorKey: 'outTimeDate',
+              header: () => 'Date',
+              cell: ({ getValue }) => {
+                const outTimeDate = getValue<string>();
+                return (
+                  <div className="font-mono font-bold opacity-70">
+                    {outTimeDate}
                   </div>
-                  <div className="hidden sm:block">{duration}</div>
+                );
+              },
+            },
+            {
+              id: 'airline',
+              accessorKey: 'airline',
+              header: () => 'Airline',
+              cell: ({ getValue }) => {
+                return currentFormData?.airline?.logo !== null &&
+                  currentFormData?.airline?.logo !== undefined ? (
+                  <div className="flex justify-start">
+                    <img
+                      alt={`${currentFormData.airline.name} Logo`}
+                      className="max-h-[20px] max-w-[68px] sm:max-h-[28px]"
+                      src={currentFormData.airline.logo}
+                    />
+                  </div>
+                ) : null;
+              },
+              footer: () => null,
+            },
+            {
+              id: 'flightNumber',
+              accessorKey: 'flightNumber',
+              header: () => 'Flt #',
+              cell: () => (
+                <div className="flex gap-1 opacity-75">
+                  <div className="hidden sm:block">
+                    {currentFormData?.airline?.iata}
+                  </div>
+                  {currentFormData?.flightNumber}
                 </div>
-              );
+              ),
+              footer: () => null,
             },
-          },
-          {
-            id: 'aircraftType',
-            accessorKey: 'aircraftType',
-            header: () => 'Acft',
-            cell: ({ getValue }) => {
-              const aircraftType = getValue<aircraft_type | null>();
-              return <div className="opacity-75">{aircraftType?.icao}</div>;
+            {
+              id: 'departureAirport',
+              accessorKey: 'departureAirport',
+              header: () => 'Dep',
+              cell: ({ getValue, row }) => {
+                const airport = getValue<airport>();
+                return (
+                  <div className="flex flex-wrap items-center">
+                    <div className="mr-2 font-bold">{airport.iata}</div>
+                    <div className="text-xs opacity-75">
+                      {row.original.outTimeLocal}
+                    </div>
+                  </div>
+                );
+              },
+              footer: () => null,
             },
-            footer: () => null,
-          },
-        ]}
-        data={data}
-      /> */}
+            {
+              id: 'arrivalAirport',
+              accessorKey: 'arrivalAirport',
+              header: () => 'Arr',
+              cell: ({ getValue, row }) => {
+                const airport = getValue<airport>();
+                return (
+                  <div className="flex flex-wrap items-center">
+                    <div className="mr-2 font-bold">{airport.iata}</div>
+                    <div className="text-xs opacity-75">
+                      {row.original.inTimeLocal}
+                      {row.original.inTimeDaysAdded > 0 ? (
+                        <sup>+{row.original.inTimeDaysAdded}</sup>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              },
+              footer: () => null,
+            },
+            {
+              id: 'duration',
+              accessorKey: 'durationString',
+              header: () => (
+                <div className="w-full">
+                  <div className="sm:hidden">Dur</div>
+                  <div className="hidden sm:block">Duration</div>
+                </div>
+              ),
+              cell: ({ getValue, row }) => {
+                const duration = getValue<string>();
+                return (
+                  <div className="font-mono opacity-75">
+                    <div className="sm:hidden">
+                      {row.original.durationStringAbbreviated}
+                    </div>
+                    <div className="hidden sm:block">{duration}</div>
+                  </div>
+                );
+              },
+            },
+            {
+              id: 'actions',
+              header: () => 'Actions',
+              cell: () => (
+                <Button className="btn-xs w-full min-w-[80px] sm:btn-sm">
+                  <PlusIcon className="h-4 w-4" />
+                  Add
+                </Button>
+              ),
+              footer: () => null,
+            },
+          ]}
+          data={data}
+          enableSorting={false}
+          getCoreRowModel={getCoreRowModel()}
+        />
+      ) : null}
     </>
   );
 };

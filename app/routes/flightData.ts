@@ -1,9 +1,13 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import groupBy from 'lodash.groupby';
 import { fetchFlightStatsData } from '../commands/flightStats';
-import { DATE_FORMAT_ISO } from '../constants';
+import { DATE_FORMAT_ISO, DATE_FORMAT_SHORT } from '../constants';
+import { prisma } from '../db';
 import { fetchFlightsByFlightNumberSchema } from '../schemas';
 import { procedure, router } from '../trpc';
+import { getFlightTimes, getFlightTimestamps } from '../utils';
 
 export const flightDataRouter = router({
   fetchFlightsByFlightNumber: procedure
@@ -40,7 +44,54 @@ export const flightDataRouter = router({
           message: 'Unable to fetch flight times. Please try again later.',
         });
       }
-      return flightStatsFlightData.flights;
+      const airportIds = [
+        ...new Set(
+          flightStatsFlightData.flights.flatMap(
+            ({ departureAirport, arrivalAirport }) => [
+              departureAirport.iata,
+              arrivalAirport.iata,
+            ],
+          ),
+        ),
+      ];
+      const airports = await prisma.airport.findMany({
+        where: {
+          iata: {
+            in: airportIds,
+          },
+        },
+      });
+      const groupedAirports = groupBy(airports, 'iata');
+      return flightStatsFlightData.flights.map((flight, index) => {
+        const departureAirport =
+          groupedAirports[flight.departureAirport.iata][0];
+        const arrivalAirport = groupedAirports[flight.arrivalAirport.iata][0];
+        const { outTime, inTime, duration } = getFlightTimes({
+          departureAirport,
+          arrivalAirport,
+          outDateISO: input.outDateISO,
+          outTimeValue: flight.departureTime24,
+          inTimeValue: flight.arrivalTime24,
+        });
+        const timestamps = getFlightTimestamps({
+          departureAirport,
+          arrivalAirport,
+          duration,
+          outTime,
+          inTime,
+        });
+        return {
+          id: index,
+          duration,
+          outTimeDate: formatInTimeZone(
+            outTime,
+            departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          ...flight,
+          ...timestamps,
+        };
+      });
     }),
 });
 

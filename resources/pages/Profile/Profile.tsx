@@ -42,7 +42,7 @@ export const Profile = (): JSX.Element => {
               <h4 className="m-0">Add Flight</h4>
             </article>
             <Card className="bg-base-200 shadow-md" compact>
-              <CardBody className="flex-row gap-4">
+              <CardBody className="gap-4">
                 <AddFlightForm />
               </CardBody>
             </Card>
