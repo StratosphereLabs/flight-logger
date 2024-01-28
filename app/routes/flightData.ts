@@ -3,7 +3,11 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 import { fetchFlightStatsData } from '../commands/flightStats';
-import { DATE_FORMAT_ISO, DATE_FORMAT_SHORT } from '../constants';
+import {
+  DATE_FORMAT_ISO,
+  DATE_FORMAT_SHORT,
+  DATE_FORMAT_WITH_DAY,
+} from '../constants';
 import { prisma } from '../db';
 import { fetchFlightsByFlightNumberSchema } from '../schemas';
 import { procedure, router } from '../trpc';
@@ -74,6 +78,11 @@ export const flightDataRouter = router({
           id: index,
           duration,
           outTimeDate: formatInTimeZone(
+            outTime,
+            departureAirport.timeZone,
+            DATE_FORMAT_WITH_DAY,
+          ),
+          outTimeDateAbbreviated: formatInTimeZone(
             outTime,
             departureAirport.timeZone,
             DATE_FORMAT_SHORT,
