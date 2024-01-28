@@ -102,12 +102,11 @@ export const AddFlightForm = (): JSX.Element => {
             duration: 'w-[100px]',
             actions: 'max-w-[175px]',
           }}
-          className="table-xs bg-base-100 sm:table-sm"
+          className="table-xs sm:table-sm"
           columns={[
             {
               id: 'date',
               accessorKey: 'outTimeDate',
-              header: () => 'Date',
               cell: ({ getValue }) => {
                 const outTimeDate = getValue<string>();
                 return (
@@ -120,7 +119,6 @@ export const AddFlightForm = (): JSX.Element => {
             {
               id: 'airline',
               accessorKey: 'airline',
-              header: () => 'Airline',
               cell: ({ getValue }) => {
                 return currentFormData?.airline?.logo !== null &&
                   currentFormData?.airline?.logo !== undefined ? (
@@ -138,7 +136,6 @@ export const AddFlightForm = (): JSX.Element => {
             {
               id: 'flightNumber',
               accessorKey: 'flightNumber',
-              header: () => 'Flt #',
               cell: () => (
                 <div className="flex gap-1 opacity-75">
                   <div className="hidden sm:block">
@@ -152,7 +149,6 @@ export const AddFlightForm = (): JSX.Element => {
             {
               id: 'departureAirport',
               accessorKey: 'departureAirport',
-              header: () => 'Dep',
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (
@@ -169,7 +165,6 @@ export const AddFlightForm = (): JSX.Element => {
             {
               id: 'arrivalAirport',
               accessorKey: 'arrivalAirport',
-              header: () => 'Arr',
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (
@@ -189,12 +184,6 @@ export const AddFlightForm = (): JSX.Element => {
             {
               id: 'duration',
               accessorKey: 'durationString',
-              header: () => (
-                <div className="w-full">
-                  <div className="sm:hidden">Dur</div>
-                  <div className="hidden sm:block">Duration</div>
-                </div>
-              ),
               cell: ({ getValue, row }) => {
                 const duration = getValue<string>();
                 return (
@@ -209,9 +198,13 @@ export const AddFlightForm = (): JSX.Element => {
             },
             {
               id: 'actions',
-              header: () => 'Actions',
               cell: () => (
-                <Button className="btn-xs w-full min-w-[80px] sm:btn-sm">
+                <Button
+                  className="btn-info btn-xs w-full min-w-[80px] sm:btn-sm"
+                  onClick={() => {
+                    alert('Coming Soon!');
+                  }}
+                >
                   <PlusIcon className="h-4 w-4" />
                   Add
                 </Button>
@@ -222,7 +215,22 @@ export const AddFlightForm = (): JSX.Element => {
           data={data}
           enableSorting={false}
           getCoreRowModel={getCoreRowModel()}
+          hideHeader
         />
+      ) : null}
+      {data !== undefined && !isFetching && data.length === 0 ? (
+        <div className="flex w-full flex-col items-center gap-6 font-semibold">
+          <div>No Flights Found</div>
+          <Button
+            color="primary"
+            onClick={() => {
+              alert('Coming Soon!');
+            }}
+          >
+            <PlusIcon className="h-6 w-6" />
+            Add Flight Info
+          </Button>
+        </div>
       ) : null}
     </>
   );

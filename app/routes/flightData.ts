@@ -21,12 +21,7 @@ export const flightDataRouter = router({
         });
       }
       const data = await fetchFlightStatsData(airline.iata, flightNumber);
-      if (data === null) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Unable to fetch flight times. Please try again later.',
-        });
-      }
+      if (data === null) return [];
       const { otherDays } = data.props.initialState.flightTracker;
       const flightStatsFlightData =
         typeof otherDays === 'object'
@@ -38,12 +33,7 @@ export const flightDataRouter = router({
               return date === outDateISO;
             })
           : undefined;
-      if (flightStatsFlightData === undefined) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Unable to fetch flight times. Please try again later.',
-        });
-      }
+      if (flightStatsFlightData === undefined) return [];
       const airportIds = [
         ...new Set(
           flightStatsFlightData.flights.flatMap(

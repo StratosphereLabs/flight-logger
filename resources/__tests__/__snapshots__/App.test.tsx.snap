@@ -412,7 +412,7 @@ exports[`<App /> > renders profile page 1`] = `
       style="position: fixed; top: 1px; left: 1px; width: 1px; height: 0px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; display: none;"
     />
     <div
-      class="flex flex-1 flex-col overflow-y-scroll bg-base-100 p-3 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:scrollbar"
+      class="flex flex-1 flex-col overflow-x-hidden overflow-y-scroll bg-base-100 p-3 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:scrollbar"
     >
       <div
         class="flex flex-1 flex-col justify-center"
