@@ -82,6 +82,7 @@ export const fetchFlightRegistrationData = async ({
         onTimeTimestamp !== undefined &&
         onTimeTimestamp.length > 0 &&
         (onTimeText.includes('Landed') ||
+          onTimeText.includes('Delayed') ||
           (onTimeText.includes('Estimated') &&
             !onTimeText.includes('departure')))
           ? createNewDate(parseInt(onTimeTimestamp, 10))
