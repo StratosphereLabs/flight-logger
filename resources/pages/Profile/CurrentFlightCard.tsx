@@ -157,8 +157,8 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               ) : null}
             </div>
             {data.progress > 0 && data.progress < 1 ? (
-              <div className="flex gap-1 text-xs">
-                <span className="font-mono">
+              <div className="flex items-center justify-start gap-1 text-xs">
+                <span className="mb-[-1px] font-mono">
                   {data.durationToDepartureAbbrString}
                 </span>
                 ago
@@ -220,9 +220,9 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               ) : null}
             </div>
             {data.progress > 0 && data.progress < 1 ? (
-              <div className="flex justify-end gap-1 text-xs">
+              <div className="flex items-center justify-end gap-1 text-xs">
                 in
-                <span className="font-mono">
+                <span className="mb-[-1px] font-mono">
                   {data.durationToArrivalAbbrString}
                 </span>
               </div>

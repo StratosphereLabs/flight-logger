@@ -18,10 +18,36 @@ import { getGroupedFlightsKey } from './utils';
 const updateFlights = async (): Promise<void> => {
   const flightsToUpdate = await prisma.flight.findMany({
     where: {
-      outTime: {
-        gt: sub(new Date(), { days: 1 }),
-        lt: add(new Date(), { days: 1 }),
-      },
+      AND: [
+        {
+          OR: [
+            {
+              inTimeActual: {
+                gt: sub(new Date(), { hours: 12 }),
+              },
+            },
+            {
+              inTime: {
+                gt: sub(new Date(), { hours: 12 }),
+              },
+            },
+          ],
+        },
+        {
+          OR: [
+            {
+              outTimeActual: {
+                lte: add(new Date(), { days: 1 }),
+              },
+            },
+            {
+              outTime: {
+                lte: add(new Date(), { days: 1 }),
+              },
+            },
+          ],
+        },
+      ],
       airline: {
         isNot: null,
       },
