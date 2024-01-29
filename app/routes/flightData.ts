@@ -1,11 +1,17 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
-import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
-import { fetchFlightStatsData } from '../commands/flightStats';
-import { DATE_FORMAT_ISO, DATE_FORMAT_SHORT } from '../constants';
+import { fetchFlightRegistrationData } from '../data/flightRadar';
+import {
+  fetchFlightStatsData,
+  fetchFlightStatsDataByFlightNumber,
+} from '../data/flightStats';
+import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { prisma } from '../db';
-import { fetchFlightsByFlightNumberSchema } from '../schemas';
+import {
+  fetchFlightDataSchema,
+  fetchFlightsByFlightNumberSchema,
+} from '../schemas';
 import { procedure, router } from '../trpc';
 import { getFlightTimes, getFlightTimestamps } from '../utils';
 
@@ -20,28 +26,18 @@ export const flightDataRouter = router({
           message: 'Airline and Flight Number are required.',
         });
       }
-      const data = await fetchFlightStatsData(airline.iata, flightNumber);
-      if (data === null) return [];
-      const { otherDays } = data.props.initialState.flightTracker;
-      const flightStatsFlightData =
-        typeof otherDays === 'object'
-          ? otherDays.find(({ date1, year }) => {
-              const date = format(
-                new Date(`${year}-${date1}`),
-                DATE_FORMAT_ISO,
-              );
-              return date === outDateISO;
-            })
-          : undefined;
-      if (flightStatsFlightData === undefined) return [];
+      const flights = await fetchFlightStatsDataByFlightNumber({
+        airlineIata: airline.iata,
+        flightNumber,
+        isoDate: outDateISO,
+      });
+      if (flights === null) return [];
       const airportIds = [
         ...new Set(
-          flightStatsFlightData.flights.flatMap(
-            ({ departureAirport, arrivalAirport }) => [
-              departureAirport.iata,
-              arrivalAirport.iata,
-            ],
-          ),
+          flights.flatMap(({ departureAirport, arrivalAirport }) => [
+            departureAirport.iata,
+            arrivalAirport.iata,
+          ]),
         ),
       ];
       const airports = await prisma.airport.findMany({
@@ -52,7 +48,7 @@ export const flightDataRouter = router({
         },
       });
       const groupedAirports = groupBy(airports, 'iata');
-      return flightStatsFlightData.flights.map((flight, index) => {
+      return flights.map((flight, index) => {
         const departureAirport =
           groupedAirports[flight.departureAirport.iata][0];
         const arrivalAirport = groupedAirports[flight.arrivalAirport.iata][0];
@@ -76,12 +72,55 @@ export const flightDataRouter = router({
           outTimeDate: formatInTimeZone(
             outTime,
             departureAirport.timeZone,
+            DATE_FORMAT_WITH_DAY,
+          ),
+          outTimeDateAbbreviated: formatInTimeZone(
+            outTime,
+            departureAirport.timeZone,
             DATE_FORMAT_SHORT,
           ),
           ...flight,
           ...timestamps,
         };
       });
+    }),
+  fetchFlightData: procedure
+    .input(fetchFlightDataSchema)
+    .query(async ({ input }) => {
+      const { airline, flightNumber, outDateISO, departureIata, arrivalIata } =
+        input;
+      if (airline === null || flightNumber === null) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Airline and Flight Number are required.',
+        });
+      }
+      const airportIds = [departureIata, arrivalIata];
+      const airports = await prisma.airport.findMany({
+        where: {
+          iata: {
+            in: airportIds,
+          },
+        },
+      });
+      const groupedAirports = groupBy(airports, 'iata');
+      const departureAirport = groupedAirports[departureIata][0];
+      const arrivalAirport = groupedAirports[arrivalIata][0];
+      const flightData = await fetchFlightStatsData({
+        airlineIata: airline.iata,
+        arrivalIata,
+        departureIata,
+        flightNumber,
+        isoDate: outDateISO,
+      });
+      const registrationData = await fetchFlightRegistrationData({
+        airlineIata: airline.iata,
+        flightNumber,
+        departureAirport,
+        arrivalAirport,
+        isoDate: outDateISO,
+      });
+      return { flightData, registrationData };
     }),
 });
 

@@ -158,6 +158,14 @@ export interface FlightStatsOtherDayFlight {
   sortTime: string;
 }
 
+export interface FlightStatsOtherDay {
+  date1: string;
+  date2: string;
+  day: string;
+  year: string;
+  flights: FlightStatsOtherDayFlight[];
+}
+
 export interface FlightStatsDataProps {
   initialProps: {
     pageProps: {
@@ -196,15 +204,7 @@ export interface FlightStatsDataProps {
     flightTracker: {
       flight: FlightStatsFlight;
       flightLoading: boolean;
-      otherDays:
-        | Array<{
-            date1: string;
-            date2: string;
-            day: string;
-            year: string;
-            flights: FlightStatsOtherDayFlight[];
-          }>
-        | '';
+      otherDays: FlightStatsOtherDay[] | '';
     };
     loading: {
       LOAD_FLIGHT_TRACKER_FLIGHT: boolean;

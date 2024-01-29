@@ -10,6 +10,7 @@ import {
   Table,
   integerInputTransformer,
 } from 'stratosphere-ui';
+import { type FlightDataRouterOutput } from '../../../app/routes/flightData';
 import {
   fetchFlightsByFlightNumberSchema,
   type FetchFlightsByFlightNumberRequest,
@@ -26,6 +27,9 @@ export const AddFlightForm = (): JSX.Element => {
   });
   const [currentFormData, setCurrentFormData] =
     useState<FetchFlightsByFlightNumberRequest | null>(null);
+  const [selectedFlight, setSelectedFlight] = useState<
+    FlightDataRouterOutput['fetchFlightsByFlightNumber'][number] | null
+  >(null);
   const { data, isFetching } =
     trpc.flightData.fetchFlightsByFlightNumber.useQuery(
       currentFormData ?? flightSearchFormDefaultValues,
@@ -33,19 +37,33 @@ export const AddFlightForm = (): JSX.Element => {
         enabled: currentFormData !== null,
       },
     );
+  const { data: flightData, isFetching: isFlightDataFetching } =
+    trpc.flightData.fetchFlightData.useQuery(
+      {
+        airline: currentFormData?.airline ?? null,
+        flightNumber: currentFormData?.flightNumber ?? null,
+        outDateISO: currentFormData?.outDateISO ?? '',
+        departureIata: selectedFlight?.departureAirport.iata ?? '',
+        arrivalIata: selectedFlight?.arrivalAirport.iata ?? '',
+      },
+      {
+        enabled: currentFormData !== null && selectedFlight !== null,
+      },
+    );
+  console.log({ flightData });
   return (
     <>
       <Form
         methods={methods}
-        className="mt-[-12px] flex w-full flex-wrap justify-end"
+        className="mt-[-12px] flex w-full flex-col gap-8 sm:flex-row"
         onFormSubmit={values => {
           setCurrentFormData(values);
           methods.reset(values);
         }}
       >
-        <div className="flex flex-1 flex-wrap gap-4">
+        <div className="flex flex-1 flex-wrap gap-x-4 gap-y-2">
           <FormControl
-            className="min-w-[150px] max-w-[250px] flex-1"
+            className="w-[150px]"
             inputClassName="bg-base-100"
             isRequired
             labelText="Departure Date"
@@ -54,18 +72,18 @@ export const AddFlightForm = (): JSX.Element => {
             type="date"
           />
           <AirlineInput
-            className="min-w-[175px] max-w-[500px] flex-[2]"
+            className="min-w-[250px] max-w-[500px] flex-1"
             dropdownInputClassName="input-sm"
             getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
             inputClassName="bg-base-100"
             isRequired
             labelText="Airline"
-            menuClassName="w-full"
+            menuClassName="w-full menu-sm"
             name="airline"
             size="sm"
           />
           <FormControl
-            className="min-w-[120px] max-w-[250px] flex-1"
+            className="w-[125px]"
             labelText="Flight No."
             inputClassName="bg-base-100"
             isRequired
@@ -75,26 +93,28 @@ export const AddFlightForm = (): JSX.Element => {
             size="sm"
           />
         </div>
-        <Button
-          className="ml-4 mt-9 flex w-[120px]"
-          color="neutral"
-          loading={isFetching}
-          disabled={!methods.formState.isDirty}
-          size="sm"
-          type="submit"
-        >
-          {!isFetching ? (
-            <div className="flex w-6 justify-center">
-              <SearchIcon className="h-5 w-5" />
-            </div>
-          ) : null}
-          Search
-        </Button>
+        <div className="flex w-full items-end justify-center sm:w-auto">
+          <Button
+            className="w-full min-w-[120px] max-w-[250px] sm:mt-9"
+            color="neutral"
+            loading={isFetching}
+            disabled={!methods.formState.isDirty}
+            size="sm"
+            type="submit"
+          >
+            {!isFetching ? (
+              <div className="flex w-6 justify-center">
+                <SearchIcon className="h-5 w-5" />
+              </div>
+            ) : null}
+            Search
+          </Button>
+        </div>
       </Form>
       {data !== undefined && !isFetching ? (
         <Table
           cellClassNames={{
-            date: 'w-[50px]',
+            date: 'w-[50px] sm:w-[105px]',
             airline: 'w-[80px] py-[2px] sm:py-1 hidden sm:table-cell',
             flightNumber: 'w-[100px] hidden sm:table-cell',
             departureAirport: 'min-w-[76px]',
@@ -107,11 +127,14 @@ export const AddFlightForm = (): JSX.Element => {
             {
               id: 'date',
               accessorKey: 'outTimeDate',
-              cell: ({ getValue }) => {
+              cell: ({ getValue, row }) => {
                 const outTimeDate = getValue<string>();
                 return (
-                  <div className="font-mono font-bold opacity-70">
-                    {outTimeDate}
+                  <div className="whitespace-nowrap font-mono text-xs font-semibold opacity-70">
+                    <div className="block sm:hidden">
+                      {row.original.outTimeDateAbbreviated}
+                    </div>
+                    <div className="hidden sm:block">{outTimeDate}</div>
                   </div>
                 );
               },
@@ -187,7 +210,7 @@ export const AddFlightForm = (): JSX.Element => {
               cell: ({ getValue, row }) => {
                 const duration = getValue<string>();
                 return (
-                  <div className="font-mono opacity-75">
+                  <div className="whitespace-nowrap font-mono opacity-75">
                     <div className="sm:hidden">
                       {row.original.durationStringAbbreviated}
                     </div>
@@ -198,17 +221,24 @@ export const AddFlightForm = (): JSX.Element => {
             },
             {
               id: 'actions',
-              cell: () => (
-                <Button
-                  className="btn-info btn-xs w-full min-w-[80px] sm:btn-sm"
-                  onClick={() => {
-                    alert('Coming Soon!');
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Add
-                </Button>
-              ),
+              cell: ({ row }) => {
+                const isLoading =
+                  row.original.id === selectedFlight?.id &&
+                  isFlightDataFetching;
+                return (
+                  <Button
+                    className="btn-info btn-xs w-full min-w-[80px] sm:btn-sm"
+                    disabled={isLoading}
+                    loading={isLoading}
+                    onClick={() => {
+                      setSelectedFlight(row.original);
+                    }}
+                  >
+                    {!isLoading ? <PlusIcon className="h-4 w-4" /> : null}
+                    Add
+                  </Button>
+                );
+              },
               footer: () => null,
             },
           ]}
