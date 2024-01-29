@@ -4,7 +4,12 @@ import { Card, CardBody, Link, Progress } from 'stratosphere-ui';
 import { PlaneSolidIcon } from '../../common/components';
 import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { CARD_COLORS, PROGRESS_BAR_COLORS, TEXT_COLORS } from './constants';
+import {
+  CARD_BORDER_COLORS,
+  CARD_COLORS,
+  PROGRESS_BAR_COLORS,
+  TEXT_COLORS,
+} from './constants';
 
 export const CurrentFlightCard = (): JSX.Element | null => {
   const enabled = useProfilePage();
@@ -25,7 +30,14 @@ export const CurrentFlightCard = (): JSX.Element | null => {
     return null;
   }
   return (
-    <Card className={classNames('shadow-md', CARD_COLORS[data.delayStatus])}>
+    <Card
+      className={classNames(
+        'border-2 shadow-md',
+        CARD_COLORS[data.delayStatus],
+        CARD_BORDER_COLORS[data.delayStatus],
+      )}
+      bordered
+    >
       <CardBody className="gap-0 px-[0.75rem] py-[0.5rem] sm:px-[1.25rem] sm:pt-[0.75rem]">
         <div className="flex w-full items-center justify-between gap-2 text-xs sm:text-sm">
           <div className="flex flex-1 flex-col gap-1">
@@ -145,8 +157,8 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               ) : null}
             </div>
             {data.progress > 0 && data.progress < 1 ? (
-              <div className="flex gap-1 text-xs">
-                <span className="font-mono">
+              <div className="flex items-center justify-start gap-1 text-xs">
+                <span className="mb-[-1px] font-mono">
                   {data.durationToDepartureAbbrString}
                 </span>
                 ago
@@ -208,9 +220,9 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               ) : null}
             </div>
             {data.progress > 0 && data.progress < 1 ? (
-              <div className="flex justify-end gap-1 text-xs">
+              <div className="flex items-center justify-end gap-1 text-xs">
                 in
-                <span className="font-mono">
+                <span className="mb-[-1px] font-mono">
                   {data.durationToArrivalAbbrString}
                 </span>
               </div>
