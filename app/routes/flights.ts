@@ -11,7 +11,11 @@ import {
   getFlightSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { getFlightTimes } from '../utils';
+import {
+  flightIncludeObj,
+  getFlightTimes,
+  transformFlightData,
+} from '../utils';
 
 export const flightsRouter = router({
   addFlight: procedure
@@ -111,9 +115,21 @@ export const flightsRouter = router({
         },
       });
       await updateFlightTimesData([flight]);
-      await updateTripTimes(flight.tripId);
       await updateFlightRegistrationData([flight]);
-      return flight;
+      await updateTripTimes(flight.tripId);
+      const updatedFlight = await prisma.flight.findUnique({
+        where: {
+          id: flight.id,
+        },
+        include: flightIncludeObj,
+      });
+      if (updatedFlight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      return transformFlightData(updatedFlight);
     }),
   getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
     const { id } = input;
@@ -121,6 +137,7 @@ export const flightsRouter = router({
       where: {
         id,
       },
+      include: flightIncludeObj,
     });
     if (flight === null) {
       throw new TRPCError({
@@ -128,7 +145,7 @@ export const flightsRouter = router({
         message: 'Flight not found.',
       });
     }
-    return flight;
+    return transformFlightData(flight);
   }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -174,7 +191,7 @@ export const flightsRouter = router({
       });
       const clearFlightData =
         !isEqual(outTime, flight.outTime) || !isEqual(inTime, flight.inTime);
-      const updatedFlight = await prisma.flight.update({
+      const updatedFlightData = await prisma.flight.update({
         where: {
           id,
         },
@@ -240,9 +257,30 @@ export const flightsRouter = router({
           comments: input.comments,
           trackingLink: input.trackingLink,
         },
+        include: {
+          airline: true,
+          departureAirport: true,
+          arrivalAirport: true,
+        },
       });
-      await updateTripTimes(updatedFlight.tripId);
-      return updatedFlight;
+      if (clearFlightData) {
+        await updateFlightTimesData([updatedFlightData]);
+        await updateFlightRegistrationData([updatedFlightData]);
+        await updateTripTimes(updatedFlightData.tripId);
+      }
+      const updatedFlight = await prisma.flight.findUnique({
+        where: {
+          id: flight.id,
+        },
+        include: flightIncludeObj,
+      });
+      if (updatedFlight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      return transformFlightData(updatedFlight);
     }),
   deleteFlight: procedure
     .use(verifyAuthenticated)
@@ -265,9 +303,10 @@ export const flightsRouter = router({
         where: {
           id,
         },
+        include: flightIncludeObj,
       });
       await updateTripTimes(deletedFlight.tripId);
-      return deletedFlight;
+      return transformFlightData(deletedFlight);
     }),
 });
 
