@@ -3,7 +3,7 @@ import { DATE_FORMAT_ISO } from '../constants';
 import { fetchFlightStatsData } from '../data/flightStats';
 import { prisma, updateTripTimes } from '../db';
 import { getDurationMinutes } from '../utils';
-import { type FlightWithData } from './updateData';
+import type { FlightWithData } from './types';
 import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightTimesData = async (

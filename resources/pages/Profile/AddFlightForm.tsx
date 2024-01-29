@@ -1,16 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
-import { useState } from 'react';
+import classNames from 'classnames';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
+  CheckIcon,
   Form,
   FormControl,
   Table,
   integerInputTransformer,
 } from 'stratosphere-ui';
-import { type FlightDataRouterOutput } from '../../../app/routes/flightData';
 import {
   fetchFlightsByFlightNumberSchema,
   type FetchFlightsByFlightNumberRequest,
@@ -20,6 +21,7 @@ import { trpc } from '../../utils/trpc';
 import { flightSearchFormDefaultValues } from './constants';
 
 export const AddFlightForm = (): JSX.Element => {
+  const utils = trpc.useUtils();
   const methods = useForm<FetchFlightsByFlightNumberRequest>({
     defaultValues: flightSearchFormDefaultValues,
     resolver: zodResolver(fetchFlightsByFlightNumberSchema),
@@ -27,9 +29,8 @@ export const AddFlightForm = (): JSX.Element => {
   });
   const [currentFormData, setCurrentFormData] =
     useState<FetchFlightsByFlightNumberRequest | null>(null);
-  const [selectedFlight, setSelectedFlight] = useState<
-    FlightDataRouterOutput['fetchFlightsByFlightNumber'][number] | null
-  >(null);
+  const [selectedFlightId, setSelectedFlightId] = useState<number | null>(null);
+  const [completedFlightIds, setCompletedFlightIds] = useState<number[]>([]);
   const { data, isFetching } =
     trpc.flightData.fetchFlightsByFlightNumber.useQuery(
       currentFormData ?? flightSearchFormDefaultValues,
@@ -37,20 +38,19 @@ export const AddFlightForm = (): JSX.Element => {
         enabled: currentFormData !== null,
       },
     );
-  const { data: flightData, isFetching: isFlightDataFetching } =
-    trpc.flightData.fetchFlightData.useQuery(
-      {
-        airline: currentFormData?.airline ?? null,
-        flightNumber: currentFormData?.flightNumber ?? null,
-        outDateISO: currentFormData?.outDateISO ?? '',
-        departureIata: selectedFlight?.departureAirport.iata ?? '',
-        arrivalIata: selectedFlight?.arrivalAirport.iata ?? '',
+  const { mutate, isLoading: isFlightDataLoading } =
+    trpc.flightData.addFlightFromData.useMutation({
+      onSuccess: () => {
+        if (selectedFlightId !== null) {
+          setCompletedFlightIds(prevIds => [...prevIds, selectedFlightId]);
+          setSelectedFlightId(null);
+          void utils.users.invalidate();
+        }
       },
-      {
-        enabled: currentFormData !== null && selectedFlight !== null,
-      },
-    );
-  console.log({ flightData });
+    });
+  useEffect(() => {
+    setCompletedFlightIds([]);
+  }, [data]);
   return (
     <>
       <Form
@@ -223,19 +223,36 @@ export const AddFlightForm = (): JSX.Element => {
               id: 'actions',
               cell: ({ row }) => {
                 const isLoading =
-                  row.original.id === selectedFlight?.id &&
-                  isFlightDataFetching;
+                  row.original.id === selectedFlightId && isFlightDataLoading;
+                const isAdded = completedFlightIds.includes(row.original.id);
                 return (
                   <Button
-                    className="btn-info btn-xs w-full min-w-[80px] sm:btn-sm"
+                    className={classNames(
+                      'btn-xs w-full min-w-[80px] sm:btn-sm',
+                      isAdded ? 'btn-success' : 'btn-info',
+                    )}
                     disabled={isLoading}
                     loading={isLoading}
                     onClick={() => {
-                      setSelectedFlight(row.original);
+                      if (!isAdded && currentFormData !== null) {
+                        setSelectedFlightId(row.original.id);
+                        mutate({
+                          airline: currentFormData.airline,
+                          flightNumber: currentFormData.flightNumber,
+                          departureIata: row.original.departureAirport.iata,
+                          arrivalIata: row.original.arrivalAirport.iata,
+                          outDateISO: row.original.outDateISO,
+                        });
+                      }
                     }}
                   >
-                    {!isLoading ? <PlusIcon className="h-4 w-4" /> : null}
-                    Add
+                    {!isLoading && !isAdded ? (
+                      <PlusIcon className="h-4 w-4" />
+                    ) : null}
+                    {!isLoading && isAdded ? (
+                      <CheckIcon className="h-4 w-4" />
+                    ) : null}
+                    {isAdded ? 'Added' : 'Add'}
                   </Button>
                 );
               },

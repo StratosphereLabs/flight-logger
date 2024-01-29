@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
-import { Card, CardBody, Link } from 'stratosphere-ui';
+import { Card, CardBody, Link, Progress } from 'stratosphere-ui';
 import { PlaneSolidIcon } from '../../common/components';
 import { useProfilePage } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
@@ -9,7 +9,7 @@ import { CARD_COLORS, PROGRESS_BAR_COLORS, TEXT_COLORS } from './constants';
 export const CurrentFlightCard = (): JSX.Element | null => {
   const enabled = useProfilePage();
   const { username } = useParams();
-  const { data } = trpc.users.getUserCurrentFlight.useQuery(
+  const { data, isLoading } = trpc.users.getUserCurrentFlight.useQuery(
     {
       username,
     },
@@ -18,6 +18,9 @@ export const CurrentFlightCard = (): JSX.Element | null => {
       refetchInterval: 60000,
     },
   );
+  if (isLoading) {
+    return <Progress />;
+  }
   if (data === null || data === undefined) {
     return null;
   }

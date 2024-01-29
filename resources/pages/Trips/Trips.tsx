@@ -19,7 +19,7 @@ export const Trips = (): JSX.Element => {
   const { state } = useLocation() as {
     state: TripsPageNavigationState | null;
   };
-  const { data, error, isFetching } = trpc.users.getUserTrips.useQuery(
+  const { data, error, isLoading } = trpc.users.getUserTrips.useQuery(
     {
       username,
     },
@@ -39,12 +39,12 @@ export const Trips = (): JSX.Element => {
       <article className="prose self-center">
         <h2>{username !== undefined ? `${username}'s Trips` : 'My Trips'}</h2>
       </article>
-      {isFetching ? (
+      {isLoading ? (
         <div className="flex flex-1 justify-center pt-8">
           <span className="loading loading-spinner" />
         </div>
       ) : null}
-      {!isFetching && data !== undefined && data.total > 0 ? (
+      {!isLoading && data !== undefined && data.total > 0 ? (
         <>
           {data.upcomingTrips.length + data.currentTrips.length > 0 ? (
             [...data.currentTrips, ...data.upcomingTrips].map((trip, index) => (
@@ -77,7 +77,7 @@ export const Trips = (): JSX.Element => {
           )}
         </>
       ) : null}
-      {!isFetching && data?.total === 0 ? (
+      {!isLoading && data?.total === 0 ? (
         <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Trips</p>

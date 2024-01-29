@@ -7,7 +7,7 @@ import { FlightsTable } from './FlightsTable';
 export const CompletedFlights = (): JSX.Element | null => {
   const enabled = useProfilePage();
   const { username } = useParams();
-  const { data, isFetching } =
+  const { data, isLoading } =
     trpc.users.getUserCompletedFlights.useInfiniteQuery(
       {
         limit: 5,
@@ -24,7 +24,7 @@ export const CompletedFlights = (): JSX.Element | null => {
     <FlightsTable
       count={data?.pages[0].count ?? 0}
       data={flattenedData}
-      isFetching={isFetching}
+      isLoading={isLoading}
       type="completed"
     />
   );
