@@ -20,6 +20,12 @@ export const CARD_COLORS: Record<FlightDelayStatus, string> = {
   severe: 'bg-error/10',
 };
 
+export const CARD_BORDER_COLORS: Record<FlightDelayStatus, string> = {
+  none: 'border-success/20',
+  moderate: 'border-warning/20',
+  severe: 'border-error/20',
+};
+
 export const PROGRESS_BAR_COLORS: Record<FlightDelayStatus, string> = {
   none: 'progress-success',
   moderate: 'progress-warning',
