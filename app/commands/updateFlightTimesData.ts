@@ -1,10 +1,10 @@
 import { formatInTimeZone } from 'date-fns-tz';
-import { DATE_FORMAT_ISO } from '../../constants';
-import { prisma, updateTripTimes } from '../../db';
-import { getDurationMinutes } from '../../utils';
-import { type FlightWithData } from '../updateData';
-import { getGroupedFlightsKey } from '../utils';
-import { fetchFlightStatsData } from './fetchFlightStatsData';
+import { DATE_FORMAT_ISO } from '../constants';
+import { fetchFlightStatsData } from '../data/flightStats';
+import { prisma, updateTripTimes } from '../db';
+import { getDurationMinutes } from '../utils';
+import { type FlightWithData } from './updateData';
+import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightTimesData = async (
   flights: FlightWithData[],

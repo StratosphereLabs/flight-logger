@@ -2,9 +2,6 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { type FlightWithData } from './updateData';
 
-export const createNewDate = (timestamp: number): Date =>
-  new Date(1000 * timestamp);
-
 export const getGroupedFlightsKey = ({
   airline,
   arrivalAirportId,

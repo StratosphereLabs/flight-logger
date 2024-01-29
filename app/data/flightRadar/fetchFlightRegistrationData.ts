@@ -3,9 +3,9 @@ import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { HEADERS } from '../constants';
-import { type FlightWithDataAirport } from '../updateData';
-import { createNewDate } from '../utils';
+import { type FlightWithDataAirport } from '../../commands/updateData';
 import type { RegistrationData } from './types';
+import { createNewDate } from './utils';
 
 export interface FetchFlightRegistrationDataParams {
   airlineIata: string;

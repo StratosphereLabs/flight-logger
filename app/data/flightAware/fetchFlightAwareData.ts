@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { HEADERS } from '../constants';
-import { type FlightWithData } from '../updateData';
+import { type FlightWithData } from '../../commands/updateData';
 import type { FlightAwareDataResponse } from './types';
 
 export const SCRIPT_BEGIN = 'var trackpollBootstrap = ';

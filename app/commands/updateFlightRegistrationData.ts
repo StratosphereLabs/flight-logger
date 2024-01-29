@@ -1,9 +1,9 @@
 import { formatInTimeZone } from 'date-fns-tz';
-import { DATE_FORMAT_ISO } from '../../constants';
-import { prisma } from '../../db';
-import { type FlightWithData } from '../updateData';
-import { getGroupedFlightsKey } from '../utils';
-import { fetchFlightRegistrationData } from './fetchFlightRegistrationData';
+import { DATE_FORMAT_ISO } from '../constants';
+import { fetchFlightRegistrationData } from '../data/flightRadar';
+import { prisma } from '../db';
+import { type FlightWithData } from './updateData';
+import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightRegistrationData = async (
   flights: FlightWithData[],

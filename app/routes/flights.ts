@@ -1,7 +1,7 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { isEqual } from 'date-fns';
-import { updateFlightRegistrationData } from '../commands/flightRadar';
-import { updateFlightTimesData } from '../commands/flightStats';
+import { updateFlightTimesData } from '../commands/updateFlightTimesData';
+import { updateFlightRegistrationData } from '../commands/updateFlightRegistrationData';
 import { prisma, updateTripTimes } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {

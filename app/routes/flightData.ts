@@ -1,11 +1,11 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
-import { fetchFlightRegistrationData } from '../commands/flightRadar';
+import { fetchFlightRegistrationData } from '../data/flightRadar';
 import {
   fetchFlightStatsData,
   fetchFlightStatsDataByFlightNumber,
-} from '../commands/flightStats';
+} from '../data/flightStats';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { prisma } from '../db';
 import {
