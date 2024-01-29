@@ -1,46 +1,31 @@
-import { differenceInMinutes } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma, updateTripTimes } from '../../db';
 import { getDurationMinutes } from '../../utils';
 import { type FlightWithData } from '../updateData';
 import { getGroupedFlightsKey } from '../utils';
 import { fetchFlightStatsData } from './fetchFlightStatsData';
 
-export const updateFlightTimes = async (
+export const updateFlightTimesData = async (
   flights: FlightWithData[],
 ): Promise<void> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
     console.error('Airline and flight number are required.');
     return;
   }
-  const data = await fetchFlightStatsData(
-    flights[0].airline.iata,
-    flights[0].flightNumber,
+  const isoDate = formatInTimeZone(
+    flights[0].outTime,
+    flights[0].departureAirport.timeZone,
+    DATE_FORMAT_ISO,
   );
-  if (data === null) {
-    console.error(
-      `  Unable to fetch flight data for ${getGroupedFlightsKey(
-        flights[0],
-      )}. Please try again later.`,
-    );
-    return;
-  }
-  const { otherDays } = data.props.initialState.flightTracker;
-  const flightStatsFlightData =
-    typeof otherDays === 'object'
-      ? otherDays
-          .flatMap(day => day.flights)
-          .find(({ arrivalAirport, departureAirport, sortTime }) => {
-            const timeDiff = Math.abs(
-              differenceInMinutes(new Date(sortTime), flights[0].outTime),
-            );
-            return (
-              departureAirport.iata === flights[0].departureAirport.iata &&
-              arrivalAirport.iata === flights[0].arrivalAirport.iata &&
-              timeDiff < 360
-            );
-          })
-      : undefined;
-  if (flightStatsFlightData === undefined) {
+  const flight = await fetchFlightStatsData({
+    airlineIata: flights[0].airline.iata,
+    arrivalIata: flights[0].arrivalAirport.iata,
+    departureIata: flights[0].departureAirport.iata,
+    flightNumber: flights[0].flightNumber,
+    isoDate,
+  });
+  if (flight === null) {
     console.error(
       `  Flight times data not found for ${getGroupedFlightsKey(
         flights[0],
@@ -48,20 +33,6 @@ export const updateFlightTimes = async (
     );
     return;
   }
-  const flightData = await fetchFlightStatsData(
-    flights[0].airline.iata,
-    flights[0].flightNumber,
-    flightStatsFlightData.url,
-  );
-  if (flightData === null) {
-    console.error(
-      `  Flight times data not found for ${getGroupedFlightsKey(
-        flights[0],
-      )}. Please try again later.`,
-    );
-    return;
-  }
-  const { flight } = flightData.props.initialState.flightTracker;
   const outTime = new Date(flight.schedule.scheduledDepartureUTC);
   const outTimeActual =
     flight.schedule.estimatedActualDepartureUTC !== null

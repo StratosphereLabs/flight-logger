@@ -1,43 +1,32 @@
-import { differenceInMinutes } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { type FlightWithData } from '../updateData';
 import { getGroupedFlightsKey } from '../utils';
-import { fetchRegistrationData } from './fetchRegistrationData';
+import { fetchFlightRegistrationData } from './fetchFlightRegistrationData';
 
-export const updateFlightRegistrations = async (
+export const updateFlightRegistrationData = async (
   flights: FlightWithData[],
 ): Promise<void> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
     console.error('Airline and flight number are required.');
     return;
   }
-  const registrationData = await fetchRegistrationData(
-    flights[0].airline.iata,
-    flights[0].flightNumber,
+  const isoDate = formatInTimeZone(
+    flights[0].outTime,
+    flights[0].departureAirport.timeZone,
+    DATE_FORMAT_ISO,
   );
-  if (registrationData.length === 0) {
+  const flight = await fetchFlightRegistrationData({
+    airlineIata: flights[0].airline.iata,
+    flightNumber: flights[0].flightNumber,
+    departureAirport: flights[0].departureAirport,
+    arrivalAirport: flights[0].arrivalAirport,
+    isoDate,
+  });
+  if (flight === null) {
     console.error(
       `  Unable to fetch registration data for ${getGroupedFlightsKey(
-        flights[0],
-      )}. Please try again later.`,
-    );
-    return;
-  }
-  const flight = registrationData.find(
-    ({ departureAirportIATA, arrivalAirportIATA, departureTime }) => {
-      const timeDiff = Math.abs(
-        differenceInMinutes(departureTime, flights[0].outTime),
-      );
-      return (
-        departureAirportIATA === flights[0].departureAirport.iata &&
-        arrivalAirportIATA === flights[0].arrivalAirport.iata &&
-        timeDiff < 360
-      );
-    },
-  );
-  if (flight === undefined) {
-    console.error(
-      `  Flight registration data not found for ${getGroupedFlightsKey(
         flights[0],
       )}. Please try again later.`,
     );

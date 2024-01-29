@@ -1,2 +1,2 @@
 export * from './fetchFlightStatsData';
-export * from './updateFlightTimes';
+export * from './updateFlightTimesData';

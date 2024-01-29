@@ -1,1 +1,2 @@
-export * from './updateFlightRegistrations';
+export * from './fetchFlightRegistrationData';
+export * from './updateFlightRegistrationData';

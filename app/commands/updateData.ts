@@ -12,20 +12,19 @@ import {
   seedManufacturers,
 } from '../db/seeders';
 import { UPDATE_CONCURRENCY } from './constants';
-import { updateFlightRegistrations } from './flightRadar';
-import { updateFlightTimes } from './flightStats';
+import { updateFlightRegistrationData } from './flightRadar';
+import { updateFlightTimesData } from './flightStats';
 import { getGroupedFlightsKey } from './utils';
+
+export interface FlightWithDataAirport {
+  iata: string;
+  timeZone: string;
+}
 
 export type FlightWithData = flight & {
   airline: airline | null;
-  departureAirport: {
-    iata: string;
-    timeZone: string;
-  };
-  arrivalAirport: {
-    iata: string;
-    timeZone: string;
-  };
+  departureAirport: FlightWithDataAirport;
+  arrivalAirport: FlightWithDataAirport;
 };
 
 const updateFlights = async (): Promise<void> => {
@@ -68,8 +67,8 @@ const updateFlights = async (): Promise<void> => {
       Object.entries(groupedFlights),
       async ([key, flights]) => {
         console.log(`Updating flight ${key}...`);
-        await updateFlightTimes(flights);
-        await updateFlightRegistrations(flights);
+        await updateFlightTimesData(flights);
+        await updateFlightRegistrationData(flights);
       },
       {
         concurrency: UPDATE_CONCURRENCY,

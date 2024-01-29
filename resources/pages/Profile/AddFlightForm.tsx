@@ -10,6 +10,7 @@ import {
   Table,
   integerInputTransformer,
 } from 'stratosphere-ui';
+import { type FlightDataRouterOutput } from '../../../app/routes/flightData';
 import {
   fetchFlightsByFlightNumberSchema,
   type FetchFlightsByFlightNumberRequest,
@@ -26,6 +27,9 @@ export const AddFlightForm = (): JSX.Element => {
   });
   const [currentFormData, setCurrentFormData] =
     useState<FetchFlightsByFlightNumberRequest | null>(null);
+  const [selectedFlight, setSelectedFlight] = useState<
+    FlightDataRouterOutput['fetchFlightsByFlightNumber'][number] | null
+  >(null);
   const { data, isFetching } =
     trpc.flightData.fetchFlightsByFlightNumber.useQuery(
       currentFormData ?? flightSearchFormDefaultValues,
@@ -33,6 +37,20 @@ export const AddFlightForm = (): JSX.Element => {
         enabled: currentFormData !== null,
       },
     );
+  const { data: flightData, isFetching: isFlightDataFetching } =
+    trpc.flightData.fetchFlightData.useQuery(
+      {
+        airline: currentFormData?.airline ?? null,
+        flightNumber: currentFormData?.flightNumber ?? null,
+        outDateISO: currentFormData?.outDateISO ?? '',
+        departureIata: selectedFlight?.departureAirport.iata ?? '',
+        arrivalIata: selectedFlight?.arrivalAirport.iata ?? '',
+      },
+      {
+        enabled: currentFormData !== null && selectedFlight !== null,
+      },
+    );
+  console.log({ flightData });
   return (
     <>
       <Form
@@ -203,17 +221,24 @@ export const AddFlightForm = (): JSX.Element => {
             },
             {
               id: 'actions',
-              cell: () => (
-                <Button
-                  className="btn-info btn-xs w-full min-w-[80px] sm:btn-sm"
-                  onClick={() => {
-                    alert('Coming Soon!');
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Add
-                </Button>
-              ),
+              cell: ({ row }) => {
+                const isLoading =
+                  row.original.id === selectedFlight?.id &&
+                  isFlightDataFetching;
+                return (
+                  <Button
+                    className="btn-info btn-xs w-full min-w-[80px] sm:btn-sm"
+                    disabled={isLoading}
+                    loading={isLoading}
+                    onClick={() => {
+                      setSelectedFlight(row.original);
+                    }}
+                  >
+                    {!isLoading ? <PlusIcon className="h-4 w-4" /> : null}
+                    Add
+                  </Button>
+                );
+              },
               footer: () => null,
             },
           ]}

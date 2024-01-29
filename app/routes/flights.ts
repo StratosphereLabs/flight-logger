@@ -1,7 +1,7 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { isEqual } from 'date-fns';
-import { updateFlightRegistrations } from '../commands/flightRadar';
-import { updateFlightTimes } from '../commands/flightStats';
+import { updateFlightRegistrationData } from '../commands/flightRadar';
+import { updateFlightTimesData } from '../commands/flightStats';
 import { prisma, updateTripTimes } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
@@ -110,9 +110,9 @@ export const flightsRouter = router({
           airline: true,
         },
       });
-      await updateFlightTimes([flight]);
+      await updateFlightTimesData([flight]);
       await updateTripTimes(flight.tripId);
-      await updateFlightRegistrations([flight]);
+      await updateFlightRegistrationData([flight]);
       return flight;
     }),
   getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
