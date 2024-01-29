@@ -7,14 +7,14 @@ import { getCoreRowModel } from '@tanstack/react-table';
 export interface FlightsTableProps {
   count: number;
   data: Array<UsersRouterOutput['getUserCompletedFlights']['results'][number]>;
-  isFetching: boolean;
+  isLoading: boolean;
   type: 'upcoming' | 'completed';
 }
 
 export const FlightsTable = ({
   count,
   data,
-  isFetching,
+  isLoading,
   type,
 }: FlightsTableProps): JSX.Element => {
   const { username } = useParams();
@@ -146,7 +146,7 @@ export const FlightsTable = ({
         data={data}
         enableSorting={false}
         getCoreRowModel={getCoreRowModel()}
-        isLoading={isFetching}
+        isLoading={isLoading}
       />
     </div>
   );

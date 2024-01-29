@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
-import { type FlightWithDataAirport } from '../../commands/updateData';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { HEADERS } from '../constants';
+import type { FlightWithDataAirport } from '../types';
 import type { RegistrationData } from './types';
 import { createNewDate } from './utils';
 

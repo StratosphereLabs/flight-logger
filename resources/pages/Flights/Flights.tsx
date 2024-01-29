@@ -73,7 +73,7 @@ export const Flights = (): JSX.Element => {
   const enableRowSelection = isRowSelectEnabled
     ? ({ original }: FlightsTableRow) => original.tripId === null
     : false;
-  const { data, error, isFetching, refetch } =
+  const { data, error, isLoading, refetch } =
     trpc.users.getUserFlights.useQuery(
       {
         username,
@@ -175,13 +175,13 @@ export const Flights = (): JSX.Element => {
           </FormRadioGroupOption>
         </FormRadioGroup>
       </Form>
-      {isFetching ? (
+      {isLoading ? (
         <div className="flex flex-1 justify-center pt-8">
           <span className="loading loading-spinner" />
         </div>
       ) : null}
       {layout === 'full' &&
-      !isFetching &&
+      !isLoading &&
       data !== undefined &&
       data.total > 0 ? (
         <>
@@ -297,7 +297,7 @@ export const Flights = (): JSX.Element => {
         </>
       ) : null}
       {layout === 'compact' &&
-      !isFetching &&
+      !isLoading &&
       data !== undefined &&
       data.total > 0 ? (
         <UserFlightsTable
@@ -315,7 +315,7 @@ export const Flights = (): JSX.Element => {
           size="sm"
         />
       ) : null}
-      {!isFetching && data?.total === 0 ? (
+      {!isLoading && data?.total === 0 ? (
         <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>

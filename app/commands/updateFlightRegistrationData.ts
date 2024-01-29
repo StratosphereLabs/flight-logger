@@ -2,7 +2,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { fetchFlightRegistrationData } from '../data/flightRadar';
 import { prisma } from '../db';
-import { type FlightWithData } from './updateData';
+import type { FlightWithData } from './types';
 import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightRegistrationData = async (

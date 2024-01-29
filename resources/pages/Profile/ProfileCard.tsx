@@ -20,7 +20,7 @@ export const ProfileCard = (): JSX.Element => {
       staleTime: 5 * 60 * 1000,
     },
   );
-  const { data, error, isFetching } = trpc.users.getUser.useQuery(
+  const { data, error, isLoading } = trpc.users.getUser.useQuery(
     { username },
     {
       enabled,
@@ -71,7 +71,7 @@ export const ProfileCard = (): JSX.Element => {
   );
   return (
     <LoadingCard
-      isLoading={isFetching}
+      isLoading={isLoading}
       className="card-bordered card-compact h-[275px] w-full bg-base-200 shadow-md md:w-[350px]"
     >
       <CardBody className="justify-between gap-2">

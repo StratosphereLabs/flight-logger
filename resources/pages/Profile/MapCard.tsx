@@ -95,7 +95,7 @@ export const MapCard = ({
       enabled,
     },
   );
-  const { data, error, isFetching } = trpc.users.getUserMapData.useQuery(
+  const { data, error, isLoading } = trpc.users.getUserMapData.useQuery(
     {
       username,
     },
@@ -165,7 +165,7 @@ export const MapCard = ({
   return useMemo(
     () => (
       <LoadingCard
-        isLoading={isFetching}
+        isLoading={isLoading}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-md duration-500',
           isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[275px]',
@@ -306,7 +306,7 @@ export const MapCard = ({
       currentFlight,
       data,
       hoverAirportId,
-      isFetching,
+      isLoading,
       isMapFullScreen,
       mapMode,
       methods,

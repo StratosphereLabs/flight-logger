@@ -1,4 +1,3 @@
-import type { airline, flight } from '@prisma/client';
 import { Promise } from 'bluebird';
 import { add, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
@@ -15,17 +14,6 @@ import { UPDATE_CONCURRENCY } from './constants';
 import { updateFlightTimesData } from './updateFlightTimesData';
 import { updateFlightRegistrationData } from './updateFlightRegistrationData';
 import { getGroupedFlightsKey } from './utils';
-
-export interface FlightWithDataAirport {
-  iata: string;
-  timeZone: string;
-}
-
-export type FlightWithData = flight & {
-  airline: airline | null;
-  departureAirport: FlightWithDataAirport;
-  arrivalAirport: FlightWithDataAirport;
-};
 
 const updateFlights = async (): Promise<void> => {
   const flightsToUpdate = await prisma.flight.findMany({

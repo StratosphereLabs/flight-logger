@@ -1,6 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
-import { type FlightWithData } from './updateData';
+import type { FlightWithData } from './types';
 
 export const getGroupedFlightsKey = ({
   airline,

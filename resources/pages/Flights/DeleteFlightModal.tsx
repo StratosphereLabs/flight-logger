@@ -53,7 +53,7 @@ export const DeleteFlightModal = ({
             }
           : undefined,
       );
-      void utils.users.getUserTrips.invalidate();
+      void utils.users.invalidate();
     },
   });
   useTRPCErrorHandler(error);
