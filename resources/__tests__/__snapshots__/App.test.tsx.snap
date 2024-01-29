@@ -384,26 +384,20 @@ exports[`<App /> > renders profile page 1`] = `
           Login
         </button>
         <div
-          class="relative hidden"
+          class="relative"
           data-headlessui-state=""
         >
           <button
             aria-expanded="false"
             aria-haspopup="menu"
-            class="btn btn-ghost btn-circle"
+            class="btn btn-ghost btn-disabled btn-circle"
             data-headlessui-state=""
             id="headlessui-menu-button-:r6:"
             type="button"
           >
-            <div
-              class="avatar"
-            >
-              <div
-                class="w-9 h-9 rounded-full"
-              >
-                <img />
-              </div>
-            </div>
+            <span
+              class="loading"
+            />
           </button>
         </div>
       </div>

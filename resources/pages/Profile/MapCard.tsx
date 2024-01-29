@@ -142,14 +142,16 @@ export const MapCard = ({
     () =>
       currentFlightData !== undefined && currentFlightData !== null
         ? {
-            lat: currentFlightData.estimatedLocation[0],
-            lng: currentFlightData.estimatedLocation[1],
+            lat: currentFlightData.estimatedLocation.lat,
+            lng: currentFlightData.estimatedLocation.lng,
             heading: currentFlightData.estimatedHeading,
             delayStatus: currentFlightData.delayStatus,
           }
         : undefined,
     [currentFlightData],
   );
+  const mapCenterpoint =
+    currentFlightData?.estimatedLocation ?? data?.centerpoint;
   useEffect(() => {
     if (
       selectedAirportId !== null &&
@@ -159,8 +161,8 @@ export const MapCard = ({
     }
   }, [data?.airports, selectedAirportId]);
   useEffect(() => {
-    if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
-  }, [data?.centerpoint]);
+    if (mapCenterpoint !== undefined) setCenter(mapCenterpoint);
+  }, [mapCenterpoint]);
   useTRPCErrorHandler(error);
   return useMemo(
     () => (
