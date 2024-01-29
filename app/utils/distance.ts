@@ -1,4 +1,5 @@
 import { EARTH_RADIUS_NM } from '../constants';
+import { type Coordinates } from './coordinates';
 
 export const calculateDistance = (
   lat1: number,
@@ -38,7 +39,7 @@ export const getProjectedCoords = (
   lon1: number,
   d: number,
   brng: number,
-): [number, number] => {
+): Coordinates => {
   const lat2 = Math.asin(
     Math.sin(toRadians(lat1)) * Math.cos(d / EARTH_RADIUS_NM) +
       Math.cos(toRadians(lat1)) *
@@ -54,7 +55,10 @@ export const getProjectedCoords = (
       Math.cos(d / EARTH_RADIUS_NM) -
         Math.sin(toRadians(lat1)) * Math.sin(lat2),
     );
-  return [toDegrees(lat2), toDegrees(lon2)];
+  return {
+    lat: toDegrees(lat2),
+    lng: toDegrees(lon2),
+  };
 };
 
 export const toRadians = (degrees: number): number => {

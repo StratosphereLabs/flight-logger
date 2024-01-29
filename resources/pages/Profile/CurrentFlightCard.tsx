@@ -27,8 +27,8 @@ export const CurrentFlightCard = (): JSX.Element | null => {
   return (
     <Card className={classNames('shadow-md', CARD_COLORS[data.delayStatus])}>
       <CardBody className="gap-0 px-[0.75rem] py-[0.5rem] sm:px-[1.25rem] sm:pt-[0.75rem]">
-        <div className="flex w-full justify-between gap-3 text-xs sm:text-sm">
-          <div className="flex flex-col">
+        <div className="flex w-full items-center justify-between gap-2 text-xs sm:text-sm">
+          <div className="flex flex-1 flex-col gap-1">
             <div
               className={classNames(
                 'flex',
@@ -40,7 +40,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 ? `Delayed ${data.delay}`
                 : 'On Time'}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-x-2 whitespace-nowrap">
               <img
                 alt={`${data.airline?.name} Logo`}
                 className="max-h-[25px] max-w-[100px]"
@@ -56,7 +56,8 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               </Link>
             </div>
           </div>
-          <div className="flex flex-col items-end">
+          <div className="font-semibold">{data.flightStatus}</div>
+          <div className="flex flex-1 flex-col items-end">
             <div className="opacity-75">{data.aircraftType?.name}</div>
             {data.tailNumber !== null && data.tailNumber.length > 0 ? (
               <Link
@@ -108,9 +109,9 @@ export const CurrentFlightCard = (): JSX.Element | null => {
           </div>
           <div>{data.arrivalAirport.iata}</div>
         </div>
-        <div className="flex w-full justify-between gap-4 opacity-75">
-          <div className="flex flex-col">
-            <div className="text-xs sm:text-sm">
+        <div className="flex w-full justify-between gap-2 opacity-75">
+          <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
+            <div className="truncate text-xs sm:text-sm">
               {data.departureAirport.municipality},{' '}
               {data.departureAirport.countryId === 'US'
                 ? data.departureAirport.region.name
@@ -143,22 +144,34 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 </div>
               ) : null}
             </div>
+            {data.progress > 0 && data.progress < 1 ? (
+              <div className="flex gap-1 text-xs">
+                <span className="font-mono">
+                  {data.durationToDepartureAbbrString}
+                </span>
+                ago
+              </div>
+            ) : null}
           </div>
-          <div className="flex flex-1 items-center justify-center text-center text-xs italic sm:text-sm">
-            {data.progress > 0 && data.progress < 1
-              ? `${data.durationToArrivalString} ${
-                  data.progress > 0 ? 'remaining' : ''
-                }`
-              : null}
+          <div className="flex flex-col items-center justify-center text-xs italic sm:text-sm">
             {data.progress === 0
               ? `Departs in ${data.durationToDepartureString}`
+              : null}
+            {data.progress > 0 && data.flightProgress === 0
+              ? `Taking off in ${data.durationToTakeoffString}`
+              : null}
+            {data.flightProgress > 0 && data.flightProgress < 1
+              ? `Landing in ${data.durationToLandingString}`
+              : null}
+            {data.flightProgress === 1 && data.progress < 1
+              ? `Arriving in ${data.durationToArrivalString}`
               : null}
             {data.progress === 1
               ? `Arrived ${data.durationToArrivalString} ago`
               : null}
           </div>
-          <div className="flex flex-col">
-            <div className="text-right text-xs sm:text-sm">
+          <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
+            <div className="truncate text-right text-xs sm:text-sm">
               {data.arrivalAirport.municipality},{' '}
               {data.arrivalAirport.countryId === 'US'
                 ? data.arrivalAirport.region.name
@@ -194,6 +207,14 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 </div>
               ) : null}
             </div>
+            {data.progress > 0 && data.progress < 1 ? (
+              <div className="flex justify-end gap-1 text-xs">
+                in
+                <span className="font-mono">
+                  {data.durationToArrivalAbbrString}
+                </span>
+              </div>
+            ) : null}
           </div>
         </div>
       </CardBody>
