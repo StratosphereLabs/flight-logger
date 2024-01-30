@@ -166,7 +166,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             ) : null}
           </div>
           <div className="flex flex-col items-center justify-center text-xs italic sm:text-sm">
-            {data.progress === 0
+            {data.progress === 0 && data.flightProgress === 0
               ? `Departs in ${data.durationToDepartureString}`
               : null}
             {data.progress > 0 && data.flightProgress === 0
@@ -178,7 +178,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
             {data.flightProgress === 1 && data.progress < 1
               ? `Arriving in ${data.durationToArrivalString}`
               : null}
-            {data.progress === 1
+            {data.progress === 1 && data.flightProgress === 1
               ? `Arrived ${data.durationToArrivalString} ago`
               : null}
           </div>
