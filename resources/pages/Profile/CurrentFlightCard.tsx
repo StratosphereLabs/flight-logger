@@ -40,7 +40,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
     >
       <CardBody className="gap-0 px-[0.75rem] py-[0.5rem] sm:px-[1.25rem] sm:pt-[0.75rem]">
         <div className="flex w-full items-center justify-between gap-2 text-xs sm:text-sm">
-          <div className="flex flex-1 flex-col gap-1">
+          <div className="flex flex-1 flex-col">
             <div
               className={classNames(
                 'flex',
@@ -58,14 +58,22 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 className="max-h-[25px] max-w-[100px]"
                 src={data.airline?.logo ?? ''}
               />
-              <Link
-                className="pt-1 font-mono"
-                hover
-                href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
-                target="_blank"
-              >
-                {data.airline?.iata} {data.flightNumber}
-              </Link>
+              <div className="flex flex-col">
+                <Link
+                  className="pt-1 font-mono"
+                  hover
+                  href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
+                  target="_blank"
+                >
+                  {data.airline?.iata} {data.flightNumber}
+                </Link>
+                {data.airframe?.operator !== null &&
+                data.airframe?.operator !== undefined ? (
+                  <div className="hidden text-xs opacity-75 sm:block">
+                    Operated by {data.airframe.operator.name}
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
           <div className="font-semibold">{data.flightStatus}</div>
@@ -121,7 +129,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
           </div>
           <div>{data.arrivalAirport.iata}</div>
         </div>
-        <div className="flex w-full justify-between gap-2 opacity-75">
+        <div className="flex w-full justify-between gap-2">
           <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
             <div className="truncate text-xs sm:text-sm">
               {data.departureAirport.municipality},{' '}
@@ -134,7 +142,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 <div
                   className={classNames(
                     data.outTimeActualLocal !== null
-                      ? 'mr-2 text-xs line-through'
+                      ? 'mr-2 text-xs line-through opacity-75'
                       : 'text-xs sm:text-sm',
                   )}
                 >
@@ -157,30 +165,59 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               ) : null}
             </div>
             {data.progress > 0 && data.progress < 1 ? (
-              <div className="flex items-center justify-start gap-1 text-xs">
+              <div className="flex items-center justify-start gap-1 text-xs italic opacity-75">
                 <span className="mb-[-1px] font-mono">
                   {data.durationToDepartureAbbrString}
                 </span>
                 ago
               </div>
             ) : null}
+            <div
+              className={classNames(
+                'flex flex-1 flex-wrap items-center gap-x-2',
+                TEXT_COLORS[data.departureDelayStatus],
+              )}
+            >
+              {data.departureGate !== null ? (
+                <div className="text-sm font-semibold sm:text-base">
+                  Gate {data.departureGate}
+                </div>
+              ) : null}
+              {data.departureTerminal !== null ? (
+                <div className="flex items-center text-xs sm:gap-1 sm:text-sm">
+                  Terminal {data.departureTerminal}
+                </div>
+              ) : null}
+            </div>
           </div>
-          <div className="flex flex-col items-center justify-center text-xs italic sm:text-sm">
-            {data.progress === 0 && data.flightProgress === 0
-              ? `Departs in ${data.durationToDepartureString}`
-              : null}
-            {data.progress > 0 && data.flightProgress === 0
-              ? `Taking off in ${data.durationToTakeoffString}`
-              : null}
-            {data.flightProgress > 0 && data.flightProgress < 1
-              ? `Landing in ${data.durationToLandingString}`
-              : null}
-            {data.flightProgress === 1 && data.progress < 1
-              ? `Arriving in ${data.durationToArrivalString}`
-              : null}
-            {data.progress === 1 && data.flightProgress === 1
-              ? `Arrived ${data.durationToArrivalString} ago`
-              : null}
+          <div className="flex flex-col items-center justify-center gap-1">
+            <div className="text-xs italic opacity-75 sm:text-sm">
+              {data.progress === 0 && data.flightProgress === 0
+                ? `Departs in ${data.durationToDepartureString}`
+                : null}
+              {data.progress > 0 && data.flightProgress === 0
+                ? `Taking off in ${data.durationToTakeoffString}`
+                : null}
+              {data.flightProgress > 0 && data.flightProgress < 1
+                ? `Landing in ${data.durationToLandingString}`
+                : null}
+              {data.flightProgress === 1 && data.progress < 1
+                ? `Arriving in ${data.durationToArrivalString}`
+                : null}
+              {data.progress === 1 && data.flightProgress === 1
+                ? `Arrived ${data.durationToArrivalString} ago`
+                : null}
+            </div>
+            {data.arrivalBaggage !== null ? (
+              <div
+                className={classNames(
+                  'text-sm font-semibold sm:text-base',
+                  TEXT_COLORS[data.arrivalDelayStatus],
+                )}
+              >
+                Baggage Claim {data.arrivalBaggage}
+              </div>
+            ) : null}
           </div>
           <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
             <div className="truncate text-right text-xs sm:text-sm">
@@ -194,7 +231,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                 <div
                   className={classNames(
                     data.inTimeActualLocal !== null
-                      ? 'text-xs line-through'
+                      ? 'text-xs line-through opacity-75'
                       : 'text-xs sm:text-sm',
                   )}
                 >
@@ -220,13 +257,30 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               ) : null}
             </div>
             {data.progress > 0 && data.progress < 1 ? (
-              <div className="flex items-center justify-end gap-1 text-xs">
+              <div className="flex items-center justify-end gap-1 text-xs italic opacity-75">
                 in
                 <span className="mb-[-1px] font-mono">
                   {data.durationToArrivalAbbrString}
                 </span>
               </div>
             ) : null}
+            <div
+              className={classNames(
+                'flex flex-1 flex-wrap items-center justify-end gap-x-2',
+                TEXT_COLORS[data.arrivalDelayStatus],
+              )}
+            >
+              {data.arrivalGate !== null ? (
+                <div className="text-sm font-semibold sm:text-base">
+                  Gate {data.arrivalGate}
+                </div>
+              ) : null}
+              {data.arrivalTerminal !== null ? (
+                <div className="flex items-center text-xs sm:gap-1 sm:text-sm">
+                  Terminal {data.arrivalTerminal}
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </CardBody>
