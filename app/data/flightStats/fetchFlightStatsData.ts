@@ -87,17 +87,19 @@ export const fetchFlightStatsData = async ({
   });
   if (data === null) return null;
   const { flight, otherDays } = data.props.initialState.flightTracker;
-  const departureDate = formatInTimeZone(
-    flight.sortTime,
-    flight.departureAirport.timeZoneRegionName,
-    DATE_FORMAT_ISO,
-  );
-  if (
-    flight.departureAirport.iata === departureIata &&
-    flight.arrivalAirport.iata === arrivalIata &&
-    departureDate === isoDate
-  )
-    return flight;
+  if (Object.keys(flight).length > 0) {
+    const departureDate = formatInTimeZone(
+      flight.sortTime,
+      flight.departureAirport.timeZoneRegionName,
+      DATE_FORMAT_ISO,
+    );
+    if (
+      flight.departureAirport.iata === departureIata &&
+      flight.arrivalAirport.iata === arrivalIata &&
+      departureDate === isoDate
+    )
+      return flight;
+  }
   if (otherDays === '') return null;
   const flights =
     otherDays.find(({ date1, year }) => {
