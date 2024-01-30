@@ -74,7 +74,8 @@ export const Itinerary = (): JSX.Element | null => {
                 <div className="opacity-90">{flight.airline?.name}</div>
                 {flight.flightNumber !== null ? (
                   <div className="text-xs opacity-60">
-                    {flight.airline?.iata ?? ''} {flight.flightNumber}
+                    {flight.airline?.iata ?? flight.airline?.icao ?? ''}{' '}
+                    {flight.flightNumber}
                   </div>
                 ) : null}
               </div>

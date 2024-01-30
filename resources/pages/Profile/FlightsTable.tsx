@@ -84,7 +84,9 @@ export const FlightsTable = ({
               const flightNumber = getValue<number | null>();
               return (
                 <div className="flex gap-1 opacity-75">
-                  <div className="hidden sm:block">{airline?.iata}</div>
+                  <div className="hidden sm:block">
+                    {airline?.iata ?? airline?.icao}
+                  </div>
                   {flightNumber}
                 </div>
               );

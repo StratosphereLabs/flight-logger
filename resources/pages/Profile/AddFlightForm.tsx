@@ -74,7 +74,9 @@ export const AddFlightForm = (): JSX.Element => {
           <AirlineInput
             className="min-w-[250px] max-w-[500px] flex-1"
             dropdownInputClassName="input-sm"
-            getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
+            getBadgeText={({ iata, icao, name }) =>
+              `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
+            }
             inputClassName="bg-base-100"
             isRequired
             labelText="Airline"
@@ -162,7 +164,8 @@ export const AddFlightForm = (): JSX.Element => {
               cell: () => (
                 <div className="flex gap-1 opacity-75">
                   <div className="hidden sm:block">
-                    {currentFormData?.airline?.iata}
+                    {currentFormData?.airline?.iata ??
+                      currentFormData?.airline?.icao}
                   </div>
                   {currentFormData?.flightNumber}
                 </div>

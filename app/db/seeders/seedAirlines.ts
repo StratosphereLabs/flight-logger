@@ -24,8 +24,6 @@ export const getAirlineDocument = async (
     const res = await axios.get<string>(url);
     const $ = parseWikipediaData(res.data);
 
-    const wiki = $('link[rel="canonical"]').attr('href');
-
     const name = $('#firstHeading').text().split('(airline')[0].trim();
 
     const infoTable = $('.infobox.vcard').find('table').eq(0);
@@ -36,11 +34,11 @@ export const getAirlineDocument = async (
       .get();
     const iata = (infoTableCells[0] as string | undefined)?.slice(0, 2) ?? '';
     const icao = (infoTableCells[1] as string | undefined)?.slice(0, 3) ?? '';
-    const callsign = infoTableCells[2] as string | undefined;
+    const callsign = (infoTableCells[2] as string | undefined) ?? '';
 
     if (
       headers !== 'IATAICAOCallsign' ||
-      !IATA_AIRLINE_CODE_REGEX.test(iata) ||
+      (iata.length > 0 && !IATA_AIRLINE_CODE_REGEX.test(iata)) ||
       !ICAO_AIRLINE_CODE_REGEX.test(icao)
     ) {
       return null;
@@ -49,20 +47,23 @@ export const getAirlineDocument = async (
     const fleetSize = getInt($('th:contains("Fleet size")').next());
     const destinations = getInt($('th:contains("Destinations")').next());
 
-    const id = `${iata}_${icao}_${name.replace(/ /g, '_')}`;
+    const id = `${iata.length > 0 ? `${iata}_` : ''}${icao}_${name.replace(
+      / /g,
+      '_',
+    )}`;
 
-    const src = $('.infobox-image img').eq(0).attr('src');
-    const logo = src !== undefined ? `https:${src}` : '';
+    const src = $('.infobox-image img').eq(0).attr('src') ?? '';
+    const wiki = $('link[rel="canonical"]').attr('href') ?? '';
 
     const data = {
       name,
-      iata,
+      iata: iata.length > 0 ? iata : undefined,
       icao,
-      callsign,
+      callsign: callsign.length > 0 ? callsign : undefined,
       fleetSize,
       destinations,
-      logo,
-      wiki,
+      logo: src.length > 0 ? `https:${src}` : undefined,
+      wiki: wiki.length > 0 ? wiki : undefined,
     };
 
     return {

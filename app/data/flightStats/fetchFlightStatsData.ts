@@ -1,3 +1,4 @@
+import type { airline } from '@prisma/client';
 import axios from 'axios';
 import { load } from 'cheerio';
 import { format } from 'date-fns';
@@ -8,13 +9,14 @@ import { OVERRIDE_CODES } from './constants';
 import type {
   FlightStatsDataResponse,
   FlightStatsFlight,
+  FlightStatsFlightData,
   FlightStatsOtherDayFlight,
 } from './types';
 
 export const SCRIPT_BEGIN = '__NEXT_DATA__ = ';
 
 interface FetchDataParams {
-  airlineIata: string;
+  airline: airline;
   customUrl?: string;
   flightNumber: number;
   isoDate: string;
@@ -26,22 +28,8 @@ export interface FetchFlightStatsDataParams
   departureIata: string;
 }
 
-const fetchData = async ({
-  airlineIata,
-  customUrl,
-  flightNumber,
-  isoDate,
-}: FetchDataParams): Promise<FlightStatsDataResponse | null> => {
-  const [year, month, day] = isoDate.split('-');
-  const dateParams = new URLSearchParams({ year, month, day }).toString();
-  const url = `https://www.flightstats.com/v2${
-    customUrl ??
-    `/flight-tracker/${
-      OVERRIDE_CODES[airlineIata] ?? airlineIata
-    }/${flightNumber}?${dateParams}`
-  }`;
-  const response = await axios.get<string>(url, { headers: HEADERS });
-  const $ = load(response.data);
+const processData = (data: string): FlightStatsFlightData | null => {
+  const $ = load(data);
   let flightData: FlightStatsDataResponse | null = null;
   $('script').each((_, script) => {
     const text = $(script).text();
@@ -51,26 +39,59 @@ const fetchData = async ({
       ) as FlightStatsDataResponse;
     }
   });
-  return flightData;
+  if (flightData === null) return null;
+  const { flight, otherDays } = (flightData as FlightStatsDataResponse).props
+    .initialState.flightTracker;
+  if (flight === undefined || otherDays === undefined || otherDays === '')
+    return null;
+  return {
+    flight,
+    otherDays,
+  };
+};
+
+const fetchData = async ({
+  airline,
+  customUrl,
+  flightNumber,
+  isoDate,
+}: FetchDataParams): Promise<FlightStatsFlightData | null> => {
+  if (customUrl !== undefined) {
+    const url = `https://www.flightstats.com/v2${customUrl}`;
+    const response = await axios.get<string>(url, { headers: HEADERS });
+    const data = processData(response.data);
+    return data;
+  }
+  const [year, month, day] = isoDate.split('-');
+  const dateParams = new URLSearchParams({ year, month, day }).toString();
+  if (airline.iata !== null) {
+    const url = `https://www.flightstats.com/v2/flight-tracker/${
+      OVERRIDE_CODES[airline.iata] ?? airline.iata
+    }/${flightNumber}?${dateParams}`;
+    const response = await axios.get<string>(url, { headers: HEADERS });
+    const data = processData(response.data);
+    if (data !== null) return data;
+  }
+  const retryUrl = `https://www.flightstats.com/v2/flight-tracker/${airline.icao}/${flightNumber}?${dateParams}`;
+  const retryResponse = await axios.get<string>(retryUrl, { headers: HEADERS });
+  return processData(retryResponse.data);
 };
 
 export const fetchFlightStatsDataByFlightNumber = async ({
-  airlineIata,
+  airline,
   flightNumber,
   isoDate,
 }: Omit<FetchDataParams, 'customUrl'>): Promise<
   FlightStatsOtherDayFlight[] | null
 > => {
   const data = await fetchData({
-    airlineIata,
+    airline,
     flightNumber,
     isoDate,
   });
   if (data === null) return null;
-  const { otherDays } = data.props.initialState.flightTracker;
-  if (otherDays === '') return null;
   return (
-    otherDays.find(({ date1, year }) => {
+    data.otherDays.find(({ date1, year }) => {
       const date = format(new Date(`${year}-${date1}`), DATE_FORMAT_ISO);
       return date === isoDate;
     })?.flights ?? null
@@ -78,19 +99,19 @@ export const fetchFlightStatsDataByFlightNumber = async ({
 };
 
 export const fetchFlightStatsData = async ({
-  airlineIata,
+  airline,
   arrivalIata,
   departureIata,
   flightNumber,
   isoDate,
 }: FetchFlightStatsDataParams): Promise<FlightStatsFlight | null> => {
   const data = await fetchData({
-    airlineIata,
+    airline,
     flightNumber,
     isoDate,
   });
   if (data === null) return null;
-  const { flight, otherDays } = data.props.initialState.flightTracker;
+  const { flight, otherDays } = data;
   if (Object.keys(flight).length > 0) {
     const departureDate = formatInTimeZone(
       flight.sortTime,
@@ -104,7 +125,6 @@ export const fetchFlightStatsData = async ({
     )
       return flight;
   }
-  if (otherDays === '') return null;
   const flights =
     otherDays.find(({ date1, year }) => {
       const date = format(new Date(`${year}-${date1}`), DATE_FORMAT_ISO);
@@ -117,11 +137,11 @@ export const fetchFlightStatsData = async ({
   )?.url;
   if (customUrl === undefined) return null;
   const correctedData = await fetchData({
-    airlineIata,
+    airline,
     flightNumber,
     isoDate,
     customUrl,
   });
   if (correctedData === null) return null;
-  return correctedData.props.initialState.flightTracker.flight;
+  return correctedData.flight;
 };
