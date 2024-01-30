@@ -74,7 +74,9 @@ export const ItineraryBuilderFields = forwardRef<
       <div className="flex flex-wrap justify-between gap-8">
         <AirlineInput
           className="w-[400px] min-w-[250px]"
-          getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
+          getBadgeText={({ iata, icao, name }) =>
+            `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
+          }
           inputClassName="bg-base-200"
           labelText="Airline"
           menuClassName="w-full"

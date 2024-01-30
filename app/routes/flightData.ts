@@ -34,7 +34,7 @@ export const flightDataRouter = router({
         });
       }
       const flights = await fetchFlightStatsDataByFlightNumber({
-        airlineIata: airline.iata,
+        airline,
         flightNumber,
         isoDate: outDateISO,
       });
@@ -115,7 +115,7 @@ export const flightDataRouter = router({
       const departureAirport = groupedAirports[departureIata][0];
       const arrivalAirport = groupedAirports[arrivalIata][0];
       const flight = await fetchFlightStatsData({
-        airlineIata: airline.iata,
+        airline,
         flightNumber,
         departureIata,
         arrivalIata,

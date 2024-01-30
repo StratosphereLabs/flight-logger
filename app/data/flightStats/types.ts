@@ -202,7 +202,7 @@ export interface FlightStatsDataProps {
     };
     flick: Record<string, unknown>;
     flightTracker: {
-      flight: FlightStatsFlight;
+      flight?: FlightStatsFlight;
       flightLoading: boolean;
       otherDays: FlightStatsOtherDay[] | '';
     };
@@ -231,4 +231,9 @@ export interface FlightStatsDataResponse {
     month: string;
     date: string;
   };
+}
+
+export interface FlightStatsFlightData {
+  flight: FlightStatsFlight;
+  otherDays: FlightStatsOtherDay[];
 }

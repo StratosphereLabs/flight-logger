@@ -29,7 +29,9 @@ export const AirlineInput = <Values extends FieldValues>({
   return (
     <TypeaheadSelect
       dropdownInputClassName={classNames('bg-base-200', dropdownInputClassName)}
-      getItemText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
+      getItemText={({ iata, icao, name }) =>
+        `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
+      }
       onDebouncedChange={setQuery}
       options={data}
       {...props}

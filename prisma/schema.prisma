@@ -163,7 +163,7 @@ model aircraft_type {
 
 model airline {
   id                        String              @id
-  iata                      String
+  iata                      String?
   icao                      String
   name                      String
   callsign                  String?

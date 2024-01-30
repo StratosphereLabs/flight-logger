@@ -65,7 +65,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
                   target="_blank"
                 >
-                  {data.airline?.iata} {data.flightNumber}
+                  {data.flightNumberString}
                 </Link>
                 {data.airframe?.operator !== null &&
                 data.airframe?.operator !== undefined ? (
@@ -83,7 +83,11 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               <Link
                 className="ml-3 pt-[1px] font-mono font-semibold"
                 hover
-                href={`https://www.flightaware.com/resources/registration/${data.tailNumber}`}
+                href={
+                  data.airframe !== null
+                    ? `https://www.planespotters.net/hex/${data.airframe.icao24.toUpperCase()}`
+                    : `https://www.flightaware.com/resources/registration/${data.tailNumber}`
+                }
                 target="_blank"
               >
                 {data.tailNumber}

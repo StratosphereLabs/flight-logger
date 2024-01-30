@@ -19,7 +19,7 @@ export const updateFlightTimesData = async (
     DATE_FORMAT_ISO,
   );
   const flight = await fetchFlightStatsData({
-    airlineIata: flights[0].airline.iata,
+    airline: flights[0].airline,
     arrivalIata: flights[0].arrivalAirport.iata,
     departureIata: flights[0].departureAirport.iata,
     flightNumber: flights[0].flightNumber,

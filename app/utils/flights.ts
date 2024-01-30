@@ -169,7 +169,9 @@ export const transformFlightData = (
     tailNumber: flight.airframe?.registration ?? flight.tailNumber,
     flightNumberString:
       flight.flightNumber !== null
-        ? `${flight.airline?.iata ?? ''} ${flight.flightNumber}`.trim()
+        ? `${flight.airline?.iata ?? flight.airline?.icao ?? ''} ${
+            flight.flightNumber
+          }`.trim()
         : '',
     distance: Math.round(flightDistance),
     link: `/user/${flight.user.username}/flights/${flight.id}`,

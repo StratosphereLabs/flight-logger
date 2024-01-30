@@ -1,3 +1,4 @@
+import type { airline } from '@prisma/client';
 import axios from 'axios';
 import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -8,7 +9,7 @@ import type { RegistrationData } from './types';
 import { createNewDate } from './utils';
 
 export interface FetchFlightRegistrationDataParams {
-  airlineIata: string;
+  airline: airline;
   arrivalAirport: FlightWithDataAirport;
   departureAirport: FlightWithDataAirport;
   flightNumber: number;
@@ -16,13 +17,15 @@ export interface FetchFlightRegistrationDataParams {
 }
 
 export const fetchFlightRegistrationData = async ({
-  airlineIata,
+  airline,
   arrivalAirport,
   departureAirport,
   flightNumber,
   isoDate,
 }: FetchFlightRegistrationDataParams): Promise<RegistrationData | null> => {
-  const url = `https://www.flightradar24.com/data/flights/${airlineIata}${flightNumber}`;
+  const url = `https://www.flightradar24.com/data/flights/${
+    airline.iata ?? airline.icao
+  }${flightNumber}`;
   const response = await axios.get<string>(url, { headers: HEADERS });
   const $ = load(response.data);
   let registrationData: RegistrationData | null = null;
