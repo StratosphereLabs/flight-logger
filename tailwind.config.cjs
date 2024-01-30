@@ -6,14 +6,17 @@ module.exports = {
   ],
   daisyui: {
     themes: [
-      'light',
-      'dark',
-      'winter',
-      'emerald',
       'business',
+      'coffee',
       'cyberpunk',
+      'dark',
+      'emerald',
+      'lemonade',
+      'light',
+      'night',
       'nord',
       'sunset',
+      'winter',
     ],
   },
   theme: {
