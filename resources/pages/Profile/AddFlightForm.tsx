@@ -148,7 +148,7 @@ export const AddFlightForm = (): JSX.Element => {
                   <div className="flex justify-start">
                     <img
                       alt={`${currentFormData.airline.name} Logo`}
-                      className="max-h-[20px] max-w-[68px] sm:max-h-[28px]"
+                      className="mr-[-12px] max-h-[20px] max-w-[68px] sm:max-h-[28px]"
                       src={currentFormData.airline.logo}
                     />
                   </div>

@@ -80,7 +80,8 @@ export const GoogleMap = ({
       gestureHandling: 'greedy',
       styles:
         theme === AppTheme.DARK ||
-        theme === AppTheme.BUSINESS ||
+        theme === AppTheme.NIGHT ||
+        theme === AppTheme.COFFEE ||
         theme === AppTheme.SUNSET
           ? darkModeStyle
           : undefined,
@@ -89,7 +90,8 @@ export const GoogleMap = ({
   );
   const aircraftColor =
     theme === AppTheme.DARK ||
-    theme === AppTheme.BUSINESS ||
+    theme === AppTheme.NIGHT ||
+    theme === AppTheme.COFFEE ||
     theme === AppTheme.SUNSET
       ? 'text-blue-500'
       : 'text-[#0000ff]';

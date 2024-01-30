@@ -1,10 +1,11 @@
 import { DropdownMenu } from 'stratosphere-ui';
 import { AppTheme, useThemeStore } from '../../stores';
 import {
-  BusinessIcon,
+  CoffeeIcon,
   CyberpunkIcon,
   DarkModeIcon,
-  GemIcon,
+  DarkModeOutlineIcon,
+  LemonIcon,
   LightModeIcon,
   SnowflakeIcon,
   SunsetIcon,
@@ -27,7 +28,7 @@ export const ThemeButton = (): JSX.Element => {
       }}
       items={[
         {
-          id: 'light',
+          id: AppTheme.LIGHT,
           onClick: () => {
             setTheme(AppTheme.LIGHT);
           },
@@ -39,7 +40,7 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: 'dark',
+          id: AppTheme.DARK,
           onClick: () => {
             setTheme(AppTheme.DARK);
           },
@@ -51,7 +52,7 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: 'nord',
+          id: AppTheme.NORD,
           onClick: () => {
             setTheme(AppTheme.NORD);
           },
@@ -63,31 +64,43 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: 'business',
+          id: AppTheme.NIGHT,
           onClick: () => {
-            setTheme(AppTheme.BUSINESS);
+            setTheme(AppTheme.NIGHT);
           },
           children: (
             <>
-              <BusinessIcon className="h-4 w-4" />
-              Business
+              <DarkModeOutlineIcon className="h-4 w-4" />
+              Night
             </>
           ),
         },
         {
-          id: 'emerald',
+          id: AppTheme.COFFEE,
           onClick: () => {
-            setTheme(AppTheme.EMERALD);
+            setTheme(AppTheme.COFFEE);
           },
           children: (
             <>
-              <GemIcon className="h-4 w-4" />
-              Emerald
+              <CoffeeIcon className="h-4 w-4" />
+              Coffee
             </>
           ),
         },
         {
-          id: 'sunset',
+          id: AppTheme.LEMONADE,
+          onClick: () => {
+            setTheme(AppTheme.LEMONADE);
+          },
+          children: (
+            <>
+              <LemonIcon className="h-4 w-4" />
+              Lemonade
+            </>
+          ),
+        },
+        {
+          id: AppTheme.SUNSET,
           onClick: () => {
             setTheme(AppTheme.SUNSET);
           },
@@ -99,7 +112,7 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: 'cyberpunk',
+          id: AppTheme.CYBERPUNK,
           onClick: () => {
             setTheme(AppTheme.CYBERPUNK);
           },
