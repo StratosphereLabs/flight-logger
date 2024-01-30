@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { HEADERS } from '../constants';
+import { OVERRIDE_CODES } from './constants';
 import type {
   FlightStatsDataResponse,
   FlightStatsFlight,
@@ -34,7 +35,10 @@ const fetchData = async ({
   const [year, month, day] = isoDate.split('-');
   const dateParams = new URLSearchParams({ year, month, day }).toString();
   const url = `https://www.flightstats.com/v2${
-    customUrl ?? `/flight-tracker/${airlineIata}/${flightNumber}?${dateParams}`
+    customUrl ??
+    `/flight-tracker/${
+      OVERRIDE_CODES[airlineIata] ?? airlineIata
+    }/${flightNumber}?${dateParams}`
   }`;
   const response = await axios.get<string>(url, { headers: HEADERS });
   const $ = load(response.data);
