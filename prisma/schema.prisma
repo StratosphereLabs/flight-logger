@@ -165,6 +165,7 @@ model airline {
   id                        String              @id
   iata                      String?
   icao                      String
+  flightStatsCode           String?
   name                      String
   callsign                  String?
   fleetSize                 Int?
