@@ -18,8 +18,8 @@ import {
 export type FlightDelayStatus = 'severe' | 'moderate' | 'none';
 
 export interface FlightTimesInput {
-  departureAirport: airport;
-  arrivalAirport: airport;
+  departureTimeZone: string;
+  arrivalTimeZone: string;
   outDateISO: string;
   outTimeValue: string;
   offTimeActualValue?: string;
@@ -71,8 +71,8 @@ export interface FlightTimestampsResult {
 }
 
 export const getFlightTimes = ({
-  departureAirport,
-  arrivalAirport,
+  departureTimeZone,
+  arrivalTimeZone,
   outDateISO,
   outTimeValue,
   offTimeActualValue,
@@ -81,25 +81,19 @@ export const getFlightTimes = ({
 }: FlightTimesInput): FlightTimesResult => {
   const outTimeUtc = zonedTimeToUtc(
     `${outDateISO} ${outTimeValue}`,
-    departureAirport.timeZone,
+    departureTimeZone,
   );
   const offTimeActualUtc =
     offTimeActualValue !== undefined
-      ? zonedTimeToUtc(
-          `${outDateISO} ${offTimeActualValue}`,
-          departureAirport.timeZone,
-        )
+      ? zonedTimeToUtc(`${outDateISO} ${offTimeActualValue}`, departureTimeZone)
       : undefined;
   const inTimeUtc = zonedTimeToUtc(
     `${outDateISO} ${inTimeValue}`,
-    arrivalAirport.timeZone,
+    arrivalTimeZone,
   );
   const onTimeActualUtc =
     onTimeActualValue !== undefined
-      ? zonedTimeToUtc(
-          `${outDateISO} ${onTimeActualValue}`,
-          arrivalAirport.timeZone,
-        )
+      ? zonedTimeToUtc(`${outDateISO} ${onTimeActualValue}`, arrivalTimeZone)
       : undefined;
   const daysAdded = getDaysToAdd({ outTime: outTimeUtc, inTime: inTimeUtc });
   const daysAddedActual =
