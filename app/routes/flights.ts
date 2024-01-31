@@ -41,8 +41,8 @@ export const flightsRouter = router({
         });
       }
       const { outTime, inTime, duration } = getFlightTimes({
-        departureTimeZone: departureAirport.timeZone,
-        arrivalTimeZone: arrivalAirport.timeZone,
+        departureAirport,
+        arrivalAirport,
         outDateISO: input.outDateISO,
         outTimeValue: input.outTimeValue,
         inTimeValue: input.inTimeValue,
@@ -183,8 +183,8 @@ export const flightsRouter = router({
         });
       }
       const { outTime, inTime, duration } = getFlightTimes({
-        departureTimeZone: departureAirport.timeZone,
-        arrivalTimeZone: arrivalAirport.timeZone,
+        departureAirport,
+        arrivalAirport,
         outDateISO: input.outDateISO,
         outTimeValue: input.outTimeValue,
         inTimeValue: input.inTimeValue,

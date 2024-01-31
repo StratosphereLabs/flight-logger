@@ -83,8 +83,8 @@ uploadRouter.post(
             aircraftTypes?.map(({ name }) => name) ?? [''],
           );
           const { outTime, inTime, duration } = getFlightTimes({
-            departureTimeZone: departureAirport.timeZone,
-            arrivalTimeZone: arrivalAirport.timeZone,
+            departureAirport,
+            arrivalAirport,
             outDateISO: row.Date,
             outTimeValue: row['Dep time'],
             inTimeValue: row['Arr time'],
@@ -212,8 +212,8 @@ uploadRouter.post(
           const airframe = data.airframes[row.registration];
           const { outTime, offTimeActual, inTime, onTimeActual, duration } =
             getFlightTimes({
-              departureTimeZone: departureAirport.timeZone,
-              arrivalTimeZone: arrivalAirport.timeZone,
+              departureAirport,
+              arrivalAirport,
               outDateISO: row.date,
               outTimeValue: row.dep_time,
               offTimeActualValue: row.dep_time_actual,

@@ -95,8 +95,8 @@ export const itinerariesRouter = router({
               ? data.aircraftTypes[flight.aircraftType.id]
               : null;
           const { outTime, inTime, duration } = getFlightTimes({
-            departureTimeZone: departureAirport.timeZone,
-            arrivalTimeZone: arrivalAirport.timeZone,
+            departureAirport,
+            arrivalAirport,
             outDateISO: flight.outDateISO,
             outTimeValue: flight.outTimeValue,
             inTimeValue: flight.inTimeValue,

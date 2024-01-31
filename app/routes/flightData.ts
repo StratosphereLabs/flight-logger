@@ -60,8 +60,8 @@ export const flightDataRouter = router({
           groupedAirports[flight.departureAirport.iata][0];
         const arrivalAirport = groupedAirports[flight.arrivalAirport.iata][0];
         const { outTime, inTime, duration } = getFlightTimes({
-          departureTimeZone: flight.departureTimezone,
-          arrivalTimeZone: flight.arrivalTimezone,
+          departureAirport,
+          arrivalAirport,
           outDateISO: input.outDateISO,
           outTimeValue: flight.departureTime24,
           inTimeValue: flight.arrivalTime24,
