@@ -39,7 +39,26 @@ export const flightDataRouter = router({
         isoDate: outDateISO,
       });
       if (flights === null) return [];
+      const airportIds = [
+        ...new Set(
+          flights.flatMap(({ departureAirport, arrivalAirport }) => [
+            departureAirport.iata,
+            arrivalAirport.iata,
+          ]),
+        ),
+      ];
+      const airports = await prisma.airport.findMany({
+        where: {
+          iata: {
+            in: airportIds,
+          },
+        },
+      });
+      const groupedAirports = groupBy(airports, 'iata');
       return flights.map((flight, index) => {
+        const departureAirport =
+          groupedAirports[flight.departureAirport.iata][0];
+        const arrivalAirport = groupedAirports[flight.arrivalAirport.iata][0];
         const { outTime, inTime, duration } = getFlightTimes({
           departureTimeZone: flight.departureTimezone,
           arrivalTimeZone: flight.arrivalTimezone,
@@ -48,8 +67,8 @@ export const flightDataRouter = router({
           inTimeValue: flight.arrivalTime24,
         });
         const timestamps = getFlightTimestamps({
-          departureTimeZone: flight.departureTimezone,
-          arrivalTimeZone: flight.arrivalTimezone,
+          departureAirport,
+          arrivalAirport,
           duration,
           outTime,
           inTime,
@@ -59,12 +78,12 @@ export const flightDataRouter = router({
           duration,
           outTimeDate: formatInTimeZone(
             outTime,
-            flight.departureTimezone,
+            departureAirport.timeZone,
             DATE_FORMAT_WITH_DAY,
           ),
           outTimeDateAbbreviated: formatInTimeZone(
             outTime,
-            flight.departureTimezone,
+            departureAirport.timeZone,
             DATE_FORMAT_SHORT,
           ),
           ...flight,

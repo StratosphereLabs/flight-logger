@@ -124,8 +124,8 @@ export const transformItineraryData = (
       });
       const { durationString, outDateLocal, outTimeLocal, inTimeLocal } =
         getFlightTimestamps({
-          departureTimeZone: departureAirport.timeZone,
-          arrivalTimeZone: arrivalAirport.timeZone,
+          departureAirport,
+          arrivalAirport,
           duration: flight.duration,
           outTime: flight.outTime,
           inTime: flight.inTime,

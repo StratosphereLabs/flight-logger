@@ -1,3 +1,4 @@
+import { type airport } from '@prisma/client';
 import { add, isBefore } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import {
@@ -27,8 +28,8 @@ export interface FlightTimesInput {
 }
 
 export interface FlightTimestampsInput {
-  departureTimeZone: string;
-  arrivalTimeZone: string;
+  departureAirport: airport;
+  arrivalAirport: airport;
   duration: number;
   outTime: number | Date;
   outTimeActual?: number | Date;
@@ -125,8 +126,8 @@ export const getFlightTimes = ({
 };
 
 export const getFlightTimestamps = ({
-  departureTimeZone,
-  arrivalTimeZone,
+  departureAirport,
+  arrivalAirport,
   duration,
   outTime,
   outTimeActual,
@@ -163,51 +164,91 @@ export const getFlightTimestamps = ({
     durationString: getDurationString(duration),
     durationStringAbbreviated: getDurationString(duration, true),
     inFuture: getInFuture(outTime),
-    outDateISO: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT_ISO),
-    outDateLocal: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT),
-    outTimeLocal: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_12H),
-    outTimeValue: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_24H),
+    outDateISO: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      DATE_FORMAT_ISO,
+    ),
+    outDateLocal: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      DATE_FORMAT,
+    ),
+    outTimeLocal: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      TIME_FORMAT_12H,
+    ),
+    outTimeValue: formatInTimeZone(
+      outTime,
+      departureAirport.timeZone,
+      TIME_FORMAT_24H,
+    ),
     outTimeActualLocal:
       outTimeActual !== undefined
-        ? formatInTimeZone(outTimeActual, departureTimeZone, TIME_FORMAT_12H)
+        ? formatInTimeZone(
+            outTimeActual,
+            departureAirport.timeZone,
+            TIME_FORMAT_12H,
+          )
         : null,
     outTimeActualValue:
       outTimeActual !== undefined
-        ? formatInTimeZone(outTimeActual, departureTimeZone, TIME_FORMAT_24H)
+        ? formatInTimeZone(
+            outTimeActual,
+            departureAirport.timeZone,
+            TIME_FORMAT_24H,
+          )
         : null,
     outTimeActualDaysAdded:
       outTimeActual !== undefined
         ? getDaysAdded({
             outTime,
             inTime: outTimeActual,
-            outTimeZone: departureTimeZone,
-            inTimeZone: departureTimeZone,
+            outTimeZone: departureAirport.timeZone,
+            inTimeZone: departureAirport.timeZone,
           })
         : null,
-    inTimeLocal: formatInTimeZone(inTime, arrivalTimeZone, TIME_FORMAT_12H),
-    inTimeValue: formatInTimeZone(inTime, arrivalTimeZone, TIME_FORMAT_24H),
+    inTimeLocal: formatInTimeZone(
+      inTime,
+      arrivalAirport.timeZone,
+      TIME_FORMAT_12H,
+    ),
+    inTimeValue: formatInTimeZone(
+      inTime,
+      arrivalAirport.timeZone,
+      TIME_FORMAT_24H,
+    ),
     inTimeDaysAdded:
       getDaysAdded({
         outTime,
         inTime,
-        outTimeZone: departureTimeZone,
-        inTimeZone: arrivalTimeZone,
+        outTimeZone: departureAirport.timeZone,
+        inTimeZone: arrivalAirport.timeZone,
       }) ?? 0,
     inTimeActualLocal:
       inTimeActual !== undefined
-        ? formatInTimeZone(inTimeActual, arrivalTimeZone, TIME_FORMAT_12H)
+        ? formatInTimeZone(
+            inTimeActual,
+            arrivalAirport.timeZone,
+            TIME_FORMAT_12H,
+          )
         : null,
     inTimeActualValue:
       inTimeActual !== undefined
-        ? formatInTimeZone(inTimeActual, arrivalTimeZone, TIME_FORMAT_24H)
+        ? formatInTimeZone(
+            inTimeActual,
+            arrivalAirport.timeZone,
+            TIME_FORMAT_24H,
+          )
         : null,
     inTimeActualDaysAdded:
       inTimeActual !== undefined
         ? getDaysAdded({
             outTime,
             inTime: inTimeActual,
-            outTimeZone: departureTimeZone,
-            inTimeZone: arrivalTimeZone,
+            outTimeZone: departureAirport.timeZone,
+            inTimeZone: arrivalAirport.timeZone,
           })
         : null,
     departureDelay:
