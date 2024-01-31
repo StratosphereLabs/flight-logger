@@ -5,7 +5,6 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { HEADERS } from '../constants';
-import { OVERRIDE_CODES } from './constants';
 import type {
   FlightStatsDataResponse,
   FlightStatsFlight,
@@ -64,17 +63,21 @@ const fetchData = async ({
   }
   const [year, month, day] = isoDate.split('-');
   const dateParams = new URLSearchParams({ year, month, day }).toString();
-  if (airline.iata !== null) {
-    const url = `https://www.flightstats.com/v2/flight-tracker/${
-      OVERRIDE_CODES[airline.iata] ?? airline.iata
-    }/${flightNumber}?${dateParams}`;
+  if (airline.flightStatsCode !== null) {
+    const url = `https://www.flightstats.com/v2/flight-tracker/${airline.flightStatsCode}/${flightNumber}?${dateParams}`;
     const response = await axios.get<string>(url, { headers: HEADERS });
     const data = processData(response.data);
     if (data !== null) return data;
   }
-  const retryUrl = `https://www.flightstats.com/v2/flight-tracker/${airline.icao}/${flightNumber}?${dateParams}`;
-  const retryResponse = await axios.get<string>(retryUrl, { headers: HEADERS });
-  return processData(retryResponse.data);
+  if (airline.iata !== null) {
+    const url = `https://www.flightstats.com/v2/flight-tracker/${airline.iata}/${flightNumber}?${dateParams}`;
+    const response = await axios.get<string>(url, { headers: HEADERS });
+    const data = processData(response.data);
+    if (data !== null) return data;
+  }
+  const url = `https://www.flightstats.com/v2/flight-tracker/${airline.icao}/${flightNumber}?${dateParams}`;
+  const response = await axios.get<string>(url, { headers: HEADERS });
+  return processData(response.data);
 };
 
 export const fetchFlightStatsDataByFlightNumber = async ({

@@ -57,13 +57,13 @@ export const getAirlineDocument = async (
 
     const data = {
       name,
-      iata: iata.length > 0 ? iata : undefined,
+      iata: iata.length > 0 ? iata : null,
       icao,
-      callsign: callsign.length > 0 ? callsign : undefined,
+      callsign: callsign.length > 0 ? callsign : null,
       fleetSize,
       destinations,
-      logo: src.length > 0 ? `https:${src}` : undefined,
-      wiki: wiki.length > 0 ? wiki : undefined,
+      logo: src.length > 0 ? `https:${src}` : null,
+      wiki: wiki.length > 0 ? wiki : null,
     };
 
     return {
