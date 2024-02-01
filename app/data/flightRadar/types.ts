@@ -5,5 +5,5 @@ export interface RegistrationData {
   offTimeActual: Date | undefined;
   onTimeActual: Date | undefined;
   aircraftTypeCode: string;
-  registration: string;
+  registration: string | undefined;
 }
