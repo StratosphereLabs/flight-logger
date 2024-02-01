@@ -55,10 +55,12 @@ export const flightDataRouter = router({
         },
       });
       const groupedAirports = groupBy(airports, 'iata');
-      return flights.map((flight, index) => {
+      return flights.flatMap((flight, index) => {
         const departureAirport =
-          groupedAirports[flight.departureAirport.iata][0];
-        const arrivalAirport = groupedAirports[flight.arrivalAirport.iata][0];
+          groupedAirports[flight.departureAirport.iata]?.[0];
+        const arrivalAirport = groupedAirports[flight.arrivalAirport.iata]?.[0];
+        if (departureAirport === undefined || arrivalAirport === undefined)
+          return [];
         const { outTime, inTime, duration } = getFlightTimes({
           departureAirport,
           arrivalAirport,
