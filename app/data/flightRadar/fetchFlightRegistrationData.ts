@@ -50,12 +50,13 @@ export const fetchFlightRegistrationData = async ({
       arrivalAirportIATA !== arrivalAirport.iata
     )
       return;
-    const registration = $(row)
+    const registrationText = $(row)
       .find('td.visible-xs.visible-sm .col-xs-3 .row')
       .eq(0)
       .text()
       .trim();
-    if (registration.length === 0) return;
+    const registration =
+      registrationText.length > 1 ? registrationText : undefined;
     const departureTime = createNewDate(parseInt(timestamp, 10));
     const departureDate = formatInTimeZone(
       departureTime,

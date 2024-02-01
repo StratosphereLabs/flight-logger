@@ -32,11 +32,14 @@ export const updateFlightRegistrationData = async (
     );
     return;
   }
-  const airframe = await prisma.airframe.findFirst({
-    where: {
-      registration: flight.registration,
-    },
-  });
+  const airframe =
+    flight.registration !== undefined
+      ? await prisma.airframe.findFirst({
+          where: {
+            registration: flight.registration,
+          },
+        })
+      : null;
   const aircraftType =
     flight.aircraftTypeCode.length >= 3 &&
     (airframe?.aircraftTypeId === null ||
