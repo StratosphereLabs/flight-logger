@@ -6,10 +6,10 @@ import { CompletedFlights } from './CompletedFlights';
 import { CurrentFlightCard } from './CurrentFlightCard';
 import { MapCard } from './MapCard';
 import { ProfileCard } from './ProfileCard';
-import { TopAirlinesTable } from './TopAirlinesTable';
-import { TopAirportsTable } from './TopAirportsTable';
-import { TopCityPairsTable } from './TopCityPairsTable';
-import { TopRoutesTable } from './TopRoutesTable';
+import { TopAirlinesChart } from './TopAirlinesChart';
+import { TopAirportsChart } from './TopAirportsChart';
+import { TopCityPairsChart } from './TopCityPairsChart';
+import { TopRoutesChart } from './TopRoutesChart';
 import { UpcomingFlights } from './UpcomingFlights';
 
 export const Profile = (): JSX.Element => {
@@ -60,10 +60,10 @@ export const Profile = (): JSX.Element => {
             <Card className="bg-base-200 shadow-md" compact>
               <CardBody className="gap-4">
                 <div className="flex flex-wrap gap-4">
-                  <TopAirlinesTable />
-                  <TopAirportsTable />
-                  <TopRoutesTable />
-                  <TopCityPairsTable />
+                  <TopAirlinesChart />
+                  <TopAirportsChart />
+                  <TopRoutesChart />
+                  <TopCityPairsChart />
                 </div>
               </CardBody>
             </Card>

@@ -37,27 +37,21 @@ export const statisticsRouter = router({
       const { skip, take } = parsePaginationRequest(input);
       return Object.values(
         results.reduce<Record<string, CityPairData>>((acc, flight) => {
-          const orderedAirports = [
-            flight.departureAirport,
-            flight.arrivalAirport,
-          ].sort(({ id: a }, { id: b }) => a.localeCompare(b));
-          const key = orderedAirports.map(({ id }) => id).join('-');
+          const key = [flight.departureAirport.iata, flight.arrivalAirport.iata]
+            .sort((a, b) => a.localeCompare(b))
+            .join('-');
           return {
             ...acc,
             [key]: {
-              firstAirport: orderedAirports[0],
-              secondAirport: orderedAirports[1],
-              count: (acc[key]?.count ?? 0) + 1,
+              cityPair: key,
+              flights: (acc[key]?.flights ?? 0) + 1,
             },
           };
         }, {}),
       )
-        .sort((a, b) => b.count - a.count)
-        .map((data, index) => ({
-          ...data,
-          id: index + 1,
-        }))
-        .slice(skip, skip + take);
+        .sort((a, b) => b.flights - a.flights)
+        .slice(skip, skip + take)
+        .reverse();
     }),
   getTopRoutes: procedure
     .input(getUserProfileFlightsSchema)
@@ -85,23 +79,19 @@ export const statisticsRouter = router({
       const { skip, take } = parsePaginationRequest(input);
       return Object.values(
         results.reduce<Record<string, RouteData>>((acc, flight) => {
-          const key = `${flight.departureAirportId}-${flight.arrivalAirportId}`;
+          const key = `${flight.departureAirport.iata}-${flight.arrivalAirport.iata}`;
           return {
             ...acc,
             [key]: {
-              departureAirport: flight.departureAirport,
-              arrivalAirport: flight.arrivalAirport,
-              count: (acc[key]?.count ?? 0) + 1,
+              route: key,
+              flights: (acc[key]?.flights ?? 0) + 1,
             },
           };
         }, {}),
       )
-        .sort((a, b) => b.count - a.count)
-        .map((data, index) => ({
-          ...data,
-          id: index + 1,
-        }))
-        .slice(skip, skip + take);
+        .sort((a, b) => b.flights - a.flights)
+        .slice(skip, skip + take)
+        .reverse();
     }),
   getTopAirlines: procedure
     .input(getUserProfileFlightsSchema)
@@ -129,21 +119,22 @@ export const statisticsRouter = router({
       return Object.values(
         results.reduce<Record<string, AirlineData>>((acc, flight) => {
           if (flight.airline === null) return acc;
+          const key = `${
+            flight.airline.iata !== null ? `${flight.airline.iata}/` : ''
+          }${flight.airline.icao}`;
           return {
             ...acc,
-            [flight.airline.id]: {
-              airline: flight.airline,
-              count: (acc[flight.airline.id]?.count ?? 0) + 1,
+            [key]: {
+              id: flight.airline.id,
+              airline: key,
+              flights: (acc[key]?.flights ?? 0) + 1,
             },
           };
         }, {}),
       )
-        .sort((a, b) => b.count - a.count)
-        .map((data, index) => ({
-          ...data,
-          id: index + 1,
-        }))
-        .slice(skip, skip + take);
+        .sort((a, b) => b.flights - a.flights)
+        .slice(skip, skip + take)
+        .reverse();
     }),
   getTopAirports: procedure
     .input(getUserProfileFlightsSchema)
@@ -174,22 +165,21 @@ export const statisticsRouter = router({
           (acc, flight) => ({
             ...acc,
             [flight.departureAirportId]: {
-              airport: flight.departureAirport,
-              count: (acc[flight.departureAirportId]?.count ?? 0) + 1,
+              id: flight.departureAirportId,
+              airport: flight.departureAirport.iata,
+              flights: (acc[flight.departureAirportId]?.flights ?? 0) + 1,
             },
             [flight.arrivalAirportId]: {
-              airport: flight.arrivalAirport,
-              count: (acc[flight.arrivalAirportId]?.count ?? 0) + 1,
+              id: flight.arrivalAirportId,
+              airport: flight.arrivalAirport.iata,
+              flights: (acc[flight.arrivalAirportId]?.flights ?? 0) + 1,
             },
           }),
           {},
         ),
       )
-        .sort((a, b) => b.count - a.count)
-        .map((data, index) => ({
-          ...data,
-          id: index + 1,
-        }))
-        .slice(skip, skip + take);
+        .sort((a, b) => b.flights - a.flights)
+        .slice(skip, skip + take)
+        .reverse();
     }),
 });

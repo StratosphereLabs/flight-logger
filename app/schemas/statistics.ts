@@ -1,26 +1,25 @@
 import { z } from 'zod';
-import { airlineSchema, airportSchema } from '../../prisma/generated/zod';
 
 export const cityPairDataSchema = z.object({
-  firstAirport: airportSchema,
-  secondAirport: airportSchema,
-  count: z.number().int().positive(),
+  cityPair: z.string(),
+  flights: z.number().int().positive(),
 });
 
 export const routeDataSchema = z.object({
-  departureAirport: airportSchema,
-  arrivalAirport: airportSchema,
-  count: z.number().int().positive(),
+  route: z.string(),
+  flights: z.number().int().positive(),
 });
 
 export const airportDataSchema = z.object({
-  airport: airportSchema,
-  count: z.number().int().positive(),
+  id: z.string(),
+  airport: z.string(),
+  flights: z.number().int().positive(),
 });
 
 export const airlineDataSchema = z.object({
-  airline: airlineSchema,
-  count: z.number().int().positive(),
+  id: z.string(),
+  airline: z.string(),
+  flights: z.number().int().positive(),
 });
 
 export type CityPairData = z.infer<typeof cityPairDataSchema>;
