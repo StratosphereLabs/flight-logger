@@ -38,3 +38,16 @@ export const flightSearchFormDefaultValues: FetchFlightsByFlightNumberRequest =
     airline: null,
     flightNumber: null,
   };
+
+export const BAR_CHART_THEME = {
+  axis: {
+    ticks: {
+      text: {
+        fill: 'oklch(var(--bc))',
+        fontFamily:
+          'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+        fontWeight: 600,
+      },
+    },
+  },
+} as const;
