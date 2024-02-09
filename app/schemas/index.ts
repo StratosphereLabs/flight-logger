@@ -11,6 +11,7 @@ export * from './pagination';
 export * from './passwordReset';
 export * from './regions';
 export * from './search';
+export * from './statistics';
 export * from './trips';
 export * from './upload';
 export * from './users';
