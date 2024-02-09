@@ -10,6 +10,7 @@ import { flightsRouter } from './flights';
 import { itinerariesRouter } from './itineraries';
 import { passwordResetRouter } from './passwordReset';
 import { regionsRouter } from './regions';
+import { statisticsRouter } from './statistics';
 import { tripsRouter } from './trips';
 import { usersRouter } from './users';
 
@@ -28,6 +29,7 @@ export const trpcRouter = router({
   itineraries: itinerariesRouter,
   passwordReset: passwordResetRouter,
   regions: regionsRouter,
+  statistics: statisticsRouter,
   trips: tripsRouter,
   users: usersRouter,
 });
