@@ -16,8 +16,19 @@ export const Profile = (): JSX.Element => {
   const [isMapFullScreen, setIsMapFullScreen] = useState(
     initialParams.get('isMapFullScreen') === 'true',
   );
-  const { data } = trpc.statistics.getTopAirports.useQuery({ username });
-  console.log(data);
+  const { data: routesData } = trpc.statistics.getTopRoutes.useQuery({
+    username,
+  });
+  const { data: cityPairsData } = trpc.statistics.getTopCityPairs.useQuery({
+    username,
+  });
+  const { data: airlinesData } = trpc.statistics.getTopAirlines.useQuery({
+    username,
+  });
+  const { data: airportsData } = trpc.statistics.getTopAirports.useQuery({
+    username,
+  });
+  console.log({ routesData, cityPairsData, airlinesData, airportsData });
   useEffect(() => {
     setSearchParams(oldSearchParams => ({
       ...Object.fromEntries(oldSearchParams),
