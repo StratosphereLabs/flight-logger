@@ -53,6 +53,10 @@ export const statisticsRouter = router({
         }, {}),
       )
         .sort((a, b) => b.count - a.count)
+        .map((data, index) => ({
+          ...data,
+          id: index + 1,
+        }))
         .slice(skip, skip + take);
     }),
   getTopRoutes: procedure
@@ -93,6 +97,10 @@ export const statisticsRouter = router({
         }, {}),
       )
         .sort((a, b) => b.count - a.count)
+        .map((data, index) => ({
+          ...data,
+          id: index + 1,
+        }))
         .slice(skip, skip + take);
     }),
   getTopAirlines: procedure
@@ -131,6 +139,10 @@ export const statisticsRouter = router({
         }, {}),
       )
         .sort((a, b) => b.count - a.count)
+        .map((data, index) => ({
+          ...data,
+          id: index + 1,
+        }))
         .slice(skip, skip + take);
     }),
   getTopAirports: procedure
@@ -174,6 +186,10 @@ export const statisticsRouter = router({
         ),
       )
         .sort((a, b) => b.count - a.count)
+        .map((data, index) => ({
+          ...data,
+          id: index + 1,
+        }))
         .slice(skip, skip + take);
     }),
 });

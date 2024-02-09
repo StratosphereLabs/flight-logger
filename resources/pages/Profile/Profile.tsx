@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardBody } from 'stratosphere-ui';
-import { trpc } from '../../utils/trpc';
 import { AddFlightForm } from './AddFlightForm';
 import { CompletedFlights } from './CompletedFlights';
 import { CurrentFlightCard } from './CurrentFlightCard';
 import { MapCard } from './MapCard';
 import { ProfileCard } from './ProfileCard';
+import { TopAirlinesTable } from './TopAirlinesTable';
+import { TopAirportsTable } from './TopAirportsTable';
+import { TopCityPairsTable } from './TopCityPairsTable';
+import { TopRoutesTable } from './TopRoutesTable';
 import { UpcomingFlights } from './UpcomingFlights';
 
 export const Profile = (): JSX.Element => {
@@ -16,19 +19,6 @@ export const Profile = (): JSX.Element => {
   const [isMapFullScreen, setIsMapFullScreen] = useState(
     initialParams.get('isMapFullScreen') === 'true',
   );
-  const { data: routesData } = trpc.statistics.getTopRoutes.useQuery({
-    username,
-  });
-  const { data: cityPairsData } = trpc.statistics.getTopCityPairs.useQuery({
-    username,
-  });
-  const { data: airlinesData } = trpc.statistics.getTopAirlines.useQuery({
-    username,
-  });
-  const { data: airportsData } = trpc.statistics.getTopAirports.useQuery({
-    username,
-  });
-  console.log({ routesData, cityPairsData, airlinesData, airportsData });
   useEffect(() => {
     setSearchParams(oldSearchParams => ({
       ...Object.fromEntries(oldSearchParams),
@@ -68,7 +58,14 @@ export const Profile = (): JSX.Element => {
               <h4 className="m-0">Statistics</h4>
             </article>
             <Card className="bg-base-200 shadow-md" compact>
-              <CardBody className="gap-4"></CardBody>
+              <CardBody className="gap-4">
+                <div className="flex flex-wrap gap-4">
+                  <TopAirlinesTable />
+                  <TopAirportsTable />
+                  <TopRoutesTable />
+                  <TopCityPairsTable />
+                </div>
+              </CardBody>
             </Card>
           </div>
         </div>
