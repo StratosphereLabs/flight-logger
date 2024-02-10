@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
 import { Card, CardBody, Link, Progress } from 'stratosphere-ui';
-import { PlaneSolidIcon } from '../../common/components';
-import { useProfilePage } from '../../common/hooks';
-import { trpc } from '../../utils/trpc';
+import { PlaneSolidIcon } from '../../../../common/components';
+import { useProfilePage } from '../../../../common/hooks';
+import { trpc } from '../../../../utils/trpc';
 import {
   CARD_BORDER_COLORS,
   CARD_COLORS,

@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardBody } from 'stratosphere-ui';
-import { AddFlightForm } from './AddFlightForm';
-import { CompletedFlights } from './CompletedFlights';
-import { CurrentFlightCard } from './CurrentFlightCard';
-import { MapCard } from './MapCard';
-import { ProfileCard } from './ProfileCard';
-import { TopAirlinesChart } from './TopAirlinesChart';
-import { TopAirportsChart } from './TopAirportsChart';
-import { TopAircraftTypesChart } from './TopAircraftTypesChart';
-import { TopRoutesChart } from './TopRoutesChart';
-import { UpcomingFlights } from './UpcomingFlights';
+import {
+  AddFlightForm,
+  CompletedFlights,
+  CurrentFlightCard,
+  MapCard,
+  ProfileCard,
+  Statistics,
+  UpcomingFlights,
+} from './components';
 
 export const Profile = (): JSX.Element => {
   const { username } = useParams();
@@ -53,21 +52,7 @@ export const Profile = (): JSX.Element => {
               </Card>
             </div>
           ) : null}
-          <div className="flex flex-1 flex-col">
-            <article className="prose p-1">
-              <h4 className="m-0">Statistics</h4>
-            </article>
-            <Card className="flex-1 bg-base-200 shadow-md" compact>
-              <CardBody className="gap-4">
-                <div className="flex flex-wrap gap-4">
-                  <TopAirlinesChart />
-                  <TopAircraftTypesChart />
-                  <TopAirportsChart />
-                  <TopRoutesChart />
-                </div>
-              </CardBody>
-            </Card>
-          </div>
+          <Statistics />
         </div>
       </div>
     </div>

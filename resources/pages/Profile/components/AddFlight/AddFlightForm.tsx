@@ -15,9 +15,13 @@ import {
 import {
   fetchFlightsByFlightNumberSchema,
   type FetchFlightsByFlightNumberRequest,
-} from '../../../app/schemas';
-import { AirlineInput, PlusIcon, SearchIcon } from '../../common/components';
-import { trpc } from '../../utils/trpc';
+} from '../../../../../app/schemas';
+import {
+  AirlineInput,
+  PlusIcon,
+  SearchIcon,
+} from '../../../../common/components';
+import { trpc } from '../../../../utils/trpc';
 import { flightSearchFormDefaultValues } from './constants';
 
 export const AddFlightForm = (): JSX.Element => {

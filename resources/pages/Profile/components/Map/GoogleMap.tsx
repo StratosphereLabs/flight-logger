@@ -16,11 +16,11 @@ import {
   useState,
 } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
-import { PlaneSolidIcon } from '../../common/components';
-import { darkModeStyle } from '../../common/mapStyle';
-import { AppTheme, useThemeStore } from '../../stores';
+import { PlaneSolidIcon } from '../../../../common/components';
+import { darkModeStyle } from '../../../../common/mapStyle';
+import { AppTheme, useThemeStore } from '../../../../stores';
 import { type MapCardFormData } from './MapCard';
-import { type MapFlight, type FilteredMapData, type MapCoords } from './utils';
+import type { FilteredMapData, MapCoords, MapFlight } from './types';
 
 export interface GoogleMapProps {
   center: MapCoords;

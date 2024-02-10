@@ -5,10 +5,10 @@ import {
   type AircraftTypeData,
   type AirportData,
   type RouteData,
-  getUserProfileFlightsSchema,
   getUserTopRoutesSchema,
   getUserTopAirlinesSchema,
   getUserTopAircraftTypesSchema,
+  getUserTopAirportsSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import { calculateDistance, parsePaginationRequest } from '../utils';
@@ -120,7 +120,7 @@ export const statisticsRouter = router({
         .reverse();
     }),
   getTopAirports: procedure
-    .input(getUserProfileFlightsSchema)
+    .input(getUserTopAirportsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -147,16 +147,24 @@ export const statisticsRouter = router({
         results.reduce<Record<string, AirportData>>(
           (acc, flight) => ({
             ...acc,
-            [flight.departureAirportId]: {
-              id: flight.departureAirportId,
-              airport: flight.departureAirport.iata,
-              flights: (acc[flight.departureAirportId]?.flights ?? 0) + 1,
-            },
-            [flight.arrivalAirportId]: {
-              id: flight.arrivalAirportId,
-              airport: flight.arrivalAirport.iata,
-              flights: (acc[flight.arrivalAirportId]?.flights ?? 0) + 1,
-            },
+            ...(input.mode === 'all' || input.mode === 'departure'
+              ? {
+                  [flight.departureAirportId]: {
+                    id: flight.departureAirportId,
+                    airport: flight.departureAirport.iata,
+                    flights: (acc[flight.departureAirportId]?.flights ?? 0) + 1,
+                  },
+                }
+              : null),
+            ...(input.mode === 'all' || input.mode === 'arrival'
+              ? {
+                  [flight.arrivalAirportId]: {
+                    id: flight.arrivalAirportId,
+                    airport: flight.arrivalAirport.iata,
+                    flights: (acc[flight.arrivalAirportId]?.flights ?? 0) + 1,
+                  },
+                }
+              : null),
           }),
           {},
         ),

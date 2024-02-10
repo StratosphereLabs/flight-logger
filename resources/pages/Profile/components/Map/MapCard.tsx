@@ -22,14 +22,13 @@ import {
   ExpandIcon,
   UserOutlineIcon,
   UserSolidIcon,
-} from '../../common/components';
-import { useProfilePage, useTRPCErrorHandler } from '../../common/hooks';
-import { trpc } from '../../utils/trpc';
+} from '../../../../common/components';
+import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
+import { trpc } from '../../../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
 import { GoogleMap } from './GoogleMap';
-import { RouteTimeline } from './RouteTimeline';
 import { getAirports } from './utils';
 
 export interface MapCardFormData {
@@ -205,12 +204,12 @@ export const MapCard = ({
           <div className="flex flex-col gap-2">
             {isMapFullScreen ? (
               <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-3 py-2">
-                <div className="flex flex-row items-center gap-4">
-                  <Avatar shapeClassName="h-16 w-16 rounded-full">
+                <div className="flex flex-row items-center gap-2 sm:gap-4">
+                  <Avatar shapeClassName="h-12 w-12 sm:w-16 sm:h-16 rounded-full">
                     <img src={userData?.avatar} alt="User Avatar" />
                   </Avatar>
                   <div className="flex flex-1 flex-col">
-                    <div className="text-xl font-medium">{`${
+                    <div className="text-base font-medium sm:text-xl">{`${
                       userData?.firstName ?? ''
                     } ${userData?.lastName ?? ''}`}</div>
                     <div className="text-xs opacity-75">{`@${
@@ -256,7 +255,10 @@ export const MapCard = ({
           </div>
           <div className="flex gap-2">
             <Select
-              className="pointer-events-auto w-[150px]"
+              buttonProps={{
+                className: 'btn-sm sm:btn-md',
+              }}
+              className="pointer-events-auto w-[125px] sm:w-[150px]"
               formValueMode="id"
               getItemText={({ text }) => text}
               options={[
@@ -277,15 +279,15 @@ export const MapCard = ({
               name="mapMode"
             />
             <Button
-              className="pointer-events-auto px-3"
+              className="btn-sm pointer-events-auto px-3 sm:btn-md"
               onClick={() => {
                 setIsMapFullScreen(isFullScreen => !isFullScreen);
               }}
             >
               {isMapFullScreen ? (
-                <CollapseIcon className="h-6 w-6" />
+                <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               ) : (
-                <ExpandIcon className="h-6 w-6" />
+                <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
               )}
               <span className="sr-only">
                 {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
@@ -293,14 +295,6 @@ export const MapCard = ({
             </Button>
           </div>
         </Form>
-        <div
-          className={classNames(
-            'absolute bottom-0 flex w-full px-2 py-6 transition-opacity duration-500',
-            isMapFullScreen ? 'opacity-100' : 'pointer-events-none opacity-0',
-          )}
-        >
-          <RouteTimeline className="rounded-xl bg-base-100/70 px-2" />
-        </div>
       </LoadingCard>
     ),
     [

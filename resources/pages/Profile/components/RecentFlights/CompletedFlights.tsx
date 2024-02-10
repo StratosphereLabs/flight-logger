@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useProfilePage } from '../../common/hooks';
-import { trpc } from '../../utils/trpc';
+import { useProfilePage } from '../../../../common/hooks';
+import { trpc } from '../../../../utils/trpc';
 import { FlightsTable } from './FlightsTable';
 
-export const UpcomingFlights = (): JSX.Element | null => {
+export const CompletedFlights = (): JSX.Element | null => {
   const enabled = useProfilePage();
   const { username } = useParams();
   const { data, isLoading } =
-    trpc.users.getUserUpcomingFlights.useInfiniteQuery(
+    trpc.users.getUserCompletedFlights.useInfiniteQuery(
       {
         limit: 5,
         username,
@@ -25,7 +25,7 @@ export const UpcomingFlights = (): JSX.Element | null => {
       count={data?.pages[0].count ?? 0}
       data={flattenedData}
       isLoading={isLoading}
-      type="upcoming"
+      type="completed"
     />
   );
 };

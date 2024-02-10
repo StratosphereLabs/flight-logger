@@ -2,8 +2,8 @@ import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
 import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Form, FormToggleSwitch, Loading } from 'stratosphere-ui';
-import { trpc } from '../../utils/trpc';
+import { Form, FormToggleSwitch, Loading, Tooltip } from 'stratosphere-ui';
+import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME } from './constants';
 
 interface TopRoutesFormData {
@@ -70,6 +70,15 @@ export const TopRoutesChart = (): JSX.Element => {
                 left: 55,
               }}
               colors={['var(--fallback-wa,oklch(var(--wa)/0.75))']}
+              tooltip={data => (
+                <Tooltip
+                  className="translate-y-[-20px]"
+                  open
+                  text={`${data.data.route}: ${data.data.flights} ${
+                    data.data.flights > 1 ? 'flights' : 'flight'
+                  }`}
+                />
+              )}
             />
           </div>
         ) : null}
