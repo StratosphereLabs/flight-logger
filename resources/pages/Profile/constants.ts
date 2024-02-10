@@ -40,10 +40,14 @@ export const flightSearchFormDefaultValues: FetchFlightsByFlightNumberRequest =
   };
 
 export const BAR_CHART_THEME = {
+  text: {
+    fontFamily:
+      'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+  },
   axis: {
     ticks: {
       text: {
-        fill: 'oklch(var(--bc))',
+        fill: 'var(--fallback-bc,oklch(var(--bc)/0.75))',
         fontFamily:
           'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
         fontWeight: 600,

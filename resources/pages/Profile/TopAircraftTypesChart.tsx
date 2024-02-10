@@ -3,16 +3,16 @@ import { useParams } from 'react-router-dom';
 import { trpc } from '../../utils/trpc';
 import { BAR_CHART_THEME } from './constants';
 
-export const TopAirlinesChart = (): JSX.Element => {
+export const TopAircraftTypesChart = (): JSX.Element => {
   const { username } = useParams();
-  const { data } = trpc.statistics.getTopAirlines.useQuery({
+  const { data } = trpc.statistics.getTopAircraftTypes.useQuery({
     username,
     limit: 5,
   });
   return (
     <div className="flex min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-sm font-semibold">Top Airlines</div>
+        <div className="text-sm font-semibold">Top Aircraft Types</div>
       </div>
       {data !== undefined ? (
         <div className="h-[150px] w-full min-w-0">
@@ -21,20 +21,19 @@ export const TopAirlinesChart = (): JSX.Element => {
             layout="horizontal"
             data={data}
             keys={['flights']}
-            indexBy="airline"
+            indexBy="aircraftType"
             enableGridY={false}
             axisBottom={{
               tickSize: 0,
             }}
             axisLeft={{
               tickSize: 0,
-              tickPadding: 10,
+              tickPadding: 15,
             }}
             margin={{
               left: 55,
             }}
-            colors={['var(--fallback-in,oklch(var(--in)/0.75))']}
-            borderColor="#000000"
+            colors={['var(--fallback-er,oklch(var(--er)/0.75))']}
           />
         </div>
       ) : null}
