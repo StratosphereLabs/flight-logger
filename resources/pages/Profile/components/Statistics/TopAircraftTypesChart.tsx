@@ -32,7 +32,7 @@ export const TopAircraftTypesChart = (): JSX.Element => {
     <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-sm">Top Aircraft Types</div>
-        <Form methods={methods}>
+        <Form className="flex h-9 items-center" methods={methods}>
           <Select
             buttonProps={{ color: 'ghost', size: 'xs' }}
             formValueMode="id"
