@@ -8,7 +8,7 @@ import { MapCard } from './MapCard';
 import { ProfileCard } from './ProfileCard';
 import { TopAirlinesChart } from './TopAirlinesChart';
 import { TopAirportsChart } from './TopAirportsChart';
-import { TopCityPairsChart } from './TopCityPairsChart';
+import { TopAircraftTypesChart } from './TopAircraftTypesChart';
 import { TopRoutesChart } from './TopRoutesChart';
 import { UpcomingFlights } from './UpcomingFlights';
 
@@ -35,7 +35,7 @@ export const Profile = (): JSX.Element => {
         />
       </div>
       <CurrentFlightCard />
-      <div className="flex flex-wrap-reverse gap-4">
+      <div className="flex flex-wrap gap-4">
         <div className="flex flex-col gap-4">
           <UpcomingFlights />
           <CompletedFlights />
@@ -57,13 +57,13 @@ export const Profile = (): JSX.Element => {
             <article className="prose p-1">
               <h4 className="m-0">Statistics</h4>
             </article>
-            <Card className="bg-base-200 shadow-md" compact>
+            <Card className="flex-1 bg-base-200 shadow-md" compact>
               <CardBody className="gap-4">
                 <div className="flex flex-wrap gap-4">
                   <TopAirlinesChart />
+                  <TopAircraftTypesChart />
                   <TopAirportsChart />
                   <TopRoutesChart />
-                  <TopCityPairsChart />
                 </div>
               </CardBody>
             </Card>

@@ -2,59 +2,18 @@ import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import {
   type AirlineData,
+  type AircraftTypeData,
   type AirportData,
-  type CityPairData,
   type RouteData,
   getUserProfileFlightsSchema,
+  getUserTopRoutesSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import { parsePaginationRequest } from '../utils';
 
 export const statisticsRouter = router({
-  getTopCityPairs: procedure
-    .input(getUserProfileFlightsSchema)
-    .query(async ({ ctx, input }) => {
-      if (input.username === undefined && ctx.user === null) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
-      const results = await prisma.flight.findMany({
-        where: {
-          user: {
-            username: input?.username ?? ctx.user?.username,
-          },
-          inTime: {
-            lte: new Date(),
-          },
-        },
-        orderBy: {
-          outTime: 'desc',
-        },
-        include: {
-          departureAirport: true,
-          arrivalAirport: true,
-        },
-      });
-      const { skip, take } = parsePaginationRequest(input);
-      return Object.values(
-        results.reduce<Record<string, CityPairData>>((acc, flight) => {
-          const key = [flight.departureAirport.iata, flight.arrivalAirport.iata]
-            .sort((a, b) => a.localeCompare(b))
-            .join('-');
-          return {
-            ...acc,
-            [key]: {
-              cityPair: key,
-              flights: (acc[key]?.flights ?? 0) + 1,
-            },
-          };
-        }, {}),
-      )
-        .sort((a, b) => b.flights - a.flights)
-        .slice(skip, skip + take)
-        .reverse();
-    }),
   getTopRoutes: procedure
-    .input(getUserProfileFlightsSchema)
+    .input(getUserTopRoutesSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -79,7 +38,11 @@ export const statisticsRouter = router({
       const { skip, take } = parsePaginationRequest(input);
       return Object.values(
         results.reduce<Record<string, RouteData>>((acc, flight) => {
-          const key = `${flight.departureAirport.iata}-${flight.arrivalAirport.iata}`;
+          const key = input.cityPairs
+            ? [flight.departureAirport.iata, flight.arrivalAirport.iata]
+                .sort((a, b) => a.localeCompare(b))
+                .join('-')
+            : `${flight.departureAirport.iata}-${flight.arrivalAirport.iata}`;
           return {
             ...acc,
             [key]: {
@@ -177,6 +140,53 @@ export const statisticsRouter = router({
           }),
           {},
         ),
+      )
+        .sort((a, b) => b.flights - a.flights)
+        .slice(skip, skip + take)
+        .reverse();
+    }),
+  getTopAircraftTypes: procedure
+    .input(getUserProfileFlightsSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          inTime: {
+            lte: new Date(),
+          },
+        },
+        orderBy: {
+          outTime: 'desc',
+        },
+        include: {
+          aircraftType: true,
+          airframe: {
+            include: {
+              aircraftType: true,
+            },
+          },
+        },
+      });
+      const { skip, take } = parsePaginationRequest(input);
+      return Object.values(
+        results.reduce<Record<string, AircraftTypeData>>((acc, flight) => {
+          const aircraftType =
+            flight.airframe?.aircraftType ?? flight.aircraftType;
+          if (aircraftType === null) return acc;
+          return {
+            ...acc,
+            [aircraftType.icao]: {
+              id: aircraftType.id,
+              aircraftType: aircraftType.icao,
+              flights: (acc[aircraftType.icao]?.flights ?? 0) + 1,
+            },
+          };
+        }, {}),
       )
         .sort((a, b) => b.flights - a.flights)
         .slice(skip, skip + take)
