@@ -79,9 +79,13 @@ export const fetchFlightRegistrationData = async ({
     registrationData = {
       departureTime,
       offTimeActual:
-        offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
-          ? createNewDate(parseInt(offTimeTimestamp, 10))
-          : undefined,
+        onTimeTimestamp !== undefined &&
+        onTimeTimestamp.length > 0 &&
+        onTimeText.includes('Estimated departure')
+          ? createNewDate(parseInt(onTimeTimestamp, 10))
+          : offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
+            ? createNewDate(parseInt(offTimeTimestamp, 10))
+            : undefined,
       onTimeActual:
         onTimeTimestamp !== undefined &&
         onTimeTimestamp.length > 0 &&
