@@ -111,6 +111,18 @@ const updateCurrentFlights = async (): Promise<void> => {
     where: {
       OR: [
         {
+          outTimeActual: {
+            gt: sub(new Date(), { minutes: 30 }),
+            lte: add(new Date(), { minutes: 60 }),
+          },
+        },
+        {
+          outTime: {
+            gt: sub(new Date(), { minutes: 30 }),
+            lte: add(new Date(), { minutes: 60 }),
+          },
+        },
+        {
           inTimeActual: {
             gt: sub(new Date(), { minutes: 30 }),
             lte: add(new Date(), { minutes: 90 }),
