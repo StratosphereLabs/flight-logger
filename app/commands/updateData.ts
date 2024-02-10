@@ -103,6 +103,7 @@ const updateFlights = async (): Promise<void> => {
     },
   });
   await processFlightUpdate(flightsToUpdate);
+  await prisma.$disconnect();
 };
 
 const updateCurrentFlights = async (): Promise<void> => {
@@ -153,6 +154,7 @@ const updateCurrentFlights = async (): Promise<void> => {
     );
   });
   await processFlightUpdate(filteredFlights);
+  await prisma.$disconnect();
 };
 
 (() => {
@@ -164,5 +166,6 @@ const updateCurrentFlights = async (): Promise<void> => {
     await seedAirlines();
     await seedAirframes();
     await seedAirports();
+    await prisma.$disconnect();
   });
 })();
