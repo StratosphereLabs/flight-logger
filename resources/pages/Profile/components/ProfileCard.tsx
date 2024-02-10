@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Button, CardBody, LoadingCard } from 'stratosphere-ui';
-import { UserOutlineIcon, UserSolidIcon } from '../../common/components';
-import { useProfilePage, useTRPCErrorHandler } from '../../common/hooks';
-import { useAuthStore } from '../../stores';
-import { trpc } from '../../utils/trpc';
+import { UserOutlineIcon, UserSolidIcon } from '../../../common/components';
+import { useProfilePage, useTRPCErrorHandler } from '../../../common/hooks';
+import { useAuthStore } from '../../../stores';
+import { trpc } from '../../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
   const enabled = useProfilePage();

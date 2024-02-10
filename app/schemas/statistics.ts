@@ -15,6 +15,10 @@ export const getUserTopAircraftTypesSchema = getUserProfileFlightsSchema.extend(
   },
 );
 
+export const getUserTopAirportsSchema = getUserProfileFlightsSchema.extend({
+  mode: z.enum(['all', 'departure', 'arrival']),
+});
+
 export const routeDataSchema = z.object({
   route: z.string(),
   flights: z.number().int().positive(),
@@ -49,6 +53,8 @@ export type GetUserTopAirlinesSchema = z.infer<typeof getUserTopAirlinesSchema>;
 export type GetUserTopAircraftTypesSchema = z.infer<
   typeof getUserTopAircraftTypesSchema
 >;
+
+export type GetUserTopAirportsSchema = z.infer<typeof getUserTopAirportsSchema>;
 
 export type RouteData = z.infer<typeof routeDataSchema>;
 

@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { Loading } from 'stratosphere-ui';
-import { useTRPCErrorHandler } from '../../common/hooks';
-import { trpc } from '../../utils/trpc';
+import { useTRPCErrorHandler } from '../../../../common/hooks';
+import { trpc } from '../../../../utils/trpc';
 
 export interface AirportInfoOverlayProps {
   airportId: string | null;

@@ -2,22 +2,19 @@ import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
 import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Form, Loading, Select } from 'stratosphere-ui';
-import { trpc } from '../../utils/trpc';
-import { BAR_CHART_THEME } from './constants';
-
-interface TopAirlinesFormData {
-  mode: 'flights' | 'distance' | 'duration';
-}
+import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
+import { trpc } from '../../../../utils/trpc';
+import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
+import type { TotalsModeFormData } from './types';
 
 export const TopAirlinesChart = (): JSX.Element => {
   const { username } = useParams();
-  const methods = useForm<TopAirlinesFormData>({
+  const methods = useForm<TotalsModeFormData>({
     defaultValues: {
       mode: 'flights',
     },
   });
-  const mode = useWatch<TopAirlinesFormData, 'mode'>({
+  const mode = useWatch<TotalsModeFormData, 'mode'>({
     name: 'mode',
     control: methods.control,
   });
@@ -55,7 +52,7 @@ export const TopAirlinesChart = (): JSX.Element => {
               },
             ]}
             menuSize="sm"
-            menuClassName="w-[175px] right-0"
+            menuClassName="w-[185px] right-0"
             name="mode"
           />
         </Form>
@@ -92,6 +89,17 @@ export const TopAirlinesChart = (): JSX.Element => {
               }}
               colors={['var(--fallback-in,oklch(var(--in)/0.75))']}
               borderColor="#000000"
+              tooltip={data => (
+                <Tooltip
+                  className="translate-y-[-20px]"
+                  open
+                  text={`${data.data.airline}: ${data.data[mode]} ${
+                    data.data[mode] > 1
+                      ? STATS_TOTALS_MODE_UNITS[mode]
+                      : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)
+                  }`}
+                />
+              )}
             />
           </div>
         ) : null}
