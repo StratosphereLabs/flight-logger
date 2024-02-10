@@ -25,7 +25,6 @@ export const TopRoutesChart = (): JSX.Element => {
     limit: 5,
     cityPairs,
   });
-  console.log({ data });
   const title = cityPairs ? 'Top City Pairs' : 'Top Routes';
   return (
     <div className="flex min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">

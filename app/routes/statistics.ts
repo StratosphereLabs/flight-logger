@@ -7,9 +7,11 @@ import {
   type RouteData,
   getUserProfileFlightsSchema,
   getUserTopRoutesSchema,
+  getUserTopAirlinesSchema,
+  getUserTopAircraftTypesSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { parsePaginationRequest } from '../utils';
+import { calculateDistance, parsePaginationRequest } from '../utils';
 
 export const statisticsRouter = router({
   getTopRoutes: procedure
@@ -57,7 +59,7 @@ export const statisticsRouter = router({
         .reverse();
     }),
   getTopAirlines: procedure
-    .input(getUserProfileFlightsSchema)
+    .input(getUserTopAirlinesSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -75,6 +77,8 @@ export const statisticsRouter = router({
           outTime: 'desc',
         },
         include: {
+          departureAirport: true,
+          arrivalAirport: true,
           airline: true,
         },
       });
@@ -85,18 +89,34 @@ export const statisticsRouter = router({
           const key = `${
             flight.airline.iata !== null ? `${flight.airline.iata}/` : ''
           }${flight.airline.icao}`;
+          const distance = calculateDistance(
+            flight.departureAirport.lat,
+            flight.departureAirport.lon,
+            flight.arrivalAirport.lat,
+            flight.arrivalAirport.lon,
+          );
           return {
             ...acc,
             [key]: {
               id: flight.airline.id,
               airline: key,
               flights: (acc[key]?.flights ?? 0) + 1,
+              distance: (acc[key]?.distance ?? 0) + distance,
+              duration: (acc[key]?.duration ?? 0) + flight.duration,
             },
           };
         }, {}),
       )
-        .sort((a, b) => b.flights - a.flights)
+        .sort((a, b) => {
+          if (input.mode === 'distance') return b.distance - a.distance;
+          if (input.mode === 'duration') return b.duration - a.duration;
+          return b.flights - a.flights;
+        })
         .slice(skip, skip + take)
+        .map(result => ({
+          ...result,
+          distance: Math.round(result.distance),
+        }))
         .reverse();
     }),
   getTopAirports: procedure
@@ -146,7 +166,7 @@ export const statisticsRouter = router({
         .reverse();
     }),
   getTopAircraftTypes: procedure
-    .input(getUserProfileFlightsSchema)
+    .input(getUserTopAircraftTypesSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -170,6 +190,8 @@ export const statisticsRouter = router({
               aircraftType: true,
             },
           },
+          arrivalAirport: true,
+          departureAirport: true,
         },
       });
       const { skip, take } = parsePaginationRequest(input);
@@ -178,18 +200,35 @@ export const statisticsRouter = router({
           const aircraftType =
             flight.airframe?.aircraftType ?? flight.aircraftType;
           if (aircraftType === null) return acc;
+          const distance = calculateDistance(
+            flight.departureAirport.lat,
+            flight.departureAirport.lon,
+            flight.arrivalAirport.lat,
+            flight.arrivalAirport.lon,
+          );
           return {
             ...acc,
             [aircraftType.icao]: {
               id: aircraftType.id,
               aircraftType: aircraftType.icao,
               flights: (acc[aircraftType.icao]?.flights ?? 0) + 1,
+              distance: (acc[aircraftType.icao]?.distance ?? 0) + distance,
+              duration:
+                (acc[aircraftType.icao]?.duration ?? 0) + flight.duration,
             },
           };
         }, {}),
       )
-        .sort((a, b) => b.flights - a.flights)
+        .sort((a, b) => {
+          if (input.mode === 'distance') return b.distance - a.distance;
+          if (input.mode === 'duration') return b.duration - a.duration;
+          return b.flights - a.flights;
+        })
         .slice(skip, skip + take)
+        .map(result => ({
+          ...result,
+          distance: Math.round(result.distance),
+        }))
         .reverse();
     }),
 });
