@@ -69,7 +69,7 @@ export const FlightsTable = ({
                 <div className="flex justify-start">
                   <img
                     alt={`${airlineData.name} Logo`}
-                    className="max-h-[20px] max-w-[64px] sm:max-h-[28px] sm:max-w-[68px]"
+                    className="max-h-[20px] max-w-[64px] lg:max-h-[28px] lg:max-w-[68px]"
                     src={airlineData.logo}
                   />
                 </div>
