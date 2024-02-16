@@ -91,22 +91,17 @@ export interface FlightTimeDataResult
 }
 
 export const getCenterpoint = (result?: FlightsResult): Coordinates => {
-  const airports = Object.values(
-    result?.reduce<Record<string, airport>>(
-      (acc, { departureAirport, arrivalAirport }) => ({
-        ...acc,
-        [departureAirport.id]: departureAirport,
-        [arrivalAirport.id]: arrivalAirport,
-      }),
-      {},
-    ) ?? {},
-  );
+  const airportMap: Record<string, airport> = {};
+  if (result !== undefined) {
+    for (const { departureAirport, arrivalAirport } of result) {
+      airportMap[departureAirport.id] = departureAirport;
+      airportMap[arrivalAirport.id] = arrivalAirport;
+    }
+  }
+  const airports = Object.values(airportMap);
   return airports.length > 0
     ? calculateCenterPoint(airports.map(({ lat, lon }) => ({ lat, lng: lon })))
-    : {
-        lat: 0,
-        lng: 0,
-      };
+    : { lat: 0, lng: 0 };
 };
 
 export const getHeatmap = (result?: FlightsResult): HeatmapResult[] =>
