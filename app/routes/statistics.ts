@@ -38,22 +38,19 @@ export const statisticsRouter = router({
         },
       });
       const { skip, take } = parsePaginationRequest(input);
-      return Object.values(
-        results.reduce<Record<string, RouteData>>((acc, flight) => {
-          const key = input.cityPairs
-            ? [flight.departureAirport.iata, flight.arrivalAirport.iata]
-                .sort((a, b) => a.localeCompare(b))
-                .join('-')
-            : `${flight.departureAirport.iata}-${flight.arrivalAirport.iata}`;
-          return {
-            ...acc,
-            [key]: {
-              route: key,
-              flights: (acc[key]?.flights ?? 0) + 1,
-            },
-          };
-        }, {}),
-      )
+      const routeDataMap: Record<string, RouteData> = {};
+      for (const flight of results) {
+        const key = input.cityPairs
+          ? [flight.departureAirport.iata, flight.arrivalAirport.iata]
+              .sort((a, b) => a.localeCompare(b))
+              .join('-')
+          : `${flight.departureAirport.iata}-${flight.arrivalAirport.iata}`;
+        if (routeDataMap[key] === undefined) {
+          routeDataMap[key] = { route: key, flights: 0 };
+        }
+        routeDataMap[key].flights++;
+      }
+      return Object.values(routeDataMap)
         .sort((a, b) => b.flights - a.flights)
         .slice(skip, skip + take)
         .reverse();
@@ -83,30 +80,33 @@ export const statisticsRouter = router({
         },
       });
       const { skip, take } = parsePaginationRequest(input);
-      return Object.values(
-        results.reduce<Record<string, AirlineData>>((acc, flight) => {
-          if (flight.airline === null) return acc;
-          const key = `${
-            flight.airline.iata !== null ? `${flight.airline.iata}/` : ''
-          }${flight.airline.icao}`;
-          const distance = calculateDistance(
-            flight.departureAirport.lat,
-            flight.departureAirport.lon,
-            flight.arrivalAirport.lat,
-            flight.arrivalAirport.lon,
-          );
-          return {
-            ...acc,
-            [key]: {
-              id: flight.airline.id,
-              airline: key,
-              flights: (acc[key]?.flights ?? 0) + 1,
-              distance: (acc[key]?.distance ?? 0) + distance,
-              duration: (acc[key]?.duration ?? 0) + flight.duration,
-            },
+      const airlineDataMap: Record<string, AirlineData> = {};
+      for (const flight of results) {
+        if (flight.airline === null) continue;
+        const key =
+          flight.airline.iata !== null ? `${flight.airline.iata}/` : '';
+        const airlineKey = `${key}${flight.airline.icao}`;
+        if (airlineDataMap[airlineKey] === undefined) {
+          airlineDataMap[airlineKey] = {
+            id: flight.airline.id,
+            airline: airlineKey,
+            flights: 0,
+            distance: 0,
+            duration: 0,
           };
-        }, {}),
-      )
+        }
+        const distance = calculateDistance(
+          flight.departureAirport.lat,
+          flight.departureAirport.lon,
+          flight.arrivalAirport.lat,
+          flight.arrivalAirport.lon,
+        );
+        const airlineData = airlineDataMap[airlineKey];
+        airlineData.flights++;
+        airlineData.distance += distance;
+        airlineData.duration += flight.duration;
+      }
+      return Object.values(airlineDataMap)
         .sort((a, b) => {
           if (input.mode === 'distance') return b.distance - a.distance;
           if (input.mode === 'duration') return b.duration - a.duration;
@@ -143,32 +143,32 @@ export const statisticsRouter = router({
         },
       });
       const { skip, take } = parsePaginationRequest(input);
-      return Object.values(
-        results.reduce<Record<string, AirportData>>(
-          (acc, flight) => ({
-            ...acc,
-            ...(input.mode === 'all' || input.mode === 'departure'
-              ? {
-                  [flight.departureAirportId]: {
-                    id: flight.departureAirportId,
-                    airport: flight.departureAirport.iata,
-                    flights: (acc[flight.departureAirportId]?.flights ?? 0) + 1,
-                  },
-                }
-              : null),
-            ...(input.mode === 'all' || input.mode === 'arrival'
-              ? {
-                  [flight.arrivalAirportId]: {
-                    id: flight.arrivalAirportId,
-                    airport: flight.arrivalAirport.iata,
-                    flights: (acc[flight.arrivalAirportId]?.flights ?? 0) + 1,
-                  },
-                }
-              : null),
-          }),
-          {},
-        ),
-      )
+      const airportDataMap: Record<string, AirportData> = {};
+      for (const flight of results) {
+        if (input.mode === 'all' || input.mode === 'departure') {
+          const departureAirportId = flight.departureAirportId;
+          if (airportDataMap[departureAirportId] === undefined) {
+            airportDataMap[departureAirportId] = {
+              id: departureAirportId,
+              airport: flight.departureAirport.iata,
+              flights: 0,
+            };
+          }
+          airportDataMap[departureAirportId].flights++;
+        }
+        if (input.mode === 'all' || input.mode === 'arrival') {
+          const arrivalAirportId = flight.arrivalAirportId;
+          if (airportDataMap[arrivalAirportId] === undefined) {
+            airportDataMap[arrivalAirportId] = {
+              id: arrivalAirportId,
+              airport: flight.arrivalAirport.iata,
+              flights: 0,
+            };
+          }
+          airportDataMap[arrivalAirportId].flights++;
+        }
+      }
+      return Object.values(airportDataMap)
         .sort((a, b) => b.flights - a.flights)
         .slice(skip, skip + take)
         .reverse();
@@ -203,30 +203,33 @@ export const statisticsRouter = router({
         },
       });
       const { skip, take } = parsePaginationRequest(input);
-      return Object.values(
-        results.reduce<Record<string, AircraftTypeData>>((acc, flight) => {
-          const aircraftType =
-            flight.airframe?.aircraftType ?? flight.aircraftType;
-          if (aircraftType === null) return acc;
-          const distance = calculateDistance(
-            flight.departureAirport.lat,
-            flight.departureAirport.lon,
-            flight.arrivalAirport.lat,
-            flight.arrivalAirport.lon,
-          );
-          return {
-            ...acc,
-            [aircraftType.icao]: {
-              id: aircraftType.id,
-              aircraftType: aircraftType.icao,
-              flights: (acc[aircraftType.icao]?.flights ?? 0) + 1,
-              distance: (acc[aircraftType.icao]?.distance ?? 0) + distance,
-              duration:
-                (acc[aircraftType.icao]?.duration ?? 0) + flight.duration,
-            },
+      const aircraftTypeDataMap: Record<string, AircraftTypeData> = {};
+      for (const flight of results) {
+        const aircraftType =
+          flight.airframe?.aircraftType ?? flight.aircraftType;
+        if (aircraftType === null) continue;
+        const icao = aircraftType.icao;
+        if (aircraftTypeDataMap[icao] === undefined) {
+          aircraftTypeDataMap[icao] = {
+            id: aircraftType.id,
+            aircraftType: icao,
+            flights: 0,
+            distance: 0,
+            duration: 0,
           };
-        }, {}),
-      )
+        }
+        const distance = calculateDistance(
+          flight.departureAirport.lat,
+          flight.departureAirport.lon,
+          flight.arrivalAirport.lat,
+          flight.arrivalAirport.lon,
+        );
+        const aircraftTypeData = aircraftTypeDataMap[icao];
+        aircraftTypeData.flights++;
+        aircraftTypeData.distance += distance;
+        aircraftTypeData.duration += flight.duration;
+      }
+      return Object.values(aircraftTypeDataMap)
         .sort((a, b) => {
           if (input.mode === 'distance') return b.distance - a.distance;
           if (input.mode === 'duration') return b.duration - a.duration;

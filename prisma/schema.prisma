@@ -28,6 +28,7 @@ model user {
   updatedAt           DateTime? @updatedAt
   followedBy          user[]    @relation("UserFollows")
   following           user[]    @relation("UserFollows")
+  @@index([username])
 }
 
 model trip {
@@ -119,6 +120,7 @@ model flight {
   user               user           @relation(fields: [userId], references: [id])
   createdAt          DateTime       @default(now())
   updatedAt          DateTime?      @updatedAt
+  @@index([outTime,inTime])
 }
 
 model manufacturer {
