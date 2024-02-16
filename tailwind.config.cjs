@@ -24,6 +24,9 @@ module.exports = {
       transitionProperty: {
         height: 'height',
       },
+      colors: {
+        'prose-headings': 'var(--tw-prose-headings)',
+      },
     },
   },
   plugins: [

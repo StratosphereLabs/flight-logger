@@ -34,8 +34,8 @@ export const Profile = (): JSX.Element => {
         />
       </div>
       <CurrentFlightCard />
-      <div className="flex flex-wrap gap-4">
-        <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-start gap-4">
+        <div className="flex flex-row flex-wrap gap-4 lg:flex-col ">
           <UpcomingFlights />
           <CompletedFlights />
         </div>

@@ -71,9 +71,9 @@ export const getDurationString = (
     end: duration * 60 * 1000,
   });
   if (abbreviated === true) {
-    return `${
-      hours !== undefined ? `${hours < 10 ? '0' : ''}${hours}` : '00'
-    }:${minutes !== undefined ? `${minutes < 10 ? '0' : ''}${minutes}` : '00'}`;
+    return `${hours ?? 0}:${
+      minutes !== undefined ? `${minutes < 10 ? '0' : ''}${minutes}` : '00'
+    }`;
   }
   return `${hours !== undefined && hours > 0 ? `${hours}h ` : ''}${
     minutes ?? 0

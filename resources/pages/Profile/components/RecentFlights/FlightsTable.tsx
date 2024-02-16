@@ -18,12 +18,14 @@ export const FlightsTable = ({
   type,
 }: FlightsTableProps): JSX.Element => {
   const { username } = useParams();
+  const title = `${type === 'upcoming' ? 'Upcoming' : 'Completed'} Flights`;
   return (
-    <div className="flex flex-col">
-      <article className="prose flex min-w-[350px] max-w-[550px] items-end justify-between p-1">
-        <h4 className="m-0">
-          {type === 'upcoming' ? 'Upcoming' : 'Completed'} Flights
-        </h4>
+    <div className="flex max-w-fit flex-1 flex-col">
+      <article className="prose flex w-full items-end justify-between p-1">
+        <h4 className="m-0 hidden lg:block">{title}</h4>
+        <div className="text-prose-headings m-0 text-sm font-semibold lg:hidden">
+          {title}
+        </div>
         <Link
           to={username !== undefined ? `/user/${username}/flights` : '/flights'}
           className="link-hover link flex items-center gap-1 text-xs opacity-75"
@@ -36,12 +38,12 @@ export const FlightsTable = ({
       </article>
       <Table
         cellClassNames={{
-          date: 'w-[50px]',
-          airline: 'w-[80px] py-[2px] sm:py-1',
-          departureAirport: 'w-[50px]',
-          arrivalAirport: 'w-[50px]',
+          date: 'w-[45px] lg:w-[50px]',
+          airline: 'w-[80px] py-[2px] lg:py-1',
+          departureAirport: 'w-[40px] lg:w-[50px]',
+          arrivalAirport: 'w-[40px] lg:w-[50px]',
         }}
-        className="table-xs min-w-[350px] max-w-[550px] table-fixed border-separate bg-base-200 shadow-md sm:table-sm"
+        className="table-xs w-full min-w-[375px] max-w-[750px] table-fixed border-separate bg-base-200 shadow-md lg:table-sm lg:max-w-[450px]"
         columns={[
           {
             id: 'date',
@@ -67,7 +69,7 @@ export const FlightsTable = ({
                 <div className="flex justify-start">
                   <img
                     alt={`${airlineData.name} Logo`}
-                    className="max-h-[20px] max-w-[68px] sm:max-h-[28px]"
+                    className="max-h-[20px] max-w-[64px] sm:max-h-[28px] sm:max-w-[68px]"
                     src={airlineData.logo}
                   />
                 </div>
@@ -84,7 +86,7 @@ export const FlightsTable = ({
               const flightNumber = getValue<number | null>();
               return (
                 <div className="flex gap-1 opacity-75">
-                  <div className="hidden sm:block">
+                  <div className="hidden lg:block">
                     {airline?.iata ?? airline?.icao}
                   </div>
                   {flightNumber}
@@ -115,23 +117,11 @@ export const FlightsTable = ({
           },
           {
             id: 'duration',
-            accessorKey: 'durationString',
-            header: () => (
-              <div className="w-full">
-                <div className="sm:hidden">Dur</div>
-                <div className="hidden sm:block">Duration</div>
-              </div>
-            ),
-            cell: ({ getValue, row }) => {
+            accessorKey: 'durationStringAbbreviated',
+            header: () => 'Dur',
+            cell: ({ getValue }) => {
               const duration = getValue<string>();
-              return (
-                <div className="font-mono opacity-75">
-                  <div className="sm:hidden">
-                    {row.original.durationStringAbbreviated}
-                  </div>
-                  <div className="hidden sm:block">{duration}</div>
-                </div>
-              );
+              return <div className="font-mono opacity-75">{duration}</div>;
             },
           },
           {
