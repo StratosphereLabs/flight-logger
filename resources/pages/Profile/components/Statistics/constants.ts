@@ -21,4 +21,10 @@ export const BAR_CHART_THEME = {
       },
     },
   },
+  grid: {
+    line: {
+      stroke: 'var(--fallback-bc,oklch(var(--bc)/0.25))',
+      strokeWidth: '2px',
+    },
+  },
 } as const;

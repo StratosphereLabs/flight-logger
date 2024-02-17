@@ -88,12 +88,14 @@ export const TopAircraftTypesChart = (): JSX.Element => {
                 left: 55,
               }}
               colors={['var(--fallback-er,oklch(var(--er)/0.75))']}
-              tooltip={data => (
+              tooltip={tooltipData => (
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${data.data.aircraftType}: ${data.data[mode]} ${
-                    data.data[mode] > 1
+                  text={`${tooltipData.data.aircraftType}: ${
+                    tooltipData.data[mode]
+                  } ${
+                    tooltipData.data[mode] > 1
                       ? STATS_TOTALS_MODE_UNITS[mode]
                       : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)
                   }`}

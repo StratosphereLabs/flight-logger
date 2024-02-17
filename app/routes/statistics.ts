@@ -4,11 +4,14 @@ import {
   type AirlineData,
   type AircraftTypeData,
   type AirportData,
+  type ReasonData,
   type RouteData,
+  type SeatPositionData,
   getUserTopRoutesSchema,
   getUserTopAirlinesSchema,
   getUserTopAircraftTypesSchema,
   getUserTopAirportsSchema,
+  getUserSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import { calculateDistance, parsePaginationRequest } from '../utils';
@@ -32,7 +35,7 @@ export const statisticsRouter = router({
         orderBy: {
           outTime: 'desc',
         },
-        include: {
+        select: {
           departureAirport: true,
           arrivalAirport: true,
         },
@@ -73,10 +76,11 @@ export const statisticsRouter = router({
         orderBy: {
           outTime: 'desc',
         },
-        include: {
+        select: {
           departureAirport: true,
           arrivalAirport: true,
           airline: true,
+          duration: true,
         },
       });
       const { skip, take } = parsePaginationRequest(input);
@@ -137,7 +141,7 @@ export const statisticsRouter = router({
         orderBy: {
           outTime: 'desc',
         },
-        include: {
+        select: {
           departureAirport: true,
           arrivalAirport: true,
         },
@@ -146,7 +150,7 @@ export const statisticsRouter = router({
       const airportDataMap: Record<string, AirportData> = {};
       for (const flight of results) {
         if (input.mode === 'all' || input.mode === 'departure') {
-          const departureAirportId = flight.departureAirportId;
+          const departureAirportId = flight.departureAirport.id;
           if (airportDataMap[departureAirportId] === undefined) {
             airportDataMap[departureAirportId] = {
               id: departureAirportId,
@@ -157,7 +161,7 @@ export const statisticsRouter = router({
           airportDataMap[departureAirportId].flights++;
         }
         if (input.mode === 'all' || input.mode === 'arrival') {
-          const arrivalAirportId = flight.arrivalAirportId;
+          const arrivalAirportId = flight.arrivalAirport.id;
           if (airportDataMap[arrivalAirportId] === undefined) {
             airportDataMap[arrivalAirportId] = {
               id: arrivalAirportId,
@@ -191,15 +195,16 @@ export const statisticsRouter = router({
         orderBy: {
           outTime: 'desc',
         },
-        include: {
+        select: {
           aircraftType: true,
           airframe: {
-            include: {
+            select: {
               aircraftType: true,
             },
           },
           arrivalAirport: true,
           departureAirport: true,
+          duration: true,
         },
       });
       const { skip, take } = parsePaginationRequest(input);
@@ -241,5 +246,85 @@ export const statisticsRouter = router({
           distance: Math.round(result.distance),
         }))
         .reverse();
+    }),
+  getReasonDistribution: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          inTime: {
+            lte: new Date(),
+          },
+        },
+        select: {
+          reason: true,
+        },
+      });
+      const reasonDataMap: Record<string, ReasonData> = {
+        LEISURE: {
+          reason: 'Leisure',
+          flights: 0,
+        },
+        BUSINESS: {
+          reason: 'Business',
+          flights: 0,
+        },
+        CREW: {
+          reason: 'Crew',
+          flights: 0,
+        },
+      };
+      for (const { reason } of results) {
+        if (reason !== null) {
+          reasonDataMap[reason].flights++;
+        }
+      }
+      return Object.values(reasonDataMap);
+    }),
+  getSeatPositionDistribution: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          inTime: {
+            lte: new Date(),
+          },
+        },
+        select: {
+          seatPosition: true,
+        },
+      });
+      const seatPositionDataMap: Record<string, SeatPositionData> = {
+        AISLE: {
+          seatPosition: 'Aisle',
+          flights: 0,
+        },
+        MIDDLE: {
+          seatPosition: 'Middle',
+          flights: 0,
+        },
+        WINDOW: {
+          seatPosition: 'Window',
+          flights: 0,
+        },
+      };
+      for (const { seatPosition } of results) {
+        if (seatPosition !== null) {
+          seatPositionDataMap[seatPosition].flights++;
+        }
+      }
+      return Object.values(seatPositionDataMap);
     }),
 });
