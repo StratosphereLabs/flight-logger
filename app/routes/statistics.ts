@@ -4,6 +4,7 @@ import {
   type AirlineData,
   type AircraftTypeData,
   type AirportData,
+  type ClassData,
   type ReasonData,
   type RouteData,
   type SeatPositionData,
@@ -326,5 +327,53 @@ export const statisticsRouter = router({
         }
       }
       return Object.values(seatPositionDataMap);
+    }),
+  getClassDistribution: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          inTime: {
+            lte: new Date(),
+          },
+        },
+        select: {
+          class: true,
+        },
+      });
+      const classDataMap: Record<string, ClassData> = {
+        BASIC: {
+          flightClass: 'Basic Economy',
+          flights: 0,
+        },
+        ECONOMY: {
+          flightClass: 'Economy',
+          flights: 0,
+        },
+        PREMIUM: {
+          flightClass: 'Premium Economy',
+          flights: 0,
+        },
+        BUSINESS: {
+          flightClass: 'Business',
+          flights: 0,
+        },
+        FIRST: {
+          flightClass: 'First',
+          flights: 0,
+        },
+      };
+      for (const { class: flightClass } of results) {
+        if (flightClass !== null) {
+          classDataMap[flightClass].flights++;
+        }
+      }
+      return Object.values(classDataMap);
     }),
 });
