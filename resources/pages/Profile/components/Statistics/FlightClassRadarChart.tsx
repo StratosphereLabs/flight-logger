@@ -5,9 +5,9 @@ import { Loading, Tooltip } from 'stratosphere-ui';
 import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME } from './constants';
 
-export const ReasonRadarChart = (): JSX.Element => {
+export const FlightClassRadarChart = (): JSX.Element => {
   const { username } = useParams();
-  const { data, isFetching } = trpc.statistics.getReasonDistribution.useQuery(
+  const { data, isFetching } = trpc.statistics.getClassDistribution.useQuery(
     {
       username,
     },
@@ -16,9 +16,9 @@ export const ReasonRadarChart = (): JSX.Element => {
     },
   );
   return (
-    <div className="flex h-[180px] min-w-[235px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[190px] min-w-[290px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-sm">Flight Reason</div>
+        <div className="text-sm">Flight Class</div>
       </div>
       <div className="relative h-full w-full">
         {isFetching ? (
@@ -37,14 +37,14 @@ export const ReasonRadarChart = (): JSX.Element => {
               theme={BAR_CHART_THEME}
               data={data}
               keys={['flights']}
-              indexBy="reason"
-              margin={{ left: 20, top: 25, bottom: 5, right: 20 }}
+              indexBy="flightClass"
+              margin={{ left: 60, top: 25, bottom: 15, right: 60 }}
               fillOpacity={0.5}
               gridLabelOffset={15}
               dotSize={8}
               dotColor="oklch(var(--b3))"
               dotBorderWidth={2}
-              colors={['oklch(var(--in))']}
+              colors={['oklch(var(--er))']}
               motionConfig="wobbly"
               sliceTooltip={tooltipData => (
                 <Tooltip

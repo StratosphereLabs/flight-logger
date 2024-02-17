@@ -17,7 +17,7 @@ export const SeatPositionRadarChart = (): JSX.Element => {
       },
     );
   return (
-    <div className="flex h-[180px] w-[225px] flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[180px] min-w-[215px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-sm">Seat Position</div>
       </div>
@@ -39,11 +39,11 @@ export const SeatPositionRadarChart = (): JSX.Element => {
               data={data}
               keys={['flights']}
               indexBy="seatPosition"
-              margin={{ left: 10, top: 30, bottom: 5, right: 10 }}
+              margin={{ left: 10, top: 25, bottom: 5, right: 10 }}
               fillOpacity={0.5}
-              gridLabelOffset={20}
+              gridLabelOffset={15}
               dotSize={8}
-              dotColor="oklch(var(--b2))"
+              dotColor="oklch(var(--b3))"
               dotBorderWidth={2}
               colors={['oklch(var(--su))']}
               motionConfig="wobbly"

@@ -1,4 +1,5 @@
 import { Card, CardBody } from 'stratosphere-ui';
+import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { ReasonRadarChart } from './ReasonRadarChart';
 import { SeatPositionRadarChart } from './SeatPositionRadarChart';
 import { TopAirlinesChart } from './TopAirlinesChart';
@@ -18,8 +19,11 @@ export const Statistics = (): JSX.Element => (
           <TopAircraftTypesChart />
           <TopAirportsChart />
           <TopRoutesChart />
-          <ReasonRadarChart />
-          <SeatPositionRadarChart />
+          <div className="flex w-full flex-wrap justify-center gap-4">
+            <ReasonRadarChart />
+            <FlightClassRadarChart />
+            <SeatPositionRadarChart />
+          </div>
         </div>
       </CardBody>
     </Card>
