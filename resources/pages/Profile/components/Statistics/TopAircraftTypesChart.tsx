@@ -25,6 +25,11 @@ export const TopAircraftTypesChart = (): JSX.Element => {
       mode,
     },
     {
+      trpc: {
+        context: {
+          skipBatch: true,
+        },
+      },
       keepPreviousData: true,
     },
   );

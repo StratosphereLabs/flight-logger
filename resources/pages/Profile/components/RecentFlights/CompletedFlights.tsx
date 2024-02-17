@@ -13,7 +13,15 @@ export const CompletedFlights = (): JSX.Element | null => {
         limit: 5,
         username,
       },
-      { enabled, staleTime: 5 * 60 * 1000 },
+      {
+        enabled,
+        trpc: {
+          context: {
+            skipBatch: true,
+          },
+        },
+        staleTime: 5 * 60 * 1000,
+      },
     );
   const flattenedData = useMemo(
     () => data?.pages.flatMap(({ results }) => results) ?? [],

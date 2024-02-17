@@ -28,6 +28,11 @@ export const TopRoutesChart = (): JSX.Element => {
       cityPairs,
     },
     {
+      trpc: {
+        context: {
+          skipBatch: true,
+        },
+      },
       keepPreviousData: true,
     },
   );

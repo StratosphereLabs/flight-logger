@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
+import { httpBatchLink, httpLink, splitLink } from '@trpc/client';
 import { type ReactNode } from 'react';
 import { TRPC_API_URL } from '../common/constants';
 import { useAuthStore } from '../stores';
@@ -19,13 +19,23 @@ const queryClient = new QueryClient({
 
 export const TRPCProvider = ({ children }: TRPCProviderProps): JSX.Element => {
   const { token } = useAuthStore();
+  const headers = {
+    Authorization: token !== null ? `Bearer ${token}` : undefined,
+  };
   const trpcClient = trpc.createClient({
     links: [
-      httpBatchLink({
-        url: TRPC_API_URL,
-        headers: {
-          Authorization: token !== null ? `Bearer ${token}` : undefined,
+      splitLink({
+        condition(op) {
+          return op.context.skipBatch === true;
         },
+        true: httpLink({
+          url: TRPC_API_URL,
+          headers,
+        }),
+        false: httpBatchLink({
+          url: TRPC_API_URL,
+          headers,
+        }),
       }),
     ],
   });
