@@ -89,12 +89,14 @@ export const TopAirlinesChart = (): JSX.Element => {
               }}
               colors={['var(--fallback-in,oklch(var(--in)/0.75))']}
               borderColor="#000000"
-              tooltip={data => (
+              tooltip={tooltipData => (
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${data.data.airline}: ${data.data[mode]} ${
-                    data.data[mode] > 1
+                  text={`${tooltipData.data.airline}: ${
+                    tooltipData.data[mode]
+                  } ${
+                    tooltipData.data[mode] > 1
                       ? STATS_TOTALS_MODE_UNITS[mode]
                       : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)
                   }`}
