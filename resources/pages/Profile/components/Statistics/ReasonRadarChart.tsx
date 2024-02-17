@@ -12,6 +12,11 @@ export const ReasonRadarChart = (): JSX.Element => {
       username,
     },
     {
+      trpc: {
+        context: {
+          skipBatch: true,
+        },
+      },
       keepPreviousData: true,
     },
   );

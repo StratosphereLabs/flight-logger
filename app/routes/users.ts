@@ -40,53 +40,46 @@ export const usersRouter = router({
     if (input.username === undefined && ctx.user === null) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
-    const [userData, completedFlightCount, upcomingFlightCount, tripCount] =
-      await prisma.$transaction([
-        prisma.user.findUnique({
-          where: {
-            username: input?.username ?? ctx.user?.username,
-          },
-          include: {
-            followedBy: true,
-            _count: {
-              select: {
-                following: true,
-                followedBy: true,
+    const [userData, upcomingFlightCount] = await prisma.$transaction([
+      prisma.user.findUnique({
+        where: {
+          username: input?.username ?? ctx.user?.username,
+        },
+        include: {
+          followedBy: true,
+          _count: {
+            select: {
+              following: true,
+              followedBy: true,
+              flights: {
+                where: {
+                  inTime: {
+                    lte: new Date(),
+                  },
+                },
+              },
+              trips: {
+                where: {
+                  inTime: {
+                    lte: new Date(),
+                  },
+                },
               },
             },
           },
-        }),
-        prisma.flight.count({
-          where: {
-            user: {
-              username: input?.username ?? ctx.user?.username,
-            },
-            inTime: {
-              lte: new Date(),
-            },
+        },
+      }),
+      prisma.flight.count({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
           },
-        }),
-        prisma.flight.count({
-          where: {
-            user: {
-              username: input?.username ?? ctx.user?.username,
-            },
-            outTime: {
-              gt: new Date(),
-            },
+          outTime: {
+            gt: new Date(),
           },
-        }),
-        prisma.trip.count({
-          where: {
-            user: {
-              username: input?.username ?? ctx.user?.username,
-            },
-            inTime: {
-              lte: new Date(),
-            },
-          },
-        }),
-      ]);
+        },
+      }),
+    ]);
     if (userData === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -98,9 +91,9 @@ export const usersRouter = router({
       undefined;
     return {
       avatar: fetchGravatarUrl(userData.email),
-      completedFlightCount,
+      completedFlightCount: userData._count.flights,
       upcomingFlightCount,
-      tripCount,
+      tripCount: userData._count.trips,
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       isFollowing,
       ...excludeKeys(
