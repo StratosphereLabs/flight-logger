@@ -67,6 +67,11 @@ export const flightTypeSchema = z.object({
   value: z.number().int().positive(),
 });
 
+export const flightLengthSchema = z.object({
+  flightLength: z.string(),
+  flights: z.number().int().positive(),
+});
+
 export type GetUserTopRoutesSchema = z.infer<typeof getUserTopRoutesSchema>;
 
 export type GetUserTopAirlinesSchema = z.infer<typeof getUserTopAirlinesSchema>;
@@ -92,3 +97,5 @@ export type SeatPositionData = z.infer<typeof seatPositionDataSchema>;
 export type ClassData = z.infer<typeof classDataSchema>;
 
 export type FlightTypeData = z.infer<typeof flightTypeSchema>;
+
+export type FlightLengthData = z.infer<typeof flightLengthSchema>;

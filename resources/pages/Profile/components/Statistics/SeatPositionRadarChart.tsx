@@ -50,7 +50,7 @@ export const SeatPositionRadarChart = (): JSX.Element => {
               dotSize={8}
               dotColor="oklch(var(--b3))"
               dotBorderWidth={2}
-              colors={['oklch(var(--su))']}
+              colors={['oklch(var(--wa))']}
               motionConfig="wobbly"
               sliceTooltip={tooltipData => (
                 <Tooltip

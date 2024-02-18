@@ -5,6 +5,7 @@ import {
   type AircraftTypeData,
   type AirportData,
   type ClassData,
+  type FlightLengthData,
   type FlightTypeData,
   type ReasonData,
   type RouteData,
@@ -425,5 +426,73 @@ export const statisticsRouter = router({
         flightTypeDataMap[flightType].value++;
       }
       return Object.values(flightTypeDataMap);
+    }),
+  getFlightLengthDistribution: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          inTime: {
+            lte: new Date(),
+          },
+        },
+        select: {
+          duration: true,
+          departureAirport: {
+            select: {
+              lat: true,
+              lon: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              lat: true,
+              lon: true,
+            },
+          },
+        },
+      });
+      const flightLengthDataMap: Record<string, FlightLengthData> = {
+        short: {
+          flightLength: 'Short',
+          flights: 0,
+        },
+        medium: {
+          flightLength: 'Medium',
+          flights: 0,
+        },
+        long: {
+          flightLength: 'Long',
+          flights: 0,
+        },
+        ultraLong: {
+          flightLength: 'Ultra Long',
+          flights: 0,
+        },
+      };
+      for (const { departureAirport, duration, arrivalAirport } of results) {
+        const flightDistance = calculateDistance(
+          departureAirport.lat,
+          departureAirport.lon,
+          arrivalAirport.lat,
+          arrivalAirport.lon,
+        );
+        if (duration > 960) {
+          flightLengthDataMap.ultraLong.flights++;
+        } else if (flightDistance > 2400 && duration > 360) {
+          flightLengthDataMap.long.flights++;
+        } else if (flightDistance > 900 && duration > 180) {
+          flightLengthDataMap.medium.flights++;
+        } else {
+          flightLengthDataMap.short.flights++;
+        }
+      }
+      return Object.values(flightLengthDataMap);
     }),
 });
