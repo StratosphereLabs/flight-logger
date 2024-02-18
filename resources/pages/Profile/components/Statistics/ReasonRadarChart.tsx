@@ -21,7 +21,7 @@ export const ReasonRadarChart = (): JSX.Element => {
     },
   );
   return (
-    <div className="flex h-[180px] min-w-[235px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[185px] min-w-[235px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-sm">Flight Reason</div>
       </div>
@@ -43,7 +43,7 @@ export const ReasonRadarChart = (): JSX.Element => {
               data={data}
               keys={['flights']}
               indexBy="reason"
-              margin={{ left: 20, top: 25, bottom: 5, right: 20 }}
+              margin={{ left: 20, top: 30, bottom: 5, right: 20 }}
               fillOpacity={0.5}
               gridLabelOffset={15}
               dotSize={8}

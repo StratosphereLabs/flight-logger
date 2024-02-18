@@ -22,7 +22,7 @@ export const FlightTypePieChart = (): JSX.Element => {
       },
     );
   return (
-    <div className="flex h-[190px] min-w-[254px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[200px] min-w-[290px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-sm">Flight Type</div>
       </div>
@@ -42,7 +42,7 @@ export const FlightTypePieChart = (): JSX.Element => {
             <ResponsivePie
               theme={BAR_CHART_THEME}
               data={data}
-              margin={{ top: 20, right: 22, bottom: 20, left: 22 }}
+              margin={{ top: 25, right: 40, bottom: 25, left: 40 }}
               colors={[
                 'var(--fallback-er,oklch(var(--s)/0.75))',
                 'var(--fallback-er,oklch(var(--a)/0.75))',
@@ -50,8 +50,9 @@ export const FlightTypePieChart = (): JSX.Element => {
               innerRadius={0.5}
               padAngle={0.7}
               cornerRadius={3}
-              activeOuterRadiusOffset={8}
+              activeOuterRadiusOffset={4}
               arcLinkLabelsSkipAngle={10}
+              arcLinkLabelsStraightLength={10}
               arcLinkLabelsTextColor="var(--fallback-bc,oklch(var(--bc)/0.75))"
               arcLinkLabelsThickness={2}
               arcLinkLabelsColor={{ from: 'color' }}
