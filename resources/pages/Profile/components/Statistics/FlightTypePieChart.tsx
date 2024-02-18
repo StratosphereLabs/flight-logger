@@ -77,18 +77,7 @@ export const FlightTypePieChart = (): JSX.Element => {
           >
             <ResponsivePie
               theme={BAR_CHART_THEME}
-              data={[
-                {
-                  label: 'Test 2',
-                  id: 'Domestic',
-                  value: 1,
-                },
-                {
-                  label: 'Test 1',
-                  id: "Int'l",
-                  value: 1,
-                },
-              ]}
+              data={data}
               margin={{ top: 25, right: 40, bottom: 25, left: 40 }}
               colors={[
                 'var(--fallback-er,oklch(var(--s)/0.75))',
