@@ -21,7 +21,7 @@ export const FlightClassRadarChart = (): JSX.Element => {
     },
   );
   return (
-    <div className="flex h-[190px] min-w-[290px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[190px] min-w-[260px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-sm">Flight Class</div>
       </div>
@@ -43,7 +43,7 @@ export const FlightClassRadarChart = (): JSX.Element => {
               data={data}
               keys={['flights']}
               indexBy="flightClass"
-              margin={{ left: 60, top: 25, bottom: 15, right: 60 }}
+              margin={{ left: 45, top: 25, bottom: 15, right: 45 }}
               fillOpacity={0.5}
               gridLabelOffset={15}
               dotSize={8}

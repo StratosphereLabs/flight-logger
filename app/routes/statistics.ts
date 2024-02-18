@@ -5,6 +5,7 @@ import {
   type AircraftTypeData,
   type AirportData,
   type ClassData,
+  type FlightTypeData,
   type ReasonData,
   type RouteData,
   type SeatPositionData,
@@ -357,7 +358,7 @@ export const statisticsRouter = router({
           flights: 0,
         },
         PREMIUM: {
-          flightClass: 'Premium Economy',
+          flightClass: 'Premium Econ.',
           flights: 0,
         },
         BUSINESS: {
@@ -375,5 +376,54 @@ export const statisticsRouter = router({
         }
       }
       return Object.values(classDataMap);
+    }),
+  getFlightTypeDistribution: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          inTime: {
+            lte: new Date(),
+          },
+        },
+        select: {
+          departureAirport: {
+            select: {
+              countryId: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              countryId: true,
+            },
+          },
+        },
+      });
+      const flightTypeDataMap: Record<string, FlightTypeData> = {
+        domestic: {
+          id: 'Domestic',
+          label: 'Domestic',
+          value: 0,
+        },
+        international: {
+          id: "Int'l",
+          label: 'International',
+          value: 0,
+        },
+      };
+      for (const { departureAirport, arrivalAirport } of results) {
+        const flightType =
+          departureAirport.countryId === arrivalAirport.countryId
+            ? 'domestic'
+            : 'international';
+        flightTypeDataMap[flightType].value++;
+      }
+      return Object.values(flightTypeDataMap);
     }),
 });

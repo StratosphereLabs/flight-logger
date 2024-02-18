@@ -23,7 +23,7 @@ export const BAR_CHART_THEME = {
   },
   grid: {
     line: {
-      stroke: 'var(--fallback-bc,oklch(var(--bc)/0.25))',
+      stroke: 'var(--fallback-bc,oklch(var(--bc)/0.15))',
       strokeWidth: '2px',
     },
   },

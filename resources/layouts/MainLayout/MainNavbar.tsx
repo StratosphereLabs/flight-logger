@@ -30,7 +30,7 @@ export const MainNavbar = (): JSX.Element => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams();
-  const { data, error, isLoading } = trpc.users.getUser.useQuery(
+  const { data, error, isFetching } = trpc.users.getUser.useQuery(
     { username: undefined },
     {
       enabled: isLoggedIn,
@@ -163,9 +163,9 @@ export const MainNavbar = (): JSX.Element => {
             Login
           </Button>
           <DropdownMenu
-            className={classNames(!isLoggedIn && !isLoading && 'hidden')}
+            className={classNames(!isLoggedIn && !isFetching && 'hidden')}
             buttonProps={{
-              children: isLoading ? (
+              children: isFetching ? (
                 <Loading />
               ) : (
                 <Avatar shapeClassName="w-9 h-9 rounded-full">
@@ -173,7 +173,7 @@ export const MainNavbar = (): JSX.Element => {
                 </Avatar>
               ),
               color: 'ghost',
-              disabled: isLoading,
+              disabled: isFetching,
               shape: 'circle',
             }}
             items={[

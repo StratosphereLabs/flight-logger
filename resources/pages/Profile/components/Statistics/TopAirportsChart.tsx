@@ -87,7 +87,7 @@ export const TopAirportsChart = (): JSX.Element => {
               }}
               axisLeft={{
                 tickSize: 0,
-                tickPadding: 15,
+                tickPadding: 20,
               }}
               margin={{
                 left: 55,
