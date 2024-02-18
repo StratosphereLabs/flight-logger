@@ -49,7 +49,7 @@ export const FlightClassRadarChart = (): JSX.Element => {
               dotSize={8}
               dotColor="oklch(var(--b3))"
               dotBorderWidth={2}
-              colors={['oklch(var(--er))']}
+              colors={['oklch(var(--su))']}
               motionConfig="wobbly"
               sliceTooltip={tooltipData => (
                 <Tooltip
