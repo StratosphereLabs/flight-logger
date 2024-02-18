@@ -26,6 +26,7 @@
     "@hookform/resolvers": "^3.3.3",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",
+    "@nivo/pie": "^0.84.0",
     "@nivo/radar": "^0.84.0",
     "@prisma/client": "^5.7.1",
     "@react-google-maps/api": "^2.19.2",
