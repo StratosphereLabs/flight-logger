@@ -1,12 +1,23 @@
 import { ResponsiveRadar } from '@nivo/radar';
 import classNames from 'classnames';
+import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Loading, Tooltip } from 'stratosphere-ui';
+import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
 import { trpc } from '../../../../utils/trpc';
-import { BAR_CHART_THEME } from './constants';
+import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
+import type { TotalsModeFormData } from './types';
 
 export const FlightClassRadarChart = (): JSX.Element => {
   const { username } = useParams();
+  const methods = useForm<TotalsModeFormData>({
+    defaultValues: {
+      mode: 'flights',
+    },
+  });
+  const mode = useWatch<TotalsModeFormData, 'mode'>({
+    name: 'mode',
+    control: methods.control,
+  });
   const { data, isFetching } = trpc.statistics.getClassDistribution.useQuery(
     {
       username,
@@ -21,9 +32,33 @@ export const FlightClassRadarChart = (): JSX.Element => {
     },
   );
   return (
-    <div className="flex h-[195px] min-w-[260px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[195px] min-w-[254px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-sm">Flight Class</div>
+        <Form className="flex h-9 items-center" methods={methods}>
+          <Select
+            buttonProps={{ color: 'ghost', size: 'xs' }}
+            formValueMode="id"
+            getItemText={({ text }) => text}
+            options={[
+              {
+                id: 'flights',
+                text: 'Flights',
+              },
+              {
+                id: 'distance',
+                text: 'Distance (nm)',
+              },
+              {
+                id: 'duration',
+                text: 'Duration (min)',
+              },
+            ]}
+            menuSize="sm"
+            menuClassName="w-[185px] right-0"
+            name="mode"
+          />
+        </Form>
       </div>
       <div className="relative h-full w-full">
         {isFetching ? (
@@ -41,7 +76,7 @@ export const FlightClassRadarChart = (): JSX.Element => {
             <ResponsiveRadar
               theme={BAR_CHART_THEME}
               data={data}
-              keys={['flights']}
+              keys={[mode]}
               indexBy="flightClass"
               margin={{ left: 45, top: 30, bottom: 15, right: 45 }}
               fillOpacity={0.5}
@@ -56,7 +91,9 @@ export const FlightClassRadarChart = (): JSX.Element => {
                   className="translate-y-[-20px]"
                   open
                   text={`${tooltipData.index}: ${tooltipData.data[0].value} ${
-                    tooltipData.data[0].value !== 1 ? 'flights' : 'flight'
+                    tooltipData.data[0].value !== 1 || mode !== 'flights'
+                      ? STATS_TOTALS_MODE_UNITS[mode]
+                      : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)
                   }`}
                 />
               )}

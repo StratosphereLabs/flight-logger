@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getUserProfileFlightsSchema } from './users';
+import { getUserProfileFlightsSchema, getUserSchema } from './users';
 
 export const getUserTopRoutesSchema = getUserProfileFlightsSchema.extend({
   cityPairs: z.boolean(),
@@ -17,6 +17,10 @@ export const getUserTopAircraftTypesSchema = getUserProfileFlightsSchema.extend(
 
 export const getUserTopAirportsSchema = getUserProfileFlightsSchema.extend({
   mode: z.enum(['all', 'departure', 'arrival']),
+});
+
+export const getUserFlightTypesSchema = getUserSchema.extend({
+  mode: z.enum(['flights', 'distance', 'duration']),
 });
 
 export const routeDataSchema = z.object({
@@ -49,16 +53,22 @@ export const aircraftTypeDataSchema = z.object({
 export const reasonDataSchema = z.object({
   reason: z.string(),
   flights: z.number().int().positive(),
+  duration: z.number().int().positive(),
+  distance: z.number().positive(),
 });
 
 export const seatPositionDataSchema = z.object({
   seatPosition: z.string(),
   flights: z.number().int().positive(),
+  duration: z.number().int().positive(),
+  distance: z.number().positive(),
 });
 
 export const classDataSchema = z.object({
   flightClass: z.string(),
   flights: z.number().int().positive(),
+  duration: z.number().int().positive(),
+  distance: z.number().positive(),
 });
 
 export const flightTypeSchema = z.object({
@@ -70,6 +80,8 @@ export const flightTypeSchema = z.object({
 export const flightLengthSchema = z.object({
   flightLength: z.string(),
   flights: z.number().int().positive(),
+  duration: z.number().int().positive(),
+  distance: z.number().positive(),
 });
 
 export type GetUserTopRoutesSchema = z.infer<typeof getUserTopRoutesSchema>;
@@ -81,6 +93,8 @@ export type GetUserTopAircraftTypesSchema = z.infer<
 >;
 
 export type GetUserTopAirportsSchema = z.infer<typeof getUserTopAirportsSchema>;
+
+export type GetUserFlightTypesSchema = z.infer<typeof getUserFlightTypesSchema>;
 
 export type RouteData = z.infer<typeof routeDataSchema>;
 
