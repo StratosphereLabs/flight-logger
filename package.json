@@ -22,7 +22,6 @@
     "update-data": "vite-node app/commands/updateData.ts"
   },
   "dependencies": {
-    "@headlessui/react": "1.7.17",
     "@hookform/resolvers": "^3.3.3",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",

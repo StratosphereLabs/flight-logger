@@ -1,13 +1,20 @@
 import { ResponsiveRadar } from '@nivo/radar';
 import classNames from 'classnames';
-import { useForm, useWatch } from 'react-hook-form';
+import { type Control, useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
 import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
+import { type StatisticsFiltersData } from './Statistics';
 import type { TotalsModeFormData } from './types';
 
-export const FlightClassRadarChart = (): JSX.Element => {
+export interface FlightClassRadarChartProps {
+  filtersFormControl: Control<StatisticsFiltersData>;
+}
+
+export const FlightClassRadarChart = ({
+  filtersFormControl,
+}: FlightClassRadarChartProps): JSX.Element => {
   const { username } = useParams();
   const methods = useForm<TotalsModeFormData>({
     defaultValues: {
@@ -18,9 +25,14 @@ export const FlightClassRadarChart = (): JSX.Element => {
     name: 'mode',
     control: methods.control,
   });
+  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
+    name: 'statsShowUpcoming',
+    control: filtersFormControl,
+  });
   const { data, isFetching } = trpc.statistics.getClassDistribution.useQuery(
     {
       username,
+      showUpcoming,
     },
     {
       trpc: {

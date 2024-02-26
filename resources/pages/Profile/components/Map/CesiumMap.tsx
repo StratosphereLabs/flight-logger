@@ -30,10 +30,10 @@ export const CesiumMap = ({
   const viewerRef = useRef<CesiumComponentRef<ViewerType> | null>(null);
   const [showCompleted, showUpcoming] = useWatch<
     MapCardFormData,
-    ['showCompleted', 'showUpcoming']
+    ['mapShowCompleted', 'mapShowUpcoming']
   >({
     control: methods.control,
-    name: ['showCompleted', 'showUpcoming'],
+    name: ['mapShowCompleted', 'mapShowUpcoming'],
   });
   useEffect(() => {
     viewerRef.current?.cesiumElement?.camera.setView({

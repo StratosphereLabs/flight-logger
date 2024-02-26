@@ -49,10 +49,10 @@ export const GoogleMap = ({
   });
   const [showCompleted, showUpcoming, mapMode] = useWatch<
     MapCardFormData,
-    ['showCompleted', 'showUpcoming', 'mapMode']
+    ['mapShowCompleted', 'mapShowUpcoming', 'mapMode']
   >({
     control: methods.control,
-    name: ['showCompleted', 'showUpcoming', 'mapMode'],
+    name: ['mapShowCompleted', 'mapShowUpcoming', 'mapMode'],
   });
   const [heatmap, setHeatmap] =
     useState<google.maps.visualization.HeatmapLayer | null>(null);
