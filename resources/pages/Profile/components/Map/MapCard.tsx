@@ -32,9 +32,9 @@ import { GoogleMap } from './GoogleMap';
 import { getAirports } from './utils';
 
 export interface MapCardFormData {
-  showUpcoming: boolean;
-  showCompleted: boolean;
   mapMode: 'routes' | 'heatmap' | '3d';
+  mapShowUpcoming: boolean;
+  mapShowCompleted: boolean;
 }
 
 export interface MapCardProps {
@@ -54,29 +54,29 @@ export const MapCard = ({
   );
   const methods = useFormWithQueryParams<
     MapCardFormData,
-    ['mapMode', 'showCompleted', 'showUpcoming']
+    ['mapMode', 'mapShowCompleted', 'mapShowUpcoming']
   >({
-    getDefaultValues: ({ mapMode, showCompleted, showUpcoming }) => ({
-      showUpcoming: showUpcoming === 'true',
-      showCompleted:
-        showCompleted !== null && showCompleted !== undefined
-          ? showCompleted === 'true'
+    getDefaultValues: ({ mapMode, mapShowCompleted, mapShowUpcoming }) => ({
+      mapShowUpcoming: mapShowUpcoming === 'true',
+      mapShowCompleted:
+        mapShowCompleted !== null && mapShowCompleted !== undefined
+          ? mapShowCompleted === 'true'
           : true,
       mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
     }),
-    getSearchParams: ([mapMode, showCompleted, showUpcoming]) => ({
+    getSearchParams: ([mapMode, mapShowCompleted, mapShowUpcoming]) => ({
       mapMode,
-      showCompleted: showCompleted.toString(),
-      showUpcoming: showUpcoming.toString(),
+      mapShowCompleted: mapShowCompleted.toString(),
+      mapShowUpcoming: mapShowUpcoming.toString(),
     }),
-    includeKeys: ['mapMode', 'showCompleted', 'showUpcoming'],
+    includeKeys: ['mapMode', 'mapShowCompleted', 'mapShowUpcoming'],
   });
-  const [showUpcoming, showCompleted, mapMode] = useWatch<
+  const [mapShowUpcoming, mapShowCompleted, mapMode] = useWatch<
     MapCardFormData,
-    ['showUpcoming', 'showCompleted', 'mapMode']
+    ['mapShowUpcoming', 'mapShowCompleted', 'mapMode']
   >({
     control: methods.control,
-    name: ['showUpcoming', 'showCompleted', 'mapMode'],
+    name: ['mapShowUpcoming', 'mapShowCompleted', 'mapMode'],
   });
   const { username } = useParams();
   const { data: userData } = trpc.users.getUser.useQuery(
@@ -103,13 +103,13 @@ export const MapCard = ({
       select: mapData => {
         const filteredHeatmapData = mapData.heatmap.flatMap(
           ({ inFuture, lat, lng }) =>
-            (showUpcoming || !inFuture) && (showCompleted || inFuture)
+            (mapShowUpcoming || !inFuture) && (mapShowCompleted || inFuture)
               ? [{ lat, lng }]
               : [],
         );
         const filteredRoutes = mapData.routes.flatMap(route =>
-          (showUpcoming && route.inFuture) ||
-          (showCompleted && route.isCompleted)
+          (mapShowUpcoming && route.inFuture) ||
+          (mapShowCompleted && route.isCompleted)
             ? [
                 {
                   ...route,
@@ -238,19 +238,19 @@ export const MapCard = ({
             <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-2">
               <FormCheckbox
                 inputClassName="bg-base-200"
-                labelText="Show upcoming"
-                name="showUpcoming"
+                labelText="Show Upcoming"
+                name="mapShowUpcoming"
               />
               <FormCheckbox
                 inputClassName="bg-base-200"
-                labelText="Show completed"
-                name="showCompleted"
+                labelText="Show Completed"
+                name="mapShowCompleted"
               />
             </div>
             <AirportInfoOverlay
               airportId={selectedAirportId}
-              showUpcoming={showUpcoming}
-              showCompleted={showCompleted}
+              showUpcoming={mapShowUpcoming}
+              showCompleted={mapShowCompleted}
             />
           </div>
           <div className="flex gap-2">
@@ -305,9 +305,9 @@ export const MapCard = ({
       isLoading,
       isMapFullScreen,
       mapMode,
+      mapShowCompleted,
+      mapShowUpcoming,
       methods,
-      showCompleted,
-      showUpcoming,
       selectedAirportId,
       setIsMapFullScreen,
       userData,

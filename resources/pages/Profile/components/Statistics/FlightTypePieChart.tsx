@@ -1,13 +1,20 @@
 import { ResponsivePie } from '@nivo/pie';
 import classNames from 'classnames';
-import { useForm, useWatch } from 'react-hook-form';
+import { type Control, useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
 import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
+import { type StatisticsFiltersData } from './Statistics';
 import type { TotalsModeFormData } from './types';
 
-export const FlightTypePieChart = (): JSX.Element => {
+export interface FlightTypePieChartProps {
+  filtersFormControl: Control<StatisticsFiltersData>;
+}
+
+export const FlightTypePieChart = ({
+  filtersFormControl,
+}: FlightTypePieChartProps): JSX.Element => {
   const { username } = useParams();
   const methods = useForm<TotalsModeFormData>({
     defaultValues: {
@@ -18,11 +25,16 @@ export const FlightTypePieChart = (): JSX.Element => {
     name: 'mode',
     control: methods.control,
   });
+  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
+    name: 'statsShowUpcoming',
+    control: filtersFormControl,
+  });
   const { data, isFetching } =
     trpc.statistics.getFlightTypeDistribution.useQuery(
       {
         username,
         mode,
+        showUpcoming,
       },
       {
         trpc: {

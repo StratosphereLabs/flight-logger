@@ -1,13 +1,20 @@
 import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
-import { useForm, useWatch } from 'react-hook-form';
+import { type Control, useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
 import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME } from './constants';
+import { type StatisticsFiltersData } from './Statistics';
 import type { AirportsModeFormData } from './types';
 
-export const TopAirportsChart = (): JSX.Element => {
+export interface TopAirportsChartProps {
+  filtersFormControl: Control<StatisticsFiltersData>;
+}
+
+export const TopAirportsChart = ({
+  filtersFormControl,
+}: TopAirportsChartProps): JSX.Element => {
   const { username } = useParams();
   const methods = useForm<AirportsModeFormData>({
     defaultValues: {
@@ -18,11 +25,16 @@ export const TopAirportsChart = (): JSX.Element => {
     name: 'mode',
     control: methods.control,
   });
+  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
+    name: 'statsShowUpcoming',
+    control: filtersFormControl,
+  });
   const { data, isFetching } = trpc.statistics.getTopAirports.useQuery(
     {
       username,
       limit: 5,
       mode,
+      showUpcoming,
     },
     {
       trpc: {

@@ -14,8 +14,8 @@ import {
   getUserTopAirlinesSchema,
   getUserTopAircraftTypesSchema,
   getUserTopAirportsSchema,
-  getUserSchema,
   getUserFlightTypesSchema,
+  getStatisticsDistributionSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import { calculateDistance, parsePaginationRequest } from '../utils';
@@ -33,11 +33,12 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         orderBy: {
-          outTime: 'desc',
+          outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
           departureAirport: true,
@@ -74,11 +75,12 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         orderBy: {
-          outTime: 'desc',
+          outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
           departureAirport: true,
@@ -139,11 +141,12 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         orderBy: {
-          outTime: 'desc',
+          outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
           departureAirport: true,
@@ -193,11 +196,12 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         orderBy: {
-          outTime: 'desc',
+          outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
           aircraftType: true,
@@ -252,7 +256,7 @@ export const statisticsRouter = router({
         .reverse();
     }),
   getReasonDistribution: procedure
-    .input(getUserSchema)
+    .input(getStatisticsDistributionSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -263,7 +267,8 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         select: {
@@ -327,7 +332,7 @@ export const statisticsRouter = router({
       }));
     }),
   getSeatPositionDistribution: procedure
-    .input(getUserSchema)
+    .input(getStatisticsDistributionSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -338,7 +343,8 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         select: {
@@ -402,7 +408,7 @@ export const statisticsRouter = router({
       }));
     }),
   getClassDistribution: procedure
-    .input(getUserSchema)
+    .input(getStatisticsDistributionSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -413,7 +419,8 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         select: {
@@ -500,7 +507,8 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         select: {
@@ -558,7 +566,7 @@ export const statisticsRouter = router({
       }));
     }),
   getFlightLengthDistribution: procedure
-    .input(getUserSchema)
+    .input(getStatisticsDistributionSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -569,7 +577,8 @@ export const statisticsRouter = router({
             username: input?.username ?? ctx.user?.username,
           },
           inTime: {
-            lte: new Date(),
+            gt: input.showUpcoming ? new Date() : undefined,
+            lte: !input.showUpcoming ? new Date() : undefined,
           },
         },
         select: {

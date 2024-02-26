@@ -1,25 +1,33 @@
 import { z } from 'zod';
 import { getUserProfileFlightsSchema, getUserSchema } from './users';
 
-export const getUserTopRoutesSchema = getUserProfileFlightsSchema.extend({
+export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema.extend({
+  showUpcoming: z.boolean(),
+});
+
+export const getUserTopRoutesSchema = getStatisticsBarGraphSchema.extend({
   cityPairs: z.boolean(),
 });
 
-export const getUserTopAirlinesSchema = getUserProfileFlightsSchema.extend({
+export const getUserTopAirlinesSchema = getStatisticsBarGraphSchema.extend({
   mode: z.enum(['flights', 'distance', 'duration']),
 });
 
-export const getUserTopAircraftTypesSchema = getUserProfileFlightsSchema.extend(
+export const getUserTopAircraftTypesSchema = getStatisticsBarGraphSchema.extend(
   {
     mode: z.enum(['flights', 'distance', 'duration']),
   },
 );
 
-export const getUserTopAirportsSchema = getUserProfileFlightsSchema.extend({
+export const getUserTopAirportsSchema = getStatisticsBarGraphSchema.extend({
   mode: z.enum(['all', 'departure', 'arrival']),
 });
 
-export const getUserFlightTypesSchema = getUserSchema.extend({
+export const getStatisticsDistributionSchema = getUserSchema.extend({
+  showUpcoming: z.boolean(),
+});
+
+export const getUserFlightTypesSchema = getStatisticsDistributionSchema.extend({
   mode: z.enum(['flights', 'distance', 'duration']),
 });
 
