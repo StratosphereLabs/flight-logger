@@ -28,7 +28,7 @@ export const passwordResetRouter = router({
         },
         data: {
           passwordResetToken,
-          passwordResetAt: new Date(Date.now() + 10 * 60 * 1000),
+          passwordResetAt: new Date(Date.now() + 12 * 60 * 60 * 1000),
         },
       });
       await sendEmail({
@@ -61,8 +61,8 @@ export const passwordResetRouter = router({
       });
       if (user === null) {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found.',
+          code: 'BAD_REQUEST',
+          message: 'Invalid token.',
         });
       }
       await prisma.user.update({

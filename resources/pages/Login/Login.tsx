@@ -25,12 +25,13 @@ export const Login = (): JSX.Element => {
     },
     resolver: zodResolver(loginSchema),
   });
-  const { error, isLoading, mutate } = trpc.auth.login.useMutation({
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.auth.login.useMutation({
     onSuccess: ({ token }) => {
       setToken(token);
     },
+    onError,
   });
-  useTRPCErrorHandler(error);
   const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
   const handleRegister = useLinkClickHandler('/auth/register');
   return (

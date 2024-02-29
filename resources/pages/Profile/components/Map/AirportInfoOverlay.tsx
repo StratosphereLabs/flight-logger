@@ -15,13 +15,14 @@ export const AirportInfoOverlay = ({
   showUpcoming,
 }: AirportInfoOverlayProps): JSX.Element | null => {
   const { username } = useParams();
-  const { data, error, isFetching } = trpc.airports.getAirport.useQuery(
+  const onError = useTRPCErrorHandler();
+  const { data, isFetching } = trpc.airports.getAirport.useQuery(
     { id: airportId ?? '', showCompleted, showUpcoming, username },
     {
       enabled: airportId !== null,
+      onError,
     },
   );
-  useTRPCErrorHandler(error);
   if (airportId === null) return null;
   return (
     <div className="pointer-events-auto flex flex-col items-center rounded-xl bg-base-100/70 p-2">

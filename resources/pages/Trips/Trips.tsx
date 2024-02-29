@@ -19,13 +19,15 @@ export const Trips = (): JSX.Element => {
   const { state } = useLocation() as {
     state: TripsPageNavigationState | null;
   };
-  const { data, error, isLoading } = trpc.users.getUserTrips.useQuery(
+  const onError = useTRPCErrorHandler();
+  const { data, isLoading } = trpc.users.getUserTrips.useQuery(
     {
       username,
     },
     {
       enabled,
       staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
   useEffect(() => {
@@ -33,7 +35,6 @@ export const Trips = (): JSX.Element => {
       window.history.replaceState({}, document.title);
     }
   }, [data]);
-  useTRPCErrorHandler(error);
   return (
     <div className="flex flex-col items-stretch gap-6">
       <article className="prose self-center">

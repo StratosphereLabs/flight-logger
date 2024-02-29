@@ -18,15 +18,16 @@ export const AirframeInput = <Values extends FieldValues>(
   props: AirframeInputProps<Values>,
 ): JSX.Element => {
   const [query, setQuery] = useState('');
-  const { data, error } = trpc.airframes.searchAirframes.useQuery(
+  const onError = useTRPCErrorHandler();
+  const { data } = trpc.airframes.searchAirframes.useQuery(
     {
       query,
     },
     {
       enabled: query.length > 0,
+      onError,
     },
   );
-  useTRPCErrorHandler(error);
   return (
     <TypeaheadSelect
       dropdownInputClassName="bg-base-200"

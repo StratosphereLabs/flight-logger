@@ -13,6 +13,7 @@ import {
   useFormWithQueryParams,
 } from 'stratosphere-ui';
 import { SearchIcon } from '../../common/components';
+import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export interface SearchUsersFormData {
@@ -21,6 +22,7 @@ export interface SearchUsersFormData {
 
 export const Users = (): JSX.Element => {
   const navigate = useNavigate();
+  const onError = useTRPCErrorHandler();
   const methods = useFormWithQueryParams<SearchUsersFormData, ['searchQuery']>({
     getDefaultValues: ({ searchQuery }) => ({
       searchQuery: searchQuery ?? '',
@@ -39,9 +41,12 @@ export const Users = (): JSX.Element => {
     name: 'searchQuery',
   });
   const { debouncedValue } = useDebouncedValue(query, 400);
-  const { data, isFetching } = trpc.users.searchUsers.useQuery({
-    query: query !== '' ? debouncedValue : query,
-  });
+  const { data, isFetching } = trpc.users.searchUsers.useQuery(
+    {
+      query: query !== '' ? debouncedValue : query,
+    },
+    { onError },
+  );
   return (
     <div className="flex flex-1 flex-col items-center">
       <div className="flex w-full max-w-[1000px] flex-col justify-center">

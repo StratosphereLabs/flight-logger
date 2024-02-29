@@ -30,11 +30,13 @@ export const MainNavbar = (): JSX.Element => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams();
-  const { data, error, isFetching } = trpc.users.getUser.useQuery(
+  const onError = useTRPCErrorHandler();
+  const { data, isFetching } = trpc.users.getUser.useQuery(
     { username: undefined },
     {
       enabled: isLoggedIn,
       staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
   const pathsToTabsMap: Record<string, string> = useMemo(
@@ -107,7 +109,6 @@ export const MainNavbar = (): JSX.Element => {
     ],
     [isLoggedIn, navigate, tabsToPathsMap],
   );
-  useTRPCErrorHandler(error);
   return (
     <>
       <div className="navbar z-10 bg-base-300 shadow-xl">

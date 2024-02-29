@@ -13,19 +13,19 @@ export const DeleteItineraryModal = (): JSX.Element => {
   const { activeItinerary, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useItinerariesPageStore();
   const handleSuccess = useSuccessResponseHandler();
-  const { error, isLoading, mutate } =
-    trpc.itineraries.deleteItinerary.useMutation({
-      onSuccess: ({ id }) => {
-        handleSuccess('Itinerary Deleted');
-        setIsDeleteDialogOpen(false);
-        utils.users.getUserItineraries.setData(
-          { username },
-          previousItineraries =>
-            previousItineraries?.filter(itinerary => itinerary.id !== id),
-        );
-      },
-    });
-  useTRPCErrorHandler(error);
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.itineraries.deleteItinerary.useMutation({
+    onSuccess: ({ id }) => {
+      handleSuccess('Itinerary Deleted');
+      setIsDeleteDialogOpen(false);
+      utils.users.getUserItineraries.setData(
+        { username },
+        previousItineraries =>
+          previousItineraries?.filter(itinerary => itinerary.id !== id),
+      );
+    },
+    onError,
+  });
   return (
     <Modal
       actionButtons={[

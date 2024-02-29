@@ -13,7 +13,8 @@ export const DeleteTripModal = (): JSX.Element => {
   const { activeTrip, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useTripsPageStore();
   const handleSuccess = useSuccessResponseHandler();
-  const { error, isLoading, mutate } = trpc.trips.deleteTrip.useMutation({
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.trips.deleteTrip.useMutation({
     onSuccess: ({ id }) => {
       handleSuccess('Trip Deleted');
       setIsDeleteDialogOpen(false);
@@ -35,8 +36,8 @@ export const DeleteTripModal = (): JSX.Element => {
       );
       void utils.users.getUserFlights.invalidate();
     },
+    onError,
   });
-  useTRPCErrorHandler(error);
   return (
     <Modal
       actionButtons={[

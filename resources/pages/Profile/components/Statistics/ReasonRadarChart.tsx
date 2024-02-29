@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { type Control, useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
+import { useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
@@ -29,6 +30,7 @@ export const ReasonRadarChart = ({
     name: 'statsShowUpcoming',
     control: filtersFormControl,
   });
+  const onError = useTRPCErrorHandler();
   const { data, isFetching } = trpc.statistics.getReasonDistribution.useQuery(
     {
       username,
@@ -41,6 +43,7 @@ export const ReasonRadarChart = ({
         },
       },
       keepPreviousData: true,
+      onError,
     },
   );
   return (

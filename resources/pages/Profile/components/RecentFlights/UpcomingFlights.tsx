@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useProfilePage } from '../../../../common/hooks';
+import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { FlightsTable } from './FlightsTable';
 
 export const UpcomingFlights = (): JSX.Element | null => {
   const enabled = useProfilePage();
   const { username } = useParams();
+  const onError = useTRPCErrorHandler();
   const { data, isLoading } =
     trpc.users.getUserUpcomingFlights.useInfiniteQuery(
       {
@@ -21,6 +22,7 @@ export const UpcomingFlights = (): JSX.Element | null => {
           },
         },
         staleTime: 5 * 60 * 1000,
+        onError,
       },
     );
   const flattenedData = useMemo(

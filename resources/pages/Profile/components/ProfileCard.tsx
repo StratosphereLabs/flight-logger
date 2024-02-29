@@ -13,18 +13,21 @@ export const ProfileCard = (): JSX.Element => {
   const [confirmUnfollow, setConfirmUnfollow] = useState(false);
   const navigate = useNavigate();
   const { username } = useParams();
+  const onError = useTRPCErrorHandler();
   const { data: currentUserData } = trpc.users.getUser.useQuery(
     { username: undefined },
     {
       enabled: isLoggedIn,
       staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
-  const { data, error, isLoading } = trpc.users.getUser.useQuery(
+  const { data, isLoading } = trpc.users.getUser.useQuery(
     { username },
     {
       enabled,
       staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
   const { mutate: addFollower, isLoading: isAddFollowerLoading } =
@@ -44,6 +47,7 @@ export const ProfileCard = (): JSX.Element => {
         );
         void utils.users.getUser.invalidate({ username: undefined });
       },
+      onError,
     });
   const { mutate: removeFollower, isLoading: isRemoveFollowingLoading } =
     trpc.users.removeFollower.useMutation({
@@ -63,8 +67,8 @@ export const ProfileCard = (): JSX.Element => {
         );
         void utils.users.getUser.invalidate({ username: undefined });
       },
+      onError,
     });
-  useTRPCErrorHandler(error);
   const onOwnProfile = useMemo(
     () => username === undefined || username === currentUserData?.username,
     [currentUserData?.username, username],

@@ -79,11 +79,13 @@ export const MapCard = ({
     name: ['mapShowUpcoming', 'mapShowCompleted', 'mapMode'],
   });
   const { username } = useParams();
+  const onError = useTRPCErrorHandler();
   const { data: userData } = trpc.users.getUser.useQuery(
     { username },
     {
       enabled,
       staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
   const { data: currentFlightData } = trpc.users.getUserCurrentFlight.useQuery(
@@ -92,9 +94,10 @@ export const MapCard = ({
     },
     {
       enabled,
+      onError,
     },
   );
-  const { data, error, isLoading } = trpc.users.getUserMapData.useQuery(
+  const { data, isLoading } = trpc.users.getUserMapData.useQuery(
     {
       username,
     },
@@ -135,6 +138,7 @@ export const MapCard = ({
         };
       },
       staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
   const currentFlight = useMemo(
@@ -162,7 +166,6 @@ export const MapCard = ({
   useEffect(() => {
     if (mapCenterpoint !== undefined) setCenter(mapCenterpoint);
   }, [mapCenterpoint]);
-  useTRPCErrorHandler(error);
   return useMemo(
     () => (
       <LoadingCard

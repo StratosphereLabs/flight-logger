@@ -30,13 +30,15 @@ export const CreateTripModal = ({
   });
   const flightIds = Object.keys(rowSelection);
   const handleSuccess = useSuccessResponseHandler();
-  const { error, isLoading, mutate } = trpc.trips.createTrip.useMutation({
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.trips.createTrip.useMutation({
     onSuccess: data => {
       handleSuccess('Trip Created!');
       setIsCreateTripDialogOpen(false);
       onSuccess?.(data.id);
       void utils.users.invalidate();
     },
+    onError,
   });
   useEffect(() => {
     if (isCreateTripDialogOpen) {
@@ -45,7 +47,6 @@ export const CreateTripModal = ({
       }, 100);
     }
   }, [isCreateTripDialogOpen, methods]);
-  useTRPCErrorHandler(error);
   return (
     <Modal
       actionButtons={[]}

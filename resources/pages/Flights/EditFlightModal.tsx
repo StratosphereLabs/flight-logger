@@ -58,15 +58,16 @@ export const EditFlightModal = ({
   const { activeFlight, isEditDialogOpen, setIsEditDialogOpen } =
     useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
-  const { error, isLoading, mutate } = trpc.flights.editFlight.useMutation({
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.flights.editFlight.useMutation({
     onSuccess: newFlight => {
       handleSuccess('Flight Edited!');
       onSuccess(newFlight);
       setIsEditDialogOpen(false);
       void utils.users.invalidate();
     },
+    onError,
   });
-  useTRPCErrorHandler(error);
   useEffect(() => {
     if (
       airframe?.aircraftType !== null &&
