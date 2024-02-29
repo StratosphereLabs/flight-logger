@@ -25,14 +25,14 @@ export const ResetPassword = (): JSX.Element => {
     resolver: zodResolver(resetPasswordSchema),
   });
   const handleSuccess = useSuccessResponseHandler();
-  const { error, isLoading, mutate } =
-    trpc.passwordReset.resetPassword.useMutation({
-      onSuccess: () => {
-        handleSuccess('Password Reset. Please log in again.');
-        navigate('/auth/login');
-      },
-    });
-  useTRPCErrorHandler(error);
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.passwordReset.resetPassword.useMutation({
+    onSuccess: () => {
+      handleSuccess('Password Reset. Please log in again.');
+      navigate('/auth/login');
+    },
+    onError,
+  });
   return (
     <>
       <CardTitle>Reset Password</CardTitle>

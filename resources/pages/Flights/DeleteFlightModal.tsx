@@ -27,7 +27,8 @@ export const DeleteFlightModal = ({
     name: 'layout',
   });
   const handleSuccess = useSuccessResponseHandler();
-  const { error, isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
     onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
       setIsDeleteDialogOpen(false);
@@ -55,8 +56,8 @@ export const DeleteFlightModal = ({
       );
       void utils.users.invalidate();
     },
+    onError,
   });
-  useTRPCErrorHandler(error);
   return (
     <Modal
       actionButtons={[

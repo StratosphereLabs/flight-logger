@@ -73,18 +73,19 @@ export const Flights = (): JSX.Element => {
   const enableRowSelection = isRowSelectEnabled
     ? ({ original }: FlightsTableRow) => original.tripId === null
     : false;
-  const { data, error, isLoading, refetch } =
-    trpc.users.getUserFlights.useQuery(
-      {
-        username,
-        withTrip: !isRowSelectEnabled,
-        layout,
-      },
-      {
-        enabled,
-        staleTime: 5 * 60 * 1000,
-      },
-    );
+  const onError = useTRPCErrorHandler();
+  const { data, isLoading, refetch } = trpc.users.getUserFlights.useQuery(
+    {
+      username,
+      withTrip: !isRowSelectEnabled,
+      layout,
+    },
+    {
+      enabled,
+      staleTime: 5 * 60 * 1000,
+      onError,
+    },
+  );
   useEffect(() => {
     if (data !== undefined && flightId !== undefined) {
       const flight =
@@ -96,7 +97,6 @@ export const Flights = (): JSX.Element => {
       setIsViewDialogOpen(true);
     }
   }, [data, flightId, setActiveFlight, setIsViewDialogOpen]);
-  useTRPCErrorHandler(error);
   return (
     <div className="flex flex-1 flex-col gap-4">
       <article className="prose self-center">

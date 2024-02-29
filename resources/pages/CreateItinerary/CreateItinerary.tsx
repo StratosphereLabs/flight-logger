@@ -36,16 +36,16 @@ export const CreateItinerary = (): JSX.Element => {
       methods.setFocus('departureAirport');
     }, 250);
   };
-  const { error, isLoading, mutate } =
-    trpc.itineraries.createItinerary.useMutation({
-      onSuccess: response => {
-        setIsCreateItineraryModalOpen(false);
-        navigate(`/itinerary/${response.id}`);
-        resetFlights();
-        void utils.users.invalidate();
-      },
-    });
-  useTRPCErrorHandler(error);
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.itineraries.createItinerary.useMutation({
+    onSuccess: response => {
+      setIsCreateItineraryModalOpen(false);
+      navigate(`/itinerary/${response.id}`);
+      resetFlights();
+      void utils.users.invalidate();
+    },
+    onError,
+  });
   useEffect(() => {
     if (isCreateItineraryModalOpen) {
       modalRef.current?.scrollTo(0, 0);

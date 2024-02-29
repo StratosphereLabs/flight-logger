@@ -19,16 +19,17 @@ export const Itineraries = (): JSX.Element => {
   const { setActiveItinerary, setIsDeleteDialogOpen, setIsEditDialogOpen } =
     useItinerariesPageStore();
   const copyToClipboard = useCopyToClipboard();
-  const { data, error, isFetching } = trpc.users.getUserItineraries.useQuery(
+  const onError = useTRPCErrorHandler();
+  const { data, isFetching } = trpc.users.getUserItineraries.useQuery(
     {
       username,
     },
     {
       enabled,
       staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
-  useTRPCErrorHandler(error);
   return (
     <div className="flex flex-col items-center gap-4">
       <article className="prose">

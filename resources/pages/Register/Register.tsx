@@ -29,12 +29,13 @@ export const Register = (): JSX.Element => {
     },
     resolver: zodResolver(registerSchema),
   });
-  const { error, isLoading, mutate } = trpc.auth.register.useMutation({
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.auth.register.useMutation({
     onSuccess: ({ token }) => {
       setToken(token);
     },
+    onError,
   });
-  useTRPCErrorHandler(error);
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>

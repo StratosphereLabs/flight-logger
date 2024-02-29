@@ -15,13 +15,16 @@ export const AirlinesCard = (): JSX.Element => {
     pageSize: 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { data, error, isFetching } = trpc.airlines.getAirlines.useQuery({
-    limit: pagination.pageSize,
-    cursor: pagination.pageIndex + 1,
-    sort: sorting[0]?.desc ? 'desc' : 'asc',
-    sortKey: sorting[0]?.id,
-  });
-  useTRPCErrorHandler(error);
+  const onError = useTRPCErrorHandler();
+  const { data, isFetching } = trpc.airlines.getAirlines.useQuery(
+    {
+      limit: pagination.pageSize,
+      cursor: pagination.pageIndex + 1,
+      sort: sorting[0]?.desc ? 'desc' : 'asc',
+      sortKey: sorting[0]?.id,
+    },
+    { onError },
+  );
   return (
     <Card className="min-h-[625px] bg-base-200 shadow-md">
       <CardBody>

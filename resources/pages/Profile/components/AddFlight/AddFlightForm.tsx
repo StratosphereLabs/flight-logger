@@ -21,6 +21,7 @@ import {
   PlusIcon,
   SearchIcon,
 } from '../../../../common/components';
+import { useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { flightSearchFormDefaultValues } from './constants';
 
@@ -35,11 +36,13 @@ export const AddFlightForm = (): JSX.Element => {
     useState<FetchFlightsByFlightNumberRequest | null>(null);
   const [selectedFlightId, setSelectedFlightId] = useState<number | null>(null);
   const [completedFlightIds, setCompletedFlightIds] = useState<number[]>([]);
+  const onError = useTRPCErrorHandler();
   const { data, isFetching } =
     trpc.flightData.fetchFlightsByFlightNumber.useQuery(
       currentFormData ?? flightSearchFormDefaultValues,
       {
         enabled: currentFormData !== null,
+        onError,
       },
     );
   const { mutate, isLoading: isFlightDataLoading } =
@@ -51,6 +54,7 @@ export const AddFlightForm = (): JSX.Element => {
           void utils.users.invalidate();
         }
       },
+      onError,
     });
   useEffect(() => {
     setCompletedFlightIds([]);

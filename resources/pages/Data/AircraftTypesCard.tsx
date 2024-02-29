@@ -14,14 +14,16 @@ export const AircraftTypesCard = (): JSX.Element => {
     pageSize: 10,
   });
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { data, error, isFetching } =
-    trpc.aircraftTypes.getAircraftTypes.useQuery({
+  const onError = useTRPCErrorHandler();
+  const { data, isFetching } = trpc.aircraftTypes.getAircraftTypes.useQuery(
+    {
       limit: pagination.pageSize,
       cursor: pagination.pageIndex + 1,
       sort: sorting[0]?.desc ? 'desc' : 'asc',
       sortKey: sorting[0]?.id,
-    });
-  useTRPCErrorHandler(error);
+    },
+    { onError },
+  );
   return (
     <Card className="min-h-[550px] bg-base-200 shadow-md">
       <CardBody>

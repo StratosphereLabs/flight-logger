@@ -9,6 +9,7 @@ import {
 } from 'stratosphere-ui';
 import { type UsersRouterOutput } from '../../../app/routes/users';
 import { trpc } from '../../utils/trpc';
+import { useTRPCErrorHandler } from '../hooks';
 import { SearchIcon } from './Icons';
 
 export interface UserSearchFormData {
@@ -21,9 +22,10 @@ export const SearchButton = (): JSX.Element => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [query, setQuery] = useState('');
+  const onError = useTRPCErrorHandler();
   const { data } = trpc.users.getUsers.useQuery(
     { query },
-    { enabled: query.length > 0 },
+    { enabled: query.length > 0, onError },
   );
   const methods = useForm<UserSearchFormData>({
     defaultValues: {

@@ -19,9 +19,10 @@ export const ForgotPassword = (): JSX.Element => {
     resolver: zodResolver(forgotPasswordSchema),
   });
   const handleBackToLogin = useLinkClickHandler('/auth/login');
-  const { error, isLoading, mutate } =
-    trpc.passwordReset.forgotPassword.useMutation();
-  useTRPCErrorHandler(error);
+  const onError = useTRPCErrorHandler();
+  const { isLoading, mutate } = trpc.passwordReset.forgotPassword.useMutation({
+    onError,
+  });
   if (resetLinkSent) {
     return (
       <>

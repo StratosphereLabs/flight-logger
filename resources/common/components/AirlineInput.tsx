@@ -17,15 +17,16 @@ export const AirlineInput = <Values extends FieldValues>({
   ...props
 }: AirlineInputProps<Values>): JSX.Element => {
   const [query, setQuery] = useState('');
-  const { data, error } = trpc.airlines.searchAirlines.useQuery(
+  const onError = useTRPCErrorHandler();
+  const { data } = trpc.airlines.searchAirlines.useQuery(
     {
       query,
     },
     {
       enabled: query.length > 0,
+      onError,
     },
   );
-  useTRPCErrorHandler(error);
   return (
     <TypeaheadSelect
       dropdownInputClassName={classNames('bg-base-200', dropdownInputClassName)}
