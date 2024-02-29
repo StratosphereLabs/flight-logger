@@ -1,12 +1,21 @@
+import { Prisma } from '@prisma/client';
 import express from 'express';
 import { type Request } from 'express-jwt';
 import createHttpError from 'http-errors';
+import groupBy from 'lodash.groupby';
+import keyBy from 'lodash.keyby';
 import multer from 'multer';
 import { findBestMatch } from 'string-similarity';
 import { type UserToken } from '../context';
 import { fetchFlightData, prisma } from '../db';
 import { authorizeToken, verifyAdminRest } from '../middleware';
-import { getFlightTimes, parseCSVFile } from '../utils';
+import {
+  getDurationMinutes,
+  getFlightTimes,
+  getFlightyFlightNumber,
+  parseCSVFile,
+  parseFlightyFile,
+} from '../utils';
 import {
   getAircraftIcao,
   getAircraftName,
@@ -268,6 +277,186 @@ uploadRouter.post(
                 offTimeActual: offTimeActual?.toISOString() ?? undefined,
                 onTimeActual: onTimeActual?.toISOString() ?? undefined,
                 inTime: inTime.toISOString(),
+                duration,
+              },
+            }),
+          ];
+        }),
+      );
+      res.status(200).json({ flights });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+uploadRouter.post(
+  '/flights/flighty',
+  authorizeToken(true),
+  upload.single('file'),
+  async (req: Request<UserToken>, res, next) => {
+    const { file } = req;
+    const userId = req.auth?.id;
+    if (userId === undefined) {
+      next(createHttpError(401, 'Unauthorized.'));
+      return;
+    }
+    try {
+      const rows = parseFlightyFile(file);
+      const airportIatas = [
+        ...new Set(
+          rows.flatMap(row => [
+            row['Departure Airport'],
+            row['Arrival Airport'],
+          ]),
+        ),
+      ];
+      const airlineIatas = [
+        ...new Set(rows.map(row => row['Flight Number'].slice(0, 2))),
+      ];
+      const registrations = [
+        ...new Set(
+          rows.flatMap(row =>
+            row['Tail Number'] !== '' ? [row['Tail Number']] : [],
+          ),
+        ),
+      ];
+      const airports = await prisma.airport.findMany({
+        where: {
+          iata: {
+            in: airportIatas,
+          },
+        },
+      });
+      const airlines = await prisma.airline.findMany({
+        where: {
+          iata: {
+            in: airlineIatas,
+          },
+        },
+      });
+      const airframes = await prisma.$queryRaw<
+        Array<{
+          registration: string;
+          icao24: string;
+          aircraftTypeId: string | null;
+          typeCode: string | null;
+        }>
+      >`
+        SELECT "registration", "icao24", "aircraftTypeId", "typeCode" FROM "airframe" WHERE "registration" ILIKE ANY (ARRAY[${Prisma.join(
+          registrations.map(reg => reg.split('').join('%')),
+        )}])
+      ;`;
+      const aircraftTypeIcaos = [
+        ...new Set(
+          airframes.flatMap(({ aircraftTypeId, typeCode }) =>
+            aircraftTypeId === null && typeCode !== null && typeCode.length > 0
+              ? typeCode
+              : [],
+          ),
+        ),
+      ];
+      const aircraftTypes = await prisma.aircraft_type.findMany({
+        where: {
+          icao: {
+            in: aircraftTypeIcaos,
+          },
+        },
+      });
+      const airportData = keyBy(airports, 'iata');
+      const airlineData = keyBy(airlines, 'iata');
+      const aircraftTypeData = groupBy(aircraftTypes, 'icao');
+      const flights = await prisma.$transaction(
+        rows.flatMap(row => {
+          const departureAirport = airportData[row['Departure Airport']];
+          const arrivalAirport = airportData[row['Arrival Airport']];
+          if (departureAirport === undefined || arrivalAirport === undefined)
+            return [];
+          const airlineIata = row['Flight Number'].slice(0, 2);
+          const flightNumber = row['Flight Number'].slice(2);
+          const airline = airlineData[airlineIata];
+          const airframe =
+            row['Tail Number'].length > 0
+              ? airframes.find(({ registration }) =>
+                  new RegExp(
+                    `^(?=${row['Tail Number']
+                      .split('')
+                      .map(val => `.*${val}`)
+                      .join('')}).+$`,
+                  ).test(registration),
+                )
+              : undefined;
+          const aircraftTypeId =
+            airframe?.aircraftTypeId ??
+            (airframe?.typeCode !== undefined && airframe?.typeCode !== null
+              ? aircraftTypeData[airframe.typeCode][0].id
+              : null);
+          const outTime = new Date(`${row['Scheduled Departure Date']}Z`);
+          const outTimeActual =
+            row['Actual Departure Date'] !== ''
+              ? new Date(`${row['Actual Departure Date']}Z`)
+              : undefined;
+          const inTime = new Date(`${row['Scheduled Arrival Date']}Z`);
+          const inTimeActual =
+            row['Actual Arrival Date'] !== ''
+              ? new Date(`${row['Actual Arrival Date']}Z`)
+              : undefined;
+          const duration = getDurationMinutes({
+            start: outTime,
+            end: inTime,
+          });
+          return [
+            prisma.flight.create({
+              data: {
+                user: {
+                  connect: {
+                    id: userId,
+                  },
+                },
+                departureAirport: {
+                  connect: {
+                    id: departureAirport.id,
+                  },
+                },
+                arrivalAirport: {
+                  connect: {
+                    id: arrivalAirport.id,
+                  },
+                },
+                airline:
+                  airline !== undefined
+                    ? {
+                        connect: {
+                          id: airline.id,
+                        },
+                      }
+                    : undefined,
+                aircraftType:
+                  aircraftTypeId !== null
+                    ? {
+                        connect: {
+                          id: aircraftTypeId,
+                        },
+                      }
+                    : undefined,
+                airframe:
+                  airframe !== undefined
+                    ? {
+                        connect: {
+                          icao24: airframe.icao24,
+                        },
+                      }
+                    : undefined,
+                flightNumber: getFlightyFlightNumber(flightNumber),
+                tailNumber:
+                  airframe?.registration ??
+                  (row['Tail Number'].length > 0
+                    ? row['Tail Number']
+                    : undefined),
+                outTime,
+                outTimeActual,
+                inTime,
+                inTimeActual,
                 duration,
               },
             }),
