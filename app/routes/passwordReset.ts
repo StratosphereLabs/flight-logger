@@ -28,7 +28,7 @@ export const passwordResetRouter = router({
         },
         data: {
           passwordResetToken,
-          passwordResetAt: new Date(Date.now() + 2 * 60 * 60 * 1000),
+          passwordResetAt: new Date(Date.now() + 12 * 60 * 60 * 1000),
         },
       });
       await sendEmail({
