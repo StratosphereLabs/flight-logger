@@ -24,149 +24,155 @@ const processFlightUpdate = async (
     return;
   }
   const groupedFlights = groupBy(flightsToUpdate, getGroupedFlightsKey);
+  await Promise.map(
+    Object.entries(groupedFlights),
+    async ([key, flights]) => {
+      console.log(`Updating flight ${key}...`);
+      await updateFlightTimesData(flights);
+      await updateFlightRegistrationData(flights);
+    },
+    {
+      concurrency: UPDATE_CONCURRENCY,
+    },
+  );
+  console.log(
+    `  ${flightsToUpdate.length} flight${
+      flightsToUpdate.length > 1 ? 's' : ''
+    } updated successfully.`,
+  );
+};
+
+const updateFlights = async (): Promise<void> => {
   try {
-    await Promise.map(
-      Object.entries(groupedFlights),
-      async ([key, flights]) => {
-        console.log(`Updating flight ${key}...`);
-        await updateFlightTimesData(flights);
-        await updateFlightRegistrationData(flights);
+    const flightsToUpdate = await prisma.flight.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                inTimeActual: {
+                  gt: sub(new Date(), { hours: 12 }),
+                },
+              },
+              {
+                inTime: {
+                  gt: sub(new Date(), { hours: 12 }),
+                },
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                outTimeActual: {
+                  lte: add(new Date(), { days: 1 }),
+                },
+              },
+              {
+                outTime: {
+                  lte: add(new Date(), { days: 1 }),
+                },
+              },
+            ],
+          },
+        ],
+        airline: {
+          isNot: null,
+        },
+        flightNumber: {
+          not: null,
+        },
       },
-      {
-        concurrency: UPDATE_CONCURRENCY,
+      include: {
+        airline: true,
+        departureAirport: {
+          select: {
+            iata: true,
+            timeZone: true,
+          },
+        },
+        arrivalAirport: {
+          select: {
+            iata: true,
+            timeZone: true,
+          },
+        },
       },
-    );
-    console.log(
-      `  ${flightsToUpdate.length} flight${
-        flightsToUpdate.length > 1 ? 's' : ''
-      } updated successfully.`,
-    );
+    });
+    await processFlightUpdate(flightsToUpdate);
+    await prisma.$disconnect();
   } catch (err) {
     console.error(err);
   }
 };
 
-const updateFlights = async (): Promise<void> => {
-  const flightsToUpdate = await prisma.flight.findMany({
-    where: {
-      AND: [
-        {
-          OR: [
-            {
-              inTimeActual: {
-                gt: sub(new Date(), { hours: 12 }),
-              },
-            },
-            {
-              inTime: {
-                gt: sub(new Date(), { hours: 12 }),
-              },
-            },
-          ],
-        },
-        {
-          OR: [
-            {
-              outTimeActual: {
-                lte: add(new Date(), { days: 1 }),
-              },
-            },
-            {
-              outTime: {
-                lte: add(new Date(), { days: 1 }),
-              },
-            },
-          ],
-        },
-      ],
-      airline: {
-        isNot: null,
-      },
-      flightNumber: {
-        not: null,
-      },
-    },
-    include: {
-      airline: true,
-      departureAirport: {
-        select: {
-          iata: true,
-          timeZone: true,
-        },
-      },
-      arrivalAirport: {
-        select: {
-          iata: true,
-          timeZone: true,
-        },
-      },
-    },
-  });
-  await processFlightUpdate(flightsToUpdate);
-  await prisma.$disconnect();
-};
-
 const updateCurrentFlights = async (): Promise<void> => {
-  const flightsToUpdate = await prisma.flight.findMany({
-    where: {
-      OR: [
-        {
-          outTimeActual: {
-            gt: sub(new Date(), { minutes: 30 }),
-            lte: add(new Date(), { minutes: 60 }),
+  try {
+    const flightsToUpdate = await prisma.flight.findMany({
+      where: {
+        OR: [
+          {
+            outTimeActual: {
+              gt: sub(new Date(), { minutes: 30 }),
+              lte: add(new Date(), { minutes: 60 }),
+            },
           },
-        },
-        {
-          outTime: {
-            gt: sub(new Date(), { minutes: 30 }),
-            lte: add(new Date(), { minutes: 60 }),
+          {
+            outTime: {
+              gt: sub(new Date(), { minutes: 30 }),
+              lte: add(new Date(), { minutes: 60 }),
+            },
           },
-        },
-        {
-          inTimeActual: {
-            gt: sub(new Date(), { minutes: 30 }),
-            lte: add(new Date(), { minutes: 90 }),
+          {
+            inTimeActual: {
+              gt: sub(new Date(), { minutes: 30 }),
+              lte: add(new Date(), { minutes: 90 }),
+            },
           },
-        },
-        {
-          inTime: {
-            gt: sub(new Date(), { minutes: 30 }),
-            lte: add(new Date(), { minutes: 90 }),
+          {
+            inTime: {
+              gt: sub(new Date(), { minutes: 30 }),
+              lte: add(new Date(), { minutes: 90 }),
+            },
           },
+        ],
+        airline: {
+          isNot: null,
         },
-      ],
-      airline: {
-        isNot: null,
-      },
-      flightNumber: {
-        not: null,
-      },
-    },
-    include: {
-      airline: true,
-      departureAirport: {
-        select: {
-          iata: true,
-          timeZone: true,
+        flightNumber: {
+          not: null,
         },
       },
-      arrivalAirport: {
-        select: {
-          iata: true,
-          timeZone: true,
+      include: {
+        airline: true,
+        departureAirport: {
+          select: {
+            iata: true,
+            timeZone: true,
+          },
+        },
+        arrivalAirport: {
+          select: {
+            iata: true,
+            timeZone: true,
+          },
         },
       },
-    },
-  });
-  const filteredFlights = flightsToUpdate.filter(({ inTime, inTimeActual }) => {
-    const arrivalTime = inTimeActual ?? inTime;
-    return (
-      isAfter(arrivalTime, sub(new Date(), { minutes: 30 })) &&
-      isBefore(arrivalTime, add(new Date(), { minutes: 90 }))
+    });
+    const filteredFlights = flightsToUpdate.filter(
+      ({ inTime, inTimeActual }) => {
+        const arrivalTime = inTimeActual ?? inTime;
+        return (
+          isAfter(arrivalTime, sub(new Date(), { minutes: 30 })) &&
+          isBefore(arrivalTime, add(new Date(), { minutes: 90 }))
+        );
+      },
     );
-  });
-  await processFlightUpdate(filteredFlights);
-  await prisma.$disconnect();
+    await processFlightUpdate(filteredFlights);
+    await prisma.$disconnect();
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 (() => {
