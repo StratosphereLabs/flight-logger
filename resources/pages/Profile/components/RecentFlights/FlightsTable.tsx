@@ -23,7 +23,7 @@ export const FlightsTable = ({
     <div className="flex max-w-fit flex-1 flex-col">
       <article className="prose flex w-full items-end justify-between p-1">
         <h4 className="m-0 hidden lg:block">{title}</h4>
-        <div className="text-prose-headings m-0 text-sm font-semibold lg:hidden">
+        <div className="m-0 text-sm font-semibold text-prose-headings lg:hidden">
           {title}
         </div>
         <Link
