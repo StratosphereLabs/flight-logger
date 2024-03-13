@@ -42,6 +42,66 @@ const processFlightUpdate = async (
   );
 };
 
+const updateFlightsHourly = async (): Promise<void> => {
+  const flightsToUpdate = await prisma.flight.findMany({
+    where: {
+      AND: [
+        {
+          OR: [
+            {
+              inTimeActual: {
+                gt: sub(new Date(), { days: 1 }),
+              },
+            },
+            {
+              inTime: {
+                gt: sub(new Date(), { days: 1 }),
+              },
+            },
+          ],
+        },
+        {
+          OR: [
+            {
+              outTimeActual: {
+                lte: add(new Date(), { days: 3 }),
+              },
+            },
+            {
+              outTime: {
+                lte: add(new Date(), { days: 3 }),
+              },
+            },
+          ],
+        },
+      ],
+      airline: {
+        isNot: null,
+      },
+      flightNumber: {
+        not: null,
+      },
+    },
+    include: {
+      airline: true,
+      departureAirport: {
+        select: {
+          iata: true,
+          timeZone: true,
+        },
+      },
+      arrivalAirport: {
+        select: {
+          iata: true,
+          timeZone: true,
+        },
+      },
+    },
+  });
+  await processFlightUpdate(flightsToUpdate);
+  await prisma.$disconnect();
+};
+
 const updateFlights = async (): Promise<void> => {
   try {
     const flightsToUpdate = await prisma.flight.findMany({
@@ -176,7 +236,8 @@ const updateCurrentFlights = async (): Promise<void> => {
 };
 
 (() => {
-  scheduleJob('*/15 * * * *', updateFlights);
+  scheduleJob('0 * * * *', updateFlightsHourly);
+  scheduleJob('15,30,45 * * * *', updateFlights);
   scheduleJob('5,10,20,25,35,40,50,55 * * * *', updateCurrentFlights);
   scheduleJob('0 0 1 * *', async () => {
     await seedManufacturers();
