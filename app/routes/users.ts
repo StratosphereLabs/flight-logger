@@ -300,12 +300,12 @@ export const usersRouter = router({
               OR: [
                 {
                   outTimeActual: {
-                    lte: add(new Date(), { hours: 12 }),
+                    lte: add(new Date(), { days: 1 }),
                   },
                 },
                 {
                   outTime: {
-                    lte: add(new Date(), { hours: 12 }),
+                    lte: add(new Date(), { days: 1 }),
                   },
                 },
               ],

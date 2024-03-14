@@ -188,9 +188,8 @@ export const getCurrentFlight = (
     const nextFlight = allFlights[index + 1];
     if (nextFlight === undefined) return true;
     const nextFlightTime = nextFlight.outTimeActual ?? nextFlight.outTime;
-    const midTime = new Date(
-      (arrivalTime.getTime() + nextFlightTime.getTime()) / 2,
-    );
+    const layoverDuration = nextFlightTime.getTime() - arrivalTime.getTime();
+    const midTime = arrivalTime.getTime() + layoverDuration / 3;
     return isAfter(midTime, new Date());
   });
   return currentFlight !== undefined
