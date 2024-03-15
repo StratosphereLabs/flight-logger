@@ -43,63 +43,67 @@ const processFlightUpdate = async (
 };
 
 const updateFlightsHourly = async (): Promise<void> => {
-  const flightsToUpdate = await prisma.flight.findMany({
-    where: {
-      AND: [
-        {
-          OR: [
-            {
-              inTimeActual: {
-                gt: sub(new Date(), { days: 1 }),
+  try {
+    const flightsToUpdate = await prisma.flight.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                inTimeActual: {
+                  gt: sub(new Date(), { days: 1 }),
+                },
               },
-            },
-            {
-              inTime: {
-                gt: sub(new Date(), { days: 1 }),
+              {
+                inTime: {
+                  gt: sub(new Date(), { days: 1 }),
+                },
               },
-            },
-          ],
+            ],
+          },
+          {
+            OR: [
+              {
+                outTimeActual: {
+                  lte: add(new Date(), { days: 3 }),
+                },
+              },
+              {
+                outTime: {
+                  lte: add(new Date(), { days: 3 }),
+                },
+              },
+            ],
+          },
+        ],
+        airline: {
+          isNot: null,
         },
-        {
-          OR: [
-            {
-              outTimeActual: {
-                lte: add(new Date(), { days: 3 }),
-              },
-            },
-            {
-              outTime: {
-                lte: add(new Date(), { days: 3 }),
-              },
-            },
-          ],
-        },
-      ],
-      airline: {
-        isNot: null,
-      },
-      flightNumber: {
-        not: null,
-      },
-    },
-    include: {
-      airline: true,
-      departureAirport: {
-        select: {
-          iata: true,
-          timeZone: true,
+        flightNumber: {
+          not: null,
         },
       },
-      arrivalAirport: {
-        select: {
-          iata: true,
-          timeZone: true,
+      include: {
+        airline: true,
+        departureAirport: {
+          select: {
+            iata: true,
+            timeZone: true,
+          },
+        },
+        arrivalAirport: {
+          select: {
+            iata: true,
+            timeZone: true,
+          },
         },
       },
-    },
-  });
-  await processFlightUpdate(flightsToUpdate);
-  await prisma.$disconnect();
+    });
+    await processFlightUpdate(flightsToUpdate);
+    await prisma.$disconnect();
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const updateFlights = async (): Promise<void> => {
