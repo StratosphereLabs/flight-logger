@@ -24,3 +24,5 @@ export const useAuthStore = create<AuthState>()(
     },
   ),
 );
+
+export const getIsLoggedIn = ({ token }: AuthState): boolean => token !== null;

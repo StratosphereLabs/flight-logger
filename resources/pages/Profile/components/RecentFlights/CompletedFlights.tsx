@@ -1,13 +1,16 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
+import {
+  useLoggedInUserQuery,
+  useTRPCErrorHandler,
+} from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { FlightsTable } from './FlightsTable';
 
 export const CompletedFlights = (): JSX.Element | null => {
-  const enabled = useProfilePage();
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
+  const { data: userData } = useLoggedInUserQuery();
   const { data, isLoading } =
     trpc.users.getUserCompletedFlights.useInfiniteQuery(
       {
@@ -15,12 +18,7 @@ export const CompletedFlights = (): JSX.Element | null => {
         username,
       },
       {
-        enabled,
-        trpc: {
-          context: {
-            skipBatch: true,
-          },
-        },
+        enabled: userData !== undefined,
         staleTime: 5 * 60 * 1000,
         onError,
       },
