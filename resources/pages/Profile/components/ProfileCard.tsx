@@ -3,13 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Button, CardBody, LoadingCard } from 'stratosphere-ui';
 import { UserOutlineIcon, UserSolidIcon } from '../../../common/components';
 import { useProfilePage, useTRPCErrorHandler } from '../../../common/hooks';
-import { useAuthStore } from '../../../stores';
+import { getIsLoggedIn, useAuthStore } from '../../../stores';
 import { trpc } from '../../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
   const enabled = useProfilePage();
   const utils = trpc.useUtils();
-  const isLoggedIn = useAuthStore(({ token }) => token !== null);
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [confirmUnfollow, setConfirmUnfollow] = useState(false);
   const navigate = useNavigate();
   const { username } = useParams();

@@ -3,11 +3,14 @@ import classNames from 'classnames';
 import { type Control, useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
+import {
+  useLoggedInUserQuery,
+  useTRPCErrorHandler,
+} from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
 import type { TotalsModeFormData } from './types';
-import { useTRPCErrorHandler } from '../../../../common/hooks';
 
 export interface TopAircraftTypeChartProps {
   filtersFormControl: Control<StatisticsFiltersData>;
@@ -31,6 +34,7 @@ export const TopAircraftTypesChart = ({
     control: filtersFormControl,
   });
   const onError = useTRPCErrorHandler();
+  const { data: userData } = useLoggedInUserQuery();
   const { data, isFetching } = trpc.statistics.getTopAircraftTypes.useQuery(
     {
       username,
@@ -39,11 +43,7 @@ export const TopAircraftTypesChart = ({
       showUpcoming,
     },
     {
-      trpc: {
-        context: {
-          skipBatch: true,
-        },
-      },
+      enabled: userData !== undefined,
       keepPreviousData: true,
       onError,
     },

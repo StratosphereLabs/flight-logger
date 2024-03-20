@@ -20,11 +20,11 @@ import {
   ThemeButton,
 } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
-import { useAuthStore } from '../../stores';
+import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
 export const MainNavbar = (): JSX.Element => {
-  const isLoggedIn = useAuthStore(({ token }) => token !== null);
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname } = useLocation();

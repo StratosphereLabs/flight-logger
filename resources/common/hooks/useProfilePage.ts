@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { useAuthStore } from '../../stores';
+import { getIsLoggedIn, useAuthStore } from '../../stores';
 
 export const useProfilePage = (): boolean => {
-  const isLoggedIn = useAuthStore(({ token }) => token !== null);
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { username } = useParams();
   return username !== undefined || isLoggedIn;
 };
