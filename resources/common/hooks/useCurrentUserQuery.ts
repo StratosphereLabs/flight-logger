@@ -1,23 +1,29 @@
 import { type TRPCClientErrorLike } from '@trpc/client';
 import { type UseTRPCQueryResult } from '@trpc/react-query/dist/shared';
+import { useParams } from 'react-router-dom';
 import {
   type UsersRouter,
   type UsersRouterOutput,
 } from '../../../app/routes/users';
-import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { useProfilePage } from './useProfilePage';
+import { useTRPCErrorHandler } from './useTRPCErrorHandler';
 
-export const useLoggedInUserQuery = (): UseTRPCQueryResult<
+export const useCurrentUserQuery = (): UseTRPCQueryResult<
   UsersRouterOutput['getUser'],
   TRPCClientErrorLike<UsersRouter>
 > => {
-  const isLoggedIn = useAuthStore(getIsLoggedIn);
+  const enabled = useProfilePage();
+  const { username } = useParams();
+  const onError = useTRPCErrorHandler();
   return trpc.users.getUser.useQuery(
     {
-      username: undefined,
+      username,
     },
     {
-      enabled: isLoggedIn,
+      enabled,
+      staleTime: 5 * 60 * 1000,
+      onError,
     },
   );
 };

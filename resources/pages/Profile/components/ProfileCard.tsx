@@ -2,12 +2,14 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Button, CardBody, LoadingCard } from 'stratosphere-ui';
 import { UserOutlineIcon, UserSolidIcon } from '../../../common/components';
-import { useProfilePage, useTRPCErrorHandler } from '../../../common/hooks';
+import {
+  useCurrentUserQuery,
+  useTRPCErrorHandler,
+} from '../../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../../stores';
 import { trpc } from '../../../utils/trpc';
 
 export const ProfileCard = (): JSX.Element => {
-  const enabled = useProfilePage();
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [confirmUnfollow, setConfirmUnfollow] = useState(false);
@@ -22,14 +24,7 @@ export const ProfileCard = (): JSX.Element => {
       onError,
     },
   );
-  const { data, isLoading } = trpc.users.getUser.useQuery(
-    { username },
-    {
-      enabled,
-      staleTime: 5 * 60 * 1000,
-      onError,
-    },
-  );
+  const { data, isLoading } = useCurrentUserQuery();
   const { mutate: addFollower, isLoading: isAddFollowerLoading } =
     trpc.users.addFollower.useMutation({
       onSuccess: () => {
