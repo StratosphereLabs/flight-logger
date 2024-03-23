@@ -23,7 +23,11 @@ import {
   UserOutlineIcon,
   UserSolidIcon,
 } from '../../../../common/components';
-import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
+import {
+  useCurrentUserQuery,
+  useProfilePage,
+  useTRPCErrorHandler,
+} from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
@@ -80,14 +84,7 @@ export const MapCard = ({
   });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
-  const { data: userData } = trpc.users.getUser.useQuery(
-    { username },
-    {
-      enabled,
-      staleTime: 5 * 60 * 1000,
-      onError,
-    },
-  );
+  const { data: userData } = useCurrentUserQuery();
   const { data: currentFlightData } = trpc.users.getUserCurrentFlight.useQuery(
     {
       username,

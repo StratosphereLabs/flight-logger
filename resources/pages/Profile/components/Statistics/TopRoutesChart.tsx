@@ -4,7 +4,7 @@ import { type Control, useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Form, FormToggleSwitch, Loading, Tooltip } from 'stratosphere-ui';
 import {
-  useLoggedInUserQuery,
+  useCurrentUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
@@ -37,7 +37,7 @@ export const TopRoutesChart = ({
     control: filtersFormControl,
   });
   const onError = useTRPCErrorHandler();
-  const { data: userData } = useLoggedInUserQuery();
+  const { data: userData } = useCurrentUserQuery();
   const { data, isFetching } = trpc.statistics.getTopRoutes.useQuery(
     {
       username,

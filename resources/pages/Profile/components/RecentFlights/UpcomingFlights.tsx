@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  useLoggedInUserQuery,
+  useCurrentUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
@@ -10,7 +10,7 @@ import { FlightsTable } from './FlightsTable';
 export const UpcomingFlights = (): JSX.Element | null => {
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
-  const { data: userData } = useLoggedInUserQuery();
+  const { data: userData } = useCurrentUserQuery();
   const { data, isLoading } =
     trpc.users.getUserUpcomingFlights.useInfiniteQuery(
       {
