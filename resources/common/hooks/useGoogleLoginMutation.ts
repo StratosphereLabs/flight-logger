@@ -1,10 +1,10 @@
 import { type CredentialResponse as GoogleLoginRequest } from '@react-oauth/google';
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
-import { useAlertMessages } from 'stratosphere-ui';
 import { useAuthStore } from '../../stores';
 import { REST_API_URL } from '../constants';
 import { type ErrorResponse } from '../types';
+import { useAlertMessages } from './useAlertMessages';
 import { useErrorResponseHandler } from './useErrorResponseHandler';
 
 export interface GoogleLoginResponse {

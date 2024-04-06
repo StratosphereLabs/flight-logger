@@ -1,14 +1,11 @@
+import { useToaster } from 'react-hot-toast/headless';
 import { Outlet } from 'react-router-dom';
-import {
-  AlertMessages,
-  Card,
-  CardBody,
-  useAlertMessages,
-} from 'stratosphere-ui';
+import { Card, CardBody } from 'stratosphere-ui';
 import { ThemeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => {
-  const { alertMessages } = useAlertMessages();
+  const { toasts, handlers } = useToaster();
+  const { startPause, endPause, updateHeight } = handlers;
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content w-full flex-wrap justify-around">
@@ -27,9 +24,26 @@ export const AuthenticationLayout = (): JSX.Element => {
           </CardBody>
         </Card>
       </div>
-      {alertMessages.length > 0 ? (
-        <div className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]">
-          <AlertMessages maxMessages={4} />
+      {toasts.length > 0 ? (
+        <div
+          className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]"
+          onMouseEnter={startPause}
+          onMouseLeave={endPause}
+        >
+          {toasts.map(toast => (
+            <div
+              key={toast.id}
+              ref={el => {
+                if (el !== null && typeof toast.height !== 'number') {
+                  const height = el.getBoundingClientRect().height;
+                  updateHeight(toast.id, height);
+                }
+              }}
+              {...toast.ariaProps}
+            >
+              {toast.message}
+            </div>
+          ))}
         </div>
       ) : null}
       <div className="absolute right-0 top-0 p-1">

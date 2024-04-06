@@ -1,10 +1,11 @@
+import { useToaster } from 'react-hot-toast/headless';
 import { Outlet } from 'react-router-dom';
-import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
 
 export const MainLayout = (): JSX.Element => {
-  const { alertMessages } = useAlertMessages();
+  const { toasts, handlers } = useToaster();
+  const { startPause, endPause, updateHeight } = handlers;
   return (
     <div className="flex h-screen flex-col justify-between">
       <MainNavbar />
@@ -12,9 +13,26 @@ export const MainLayout = (): JSX.Element => {
         <Outlet />
       </div>
       <MainFooter />
-      {alertMessages.length > 0 ? (
-        <div className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]">
-          <AlertMessages maxMessages={4} />
+      {toasts.length > 0 ? (
+        <div
+          className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]"
+          onMouseEnter={startPause}
+          onMouseLeave={endPause}
+        >
+          {toasts.map(toast => (
+            <div
+              key={toast.id}
+              ref={el => {
+                if (el !== null && typeof toast.height !== 'number') {
+                  const height = el.getBoundingClientRect().height;
+                  updateHeight(toast.id, height);
+                }
+              }}
+              {...toast.ariaProps}
+            >
+              {toast.message}
+            </div>
+          ))}
         </div>
       ) : null}
     </div>

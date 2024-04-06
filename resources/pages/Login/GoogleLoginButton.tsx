@@ -1,7 +1,7 @@
+import { NotificationColor } from '@prisma/client';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import { useAlertMessages } from 'stratosphere-ui';
 import { GOOGLE_CLIENT_ID } from '../../common/constants';
-import { useGoogleLoginMutation } from '../../common/hooks';
+import { useAlertMessages, useGoogleLoginMutation } from '../../common/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
 
 export interface GoogleLoginButtonProps {
@@ -23,7 +23,7 @@ export const GoogleLoginButton = ({
         onError={() => {
           addAlertMessages([
             {
-              color: 'error',
+              color: NotificationColor.ERROR,
               title: 'Unable to fetch Google Auth token',
             },
           ]);

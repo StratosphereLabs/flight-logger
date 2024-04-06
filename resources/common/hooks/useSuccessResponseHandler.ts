@@ -1,11 +1,12 @@
-import { useAlertMessages } from 'stratosphere-ui';
+import { NotificationColor } from '@prisma/client';
+import { useAlertMessages } from './useAlertMessages';
 
 export const useSuccessResponseHandler = (): ((message: string) => void) => {
   const { addAlertMessages } = useAlertMessages();
   return message => {
     addAlertMessages([
       {
-        color: 'success',
+        color: NotificationColor.SUCCESS,
         title: message,
       },
     ]);

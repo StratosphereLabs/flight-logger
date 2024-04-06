@@ -1,7 +1,8 @@
+import { NotificationColor } from '@prisma/client';
 import { type TRPCClientErrorBase } from '@trpc/client';
 import { useCallback } from 'react';
-import { useAlertMessages } from 'stratosphere-ui';
 import { type DefaultErrorShape } from '../types';
+import { useAlertMessages } from './useAlertMessages';
 
 export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(): ((
   trpcError?: TRPCClientErrorBase<TShape> | null,
@@ -16,21 +17,21 @@ export const useTRPCErrorHandler = <TShape extends DefaultErrorShape>(): ((
           Object.entries(zodError.fieldErrors).flatMap(
             ([field, errors]) =>
               errors?.map(message => ({
-                color: 'error',
+                color: NotificationColor.ERROR,
                 title: `[${field}]: ${message}`,
               })) ?? [],
           ),
         );
         addAlertMessages(
           zodError.formErrors.map(message => ({
-            color: 'error',
+            color: NotificationColor.ERROR,
             title: message,
           })),
         );
       } else if (errorMessage !== null) {
         addAlertMessages([
           {
-            color: 'error',
+            color: NotificationColor.ERROR,
             title: errorMessage,
           },
         ]);

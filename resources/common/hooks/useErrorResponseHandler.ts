@@ -1,10 +1,11 @@
+import { NotificationColor } from '@prisma/client';
 import { type AxiosResponse } from 'axios';
 import { useCallback } from 'react';
-import { type AlertMessage, useAlertMessages } from 'stratosphere-ui';
 import { type ErrorResponse } from '../types';
+import { type NotificationOptions, useAlertMessages } from './useAlertMessages';
 
 export const useErrorResponseHandler = (
-  defaultMessage?: AlertMessage,
+  defaultMessage?: NotificationOptions,
 ): ((response?: AxiosResponse<ErrorResponse>) => void) => {
   const { addAlertMessages } = useAlertMessages();
   return useCallback(
@@ -13,7 +14,7 @@ export const useErrorResponseHandler = (
       if (errorMessage !== undefined) {
         addAlertMessages([
           {
-            color: 'error',
+            color: NotificationColor.ERROR,
             title: errorMessage,
           },
         ]);

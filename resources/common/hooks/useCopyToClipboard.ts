@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useAlertMessages } from 'stratosphere-ui';
+import { useAlertMessages } from './useAlertMessages';
 
 export const useCopyToClipboard = (): ((
   text: string,
@@ -11,7 +11,7 @@ export const useCopyToClipboard = (): ((
       await navigator.clipboard.writeText(text);
       addAlertMessages([
         {
-          color: 'success',
+          color: 'SUCCESS',
           title: successMessage ?? 'Copied to clipboard!',
         },
       ]);
