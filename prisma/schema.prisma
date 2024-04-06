@@ -21,6 +21,7 @@ model user {
   admin               Boolean   @default(false)
   passwordResetToken  String?
   passwordResetAt     DateTime?
+  notifications       notification[]
   flights             flight[]
   trips               trip[]
   itineraries         itinerary[]
@@ -29,6 +30,19 @@ model user {
   followedBy          user[]    @relation("UserFollows")
   following           user[]    @relation("UserFollows")
   @@index([username])
+}
+
+model notification {
+  id              String    @id @default(uuid()) @db.Uuid
+  userId          Int
+  showDefault     Boolean
+  color           NotificationColor?
+  title           String
+  description     String?
+  expiration      DateTime?
+  primaryAction   NotificationAction?
+  secondaryAction NotificationAction?
+  user            user      @relation(fields: [userId], references: [id])
 }
 
 model trip {
@@ -223,6 +237,17 @@ model region {
   wiki      String?
   country   country   @relation(fields: [countryId], references: [id])
   airports  airport[]
+}
+
+enum NotificationColor {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum NotificationAction {
+  DISMISS
 }
 
 enum FlightClass {

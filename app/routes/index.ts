@@ -8,6 +8,7 @@ import { countriesRouter } from './countries';
 import { flightDataRouter } from './flightData';
 import { flightsRouter } from './flights';
 import { itinerariesRouter } from './itineraries';
+import { notificationsRouter } from './notifications';
 import { passwordResetRouter } from './passwordReset';
 import { regionsRouter } from './regions';
 import { statisticsRouter } from './statistics';
@@ -27,6 +28,7 @@ export const trpcRouter = router({
   flightData: flightDataRouter,
   flights: flightsRouter,
   itineraries: itinerariesRouter,
+  notifications: notificationsRouter,
   passwordReset: passwordResetRouter,
   regions: regionsRouter,
   statistics: statisticsRouter,

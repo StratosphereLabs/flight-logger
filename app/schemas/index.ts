@@ -7,6 +7,7 @@ export * from './countries';
 export * from './flightData';
 export * from './flights';
 export * from './itineraries';
+export * from './notifications';
 export * from './pagination';
 export * from './passwordReset';
 export * from './regions';
