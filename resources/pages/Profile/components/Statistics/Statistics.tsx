@@ -14,9 +14,19 @@ import { TopAirlinesChart } from './TopAirlinesChart';
 import { TopAircraftTypesChart } from './TopAircraftTypesChart';
 import { TopAirportsChart } from './TopAirportsChart';
 import { TopRoutesChart } from './TopRoutesChart';
+import type { StatsAirportMode, StatsTotalsMode } from './types';
 
 export interface StatisticsFiltersData {
   statsShowUpcoming: boolean;
+  airlinesMode: StatsTotalsMode;
+  aircraftTypesMode: StatsTotalsMode;
+  airportsMode: StatsAirportMode;
+  routesCityPairs: boolean;
+  flightTypeMode: StatsTotalsMode;
+  flightLengthMode: StatsTotalsMode;
+  flightReasonMode: StatsTotalsMode;
+  flightClassMode: StatsTotalsMode;
+  seatPositionMode: StatsTotalsMode;
 }
 
 export const Statistics = (): JSX.Element => {
@@ -26,6 +36,15 @@ export const Statistics = (): JSX.Element => {
   >({
     getDefaultValues: ({ statsShowUpcoming }) => ({
       statsShowUpcoming: statsShowUpcoming === 'true',
+      airlinesMode: 'flights',
+      aircraftTypesMode: 'flights',
+      airportsMode: 'all',
+      routesCityPairs: false,
+      flightTypeMode: 'flights',
+      flightLengthMode: 'flights',
+      flightReasonMode: 'flights',
+      flightClassMode: 'flights',
+      seatPositionMode: 'flights',
     }),
     getSearchParams: ([statsShowUpcoming]) => ({
       statsShowUpcoming: statsShowUpcoming.toString(),
@@ -47,15 +66,15 @@ export const Statistics = (): JSX.Element => {
         </div>
         <CardBody className="gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-4">
-            <TopAirlinesChart filtersFormControl={methods.control} />
-            <TopAircraftTypesChart filtersFormControl={methods.control} />
-            <TopAirportsChart filtersFormControl={methods.control} />
-            <TopRoutesChart filtersFormControl={methods.control} />
-            <FlightTypePieChart filtersFormControl={methods.control} />
-            <FlightLengthRadarChart filtersFormControl={methods.control} />
-            <ReasonRadarChart filtersFormControl={methods.control} />
-            <FlightClassRadarChart filtersFormControl={methods.control} />
-            <SeatPositionRadarChart filtersFormControl={methods.control} />
+            <TopAirlinesChart />
+            <TopAircraftTypesChart />
+            <TopAirportsChart />
+            <TopRoutesChart />
+            <FlightTypePieChart />
+            <FlightLengthRadarChart />
+            <ReasonRadarChart />
+            <FlightClassRadarChart />
+            <SeatPositionRadarChart />
           </div>
         </CardBody>
       </Card>

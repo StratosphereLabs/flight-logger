@@ -1,8 +1,8 @@
 import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
-import { type Control, useForm, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Form, FormToggleSwitch, Loading, Tooltip } from 'stratosphere-ui';
+import { FormToggleSwitch, Loading, Tooltip } from 'stratosphere-ui';
 import {
   useCurrentUserQuery,
   useTRPCErrorHandler,
@@ -11,30 +11,13 @@ import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
 
-interface TopRoutesFormData {
-  cityPairs: boolean;
-}
-
-export interface TopRoutesChartProps {
-  filtersFormControl: Control<StatisticsFiltersData>;
-}
-
-export const TopRoutesChart = ({
-  filtersFormControl,
-}: TopRoutesChartProps): JSX.Element => {
+export const TopRoutesChart = (): JSX.Element => {
   const { username } = useParams();
-  const methods = useForm<TopRoutesFormData>({
-    defaultValues: {
-      cityPairs: false,
-    },
-  });
-  const cityPairs = useWatch<TopRoutesFormData, 'cityPairs'>({
-    name: 'cityPairs',
-    control: methods.control,
-  });
   const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
     name: 'statsShowUpcoming',
-    control: filtersFormControl,
+  });
+  const cityPairs = useWatch<StatisticsFiltersData, 'routesCityPairs'>({
+    name: 'routesCityPairs',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useCurrentUserQuery();
@@ -56,9 +39,11 @@ export const TopRoutesChart = ({
     <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex w-full items-center justify-between">
         <div className="text-sm">{title}</div>
-        <Form methods={methods}>
-          <FormToggleSwitch labelText="City Pairs" name="cityPairs" size="xs" />
-        </Form>
+        <FormToggleSwitch
+          labelText="City Pairs"
+          name="routesCityPairs"
+          size="xs"
+        />
       </div>
       <div className="relative h-full w-full">
         {isFetching ? (
