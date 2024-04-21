@@ -8,7 +8,7 @@ export const MainLayout = (): JSX.Element => {
   return (
     <div className="flex h-screen flex-col justify-between">
       <MainNavbar />
-      <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-scroll bg-base-100 p-2 scrollbar-none scrollbar-track-base-100 scrollbar-thumb-neutral sm:p-3 sm:scrollbar">
+      <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-scroll bg-base-100">
         <Outlet />
       </div>
       <MainFooter />

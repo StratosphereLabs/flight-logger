@@ -12,7 +12,6 @@ import {
   Avatar,
   Button,
   Form,
-  FormCheckbox,
   LoadingCard,
   Select,
   useFormWithQueryParams,
@@ -169,7 +168,9 @@ export const MapCard = ({
         isLoading={isLoading}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-md duration-500',
-          isMapFullScreen ? 'h-[calc(100vh-148px)]' : 'h-[275px]',
+          isMapFullScreen
+            ? 'h-[calc(100vh-175px)]'
+            : 'h-[calc(100vh-175px-185px)]',
         )}
       >
         {data !== undefined &&
@@ -198,54 +199,45 @@ export const MapCard = ({
           />
         ) : null}
         <Form
-          className="pointer-events-none absolute flex w-full justify-between gap-2 p-3"
+          className="pointer-events-none absolute flex w-full justify-between gap-2 p-2"
           methods={methods}
         >
           <div className="flex flex-col gap-2">
-            {isMapFullScreen ? (
-              <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-3 py-2">
-                <div className="flex flex-row items-center gap-2 sm:gap-4">
-                  <Avatar shapeClassName="h-12 w-12 sm:w-16 sm:h-16 rounded-full">
-                    <img src={userData?.avatar} alt="User Avatar" />
-                  </Avatar>
-                  <div className="flex flex-1 flex-col">
+            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-3 py-2">
+              <div className="flex flex-row items-center">
+                <Avatar shapeClassName="h-12 w-12 sm:w-16 sm:h-16 rounded-full">
+                  <img src={userData?.avatar} alt="User Avatar" />
+                </Avatar>
+                <div className="flex flex-1 flex-col">
+                  <div className="ml-2 flex flex-col">
                     <div className="text-base font-medium sm:text-xl">{`${
                       userData?.firstName ?? ''
                     } ${userData?.lastName ?? ''}`}</div>
-                    <div className="text-xs opacity-75">{`@${
+                    <div className="text-sm opacity-75">{`@${
                       userData?.username ?? ''
                     }`}</div>
-                    <div className="mt-1 flex gap-4 text-sm">
-                      <div className="flex items-center">
-                        <Button color="ghost" size="xs" shape="circle">
-                          <UserOutlineIcon className="h-3 w-3 text-info" />
-                          <span className="sr-only">Following</span>
-                        </Button>
-                        0
-                      </div>
-                      <div className="flex items-center">
-                        <Button color="ghost" size="xs" shape="circle">
-                          <UserSolidIcon className="h-3 w-3 text-info" />
-                          <span className="sr-only">Followers</span>
-                        </Button>
-                        0
-                      </div>
-                    </div>
+                  </div>
+                  <div className="mt-1 flex flex-wrap">
+                    <Button color="ghost" size="xs">
+                      <UserOutlineIcon className="h-3 w-3 text-info" />
+                      <span>
+                        {userData?._count.following}
+                        <span className="ml-1 opacity-60">Following</span>
+                      </span>
+                    </Button>
+                    <Button color="ghost" size="xs">
+                      <UserSolidIcon className="h-3 w-3 text-info" />
+                      <span>
+                        {userData?._count.followedBy}
+                        <span className="ml-1 opacity-60">
+                          Follower
+                          {userData?._count.followedBy !== 1 ? 's' : ''}
+                        </span>
+                      </span>
+                    </Button>
                   </div>
                 </div>
               </div>
-            ) : null}
-            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-2">
-              <FormCheckbox
-                inputClassName="bg-base-200"
-                labelText="Show Upcoming"
-                name="mapShowUpcoming"
-              />
-              <FormCheckbox
-                inputClassName="bg-base-200"
-                labelText="Show Completed"
-                name="mapShowCompleted"
-              />
             </div>
             <AirportInfoOverlay
               airportId={selectedAirportId}
@@ -253,46 +245,48 @@ export const MapCard = ({
               showCompleted={mapShowCompleted}
             />
           </div>
-          <div className="flex gap-2">
-            <Select
-              buttonProps={{
-                className: 'btn-sm sm:btn-md',
-              }}
-              className="pointer-events-auto w-[125px] sm:w-[150px]"
-              formValueMode="id"
-              getItemText={({ text }) => text}
-              options={[
-                {
-                  id: 'routes',
-                  text: 'Routes',
-                },
-                {
-                  id: 'heatmap',
-                  text: 'Heatmap',
-                },
-                {
-                  id: '3d',
-                  text: '3D',
-                },
-              ]}
-              menuClassName="right-0 w-full"
-              name="mapMode"
-            />
-            <Button
-              className="btn-sm pointer-events-auto px-3 sm:btn-md"
-              onClick={() => {
-                setIsMapFullScreen(isFullScreen => !isFullScreen);
-              }}
-            >
-              {isMapFullScreen ? (
-                <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-              ) : (
-                <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-              )}
-              <span className="sr-only">
-                {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
-              </span>
-            </Button>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap-reverse justify-end gap-2">
+              <Select
+                buttonProps={{
+                  className: 'btn-sm sm:btn-md',
+                }}
+                className="pointer-events-auto w-[125px] sm:w-[150px]"
+                formValueMode="id"
+                getItemText={({ text }) => text}
+                options={[
+                  {
+                    id: 'routes',
+                    text: 'Routes',
+                  },
+                  {
+                    id: 'heatmap',
+                    text: 'Heatmap',
+                  },
+                  {
+                    id: '3d',
+                    text: '3D',
+                  },
+                ]}
+                menuClassName="right-0 w-full"
+                name="mapMode"
+              />
+              <Button
+                className="btn-sm pointer-events-auto px-3 sm:btn-md"
+                onClick={() => {
+                  setIsMapFullScreen(isFullScreen => !isFullScreen);
+                }}
+              >
+                {isMapFullScreen ? (
+                  <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                ) : (
+                  <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                )}
+                <span className="sr-only">
+                  {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
+                </span>
+              </Button>
+            </div>
           </div>
         </Form>
       </LoadingCard>
@@ -310,7 +304,12 @@ export const MapCard = ({
       methods,
       selectedAirportId,
       setIsMapFullScreen,
-      userData,
+      userData?._count.followedBy,
+      userData?._count.following,
+      userData?.avatar,
+      userData?.firstName,
+      userData?.lastName,
+      userData?.username,
     ],
   );
 };

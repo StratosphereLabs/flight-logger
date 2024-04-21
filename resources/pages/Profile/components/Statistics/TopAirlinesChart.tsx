@@ -1,8 +1,8 @@
 import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
-import { type Control, useForm, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Form, Loading, Select, Tooltip } from 'stratosphere-ui';
+import { Loading, Select, Tooltip } from 'stratosphere-ui';
 import {
   useCurrentUserQuery,
   useTRPCErrorHandler,
@@ -10,28 +10,14 @@ import {
 import { trpc } from '../../../../utils/trpc';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
-import type { TotalsModeFormData } from './types';
 
-export interface TopAirlinesChartProps {
-  filtersFormControl: Control<StatisticsFiltersData>;
-}
-
-export const TopAirlinesChart = ({
-  filtersFormControl,
-}: TopAirlinesChartProps): JSX.Element => {
+export const TopAirlinesChart = (): JSX.Element => {
   const { username } = useParams();
-  const methods = useForm<TotalsModeFormData>({
-    defaultValues: {
-      mode: 'flights',
-    },
-  });
-  const mode = useWatch<TotalsModeFormData, 'mode'>({
-    name: 'mode',
-    control: methods.control,
-  });
   const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
     name: 'statsShowUpcoming',
-    control: filtersFormControl,
+  });
+  const mode = useWatch<StatisticsFiltersData, 'airlinesMode'>({
+    name: 'airlinesMode',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useCurrentUserQuery();
@@ -52,30 +38,28 @@ export const TopAirlinesChart = ({
     <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-sm">Top Airlines</div>
-        <Form className="flex h-9 items-center" methods={methods}>
-          <Select
-            buttonProps={{ color: 'ghost', size: 'xs' }}
-            formValueMode="id"
-            getItemText={({ text }) => text}
-            options={[
-              {
-                id: 'flights',
-                text: 'Flights',
-              },
-              {
-                id: 'distance',
-                text: 'Distance (nm)',
-              },
-              {
-                id: 'duration',
-                text: 'Duration (min)',
-              },
-            ]}
-            menuSize="sm"
-            menuClassName="w-[185px] right-0"
-            name="mode"
-          />
-        </Form>
+        <Select
+          buttonProps={{ color: 'ghost', size: 'xs' }}
+          formValueMode="id"
+          getItemText={({ text }) => text}
+          options={[
+            {
+              id: 'flights',
+              text: 'Flights',
+            },
+            {
+              id: 'distance',
+              text: 'Distance (nm)',
+            },
+            {
+              id: 'duration',
+              text: 'Duration (min)',
+            },
+          ]}
+          menuSize="sm"
+          menuClassName="w-[185px] right-0"
+          name="airlinesMode"
+        />
       </div>
       <div className="relative h-full w-full">
         {isFetching ? (

@@ -48,7 +48,7 @@ export const Users = (): JSX.Element => {
     { onError },
   );
   return (
-    <div className="flex flex-1 flex-col items-center">
+    <div className="flex flex-1 flex-col items-center p-2 sm:p-3">
       <div className="flex w-full max-w-[1000px] flex-col justify-center">
         <article className="prose self-center">
           <h2>Search Users</h2>

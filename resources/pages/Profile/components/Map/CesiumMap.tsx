@@ -76,13 +76,13 @@ export const CesiumMap = ({
                     : isCompleted && (!showUpcoming || showCompleted)
                       ? Color.RED
                       : Color.WHITE,
-                  selectedAirportId === null || isSelected ? 0.5 : 0.1,
+                  selectedAirportId === null || isSelected ? 0.75 : 0.1,
                 ),
                 positions: [
                   Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
                   Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
                 ],
-                width: isActive ? 4 : 2,
+                width: isActive ? 3 : 1.5,
                 zIndex: isActive ? 10 : inFuture ? 5 : undefined,
               }}
             />
@@ -113,8 +113,8 @@ export const CesiumMap = ({
                 Color.BLACK,
                 hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
               ),
-              outlineWidth: isActive ? 2.5 : 1.5,
-              pixelSize: isActive ? 9 : 6,
+              outlineWidth: isActive ? 1.5 : 1,
+              pixelSize: isActive ? 6 : 5,
             }}
           />
         );

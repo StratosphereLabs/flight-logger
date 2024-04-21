@@ -45,7 +45,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csv-parse": "^5.5.3",
-    "daisyui": "^4.7.3",
+    "daisyui": "^4.10.2",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
     "debug": "^4.3.4",

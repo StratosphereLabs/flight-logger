@@ -36,7 +36,7 @@ export const Trips = (): JSX.Element => {
     }
   }, [data]);
   return (
-    <div className="flex flex-col items-stretch gap-6">
+    <div className="flex flex-col items-stretch gap-6 p-2 sm:p-3">
       <article className="prose self-center">
         <h2>{username !== undefined ? `${username}'s Trips` : 'My Trips'}</h2>
       </article>

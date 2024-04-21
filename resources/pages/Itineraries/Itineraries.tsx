@@ -31,7 +31,7 @@ export const Itineraries = (): JSX.Element => {
     },
   );
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 p-2 sm:p-3">
       <article className="prose">
         <h2>
           {username !== undefined
