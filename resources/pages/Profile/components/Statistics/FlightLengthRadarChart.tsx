@@ -13,9 +13,6 @@ import { type StatisticsFiltersData } from './Statistics';
 
 export const FlightLengthRadarChart = (): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'flightLengthMode'>({
     name: 'flightLengthMode',
   });
@@ -25,7 +22,7 @@ export const FlightLengthRadarChart = (): JSX.Element => {
     trpc.statistics.getFlightLengthDistribution.useQuery(
       {
         username,
-        showUpcoming,
+        showUpcoming: false,
       },
       {
         enabled: userData !== undefined,

@@ -13,9 +13,6 @@ import { type StatisticsFiltersData } from './Statistics';
 
 export const ReasonRadarChart = (): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'flightReasonMode'>({
     name: 'flightReasonMode',
   });
@@ -24,7 +21,7 @@ export const ReasonRadarChart = (): JSX.Element => {
   const { data, isFetching } = trpc.statistics.getReasonDistribution.useQuery(
     {
       username,
-      showUpcoming,
+      showUpcoming: false,
     },
     {
       enabled: userData !== undefined,

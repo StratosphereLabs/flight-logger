@@ -203,8 +203,8 @@ export const MapCard = ({
           methods={methods}
         >
           <div className="flex flex-col gap-2">
-            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-3 py-2">
-              <div className="flex flex-row items-center">
+            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/50 px-3 py-2 backdrop-blur">
+              <div className="flex flex-row items-center gap-1">
                 <Avatar shapeClassName="h-12 w-12 sm:w-16 sm:h-16 rounded-full">
                   <img src={userData?.avatar} alt="User Avatar" />
                 </Avatar>

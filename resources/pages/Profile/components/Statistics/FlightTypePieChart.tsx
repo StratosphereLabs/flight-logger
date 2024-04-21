@@ -13,9 +13,6 @@ import { type StatisticsFiltersData } from './Statistics';
 
 export const FlightTypePieChart = (): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'flightTypeMode'>({
     name: 'flightTypeMode',
   });
@@ -26,7 +23,7 @@ export const FlightTypePieChart = (): JSX.Element => {
       {
         username,
         mode,
-        showUpcoming,
+        showUpcoming: false,
       },
       {
         enabled: userData !== undefined,

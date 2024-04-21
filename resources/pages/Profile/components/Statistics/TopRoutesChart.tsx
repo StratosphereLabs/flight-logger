@@ -13,9 +13,6 @@ import { type StatisticsFiltersData } from './Statistics';
 
 export const TopRoutesChart = (): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const cityPairs = useWatch<StatisticsFiltersData, 'routesCityPairs'>({
     name: 'routesCityPairs',
   });
@@ -26,7 +23,7 @@ export const TopRoutesChart = (): JSX.Element => {
       username,
       limit: 5,
       cityPairs,
-      showUpcoming,
+      showUpcoming: false,
     },
     {
       enabled: userData !== undefined,

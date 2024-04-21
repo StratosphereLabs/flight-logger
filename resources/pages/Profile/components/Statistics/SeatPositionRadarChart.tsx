@@ -13,9 +13,6 @@ import { type StatisticsFiltersData } from './Statistics';
 
 export const SeatPositionRadarChart = (): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'seatPositionMode'>({
     name: 'seatPositionMode',
   });
@@ -25,7 +22,7 @@ export const SeatPositionRadarChart = (): JSX.Element => {
     trpc.statistics.getSeatPositionDistribution.useQuery(
       {
         username,
-        showUpcoming,
+        showUpcoming: false,
       },
       {
         enabled: userData !== undefined,

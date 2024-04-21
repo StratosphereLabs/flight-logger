@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
-import { Form, FormControl, Select } from 'stratosphere-ui';
+import {
+  Form,
+  FormControl,
+  Select,
+  useFormWithQueryParams,
+} from 'stratosphere-ui';
 import { MONTH_NAMES } from '../../common/constants';
 import {
   CompletedFlights,
@@ -34,14 +39,33 @@ export const Profile = (): JSX.Element => {
     initialParams.get('isMapFullScreen') === 'true',
   );
   const currentDate = useMemo(() => new Date(), []);
-  const methods = useForm<ProfileFilterFormData>({
-    defaultValues: {
-      range: 'all',
-      year: currentDate.getFullYear().toString(),
-      month: (currentDate.getMonth() + 1).toString(),
-      fromDate: format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
-      toDate: format(new Date(), DATE_FORMAT_ISO),
+  const methods = useFormWithQueryParams<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    getDefaultValues: ({ range, year, month, fromDate, toDate }) => ({
+      range: (range as ProfileFilterFormData['range']) ?? 'all',
+      year: year ?? currentDate.getFullYear().toString(),
+      month: month ?? (currentDate.getMonth() + 1).toString(),
+      fromDate:
+        fromDate ?? format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
+      toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
+    }),
+    getSearchParams: ([range, year, month, fromDate, toDate]) => {
+      const params = new URLSearchParams({ range });
+      if (range === 'customMonth') {
+        params.set('month', month);
+      }
+      if (range === 'customMonth' || range === 'customYear') {
+        params.set('year', year);
+      }
+      if (range === 'customRange') {
+        params.set('fromDate', fromDate);
+        params.set('toDate', toDate);
+      }
+      return params;
     },
+    includeKeys: ['range', 'year', 'month', 'fromDate', 'toDate'],
   });
   const range = useWatch<ProfileFilterFormData, 'range'>({
     control: methods.control,

@@ -13,9 +13,6 @@ import { type StatisticsFiltersData } from './Statistics';
 
 export const TopAirportsChart = (): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'airportsMode'>({
     name: 'airportsMode',
   });
@@ -26,7 +23,7 @@ export const TopAirportsChart = (): JSX.Element => {
       username,
       limit: 5,
       mode,
-      showUpcoming,
+      showUpcoming: false,
     },
     {
       enabled: userData !== undefined,

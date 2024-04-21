@@ -13,9 +13,6 @@ import { type StatisticsFiltersData } from './Statistics';
 
 export const FlightClassRadarChart = (): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'flightClassMode'>({
     name: 'flightClassMode',
   });
@@ -24,7 +21,7 @@ export const FlightClassRadarChart = (): JSX.Element => {
   const { data, isFetching } = trpc.statistics.getClassDistribution.useQuery(
     {
       username,
-      showUpcoming,
+      showUpcoming: false,
     },
     {
       enabled: userData !== undefined,
