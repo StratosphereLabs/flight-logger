@@ -8,6 +8,10 @@
   --padding-card: 1.5rem;
 }
 
+html {
+  overflow-y: hidden;
+}
+
 html[data-theme='dark'] .map-tiles {
   filter: var(--map-tiles-filter, none);
 }

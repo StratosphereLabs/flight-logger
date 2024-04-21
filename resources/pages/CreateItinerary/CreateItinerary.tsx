@@ -55,7 +55,7 @@ export const CreateItinerary = (): JSX.Element => {
     }
   }, [isCreateItineraryModalOpen, methods]);
   return (
-    <>
+    <div className="flex flex-1 flex-col p-2 sm:p-3">
       <article className="prose self-center">
         <h2>Create Itinerary</h2>
       </article>
@@ -85,6 +85,6 @@ export const CreateItinerary = (): JSX.Element => {
       </Form>
       <DeleteItineraryModal />
       <ResetItineraryModal onSubmit={resetForm} />
-    </>
+    </div>
   );
 };

@@ -135,9 +135,9 @@ export const GoogleMap = ({
                         hasSelectedRoute || selectedAirportId === null
                           ? 1
                           : 0.2,
-                      scale: isActive ? 8 : 5,
+                      scale: isActive ? 5 : 4,
                       strokeColor: 'black',
-                      strokeWeight: isActive ? 3 : 2,
+                      strokeWeight: isActive ? 2 : 1.5,
                       strokeOpacity:
                         hasSelectedRoute || selectedAirportId === null
                           ? 1
@@ -159,13 +159,13 @@ export const GoogleMap = ({
               key={index}
               options={{
                 strokeOpacity:
-                  selectedAirportId === null || isSelected ? 0.5 : 0.1,
+                  selectedAirportId === null || isSelected ? 0.75 : 0.1,
                 strokeColor: isActive
                   ? 'blue'
                   : isCompleted && (!showUpcoming || showCompleted)
                     ? 'red'
                     : 'white',
-                strokeWeight: isActive ? 4 : 2,
+                strokeWeight: isActive ? 3 : 1.5,
                 zIndex: isActive ? 10 : inFuture ? 5 : undefined,
                 geodesic: true,
               }}

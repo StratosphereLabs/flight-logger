@@ -111,7 +111,7 @@ export const MainNavbar = (): JSX.Element => {
   );
   return (
     <>
-      <div className="navbar z-10 bg-base-300 shadow-xl">
+      <div className="navbar z-20 bg-base-300">
         <div className="navbar-start">
           <DropdownMenu
             buttonProps={{
