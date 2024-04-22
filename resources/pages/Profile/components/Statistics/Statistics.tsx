@@ -1,5 +1,6 @@
-import { useForm } from 'react-hook-form';
+import { type Control, useForm } from 'react-hook-form';
 import { Card, CardBody, Form } from 'stratosphere-ui';
+import { type ProfileFilterFormData } from '../../Profile';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { FlightLengthRadarChart } from './FlightLengthRadarChart';
 import { FlightTypePieChart } from './FlightTypePieChart';
@@ -23,7 +24,13 @@ export interface StatisticsFiltersData {
   seatPositionMode: StatsTotalsMode;
 }
 
-export const Statistics = (): JSX.Element => {
+export interface StatisticsProps {
+  filtersFormControl: Control<ProfileFilterFormData>;
+}
+
+export const Statistics = ({
+  filtersFormControl,
+}: StatisticsProps): JSX.Element => {
   const methods = useForm<StatisticsFiltersData>({
     defaultValues: {
       airlinesMode: 'flights',
@@ -45,15 +52,15 @@ export const Statistics = (): JSX.Element => {
       <Card className="flex-1 bg-base-200 shadow-md" compact>
         <CardBody className="gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-4">
-            <TopAirlinesChart />
-            <TopAircraftTypesChart />
-            <TopAirportsChart />
-            <TopRoutesChart />
-            <FlightTypePieChart />
-            <FlightLengthRadarChart />
-            <ReasonRadarChart />
-            <FlightClassRadarChart />
-            <SeatPositionRadarChart />
+            <TopAirlinesChart filtersFormControl={filtersFormControl} />
+            <TopAircraftTypesChart filtersFormControl={filtersFormControl} />
+            <TopAirportsChart filtersFormControl={filtersFormControl} />
+            <TopRoutesChart filtersFormControl={filtersFormControl} />
+            <FlightTypePieChart filtersFormControl={filtersFormControl} />
+            <FlightLengthRadarChart filtersFormControl={filtersFormControl} />
+            <ReasonRadarChart filtersFormControl={filtersFormControl} />
+            <FlightClassRadarChart filtersFormControl={filtersFormControl} />
+            <SeatPositionRadarChart filtersFormControl={filtersFormControl} />
           </div>
         </CardBody>
       </Card>

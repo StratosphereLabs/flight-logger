@@ -6,12 +6,13 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useWatch } from 'react-hook-form';
+import { type Control, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
   Avatar,
   Button,
   Form,
+  Loading,
   LoadingCard,
   Select,
   useFormWithQueryParams,
@@ -28,6 +29,7 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
+import { type ProfileFilterFormData } from '../../Profile';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
@@ -41,11 +43,13 @@ export interface MapCardFormData {
 }
 
 export interface MapCardProps {
+  filtersFormControl: Control<ProfileFilterFormData>;
   isMapFullScreen: boolean;
   setIsMapFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const MapCard = ({
+  filtersFormControl,
   isMapFullScreen,
   setIsMapFullScreen,
 }: MapCardProps): JSX.Element => {
@@ -81,6 +85,13 @@ export const MapCard = ({
     control: methods.control,
     name: ['mapShowUpcoming', 'mapShowCompleted', 'mapMode'],
   });
+  const [range, year, month, fromDate, toDate] = useWatch<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    control: filtersFormControl,
+    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+  });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
   const { data: userData } = useCurrentUserQuery();
@@ -93,12 +104,18 @@ export const MapCard = ({
       onError,
     },
   );
-  const { data, isLoading } = trpc.users.getUserMapData.useQuery(
+  const { data, isFetching } = trpc.users.getUserMapData.useQuery(
     {
       username,
+      range,
+      year,
+      month,
+      fromDate,
+      toDate,
     },
     {
       enabled,
+      keepPreviousData: true,
       select: mapData => {
         const filteredHeatmapData = mapData.heatmap.flatMap(
           ({ inFuture, lat, lng }) =>
@@ -165,7 +182,7 @@ export const MapCard = ({
   return useMemo(
     () => (
       <LoadingCard
-        isLoading={isLoading}
+        isLoading={data === undefined}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-md duration-500',
           isMapFullScreen
@@ -241,12 +258,14 @@ export const MapCard = ({
             </div>
             <AirportInfoOverlay
               airportId={selectedAirportId}
+              filtersFormControl={filtersFormControl}
               showUpcoming={mapShowUpcoming}
               showCompleted={mapShowCompleted}
             />
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap-reverse justify-end gap-2">
+              {isFetching ? <Loading /> : null}
               <Select
                 buttonProps={{
                   className: 'btn-sm sm:btn-md',
@@ -295,8 +314,9 @@ export const MapCard = ({
       center,
       currentFlight,
       data,
+      filtersFormControl,
       hoverAirportId,
-      isLoading,
+      isFetching,
       isMapFullScreen,
       mapMode,
       mapShowCompleted,

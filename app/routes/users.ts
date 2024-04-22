@@ -7,6 +7,7 @@ import { verifyAuthenticated } from '../middleware';
 import {
   addFollowerSchema,
   getUserFlightsSchema,
+  getUserMapDataSchema,
   getUserProfileFlightsSchema,
   getUserSchema,
   getUsersSchema,
@@ -23,10 +24,12 @@ import {
   getDurationMinutes,
   getDurationString,
   getFlightTimestamps,
+  getFromDate,
   getHeatmap,
   getInFuture,
   getProjectedCoords,
   getRoutes,
+  getToDate,
   itinerariesIncludeObj,
   parsePaginationRequest,
   transformFlightData,
@@ -498,15 +501,21 @@ export const usersRouter = router({
       };
     }),
   getUserMapData: procedure
-    .input(getUserSchema)
+    .input(getUserMapDataSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const flights = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         include: {

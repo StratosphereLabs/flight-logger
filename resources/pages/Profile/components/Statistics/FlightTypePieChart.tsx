@@ -8,22 +8,38 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
+import { type ProfileFilterFormData } from '../../Profile';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
+import type { StatisticsChartProps } from './types';
 
-export const FlightTypePieChart = (): JSX.Element => {
+export const FlightTypePieChart = ({
+  filtersFormControl,
+}: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
   const mode = useWatch<StatisticsFiltersData, 'flightTypeMode'>({
     name: 'flightTypeMode',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useCurrentUserQuery();
+  const [range, year, month, fromDate, toDate] = useWatch<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    control: filtersFormControl,
+    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+  });
   const { data, isFetching } =
     trpc.statistics.getFlightTypeDistribution.useQuery(
       {
         username,
         mode,
         showUpcoming: false,
+        range,
+        year,
+        month,
+        fromDate,
+        toDate,
       },
       {
         enabled: userData !== undefined,

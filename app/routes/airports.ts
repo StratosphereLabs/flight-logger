@@ -3,7 +3,12 @@ import { prisma } from '../db';
 import { searchSchema } from '../schemas/search';
 import { procedure, router } from '../trpc';
 import { getAirportSchema, getAirportsSchema } from '../schemas';
-import { getPaginatedResponse, parsePaginationRequest } from '../utils';
+import {
+  getFromDate,
+  getPaginatedResponse,
+  getToDate,
+  parsePaginationRequest,
+} from '../utils';
 
 export const airportsRouter = router({
   getAirports: procedure.input(getAirportsSchema).query(async ({ input }) => {
@@ -60,6 +65,8 @@ export const airportsRouter = router({
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
       const username = input?.username ?? ctx.user?.username;
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const airport = await prisma.airport.findUnique({
         where: {
           id,
@@ -73,14 +80,8 @@ export const airportsRouter = router({
                     username,
                   },
                   outTime: {
-                    gt:
-                      input.showUpcoming && !input.showCompleted
-                        ? new Date()
-                        : undefined,
-                    lt:
-                      input.showCompleted && !input.showUpcoming
-                        ? new Date()
-                        : undefined,
+                    gte: fromDate,
+                    lte: toDate,
                   },
                 },
               },
@@ -90,14 +91,8 @@ export const airportsRouter = router({
                     username,
                   },
                   outTime: {
-                    gt:
-                      input.showUpcoming && !input.showCompleted
-                        ? new Date()
-                        : undefined,
-                    lt:
-                      input.showCompleted && !input.showUpcoming
-                        ? new Date()
-                        : undefined,
+                    gte: fromDate,
+                    lte: toDate,
                   },
                 },
               },

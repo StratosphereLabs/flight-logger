@@ -18,7 +18,12 @@ import {
   getStatisticsDistributionSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { calculateDistance, parsePaginationRequest } from '../utils';
+import {
+  calculateDistance,
+  getFromDate,
+  getToDate,
+  parsePaginationRequest,
+} from '../utils';
 
 export const statisticsRouter = router({
   getTopRoutes: procedure
@@ -27,14 +32,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         orderBy: {
@@ -69,14 +76,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         orderBy: {
@@ -135,14 +144,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         orderBy: {
@@ -190,14 +201,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         orderBy: {
@@ -261,14 +274,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         select: {
@@ -337,14 +352,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         select: {
@@ -413,14 +430,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         select: {
@@ -501,14 +520,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         select: {
@@ -571,14 +592,16 @@ export const statisticsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
           },
-          inTime: {
-            gt: input.showUpcoming ? new Date() : undefined,
-            lte: !input.showUpcoming ? new Date() : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         select: {
