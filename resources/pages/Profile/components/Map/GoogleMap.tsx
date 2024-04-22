@@ -81,7 +81,6 @@ export const GoogleMap = ({
       styles:
         theme === AppTheme.DARK ||
         theme === AppTheme.NIGHT ||
-        theme === AppTheme.COFFEE ||
         theme === AppTheme.SUNSET
           ? darkModeStyle
           : undefined,
@@ -91,7 +90,6 @@ export const GoogleMap = ({
   const aircraftColor =
     theme === AppTheme.DARK ||
     theme === AppTheme.NIGHT ||
-    theme === AppTheme.COFFEE ||
     theme === AppTheme.SUNSET
       ? 'text-blue-500'
       : 'text-[#0000ff]';

@@ -111,7 +111,7 @@ export const MainNavbar = (): JSX.Element => {
   );
   return (
     <>
-      <div className="navbar z-20 bg-base-300">
+      <div className="navbar z-20 bg-base-200">
         <div className="navbar-start">
           <DropdownMenu
             buttonProps={{
@@ -142,7 +142,7 @@ export const MainNavbar = (): JSX.Element => {
         </div>
         <div className="navbar-center hidden lg:flex">
           <Tabs
-            className="tabs-boxed bg-base-300 p-0"
+            className="tabs-boxed bg-base-200 p-0"
             onChange={({ id }) => {
               navigate(tabsToPathsMap[id]);
             }}

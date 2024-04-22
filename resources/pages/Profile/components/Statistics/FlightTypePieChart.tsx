@@ -93,8 +93,8 @@ export const FlightTypePieChart = ({
               data={data}
               margin={{ top: 25, right: 40, bottom: 25, left: 40 }}
               colors={[
-                'var(--fallback-er,oklch(var(--s)/0.75))',
-                'var(--fallback-er,oklch(var(--a)/0.75))',
+                'var(--fallback-er,oklch(var(--in)/0.50))',
+                'var(--fallback-er,oklch(var(--a)/0.50))',
               ]}
               innerRadius={mode === 'flights' ? 0.5 : 0.2}
               padAngle={0.7}

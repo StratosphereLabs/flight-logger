@@ -3,12 +3,11 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 export enum AppTheme {
   BUSINESS = 'business',
-  COFFEE = 'coffee',
   CYBERPUNK = 'cyberpunk',
   DARK = 'dark',
   EMERALD = 'emerald',
-  LEMONADE = 'lemonade',
   LIGHT = 'light',
+  LOFI = 'lofi',
   NIGHT = 'night',
   NORD = 'nord',
   SUNSET = 'sunset',
