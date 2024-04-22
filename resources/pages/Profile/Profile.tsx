@@ -102,7 +102,7 @@ export const Profile = (): JSX.Element => {
     <div className="flex flex-1 flex-col">
       <Form
         methods={methods}
-        className="sticky top-0 z-10 flex w-full items-center justify-end gap-2 bg-gradient-to-b from-base-300 to-base-200/60 px-2 pb-2 shadow-md backdrop-blur-sm"
+        className="sticky top-0 z-10 flex w-full items-center justify-end gap-2 bg-gradient-to-b from-base-200 to-base-200/60 px-2 pb-2 shadow-md backdrop-blur-sm"
       >
         {range === 'customRange' ? (
           <div className="flex items-center gap-2 text-sm">

@@ -1,12 +1,11 @@
 import { DropdownMenu } from 'stratosphere-ui';
 import { AppTheme, useThemeStore } from '../../stores';
 import {
-  CoffeeIcon,
   CyberpunkIcon,
   DarkModeIcon,
   DarkModeOutlineIcon,
-  LemonIcon,
   LightModeIcon,
+  MusicIcon,
   SnowflakeIcon,
   SunsetIcon,
   ThemeIcon,
@@ -52,14 +51,14 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: AppTheme.NORD,
+          id: AppTheme.LOFI,
           onClick: () => {
-            setTheme(AppTheme.NORD);
+            setTheme(AppTheme.LOFI);
           },
           children: (
             <>
-              <SnowflakeIcon className="h-4 w-4" />
-              Nord
+              <MusicIcon className="h-4 w-4" />
+              Lofi
             </>
           ),
         },
@@ -76,26 +75,14 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: AppTheme.COFFEE,
+          id: AppTheme.NORD,
           onClick: () => {
-            setTheme(AppTheme.COFFEE);
+            setTheme(AppTheme.NORD);
           },
           children: (
             <>
-              <CoffeeIcon className="h-4 w-4" />
-              Coffee
-            </>
-          ),
-        },
-        {
-          id: AppTheme.LEMONADE,
-          onClick: () => {
-            setTheme(AppTheme.LEMONADE);
-          },
-          children: (
-            <>
-              <LemonIcon className="h-4 w-4" />
-              Lemonade
+              <SnowflakeIcon className="h-4 w-4" />
+              Nord
             </>
           ),
         },

@@ -46,7 +46,7 @@ export const AirportInfoOverlay = ({
   );
   if (airportId === null) return null;
   return (
-    <div className="pointer-events-auto flex flex-col items-center rounded-xl bg-base-100/70 p-2">
+    <div className="pointer-events-auto flex flex-col items-center rounded-xl bg-base-100/50 p-2 backdrop-blur-sm">
       {isFetching ? <Loading /> : null}
       {!isFetching && data !== undefined ? (
         <>

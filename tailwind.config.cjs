@@ -7,12 +7,11 @@ module.exports = {
   daisyui: {
     themes: [
       'business',
-      'coffee',
       'cyberpunk',
       'dark',
       'emerald',
-      'lemonade',
       'light',
+      'lofi',
       'night',
       'nord',
       'sunset',
