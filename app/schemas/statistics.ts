@@ -11,6 +11,8 @@ export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema
     showUpcoming: z.boolean(),
   });
 
+export const getCountsSchema = getUserSchema.extend(profileFiltersSchema.shape);
+
 export const getUserTopRoutesSchema = getStatisticsBarGraphSchema.extend({
   cityPairs: z.boolean(),
 });

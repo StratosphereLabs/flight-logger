@@ -16,6 +16,7 @@ import {
   getUserTopAirportsSchema,
   getUserFlightTypesSchema,
   getStatisticsDistributionSchema,
+  getCountsSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -26,6 +27,63 @@ import {
 } from '../utils';
 
 export const statisticsRouter = router({
+  getCounts: procedure.input(getCountsSchema).query(async ({ ctx, input }) => {
+    if (input.username === undefined && ctx.user === null) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+    const fromDate = getFromDate(input);
+    const toDate = getToDate(input);
+    const [userData, upcomingFlightCount] = await prisma.$transaction([
+      prisma.user.findUnique({
+        where: {
+          username: input?.username ?? ctx.user?.username,
+        },
+        include: {
+          _count: {
+            select: {
+              flights: {
+                where: {
+                  inTime: {
+                    gte: fromDate,
+                    lte: toDate,
+                  },
+                },
+              },
+              trips: {
+                where: {
+                  inTime: {
+                    gte: fromDate,
+                    lte: toDate,
+                  },
+                },
+              },
+            },
+          },
+        },
+      }),
+      prisma.flight.count({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            gt: new Date(),
+          },
+        },
+      }),
+    ]);
+    if (userData === null) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'User not found.',
+      });
+    }
+    return {
+      completedFlightCount: userData._count.flights,
+      upcomingFlightCount,
+      tripCount: userData._count.trips,
+    };
+  }),
   getTopRoutes: procedure
     .input(getUserTopRoutesSchema)
     .query(async ({ ctx, input }) => {

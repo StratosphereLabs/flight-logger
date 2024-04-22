@@ -104,56 +104,66 @@ export const MapCard = ({
       onError,
     },
   );
-  const { data, isFetching } = trpc.users.getUserMapData.useQuery(
-    {
+  const { data: countData, isFetching: isCountsFetching } =
+    trpc.statistics.getCounts.useQuery({
       username,
       range,
       year,
       month,
       fromDate,
       toDate,
-    },
-    {
-      enabled,
-      keepPreviousData: true,
-      select: mapData => {
-        const filteredHeatmapData = mapData.heatmap.flatMap(
-          ({ inFuture, lat, lng }) =>
-            (mapShowUpcoming || !inFuture) && (mapShowCompleted || inFuture)
-              ? [{ lat, lng }]
-              : [],
-        );
-        const filteredRoutes = mapData.routes.flatMap(route =>
-          (mapShowUpcoming && route.inFuture) ||
-          (mapShowCompleted && route.isCompleted)
-            ? [
-                {
-                  ...route,
-                  isHover: route.airports.some(
-                    ({ id }) => id === hoverAirportId,
-                  ),
-                  isSelected: route.airports.some(
-                    ({ id }) => id === selectedAirportId,
-                  ),
-                },
-              ]
-            : [],
-        );
-        return {
-          ...mapData,
-          heatmap: filteredHeatmapData,
-          routes: filteredRoutes,
-          airports: getAirports(filteredRoutes),
-          numFlights: filteredRoutes.reduce(
-            (acc, { frequency }) => acc + frequency,
-            0,
-          ),
-        };
+    });
+  const { data, isFetching: isMapDataFetching } =
+    trpc.users.getUserMapData.useQuery(
+      {
+        username,
+        range,
+        year,
+        month,
+        fromDate,
+        toDate,
       },
-      staleTime: 5 * 60 * 1000,
-      onError,
-    },
-  );
+      {
+        enabled,
+        keepPreviousData: true,
+        select: mapData => {
+          const filteredHeatmapData = mapData.heatmap.flatMap(
+            ({ inFuture, lat, lng }) =>
+              (mapShowUpcoming || !inFuture) && (mapShowCompleted || inFuture)
+                ? [{ lat, lng }]
+                : [],
+          );
+          const filteredRoutes = mapData.routes.flatMap(route =>
+            (mapShowUpcoming && route.inFuture) ||
+            (mapShowCompleted && route.isCompleted)
+              ? [
+                  {
+                    ...route,
+                    isHover: route.airports.some(
+                      ({ id }) => id === hoverAirportId,
+                    ),
+                    isSelected: route.airports.some(
+                      ({ id }) => id === selectedAirportId,
+                    ),
+                  },
+                ]
+              : [],
+          );
+          return {
+            ...mapData,
+            heatmap: filteredHeatmapData,
+            routes: filteredRoutes,
+            airports: getAirports(filteredRoutes),
+            numFlights: filteredRoutes.reduce(
+              (acc, { frequency }) => acc + frequency,
+              0,
+            ),
+          };
+        },
+        staleTime: 5 * 60 * 1000,
+        onError,
+      },
+    );
   const currentFlight = useMemo(
     () =>
       currentFlightData !== undefined && currentFlightData !== null
@@ -265,7 +275,22 @@ export const MapCard = ({
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap-reverse justify-end gap-2">
-              {isFetching ? <Loading /> : null}
+              <div className="flex h-[32px] w-[150px] items-center justify-center rounded-lg bg-base-100/50 backdrop-blur sm:h-[48px]">
+                {isMapDataFetching ||
+                isCountsFetching ||
+                countData === undefined ? (
+                  <Loading />
+                ) : (
+                  <>
+                    <span className="font-semibold">
+                      {countData.completedFlightCount}
+                    </span>
+                    <span className="ml-1 opacity-75">
+                      Flight{countData.completedFlightCount !== 1 ? 's' : ''}
+                    </span>
+                  </>
+                )}
+              </div>
               <Select
                 buttonProps={{
                   className: 'btn-sm sm:btn-md',
@@ -312,11 +337,13 @@ export const MapCard = ({
     ),
     [
       center,
+      countData,
       currentFlight,
       data,
       filtersFormControl,
       hoverAirportId,
-      isFetching,
+      isCountsFetching,
+      isMapDataFetching,
       isMapFullScreen,
       mapMode,
       mapShowCompleted,
