@@ -1,23 +1,44 @@
+import { useWatch, type Control } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Loading } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
+import { type ProfileFilterFormData } from '../../Profile';
 
 export interface AirportInfoOverlayProps {
   airportId: string | null;
+  filtersFormControl: Control<ProfileFilterFormData>;
   showCompleted: boolean;
   showUpcoming: boolean;
 }
 
 export const AirportInfoOverlay = ({
   airportId,
+  filtersFormControl,
   showCompleted,
   showUpcoming,
 }: AirportInfoOverlayProps): JSX.Element | null => {
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
+  const [range, year, month, fromDate, toDate] = useWatch<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    control: filtersFormControl,
+    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+  });
   const { data, isFetching } = trpc.airports.getAirport.useQuery(
-    { id: airportId ?? '', showCompleted, showUpcoming, username },
+    {
+      id: airportId ?? '',
+      showCompleted,
+      showUpcoming,
+      username,
+      range,
+      year,
+      month,
+      fromDate,
+      toDate,
+    },
     {
       enabled: airportId !== null,
       onError,

@@ -8,23 +8,36 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
+import { type ProfileFilterFormData } from '../../Profile';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
+import type { StatisticsChartProps } from './types';
 
-export const ReasonRadarChart = (): JSX.Element => {
+export const ReasonRadarChart = ({
+  filtersFormControl,
+}: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'flightReasonMode'>({
     name: 'flightReasonMode',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useCurrentUserQuery();
+  const [range, year, month, fromDate, toDate] = useWatch<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    control: filtersFormControl,
+    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+  });
   const { data, isFetching } = trpc.statistics.getReasonDistribution.useQuery(
     {
       username,
-      showUpcoming,
+      showUpcoming: false,
+      range,
+      year,
+      month,
+      fromDate,
+      toDate,
     },
     {
       enabled: userData !== undefined,

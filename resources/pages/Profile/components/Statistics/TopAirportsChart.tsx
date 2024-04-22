@@ -8,25 +8,38 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
+import { type ProfileFilterFormData } from '../../Profile';
 import { BAR_CHART_THEME } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
+import type { StatisticsChartProps } from './types';
 
-export const TopAirportsChart = (): JSX.Element => {
+export const TopAirportsChart = ({
+  filtersFormControl,
+}: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
-  const showUpcoming = useWatch<StatisticsFiltersData, 'statsShowUpcoming'>({
-    name: 'statsShowUpcoming',
-  });
   const mode = useWatch<StatisticsFiltersData, 'airportsMode'>({
     name: 'airportsMode',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useCurrentUserQuery();
+  const [range, year, month, fromDate, toDate] = useWatch<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    control: filtersFormControl,
+    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+  });
   const { data, isFetching } = trpc.statistics.getTopAirports.useQuery(
     {
       username,
       limit: 5,
       mode,
-      showUpcoming,
+      showUpcoming: false,
+      range,
+      year,
+      month,
+      fromDate,
+      toDate,
     },
     {
       enabled: userData !== undefined,

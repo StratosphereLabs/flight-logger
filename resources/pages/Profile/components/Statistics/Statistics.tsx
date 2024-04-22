@@ -1,10 +1,6 @@
-import {
-  Card,
-  CardBody,
-  Form,
-  FormToggleSwitch,
-  useFormWithQueryParams,
-} from 'stratosphere-ui';
+import { type Control, useForm } from 'react-hook-form';
+import { Card, CardBody, Form } from 'stratosphere-ui';
+import { type ProfileFilterFormData } from '../../Profile';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { FlightLengthRadarChart } from './FlightLengthRadarChart';
 import { FlightTypePieChart } from './FlightTypePieChart';
@@ -17,7 +13,6 @@ import { TopRoutesChart } from './TopRoutesChart';
 import type { StatsAirportMode, StatsTotalsMode } from './types';
 
 export interface StatisticsFiltersData {
-  statsShowUpcoming: boolean;
   airlinesMode: StatsTotalsMode;
   aircraftTypesMode: StatsTotalsMode;
   airportsMode: StatsAirportMode;
@@ -29,13 +24,15 @@ export interface StatisticsFiltersData {
   seatPositionMode: StatsTotalsMode;
 }
 
-export const Statistics = (): JSX.Element => {
-  const methods = useFormWithQueryParams<
-    StatisticsFiltersData,
-    ['statsShowUpcoming']
-  >({
-    getDefaultValues: ({ statsShowUpcoming }) => ({
-      statsShowUpcoming: statsShowUpcoming === 'true',
+export interface StatisticsProps {
+  filtersFormControl: Control<ProfileFilterFormData>;
+}
+
+export const Statistics = ({
+  filtersFormControl,
+}: StatisticsProps): JSX.Element => {
+  const methods = useForm<StatisticsFiltersData>({
+    defaultValues: {
       airlinesMode: 'flights',
       aircraftTypesMode: 'flights',
       airportsMode: 'all',
@@ -45,11 +42,7 @@ export const Statistics = (): JSX.Element => {
       flightReasonMode: 'flights',
       flightClassMode: 'flights',
       seatPositionMode: 'flights',
-    }),
-    getSearchParams: ([statsShowUpcoming]) => ({
-      statsShowUpcoming: statsShowUpcoming.toString(),
-    }),
-    includeKeys: ['statsShowUpcoming'],
+    },
   });
   return (
     <Form methods={methods} className="flex flex-1 flex-col">
@@ -57,24 +50,17 @@ export const Statistics = (): JSX.Element => {
         <h4 className="m-0">Statistics</h4>
       </article>
       <Card className="flex-1 bg-base-200 shadow-md" compact>
-        <div className="flex justify-end rounded-t-box bg-base-300 p-2 shadow-sm">
-          <FormToggleSwitch
-            name="statsShowUpcoming"
-            labelText="Show Upcoming"
-            size="sm"
-          />
-        </div>
         <CardBody className="gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-4">
-            <TopAirlinesChart />
-            <TopAircraftTypesChart />
-            <TopAirportsChart />
-            <TopRoutesChart />
-            <FlightTypePieChart />
-            <FlightLengthRadarChart />
-            <ReasonRadarChart />
-            <FlightClassRadarChart />
-            <SeatPositionRadarChart />
+            <TopAirlinesChart filtersFormControl={filtersFormControl} />
+            <TopAircraftTypesChart filtersFormControl={filtersFormControl} />
+            <TopAirportsChart filtersFormControl={filtersFormControl} />
+            <TopRoutesChart filtersFormControl={filtersFormControl} />
+            <FlightTypePieChart filtersFormControl={filtersFormControl} />
+            <FlightLengthRadarChart filtersFormControl={filtersFormControl} />
+            <ReasonRadarChart filtersFormControl={filtersFormControl} />
+            <FlightClassRadarChart filtersFormControl={filtersFormControl} />
+            <SeatPositionRadarChart filtersFormControl={filtersFormControl} />
           </div>
         </CardBody>
       </Card>

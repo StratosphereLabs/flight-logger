@@ -1,9 +1,17 @@
 import { z } from 'zod';
-import { getUserProfileFlightsSchema, getUserSchema } from './users';
+import {
+  getUserProfileFlightsSchema,
+  getUserSchema,
+  profileFiltersSchema,
+} from './users';
 
-export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema.extend({
-  showUpcoming: z.boolean(),
-});
+export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema
+  .extend(profileFiltersSchema.shape)
+  .extend({
+    showUpcoming: z.boolean(),
+  });
+
+export const getCountsSchema = getUserSchema.extend(profileFiltersSchema.shape);
 
 export const getUserTopRoutesSchema = getStatisticsBarGraphSchema.extend({
   cityPairs: z.boolean(),
@@ -23,9 +31,11 @@ export const getUserTopAirportsSchema = getStatisticsBarGraphSchema.extend({
   mode: z.enum(['all', 'departure', 'arrival']),
 });
 
-export const getStatisticsDistributionSchema = getUserSchema.extend({
-  showUpcoming: z.boolean(),
-});
+export const getStatisticsDistributionSchema = getUserSchema
+  .extend(profileFiltersSchema.shape)
+  .extend({
+    showUpcoming: z.boolean(),
+  });
 
 export const getUserFlightTypesSchema = getStatisticsDistributionSchema.extend({
   mode: z.enum(['flights', 'distance', 'duration']),

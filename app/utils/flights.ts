@@ -7,8 +7,18 @@ import {
   type region,
   type user,
 } from '@prisma/client';
-import { isAfter, isBefore } from 'date-fns';
+import {
+  endOfMonth,
+  endOfYear,
+  isAfter,
+  isBefore,
+  min,
+  startOfMonth,
+  startOfYear,
+  sub,
+} from 'date-fns';
 import groupBy from 'lodash.groupby';
+import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
 import { getInFuture } from './datetime';
@@ -90,9 +100,12 @@ export interface FlightTimeDataResult
   link: string;
 }
 
-export const getCenterpoint = (result?: FlightsResult): Coordinates => {
+export const getCenterpoint = (
+  result?: FlightsResult,
+): Coordinates | undefined => {
   const airportMap: Record<string, airport> = {};
   if (result !== undefined) {
+    if (result.length === 0) return undefined;
     for (const { departureAirport, arrivalAirport } of result) {
       airportMap[departureAirport.id] = departureAirport;
       airportMap[arrivalAirport.id] = arrivalAirport;
@@ -195,4 +208,42 @@ export const getCurrentFlight = (
   return currentFlight !== undefined
     ? transformFlightData(currentFlight)
     : undefined;
+};
+
+export const getFromDate = (
+  input: GetProfileFiltersRequest,
+): Date | undefined => {
+  if (input.range === 'all') return undefined;
+  if (input.range === 'pastMonth') return sub(new Date(), { months: 1 });
+  if (input.range === 'pastYear') return sub(new Date(), { years: 1 });
+  if (input.range === 'customMonth') {
+    const year = parseInt(input.year, 10);
+    const month = parseInt(input.month, 10);
+    return startOfMonth(new Date(year, month - 1));
+  }
+  if (input.range === 'customYear') {
+    const year = parseInt(input.year, 10);
+    return startOfYear(new Date(year, 0));
+  }
+  if (input.range === 'customRange') {
+    return new Date(input.fromDate);
+  }
+};
+
+export const getToDate = (input: GetProfileFiltersRequest): Date => {
+  if (input.range === 'customMonth') {
+    const year = parseInt(input.year, 10);
+    const month = parseInt(input.month, 10);
+    const toDate = endOfMonth(new Date(year, month - 1));
+    return min([toDate, new Date()]);
+  }
+  if (input.range === 'customYear') {
+    const year = parseInt(input.year, 10);
+    const toDate = endOfYear(new Date(year, 0));
+    return min([toDate, new Date()]);
+  }
+  if (input.range === 'customRange') {
+    return new Date(input.toDate);
+  }
+  return new Date();
 };

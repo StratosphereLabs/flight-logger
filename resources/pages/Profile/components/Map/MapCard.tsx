@@ -6,12 +6,13 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useWatch } from 'react-hook-form';
+import { type Control, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
   Avatar,
   Button,
   Form,
+  Loading,
   LoadingCard,
   Select,
   useFormWithQueryParams,
@@ -28,6 +29,7 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
+import { type ProfileFilterFormData } from '../../Profile';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
@@ -41,11 +43,13 @@ export interface MapCardFormData {
 }
 
 export interface MapCardProps {
+  filtersFormControl: Control<ProfileFilterFormData>;
   isMapFullScreen: boolean;
   setIsMapFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const MapCard = ({
+  filtersFormControl,
   isMapFullScreen,
   setIsMapFullScreen,
 }: MapCardProps): JSX.Element => {
@@ -81,6 +85,13 @@ export const MapCard = ({
     control: methods.control,
     name: ['mapShowUpcoming', 'mapShowCompleted', 'mapMode'],
   });
+  const [range, year, month, fromDate, toDate] = useWatch<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    control: filtersFormControl,
+    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+  });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
   const { data: userData } = useCurrentUserQuery();
@@ -93,50 +104,66 @@ export const MapCard = ({
       onError,
     },
   );
-  const { data, isLoading } = trpc.users.getUserMapData.useQuery(
-    {
+  const { data: countData, isFetching: isCountsFetching } =
+    trpc.statistics.getCounts.useQuery({
       username,
-    },
-    {
-      enabled,
-      select: mapData => {
-        const filteredHeatmapData = mapData.heatmap.flatMap(
-          ({ inFuture, lat, lng }) =>
-            (mapShowUpcoming || !inFuture) && (mapShowCompleted || inFuture)
-              ? [{ lat, lng }]
-              : [],
-        );
-        const filteredRoutes = mapData.routes.flatMap(route =>
-          (mapShowUpcoming && route.inFuture) ||
-          (mapShowCompleted && route.isCompleted)
-            ? [
-                {
-                  ...route,
-                  isHover: route.airports.some(
-                    ({ id }) => id === hoverAirportId,
-                  ),
-                  isSelected: route.airports.some(
-                    ({ id }) => id === selectedAirportId,
-                  ),
-                },
-              ]
-            : [],
-        );
-        return {
-          ...mapData,
-          heatmap: filteredHeatmapData,
-          routes: filteredRoutes,
-          airports: getAirports(filteredRoutes),
-          numFlights: filteredRoutes.reduce(
-            (acc, { frequency }) => acc + frequency,
-            0,
-          ),
-        };
+      range,
+      year,
+      month,
+      fromDate,
+      toDate,
+    });
+  const { data, isFetching: isMapDataFetching } =
+    trpc.users.getUserMapData.useQuery(
+      {
+        username,
+        range,
+        year,
+        month,
+        fromDate,
+        toDate,
       },
-      staleTime: 5 * 60 * 1000,
-      onError,
-    },
-  );
+      {
+        enabled,
+        keepPreviousData: true,
+        select: mapData => {
+          const filteredHeatmapData = mapData.heatmap.flatMap(
+            ({ inFuture, lat, lng }) =>
+              (mapShowUpcoming || !inFuture) && (mapShowCompleted || inFuture)
+                ? [{ lat, lng }]
+                : [],
+          );
+          const filteredRoutes = mapData.routes.flatMap(route =>
+            (mapShowUpcoming && route.inFuture) ||
+            (mapShowCompleted && route.isCompleted)
+              ? [
+                  {
+                    ...route,
+                    isHover: route.airports.some(
+                      ({ id }) => id === hoverAirportId,
+                    ),
+                    isSelected: route.airports.some(
+                      ({ id }) => id === selectedAirportId,
+                    ),
+                  },
+                ]
+              : [],
+          );
+          return {
+            ...mapData,
+            heatmap: filteredHeatmapData,
+            routes: filteredRoutes,
+            airports: getAirports(filteredRoutes),
+            numFlights: filteredRoutes.reduce(
+              (acc, { frequency }) => acc + frequency,
+              0,
+            ),
+          };
+        },
+        staleTime: 5 * 60 * 1000,
+        onError,
+      },
+    );
   const currentFlight = useMemo(
     () =>
       currentFlightData !== undefined && currentFlightData !== null
@@ -165,7 +192,7 @@ export const MapCard = ({
   return useMemo(
     () => (
       <LoadingCard
-        isLoading={isLoading}
+        isLoading={data === undefined}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-md duration-500',
           isMapFullScreen
@@ -203,8 +230,8 @@ export const MapCard = ({
           methods={methods}
         >
           <div className="flex flex-col gap-2">
-            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/70 px-3 py-2">
-              <div className="flex flex-row items-center">
+            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/50 px-3 py-2 backdrop-blur">
+              <div className="flex flex-row items-center gap-1">
                 <Avatar shapeClassName="h-12 w-12 sm:w-16 sm:h-16 rounded-full">
                   <img src={userData?.avatar} alt="User Avatar" />
                 </Avatar>
@@ -241,12 +268,29 @@ export const MapCard = ({
             </div>
             <AirportInfoOverlay
               airportId={selectedAirportId}
+              filtersFormControl={filtersFormControl}
               showUpcoming={mapShowUpcoming}
               showCompleted={mapShowCompleted}
             />
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap-reverse justify-end gap-2">
+              <div className="flex h-[32px] w-[150px] items-center justify-center rounded-lg bg-base-100/50 backdrop-blur sm:h-[48px]">
+                {isMapDataFetching ||
+                isCountsFetching ||
+                countData === undefined ? (
+                  <Loading />
+                ) : (
+                  <>
+                    <span className="font-semibold">
+                      {countData.completedFlightCount}
+                    </span>
+                    <span className="ml-1 opacity-75">
+                      Flight{countData.completedFlightCount !== 1 ? 's' : ''}
+                    </span>
+                  </>
+                )}
+              </div>
               <Select
                 buttonProps={{
                   className: 'btn-sm sm:btn-md',
@@ -293,10 +337,13 @@ export const MapCard = ({
     ),
     [
       center,
+      countData,
       currentFlight,
       data,
+      filtersFormControl,
       hoverAirportId,
-      isLoading,
+      isCountsFetching,
+      isMapDataFetching,
       isMapFullScreen,
       mapMode,
       mapShowCompleted,

@@ -1,7 +1,16 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format, sub } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
-import { Form, FormControl, Select } from 'stratosphere-ui';
+import {
+  Form,
+  FormControl,
+  Select,
+  useFormWithQueryParams,
+} from 'stratosphere-ui';
+import { DATE_FORMAT_ISO } from '../../../app/constants';
+import { profileFiltersSchema } from '../../../app/schemas';
 import { MONTH_NAMES } from '../../common/constants';
 import {
   CompletedFlights,
@@ -10,8 +19,6 @@ import {
   Statistics,
   UpcomingFlights,
 } from './components';
-import { format, sub } from 'date-fns';
-import { DATE_FORMAT_ISO } from '../../../app/constants';
 
 export interface ProfileFilterFormData {
   range:
@@ -22,7 +29,19 @@ export interface ProfileFilterFormData {
     | 'customMonth'
     | 'customRange';
   year: string;
-  month: string;
+  month:
+    | '1'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '7'
+    | '8'
+    | '9'
+    | '10'
+    | '11'
+    | '12';
   fromDate: string;
   toDate: string;
 }
@@ -34,18 +53,44 @@ export const Profile = (): JSX.Element => {
     initialParams.get('isMapFullScreen') === 'true',
   );
   const currentDate = useMemo(() => new Date(), []);
-  const methods = useForm<ProfileFilterFormData>({
-    defaultValues: {
-      range: 'all',
-      year: currentDate.getFullYear().toString(),
-      month: (currentDate.getMonth() + 1).toString(),
-      fromDate: format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
-      toDate: format(new Date(), DATE_FORMAT_ISO),
+  const methods = useFormWithQueryParams<
+    ProfileFilterFormData,
+    ['range', 'year', 'month', 'fromDate', 'toDate']
+  >({
+    getDefaultValues: ({ range, year, month, fromDate, toDate }) => ({
+      range: (range as ProfileFilterFormData['range']) ?? 'all',
+      year: year ?? currentDate.getFullYear().toString(),
+      month:
+        (month as ProfileFilterFormData['month']) ??
+        (currentDate.getMonth() + 1).toString(),
+      fromDate:
+        fromDate ?? format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
+      toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
+    }),
+    getSearchParams: ([range, year, month, fromDate, toDate]) => {
+      const params = new URLSearchParams({ range });
+      if (range === 'customMonth') {
+        params.set('month', month);
+      }
+      if (range === 'customMonth' || range === 'customYear') {
+        params.set('year', year);
+      }
+      if (range === 'customRange') {
+        params.set('fromDate', fromDate);
+        params.set('toDate', toDate);
+      }
+      return params;
     },
+    includeKeys: ['range', 'year', 'month', 'fromDate', 'toDate'],
+    mode: 'onChange',
+    resolver: zodResolver(profileFiltersSchema),
   });
-  const range = useWatch<ProfileFilterFormData, 'range'>({
+  const [range, fromDate, toDate] = useWatch<
+    ProfileFilterFormData,
+    ['range', 'fromDate', 'toDate']
+  >({
     control: methods.control,
-    name: 'range',
+    name: ['range', 'fromDate', 'toDate'],
   });
   useEffect(() => {
     setSearchParams(oldSearchParams => ({
@@ -61,9 +106,9 @@ export const Profile = (): JSX.Element => {
       >
         {range === 'customRange' ? (
           <div className="flex items-center gap-2 text-sm">
-            <FormControl name="fromDate" size="xs" type="date" />
+            <FormControl name="fromDate" size="xs" type="date" max={toDate} />
             to
-            <FormControl name="toDate" size="xs" type="date" />
+            <FormControl name="toDate" size="xs" type="date" min={fromDate} />
           </div>
         ) : null}
         {range === 'customMonth' ? (
@@ -77,7 +122,7 @@ export const Profile = (): JSX.Element => {
             getItemText={({ label }) => label}
             name="month"
             options={[...Array(12).keys()].map(key => ({
-              id: key + 1,
+              id: (key + 1).toString(),
               label: MONTH_NAMES[key],
             }))}
             menuClassName="w-[150px] right-0 menu-sm sm:menu-md max-h-[200px] overflow-y-scroll flex-nowrap"
@@ -141,6 +186,7 @@ export const Profile = (): JSX.Element => {
       <div className="flex flex-1 flex-col gap-3 overflow-y-scroll px-2 pb-2 pt-2 sm:px-3 sm:pb-3">
         <div className="flex flex-wrap gap-4">
           <MapCard
+            filtersFormControl={methods.control}
             isMapFullScreen={isMapFullScreen}
             setIsMapFullScreen={setIsMapFullScreen}
           />
@@ -164,7 +210,7 @@ export const Profile = (): JSX.Element => {
                 </Card>
               </div>
             ) : null} */}
-            <Statistics />
+            <Statistics filtersFormControl={methods.control} />
           </div>
         </div>
       </div>

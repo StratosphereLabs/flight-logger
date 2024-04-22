@@ -7,6 +7,7 @@ import { verifyAuthenticated } from '../middleware';
 import {
   addFollowerSchema,
   getUserFlightsSchema,
+  getUserMapDataSchema,
   getUserProfileFlightsSchema,
   getUserSchema,
   getUsersSchema,
@@ -23,10 +24,12 @@ import {
   getDurationMinutes,
   getDurationString,
   getFlightTimestamps,
+  getFromDate,
   getHeatmap,
   getInFuture,
   getProjectedCoords,
   getRoutes,
+  getToDate,
   itinerariesIncludeObj,
   parsePaginationRequest,
   transformFlightData,
@@ -40,46 +43,20 @@ export const usersRouter = router({
     if (input.username === undefined && ctx.user === null) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
-    const [userData, upcomingFlightCount] = await prisma.$transaction([
-      prisma.user.findUnique({
-        where: {
-          username: input?.username ?? ctx.user?.username,
-        },
-        include: {
-          followedBy: true,
-          _count: {
-            select: {
-              following: true,
-              followedBy: true,
-              flights: {
-                where: {
-                  inTime: {
-                    lte: new Date(),
-                  },
-                },
-              },
-              trips: {
-                where: {
-                  inTime: {
-                    lte: new Date(),
-                  },
-                },
-              },
-            },
+    const userData = await prisma.user.findUnique({
+      where: {
+        username: input?.username ?? ctx.user?.username,
+      },
+      include: {
+        followedBy: true,
+        _count: {
+          select: {
+            following: true,
+            followedBy: true,
           },
         },
-      }),
-      prisma.flight.count({
-        where: {
-          user: {
-            username: input?.username ?? ctx.user?.username,
-          },
-          outTime: {
-            gt: new Date(),
-          },
-        },
-      }),
-    ]);
+      },
+    });
     if (userData === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -91,9 +68,6 @@ export const usersRouter = router({
       undefined;
     return {
       avatar: fetchGravatarUrl(userData.email),
-      completedFlightCount: userData._count.flights,
-      upcomingFlightCount,
-      tripCount: userData._count.trips,
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       isFollowing,
       ...excludeKeys(
@@ -498,15 +472,21 @@ export const usersRouter = router({
       };
     }),
   getUserMapData: procedure
-    .input(getUserSchema)
+    .input(getUserMapDataSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
       const flights = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
           },
         },
         include: {
