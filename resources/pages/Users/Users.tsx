@@ -4,6 +4,9 @@ import { useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
+  Card,
+  CardBody,
+  CardTitle,
   Form,
   FormControl,
   Link,
@@ -49,81 +52,81 @@ export const Users = (): JSX.Element => {
   );
   return (
     <div className="flex flex-1 flex-col items-center p-2 sm:p-3">
-      <div className="flex w-full max-w-[1000px] flex-col justify-center">
-        <article className="prose self-center">
-          <h2>Search Users</h2>
-        </article>
-        <Form className="mt-2" methods={methods}>
-          <FormControl
-            elementLeft={<SearchIcon className="ml-1 h-5 w-5" />}
-            elementRight={isFetching ? <Loading /> : null}
-            inputClassName="bg-base-200 pl-10"
-            name="searchQuery"
-          />
-        </Form>
-        {data !== undefined && data.length > 0 ? (
-          <Table
-            cellClassNames={{
-              avatar: 'w-[60px]',
-              numFlights: 'w-[100px]',
-            }}
-            columns={[
-              {
-                id: 'avatar',
-                accessorKey: 'avatar',
-                header: () => '',
-                cell: ({ row }) => {
-                  const data = row.original;
-                  return (
-                    <div className="flex flex-1 items-center justify-center">
-                      <Avatar shapeClassName="w-9 h-9 rounded-full">
-                        <img alt={data?.username} src={data?.avatar} />
-                      </Avatar>
-                    </div>
-                  );
+      <Card className="flex w-full max-w-[1000px] flex-col justify-center bg-base-100">
+        <CardBody>
+          <CardTitle className="justify-center">User Search</CardTitle>
+          <Form className="mt-2" methods={methods}>
+            <FormControl
+              elementLeft={<SearchIcon className="ml-1 h-5 w-5" />}
+              elementRight={isFetching ? <Loading /> : null}
+              inputClassName="bg-base-200 pl-10"
+              name="searchQuery"
+            />
+          </Form>
+          {data !== undefined && data.length > 0 ? (
+            <Table
+              cellClassNames={{
+                avatar: 'w-[60px]',
+                numFlights: 'w-[100px]',
+              }}
+              columns={[
+                {
+                  id: 'avatar',
+                  accessorKey: 'avatar',
+                  header: () => '',
+                  cell: ({ row }) => {
+                    const data = row.original;
+                    return (
+                      <div className="flex flex-1 items-center justify-center">
+                        <Avatar shapeClassName="w-9 h-9 rounded-full">
+                          <img alt={data?.username} src={data?.avatar} />
+                        </Avatar>
+                      </div>
+                    );
+                  },
                 },
-              },
-              {
-                id: 'username',
-                accessorKey: 'username',
-                header: () => 'Username',
-                cell: ({ getValue }) => {
-                  const username = getValue<string>();
-                  return (
-                    <Link
-                      className="font-bold"
-                      hover
-                      onClick={() => {
-                        navigate(`/user/${username}`);
-                      }}
-                    >
-                      {username}
-                    </Link>
-                  );
+                {
+                  id: 'username',
+                  accessorKey: 'username',
+                  header: () => 'Username',
+                  cell: ({ getValue }) => {
+                    const username = getValue<string>();
+                    return (
+                      <Link
+                        className="font-bold"
+                        hover
+                        onClick={() => {
+                          navigate(`/user/${username}`);
+                        }}
+                      >
+                        {username}
+                      </Link>
+                    );
+                  },
                 },
-              },
-              {
-                id: 'name',
-                header: () => 'Name',
-                cell: ({ row }) => (
-                  <>
-                    {row.original.firstName} {row.original.lastName}
-                  </>
-                ),
-              },
-              {
-                id: 'numFlights',
-                accessorKey: 'numFlights',
-                header: () => 'Flights',
-              },
-            ]}
-            data={data ?? []}
-            enableSorting={false}
-            getCoreRowModel={getCoreRowModel()}
-            size="sm"
-          />
-        ) : null}
-      </div>
+                {
+                  id: 'name',
+                  header: () => 'Name',
+                  cell: ({ row }) => (
+                    <>
+                      {row.original.firstName} {row.original.lastName}
+                    </>
+                  ),
+                },
+                {
+                  id: 'numFlights',
+                  accessorKey: 'numFlights',
+                  header: () => 'Flights',
+                },
+              ]}
+              data={data ?? []}
+              enableSorting={false}
+              getCoreRowModel={getCoreRowModel()}
+              size="sm"
+            />
+          ) : null}
+        </CardBody>
+      </Card>
     </div>
   );
 };

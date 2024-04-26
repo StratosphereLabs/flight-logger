@@ -6,6 +6,10 @@ export const useProtectedPage = (): void => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const navigate = useNavigate();
   useEffect(() => {
-    if (!isLoggedIn) navigate('/');
+    if (!isLoggedIn) {
+      setTimeout(() => {
+        navigate('/auth/login');
+      }, 0);
+    }
   }, [isLoggedIn, navigate]);
 };

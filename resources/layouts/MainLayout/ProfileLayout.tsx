@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useProfilePage } from '../../pages/Profile/hooks';
 
 export const ProfileLayout = (): JSX.Element => {
-  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const navigate = useNavigate();
-  const { username } = useParams();
+  const { isAuthorized } = useProfilePage();
   useEffect(() => {
-    if (!isLoggedIn && username === undefined) {
-      navigate('/auth/login');
+    if (!isAuthorized) {
+      setTimeout(() => {
+        navigate('/auth/login');
+      }, 0);
     }
-  }, [isLoggedIn, navigate, username]);
+  }, [isAuthorized, navigate]);
   return <Outlet />;
 };
