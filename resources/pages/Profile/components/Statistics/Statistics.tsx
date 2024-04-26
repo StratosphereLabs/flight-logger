@@ -1,6 +1,6 @@
 import { type Control, useForm } from 'react-hook-form';
-import { Card, CardBody, Form } from 'stratosphere-ui';
-import { type ProfileFilterFormData } from '../../Profile';
+import { Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
+import { type ProfileFilterFormData } from '../../hooks';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { FlightLengthRadarChart } from './FlightLengthRadarChart';
 import { FlightTypePieChart } from './FlightTypePieChart';
@@ -46,11 +46,9 @@ export const Statistics = ({
   });
   return (
     <Form methods={methods} className="flex flex-1 flex-col">
-      <article className="prose p-1">
-        <h4 className="m-0">Statistics</h4>
-      </article>
-      <Card className="flex-1 bg-base-200 shadow-md" compact>
+      <Card className="flex-1 bg-base-100 shadow-sm" compact>
         <CardBody className="gap-4">
+          <CardTitle>Statistics</CardTitle>
           <div className="flex flex-wrap gap-x-6 gap-y-4">
             <TopAirlinesChart filtersFormControl={filtersFormControl} />
             <TopAircraftTypesChart filtersFormControl={filtersFormControl} />

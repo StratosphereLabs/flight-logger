@@ -59,7 +59,7 @@ export const Itinerary = (): JSX.Element | null => {
               {flight.layoverDuration})
             </div>
           ) : null}
-          <Card key={index} className="bg-base-200 shadow-md">
+          <Card key={index} className="bg-base-100 shadow-sm">
             <CardBody className="flex-row items-center justify-between gap-4">
               {flight.airline !== null ? (
                 <AirlineLogo

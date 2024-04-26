@@ -86,18 +86,20 @@ export const AddFlight = (): JSX.Element => {
         <div className="flex flex-col gap-8">
           <div className="flex flex-wrap justify-around gap-8">
             <AirportInput
+              bordered
               className="w-[400px] min-w-[250px]"
               getBadgeText={({ id, name }) => `${id} - ${name}`}
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               isRequired
               labelText="Departure Airport"
               menuClassName="w-full"
               name="departureAirport"
             />
             <AirportInput
+              bordered
               className="w-[400px] min-w-[250px]"
               getBadgeText={({ id, name }) => `${id} - ${name}`}
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               isRequired
               labelText="Arrival Airport"
               menuClassName="w-full"
@@ -106,16 +108,18 @@ export const AddFlight = (): JSX.Element => {
           </div>
           <div className="flex flex-wrap justify-between gap-8">
             <FormControl
+              bordered
               className="w-[200px]"
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               isRequired
               labelText="Departure Date"
               name="outDateISO"
               type="date"
             />
             <FormControl
+              bordered
               className="w-[200px]"
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               isRequired
               labelText="Departure Time (Local)"
               name="outTimeValue"
@@ -123,8 +127,9 @@ export const AddFlight = (): JSX.Element => {
               type="time"
             />
             <FormControl
+              bordered
               className="w-[200px]"
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               isRequired
               labelText="Arrival Time (Local)"
               name="inTimeValue"
@@ -135,8 +140,9 @@ export const AddFlight = (): JSX.Element => {
           {shouldShowRegField ? (
             <div className="flex flex-wrap justify-center">
               <AirframeInput
+                bordered
                 className="w-[400px] min-w-[250px]"
-                inputClassName="bg-base-200"
+                inputClassName="bg-base-100"
                 labelText="Registration"
                 menuClassName="w-full"
                 name="airframe"
@@ -145,28 +151,31 @@ export const AddFlight = (): JSX.Element => {
           ) : null}
           <div className="flex flex-wrap justify-between gap-8">
             <AirlineInput
+              bordered
               className="w-[400px] min-w-[250px]"
               getBadgeText={({ iata, icao, name }) =>
                 `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
               }
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               labelText="Airline"
               menuClassName="w-full"
               name="airline"
             />
             <FormControl
+              bordered
               className="w-[200px]"
               labelText="Flight Number"
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               name="flightNumber"
               transform={integerInputTransformer}
             />
             <AircraftTypeInput
+              bordered
               className="w-[400px] min-w-[250px]"
               getBadgeText={({ iata, icao, name }) =>
                 `${iata}/${icao} - ${name}`
               }
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               labelText="Aircraft Type"
               menuClassName="w-full"
               name="aircraftType"
@@ -208,8 +217,9 @@ export const AddFlight = (): JSX.Element => {
             />
             <div className="flex min-w-[250px] max-w-[400px] flex-1 flex-col gap-4">
               <FormControl
+                bordered
                 className="w-[200px]"
-                inputClassName="bg-base-200"
+                inputClassName="bg-base-100"
                 labelText="Seat Number"
                 name="seatNumber"
               />
@@ -260,14 +270,16 @@ export const AddFlight = (): JSX.Element => {
           <div className="divider my-2" />
           <div className="mb-8 flex flex-wrap gap-8">
             <FormControl
+              bordered
               className="min-w-[250px] flex-1"
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               labelText="Comments"
               name="comments"
             />
             <FormControl
+              bordered
               className="min-w-[250px] flex-1"
-              inputClassName="bg-base-200"
+              inputClassName="bg-base-100"
               labelText="Tracking Link"
               name="trackingLink"
             />

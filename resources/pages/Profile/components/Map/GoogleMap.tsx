@@ -95,7 +95,7 @@ export const GoogleMap = ({
       : 'text-[#0000ff]';
   return isLoaded ? (
     <GoogleMapComponent
-      mapContainerClassName="rounded-2xl"
+      mapContainerClassName="rounded-box"
       mapContainerStyle={{
         height: '100%',
         width: '100%',

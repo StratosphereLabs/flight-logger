@@ -29,7 +29,7 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
-import { type ProfileFilterFormData } from '../../Profile';
+import { type ProfileFilterFormData } from '../../hooks';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
@@ -194,7 +194,7 @@ export const MapCard = ({
       <LoadingCard
         isLoading={data === undefined}
         className={classNames(
-          'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-md duration-500',
+          'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
           isMapFullScreen
             ? 'h-[calc(100vh-175px)]'
             : 'h-[calc(100vh-175px-185px)]',

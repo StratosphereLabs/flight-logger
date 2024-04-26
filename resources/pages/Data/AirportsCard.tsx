@@ -51,7 +51,7 @@ export const AirportsCard = (): JSX.Element => {
     { onError },
   );
   return (
-    <Card className="min-h-[550px] bg-base-200 shadow-md">
+    <Card className="min-h-[550px] bg-base-100 shadow-sm">
       <CardBody>
         <CardTitle className="mb-3 justify-center">Airports</CardTitle>
         <Table

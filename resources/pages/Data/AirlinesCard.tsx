@@ -26,9 +26,9 @@ export const AirlinesCard = (): JSX.Element => {
     { onError },
   );
   return (
-    <Card className="min-h-[625px] bg-base-200 shadow-md">
+    <Card className="min-h-[625px] bg-base-100 shadow-sm">
       <CardBody>
-        <CardTitle className="mb-3 justify-center">Airlines</CardTitle>
+        <CardTitle className="justify-center">Airlines</CardTitle>
         <Table
           className="table-fixed border-separate bg-base-100"
           columns={[

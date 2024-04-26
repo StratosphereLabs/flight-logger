@@ -24,7 +24,7 @@ export const Account = (): JSX.Element => {
       <article className="prose self-center">
         <h2>My Account</h2>
       </article>
-      <Card className="bg-base-200">
+      <Card className="bg-base-100">
         <CardBody>
           <CardTitle>
             Data Import{' '}

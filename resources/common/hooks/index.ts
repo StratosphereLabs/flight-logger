@@ -1,5 +1,6 @@
 export * from './useAuthPage';
 export * from './useCopyToClipboard';
+export * from './useCurrentDate';
 export * from './useCurrentUserQuery';
 export * from './useErrorResponseHandler';
 export * from './useFlightDiaryUploadMutation';

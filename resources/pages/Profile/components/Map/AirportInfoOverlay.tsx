@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Loading } from 'stratosphere-ui';
 import { useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
-import { type ProfileFilterFormData } from '../../Profile';
+import { type ProfileFilterFormData } from '../../hooks';
 
 export interface AirportInfoOverlayProps {
   airportId: string | null;
