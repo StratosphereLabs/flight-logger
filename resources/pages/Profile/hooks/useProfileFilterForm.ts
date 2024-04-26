@@ -5,6 +5,7 @@ import { useFormWithQueryParams } from 'stratosphere-ui';
 import { DATE_FORMAT_ISO } from '../../../../app/constants';
 import { profileFiltersSchema } from '../../../../app/schemas';
 import { useCurrentDate } from '../../../common/hooks';
+import { useProfilePage } from './useProfilePage';
 
 export interface ProfileFilterFormData {
   range:
@@ -35,6 +36,7 @@ export interface ProfileFilterFormData {
 export const useProfileFilterForm =
   (): UseFormReturn<ProfileFilterFormData> => {
     const currentDate = useCurrentDate();
+    const { isAuthorized, isProfilePage } = useProfilePage();
     return useFormWithQueryParams<
       ProfileFilterFormData,
       ['range', 'year', 'month', 'fromDate', 'toDate']
@@ -50,7 +52,9 @@ export const useProfileFilterForm =
         toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
       }),
       getSearchParams: ([range, year, month, fromDate, toDate]) => {
-        const params = new URLSearchParams({ range });
+        const params = new URLSearchParams(
+          isProfilePage && isAuthorized ? { range } : {},
+        );
         if (range === 'customMonth') {
           params.set('month', month);
         }
