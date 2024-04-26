@@ -25,15 +25,15 @@ export const AircraftTypesCard = (): JSX.Element => {
     { onError },
   );
   return (
-    <Card className="min-h-[550px] bg-base-200 shadow-md">
+    <Card className="min-h-[550px] bg-base-100 shadow-sm">
       <CardBody>
-        <CardTitle className="mb-3 justify-center">Aircraft Types</CardTitle>
+        <CardTitle className="justify-center">Aircraft Types</CardTitle>
         <Table
           cellClassNames={{
             iata: 'w-[120px] hidden sm:table-cell',
             icao: 'w-[120px]',
           }}
-          className="table-fixed border-separate bg-base-100"
+          className="table-fixed border-separate"
           columns={[
             {
               id: 'iata',

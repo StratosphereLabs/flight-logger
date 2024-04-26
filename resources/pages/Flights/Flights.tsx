@@ -301,7 +301,7 @@ export const Flights = (): JSX.Element => {
       data !== undefined &&
       data.total > 0 ? (
         <UserFlightsTable
-          className="shadow-md"
+          className="shadow-sm"
           data={[
             ...data.upcomingFlights,
             ...data.currentFlights,

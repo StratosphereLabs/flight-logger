@@ -1,14 +1,32 @@
-import { Outlet } from 'react-router-dom';
+import { useMemo } from 'react';
+import { type UseFormReturn } from 'react-hook-form';
+import { Outlet, useLocation } from 'react-router-dom';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
+import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
+import classNames from 'classnames';
 
-export const MainLayout = (): JSX.Element => {
+export interface MainLayoutProps {
+  methods: UseFormReturn<ProfileFilterFormData>;
+}
+
+export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { alertMessages } = useAlertMessages();
+  const { pathname } = useLocation();
+  const isUserPage = useMemo(
+    () => pathname.includes('/profile') || pathname.includes('/user/'),
+    [pathname],
+  );
   return (
-    <div className="flex h-screen flex-col justify-between">
-      <MainNavbar />
-      <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-scroll bg-base-100">
+    <div className="relative flex h-screen flex-col justify-between">
+      <MainNavbar methods={methods} />
+      <div
+        className={classNames(
+          'flex flex-1 flex-col overflow-x-hidden overflow-y-scroll bg-base-200',
+          isUserPage ? 'pt-24' : 'pt-16',
+        )}
+      >
         <Outlet />
       </div>
       <MainFooter />

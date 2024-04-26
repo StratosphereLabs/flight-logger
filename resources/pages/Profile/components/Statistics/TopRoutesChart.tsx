@@ -8,7 +8,7 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
-import { type ProfileFilterFormData } from '../../Profile';
+import { type ProfileFilterFormData } from '../../hooks';
 import { BAR_CHART_THEME } from './constants';
 import { type StatisticsFiltersData } from './Statistics';
 import type { StatisticsChartProps } from './types';

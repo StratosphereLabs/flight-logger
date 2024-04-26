@@ -20,8 +20,8 @@ export const FlightsTable = ({
   const { username } = useParams();
   const title = `${type === 'upcoming' ? 'Upcoming' : 'Completed'} Flights`;
   return (
-    <div className="flex max-w-fit flex-1 flex-col">
-      <article className="prose flex w-full items-end justify-between p-1">
+    <div className="flex max-w-fit flex-1 flex-col rounded-box bg-base-100 shadow-sm">
+      <article className="prose flex w-full items-end justify-between p-3">
         <h4 className="m-0 hidden lg:block">{title}</h4>
         <div className="m-0 text-sm font-semibold text-prose-headings lg:hidden">
           {title}
@@ -43,7 +43,7 @@ export const FlightsTable = ({
           departureAirport: 'w-[40px] lg:w-[50px]',
           arrivalAirport: 'w-[40px] lg:w-[50px]',
         }}
-        className="table-xs w-full min-w-[375px] max-w-[750px] table-fixed border-separate bg-base-200 shadow-md lg:table-sm lg:max-w-[450px]"
+        className="table-xs w-full min-w-[375px] max-w-[750px] table-fixed border-separate lg:table-sm lg:max-w-[450px]"
         columns={[
           {
             id: 'date',

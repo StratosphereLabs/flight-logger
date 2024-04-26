@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useMemo, useState } from 'react';
+import { type UseFormReturn } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Avatar,
@@ -20,10 +21,16 @@ import {
   ThemeButton,
 } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
+import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { ProfileFiltersForm } from './ProfileFiltersForm';
 
-export const MainNavbar = (): JSX.Element => {
+export interface MainNavbarProps {
+  methods: UseFormReturn<ProfileFilterFormData>;
+}
+
+export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
@@ -38,6 +45,10 @@ export const MainNavbar = (): JSX.Element => {
       staleTime: 5 * 60 * 1000,
       onError,
     },
+  );
+  const isUserPage = useMemo(
+    () => pathname.includes('/profile') || pathname.includes('/user/'),
+    [pathname],
   );
   const pathsToTabsMap: Record<string, string> = useMemo(
     () => ({
@@ -111,129 +122,132 @@ export const MainNavbar = (): JSX.Element => {
   );
   return (
     <>
-      <div className="navbar z-20 bg-base-200">
-        <div className="navbar-start">
-          <DropdownMenu
-            buttonProps={{
-              color: 'ghost',
-              children: (
-                <>
-                  <MenuIcon />
-                  <span className="sr-only">Navigation Menu</span>
-                </>
-              ),
-            }}
-            className="lg:hidden"
-            items={tabs}
-            menuClassName="rounded-box w-48 bg-base-200"
-          />
-          <Button
-            className="hidden text-xl normal-case sm:inline-flex"
-            color="ghost"
-            onClick={() => {
-              navigate('/');
-            }}
-          >
-            <div className="font-title text-3xl text-primary transition-all duration-200">
-              <span>Flight</span>
-              <span className="text-base-content">Logger</span>
-            </div>
-          </Button>
+      <div className="absolute left-0 top-0 z-30 flex w-full flex-col bg-gradient-to-b from-base-100/90 to-base-100/70 shadow-md backdrop-blur">
+        <div className="navbar">
+          <div className="navbar-start">
+            <DropdownMenu
+              buttonProps={{
+                color: 'ghost',
+                children: (
+                  <>
+                    <MenuIcon />
+                    <span className="sr-only">Navigation Menu</span>
+                  </>
+                ),
+              }}
+              className="lg:hidden"
+              items={tabs}
+              menuClassName="rounded-box w-48 bg-base-200"
+            />
+            <Button
+              className="hidden text-xl normal-case sm:inline-flex"
+              color="ghost"
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              <div className="font-title text-3xl text-primary transition-all duration-200">
+                <span>Flight</span>
+                <span className="text-base-content">Logger</span>
+              </div>
+            </Button>
+          </div>
+          <div className="navbar-center hidden lg:flex">
+            <Tabs
+              className="tabs-boxed bg-transparent p-0"
+              onChange={({ id }) => {
+                navigate(tabsToPathsMap[id]);
+              }}
+              selectedTabId={pathsToTabsMap[pathname]}
+              size="lg"
+              tabs={tabs}
+            />
+          </div>
+          <div className="navbar-end gap-1">
+            <SearchButton />
+            <ThemeButton />
+            <Button
+              className={classNames(isLoggedIn && 'hidden')}
+              color="neutral"
+              onClick={() => {
+                navigate('/auth/login');
+              }}
+            >
+              Login
+            </Button>
+            <DropdownMenu
+              className={classNames(!isLoggedIn && !isFetching && 'hidden')}
+              buttonProps={{
+                children: isFetching ? (
+                  <Loading />
+                ) : (
+                  <Avatar shapeClassName="w-9 h-9 rounded-full">
+                    <img alt={data?.username} src={data?.avatar} />
+                  </Avatar>
+                ),
+                color: 'ghost',
+                disabled: isFetching,
+                shape: 'circle',
+              }}
+              items={[
+                {
+                  id: 'profile',
+                  className: 'rounded-lg',
+                  children: (
+                    <>
+                      <HomeIcon className="h-4 w-4" />
+                      My Profile
+                    </>
+                  ),
+                  onClick: () => {
+                    navigate('/profile');
+                  },
+                },
+                {
+                  id: 'add-flight',
+                  className: 'rounded-lg',
+                  children: (
+                    <>
+                      <PlusIcon className="h-4 w-4" />
+                      Add Flight
+                    </>
+                  ),
+                  onClick: () => {
+                    navigate('/add-flight');
+                  },
+                },
+                {
+                  id: 'settings',
+                  className: 'rounded-lg',
+                  children: (
+                    <>
+                      <CogIcon className="h-4 w-4" />
+                      Settings
+                    </>
+                  ),
+                  onClick: () => {
+                    navigate('/account');
+                  },
+                },
+                {
+                  id: 'logout',
+                  className: 'rounded-lg bg-red-500/25 font-semibold',
+                  children: (
+                    <>
+                      <LogoutIcon className="h-4 w-4" />
+                      Logout
+                    </>
+                  ),
+                  onClick: () => {
+                    setIsLogoutDialogOpen(true);
+                  },
+                },
+              ]}
+              menuClassName="rounded-box right-0 w-48 bg-base-200"
+            />
+          </div>
         </div>
-        <div className="navbar-center hidden lg:flex">
-          <Tabs
-            className="tabs-boxed bg-base-200 p-0"
-            onChange={({ id }) => {
-              navigate(tabsToPathsMap[id]);
-            }}
-            selectedTabId={pathsToTabsMap[pathname]}
-            size="lg"
-            tabs={tabs}
-          />
-        </div>
-        <div className="navbar-end gap-1">
-          <SearchButton />
-          <ThemeButton />
-          <Button
-            className={classNames(isLoggedIn && 'hidden')}
-            color="neutral"
-            onClick={() => {
-              navigate('/auth/login');
-            }}
-          >
-            Login
-          </Button>
-          <DropdownMenu
-            className={classNames(!isLoggedIn && !isFetching && 'hidden')}
-            buttonProps={{
-              children: isFetching ? (
-                <Loading />
-              ) : (
-                <Avatar shapeClassName="w-9 h-9 rounded-full">
-                  <img alt={data?.username} src={data?.avatar} />
-                </Avatar>
-              ),
-              color: 'ghost',
-              disabled: isFetching,
-              shape: 'circle',
-            }}
-            items={[
-              {
-                id: 'profile',
-                className: 'rounded-lg',
-                children: (
-                  <>
-                    <HomeIcon className="h-4 w-4" />
-                    My Profile
-                  </>
-                ),
-                onClick: () => {
-                  navigate('/profile');
-                },
-              },
-              {
-                id: 'add-flight',
-                className: 'rounded-lg',
-                children: (
-                  <>
-                    <PlusIcon className="h-4 w-4" />
-                    Add Flight
-                  </>
-                ),
-                onClick: () => {
-                  navigate('/add-flight');
-                },
-              },
-              {
-                id: 'settings',
-                className: 'rounded-lg',
-                children: (
-                  <>
-                    <CogIcon className="h-4 w-4" />
-                    Settings
-                  </>
-                ),
-                onClick: () => {
-                  navigate('/account');
-                },
-              },
-              {
-                id: 'logout',
-                className: 'rounded-lg bg-red-500/25 font-semibold',
-                children: (
-                  <>
-                    <LogoutIcon className="h-4 w-4" />
-                    Logout
-                  </>
-                ),
-                onClick: () => {
-                  setIsLogoutDialogOpen(true);
-                },
-              },
-            ]}
-            menuClassName="rounded-box right-0 w-48 bg-base-200"
-          />
-        </div>
+        {isUserPage ? <ProfileFiltersForm methods={methods} /> : null}
       </div>
       <Modal
         actionButtons={[
