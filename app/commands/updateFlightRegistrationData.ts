@@ -56,7 +56,7 @@ export const updateFlightRegistrationData = async (
             ],
           },
         })
-      : null;
+      : undefined;
   await prisma.flight.updateMany({
     where: {
       id: {
@@ -64,7 +64,7 @@ export const updateFlightRegistrationData = async (
       },
     },
     data: {
-      airframeId: airframe !== null ? airframe.icao24 : undefined,
+      airframeId: airframe !== undefined ? airframe?.icao24 ?? null : undefined,
       tailNumber: flight.registration,
       offTimeActual: flight.offTimeActual,
       onTimeActual: flight.onTimeActual,
