@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,15 +18,22 @@ import { trpc } from '../../utils/trpc';
 import { useTRPCErrorHandler } from '../hooks';
 import { SearchIcon } from './Icons';
 
+export interface SearchButtonProps {
+  isSearching: boolean;
+  setIsSearching: Dispatch<SetStateAction<boolean>>;
+}
+
 export interface UserSearchFormData {
   user: UsersRouterOutput['getUsers'][number] | null;
 }
 
-export const SearchButton = (): JSX.Element => {
+export const SearchButton = ({
+  isSearching,
+  setIsSearching,
+}: SearchButtonProps): JSX.Element => {
   const navigate = useNavigate();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [isSearching, setIsSearching] = useState(false);
   const [query, setQuery] = useState('');
   const onError = useTRPCErrorHandler();
   const { data } = trpc.users.getUsers.useQuery(
@@ -41,7 +54,7 @@ export const SearchButton = (): JSX.Element => {
       setIsSearching(false);
       navigate(`/user/${user.username}`);
     }
-  }, [navigate, user]);
+  }, [navigate, setIsSearching, user]);
   useEffect(() => {
     if (!isSearching) {
       methods.reset();

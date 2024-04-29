@@ -1,28 +1,17 @@
+import { type InfiniteData } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import {
-  useCurrentUserQuery,
-  useTRPCErrorHandler,
-} from '../../../../common/hooks';
-import { trpc } from '../../../../utils/trpc';
+import { type UsersRouterOutput } from '../../../../../app/routes/users';
 import { FlightsTable } from './FlightsTable';
 
-export const UpcomingFlights = (): JSX.Element | null => {
-  const { username } = useParams();
-  const onError = useTRPCErrorHandler();
-  const { data: userData } = useCurrentUserQuery();
-  const { data, isLoading } =
-    trpc.users.getUserUpcomingFlights.useInfiniteQuery(
-      {
-        limit: 5,
-        username,
-      },
-      {
-        enabled: userData !== undefined,
-        staleTime: 5 * 60 * 1000,
-        onError,
-      },
-    );
+export interface UpcomingFlightsProps {
+  data?: InfiniteData<UsersRouterOutput['getUserUpcomingFlights']>;
+  isLoading: boolean;
+}
+
+export const UpcomingFlights = ({
+  data,
+  isLoading,
+}: UpcomingFlightsProps): JSX.Element | null => {
   const flattenedData = useMemo(
     () => data?.pages.flatMap(({ results }) => results) ?? [],
     [data?.pages],

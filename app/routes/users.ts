@@ -582,10 +582,26 @@ export const usersRouter = router({
     const results = await prisma.user.findMany({
       take: 5,
       where: {
-        username: {
-          contains: input.query,
-          mode: 'insensitive',
-        },
+        OR: [
+          {
+            username: {
+              contains: input.query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            firstName: {
+              contains: input.query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            lastName: {
+              contains: input.query,
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
       orderBy: {
         flights: {
@@ -609,10 +625,26 @@ export const usersRouter = router({
     const results = await prisma.user.findMany({
       take: 10,
       where: {
-        username: {
-          contains: input.query,
-          mode: 'insensitive',
-        },
+        OR: [
+          {
+            username: {
+              contains: input.query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            firstName: {
+              contains: input.query,
+              mode: 'insensitive',
+            },
+          },
+          {
+            lastName: {
+              contains: input.query,
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
       include: {
         _count: {
