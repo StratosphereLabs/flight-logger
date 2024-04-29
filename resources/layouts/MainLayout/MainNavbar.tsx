@@ -33,6 +33,7 @@ export interface MainNavbarProps {
 export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
+  const [isSearching, setIsSearching] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -124,13 +125,13 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     <>
       <div className="absolute left-0 top-0 z-30 flex w-full flex-col bg-gradient-to-b from-base-100/90 to-base-100/70 shadow-md backdrop-blur">
         <div className="navbar">
-          <div className="navbar-start">
+          <div className="flex sm:flex-1">
             <DropdownMenu
               buttonProps={{
                 color: 'ghost',
                 children: (
                   <>
-                    <MenuIcon />
+                    <MenuIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span className="sr-only">Navigation Menu</span>
                   </>
                 ),
@@ -140,19 +141,22 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               menuClassName="rounded-box w-48 bg-base-200"
             />
             <Button
-              className="hidden text-xl normal-case sm:inline-flex"
+              className={classNames(
+                'inline-flex px-1 normal-case sm:px-4',
+                isSearching && 'hidden sm:block',
+              )}
               color="ghost"
               onClick={() => {
                 navigate('/');
               }}
             >
-              <div className="font-title text-3xl text-primary transition-all duration-200">
+              <div className="font-title text-xl text-primary transition-all duration-200 sm:text-3xl">
                 <span>Flight</span>
                 <span className="text-base-content">Logger</span>
               </div>
             </Button>
           </div>
-          <div className="navbar-center hidden lg:flex">
+          <div className="hidden flex-1 justify-center lg:flex">
             <Tabs
               className="tabs-boxed bg-transparent p-0"
               onChange={({ id }) => {
@@ -163,8 +167,11 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               tabs={tabs}
             />
           </div>
-          <div className="navbar-end gap-1">
-            <SearchButton />
+          <div className="flex-1 justify-end gap-1">
+            <SearchButton
+              isSearching={isSearching}
+              setIsSearching={setIsSearching}
+            />
             <ThemeButton />
             <Button
               className={classNames(isLoggedIn && 'hidden')}
