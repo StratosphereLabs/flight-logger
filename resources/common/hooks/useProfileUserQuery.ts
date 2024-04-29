@@ -9,7 +9,7 @@ import { trpc } from '../../utils/trpc';
 import { useProfilePage } from './useProfilePage';
 import { useTRPCErrorHandler } from './useTRPCErrorHandler';
 
-export const useCurrentUserQuery = (): UseTRPCQueryResult<
+export const useProfileUserQuery = (): UseTRPCQueryResult<
   UsersRouterOutput['getUser'],
   TRPCClientErrorLike<UsersRouter>
 > => {

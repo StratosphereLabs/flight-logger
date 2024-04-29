@@ -4,7 +4,7 @@ import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Loading, Select, Tooltip } from 'stratosphere-ui';
 import {
-  useCurrentUserQuery,
+  useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
@@ -21,7 +21,7 @@ export const ReasonRadarChart = ({
     name: 'flightReasonMode',
   });
   const onError = useTRPCErrorHandler();
-  const { data: userData } = useCurrentUserQuery();
+  const { data: userData } = useProfileUserQuery();
   const [range, year, month, fromDate, toDate] = useWatch<
     ProfileFilterFormData,
     ['range', 'year', 'month', 'fromDate', 'toDate']

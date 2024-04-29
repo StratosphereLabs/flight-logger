@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { useCurrentUserQuery, useTRPCErrorHandler } from '../../common/hooks';
+import { useProfileUserQuery, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import {
   CompletedFlights,
@@ -23,7 +23,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
   const [isMapFullScreen, setIsMapFullScreen] = useState(
     initialParams.get('isMapFullScreen') === 'true',
   );
-  const { data: userData } = useCurrentUserQuery();
+  const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
   const { data: upcomingFlightsData, isLoading: isUpcomingFlightsLoading } =
     trpc.users.getUserUpcomingFlights.useInfiniteQuery(

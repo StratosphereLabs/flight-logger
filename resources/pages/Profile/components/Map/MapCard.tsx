@@ -9,7 +9,6 @@ import {
 import { type Control, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
-  Avatar,
   Button,
   Form,
   Loading,
@@ -17,23 +16,15 @@ import {
   Select,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
-import {
-  CollapseIcon,
-  ExpandIcon,
-  UserOutlineIcon,
-  UserSolidIcon,
-} from '../../../../common/components';
-import {
-  useCurrentUserQuery,
-  useProfilePage,
-  useTRPCErrorHandler,
-} from '../../../../common/hooks';
+import { CollapseIcon, ExpandIcon } from '../../../../common/components';
+import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
 import { GoogleMap } from './GoogleMap';
+import { ProfileOverlay } from './ProfileOverlay';
 import { getAirports } from './utils';
 
 export interface MapCardFormData {
@@ -94,7 +85,6 @@ export const MapCard = ({
   });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
-  const { data: userData } = useCurrentUserQuery();
   const { data: currentFlightData } = trpc.users.getUserCurrentFlight.useQuery(
     {
       username,
@@ -230,42 +220,7 @@ export const MapCard = ({
           methods={methods}
         >
           <div className="flex flex-col gap-2">
-            <div className="pointer-events-auto flex flex-col items-start rounded-xl bg-base-100/50 px-3 py-2 backdrop-blur-sm">
-              <div className="flex flex-row items-center gap-1">
-                <Avatar shapeClassName="h-12 w-12 sm:w-16 sm:h-16 rounded-full">
-                  <img src={userData?.avatar} alt="User Avatar" />
-                </Avatar>
-                <div className="flex flex-1 flex-col">
-                  <div className="ml-2 flex flex-col">
-                    <div className="text-base font-medium sm:text-xl">{`${
-                      userData?.firstName ?? ''
-                    } ${userData?.lastName ?? ''}`}</div>
-                    <div className="text-sm opacity-75">{`@${
-                      userData?.username ?? ''
-                    }`}</div>
-                  </div>
-                  <div className="mt-1 flex flex-wrap">
-                    <Button color="ghost" size="xs">
-                      <UserOutlineIcon className="h-3 w-3 text-info" />
-                      <span>
-                        {userData?._count.following}
-                        <span className="ml-1 opacity-60">Following</span>
-                      </span>
-                    </Button>
-                    <Button color="ghost" size="xs">
-                      <UserSolidIcon className="h-3 w-3 text-info" />
-                      <span>
-                        {userData?._count.followedBy}
-                        <span className="ml-1 opacity-60">
-                          Follower
-                          {userData?._count.followedBy !== 1 ? 's' : ''}
-                        </span>
-                      </span>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ProfileOverlay />
             <AirportInfoOverlay
               airportId={selectedAirportId}
               filtersFormControl={filtersFormControl}
@@ -351,12 +306,6 @@ export const MapCard = ({
       methods,
       selectedAirportId,
       setIsMapFullScreen,
-      userData?._count.followedBy,
-      userData?._count.following,
-      userData?.avatar,
-      userData?.firstName,
-      userData?.lastName,
-      userData?.username,
     ],
   );
 };
