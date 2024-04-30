@@ -10,7 +10,7 @@ import {
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
-import { type StatisticsFiltersData } from './Statistics';
+import { type StatisticsFiltersData } from './StatisticsCard';
 import type { StatisticsChartProps } from './types';
 
 export const SeatPositionRadarChart = ({

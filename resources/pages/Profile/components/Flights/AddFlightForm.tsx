@@ -60,7 +60,7 @@ export const AddFlightForm = (): JSX.Element => {
     setCompletedFlightIds([]);
   }, [data]);
   return (
-    <>
+    <div className="mb-3 flex flex-col gap-3">
       <Form
         methods={methods}
         className="mt-[-12px] flex w-full flex-col gap-8 sm:flex-row"
@@ -72,7 +72,7 @@ export const AddFlightForm = (): JSX.Element => {
         <div className="flex flex-1 flex-wrap gap-x-4 gap-y-2">
           <FormControl
             className="w-[150px]"
-            inputClassName="bg-base-100"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Departure Date"
             name="outDateISO"
@@ -85,7 +85,7 @@ export const AddFlightForm = (): JSX.Element => {
             getBadgeText={({ iata, icao, name }) =>
               `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
             }
-            inputClassName="bg-base-100"
+            inputClassName="bg-base-200"
             isRequired
             labelText="Airline"
             menuClassName="w-full menu-sm"
@@ -95,7 +95,7 @@ export const AddFlightForm = (): JSX.Element => {
           <FormControl
             className="w-[125px]"
             labelText="Flight No."
-            inputClassName="bg-base-100"
+            inputClassName="bg-base-200"
             isRequired
             name="flightNumber"
             transform={integerInputTransformer}
@@ -290,6 +290,6 @@ export const AddFlightForm = (): JSX.Element => {
           </Button>
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
