@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
+import { getIsLoggedIn, useAuthStore } from '../../stores';
 
 export const WelcomeHero = (): JSX.Element => {
   const navigate = useNavigate();
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   return (
     <div className="hero">
       <div className="hero-content text-center">
@@ -30,7 +32,7 @@ export const WelcomeHero = (): JSX.Element => {
             className="mt-4"
             color="accent"
             onClick={() => {
-              navigate('/create-itinerary');
+              navigate(isLoggedIn ? '/profile' : '/auth/login');
             }}
           >
             Get Started

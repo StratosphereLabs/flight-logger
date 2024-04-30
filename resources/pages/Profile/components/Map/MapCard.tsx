@@ -228,9 +228,9 @@ export const MapCard = ({
               showCompleted={mapShowCompleted}
             />
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-1 flex-col gap-2">
             <div className="flex flex-wrap-reverse justify-end gap-2">
-              <div className="flex h-[32px] w-[150px] items-center justify-center rounded-lg bg-base-100/50 backdrop-blur-sm sm:h-[48px]">
+              <div className="flex h-[32px] w-full min-w-[125px] max-w-[150px] items-center justify-center rounded-lg bg-base-100/50 backdrop-blur-sm sm:h-[48px]">
                 {isMapDataFetching ||
                 isCountsFetching ||
                 countData === undefined ? (
@@ -246,45 +246,47 @@ export const MapCard = ({
                   </>
                 )}
               </div>
-              <Select
-                buttonProps={{
-                  className: 'btn-sm sm:btn-md',
-                }}
-                className="pointer-events-auto w-[125px] sm:w-[150px]"
-                formValueMode="id"
-                getItemText={({ text }) => text}
-                options={[
-                  {
-                    id: 'routes',
-                    text: 'Routes',
-                  },
-                  {
-                    id: 'heatmap',
-                    text: 'Heatmap',
-                  },
-                  {
-                    id: '3d',
-                    text: '3D',
-                  },
-                ]}
-                menuClassName="right-0 w-full"
-                name="mapMode"
-              />
-              <Button
-                className="btn-sm pointer-events-auto px-3 sm:btn-md"
-                onClick={() => {
-                  setIsMapFullScreen(isFullScreen => !isFullScreen);
-                }}
-              >
-                {isMapFullScreen ? (
-                  <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-                ) : (
-                  <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-                )}
-                <span className="sr-only">
-                  {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
-                </span>
-              </Button>
+              <div className="flex flex-wrap-reverse justify-end gap-2">
+                <Select
+                  buttonProps={{
+                    className: 'btn-sm sm:btn-md',
+                  }}
+                  className="pointer-events-auto w-[125px] sm:w-[150px]"
+                  formValueMode="id"
+                  getItemText={({ text }) => text}
+                  options={[
+                    {
+                      id: 'routes',
+                      text: 'Routes',
+                    },
+                    {
+                      id: 'heatmap',
+                      text: 'Heatmap',
+                    },
+                    {
+                      id: '3d',
+                      text: '3D',
+                    },
+                  ]}
+                  menuClassName="right-0 w-full menu-sm sm:menu-md"
+                  name="mapMode"
+                />
+                <Button
+                  className="btn-sm pointer-events-auto px-3 sm:btn-md"
+                  onClick={() => {
+                    setIsMapFullScreen(isFullScreen => !isFullScreen);
+                  }}
+                >
+                  {isMapFullScreen ? (
+                    <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  ) : (
+                    <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  )}
+                  <span className="sr-only">
+                    {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
+                  </span>
+                </Button>
+              </div>
             </div>
           </div>
         </Form>
