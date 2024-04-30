@@ -40,7 +40,7 @@ export const FlightsCard = ({
         (flightsMode as FlightsModeFormData['flightsMode']) ?? 'upcoming',
     }),
     getSearchParams: ([flightsMode]) => ({
-      flightsMode,
+      flightsMode: flightsMode !== 'upcoming' ? flightsMode : '',
     }),
     includeKeys: ['flightsMode'],
   });

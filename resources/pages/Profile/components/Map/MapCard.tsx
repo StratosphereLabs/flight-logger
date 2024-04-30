@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {
   Button,
   Form,
@@ -45,29 +45,22 @@ export const MapCard = ({
   setIsMapFullScreen,
 }: MapCardProps): JSX.Element => {
   const enabled = useProfilePage();
+  const [, setSearchParams] = useSearchParams();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
     null,
   );
-  const methods = useFormWithQueryParams<
-    MapCardFormData,
-    ['mapMode', 'mapShowCompleted', 'mapShowUpcoming']
-  >({
-    getDefaultValues: ({ mapMode, mapShowCompleted, mapShowUpcoming }) => ({
-      mapShowUpcoming: mapShowUpcoming === 'true',
-      mapShowCompleted:
-        mapShowCompleted !== null && mapShowCompleted !== undefined
-          ? mapShowCompleted === 'true'
-          : true,
+  const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
+    getDefaultValues: ({ mapMode }) => ({
+      mapShowUpcoming: false,
+      mapShowCompleted: true,
       mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
     }),
-    getSearchParams: ([mapMode, mapShowCompleted, mapShowUpcoming]) => ({
-      mapMode,
-      mapShowCompleted: mapShowCompleted.toString(),
-      mapShowUpcoming: mapShowUpcoming.toString(),
+    getSearchParams: ([mapMode]) => ({
+      mapMode: mapMode !== 'routes' ? mapMode : '',
     }),
-    includeKeys: ['mapMode', 'mapShowCompleted', 'mapShowUpcoming'],
+    includeKeys: ['mapMode'],
   });
   const [mapShowUpcoming, mapShowCompleted, mapMode] = useWatch<
     MapCardFormData,
@@ -274,7 +267,14 @@ export const MapCard = ({
                 <Button
                   className="btn-sm pointer-events-auto px-3 sm:btn-md"
                   onClick={() => {
-                    setIsMapFullScreen(isFullScreen => !isFullScreen);
+                    setIsMapFullScreen(isFullScreen => {
+                      const newValue = !isFullScreen;
+                      setSearchParams(oldSearchParams => ({
+                        ...Object.fromEntries(oldSearchParams),
+                        isMapFullScreen: newValue.toString(),
+                      }));
+                      return newValue;
+                    });
                   }}
                 >
                   {isMapFullScreen ? (
@@ -308,6 +308,7 @@ export const MapCard = ({
       methods,
       selectedAirportId,
       setIsMapFullScreen,
+      setSearchParams,
     ],
   );
 };
