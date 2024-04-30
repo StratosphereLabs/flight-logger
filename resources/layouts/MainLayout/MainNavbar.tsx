@@ -20,10 +20,9 @@ import {
   SearchButton,
   ThemeButton,
 } from '../../common/components';
-import { useTRPCErrorHandler } from '../../common/hooks';
+import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
-import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
 
 export interface MainNavbarProps {
@@ -38,15 +37,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams();
-  const onError = useTRPCErrorHandler();
-  const { data, isFetching } = trpc.users.getUser.useQuery(
-    { username: undefined },
-    {
-      enabled: isLoggedIn,
-      staleTime: 5 * 60 * 1000,
-      onError,
-    },
-  );
+  const { data, isFetching } = useLoggedInUserQuery();
   const isUserPage = useMemo(
     () => pathname.includes('/profile') || pathname.includes('/user/'),
     [pathname],

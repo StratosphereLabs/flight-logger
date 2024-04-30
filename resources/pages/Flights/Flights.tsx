@@ -157,19 +157,11 @@ export const Flights = (): JSX.Element => {
           ) : null}
         </div>
         <FormRadioGroup name="layout">
-          <FormRadioGroupOption
-            color={layout === 'full' ? 'info' : undefined}
-            size="sm"
-            value="full"
-          >
+          <FormRadioGroupOption activeColor="info" size="sm" value="full">
             <Bars2Icon className="h-4 w-4" />
             <span className="sr-only">Full</span>
           </FormRadioGroupOption>
-          <FormRadioGroupOption
-            color={layout === 'compact' ? 'info' : undefined}
-            size="sm"
-            value="compact"
-          >
+          <FormRadioGroupOption activeColor="info" size="sm" value="compact">
             <Bars4Icon className="h-4 w-4" />
             <span className="sr-only">Compact</span>
           </FormRadioGroupOption>

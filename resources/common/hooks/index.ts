@@ -4,6 +4,7 @@ export * from './useCurrentDate';
 export * from './useErrorResponseHandler';
 export * from './useFlightDiaryUploadMutation';
 export * from './useGoogleLoginMutation';
+export * from './useLoggedInUserQuery';
 export * from './useProfilePage';
 export * from './useProfileUserQuery';
 export * from './useProtectedPage';

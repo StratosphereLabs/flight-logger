@@ -28,7 +28,7 @@ export interface StatisticsProps {
   filtersFormControl: Control<ProfileFilterFormData>;
 }
 
-export const Statistics = ({
+export const StatisticsCard = ({
   filtersFormControl,
 }: StatisticsProps): JSX.Element => {
   const methods = useForm<StatisticsFiltersData>({
