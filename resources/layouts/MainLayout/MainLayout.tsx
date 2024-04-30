@@ -17,7 +17,7 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const { isProfilePage } = useProfilePage();
   return (
-    <div className="relative flex h-screen flex-col justify-between">
+    <div className="relative flex h-[calc(100dvh)] flex-col justify-between">
       <MainNavbar methods={methods} />
       <div
         className={classNames(

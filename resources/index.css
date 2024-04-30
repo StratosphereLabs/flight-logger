@@ -37,3 +37,7 @@ input[type='number'] {
 .cesium-selection-wrapper-visible {
   display: none;
 }
+
+.gm-style iframe + div {
+  border: none !important;
+}

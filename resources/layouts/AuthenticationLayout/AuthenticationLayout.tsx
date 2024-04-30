@@ -1,16 +1,19 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   AlertMessages,
+  Button,
   Card,
   CardBody,
   useAlertMessages,
 } from 'stratosphere-ui';
-import { ThemeButton } from '../../common/components';
+import { RightArrowIcon, ThemeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { alertMessages } = useAlertMessages();
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-[calc(100dvh)] bg-base-200">
       <div className="hero-content w-full flex-wrap justify-around">
         <div className="text-center lg:text-left">
           <div className="font-title inline-flex text-lg text-primary transition-all duration-200 md:text-5xl">
@@ -20,6 +23,16 @@ export const AuthenticationLayout = (): JSX.Element => {
           <p className="py-6">
             Welcome! Please login to access your flights and trips
           </p>
+          {pathname === '/auth/login' ? (
+            <Button
+              color="secondary"
+              onClick={() => {
+                navigate('/auth/register');
+              }}
+            >
+              Register <RightArrowIcon className="h-4 w-4" />
+            </Button>
+          ) : null}
         </div>
         <Card className="mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg">
           <CardBody>
