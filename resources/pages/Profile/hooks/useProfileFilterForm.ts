@@ -36,7 +36,7 @@ export interface ProfileFilterFormData {
 export const useProfileFilterForm =
   (): UseFormReturn<ProfileFilterFormData> => {
     const currentDate = useCurrentDate();
-    const { isAuthorized, isProfilePage } = useProfilePage();
+    const { isAuthorized } = useProfilePage();
     return useFormWithQueryParams<
       ProfileFilterFormData,
       ['range', 'year', 'month', 'fromDate', 'toDate']
@@ -52,20 +52,24 @@ export const useProfileFilterForm =
         toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
       }),
       getSearchParams: ([range, year, month, fromDate, toDate]) => {
-        const params = new URLSearchParams(
-          isProfilePage && isAuthorized ? { range } : {},
-        );
-        if (range === 'customMonth') {
-          params.set('month', month);
-        }
-        if (range === 'customMonth' || range === 'customYear') {
-          params.set('year', year);
-        }
-        if (range === 'customRange') {
-          params.set('fromDate', fromDate);
-          params.set('toDate', toDate);
-        }
-        return params;
+        const { pathname } = window.location;
+        const isProfilePage =
+          pathname.includes('/profile') || pathname.includes('/user/');
+        if (!isProfilePage || !isAuthorized)
+          return {
+            range: '',
+            month: '',
+            year: '',
+            fromDate: '',
+            toDate: '',
+          };
+        return {
+          range: range !== 'all' ? range : '',
+          month: range === 'customMonth' ? month : '',
+          year: range === 'customMonth' || range === 'customYear' ? year : '',
+          fromDate: range === 'customRange' ? fromDate : '',
+          toDate: range === 'customRange' ? toDate : '',
+        };
       },
       includeKeys: ['range', 'year', 'month', 'fromDate', 'toDate'],
       mode: 'onChange',

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -15,18 +15,12 @@ export interface ProfileProps {
 }
 
 export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [initialParams] = useState(searchParams);
   const [isAddingFlight, setIsAddingFlight] = useState(false);
   const [isMapFullScreen, setIsMapFullScreen] = useState(
     initialParams.get('isMapFullScreen') === 'true',
   );
-  useEffect(() => {
-    setSearchParams(oldSearchParams => ({
-      ...Object.fromEntries(oldSearchParams),
-      isMapFullScreen: isMapFullScreen.toString(),
-    }));
-  }, [isMapFullScreen, setSearchParams]);
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col gap-3 overflow-y-scroll px-2 pb-2 pt-2 sm:px-3 sm:pb-3">

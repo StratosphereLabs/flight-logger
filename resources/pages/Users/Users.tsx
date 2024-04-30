@@ -1,5 +1,4 @@
 import { getCoreRowModel } from '@tanstack/react-table';
-import { pickBy } from 'lodash';
 import { useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -30,13 +29,9 @@ export const Users = (): JSX.Element => {
     getDefaultValues: ({ searchQuery }) => ({
       searchQuery: searchQuery ?? '',
     }),
-    getSearchParams: ([searchQuery]) =>
-      pickBy(
-        {
-          searchQuery,
-        },
-        value => value.length > 0,
-      ),
+    getSearchParams: ([searchQuery]) => ({
+      searchQuery,
+    }),
     includeKeys: ['searchQuery'],
   });
   const query = useWatch<SearchUsersFormData, 'searchQuery'>({
