@@ -1,6 +1,6 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { isEqual } from 'date-fns';
-import { updateFlightTimesData } from '../commands/updateFlightTimesData';
+// import { updateFlightTimesData } from '../commands/updateFlightTimesData';
 import { updateFlightRegistrationData } from '../commands/updateFlightRegistrationData';
 import { prisma, updateTripTimes } from '../db';
 import { verifyAuthenticated } from '../middleware';
@@ -114,7 +114,7 @@ export const flightsRouter = router({
           airline: true,
         },
       });
-      await updateFlightTimesData([flight]);
+      // await updateFlightTimesData([flight]);
       await updateFlightRegistrationData([flight]);
       await updateTripTimes(flight.tripId);
       const updatedFlight = await prisma.flight.findUnique({
@@ -264,7 +264,7 @@ export const flightsRouter = router({
         },
       });
       if (clearFlightData) {
-        await updateFlightTimesData([updatedFlightData]);
+        // await updateFlightTimesData([updatedFlightData]);
         await updateFlightRegistrationData([updatedFlightData]);
         await updateTripTimes(updatedFlightData.tripId);
       }
