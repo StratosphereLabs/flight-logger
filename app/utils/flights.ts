@@ -149,8 +149,8 @@ export const transformFlightData = (
   flight: FlightData,
 ): FlightTimeDataResult => {
   const timestamps = getFlightTimestamps({
-    departureAirport: flight.departureAirport,
-    arrivalAirport: flight.arrivalAirport,
+    departureTimeZone: flight.departureAirport.timeZone,
+    arrivalTimeZone: flight.arrivalAirport.timeZone,
     duration: flight.duration,
     outTime: flight.outTime,
     outTimeActual: flight.outTimeActual ?? undefined,
