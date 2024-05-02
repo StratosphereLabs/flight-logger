@@ -57,6 +57,14 @@ export const getUserMapDataSchema = getUserSchema.extend(
 
 export const getUsersSchema = z.object({
   query: z.string(),
+  followingUsersOnly: z.boolean().optional(),
+});
+
+export const selectUserSchema = z.object({
+  username: z
+    .string()
+    .nullable()
+    .refine(item => item !== null, 'User is required.'),
 });
 
 export const addFollowerSchema = z.object({
@@ -74,3 +82,5 @@ export type GetUserProfileFlightsRequest = z.infer<
 export type GetProfileFiltersRequest = z.infer<typeof profileFiltersSchema>;
 
 export type GetUserMapDataRequest = z.infer<typeof getUserMapDataSchema>;
+
+export type UserSelectFormData = z.infer<typeof selectUserSchema>;

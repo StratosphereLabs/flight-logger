@@ -578,7 +578,7 @@ export const usersRouter = router({
       });
       return itineraries.map(transformItineraryData);
     }),
-  getUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
+  getUsers: procedure.input(getUsersSchema).query(async ({ ctx, input }) => {
     const results = await prisma.user.findMany({
       take: 5,
       where: {
@@ -602,6 +602,22 @@ export const usersRouter = router({
             },
           },
         ],
+        followedBy:
+          input.followingUsersOnly === true
+            ? {
+                some: {
+                  username: ctx.user?.username,
+                },
+              }
+            : undefined,
+        following:
+          input.followingUsersOnly === true
+            ? {
+                some: {
+                  username: ctx.user?.username,
+                },
+              }
+            : undefined,
       },
       orderBy: {
         flights: {

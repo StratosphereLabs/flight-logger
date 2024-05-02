@@ -2,19 +2,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import {
   Button,
   CheckIcon,
   Form,
   FormControl,
+  FormRadioGroup,
+  FormRadioGroupOption,
   Table,
   integerInputTransformer,
 } from 'stratosphere-ui';
+import { type FlightDataRouterOutput } from '../../../../../app/routes/flightData';
 import {
-  fetchFlightsByFlightNumberSchema,
-  type FetchFlightsByFlightNumberRequest,
+  type FlightSearchFormData,
+  flightSearchFormSchema,
 } from '../../../../../app/schemas';
 import {
   AirlineInput,
@@ -24,17 +27,25 @@ import {
 import { useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { flightSearchFormDefaultValues } from './constants';
+import { UserSelectModal } from './UserSelectModal';
 
 export const AddFlightForm = (): JSX.Element => {
   const utils = trpc.useUtils();
-  const methods = useForm<FetchFlightsByFlightNumberRequest>({
+  const methods = useForm<FlightSearchFormData>({
     defaultValues: flightSearchFormDefaultValues,
-    resolver: zodResolver(fetchFlightsByFlightNumberSchema),
+    resolver: zodResolver(flightSearchFormSchema),
     reValidateMode: 'onBlur',
   });
   const [currentFormData, setCurrentFormData] =
-    useState<FetchFlightsByFlightNumberRequest | null>(null);
-  const [selectedFlightId, setSelectedFlightId] = useState<number | null>(null);
+    useState<FlightSearchFormData | null>(null);
+  const userType = useWatch<FlightSearchFormData, 'userType'>({
+    name: 'userType',
+    control: methods.control,
+  });
+  const [isUserSelectModalOpen, setIsUserSelectModalOpen] = useState(false);
+  const [selectedFlight, setSelectedFlight] = useState<
+    FlightDataRouterOutput['fetchFlightsByFlightNumber'][number] | null
+  >(null);
   const [completedFlightIds, setCompletedFlightIds] = useState<number[]>([]);
   const onError = useTRPCErrorHandler();
   const { data, isFetching } =
@@ -48,14 +59,42 @@ export const AddFlightForm = (): JSX.Element => {
   const { mutate, isLoading: isFlightDataLoading } =
     trpc.flightData.addFlightFromData.useMutation({
       onSuccess: () => {
-        if (selectedFlightId !== null) {
-          setCompletedFlightIds(prevIds => [...prevIds, selectedFlightId]);
-          setSelectedFlightId(null);
+        setIsUserSelectModalOpen(false);
+        if (selectedFlight !== null) {
+          setCompletedFlightIds(prevIds => [...prevIds, selectedFlight.id]);
+          setSelectedFlight(null);
           void utils.users.invalidate();
         }
       },
       onError,
     });
+  const addFlight = useCallback(
+    (
+      newFlight: FlightDataRouterOutput['fetchFlightsByFlightNumber'][number],
+      username?: string,
+    ) => {
+      if (currentFormData !== null)
+        mutate({
+          username,
+          airline: currentFormData.airline,
+          flightNumber: currentFormData.flightNumber,
+          departureIcao: newFlight.origin.icao,
+          arrivalIcao: newFlight.destination.icao,
+          aircraftTypeIcao: newFlight.aircraftType,
+          departureTime: newFlight.gateDepartureTimes.scheduled,
+          departureTimeEstimated: newFlight.gateDepartureTimes.estimated,
+          departureTimeActual: newFlight.gateDepartureTimes.actual,
+          departureTerminal: newFlight.origin.terminal,
+          departureGate: newFlight.origin.gate,
+          arrivalTime: newFlight.gateArrivalTimes.scheduled,
+          arrivalTimeEstimated: newFlight.gateArrivalTimes.estimated,
+          arrivalTimeActual: newFlight.gateArrivalTimes.actual,
+          arrivalTerminal: newFlight.destination.terminal,
+          arrivalGate: newFlight.destination.gate,
+        });
+    },
+    [currentFormData, mutate],
+  );
   useEffect(() => {
     setCompletedFlightIds([]);
   }, [data]);
@@ -63,45 +102,65 @@ export const AddFlightForm = (): JSX.Element => {
     <div className="mb-3 flex flex-col gap-3">
       <Form
         methods={methods}
-        className="mt-[-12px] flex w-full flex-col gap-8 sm:flex-row"
+        className="flex w-full flex-col justify-between gap-8 sm:flex-row"
         onFormSubmit={values => {
           setCurrentFormData(values);
           methods.reset(values);
         }}
       >
-        <div className="flex flex-1 flex-wrap gap-x-4 gap-y-2">
-          <FormControl
-            className="w-[150px]"
-            inputClassName="bg-base-200"
-            isRequired
-            labelText="Departure Date"
-            name="outDateISO"
-            size="sm"
-            type="date"
-          />
-          <AirlineInput
-            className="min-w-[250px] max-w-[500px] flex-1"
-            dropdownInputClassName="input-sm"
-            getBadgeText={({ iata, icao, name }) =>
-              `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
-            }
-            inputClassName="bg-base-200"
-            isRequired
-            labelText="Airline"
-            menuClassName="w-full menu-sm"
-            name="airline"
-            size="sm"
-          />
-          <FormControl
-            className="w-[125px]"
-            labelText="Flight No."
-            inputClassName="bg-base-200"
-            isRequired
-            name="flightNumber"
-            transform={integerInputTransformer}
-            maxLength={4}
-            size="sm"
-          />
+        <div className="flex flex-col gap-4">
+          <FormRadioGroup className="w-full" name="userType">
+            <FormRadioGroupOption
+              activeColor="info"
+              className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              size="sm"
+              value="me"
+            >
+              Myself
+            </FormRadioGroupOption>
+            <FormRadioGroupOption
+              activeColor="info"
+              className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              size="sm"
+              value="other"
+            >
+              Other User
+            </FormRadioGroupOption>
+          </FormRadioGroup>
+          <div className="flex flex-1 flex-wrap gap-x-4 gap-y-2">
+            <FormControl
+              className="w-[150px]"
+              inputClassName="bg-base-200"
+              isRequired
+              labelText="Departure Date"
+              name="outDateISO"
+              size="sm"
+              type="date"
+            />
+            <AirlineInput
+              className="min-w-[250px] max-w-[500px] flex-1"
+              dropdownInputClassName="input-sm"
+              getBadgeText={({ iata, icao, name }) =>
+                `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
+              }
+              inputClassName="bg-base-200"
+              isRequired
+              labelText="Airline"
+              menuClassName="w-full menu-sm"
+              name="airline"
+              size="sm"
+            />
+            <FormControl
+              className="w-[125px]"
+              labelText="Flight No."
+              inputClassName="bg-base-200"
+              isRequired
+              name="flightNumber"
+              transform={integerInputTransformer}
+              maxLength={4}
+              size="sm"
+            />
+          </div>
         </div>
         <div className="flex w-full items-end justify-center sm:w-auto">
           <Button
@@ -234,7 +293,9 @@ export const AddFlightForm = (): JSX.Element => {
               id: 'actions',
               cell: ({ row }) => {
                 const isLoading =
-                  row.original.id === selectedFlightId && isFlightDataLoading;
+                  userType === 'me' &&
+                  row.original.id === selectedFlight?.id &&
+                  isFlightDataLoading;
                 const isAdded = completedFlightIds.includes(row.original.id);
                 return (
                   <Button
@@ -245,30 +306,13 @@ export const AddFlightForm = (): JSX.Element => {
                     disabled={isLoading}
                     loading={isLoading}
                     onClick={() => {
-                      if (!isAdded && currentFormData !== null) {
-                        setSelectedFlightId(row.original.id);
-                        mutate({
-                          airline: currentFormData.airline,
-                          flightNumber: currentFormData.flightNumber,
-                          departureIcao: row.original.origin.icao,
-                          arrivalIcao: row.original.destination.icao,
-                          aircraftTypeIcao: row.original.aircraftType,
-                          departureTime:
-                            row.original.gateDepartureTimes.scheduled,
-                          departureTimeEstimated:
-                            row.original.gateDepartureTimes.estimated,
-                          departureTimeActual:
-                            row.original.gateDepartureTimes.actual,
-                          departureTerminal: row.original.origin.terminal,
-                          departureGate: row.original.origin.gate,
-                          arrivalTime: row.original.gateArrivalTimes.scheduled,
-                          arrivalTimeEstimated:
-                            row.original.gateArrivalTimes.estimated,
-                          arrivalTimeActual:
-                            row.original.gateArrivalTimes.actual,
-                          arrivalTerminal: row.original.destination.terminal,
-                          arrivalGate: row.original.destination.gate,
-                        });
+                      if (!isAdded) {
+                        setSelectedFlight(row.original);
+                        if (userType === 'me') {
+                          addFlight(row.original);
+                        } else {
+                          setIsUserSelectModalOpen(true);
+                        }
                       }
                     }}
                   >
@@ -305,6 +349,15 @@ export const AddFlightForm = (): JSX.Element => {
           </Button>
         </div>
       ) : null}
+      <UserSelectModal
+        isLoading={isFlightDataLoading}
+        isOpen={isUserSelectModalOpen}
+        onSubmit={({ username }) => {
+          if (selectedFlight !== null && username !== null)
+            addFlight(selectedFlight, username);
+        }}
+        setIsOpen={setIsUserSelectModalOpen}
+      />
     </div>
   );
 };
