@@ -28,8 +28,8 @@ export interface FlightTimesInput {
 }
 
 export interface FlightTimestampsInput {
-  departureAirport: airport;
-  arrivalAirport: airport;
+  departureTimeZone: string;
+  arrivalTimeZone: string;
   duration: number;
   outTime: number | Date;
   outTimeActual?: number | Date;
@@ -132,8 +132,8 @@ export const getFlightTimes = ({
 };
 
 export const getFlightTimestamps = ({
-  departureAirport,
-  arrivalAirport,
+  departureTimeZone,
+  arrivalTimeZone,
   duration,
   outTime,
   outTimeActual,
@@ -170,91 +170,51 @@ export const getFlightTimestamps = ({
     durationString: getDurationString(duration),
     durationStringAbbreviated: getDurationString(duration, true),
     inFuture: getInFuture(outTime),
-    outDateISO: formatInTimeZone(
-      outTime,
-      departureAirport.timeZone,
-      DATE_FORMAT_ISO,
-    ),
-    outDateLocal: formatInTimeZone(
-      outTime,
-      departureAirport.timeZone,
-      DATE_FORMAT,
-    ),
-    outTimeLocal: formatInTimeZone(
-      outTime,
-      departureAirport.timeZone,
-      TIME_FORMAT_12H,
-    ),
-    outTimeValue: formatInTimeZone(
-      outTime,
-      departureAirport.timeZone,
-      TIME_FORMAT_24H,
-    ),
+    outDateISO: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT_ISO),
+    outDateLocal: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT),
+    outTimeLocal: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_12H),
+    outTimeValue: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_24H),
     outTimeActualLocal:
       outTimeActual !== undefined
-        ? formatInTimeZone(
-            outTimeActual,
-            departureAirport.timeZone,
-            TIME_FORMAT_12H,
-          )
+        ? formatInTimeZone(outTimeActual, departureTimeZone, TIME_FORMAT_12H)
         : null,
     outTimeActualValue:
       outTimeActual !== undefined
-        ? formatInTimeZone(
-            outTimeActual,
-            departureAirport.timeZone,
-            TIME_FORMAT_24H,
-          )
+        ? formatInTimeZone(outTimeActual, departureTimeZone, TIME_FORMAT_24H)
         : null,
     outTimeActualDaysAdded:
       outTimeActual !== undefined
         ? getDaysAdded({
             outTime,
             inTime: outTimeActual,
-            outTimeZone: departureAirport.timeZone,
-            inTimeZone: departureAirport.timeZone,
+            outTimeZone: departureTimeZone,
+            inTimeZone: departureTimeZone,
           })
         : null,
-    inTimeLocal: formatInTimeZone(
-      inTime,
-      arrivalAirport.timeZone,
-      TIME_FORMAT_12H,
-    ),
-    inTimeValue: formatInTimeZone(
-      inTime,
-      arrivalAirport.timeZone,
-      TIME_FORMAT_24H,
-    ),
+    inTimeLocal: formatInTimeZone(inTime, arrivalTimeZone, TIME_FORMAT_12H),
+    inTimeValue: formatInTimeZone(inTime, arrivalTimeZone, TIME_FORMAT_24H),
     inTimeDaysAdded:
       getDaysAdded({
         outTime,
         inTime,
-        outTimeZone: departureAirport.timeZone,
-        inTimeZone: arrivalAirport.timeZone,
+        outTimeZone: departureTimeZone,
+        inTimeZone: arrivalTimeZone,
       }) ?? 0,
     inTimeActualLocal:
       inTimeActual !== undefined
-        ? formatInTimeZone(
-            inTimeActual,
-            arrivalAirport.timeZone,
-            TIME_FORMAT_12H,
-          )
+        ? formatInTimeZone(inTimeActual, arrivalTimeZone, TIME_FORMAT_12H)
         : null,
     inTimeActualValue:
       inTimeActual !== undefined
-        ? formatInTimeZone(
-            inTimeActual,
-            arrivalAirport.timeZone,
-            TIME_FORMAT_24H,
-          )
+        ? formatInTimeZone(inTimeActual, arrivalTimeZone, TIME_FORMAT_24H)
         : null,
     inTimeActualDaysAdded:
       inTimeActual !== undefined
         ? getDaysAdded({
             outTime,
             inTime: inTimeActual,
-            outTimeZone: departureAirport.timeZone,
-            inTimeZone: arrivalAirport.timeZone,
+            outTimeZone: departureTimeZone,
+            inTimeZone: arrivalTimeZone,
           })
         : null,
     departureDelay:

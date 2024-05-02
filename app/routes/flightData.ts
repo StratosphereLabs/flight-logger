@@ -3,10 +3,9 @@ import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 import { updateFlightRegistrationData } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
-import {
-  fetchFlightStatsData,
-  fetchFlightStatsDataByFlightNumber,
-} from '../data/flightStats';
+import { fetchFlightAwareData } from '../data/flightAware/fetchFlightAwareData';
+import { createNewDate } from '../data/flightRadar/utils';
+import { fetchFlightStatsData } from '../data/flightStats';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
@@ -17,7 +16,6 @@ import { procedure, router } from '../trpc';
 import {
   flightIncludeObj,
   getDurationMinutes,
-  getFlightTimes,
   getFlightTimestamps,
   transformFlightData,
 } from '../utils';
@@ -33,44 +31,22 @@ export const flightDataRouter = router({
           message: 'Airline and Flight Number are required.',
         });
       }
-      const flights = await fetchFlightStatsDataByFlightNumber({
+      const flights = await fetchFlightAwareData({
         airline,
         flightNumber,
         isoDate: outDateISO,
       });
       if (flights === null) return [];
-      const airportIds = [
-        ...new Set(
-          flights.flatMap(({ departureAirport, arrivalAirport }) => [
-            departureAirport.iata,
-            arrivalAirport.iata,
-          ]),
-        ),
-      ];
-      const airports = await prisma.airport.findMany({
-        where: {
-          iata: {
-            in: airportIds,
-          },
-        },
-      });
-      const groupedAirports = groupBy(airports, 'iata');
       return flights.flatMap((flight, index) => {
-        const departureAirport =
-          groupedAirports[flight.departureAirport.iata]?.[0];
-        const arrivalAirport = groupedAirports[flight.arrivalAirport.iata]?.[0];
-        if (departureAirport === undefined || arrivalAirport === undefined)
-          return [];
-        const { outTime, inTime, duration } = getFlightTimes({
-          departureAirport,
-          arrivalAirport,
-          outDateISO: input.outDateISO,
-          outTimeValue: flight.departureTime24,
-          inTimeValue: flight.arrivalTime24,
+        const outTime = createNewDate(flight.gateDepartureTimes.scheduled);
+        const inTime = createNewDate(flight.gateArrivalTimes.scheduled);
+        const duration = getDurationMinutes({
+          start: outTime,
+          end: inTime,
         });
         const timestamps = getFlightTimestamps({
-          departureAirport,
-          arrivalAirport,
+          departureTimeZone: flight.origin.TZ.replace(/:/g, ''),
+          arrivalTimeZone: flight.destination.TZ.replace(/:/g, ''),
           duration,
           outTime,
           inTime,
@@ -80,12 +56,12 @@ export const flightDataRouter = router({
           duration,
           outTimeDate: formatInTimeZone(
             outTime,
-            departureAirport.timeZone,
+            flight.origin.TZ.replace(/:/g, ''),
             DATE_FORMAT_WITH_DAY,
           ),
           outTimeDateAbbreviated: formatInTimeZone(
             outTime,
-            departureAirport.timeZone,
+            flight.origin.TZ.replace(/:/g, ''),
             DATE_FORMAT_SHORT,
           ),
           ...flight,

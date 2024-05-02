@@ -182,7 +182,7 @@ export const AddFlightForm = (): JSX.Element => {
             },
             {
               id: 'departureAirport',
-              accessorKey: 'departureAirport',
+              accessorKey: 'origin',
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (
@@ -198,7 +198,7 @@ export const AddFlightForm = (): JSX.Element => {
             },
             {
               id: 'arrivalAirport',
-              accessorKey: 'arrivalAirport',
+              accessorKey: 'destination',
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (
@@ -250,8 +250,8 @@ export const AddFlightForm = (): JSX.Element => {
                         mutate({
                           airline: currentFormData.airline,
                           flightNumber: currentFormData.flightNumber,
-                          departureIata: row.original.departureAirport.iata,
-                          arrivalIata: row.original.arrivalAirport.iata,
+                          departureIata: row.original.origin.iata,
+                          arrivalIata: row.original.destination.iata,
                           outDateISO: row.original.outDateISO,
                         });
                       }

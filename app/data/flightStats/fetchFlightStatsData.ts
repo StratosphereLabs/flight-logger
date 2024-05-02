@@ -1,10 +1,10 @@
-import type { airline } from '@prisma/client';
 import axios from 'axios';
 import { load } from 'cheerio';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { HEADERS } from '../constants';
+import type { FetchDataParams } from '../types';
 import type {
   FlightStatsDataResponse,
   FlightStatsFlight,
@@ -13,13 +13,6 @@ import type {
 } from './types';
 
 export const SCRIPT_BEGIN = '__NEXT_DATA__ = ';
-
-interface FetchDataParams {
-  airline: airline;
-  customUrl?: string;
-  flightNumber: number;
-  isoDate: string;
-}
 
 export interface FetchFlightStatsDataParams
   extends Omit<FetchDataParams, 'customUrl'> {
