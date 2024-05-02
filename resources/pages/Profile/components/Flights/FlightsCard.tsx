@@ -57,30 +57,32 @@ export const FlightsCard = ({
       )}
     >
       <CardBody className="p-1 pt-4">
-        <div className="flex w-full min-w-[375px] flex-col gap-3 px-3">
-          <div className="flex justify-between">
+        <div className="flex w-full min-w-[375px] flex-col gap-4 px-3">
+          <div className="flex flex-wrap justify-between gap-2">
             <div className="flex items-end gap-1">
-              <CardTitle>Flights</CardTitle>
-              <Button
-                className="w-[100px]"
-                color="ghost"
-                onClick={() => {
-                  navigate(
-                    username !== undefined
-                      ? `/user/${username}/flights`
-                      : '/flights',
-                  );
-                }}
-                size="xs"
-              >
-                View All
-              </Button>
+              <CardTitle>{isAddingFlight ? 'Add Flight' : 'Flights'}</CardTitle>
+              {!isAddingFlight ? (
+                <Button
+                  className="w-[100px]"
+                  color="ghost"
+                  onClick={() => {
+                    navigate(
+                      username !== undefined
+                        ? `/user/${username}/flights`
+                        : '/flights',
+                    );
+                  }}
+                  size="xs"
+                >
+                  View All
+                </Button>
+              ) : null}
             </div>
             {onOwnProfile ? (
               <div className="flex justify-end gap-4">
                 {isAddingFlight ? (
                   <Button
-                    className="flex w-[120px] flex-1 flex-nowrap"
+                    className="flex w-[120px] flex-nowrap"
                     color="warning"
                     size="sm"
                     onClick={() => {
@@ -131,7 +133,7 @@ export const FlightsCard = ({
           ) : null}
         </div>
         {!isAddingFlight ? (
-          <div className="min-h-[60px]">
+          <div className="min-h-[70px]">
             {flightsMode === 'completed' ? <CompletedFlights /> : null}
             {flightsMode === 'upcoming' ? <UpcomingFlights /> : null}
           </div>

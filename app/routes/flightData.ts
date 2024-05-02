@@ -8,7 +8,7 @@ import { createNewDate } from '../data/utils';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
-  fetchFlightDataSchema,
+  addFlightFromDataSchema,
   fetchFlightsByFlightNumberSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
@@ -70,12 +70,36 @@ export const flightDataRouter = router({
     }),
   addFlightFromData: procedure
     .use(verifyAuthenticated)
-    .input(fetchFlightDataSchema)
+    .input(addFlightFromDataSchema)
     .mutation(async ({ ctx, input }) => {
       if (input.airline === null || input.flightNumber === null) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Airline and Flight Number are required.',
+        });
+      }
+      const user =
+        input.username !== undefined
+          ? await prisma.user.findUnique({
+              where: {
+                username: input.username,
+                followedBy: {
+                  some: {
+                    username: ctx.user.username,
+                  },
+                },
+                following: {
+                  some: {
+                    username: ctx.user.username,
+                  },
+                },
+              },
+            })
+          : undefined;
+      if (user === null) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unable to add flight for user @${input.username}`,
         });
       }
       const airportIds = [input.departureIcao, input.arrivalIcao];
@@ -121,7 +145,7 @@ export const flightDataRouter = router({
         data: {
           user: {
             connect: {
-              id: ctx.user.id,
+              id: user?.id ?? ctx.user.id,
             },
           },
           departureAirport: {

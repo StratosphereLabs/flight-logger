@@ -1,22 +1,10 @@
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import {
-  Button,
-  Form,
-  TypeaheadSelect,
-  useOutsideClick,
-} from 'stratosphere-ui';
+import { Button, Form, useOutsideClick } from 'stratosphere-ui';
 import { type UsersRouterOutput } from '../../../app/routes/users';
-import { trpc } from '../../utils/trpc';
-import { useTRPCErrorHandler } from '../hooks';
 import { SearchIcon } from './Icons';
+import { UserSelect } from './UserInput';
 
 export interface SearchButtonProps {
   isSearching: boolean;
@@ -34,12 +22,7 @@ export const SearchButton = ({
   const navigate = useNavigate();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [query, setQuery] = useState('');
-  const onError = useTRPCErrorHandler();
-  const { data } = trpc.users.getUsers.useQuery(
-    { query },
-    { enabled: query.length > 0, onError },
-  );
+
   const methods = useForm<UserSearchFormData>({
     defaultValues: {
       user: null,
@@ -68,20 +51,17 @@ export const SearchButton = ({
     <>
       {isSearching ? (
         <Form methods={methods} onFormSubmit={() => null} formRef={formRef}>
-          <TypeaheadSelect
+          <UserSelect
             disableSingleSelectBadge
-            getItemText={({ username }) => username}
             inputClassName="bg-base-200"
             menuClassName="min-w-full"
             name="user"
-            onDebouncedChange={setQuery}
             onKeyDown={({ key }) => {
               if (key === 'Escape' || key === 'Tab') {
                 setIsSearching(false);
                 if (key !== 'Tab') setTimeout(() => buttonRef.current?.focus());
               }
             }}
-            options={data}
             placeholder="Search Users..."
           />
         </Form>

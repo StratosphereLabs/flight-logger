@@ -18,9 +18,14 @@ export const fetchFlightsByFlightNumberSchema = z.object({
     .refine(item => item !== null, 'Required'),
 });
 
-export const fetchFlightDataSchema = fetchFlightsByFlightNumberSchema
+export const flightSearchFormSchema = fetchFlightsByFlightNumberSchema.extend({
+  userType: z.enum(['me', 'other']),
+});
+
+export const addFlightFromDataSchema = fetchFlightsByFlightNumberSchema
   .omit({ outDateISO: true })
   .extend({
+    username: z.string().optional(),
     departureIcao: z.string().length(4, 'Length must be 4'),
     arrivalIcao: z.string().length(4, 'Length must be 4'),
     aircraftTypeIcao: z.string().nullable(),
@@ -40,4 +45,6 @@ export type FetchFlightsByFlightNumberRequest = z.infer<
   typeof fetchFlightsByFlightNumberSchema
 >;
 
-export type FetchFlightDataRequest = z.infer<typeof fetchFlightDataSchema>;
+export type FlightSearchFormData = z.infer<typeof flightSearchFormSchema>;
+
+export type AddFlightFromDataRequest = z.infer<typeof addFlightFromDataSchema>;
