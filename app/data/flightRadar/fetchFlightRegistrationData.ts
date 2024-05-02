@@ -76,30 +76,32 @@ export const fetchFlightRegistrationData = async ({
     const offTimeTimestamp = tableCells.eq(7).attr('data-timestamp');
     const onTimeTimestamp = tableCells.eq(10).attr('data-timestamp');
     const onTimeText = tableCells.eq(10).text();
-    registrationData = {
-      departureTime,
-      offTimeActual:
-        onTimeTimestamp !== undefined &&
-        onTimeTimestamp.length > 0 &&
-        onTimeText.includes('Estimated departure')
-          ? createNewDate(parseInt(onTimeTimestamp, 10))
-          : offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
-            ? createNewDate(parseInt(offTimeTimestamp, 10))
+    if (registrationData === null) {
+      registrationData = {
+        departureTime,
+        offTimeActual:
+          onTimeTimestamp !== undefined &&
+          onTimeTimestamp.length > 0 &&
+          onTimeText.includes('Estimated departure')
+            ? createNewDate(parseInt(onTimeTimestamp, 10))
+            : offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
+              ? createNewDate(parseInt(offTimeTimestamp, 10))
+              : undefined,
+        onTimeActual:
+          onTimeTimestamp !== undefined &&
+          onTimeTimestamp.length > 0 &&
+          (onTimeText.includes('Landed') ||
+            onTimeText.includes('Delayed') ||
+            (onTimeText.includes('Estimated') &&
+              !onTimeText.includes('departure')))
+            ? createNewDate(parseInt(onTimeTimestamp, 10))
             : undefined,
-      onTimeActual:
-        onTimeTimestamp !== undefined &&
-        onTimeTimestamp.length > 0 &&
-        (onTimeText.includes('Landed') ||
-          onTimeText.includes('Delayed') ||
-          (onTimeText.includes('Estimated') &&
-            !onTimeText.includes('departure')))
-          ? createNewDate(parseInt(onTimeTimestamp, 10))
-          : undefined,
-      departureAirportIATA,
-      arrivalAirportIATA,
-      aircraftTypeCode,
-      registration,
-    };
+        departureAirportIATA,
+        arrivalAirportIATA,
+        aircraftTypeCode,
+        registration,
+      };
+    }
   });
   return registrationData;
 };
