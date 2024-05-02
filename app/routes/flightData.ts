@@ -3,10 +3,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 import { updateFlightRegistrationData } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
-import {
-  fetchFlightAwareData,
-  fetchFlightAwareDataByFlightNumber,
-} from '../data/flightAware';
+import { fetchFlightAwareDataByFlightNumber } from '../data/flightAware';
 import { createNewDate } from '../data/utils';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
@@ -75,51 +72,50 @@ export const flightDataRouter = router({
     .use(verifyAuthenticated)
     .input(fetchFlightDataSchema)
     .mutation(async ({ ctx, input }) => {
-      const { airline, flightNumber, outDateISO, departureIata, arrivalIata } =
-        input;
-      if (airline === null || flightNumber === null) {
+      if (input.airline === null || input.flightNumber === null) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Airline and Flight Number are required.',
         });
       }
-      const airportIds = [departureIata, arrivalIata];
+      const airportIds = [input.departureIcao, input.arrivalIcao];
       const airports = await prisma.airport.findMany({
         where: {
-          iata: {
+          id: {
             in: airportIds,
           },
         },
       });
-      const groupedAirports = groupBy(airports, 'iata');
-      const departureAirport = groupedAirports[departureIata][0];
-      const arrivalAirport = groupedAirports[arrivalIata][0];
-      const flight = await fetchFlightAwareData({
-        airline,
-        flightNumber,
-        departureIata,
-        arrivalIata,
-        isoDate: outDateISO,
-      });
-      if (flight === null) {
+      const groupedAirports = groupBy(airports, 'id');
+      const departureAirport = groupedAirports[input.departureIcao][0];
+      const arrivalAirport = groupedAirports[input.arrivalIcao][0];
+      if (departureAirport === undefined || arrivalAirport === undefined) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Flight data not found. Please enter data manually.',
+          message: 'One or more airports not found.',
         });
       }
-      const outTime = createNewDate(flight.gateDepartureTimes.scheduled);
+      const aircraftType =
+        input.aircraftTypeIcao !== null
+          ? await prisma.aircraft_type.findFirst({
+              where: {
+                icao: input.aircraftTypeIcao,
+              },
+            })
+          : null;
+      const outTime = createNewDate(input.departureTime);
       const outTimeActual =
-        flight.gateDepartureTimes.actual !== null
-          ? createNewDate(flight.gateDepartureTimes.actual)
-          : flight.gateDepartureTimes.estimated !== null
-            ? createNewDate(flight.gateDepartureTimes.estimated)
+        input.departureTimeActual !== null
+          ? createNewDate(input.departureTimeActual)
+          : input.departureTimeEstimated !== null
+            ? createNewDate(input.departureTimeEstimated)
             : null;
-      const inTime = createNewDate(flight.gateArrivalTimes.scheduled);
+      const inTime = createNewDate(input.arrivalTime);
       const inTimeActual =
-        flight.gateArrivalTimes.actual !== null
-          ? createNewDate(flight.gateArrivalTimes.actual)
-          : flight.gateArrivalTimes.estimated !== null
-            ? createNewDate(flight.gateArrivalTimes.estimated)
+        input.arrivalTimeActual !== null
+          ? createNewDate(input.arrivalTimeActual)
+          : input.arrivalTimeEstimated !== null
+            ? createNewDate(input.arrivalTimeEstimated)
             : null;
       const newFlight = await prisma.flight.create({
         data: {
@@ -147,6 +143,14 @@ export const flightDataRouter = router({
                 }
               : undefined,
           flightNumber: input.flightNumber,
+          aircraftType:
+            aircraftType !== null
+              ? {
+                  connect: {
+                    id: aircraftType.id,
+                  },
+                }
+              : undefined,
           outTime,
           outTimeActual,
           inTime,
@@ -155,10 +159,10 @@ export const flightDataRouter = router({
             start: outTime,
             end: inTime,
           }),
-          departureGate: flight.origin.gate ?? undefined,
-          arrivalGate: flight.destination.gate ?? undefined,
-          departureTerminal: flight.origin.terminal ?? undefined,
-          arrivalTerminal: flight.destination.terminal ?? undefined,
+          departureGate: input.departureGate ?? undefined,
+          arrivalGate: input.arrivalGate ?? undefined,
+          departureTerminal: input.departureTerminal ?? undefined,
+          arrivalTerminal: input.arrivalTerminal ?? undefined,
           arrivalBaggage: undefined,
         },
         include: {
