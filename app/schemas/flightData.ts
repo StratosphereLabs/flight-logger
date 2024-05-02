@@ -18,10 +18,23 @@ export const fetchFlightsByFlightNumberSchema = z.object({
     .refine(item => item !== null, 'Required'),
 });
 
-export const fetchFlightDataSchema = fetchFlightsByFlightNumberSchema.extend({
-  departureIata: z.string().length(3, 'Length must be 3'),
-  arrivalIata: z.string().length(3, 'Length must be 3'),
-});
+export const fetchFlightDataSchema = fetchFlightsByFlightNumberSchema
+  .omit({ outDateISO: true })
+  .extend({
+    departureIcao: z.string().length(4, 'Length must be 4'),
+    arrivalIcao: z.string().length(4, 'Length must be 4'),
+    aircraftTypeIcao: z.string().nullable(),
+    departureTime: z.number().int(),
+    departureTimeEstimated: z.number().int().nullable(),
+    departureTimeActual: z.number().int().nullable(),
+    departureTerminal: z.string().nullable(),
+    departureGate: z.string().nullable(),
+    arrivalTime: z.number().int(),
+    arrivalTimeEstimated: z.number().int().nullable(),
+    arrivalTimeActual: z.number().int().nullable(),
+    arrivalTerminal: z.string().nullable(),
+    arrivalGate: z.string().nullable(),
+  });
 
 export type FetchFlightsByFlightNumberRequest = z.infer<
   typeof fetchFlightsByFlightNumberSchema

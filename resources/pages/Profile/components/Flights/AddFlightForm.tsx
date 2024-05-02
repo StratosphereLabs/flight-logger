@@ -250,9 +250,24 @@ export const AddFlightForm = (): JSX.Element => {
                         mutate({
                           airline: currentFormData.airline,
                           flightNumber: currentFormData.flightNumber,
-                          departureIata: row.original.origin.iata,
-                          arrivalIata: row.original.destination.iata,
-                          outDateISO: row.original.outDateISO,
+                          departureIcao: row.original.origin.icao,
+                          arrivalIcao: row.original.destination.icao,
+                          aircraftTypeIcao: row.original.aircraftType,
+                          departureTime:
+                            row.original.gateDepartureTimes.scheduled,
+                          departureTimeEstimated:
+                            row.original.gateDepartureTimes.estimated,
+                          departureTimeActual:
+                            row.original.gateDepartureTimes.actual,
+                          departureTerminal: row.original.origin.terminal,
+                          departureGate: row.original.origin.gate,
+                          arrivalTime: row.original.gateArrivalTimes.scheduled,
+                          arrivalTimeEstimated:
+                            row.original.gateArrivalTimes.estimated,
+                          arrivalTimeActual:
+                            row.original.gateArrivalTimes.actual,
+                          arrivalTerminal: row.original.destination.terminal,
+                          arrivalGate: row.original.destination.gate,
                         });
                       }
                     }}
