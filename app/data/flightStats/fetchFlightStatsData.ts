@@ -4,7 +4,10 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { HEADERS } from '../constants';
-import type { FetchDataParams } from '../types';
+import type {
+  FetchFlightDataParams,
+  FetchFlightsByFlightNumberParams,
+} from '../types';
 import type {
   FlightStatsDataResponse,
   FlightStatsFlight,
@@ -13,12 +16,6 @@ import type {
 } from './types';
 
 export const SCRIPT_BEGIN = '__NEXT_DATA__ = ';
-
-export interface FetchFlightStatsDataParams
-  extends Omit<FetchDataParams, 'customUrl'> {
-  arrivalIata: string;
-  departureIata: string;
-}
 
 const processData = (data: string): FlightStatsFlightData | null => {
   const $ = load(data);
@@ -47,7 +44,7 @@ const fetchData = async ({
   customUrl,
   flightNumber,
   isoDate,
-}: FetchDataParams): Promise<FlightStatsFlightData | null> => {
+}: FetchFlightsByFlightNumberParams): Promise<FlightStatsFlightData | null> => {
   if (customUrl !== undefined) {
     const url = `https://www.flightstats.com/v2${customUrl}`;
     const response = await axios.get<string>(url, { headers: HEADERS });
@@ -77,7 +74,7 @@ export const fetchFlightStatsDataByFlightNumber = async ({
   airline,
   flightNumber,
   isoDate,
-}: Omit<FetchDataParams, 'customUrl'>): Promise<
+}: Omit<FetchFlightsByFlightNumberParams, 'customUrl'>): Promise<
   FlightStatsOtherDayFlight[] | null
 > => {
   const data = await fetchData({
@@ -100,7 +97,7 @@ export const fetchFlightStatsData = async ({
   departureIata,
   flightNumber,
   isoDate,
-}: FetchFlightStatsDataParams): Promise<FlightStatsFlight | null> => {
+}: FetchFlightDataParams): Promise<FlightStatsFlight | null> => {
   const data = await fetchData({
     airline,
     flightNumber,
