@@ -38,15 +38,15 @@ export const updateFlightTimesData = async (
   const outTimeActual =
     flight.gateDepartureTimes.actual !== null
       ? createNewDate(flight.gateDepartureTimes.actual)
-      : flight.gateDepartureTimes.scheduled !== null
-        ? createNewDate(flight.gateDepartureTimes.scheduled)
+      : flight.gateDepartureTimes.estimated !== null
+        ? createNewDate(flight.gateDepartureTimes.estimated)
         : null;
   const inTime = createNewDate(flight.gateArrivalTimes.scheduled);
   const inTimeActual =
     flight.gateArrivalTimes.actual !== null
       ? createNewDate(flight.gateArrivalTimes.actual)
-      : flight.gateArrivalTimes.scheduled !== null
-        ? createNewDate(flight.gateArrivalTimes.scheduled)
+      : flight.gateArrivalTimes.estimated !== null
+        ? createNewDate(flight.gateArrivalTimes.estimated)
         : null;
   await prisma.flight.updateMany({
     where: {
