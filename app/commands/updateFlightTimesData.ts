@@ -1,6 +1,7 @@
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
-import { fetchFlightStatsData } from '../data/flightStats';
+import { fetchFlightAwareData } from '../data/flightAware';
+import { createNewDate } from '../data/utils';
 import { prisma, updateTripTimes } from '../db';
 import { getDurationMinutes } from '../utils';
 import type { FlightWithData } from './types';
@@ -18,7 +19,7 @@ export const updateFlightTimesData = async (
     flights[0].departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
-  const flight = await fetchFlightStatsData({
+  const flight = await fetchFlightAwareData({
     airline: flights[0].airline,
     arrivalIata: flights[0].arrivalAirport.iata,
     departureIata: flights[0].departureAirport.iata,
@@ -33,16 +34,20 @@ export const updateFlightTimesData = async (
     );
     return;
   }
-  const outTime = new Date(flight.schedule.scheduledDepartureUTC);
+  const outTime = createNewDate(flight.gateDepartureTimes.scheduled);
   const outTimeActual =
-    flight.schedule.estimatedActualDepartureUTC !== null
-      ? new Date(flight.schedule.estimatedActualDepartureUTC)
-      : null;
-  const inTime = new Date(flight.schedule.scheduledArrivalUTC);
+    flight.gateDepartureTimes.actual !== null
+      ? createNewDate(flight.gateDepartureTimes.actual)
+      : flight.gateDepartureTimes.scheduled !== null
+        ? createNewDate(flight.gateDepartureTimes.scheduled)
+        : null;
+  const inTime = createNewDate(flight.gateArrivalTimes.scheduled);
   const inTimeActual =
-    flight.schedule.estimatedActualArrivalUTC !== null
-      ? new Date(flight.schedule.estimatedActualArrivalUTC)
-      : null;
+    flight.gateArrivalTimes.actual !== null
+      ? createNewDate(flight.gateArrivalTimes.actual)
+      : flight.gateArrivalTimes.scheduled !== null
+        ? createNewDate(flight.gateArrivalTimes.scheduled)
+        : null;
   await prisma.flight.updateMany({
     where: {
       id: {
@@ -58,11 +63,11 @@ export const updateFlightTimesData = async (
       outTimeActual,
       inTime,
       inTimeActual,
-      departureGate: flight.departureAirport.gate ?? undefined,
-      arrivalGate: flight.arrivalAirport.gate ?? undefined,
-      departureTerminal: flight.departureAirport.terminal ?? undefined,
-      arrivalTerminal: flight.arrivalAirport.terminal ?? undefined,
-      arrivalBaggage: flight.arrivalAirport.baggage ?? undefined,
+      departureGate: flight.origin.gate ?? undefined,
+      arrivalGate: flight.destination.gate ?? undefined,
+      departureTerminal: flight.origin.terminal ?? undefined,
+      arrivalTerminal: flight.destination.terminal ?? undefined,
+      arrivalBaggage: undefined,
     },
   });
   await Promise.all(

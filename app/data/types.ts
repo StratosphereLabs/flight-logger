@@ -5,9 +5,15 @@ export interface FlightWithDataAirport {
   timeZone: string;
 }
 
-export interface FetchDataParams {
+export interface FetchFlightsByFlightNumberParams {
   airline: airline;
   customUrl?: string;
   flightNumber: number;
   isoDate: string;
+}
+
+export interface FetchFlightDataParams
+  extends Omit<FetchFlightsByFlightNumberParams, 'customUrl'> {
+  arrivalIata: string;
+  departureIata: string;
 }
