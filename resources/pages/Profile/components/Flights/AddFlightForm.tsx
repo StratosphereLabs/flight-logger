@@ -4,6 +4,7 @@ import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import {
   Button,
   CheckIcon,
@@ -24,15 +25,23 @@ import {
   PlusIcon,
   SearchIcon,
 } from '../../../../common/components';
-import { useTRPCErrorHandler } from '../../../../common/hooks';
+import {
+  useLoggedInUserQuery,
+  useTRPCErrorHandler,
+} from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { flightSearchFormDefaultValues } from './constants';
 import { UserSelectModal } from './UserSelectModal';
 
 export const AddFlightForm = (): JSX.Element => {
   const utils = trpc.useUtils();
+  const { username } = useParams();
+  const { onOwnProfile } = useLoggedInUserQuery();
   const methods = useForm<FlightSearchFormData>({
-    defaultValues: flightSearchFormDefaultValues,
+    defaultValues: {
+      ...flightSearchFormDefaultValues,
+      userType: onOwnProfile ? 'me' : 'other',
+    },
     resolver: zodResolver(flightSearchFormSchema),
     reValidateMode: 'onBlur',
   });
@@ -109,24 +118,26 @@ export const AddFlightForm = (): JSX.Element => {
         }}
       >
         <div className="flex flex-col gap-4">
-          <FormRadioGroup className="w-full" name="userType">
-            <FormRadioGroupOption
-              activeColor="info"
-              className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-              size="sm"
-              value="me"
-            >
-              Myself
-            </FormRadioGroupOption>
-            <FormRadioGroupOption
-              activeColor="info"
-              className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-              size="sm"
-              value="other"
-            >
-              Other User
-            </FormRadioGroupOption>
-          </FormRadioGroup>
+          {onOwnProfile ? (
+            <FormRadioGroup className="w-full" name="userType">
+              <FormRadioGroupOption
+                activeColor="info"
+                className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+                size="sm"
+                value="me"
+              >
+                Myself
+              </FormRadioGroupOption>
+              <FormRadioGroupOption
+                activeColor="info"
+                className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+                size="sm"
+                value="other"
+              >
+                Other User
+              </FormRadioGroupOption>
+            </FormRadioGroup>
+          ) : null}
           <div className="flex flex-1 flex-wrap gap-x-4 gap-y-2">
             <FormControl
               className="w-[150px]"
@@ -293,7 +304,7 @@ export const AddFlightForm = (): JSX.Element => {
               id: 'actions',
               cell: ({ row }) => {
                 const isLoading =
-                  userType === 'me' &&
+                  (userType === 'me' || !onOwnProfile) &&
                   row.original.id === selectedFlight?.id &&
                   isFlightDataLoading;
                 const isAdded = completedFlightIds.includes(row.original.id);
@@ -308,10 +319,13 @@ export const AddFlightForm = (): JSX.Element => {
                     onClick={() => {
                       if (!isAdded) {
                         setSelectedFlight(row.original);
-                        if (userType === 'me') {
-                          addFlight(row.original);
-                        } else {
+                        if (userType === 'other' && onOwnProfile) {
                           setIsUserSelectModalOpen(true);
+                        } else {
+                          addFlight(
+                            row.original,
+                            !onOwnProfile ? username : undefined,
+                          );
                         }
                       }
                     }}
@@ -352,9 +366,9 @@ export const AddFlightForm = (): JSX.Element => {
       <UserSelectModal
         isLoading={isFlightDataLoading}
         isOpen={isUserSelectModalOpen}
-        onSubmit={({ username }) => {
-          if (selectedFlight !== null && username !== null)
-            addFlight(selectedFlight, username);
+        onSubmit={({ username: selectedUsername }) => {
+          if (selectedFlight !== null && selectedUsername !== null)
+            addFlight(selectedFlight, selectedUsername);
         }}
         setIsOpen={setIsUserSelectModalOpen}
       />

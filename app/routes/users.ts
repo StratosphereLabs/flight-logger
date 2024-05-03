@@ -49,6 +49,7 @@ export const usersRouter = router({
       },
       include: {
         followedBy: true,
+        following: true,
         _count: {
           select: {
             following: true,
@@ -66,10 +67,14 @@ export const usersRouter = router({
     const isFollowing =
       userData.followedBy.find(user => user.username === ctx.user?.username) !==
       undefined;
+    const isFollowedBy =
+      userData.following.find(user => user.username === ctx.user?.username) !==
+      undefined;
     return {
       avatar: fetchGravatarUrl(userData.email),
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       isFollowing,
+      isFollowedBy,
       ...excludeKeys(
         userData,
         'admin',

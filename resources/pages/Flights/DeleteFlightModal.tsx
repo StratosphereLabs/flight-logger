@@ -87,8 +87,8 @@ export const DeleteFlightModal = ({
       <div className="pt-4">
         Are you sure you want to delete your{' '}
         <strong>
-          {activeFlight?.departureAirportId ?? ''} -{' '}
-          {activeFlight?.arrivalAirportId ?? ''}
+          {activeFlight?.departureAirport.iata ?? ''} -{' '}
+          {activeFlight?.arrivalAirport.iata ?? ''}
         </strong>{' '}
         flight?
       </div>

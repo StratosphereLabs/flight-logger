@@ -1,9 +1,9 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 generator zod {
-  provider        = "zod-prisma-types"
+  provider = "zod-prisma-types"
 }
 
 datasource db {
@@ -12,22 +12,25 @@ datasource db {
 }
 
 model user {
-  id                  Int       @id @default(autoincrement())
-  username            String    @unique
-  password            String?
-  email               String    @unique
-  firstName           String
-  lastName            String
-  admin               Boolean   @default(false)
-  passwordResetToken  String?
-  passwordResetAt     DateTime?
-  flights             flight[]
-  trips               trip[]
-  itineraries         itinerary[]
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime? @updatedAt
-  followedBy          user[]    @relation("UserFollows")
-  following           user[]    @relation("UserFollows")
+  id                 Int            @id @default(autoincrement())
+  username           String         @unique
+  password           String?
+  email              String         @unique
+  firstName          String
+  lastName           String
+  admin              Boolean        @default(false)
+  passwordResetAt    DateTime?
+  passwordResetToken String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime?      @updatedAt
+  flights            flight[]       @relation("UserFlights")
+  flightsAdded       flight[]       @relation("UserFlightsAdded")
+  itineraries        itinerary[]
+  notification       notification[]
+  trips              trip[]
+  followedBy         user[]         @relation("UserFollows")
+  following          user[]         @relation("UserFollows")
+
   @@index([username])
 }
 
@@ -35,22 +38,22 @@ model trip {
   id        String    @id @default(uuid()) @db.Uuid
   userId    Int
   name      String
-  user      user      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
   outTime   DateTime
   inTime    DateTime
   flights   flight[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  user      user      @relation(fields: [userId], references: [id])
 }
 
 model itinerary {
-  id        String              @id @default(uuid()) @db.Uuid
+  id        String             @id @default(uuid()) @db.Uuid
+  createdAt DateTime           @default(now())
+  updatedAt DateTime?          @updatedAt
   userId    Int?
   name      String
-  user      user?               @relation(fields: [userId], references: [id])
+  user      user?              @relation(fields: [userId], references: [id])
   flights   itinerary_flight[]
-  createdAt DateTime            @default(now())
-  updatedAt DateTime?           @updatedAt
 }
 
 model itinerary_flight {
@@ -67,19 +70,20 @@ model itinerary_flight {
   onTime             DateTime?
   inTime             DateTime
   duration           Int            @default(0)
-  itinerary          itinerary      @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime?      @updatedAt
   aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
   airline            airline?       @relation("itineraryFlights", fields: [airlineId], references: [id])
   arrivalAirport     airport        @relation("arrivalItineraryFlights", fields: [arrivalAirportId], references: [id])
   departureAirport   airport        @relation("departureItineraryFlights", fields: [departureAirportId], references: [id])
+  itinerary          itinerary      @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
   operatorAirline    airline?       @relation("operatorItineraryFlights", fields: [operatorAirlineId], references: [id])
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime?      @updatedAt
 }
 
 model flight {
   id                 String         @id @default(uuid()) @db.Uuid
   userId             Int
+  addedByUserId      Int?
   tripId             String?        @db.Uuid
   departureAirportId String
   arrivalAirportId   String
@@ -89,100 +93,102 @@ model flight {
   callsign           String?
   aircraftTypeId     String?
   tailNumber         String?
-  airframeId         String?
-  outTime            DateTime
-  outTimeActual      DateTime?
-  offTime            DateTime?
-  offTimeActual      DateTime?
-  onTime             DateTime?
-  onTimeActual       DateTime?
-  inTime             DateTime
-  inTimeActual       DateTime?
-  duration           Int            @default(0)
-  departureGate      String?
-  arrivalGate        String?
-  departureTerminal  String?
-  arrivalTerminal    String?
-  arrivalBaggage     String?
   class              FlightClass?
   seatNumber         String?
   seatPosition       SeatPosition?
   reason             FlightReason?
   comments           String?
   trackingLink       String?
-  airframe           airframe?      @relation(fields: [airframeId], references: [icao24])
+  duration           Int            @default(0)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime?      @updatedAt
+  outTime            DateTime
+  offTime            DateTime?
+  onTime             DateTime?
+  inTime             DateTime
+  airframeId         String?
+  inTimeActual       DateTime?
+  offTimeActual      DateTime?
+  onTimeActual       DateTime?
+  outTimeActual      DateTime?
+  arrivalBaggage     String?
+  arrivalGate        String?
+  arrivalTerminal    String?
+  departureGate      String?
+  departureTerminal  String?
   aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
+  airframe           airframe?      @relation(fields: [airframeId], references: [icao24])
   airline            airline?       @relation("flights", fields: [airlineId], references: [id])
   arrivalAirport     airport        @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
   departureAirport   airport        @relation("departureFlights", fields: [departureAirportId], references: [id])
   operatorAirline    airline?       @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
   trip               trip?          @relation(fields: [tripId], references: [id])
-  user               user           @relation(fields: [userId], references: [id])
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime?      @updatedAt
-  @@index([outTime,inTime])
+  user               user           @relation("UserFlights", fields: [userId], references: [id])
+  addedByUser        user?          @relation("UserFlightsAdded", fields: [addedByUserId], references: [id])
+
+  @@index([outTime, inTime])
 }
 
 model manufacturer {
-  code              String        @id
-  name              String
-  airframes         airframe[]
+  code      String     @id
+  name      String
+  airframes airframe[]
 }
 
 model airframe {
-  icao24                String          @id
-  registration          String
-  manufacturerCode      String
-  manufacturer          manufacturer    @relation(fields: [manufacturerCode], references: [code])
-  model                 String?
-  typeCode              String?
-  serialNumber          String?
-  lineNumber            String?
-  icaoAircraftType      String?
-  operatorId            String?
-  operator              airline?        @relation(fields: [operatorId], references: [id])
-  owner                 String?
-  testReg               String?
-  registrationDate      DateTime?       @db.Date
-  registrationExprDate  DateTime?       @db.Date
-  builtDate             DateTime?       @db.Date
-  engines               String?
-  aircraftTypeId        String?
-  aircraftType          aircraft_type?  @relation(fields: [aircraftTypeId], references: [id])
-  flights               flight[]
+  icao24               String         @id
+  registration         String
+  manufacturerCode     String
+  model                String?
+  typeCode             String?
+  serialNumber         String?
+  lineNumber           String?
+  icaoAircraftType     String?
+  operatorId           String?
+  owner                String?
+  testReg              String?
+  registrationDate     DateTime?      @db.Date
+  registrationExprDate DateTime?      @db.Date
+  builtDate            DateTime?      @db.Date
+  engines              String?
+  aircraftTypeId       String?
+  aircraftType         aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
+  manufacturer         manufacturer   @relation(fields: [manufacturerCode], references: [code])
+  operator             airline?       @relation(fields: [operatorId], references: [id])
+  flights              flight[]
 }
 
 model aircraft_type {
-  id                String              @id
-  iata              String
-  icao              String
-  name              String
-  class             String
-  flights           flight[]
-  itineraryFlights  itinerary_flight[]
-  airframes         airframe[]
+  id               String             @id
+  iata             String
+  icao             String
+  name             String
+  class            String
+  airframes        airframe[]
+  flights          flight[]
+  itineraryFlights itinerary_flight[]
 }
 
 model airline {
-  id                        String              @id
-  iata                      String?
-  icao                      String
-  flightStatsCode           String?
-  name                      String
-  callsign                  String?
-  fleetSize                 Int?
-  destinations              Int?
-  logo                      String?
-  wiki                      String?
-  airframes                 airframe[]
-  flights                   flight[]            @relation("flights")
-  operatorFlights           flight[]            @relation("operatorFlights")
-  itineraryFlights          itinerary_flight[]  @relation("itineraryFlights")
-  operatorItineraryFlights  itinerary_flight[]  @relation("operatorItineraryFlights")
+  id                       String             @id
+  iata                     String?
+  icao                     String
+  name                     String
+  callsign                 String?
+  fleetSize                Int?
+  destinations             Int?
+  logo                     String?
+  wiki                     String?
+  flightStatsCode          String?
+  airframes                airframe[]
+  flights                  flight[]           @relation("flights")
+  operatorFlights          flight[]           @relation("operatorFlights")
+  itineraryFlights         itinerary_flight[] @relation("itineraryFlights")
+  operatorItineraryFlights itinerary_flight[] @relation("operatorItineraryFlights")
 }
 
 model airport {
-  id                        String   @id
+  id                        String             @id
   type                      String
   name                      String
   lat                       Float
@@ -198,12 +204,12 @@ model airport {
   gps                       String
   iata                      String
   local                     String
-  country                   country             @relation(fields: [countryId], references: [id])
-  region                    region              @relation(fields: [regionId], references: [id])
-  departureFlights          flight[]            @relation("departureFlights")
-  arrivalFlights            flight[]            @relation("arrivalFlights")
-  departureItineraryFlights itinerary_flight[]  @relation("departureItineraryFlights")
-  arrivalItineraryFlights   itinerary_flight[]  @relation("arrivalItineraryFlights")
+  country                   country            @relation(fields: [countryId], references: [id])
+  region                    region             @relation(fields: [regionId], references: [id])
+  arrivalFlights            flight[]           @relation("arrivalFlights")
+  departureFlights          flight[]           @relation("departureFlights")
+  arrivalItineraryFlights   itinerary_flight[] @relation("arrivalItineraryFlights")
+  departureItineraryFlights itinerary_flight[] @relation("departureItineraryFlights")
 }
 
 model country {
@@ -221,8 +227,21 @@ model region {
   continent String
   countryId String
   wiki      String?
-  country   country   @relation(fields: [countryId], references: [id])
   airports  airport[]
+  country   country   @relation(fields: [countryId], references: [id])
+}
+
+model notification {
+  id              String              @id @db.Uuid
+  userId          Int
+  showDefault     Boolean
+  color           NotificationColor?
+  title           String
+  description     String?
+  expiration      DateTime?
+  primaryAction   NotificationAction?
+  secondaryAction NotificationAction?
+  user            user                @relation(fields: [userId], references: [id])
 }
 
 enum FlightClass {
@@ -243,4 +262,15 @@ enum FlightReason {
   LEISURE
   BUSINESS
   CREW
+}
+
+enum NotificationAction {
+  DISMISS
+}
+
+enum NotificationColor {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
 }

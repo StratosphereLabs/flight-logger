@@ -148,6 +148,14 @@ export const flightDataRouter = router({
               id: user?.id ?? ctx.user.id,
             },
           },
+          addedByUser:
+            user !== undefined
+              ? {
+                  connect: {
+                    id: ctx.user.id,
+                  },
+                }
+              : undefined,
           departureAirport: {
             connect: {
               id: departureAirport.id,
