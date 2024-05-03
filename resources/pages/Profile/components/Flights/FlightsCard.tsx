@@ -14,7 +14,10 @@ import {
   useFormWithQueryParams,
 } from 'stratosphere-ui';
 import { PlusIcon } from '../../../../common/components';
-import { useLoggedInUserQuery } from '../../../../common/hooks';
+import {
+  useLoggedInUserQuery,
+  useProfileUserQuery,
+} from '../../../../common/hooks';
 import { AddFlightForm } from './AddFlightForm';
 import { CompletedFlights } from './CompletedFlights';
 import { UpcomingFlights } from './UpcomingFlights';
@@ -49,6 +52,7 @@ export const FlightsCard = ({
     control: methods.control,
   });
   const { onOwnProfile } = useLoggedInUserQuery();
+  const { data } = useProfileUserQuery();
   return (
     <Card
       className={classNames(
@@ -60,7 +64,11 @@ export const FlightsCard = ({
         <div className="flex w-full min-w-[375px] flex-col gap-4 px-3">
           <div className="flex flex-wrap justify-between gap-2">
             <div className="flex items-end gap-1">
-              <CardTitle>{isAddingFlight ? 'Add Flight' : 'Flights'}</CardTitle>
+              <CardTitle>
+                {isAddingFlight
+                  ? `Add Flight${!onOwnProfile ? ` for @${username}` : ''}`
+                  : 'Flights'}
+              </CardTitle>
               {!isAddingFlight ? (
                 <Button
                   className="w-[100px]"
@@ -78,7 +86,8 @@ export const FlightsCard = ({
                 </Button>
               ) : null}
             </div>
-            {onOwnProfile ? (
+            {onOwnProfile ||
+            (data?.isFollowedBy === true && data.isFollowing) ? (
               <div className="flex justify-end gap-4">
                 {isAddingFlight ? (
                   <Button

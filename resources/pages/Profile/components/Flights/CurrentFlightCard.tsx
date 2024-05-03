@@ -1,8 +1,14 @@
 import classNames from 'classnames';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, CardBody, Link, Progress } from 'stratosphere-ui';
+import { Button, Card, CardBody, Link, Modal, Progress } from 'stratosphere-ui';
 import { PlaneSolidIcon } from '../../../../common/components';
-import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
+import {
+  useLoggedInUserQuery,
+  useProfilePage,
+  useSuccessResponseHandler,
+  useTRPCErrorHandler,
+} from '../../../../common/hooks';
 import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import {
@@ -15,10 +21,14 @@ import {
 } from './constants';
 
 export const CurrentFlightCard = (): JSX.Element | null => {
+  const utils = trpc.useUtils();
   const enabled = useProfilePage();
   const { username } = useParams();
   const { theme } = useThemeStore();
+  const handleSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
+  const [isDeleteFlightModalOpen, setIsDeleteFlightModalOpen] = useState(false);
+  const { onOwnProfile } = useLoggedInUserQuery();
   const { data, isLoading } = trpc.users.getUserCurrentFlight.useQuery(
     {
       username,
@@ -29,6 +39,15 @@ export const CurrentFlightCard = (): JSX.Element | null => {
       onError,
     },
   );
+  const { mutate, isLoading: isDeleteFlightLoading } =
+    trpc.flights.deleteFlight.useMutation({
+      onSuccess: () => {
+        handleSuccess('Flight Deleted');
+        setIsDeleteFlightModalOpen(false);
+        utils.users.getUserCurrentFlight.setData({ username }, null);
+      },
+      onError,
+    });
   if (isLoading) {
     return <Progress />;
   }
@@ -36,7 +55,21 @@ export const CurrentFlightCard = (): JSX.Element | null => {
     return null;
   }
   return (
-    <Card className="m-0 bg-base-100 p-0">
+    <Card className="relative m-0 bg-base-100 p-0">
+      {onOwnProfile ? (
+        <Button
+          aria-label="Remove current flight"
+          className="absolute right-0 top-0 z-20 opacity-25 hover:opacity-75"
+          color="ghost"
+          shape="circle"
+          size="sm"
+          onClick={() => {
+            setIsDeleteFlightModalOpen(true);
+          }}
+        >
+          ✕
+        </Button>
+      ) : null}
       <Card
         className={classNames(
           'border-2 shadow-sm',
@@ -300,6 +333,41 @@ export const CurrentFlightCard = (): JSX.Element | null => {
           </div>
         </CardBody>
       </Card>
+      <Modal
+        actionButtons={[
+          {
+            children: 'Cancel',
+            color: 'secondary',
+            outline: true,
+            onClick: () => {
+              setIsDeleteFlightModalOpen(false);
+            },
+          },
+          {
+            children: !isDeleteFlightLoading ? 'Delete Flight' : null,
+            className: 'w-[125px]',
+            loading: isDeleteFlightLoading,
+            color: 'primary',
+            onClick: () => {
+              mutate({ id: data.id });
+            },
+          },
+        ]}
+        open={isDeleteFlightModalOpen}
+        onClose={() => {
+          setIsDeleteFlightModalOpen(false);
+        }}
+        title="Delete Flight"
+      >
+        <div className="pt-4">
+          Are you sure you want to delete your{' '}
+          <strong>
+            {data?.departureAirport.iata ?? ''} -{' '}
+            {data?.arrivalAirport.iata ?? ''}
+          </strong>{' '}
+          flight?
+        </div>
+      </Modal>
     </Card>
   );
 };
