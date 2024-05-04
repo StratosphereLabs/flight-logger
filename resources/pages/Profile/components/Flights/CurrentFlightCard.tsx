@@ -44,7 +44,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
       onSuccess: async () => {
         handleSuccess('Flight Deleted');
         setIsDeleteFlightModalOpen(false);
-        utils.users.getUserCurrentFlight.setData({ username }, null);
+        await utils.users.getUserCurrentFlight.invalidate();
         await utils.statistics.getCounts.invalidate();
       },
       onError,

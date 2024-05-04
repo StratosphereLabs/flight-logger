@@ -53,6 +53,7 @@ export const TopRoutesChart = ({
       <div className="flex w-full items-center justify-between">
         <div className="text-sm">{title}</div>
         <FormToggleSwitch
+          className="my-[-3px]"
           labelText="City Pairs"
           name="routesCityPairs"
           size="xs"
