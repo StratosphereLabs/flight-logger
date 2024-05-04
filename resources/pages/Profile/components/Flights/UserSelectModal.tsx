@@ -28,10 +28,12 @@ export const UserSelectModal = ({
     resolver: zodResolver(selectUserSchema),
   });
   useEffect(() => {
-    setTimeout(() => {
-      methods.setFocus('username');
-    }, 100);
-  }, [methods]);
+    if (isOpen) {
+      setTimeout(() => {
+        methods.setFocus('username');
+      });
+    }
+  }, [isOpen, methods]);
   return (
     <Modal
       actionButtons={[
