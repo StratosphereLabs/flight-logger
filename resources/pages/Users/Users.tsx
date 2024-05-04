@@ -1,4 +1,5 @@
 import { getCoreRowModel } from '@tanstack/react-table';
+import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -45,6 +46,9 @@ export const Users = (): JSX.Element => {
     },
     { onError },
   );
+  useEffect(() => {
+    methods.setFocus('searchQuery');
+  }, [methods]);
   return (
     <div className="flex flex-1 flex-col items-center p-2 sm:p-3">
       <Card className="flex w-full max-w-[1000px] flex-col justify-center bg-base-100">
