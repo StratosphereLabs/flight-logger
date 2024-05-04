@@ -12,10 +12,12 @@ import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
+import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 
 export const ProfileOverlay = (): JSX.Element => {
   const utils = trpc.useUtils();
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const navigate = useNavigate();
   const { username } = useParams();
   const [confirmUnfollow, setConfirmUnfollow] = useState(false);
@@ -78,64 +80,67 @@ export const ProfileOverlay = (): JSX.Element => {
               <div className="text-base font-medium sm:text-xl">{`${userData.firstName} ${userData.lastName}`}</div>
               <div className="text-sm opacity-75">{`@${userData.username}`}</div>
             </div>
-            <div className="pl-2">
-              {onOwnProfile ? (
-                <Button
-                  className="w-full border-opacity-0 bg-opacity-75"
-                  size="xs"
-                  color="neutral"
-                  onClick={() => {
-                    navigate('/account');
-                  }}
-                >
-                  <PencilIcon className="h-3 w-3" />
-                  Edit Profile
-                </Button>
-              ) : confirmUnfollow ? (
-                <div className="flex gap-2">
+            {isLoggedIn ? (
+              <div className="pl-2">
+                {onOwnProfile ? (
                   <Button
-                    className="flex-1 border-opacity-0 bg-opacity-75"
-                    size="xs"
-                    color="error"
-                    onClick={() => {
-                      setConfirmUnfollow(false);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    className="flex-1 border-opacity-0 bg-opacity-75"
+                    className="w-full border-opacity-0 bg-opacity-75"
                     size="xs"
                     color="neutral"
                     onClick={() => {
-                      if (username !== undefined) removeFollower({ username });
+                      navigate('/account');
                     }}
-                    loading={isRemoveFollowingLoading}
                   >
-                    {!isRemoveFollowingLoading ? 'Unfollow' : null}
+                    <PencilIcon className="h-3 w-3" />
+                    Edit Profile
                   </Button>
-                </div>
-              ) : (
-                <Button
-                  className="w-full border-opacity-0 bg-opacity-75"
-                  size="xs"
-                  color={userData.isFollowing ? 'neutral' : 'success'}
-                  loading={isAddFollowerLoading}
-                  onClick={() => {
-                    if (userData.isFollowing) {
-                      setConfirmUnfollow(true);
-                    } else if (username !== undefined) {
-                      addFollower({ username });
-                    }
-                  }}
-                >
-                  {!userData.isFollowing ? (
-                    <PlusIcon className="h-3 w-3" />
-                  ) : null}
-                  {userData.isFollowing ? 'Following' : 'Follow'}
-                </Button>
-              )}
-            </div>
+                ) : confirmUnfollow ? (
+                  <div className="flex gap-2">
+                    <Button
+                      className="flex-1 border-opacity-0 bg-opacity-75"
+                      size="xs"
+                      color="error"
+                      onClick={() => {
+                        setConfirmUnfollow(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="flex-1 border-opacity-0 bg-opacity-75"
+                      size="xs"
+                      color="neutral"
+                      onClick={() => {
+                        if (username !== undefined)
+                          removeFollower({ username });
+                      }}
+                      loading={isRemoveFollowingLoading}
+                    >
+                      {!isRemoveFollowingLoading ? 'Unfollow' : null}
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    className="w-full border-opacity-0 bg-opacity-75"
+                    size="xs"
+                    color={userData.isFollowing ? 'neutral' : 'success'}
+                    loading={isAddFollowerLoading}
+                    onClick={() => {
+                      if (userData.isFollowing) {
+                        setConfirmUnfollow(true);
+                      } else if (username !== undefined) {
+                        addFollower({ username });
+                      }
+                    }}
+                  >
+                    {!userData.isFollowing ? (
+                      <PlusIcon className="h-3 w-3" />
+                    ) : null}
+                    {userData.isFollowing ? 'Following' : 'Follow'}
+                  </Button>
+                )}
+              </div>
+            ) : null}
             <div className="mt-1 flex flex-wrap">
               <Button color="ghost" size="xs">
                 <UserOutlineIcon className="h-3 w-3 text-info" />

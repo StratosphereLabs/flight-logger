@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
@@ -37,6 +37,7 @@ export const AddFlightForm = (): JSX.Element => {
   const utils = trpc.useUtils();
   const { username } = useParams();
   const { onOwnProfile } = useLoggedInUserQuery();
+  const formRef = useRef<HTMLFormElement>(null);
   const methods = useForm<FlightSearchFormData>({
     defaultValues: {
       ...flightSearchFormDefaultValues,
@@ -67,12 +68,13 @@ export const AddFlightForm = (): JSX.Element => {
     );
   const { mutate, isLoading: isFlightDataLoading } =
     trpc.flightData.addFlightFromData.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         setIsUserSelectModalOpen(false);
         if (selectedFlight !== null) {
           setCompletedFlightIds(prevIds => [...prevIds, selectedFlight.id]);
           setSelectedFlight(null);
-          void utils.users.invalidate();
+          await utils.users.invalidate();
+          await utils.statistics.getCounts.invalidate();
         }
       },
       onError,
@@ -107,9 +109,19 @@ export const AddFlightForm = (): JSX.Element => {
   useEffect(() => {
     setCompletedFlightIds([]);
   }, [data]);
+  useEffect(() => {
+    setTimeout(() => {
+      methods.setFocus('outDateISO');
+      formRef.current?.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth',
+      });
+    });
+  }, [methods]);
   return (
     <div className="mb-3 flex flex-col gap-3">
       <Form
+        formRef={formRef}
         methods={methods}
         className="flex w-full flex-col justify-between gap-8 sm:flex-row"
         onFormSubmit={values => {
@@ -117,7 +129,7 @@ export const AddFlightForm = (): JSX.Element => {
           methods.reset(values);
         }}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex w-full max-w-[750px] flex-col gap-4">
           {onOwnProfile ? (
             <FormRadioGroup className="w-full" name="userType">
               <FormRadioGroupOption
@@ -145,31 +157,27 @@ export const AddFlightForm = (): JSX.Element => {
               isRequired
               labelText="Departure Date"
               name="outDateISO"
-              size="sm"
               type="date"
             />
             <AirlineInput
               className="min-w-[250px] max-w-[500px] flex-1"
-              dropdownInputClassName="input-sm"
               getBadgeText={({ iata, icao, name }) =>
                 `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
               }
               inputClassName="bg-base-200"
               isRequired
               labelText="Airline"
-              menuClassName="w-full menu-sm"
+              menuClassName="w-full"
               name="airline"
-              size="sm"
             />
             <FormControl
-              className="w-[125px]"
+              className="w-[150px]"
               labelText="Flight No."
               inputClassName="bg-base-200"
               isRequired
               name="flightNumber"
               transform={integerInputTransformer}
               maxLength={4}
-              size="sm"
             />
           </div>
         </div>
@@ -179,7 +187,6 @@ export const AddFlightForm = (): JSX.Element => {
             color="neutral"
             loading={isFetching}
             disabled={!methods.formState.isDirty}
-            size="sm"
             type="submit"
           >
             {!isFetching ? (
@@ -196,13 +203,13 @@ export const AddFlightForm = (): JSX.Element => {
           cellClassNames={{
             date: 'w-[50px] sm:w-[105px]',
             airline: 'w-[80px] py-[2px] sm:py-1 hidden sm:table-cell',
-            flightNumber: 'w-[100px] hidden sm:table-cell',
+            flightNumber: 'w-[80px] hidden sm:table-cell',
             departureAirport: 'min-w-[76px]',
             arrivalAirport: 'min-w-[76px]',
-            duration: 'w-[100px]',
-            actions: 'max-w-[175px]',
+            duration: 'w-[90px]',
+            actions: 'w-[90px] sm:w-[125px]',
           }}
-          className="table-xs sm:table-sm"
+          className="table-xs table-fixed sm:table-sm"
           columns={[
             {
               id: 'date',
@@ -311,7 +318,7 @@ export const AddFlightForm = (): JSX.Element => {
                 return (
                   <Button
                     className={classNames(
-                      'btn-xs w-full min-w-[80px] sm:btn-sm',
+                      'btn-xs w-full sm:btn-sm',
                       isAdded ? 'btn-success' : 'btn-info',
                     )}
                     disabled={isLoading}

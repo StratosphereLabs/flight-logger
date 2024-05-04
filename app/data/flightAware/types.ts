@@ -116,10 +116,12 @@ export interface FlightAwareFlightData {
 }
 
 export interface FlightAwareFlight extends FlightAwareFlightData {
-  activityLog: {
-    flights: FlightAwareFlightData[];
-    additionalLogRowsAvailable: boolean;
-  };
+  activityLog:
+    | {
+        flights: FlightAwareFlightData[] | undefined;
+        additionalLogRowsAvailable: boolean;
+      }
+    | undefined;
 }
 
 export interface FlightAwareDataResponse {

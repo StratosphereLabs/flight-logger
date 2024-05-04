@@ -38,7 +38,7 @@ export const fetchFlightAwareDataByFlightNumber = async ({
   const data = processData(response.data);
   if (data === null) return null;
   return (
-    Object.values(data.flights)[0]?.activityLog.flights.filter(
+    Object.values(data.flights)[0]?.activityLog?.flights?.filter(
       ({ origin, gateDepartureTimes }) => {
         const date = createNewDate(gateDepartureTimes.scheduled);
         const formattedDate = formatInTimeZone(
@@ -64,7 +64,7 @@ export const fetchFlightAwareData = async ({
   const data = processData(response.data);
   if (data === null) return null;
   return (
-    Object.values(data.flights)[0]?.activityLog.flights.find(
+    Object.values(data.flights)[0]?.activityLog?.flights?.find(
       ({ origin, destination, gateDepartureTimes }) => {
         const date = createNewDate(gateDepartureTimes.scheduled);
         const formattedDate = formatInTimeZone(

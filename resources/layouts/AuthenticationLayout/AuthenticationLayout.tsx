@@ -34,7 +34,7 @@ export const AuthenticationLayout = (): JSX.Element => {
             </Button>
           ) : null}
         </div>
-        <Card className="mx-10 w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg">
+        <Card className="w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg">
           <CardBody>
             <Outlet />
           </CardBody>

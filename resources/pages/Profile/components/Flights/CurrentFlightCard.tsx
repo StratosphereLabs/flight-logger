@@ -41,10 +41,11 @@ export const CurrentFlightCard = (): JSX.Element | null => {
   );
   const { mutate, isLoading: isDeleteFlightLoading } =
     trpc.flights.deleteFlight.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         handleSuccess('Flight Deleted');
         setIsDeleteFlightModalOpen(false);
         utils.users.getUserCurrentFlight.setData({ username }, null);
+        await utils.statistics.getCounts.invalidate();
       },
       onError,
     });
