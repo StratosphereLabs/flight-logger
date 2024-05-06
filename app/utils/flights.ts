@@ -219,8 +219,9 @@ export const transformFlightData = (
 };
 
 export const transformCurrentFlightData = (
-  flight: FlightTimeDataResult,
+  flightData: FlightData,
 ): CurrentFlightDataResult => {
+  const flight = transformFlightData(flightData);
   const departureTime = flight.outTimeActual ?? flight.outTime;
   const arrivalTime = flight.inTimeActual ?? flight.inTime;
   const runwayDepartureTime =
@@ -326,8 +327,8 @@ export const transformCurrentFlightData = (
 
 export const getCurrentFlight = (
   flights: FlightData[],
-): FlightTimeDataResult | undefined => {
-  const currentFlight = flights.find((currentFlight, index, allFlights) => {
+): FlightData | undefined =>
+  flights.find((currentFlight, index, allFlights) => {
     const departureTime = currentFlight.outTimeActual ?? currentFlight.outTime;
     const arrivalTime = currentFlight.inTimeActual ?? currentFlight.inTime;
     if (
@@ -343,10 +344,6 @@ export const getCurrentFlight = (
     const midTime = arrivalTime.getTime() + layoverDuration / 3;
     return isAfter(midTime, new Date());
   });
-  return currentFlight !== undefined
-    ? transformFlightData(currentFlight)
-    : undefined;
-};
 
 export const getFromDate = (
   input: GetProfileFiltersRequest,

@@ -20,14 +20,10 @@ import { procedure, router } from '../trpc';
 import {
   type FlightDataWithTimestamps,
   flightIncludeObj,
-  getBearing,
   getCurrentFlight,
-  getDurationMinutes,
   getDurationString,
   getFlightTimes,
   getFlightTimestamps,
-  getInFuture,
-  getProjectedCoords,
   parsePaginationRequest,
   transformFlightData,
   getFromDate,
@@ -267,110 +263,7 @@ export const flightsRouter = router({
       });
       const flight = getCurrentFlight(flights);
       if (flight === undefined) return null;
-      const departureTime = flight.outTimeActual ?? flight.outTime;
-      const arrivalTime = flight.inTimeActual ?? flight.inTime;
-      const runwayDepartureTime =
-        flight.offTimeActual ?? add(departureTime, { minutes: 10 });
-      const runwayArrivalTime =
-        flight.onTimeActual ?? sub(arrivalTime, { minutes: 10 });
-      const hasDeparted = !getInFuture(departureTime);
-      const hasTakenOff = !getInFuture(runwayDepartureTime);
-      const hasArrived = !getInFuture(arrivalTime);
-      const hasLanded = !getInFuture(runwayArrivalTime);
-      const totalDuration = getDurationMinutes({
-        start: departureTime,
-        end: arrivalTime,
-      });
-      const flightDuration = getDurationMinutes({
-        start: runwayDepartureTime,
-        end: runwayArrivalTime,
-      });
-      const minutesToDeparture = getDurationMinutes({
-        start: departureTime,
-        end: new Date(),
-      });
-      const minutesToTakeoff = getDurationMinutes({
-        start: runwayDepartureTime,
-        end: new Date(),
-      });
-      const minutesToArrival = getDurationMinutes({
-        start: new Date(),
-        end: arrivalTime,
-      });
-      const minutesToLanding = getDurationMinutes({
-        start: new Date(),
-        end: runwayArrivalTime,
-      });
-      const currentDuration = hasDeparted
-        ? !hasArrived
-          ? minutesToDeparture
-          : totalDuration
-        : 0;
-      const currentFlightDuration = hasTakenOff
-        ? !hasLanded
-          ? minutesToTakeoff
-          : flightDuration
-        : 0;
-      const progress = currentDuration / totalDuration;
-      const flightProgress = currentFlightDuration / flightDuration;
-      const flightStatus =
-        progress === 0
-          ? 'Scheduled'
-          : flightProgress === 0
-            ? 'Departed - Taxiing'
-            : flightProgress < 1
-              ? 'En Route'
-              : progress < 1
-                ? 'Landed - Taxiing'
-                : 'Arrived';
-      const distanceTraveled = flightProgress * flight.distance;
-      const initialHeading = getBearing(
-        flight.departureAirport.lat,
-        flight.departureAirport.lon,
-        flight.arrivalAirport.lat,
-        flight.arrivalAirport.lon,
-      );
-      const estimatedLocation = getProjectedCoords(
-        flight.departureAirport.lat,
-        flight.departureAirport.lon,
-        distanceTraveled,
-        initialHeading,
-      );
-      const estimatedHeading = getBearing(
-        estimatedLocation.lat,
-        estimatedLocation.lng,
-        flight.arrivalAirport.lat,
-        flight.arrivalAirport.lon,
-      );
-      const delayStatus =
-        progress > 0 ? flight.arrivalDelayStatus : flight.departureDelayStatus;
-      const delayValue =
-        progress > 0 ? flight.arrivalDelayValue : flight.departureDelayValue;
-      const delay = progress > 0 ? flight.arrivalDelay : flight.departureDelay;
-      return {
-        ...flight,
-        minutesToDeparture,
-        minutesToTakeoff,
-        minutesToArrival,
-        minutesToLanding,
-        durationToDepartureString: getDurationString(minutesToDeparture),
-        durationToDepartureAbbrString: getDurationString(
-          minutesToDeparture,
-          true,
-        ),
-        durationToArrivalString: getDurationString(minutesToArrival),
-        durationToArrivalAbbrString: getDurationString(minutesToArrival, true),
-        durationToTakeoffString: getDurationString(minutesToTakeoff),
-        durationToLandingString: getDurationString(minutesToLanding),
-        progress,
-        flightProgress,
-        flightStatus,
-        delay,
-        delayValue,
-        delayStatus,
-        estimatedLocation,
-        estimatedHeading,
-      };
+      return transformCurrentFlightData(flight);
     }),
   getUserCurrentRoute: procedure
     .input(getUserSchema)
@@ -442,7 +335,7 @@ export const flightsRouter = router({
       );
       return {
         ...sortedFlights,
-        currentFlight,
+        currentFlight: transformFlightData(currentFlight),
       };
     }),
   getUserMapData: procedure
@@ -533,10 +426,7 @@ export const flightsRouter = router({
           outTime: 'asc',
         },
       });
-      return flights.map(flight => {
-        const flightWithTimes = transformFlightData(flight);
-        return transformCurrentFlightData(flightWithTimes);
-      });
+      return flights.map(transformCurrentFlightData);
     }),
   addFlight: procedure
     .use(verifyAuthenticated)

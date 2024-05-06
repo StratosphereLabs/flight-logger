@@ -2,7 +2,10 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Card, CardBody, Link, Modal, Progress } from 'stratosphere-ui';
-import { PlaneSolidIcon } from '../../../../common/components';
+import {
+  FlightTimesDisplay,
+  PlaneSolidIcon,
+} from '../../../../common/components';
 import {
   CARD_BORDER_COLORS,
   CARD_BORDER_COLORS_LOFI,
@@ -187,33 +190,17 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   ? data.departureAirport.region.name
                   : data.departureAirport.countryId}
               </div>
-              <div className="flex flex-wrap items-center font-mono">
-                {data.outTimeActualValue !== data.outTimeValue ? (
-                  <div
-                    className={classNames(
-                      data.outTimeActualLocal !== null
-                        ? 'mr-2 text-xs line-through opacity-75'
-                        : 'text-xs sm:text-sm',
-                    )}
-                  >
-                    {data.outTimeLocal}
-                  </div>
-                ) : null}
-                {data.outTimeActualLocal !== null &&
-                data.outTimeActualDaysAdded !== null ? (
-                  <div
-                    className={classNames(
-                      'text-xs font-bold sm:text-sm',
-                      TEXT_COLORS[data.departureDelayStatus],
-                    )}
-                  >
-                    {data.outTimeActualLocal}
-                    {data.outTimeActualDaysAdded > 0 ? (
-                      <sup>+{data.outTimeActualDaysAdded}</sup>
-                    ) : null}
-                  </div>
-                ) : null}
-              </div>
+              <FlightTimesDisplay
+                data={{
+                  delayStatus: data.departureDelayStatus,
+                  actualValue: data.outTimeActualValue,
+                  value: data.outTimeValue,
+                  actualLocal: data.outTimeActualLocal,
+                  local: data.outTimeLocal,
+                  actualDaysAdded: data.outTimeActualDaysAdded,
+                  daysAdded: 0,
+                }}
+              />
               {data.progress > 0 && data.progress < 1 ? (
                 <div className="flex items-center justify-start gap-1 text-xs italic opacity-75">
                   <span className="mb-[-1px] font-mono">
@@ -276,36 +263,18 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   ? data.arrivalAirport.region.name
                   : data.arrivalAirport.countryId}
               </div>
-              <div className="flex flex-wrap items-center justify-end font-mono">
-                {data.inTimeActualValue !== data.inTimeValue ? (
-                  <div
-                    className={classNames(
-                      data.inTimeActualLocal !== null
-                        ? 'text-xs line-through opacity-75'
-                        : 'text-xs sm:text-sm',
-                    )}
-                  >
-                    {data.inTimeLocal}
-                    {data.inTimeDaysAdded > 0 ? (
-                      <sup>+{data.inTimeDaysAdded}</sup>
-                    ) : null}
-                  </div>
-                ) : null}
-                {data.inTimeActualLocal !== null &&
-                data.inTimeActualDaysAdded !== null ? (
-                  <div
-                    className={classNames(
-                      'ml-2 text-xs font-bold sm:text-sm',
-                      TEXT_COLORS[data.arrivalDelayStatus],
-                    )}
-                  >
-                    {data.inTimeActualLocal}
-                    {data.inTimeActualDaysAdded > 0 ? (
-                      <sup>+{data.inTimeActualDaysAdded}</sup>
-                    ) : null}
-                  </div>
-                ) : null}
-              </div>
+              <FlightTimesDisplay
+                className="justify-end"
+                data={{
+                  delayStatus: data.arrivalDelayStatus,
+                  actualValue: data.inTimeActualValue,
+                  value: data.inTimeValue,
+                  actualLocal: data.inTimeActualLocal,
+                  local: data.inTimeLocal,
+                  actualDaysAdded: data.inTimeActualDaysAdded,
+                  daysAdded: data.inTimeDaysAdded,
+                }}
+              />
               {data.progress > 0 && data.progress < 1 ? (
                 <div className="flex items-center justify-end gap-1 text-xs italic opacity-75">
                   in
