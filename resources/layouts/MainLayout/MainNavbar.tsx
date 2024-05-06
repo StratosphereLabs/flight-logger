@@ -23,6 +23,7 @@ import {
 import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
 
 export interface MainNavbarProps {
@@ -30,6 +31,7 @@ export interface MainNavbarProps {
 }
 
 export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
+  const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
   const [isSearching, setIsSearching] = useState(false);
@@ -260,9 +262,11 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
           {
             children: 'Log out',
             color: 'primary',
-            onClick: () => {
+            onClick: async () => {
               logout();
               setIsLogoutDialogOpen(false);
+              await utils.users.getUser.cancel();
+              await utils.users.getUser.invalidate({ username: undefined });
             },
           },
         ]}

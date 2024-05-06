@@ -11,7 +11,7 @@ export const UpcomingFlights = (): JSX.Element | null => {
   const { username } = useParams();
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
-  const { data, isLoading } =
+  const { data, isFetching } =
     trpc.users.getUserUpcomingFlights.useInfiniteQuery(
       {
         limit: 5,
@@ -19,7 +19,6 @@ export const UpcomingFlights = (): JSX.Element | null => {
       },
       {
         enabled: userData !== undefined,
-        staleTime: 5 * 60 * 1000,
         onError,
       },
     );
@@ -27,5 +26,5 @@ export const UpcomingFlights = (): JSX.Element | null => {
     () => data?.pages.flatMap(({ results }) => results) ?? [],
     [data?.pages],
   );
-  return <FlightsTable data={flattenedData} isLoading={isLoading} />;
+  return <FlightsTable data={flattenedData} isLoading={isFetching} />;
 };
