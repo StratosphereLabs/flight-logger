@@ -4,6 +4,14 @@ import { useParams } from 'react-router-dom';
 import { Button, Card, CardBody, Link, Modal, Progress } from 'stratosphere-ui';
 import { PlaneSolidIcon } from '../../../../common/components';
 import {
+  CARD_BORDER_COLORS,
+  CARD_BORDER_COLORS_LOFI,
+  CARD_COLORS,
+  CARD_COLORS_LOFI,
+  PROGRESS_BAR_COLORS,
+  TEXT_COLORS,
+} from '../../../../common/constants';
+import {
   useLoggedInUserQuery,
   useProfilePage,
   useSuccessResponseHandler,
@@ -11,14 +19,6 @@ import {
 } from '../../../../common/hooks';
 import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
-import {
-  CARD_BORDER_COLORS,
-  CARD_BORDER_COLORS_LOFI,
-  CARD_COLORS,
-  CARD_COLORS_LOFI,
-  PROGRESS_BAR_COLORS,
-  TEXT_COLORS,
-} from './constants';
 
 export const CurrentFlightCard = (): JSX.Element | null => {
   const utils = trpc.useUtils();
@@ -134,6 +134,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                       : `https://www.flightaware.com/resources/registration/${data.tailNumber}`
                   }
                   target="_blank"
+                  rel="noreferrer"
                 >
                   {data.tailNumber}
                 </Link>

@@ -224,7 +224,7 @@ export const MapCard = ({
           </div>
           <div className="flex flex-1 flex-col gap-2">
             <div className="flex flex-wrap-reverse justify-end gap-2">
-              <div className="flex h-[32px] w-full min-w-[125px] max-w-[150px] items-center justify-center rounded-lg bg-base-100/50 backdrop-blur-sm sm:h-[48px]">
+              <div className="flex h-[32px] w-full min-w-[125px] max-w-[150px] items-center justify-center rounded-box bg-base-100/50 backdrop-blur-sm sm:h-[48px]">
                 {isMapDataFetching ||
                 isCountsFetching ||
                 countData === undefined ? (

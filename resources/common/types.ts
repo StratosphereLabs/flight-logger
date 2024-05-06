@@ -37,3 +37,5 @@ export interface PaginatedResults<Data> {
   metadata: PaginationMetadata;
   results: Data[];
 }
+
+export type FlightDelayStatus = 'severe' | 'moderate' | 'none';

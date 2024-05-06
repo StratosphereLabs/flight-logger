@@ -35,6 +35,7 @@ import {
   getCenterpoint,
   getHeatmap,
   getRoutes,
+  transformCurrentFlightData,
 } from '../utils';
 
 export const flightsRouter = router({
@@ -472,6 +473,70 @@ export const flightsRouter = router({
         heatmap: getHeatmap(flights),
         routes: getRoutes(flights),
       };
+    }),
+  getFollowingFlights: procedure
+    .use(verifyAuthenticated)
+    .query(async ({ ctx }) => {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: ctx.user.id,
+        },
+        include: {
+          following: true,
+        },
+      });
+      if (user === null) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'User not found.',
+        });
+      }
+      const followingIds = user.following.map(({ id }) => id);
+      const flights = await prisma.flight.findMany({
+        where: {
+          userId: {
+            in: [user.id, ...followingIds],
+          },
+          AND: [
+            {
+              OR: [
+                {
+                  inTimeActual: {
+                    gt: sub(new Date(), { days: 3 }),
+                  },
+                },
+                {
+                  inTime: {
+                    gt: sub(new Date(), { days: 3 }),
+                  },
+                },
+              ],
+            },
+            {
+              OR: [
+                {
+                  outTimeActual: {
+                    lte: add(new Date(), { days: 3 }),
+                  },
+                },
+                {
+                  outTime: {
+                    lte: add(new Date(), { days: 3 }),
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        include: flightIncludeObj,
+        orderBy: {
+          outTime: 'asc',
+        },
+      });
+      return flights.map(flight => {
+        const flightWithTimes = transformFlightData(flight);
+        return transformCurrentFlightData(flightWithTimes);
+      });
     }),
   addFlight: procedure
     .use(verifyAuthenticated)

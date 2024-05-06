@@ -1,6 +1,6 @@
 import type { airport } from '@prisma/client';
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
-import type { FlightDelayStatus } from '../../types';
+import type { FlightDelayStatus } from '../../../../common/types';
 
 export interface MapCoords {
   lat: number;

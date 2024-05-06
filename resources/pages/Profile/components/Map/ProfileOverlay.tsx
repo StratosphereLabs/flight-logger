@@ -64,7 +64,7 @@ export const ProfileOverlay = (): JSX.Element => {
       onError,
     });
   return (
-    <div className="pointer-events-auto flex min-w-[210px] flex-col items-start rounded-xl bg-base-100/50 px-3 py-2 backdrop-blur-sm">
+    <div className="pointer-events-auto flex min-w-[210px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
       {isFetching ? (
         <div className="flex w-full justify-center">
           <Loading />
