@@ -18,7 +18,7 @@ export const DeleteTripModal = (): JSX.Element => {
     onSuccess: ({ id }) => {
       handleSuccess('Trip Deleted');
       setIsDeleteDialogOpen(false);
-      utils.users.getUserTrips.setData({ username }, previousTrips =>
+      utils.trips.getUserTrips.setData({ username }, previousTrips =>
         previousTrips !== undefined
           ? {
               upcomingTrips: previousTrips.upcomingTrips.filter(
@@ -34,7 +34,7 @@ export const DeleteTripModal = (): JSX.Element => {
             }
           : undefined,
       );
-      void utils.users.getUserFlights.invalidate();
+      void utils.flights.getUserFlights.invalidate();
     },
     onError,
   });

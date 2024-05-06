@@ -12,7 +12,7 @@ export const UpcomingFlights = (): JSX.Element | null => {
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
   const { data, isFetching } =
-    trpc.users.getUserUpcomingFlights.useInfiniteQuery(
+    trpc.flights.getUserUpcomingFlights.useInfiniteQuery(
       {
         limit: 5,
         username,

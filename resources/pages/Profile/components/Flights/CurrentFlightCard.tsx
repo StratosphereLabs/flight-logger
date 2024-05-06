@@ -29,7 +29,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
   const onError = useTRPCErrorHandler();
   const [isDeleteFlightModalOpen, setIsDeleteFlightModalOpen] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
-  const { data, isLoading } = trpc.users.getUserCurrentFlight.useQuery(
+  const { data, isLoading } = trpc.flights.getUserCurrentFlight.useQuery(
     {
       username,
     },
@@ -44,7 +44,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
       onSuccess: async () => {
         handleSuccess('Flight Deleted');
         setIsDeleteFlightModalOpen(false);
-        await utils.users.getUserCurrentFlight.invalidate();
+        await utils.flights.getUserCurrentFlight.invalidate();
         await utils.statistics.getCounts.invalidate();
       },
       onError,

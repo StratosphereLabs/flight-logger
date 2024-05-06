@@ -1,4 +1,4 @@
-import { TRPCError } from '@trpc/server';
+import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import difference from 'lodash.difference';
 import { prisma, updateTripTimes, validateUserFlights } from '../db';
 import { verifyAuthenticated } from '../middleware';
@@ -7,6 +7,7 @@ import {
   deleteTripSchema,
   editTripSchema,
   getTripSchema,
+  getUserSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import { transformTripData, tripIncludeObj } from '../utils';
@@ -27,6 +28,65 @@ export const tripsRouter = router({
       });
     }
     return transformTripData(trip);
+  }),
+  getUserTrips: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
+    if (input.username === undefined && ctx.user === null) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+    const [upcomingTrips, currentTrips, completedTrips] =
+      await prisma.$transaction([
+        prisma.trip.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            outTime: {
+              gt: new Date(),
+            },
+          },
+          include: tripIncludeObj,
+          orderBy: {
+            outTime: 'asc',
+          },
+        }),
+        prisma.trip.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              gt: new Date(),
+            },
+            outTime: {
+              lte: new Date(),
+            },
+          },
+          include: tripIncludeObj,
+          orderBy: {
+            outTime: 'asc',
+          },
+        }),
+        prisma.trip.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              lte: new Date(),
+            },
+          },
+          include: tripIncludeObj,
+          orderBy: {
+            outTime: 'desc',
+          },
+        }),
+      ]);
+    return {
+      upcomingTrips: upcomingTrips.map(transformTripData),
+      currentTrips: currentTrips.map(transformTripData),
+      completedTrips: completedTrips.map(transformTripData),
+      total: upcomingTrips.length + currentTrips.length + completedTrips.length,
+    };
   }),
   createTrip: procedure
     .use(verifyAuthenticated)
@@ -156,3 +216,7 @@ export const tripsRouter = router({
       return transformTripData(deletedTrip);
     }),
 });
+
+export type TripsRouter = typeof tripsRouter;
+
+export type TripsRouterOutput = inferRouterOutputs<TripsRouter>;

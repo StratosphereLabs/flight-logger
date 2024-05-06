@@ -20,7 +20,7 @@ export const Trips = (): JSX.Element => {
     state: TripsPageNavigationState | null;
   };
   const onError = useTRPCErrorHandler();
-  const { data, isLoading } = trpc.users.getUserTrips.useQuery(
+  const { data, isLoading } = trpc.trips.getUserTrips.useQuery(
     {
       username,
     },

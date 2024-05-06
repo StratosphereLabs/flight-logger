@@ -1,13 +1,13 @@
 import { create } from 'zustand';
-import { type UsersRouterOutput } from '../../../app/routes/users';
+import { type ItinerariesRouterOutput } from '../../../app/routes/itineraries';
 
 interface ItinerariesPageState {
-  activeItinerary: UsersRouterOutput['getUserItineraries'][number] | null;
+  activeItinerary: ItinerariesRouterOutput['getUserItineraries'][number] | null;
   isDeleteDialogOpen: boolean;
   isEditDialogOpen: boolean;
   isViewDialogOpen: boolean;
   setActiveItinerary: (
-    flight: UsersRouterOutput['getUserItineraries'][number] | null,
+    flight: ItinerariesRouterOutput['getUserItineraries'][number] | null,
   ) => void;
   setIsDeleteDialogOpen: (open: boolean) => void;
   setIsEditDialogOpen: (open: boolean) => void;

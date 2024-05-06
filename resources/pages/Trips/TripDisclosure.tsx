@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Badge, Disclosure } from 'stratosphere-ui';
-import { type UsersRouterOutput } from '../../../app/routes/users';
+import { type TripsRouterOutput } from '../../../app/routes/trips';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import { useCopyToClipboard } from '../../common/hooks';
@@ -10,7 +10,7 @@ import { useTripsPageStore } from './tripsPageStore';
 
 export interface TripDisclosureProps {
   defaultOpen?: boolean;
-  trip: UsersRouterOutput['getUserTrips']['upcomingTrips'][number];
+  trip: TripsRouterOutput['getUserTrips']['upcomingTrips'][number];
 }
 
 export const TripDisclosure = ({

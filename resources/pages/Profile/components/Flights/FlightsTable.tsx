@@ -1,10 +1,12 @@
 import type { aircraft_type, airline, airport } from '@prisma/client';
 import { Table } from 'stratosphere-ui';
-import { type UsersRouterOutput } from '../../../../../app/routes/users';
+import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 import { getCoreRowModel } from '@tanstack/react-table';
 
 export interface FlightsTableProps {
-  data: Array<UsersRouterOutput['getUserCompletedFlights']['results'][number]>;
+  data: Array<
+    FlightsRouterOutput['getUserCompletedFlights']['results'][number]
+  >;
   isLoading: boolean;
 }
 

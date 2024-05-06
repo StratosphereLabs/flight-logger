@@ -1,10 +1,11 @@
-import { TRPCError } from '@trpc/server';
+import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import { fetchFlightData, prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
   addItinerarySchema,
   deleteItinerarySchema,
   getItinerarySchema,
+  getUserSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -29,6 +30,25 @@ export const itinerariesRouter = router({
     }
     return transformItineraryData(itinerary);
   }),
+  getUserItineraries: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const itineraries = await prisma.itinerary.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+        },
+        include: itinerariesIncludeObj,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+      return itineraries.map(transformItineraryData);
+    }),
   createItinerary: procedure
     .input(addItinerarySchema)
     .mutation(async ({ input, ctx }) => {
@@ -189,3 +209,7 @@ export const itinerariesRouter = router({
       return transformItineraryData(itinerary);
     }),
 });
+
+export type ItinerariesRouter = typeof itinerariesRouter;
+
+export type ItinerariesRouterOutput = inferRouterOutputs<ItinerariesRouter>;

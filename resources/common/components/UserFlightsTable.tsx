@@ -6,29 +6,29 @@ import {
 } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
-import { type UsersRouterOutput } from '../../../app/routes/users';
+import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { ActionsCell } from './ActionsCell';
 
 export interface UserFlightsTableProps {
   className?: string;
-  data?: UsersRouterOutput['getUserFlights']['upcomingFlights'];
+  data?: FlightsRouterOutput['getUserFlights']['upcomingFlights'];
   dateBadgeColor?:
     | ((
-        flight: UsersRouterOutput['getUserFlights']['upcomingFlights'][number],
+        flight: FlightsRouterOutput['getUserFlights']['upcomingFlights'][number],
       ) => BadgeColor)
     | BadgeColor;
   enableRowSelection?: RowSelectionOptions<
-    UsersRouterOutput['getUserFlights']['upcomingFlights'][number]
+    FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]
   >['enableRowSelection'];
   onCopyLink?: (
-    flight: UsersRouterOutput['getUserFlights']['upcomingFlights'][number],
+    flight: FlightsRouterOutput['getUserFlights']['upcomingFlights'][number],
   ) => void;
   size?: TableSize;
 }
 
 export type FlightsTableRow = Row<
-  UsersRouterOutput['getUserFlights']['upcomingFlights'][number]
+  FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]
 >;
 
 export const UserFlightsTable = ({

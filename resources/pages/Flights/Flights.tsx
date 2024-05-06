@@ -74,7 +74,7 @@ export const Flights = (): JSX.Element => {
     ? ({ original }: FlightsTableRow) => original.tripId === null
     : false;
   const onError = useTRPCErrorHandler();
-  const { data, isLoading, refetch } = trpc.users.getUserFlights.useQuery(
+  const { data, isLoading, refetch } = trpc.flights.getUserFlights.useQuery(
     {
       username,
       withTrip: !isRowSelectEnabled,
