@@ -1,7 +1,9 @@
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
-import { isEqual } from 'date-fns';
+import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 // import { updateFlightTimesData } from '../commands/updateFlightTimesData';
 import { updateFlightRegistrationData } from '../commands/updateFlightRegistrationData';
+import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
@@ -9,15 +11,423 @@ import {
   deleteFlightSchema,
   editFlightSchema,
   getFlightSchema,
+  getUserFlightsSchema,
+  getUserMapDataSchema,
+  getUserProfileFlightsSchema,
+  getUserSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
+  type FlightDataWithTimestamps,
   flightIncludeObj,
+  getCurrentFlight,
+  getDurationString,
   getFlightTimes,
+  getFlightTimestamps,
+  parsePaginationRequest,
   transformFlightData,
+  getFromDate,
+  getToDate,
+  getCenterpoint,
+  getHeatmap,
+  getRoutes,
+  transformCurrentFlightData,
 } from '../utils';
 
 export const flightsRouter = router({
+  getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
+    const { id } = input;
+    const flight = await prisma.flight.findUnique({
+      where: {
+        id,
+      },
+      include: flightIncludeObj,
+    });
+    if (flight === null) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Flight not found.',
+      });
+    }
+    return transformFlightData(flight);
+  }),
+  getUserFlights: procedure
+    .input(getUserFlightsSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const [upcomingFlights, currentFlights, completedFlights] =
+        await prisma.$transaction([
+          prisma.flight.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              tripId: input?.withTrip === false ? null : undefined,
+              outTime: {
+                gt: new Date(),
+              },
+            },
+            include: flightIncludeObj,
+            orderBy: {
+              outTime: input.layout === 'full' ? 'asc' : 'desc',
+            },
+          }),
+          prisma.flight.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              tripId: input?.withTrip === false ? null : undefined,
+              inTime: {
+                gt: new Date(),
+              },
+              outTime: {
+                lte: new Date(),
+              },
+            },
+            include: flightIncludeObj,
+            orderBy: {
+              outTime: input.layout === 'full' ? 'asc' : 'desc',
+            },
+          }),
+          prisma.flight.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              tripId: input?.withTrip === false ? null : undefined,
+              inTime: {
+                lte: new Date(),
+              },
+            },
+            include: flightIncludeObj,
+            orderBy: {
+              outTime: 'desc',
+            },
+          }),
+        ]);
+      return {
+        upcomingFlights: upcomingFlights.map(transformFlightData),
+        currentFlights: currentFlights.map(transformFlightData),
+        completedFlights: completedFlights.map(transformFlightData),
+        total:
+          upcomingFlights.length +
+          currentFlights.length +
+          completedFlights.length,
+      };
+    }),
+  getUserCompletedFlights: procedure
+    .input(getUserProfileFlightsSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const whereObj = {
+        user: {
+          username: input?.username ?? ctx.user?.username,
+        },
+        inTime: {
+          lte: new Date(),
+        },
+      };
+      const { skip, take } = parsePaginationRequest(input);
+      const [results, count] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          skip,
+          take,
+          orderBy: {
+            outTime: 'desc',
+          },
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return {
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
+        })),
+        count,
+      };
+    }),
+  getUserUpcomingFlights: procedure
+    .input(getUserProfileFlightsSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const whereObj = {
+        user: {
+          username: input?.username ?? ctx.user?.username,
+        },
+        outTime: {
+          gt: new Date(),
+        },
+      };
+      const { skip, take } = parsePaginationRequest(input);
+      const [results, count] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: {
+            departureAirport: true,
+            arrivalAirport: true,
+            airline: true,
+            aircraftType: true,
+          },
+          skip,
+          take,
+          orderBy: {
+            outTime: 'asc',
+          },
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return {
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
+        })),
+        count,
+      };
+    }),
+  getUserCurrentFlight: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const flights = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          AND: [
+            {
+              OR: [
+                {
+                  inTimeActual: {
+                    gt: sub(new Date(), { hours: 12 }),
+                  },
+                },
+                {
+                  inTime: {
+                    gt: sub(new Date(), { hours: 12 }),
+                  },
+                },
+              ],
+            },
+            {
+              OR: [
+                {
+                  outTimeActual: {
+                    lte: add(new Date(), { days: 1 }),
+                  },
+                },
+                {
+                  outTime: {
+                    lte: add(new Date(), { days: 1 }),
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        include: flightIncludeObj,
+        orderBy: {
+          outTime: 'asc',
+        },
+      });
+      const flight = getCurrentFlight(flights);
+      if (flight === undefined) return null;
+      return transformCurrentFlightData(flight);
+    }),
+  getUserCurrentRoute: procedure
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const flights = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            lte: add(new Date(), { days: 1 }),
+          },
+          inTime: {
+            gte: sub(new Date(), { days: 1 }),
+          },
+        },
+        include: flightIncludeObj,
+        orderBy: {
+          outTime: 'asc',
+        },
+      });
+      const currentFlight = getCurrentFlight(flights);
+      if (currentFlight === undefined) return [];
+      const sortedFlights = flights.reduce<{
+        completedFlights: FlightDataWithTimestamps[];
+        upcomingFlights: FlightDataWithTimestamps[];
+      }>(
+        (acc, flight) => {
+          const timestamps = getFlightTimestamps({
+            departureTimeZone: flight.departureAirport.timeZone,
+            arrivalTimeZone: flight.arrivalAirport.timeZone,
+            duration: flight.duration,
+            outTime: flight.outTime,
+            outTimeActual: flight.outTimeActual ?? undefined,
+            inTime: flight.inTime,
+            inTimeActual: flight.inTimeActual ?? undefined,
+          });
+          return isAfter(flight.outTime, currentFlight.outTime)
+            ? {
+                ...acc,
+                upcomingFlights: [
+                  ...acc.upcomingFlights,
+                  {
+                    ...flight,
+                    ...timestamps,
+                  },
+                ],
+              }
+            : isBefore(flight.outTime, currentFlight.outTime)
+              ? {
+                  ...acc,
+                  completedFlights: [
+                    ...acc.completedFlights,
+                    {
+                      ...flight,
+                      ...timestamps,
+                    },
+                  ],
+                }
+              : acc;
+        },
+        {
+          completedFlights: [],
+          upcomingFlights: [],
+        },
+      );
+      return {
+        ...sortedFlights,
+        currentFlight: transformFlightData(currentFlight),
+      };
+    }),
+  getUserMapData: procedure
+    .input(getUserMapDataSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
+      const flights = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
+          },
+        },
+        include: {
+          departureAirport: true,
+          arrivalAirport: true,
+        },
+      });
+      return {
+        centerpoint: getCenterpoint(flights),
+        heatmap: getHeatmap(flights),
+        routes: getRoutes(flights),
+      };
+    }),
+  getFollowingFlights: procedure
+    .use(verifyAuthenticated)
+    .query(async ({ ctx }) => {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: ctx.user.id,
+        },
+        include: {
+          following: true,
+        },
+      });
+      if (user === null) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'User not found.',
+        });
+      }
+      const followingIds = user.following.map(({ id }) => id);
+      const flights = await prisma.flight.findMany({
+        where: {
+          userId: {
+            in: [user.id, ...followingIds],
+          },
+          AND: [
+            {
+              OR: [
+                {
+                  inTimeActual: {
+                    gt: sub(new Date(), { days: 3 }),
+                  },
+                },
+                {
+                  inTime: {
+                    gt: sub(new Date(), { days: 3 }),
+                  },
+                },
+              ],
+            },
+            {
+              OR: [
+                {
+                  outTimeActual: {
+                    lte: add(new Date(), { days: 3 }),
+                  },
+                },
+                {
+                  outTime: {
+                    lte: add(new Date(), { days: 3 }),
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        include: flightIncludeObj,
+        orderBy: {
+          outTime: 'asc',
+        },
+      });
+      return flights.map(transformCurrentFlightData);
+    }),
   addFlight: procedure
     .use(verifyAuthenticated)
     .input(addFlightSchema)
@@ -131,22 +541,6 @@ export const flightsRouter = router({
       }
       return transformFlightData(updatedFlight);
     }),
-  getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
-    const { id } = input;
-    const flight = await prisma.flight.findUnique({
-      where: {
-        id,
-      },
-      include: flightIncludeObj,
-    });
-    if (flight === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Flight not found.',
-      });
-    }
-    return transformFlightData(flight);
-  }),
   editFlight: procedure
     .use(verifyAuthenticated)
     .input(editFlightSchema)

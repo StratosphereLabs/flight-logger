@@ -1,10 +1,10 @@
 import { type OnChangeFn, type RowSelectionState } from '@tanstack/react-table';
 import { create } from 'zustand';
-import { type UsersRouterOutput } from '../../../app/routes/users';
+import { type FlightsRouterOutput } from '../../../app/routes/flights';
 
 interface FlightsPageState {
   activeFlight:
-    | UsersRouterOutput['getUserFlights']['upcomingFlights'][number]
+    | FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]
     | null;
   isCreateTripDialogOpen: boolean;
   isDeleteDialogOpen: boolean;
@@ -13,7 +13,7 @@ interface FlightsPageState {
   rowSelection: RowSelectionState;
   setActiveFlight: (
     flight:
-      | UsersRouterOutput['getUserFlights']['upcomingFlights'][number]
+      | FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]
       | null,
   ) => void;
   setIsCreateTripDialogOpen: (open: boolean) => void;

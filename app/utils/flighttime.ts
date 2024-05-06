@@ -11,6 +11,7 @@ import {
 import {
   DATE_FORMAT,
   DATE_FORMAT_ISO,
+  DATE_FORMAT_SHORT,
   TIME_FORMAT_12H,
   TIME_FORMAT_24H,
 } from '../constants';
@@ -52,6 +53,7 @@ export interface FlightTimestampsResult {
   outDateISO: string;
   outDateLocal: string;
   outTimeLocal: string;
+  outDateLocalAbbreviated: string;
   outTimeValue: string;
   outTimeActualLocal: string | null;
   outTimeActualValue: string | null;
@@ -172,6 +174,11 @@ export const getFlightTimestamps = ({
     inFuture: getInFuture(outTime),
     outDateISO: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT_ISO),
     outDateLocal: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT),
+    outDateLocalAbbreviated: formatInTimeZone(
+      outTime,
+      departureTimeZone,
+      DATE_FORMAT_SHORT,
+    ),
     outTimeLocal: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_12H),
     outTimeValue: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_24H),
     outTimeActualLocal:

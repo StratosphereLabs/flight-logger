@@ -11,15 +11,14 @@ export const CompletedFlights = (): JSX.Element | null => {
   const { username } = useParams();
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
-  const { data, isLoading } =
-    trpc.users.getUserCompletedFlights.useInfiniteQuery(
+  const { data, isFetching } =
+    trpc.flights.getUserCompletedFlights.useInfiniteQuery(
       {
         limit: 5,
         username,
       },
       {
         enabled: userData !== undefined,
-        staleTime: 5 * 60 * 1000,
         onError,
       },
     );
@@ -27,5 +26,5 @@ export const CompletedFlights = (): JSX.Element | null => {
     () => data?.pages.flatMap(({ results }) => results) ?? [],
     [data?.pages],
   );
-  return <FlightsTable data={flattenedData} isLoading={isLoading} />;
+  return <FlightsTable data={flattenedData} isLoading={isFetching} />;
 };

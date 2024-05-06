@@ -23,7 +23,7 @@ export const ProfileOverlay = (): JSX.Element => {
   const [confirmUnfollow, setConfirmUnfollow] = useState(false);
   const onError = useTRPCErrorHandler();
   const { onOwnProfile } = useLoggedInUserQuery();
-  const { data: userData } = useProfileUserQuery();
+  const { data: userData, isFetching } = useProfileUserQuery();
   const { mutate: addFollower, isLoading: isAddFollowerLoading } =
     trpc.users.addFollower.useMutation({
       onSuccess: () => {
@@ -64,13 +64,13 @@ export const ProfileOverlay = (): JSX.Element => {
       onError,
     });
   return (
-    <div className="pointer-events-auto flex min-w-[210px] flex-col items-start rounded-xl bg-base-100/50 px-3 py-2 backdrop-blur-sm">
-      {userData === undefined ? (
+    <div className="pointer-events-auto flex min-w-[210px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
+      {isFetching ? (
         <div className="flex w-full justify-center">
           <Loading />
         </div>
       ) : null}
-      {userData !== undefined ? (
+      {!isFetching && userData !== undefined ? (
         <div className="flex flex-row items-center gap-1">
           <Avatar shapeClassName="h-12 w-12 sm:w-16 sm:h-16 rounded-full">
             <img src={userData.avatar} alt="User Avatar" />

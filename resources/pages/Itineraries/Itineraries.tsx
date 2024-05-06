@@ -20,7 +20,7 @@ export const Itineraries = (): JSX.Element => {
     useItinerariesPageStore();
   const copyToClipboard = useCopyToClipboard();
   const onError = useTRPCErrorHandler();
-  const { data, isFetching } = trpc.users.getUserItineraries.useQuery(
+  const { data, isFetching } = trpc.itineraries.getUserItineraries.useQuery(
     {
       username,
     },

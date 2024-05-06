@@ -18,7 +18,7 @@ export const DeleteItineraryModal = (): JSX.Element => {
     onSuccess: ({ id }) => {
       handleSuccess('Itinerary Deleted');
       setIsDeleteDialogOpen(false);
-      utils.users.getUserItineraries.setData(
+      utils.itineraries.getUserItineraries.setData(
         { username },
         previousItineraries =>
           previousItineraries?.filter(itinerary => itinerary.id !== id),

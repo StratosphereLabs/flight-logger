@@ -1,6 +1,6 @@
 import type { airport } from '@prisma/client';
-import type { UsersRouterOutput } from '../../../../../app/routes/users';
-import type { FlightDelayStatus } from '../../types';
+import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
+import type { FlightDelayStatus } from '../../../../common/types';
 
 export interface MapCoords {
   lat: number;
@@ -13,7 +13,7 @@ export interface MapFlight extends MapCoords {
 }
 
 export type RouteInput =
-  UsersRouterOutput['getUserMapData']['routes'][number] & {
+  FlightsRouterOutput['getUserMapData']['routes'][number] & {
     isHover: boolean;
     isSelected: boolean;
   };
@@ -23,7 +23,7 @@ export type AirportResult = airport & {
 };
 
 export type FilteredMapData = Omit<
-  UsersRouterOutput['getUserMapData'],
+  FlightsRouterOutput['getUserMapData'],
   'heatmap' | 'routes' | 'airports'
 > & {
   heatmap: MapCoords[];

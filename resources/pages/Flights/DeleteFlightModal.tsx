@@ -32,12 +32,12 @@ export const DeleteFlightModal = ({
     onSuccess: ({ id }) => {
       handleSuccess('Flight Deleted');
       setIsDeleteDialogOpen(false);
-      const previousFlights = utils.users.getUserFlights.getData({
+      const previousFlights = utils.flights.getUserFlights.getData({
         username,
         withTrip: !isRowSelectEnabled,
         layout,
       });
-      utils.users.getUserFlights.setData(
+      utils.flights.getUserFlights.setData(
         { username, withTrip: !isRowSelectEnabled, layout },
         previousFlights !== undefined
           ? {
