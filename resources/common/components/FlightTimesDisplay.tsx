@@ -23,10 +23,7 @@ export const FlightTimesDisplay = ({
   ...props
 }: FlightTimesDisplayProps): JSX.Element => (
   <div
-    className={classNames(
-      'flex flex-wrap items-center gap-x-2 font-mono',
-      className,
-    )}
+    className={classNames('flex flex-wrap items-center gap-x-2', className)}
     {...props}
   >
     {data.actualValue !== data.value ? (
@@ -44,7 +41,7 @@ export const FlightTimesDisplay = ({
     {data.actualLocal !== null && data.actualDaysAdded !== null ? (
       <div
         className={classNames(
-          'text-xs font-bold sm:text-sm',
+          'text-nowrap text-xs font-bold sm:text-sm',
           TEXT_COLORS[data.delayStatus],
         )}
       >

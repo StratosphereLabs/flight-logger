@@ -1,8 +1,8 @@
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Avatar, Card, Loading } from 'stratosphere-ui';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Card, Link, Loading } from 'stratosphere-ui';
 import { FlightTimesDisplay } from '../../common/components';
 import {
   CARD_BORDER_COLORS,
@@ -25,6 +25,7 @@ export const FollowingMapCard = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
+  const navigate = useNavigate();
   const [center] = useState(DEFAULT_COORDINATES);
   const { theme } = useThemeStore();
   const { data, isLoading } = trpc.flights.getFollowingFlights.useQuery(
@@ -83,7 +84,7 @@ export const FollowingMapCard = (): JSX.Element => {
               <div className="font-mono text-xs opacity-75 sm:text-sm">
                 {flight.outDateLocalAbbreviated}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-[3] items-center gap-2 truncate sm:flex-[2]">
                 <Avatar
                   className="hidden md:block"
                   shapeClassName="w-8 h-8 rounded-full"
@@ -91,8 +92,11 @@ export const FollowingMapCard = (): JSX.Element => {
                   <img alt={flight.user.username} src={flight.user.avatar} />
                 </Avatar>
                 <Link
-                  to={`/user/${flight.user.username}`}
-                  className="link-hover link text-xs font-semibold opacity-90 sm:text-sm"
+                  hover
+                  onClick={() => {
+                    navigate(`/user/${flight.user.username}`);
+                  }}
+                  className="truncate text-xs font-semibold opacity-90 sm:text-sm"
                 >
                   {flight.user.username}
                 </Link>
@@ -107,10 +111,16 @@ export const FollowingMapCard = (): JSX.Element => {
                   />
                 </div>
               ) : null}
-              <div className="text-nowrap font-mono text-xs sm:text-sm">
-                {flight.airline?.iata} {flight.flightNumber}
+              <div className="w-[50px] text-nowrap font-mono text-xs sm:w-[60px] sm:text-sm">
+                <Link
+                  hover
+                  href={`https://www.flightaware.com/live/flight/${flight.airline?.icao}${flight.flightNumber}`}
+                  target="_blank"
+                >
+                  {flight.flightNumberString}
+                </Link>
               </div>
-              <div className="flex flex-1 flex-col">
+              <div className="flex flex-[3] flex-col">
                 <div className="flex flex-wrap items-center gap-x-3">
                   <div className="font-mono font-semibold sm:text-lg">
                     {flight.departureAirport.iata}
@@ -134,7 +144,7 @@ export const FollowingMapCard = (): JSX.Element => {
                     : flight.departureAirport.countryId}
                 </div>
               </div>
-              <div className="flex flex-1 flex-col">
+              <div className="flex flex-[3] flex-col">
                 <div className="flex flex-wrap items-center gap-x-3">
                   <div className="font-mono font-semibold sm:text-lg">
                     {flight.arrivalAirport.iata}
@@ -158,17 +168,22 @@ export const FollowingMapCard = (): JSX.Element => {
                     : flight.arrivalAirport.countryId}
                 </div>
               </div>
-              <div className="flex h-full flex-col items-end justify-between">
+              <div className="flex h-full flex-[2] flex-col items-end justify-between text-xs sm:text-sm">
                 <div
                   className={classNames(
-                    'mt-[-2px] flex sm:mt-[-5px]',
+                    'mt-[-2px] flex flex-wrap justify-end gap-x-1 text-right sm:mt-[-5px]',
                     flight.delayStatus !== 'none' && 'font-semibold',
                     TEXT_COLORS[flight.delayStatus],
                   )}
                 >
-                  {flight.delayStatus !== 'none'
-                    ? `Delayed ${flight.delay}`
-                    : 'On Time'}
+                  {flight.delayStatus !== 'none' ? (
+                    <>
+                      Delayed{' '}
+                      <span className="text-nowrap">{flight.delay}</span>
+                    </>
+                  ) : (
+                    'On Time'
+                  )}
                 </div>
                 <div className="flex">
                   {flight.aircraftType !== null ? (

@@ -28,26 +28,26 @@ export const TEXT_COLORS: Record<FlightDelayStatus, string> = {
 
 export const CARD_COLORS: Record<FlightDelayStatus, string> = {
   none: 'bg-success/10',
-  moderate: 'bg-warning/10',
-  severe: 'bg-error/10',
+  moderate: 'bg-warning/20',
+  severe: 'bg-error/20',
 };
 
 export const CARD_COLORS_LOFI: Record<FlightDelayStatus, string> = {
   none: 'bg-success/5',
-  moderate: 'bg-warning/5',
-  severe: 'bg-error/5',
+  moderate: 'bg-warning/10',
+  severe: 'bg-error/10',
 };
 
 export const CARD_BORDER_COLORS: Record<FlightDelayStatus, string> = {
   none: 'border-success/25',
-  moderate: 'border-warning/25',
-  severe: 'border-error/25',
+  moderate: 'border-warning/50',
+  severe: 'border-error/50',
 };
 
 export const CARD_BORDER_COLORS_LOFI: Record<FlightDelayStatus, string> = {
   none: 'border-success/50',
-  moderate: 'border-warning/50',
-  severe: 'border-error/50',
+  moderate: 'border-warning/75',
+  severe: 'border-error/75',
 };
 
 export const PROGRESS_BAR_COLORS: Record<FlightDelayStatus, string> = {
