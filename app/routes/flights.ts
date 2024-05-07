@@ -1,3 +1,4 @@
+import type { airport } from '@prisma/client';
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -20,6 +21,7 @@ import { procedure, router } from '../trpc';
 import {
   type CurrentFlightDataResult,
   type FlightDataWithTimestamps,
+  calculateCenterPoint,
   flightIncludeObj,
   getCurrentFlight,
   getDurationString,
@@ -427,43 +429,44 @@ export const flightsRouter = router({
           outTime: 'asc',
         },
       });
-      return flights.map(transformCurrentFlightData).reduce<{
+      const result: {
+        airports: Record<string, airport>;
         completedFlights: CurrentFlightDataResult[];
         currentFlights: CurrentFlightDataResult[];
         upcomingFlights: CurrentFlightDataResult[];
-      }>(
-        (acc, flight) => {
-          const outTime = flight.outTimeActual ?? flight.outTime;
-          const inTime = flight.inTimeActual ?? flight.inTime;
-          if (
-            (isEqual(new Date(), outTime) || isAfter(new Date(), outTime)) &&
-            isBefore(new Date(), inTime)
-          ) {
-            return {
-              ...acc,
-              currentFlights: [...acc.currentFlights, flight],
-            };
-          }
-          if (isBefore(new Date(), outTime)) {
-            return {
-              ...acc,
-              upcomingFlights: [...acc.upcomingFlights, flight],
-            };
-          }
-          if (isEqual(new Date(), inTime) || isAfter(new Date(), inTime)) {
-            return {
-              ...acc,
-              completedFlights: [flight, ...acc.completedFlights],
-            };
-          }
-          return acc;
-        },
-        {
-          completedFlights: [],
-          currentFlights: [],
-          upcomingFlights: [],
-        },
-      );
+      } = {
+        airports: {},
+        completedFlights: [],
+        currentFlights: [],
+        upcomingFlights: [],
+      };
+      for (const flightResult of flights) {
+        const flight = transformCurrentFlightData(flightResult);
+        const outTime = flight.outTimeActual ?? flight.outTime;
+        const inTime = flight.inTimeActual ?? flight.inTime;
+        if (
+          (isEqual(new Date(), outTime) || isAfter(new Date(), outTime)) &&
+          isBefore(new Date(), inTime)
+        ) {
+          result.currentFlights.push(flight);
+        } else if (isBefore(new Date(), outTime)) {
+          result.upcomingFlights.push(flight);
+        } else if (isEqual(new Date(), inTime) || isAfter(new Date(), inTime)) {
+          result.completedFlights.unshift(flight);
+        }
+        result.airports[flight.departureAirportId] = flight.departureAirport;
+        result.airports[flight.arrivalAirportId] = flight.arrivalAirport;
+      }
+      const airports = Object.values(result.airports);
+      return {
+        ...result,
+        centerpoint:
+          airports.length > 0
+            ? calculateCenterPoint(
+                airports.map(({ lat, lon }) => ({ lat, lng: lon })),
+              )
+            : { lat: 0, lng: 0 },
+      };
     }),
   addFlight: procedure
     .use(verifyAuthenticated)
