@@ -40,6 +40,7 @@ export const ProfileOverlay = (): JSX.Element => {
             : undefined,
         );
         void utils.users.getUser.invalidate({ username: undefined });
+        void utils.flights.getFollowingFlights.invalidate();
       },
       onError,
     });
@@ -60,6 +61,7 @@ export const ProfileOverlay = (): JSX.Element => {
             : undefined,
         );
         void utils.users.getUser.invalidate({ username: undefined });
+        void utils.flights.getFollowingFlights.invalidate();
       },
       onError,
     });

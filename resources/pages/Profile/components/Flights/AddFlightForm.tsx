@@ -68,13 +68,14 @@ export const AddFlightForm = (): JSX.Element => {
     );
   const { mutate, isLoading: isFlightDataLoading } =
     trpc.flightData.addFlightFromData.useMutation({
-      onSuccess: async () => {
+      onSuccess: () => {
         setIsUserSelectModalOpen(false);
         if (selectedFlight !== null) {
           setCompletedFlightIds(prevIds => [...prevIds, selectedFlight.id]);
           setSelectedFlight(null);
-          await utils.users.invalidate();
-          await utils.statistics.getCounts.invalidate();
+          void utils.users.invalidate();
+          void utils.statistics.getCounts.invalidate();
+          void utils.flights.getFollowingFlights.invalidate();
         }
       },
       onError,

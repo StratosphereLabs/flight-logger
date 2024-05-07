@@ -191,6 +191,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   : data.departureAirport.countryId}
               </div>
               <FlightTimesDisplay
+                className="font-mono"
                 data={{
                   delayStatus: data.departureDelayStatus,
                   actualValue: data.outTimeActualValue,
@@ -264,7 +265,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   : data.arrivalAirport.countryId}
               </div>
               <FlightTimesDisplay
-                className="justify-end"
+                className="justify-end font-mono"
                 data={{
                   delayStatus: data.arrivalDelayStatus,
                   actualValue: data.inTimeActualValue,
