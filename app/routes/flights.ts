@@ -18,6 +18,7 @@ import {
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
+  type CurrentFlightDataResult,
   type FlightDataWithTimestamps,
   flightIncludeObj,
   getCurrentFlight,
@@ -426,7 +427,43 @@ export const flightsRouter = router({
           outTime: 'asc',
         },
       });
-      return flights.map(transformCurrentFlightData);
+      return flights.map(transformCurrentFlightData).reduce<{
+        completedFlights: CurrentFlightDataResult[];
+        currentFlights: CurrentFlightDataResult[];
+        upcomingFlights: CurrentFlightDataResult[];
+      }>(
+        (acc, flight) => {
+          const outTime = flight.outTimeActual ?? flight.outTime;
+          const inTime = flight.inTimeActual ?? flight.inTime;
+          if (
+            (isEqual(new Date(), outTime) || isAfter(new Date(), outTime)) &&
+            isBefore(new Date(), inTime)
+          ) {
+            return {
+              ...acc,
+              currentFlights: [...acc.currentFlights, flight],
+            };
+          }
+          if (isBefore(new Date(), outTime)) {
+            return {
+              ...acc,
+              upcomingFlights: [...acc.upcomingFlights, flight],
+            };
+          }
+          if (isEqual(new Date(), inTime) || isAfter(new Date(), inTime)) {
+            return {
+              ...acc,
+              completedFlights: [flight, ...acc.completedFlights],
+            };
+          }
+          return acc;
+        },
+        {
+          completedFlights: [],
+          currentFlights: [],
+          upcomingFlights: [],
+        },
+      );
     }),
   addFlight: procedure
     .use(verifyAuthenticated)
