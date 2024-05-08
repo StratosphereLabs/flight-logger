@@ -299,6 +299,7 @@ export const flightsRouter = router({
       }>(
         (acc, flight) => {
           const timestamps = getFlightTimestamps({
+            flightRadarStatus: flight.flightRadarStatus,
             departureTimeZone: flight.departureAirport.timeZone,
             arrivalTimeZone: flight.arrivalAirport.timeZone,
             duration: flight.duration,

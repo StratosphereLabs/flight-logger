@@ -1,4 +1,4 @@
-import { type airport } from '@prisma/client';
+import { type FlightRadarStatus, type airport } from '@prisma/client';
 import { add, isBefore } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import {
@@ -16,7 +16,7 @@ import {
   TIME_FORMAT_24H,
 } from '../constants';
 
-export type FlightDelayStatus = 'severe' | 'moderate' | 'none';
+export type FlightDelayStatus = 'canceled' | 'severe' | 'moderate' | 'none';
 
 export interface FlightTimesInput {
   departureAirport: airport;
@@ -29,6 +29,7 @@ export interface FlightTimesInput {
 }
 
 export interface FlightTimestampsInput {
+  flightRadarStatus?: FlightRadarStatus | null;
   departureTimeZone: string;
   arrivalTimeZone: string;
   duration: number;
@@ -134,6 +135,7 @@ export const getFlightTimes = ({
 };
 
 export const getFlightTimestamps = ({
+  flightRadarStatus,
   departureTimeZone,
   arrivalTimeZone,
   duration,
@@ -157,17 +159,21 @@ export const getFlightTimestamps = ({
         })
       : null;
   const departureDelayStatus =
-    departureDelay !== null && departureDelay > 60
-      ? 'severe'
-      : departureDelay !== null && departureDelay > 15
-        ? 'moderate'
-        : 'none';
+    flightRadarStatus === 'CANCELED'
+      ? 'canceled'
+      : departureDelay !== null && departureDelay > 60
+        ? 'severe'
+        : departureDelay !== null && departureDelay > 15
+          ? 'moderate'
+          : 'none';
   const arrivalDelayStatus =
-    arrivalDelay !== null && arrivalDelay > 60
-      ? 'severe'
-      : arrivalDelay !== null && arrivalDelay > 15
-        ? 'moderate'
-        : 'none';
+    flightRadarStatus === 'CANCELED'
+      ? 'canceled'
+      : arrivalDelay !== null && arrivalDelay > 60
+        ? 'severe'
+        : arrivalDelay !== null && arrivalDelay > 15
+          ? 'moderate'
+          : 'none';
   return {
     durationString: getDurationString(duration),
     durationStringAbbreviated: getDurationString(duration, true),

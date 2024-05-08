@@ -1,4 +1,5 @@
 import {
+  type FlightRadarStatus,
   type aircraft_type,
   type airframe,
   type airline,
@@ -129,6 +130,15 @@ export type CurrentFlightDataResult = FlightTimeDataResult & {
   estimatedHeading: number;
 };
 
+const FLIGHT_STATUS_MAP: Record<FlightRadarStatus, string> = {
+  SCHEDULED: 'Scheduled',
+  DEPARTED_TAXIING: 'Departed - Taxiing',
+  EN_ROUTE: 'En Route',
+  LANDED_TAXIING: 'Landed - Taxiing',
+  ARRIVED: 'Arrived',
+  CANCELED: '',
+};
+
 export const getCenterpoint = (
   result?: FlightsResult,
 ): Coordinates | undefined => {
@@ -178,6 +188,7 @@ export const transformFlightData = (
   flight: FlightData,
 ): FlightTimeDataResult => {
   const timestamps = getFlightTimestamps({
+    flightRadarStatus: flight.flightRadarStatus,
     departureTimeZone: flight.departureAirport.timeZone,
     arrivalTimeZone: flight.arrivalAirport.timeZone,
     duration: flight.duration,
@@ -228,10 +239,15 @@ export const transformCurrentFlightData = (
     flight.offTimeActual ?? add(departureTime, { minutes: 10 });
   const runwayArrivalTime =
     flight.onTimeActual ?? sub(arrivalTime, { minutes: 10 });
-  const hasDeparted = !getInFuture(departureTime);
-  const hasTakenOff = !getInFuture(runwayDepartureTime);
-  const hasArrived = !getInFuture(arrivalTime);
-  const hasLanded = !getInFuture(runwayArrivalTime);
+  const hasDeparted =
+    flight.flightRadarStatus !== 'CANCELED' && !getInFuture(departureTime);
+  const hasTakenOff =
+    flight.flightRadarStatus !== 'CANCELED' &&
+    !getInFuture(runwayDepartureTime);
+  const hasLanded =
+    flight.flightRadarStatus !== 'CANCELED' && !getInFuture(runwayArrivalTime);
+  const hasArrived =
+    flight.flightRadarStatus !== 'CANCELED' && !getInFuture(arrivalTime);
   const totalDuration = getDurationMinutes({
     start: departureTime,
     end: arrivalTime,
@@ -268,16 +284,18 @@ export const transformCurrentFlightData = (
     : 0;
   const progress = currentDuration / totalDuration;
   const flightProgress = currentFlightDuration / flightDuration;
-  const flightStatus =
+  const estimatedStatus =
     progress === 0
-      ? 'Scheduled'
+      ? 'SCHEDULED'
       : flightProgress === 0
-        ? 'Departed - Taxiing'
+        ? 'DEPARTED_TAXIING'
         : flightProgress < 1
-          ? 'En Route'
+          ? 'EN_ROUTE'
           : progress < 1
-            ? 'Landed - Taxiing'
-            : 'Arrived';
+            ? 'LANDED_TAXIING'
+            : 'ARRIVED';
+  const flightStatus =
+    FLIGHT_STATUS_MAP[flight.flightRadarStatus ?? estimatedStatus];
   const distanceTraveled = flightProgress * flight.distance;
   const initialHeading = getBearing(
     flight.departureAirport.lat,
@@ -298,7 +316,11 @@ export const transformCurrentFlightData = (
     flight.arrivalAirport.lon,
   );
   const delayStatus =
-    progress > 0 ? flight.arrivalDelayStatus : flight.departureDelayStatus;
+    flight.flightRadarStatus === 'CANCELED'
+      ? 'canceled'
+      : progress > 0
+        ? flight.arrivalDelayStatus
+        : flight.departureDelayStatus;
   const delayValue =
     progress > 0 ? flight.arrivalDelayValue : flight.departureDelayValue;
   const delay = progress > 0 ? flight.arrivalDelay : flight.departureDelay;

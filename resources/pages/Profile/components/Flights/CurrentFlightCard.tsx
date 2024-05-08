@@ -97,9 +97,11 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   TEXT_COLORS[data.delayStatus],
                 )}
               >
-                {data.delayStatus !== 'none'
-                  ? `Delayed ${data.delay}`
-                  : 'On Time'}
+                {data.delayStatus === 'canceled'
+                  ? 'Canceled'
+                  : data.delayStatus !== 'none'
+                    ? `Delayed ${data.delay}`
+                    : 'On Time'}
               </div>
               <div className="flex flex-wrap items-center gap-x-2 whitespace-nowrap">
                 <img
@@ -230,23 +232,25 @@ export const CurrentFlightCard = (): JSX.Element | null => {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="text-xs italic opacity-75 sm:text-sm">
-                {data.progress === 0 && data.flightProgress === 0
-                  ? `Departs in ${data.durationToDepartureString}`
-                  : null}
-                {data.progress > 0 && data.flightProgress === 0
-                  ? `Taking off in ${data.durationToTakeoffString}`
-                  : null}
-                {data.flightProgress > 0 && data.flightProgress < 1
-                  ? `Landing in ${data.durationToLandingString}`
-                  : null}
-                {data.flightProgress === 1 && data.progress < 1
-                  ? `Arriving in ${data.durationToArrivalString}`
-                  : null}
-                {data.progress === 1 && data.flightProgress === 1
-                  ? `Arrived ${data.durationToArrivalString} ago`
-                  : null}
-              </div>
+              {data.flightRadarStatus !== 'CANCELED' ? (
+                <div className="text-xs italic opacity-75 sm:text-sm">
+                  {data.progress === 0 && data.flightProgress === 0
+                    ? `Departs in ${data.durationToDepartureString}`
+                    : null}
+                  {data.progress > 0 && data.flightProgress === 0
+                    ? `Taking off in ${data.durationToTakeoffString}`
+                    : null}
+                  {data.flightProgress > 0 && data.flightProgress < 1
+                    ? `Landing in ${data.durationToLandingString}`
+                    : null}
+                  {data.flightProgress === 1 && data.progress < 1
+                    ? `Arriving in ${data.durationToArrivalString}`
+                    : null}
+                  {data.progress === 1 && data.flightProgress === 1
+                    ? `Arrived ${data.durationToArrivalString} ago`
+                    : null}
+                </div>
+              ) : null}
               {data.arrivalBaggage !== null ? (
                 <div
                   className={classNames(

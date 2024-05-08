@@ -1,4 +1,4 @@
-import type { airline } from '@prisma/client';
+import type { FlightRadarStatus, airline } from '@prisma/client';
 import axios from 'axios';
 import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -6,9 +6,9 @@ import { DATE_FORMAT_ISO } from '../../constants';
 import type { FlightWithDataAirport } from '../types';
 import { createNewDate } from '../utils';
 import { HEADERS } from '../constants';
-import type { RegistrationData } from './types';
+import type { FlightRadarData } from './types';
 
-export interface FetchFlightRegistrationDataParams {
+export interface FetchFlightRadarDataParams {
   airline: airline;
   arrivalAirport: FlightWithDataAirport;
   departureAirport: FlightWithDataAirport;
@@ -16,19 +16,19 @@ export interface FetchFlightRegistrationDataParams {
   isoDate: string;
 }
 
-export const fetchFlightRegistrationData = async ({
+export const fetchFlightRadarData = async ({
   airline,
   arrivalAirport,
   departureAirport,
   flightNumber,
   isoDate,
-}: FetchFlightRegistrationDataParams): Promise<RegistrationData | null> => {
+}: FetchFlightRadarDataParams): Promise<FlightRadarData | null> => {
   const url = `https://www.flightradar24.com/data/flights/${
     airline.iata ?? airline.icao
   }${flightNumber}`;
   const response = await axios.get<string>(url, { headers: HEADERS });
   const $ = load(response.data);
-  let registrationData: RegistrationData | null = null;
+  let data: FlightRadarData | null = null;
   $('tbody .data-row').each((_, row) => {
     const timestamp = $(row).attr('data-timestamp');
     if (timestamp === undefined) return;
@@ -75,14 +75,47 @@ export const fetchFlightRegistrationData = async ({
       .trim();
     const offTimeTimestamp = tableCells.eq(7).attr('data-timestamp');
     const onTimeTimestamp = tableCells.eq(10).attr('data-timestamp');
-    const onTimeText = tableCells.eq(10).text();
-    if (registrationData === null) {
-      registrationData = {
+    const onTimeCell = tableCells.eq(10);
+    const flightLinkText = tableCells
+      .eq(11)
+      .find('.btn-playback')
+      .text()
+      .trim();
+    if (data === null) {
+      let flightStatus: FlightRadarStatus | null = null;
+      let diversionIata: string | null = null;
+      if (onTimeCell.text().includes('Diverted to')) {
+        const airport = onTimeCell.find('a').eq(0).text().trim();
+        if (airport !== '') diversionIata = airport;
+      }
+      if (onTimeCell.text().includes('Canceled')) {
+        flightStatus = 'CANCELED';
+      } else if (flightLinkText === 'Live') {
+        if (onTimeCell.text().includes('Estimated departure')) {
+          flightStatus = 'DEPARTED_TAXIING';
+        } else if (onTimeCell.text().includes('Landed')) {
+          flightStatus = 'LANDED_TAXIING';
+        } else {
+          flightStatus = 'EN_ROUTE';
+        }
+      } else if (flightLinkText === 'Play') {
+        if (
+          onTimeCell.text().includes('Landed') ||
+          onTimeCell.text().includes('Diverted to')
+        ) {
+          flightStatus = 'ARRIVED';
+        } else if (onTimeCell.text().includes('Unknown')) {
+          flightStatus = null;
+        } else {
+          flightStatus = 'SCHEDULED';
+        }
+      }
+      data = {
         departureTime,
         offTimeActual:
           onTimeTimestamp !== undefined &&
           onTimeTimestamp.length > 0 &&
-          onTimeText.includes('Estimated departure')
+          (flightStatus === 'SCHEDULED' || flightStatus === 'DEPARTED_TAXIING')
             ? createNewDate(parseInt(onTimeTimestamp, 10))
             : offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
               ? createNewDate(parseInt(offTimeTimestamp, 10))
@@ -90,18 +123,19 @@ export const fetchFlightRegistrationData = async ({
         onTimeActual:
           onTimeTimestamp !== undefined &&
           onTimeTimestamp.length > 0 &&
-          (onTimeText.includes('Landed') ||
-            onTimeText.includes('Delayed') ||
-            (onTimeText.includes('Estimated') &&
-              !onTimeText.includes('departure')))
+          (flightStatus === 'EN_ROUTE' ||
+            flightStatus === 'LANDED_TAXIING' ||
+            flightStatus === 'ARRIVED')
             ? createNewDate(parseInt(onTimeTimestamp, 10))
             : undefined,
         departureAirportIATA,
         arrivalAirportIATA,
         aircraftTypeCode,
         registration,
+        flightStatus,
+        diversionIata,
       };
     }
   });
-  return registrationData;
+  return data;
 };
