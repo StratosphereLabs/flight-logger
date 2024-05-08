@@ -443,17 +443,12 @@ export const flightsRouter = router({
       };
       for (const flightResult of flights) {
         const flight = transformCurrentFlightData(flightResult);
-        const outTime = flight.outTimeActual ?? flight.outTime;
-        const inTime = flight.inTimeActual ?? flight.inTime;
-        if (
-          (isEqual(new Date(), outTime) || isAfter(new Date(), outTime)) &&
-          isBefore(new Date(), inTime)
-        ) {
-          result.currentFlights.push(flight);
-        } else if (isBefore(new Date(), outTime)) {
+        if (flight.flightStatus === 'Scheduled' || flight.flightStatus === '') {
           result.upcomingFlights.push(flight);
-        } else if (isEqual(new Date(), inTime) || isAfter(new Date(), inTime)) {
+        } else if (flight.flightStatus === 'Arrived') {
           result.completedFlights.unshift(flight);
+        } else {
+          result.currentFlights.push(flight);
         }
         result.airports[flight.departureAirportId] = flight.departureAirport;
         result.airports[flight.arrivalAirportId] = flight.arrivalAirport;
