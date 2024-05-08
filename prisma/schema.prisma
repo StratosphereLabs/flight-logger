@@ -87,6 +87,7 @@ model flight {
   tripId             String?        @db.Uuid
   departureAirportId String
   arrivalAirportId   String
+  diversionAirportId String?
   airlineId          String?
   operatorAirlineId  String?
   flightNumber       Int?
@@ -111,6 +112,7 @@ model flight {
   offTimeActual      DateTime?
   onTimeActual       DateTime?
   outTimeActual      DateTime?
+  flightRadarStatus  FlightRadarStatus?
   arrivalBaggage     String?
   arrivalGate        String?
   arrivalTerminal    String?
@@ -121,6 +123,7 @@ model flight {
   airline            airline?       @relation("flights", fields: [airlineId], references: [id])
   arrivalAirport     airport        @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
   departureAirport   airport        @relation("departureFlights", fields: [departureAirportId], references: [id])
+  diversionAirport   airport?       @relation("diversionFlights", fields: [diversionAirportId], references: [id])
   operatorAirline    airline?       @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
   trip               trip?          @relation(fields: [tripId], references: [id])
   user               user           @relation("UserFlights", fields: [userId], references: [id])
@@ -208,6 +211,7 @@ model airport {
   region                    region             @relation(fields: [regionId], references: [id])
   arrivalFlights            flight[]           @relation("arrivalFlights")
   departureFlights          flight[]           @relation("departureFlights")
+  diversionFlights          flight[]           @relation("diversionFlights")
   arrivalItineraryFlights   itinerary_flight[] @relation("arrivalItineraryFlights")
   departureItineraryFlights itinerary_flight[] @relation("departureItineraryFlights")
 }
@@ -262,6 +266,15 @@ enum FlightReason {
   LEISURE
   BUSINESS
   CREW
+}
+
+enum FlightRadarStatus {
+  SCHEDULED
+  DEPARTED_TAXIING
+  EN_ROUTE
+  LANDED_TAXIING
+  ARRIVED
+  CANCELED
 }
 
 enum NotificationAction {

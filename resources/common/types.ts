@@ -38,4 +38,4 @@ export interface PaginatedResults<Data> {
   results: Data[];
 }
 
-export type FlightDelayStatus = 'severe' | 'moderate' | 'none';
+export type FlightDelayStatus = 'canceled' | 'severe' | 'moderate' | 'none';

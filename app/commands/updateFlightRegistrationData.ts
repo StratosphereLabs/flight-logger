@@ -1,6 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
-import { fetchFlightRegistrationData } from '../data/flightRadar';
+import { fetchFlightRadarData } from '../data/flightRadar';
 import { prisma } from '../db';
 import type { FlightWithData } from './types';
 import { getGroupedFlightsKey } from './utils';
@@ -17,7 +17,7 @@ export const updateFlightRegistrationData = async (
     flights[0].departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
-  const flight = await fetchFlightRegistrationData({
+  const flight = await fetchFlightRadarData({
     airline: flights[0].airline,
     flightNumber: flights[0].flightNumber,
     departureAirport: flights[0].departureAirport,
@@ -57,6 +57,14 @@ export const updateFlightRegistrationData = async (
           },
         })
       : undefined;
+  const diversionAirport =
+    flight.diversionIata !== null
+      ? await prisma.airport.findFirst({
+          where: {
+            iata: flight.diversionIata,
+          },
+        })
+      : null;
   await prisma.flight.updateMany({
     where: {
       id: {
@@ -69,6 +77,8 @@ export const updateFlightRegistrationData = async (
       offTimeActual: flight.offTimeActual,
       onTimeActual: flight.onTimeActual,
       aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
+      flightRadarStatus: flight.flightStatus,
+      diversionAirportId: diversionAirport?.id ?? undefined,
     },
   });
 };

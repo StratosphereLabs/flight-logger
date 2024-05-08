@@ -1,1 +1,1 @@
-export const UPDATE_CONCURRENCY = 5;
+export const UPDATE_CONCURRENCY = 4;
