@@ -6,6 +6,10 @@ export const useAuthPage = (redirectPath?: string): void => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const navigate = useNavigate();
   useEffect(() => {
-    if (isLoggedIn) navigate(redirectPath ?? '/profile');
+    if (isLoggedIn) {
+      setTimeout(() => {
+        navigate(redirectPath ?? '/profile');
+      }, 0);
+    }
   }, [isLoggedIn, navigate, redirectPath]);
 };
