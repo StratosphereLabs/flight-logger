@@ -58,15 +58,17 @@ export const FlightRow = ({
           {flight.user.username}
         </Link>
       </div>
-      {flight.airline?.logo !== null && flight.airline?.logo !== undefined ? (
-        <div className="flex hidden w-[80px] justify-center md:block">
-          <img
-            alt={`${flight.airline.name} Logo`}
-            className="max-h-[32px] max-w-[80px]"
-            src={flight.airline.logo}
-          />
-        </div>
-      ) : null}
+      <div className="flex hidden w-[80px] justify-center md:block">
+        {flight.airline?.logo !== null && flight.airline?.logo !== undefined ? (
+          <a href={flight.airline.wiki ?? '#'} target="_blank" rel="noreferrer">
+            <img
+              alt={`${flight.airline.name} Logo`}
+              className="max-h-[32px] max-w-[80px]"
+              src={flight.airline.logo}
+            />
+          </a>
+        ) : null}
+      </div>
       <div className="w-[50px] text-nowrap font-mono text-xs sm:w-[60px] sm:text-sm">
         <Link
           hover
@@ -149,14 +151,9 @@ export const FlightRow = ({
           )}
         </div>
         <div className="flex">
-          {flight.aircraftType !== null ? (
-            <div className="hidden opacity-75 sm:block">
-              {flight.aircraftType.icao}
-            </div>
-          ) : null}
           {flight.tailNumber !== null && flight.tailNumber.length > 0 ? (
             <a
-              className="link-hover link ml-3 pt-[1px] font-mono font-semibold"
+              className="link-hover link pt-[1px] font-mono font-semibold"
               href={
                 flight.airframe !== null
                   ? `https://www.planespotters.net/hex/${flight.airframe.icao24.toUpperCase()}`
@@ -167,6 +164,11 @@ export const FlightRow = ({
             >
               {flight.tailNumber}
             </a>
+          ) : null}
+          {flight.aircraftType !== null ? (
+            <div className="ml-3 hidden opacity-75 sm:block">
+              {flight.aircraftType.icao}
+            </div>
           ) : null}
         </div>
       </div>
