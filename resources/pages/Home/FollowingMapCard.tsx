@@ -19,12 +19,8 @@ import { darkModeStyle } from '../../common/mapStyle';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { type ProfilePageNavigationState } from '../Profile';
+import { DEFAULT_COORDINATES } from './constants';
 import { FlightRow } from './FlightRow';
-
-export const DEFAULT_COORDINATES = {
-  lat: 0,
-  lng: 0,
-};
 
 export const FollowingMapCard = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({
