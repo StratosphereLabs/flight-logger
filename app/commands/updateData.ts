@@ -3,13 +3,7 @@ import { add, isAfter, isBefore, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 import { scheduleJob } from 'node-schedule';
 import { prisma } from '../db';
-import {
-  seedAircraftTypes,
-  seedAirframes,
-  seedAirlines,
-  seedAirports,
-  seedManufacturers,
-} from '../db/seeders';
+import { seedDatabase } from '../db/seeders';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
 import { updateFlightTimesData } from './updateFlightTimesData';
@@ -243,12 +237,5 @@ const updateCurrentFlights = async (): Promise<void> => {
   scheduleJob('0 * * * *', updateFlightsHourly);
   scheduleJob('15,30,45 * * * *', updateFlights);
   scheduleJob('5,10,20,25,35,40,50,55 * * * *', updateCurrentFlights);
-  scheduleJob('0 0 1 * *', async () => {
-    await seedManufacturers();
-    await seedAircraftTypes();
-    await seedAirlines();
-    await seedAirframes();
-    await seedAirports();
-    await prisma.$disconnect();
-  });
+  scheduleJob('0 0 1 * *', seedDatabase);
 })();
