@@ -193,26 +193,28 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   ? data.departureAirport.region.name
                   : data.departureAirport.countryId}
               </div>
-              <FlightTimesDisplay
-                className="font-mono"
-                data={{
-                  delayStatus: data.departureDelayStatus,
-                  actualValue: data.outTimeActualValue,
-                  value: data.outTimeValue,
-                  actualLocal: data.outTimeActualLocal,
-                  local: data.outTimeLocal,
-                  actualDaysAdded: data.outTimeActualDaysAdded,
-                  daysAdded: 0,
-                }}
-              />
-              {data.progress > 0 && data.progress < 1 ? (
-                <div className="flex items-center justify-start gap-1 text-xs italic opacity-75">
-                  <span className="mb-[-1px] font-mono">
-                    {data.durationToDepartureAbbrString}
-                  </span>
-                  ago
-                </div>
-              ) : null}
+              <div className="flex flex-wrap gap-x-3">
+                <FlightTimesDisplay
+                  className="font-mono"
+                  data={{
+                    delayStatus: data.departureDelayStatus,
+                    actualValue: data.outTimeActualValue,
+                    value: data.outTimeValue,
+                    actualLocal: data.outTimeActualLocal,
+                    local: data.outTimeLocal,
+                    actualDaysAdded: data.outTimeActualDaysAdded,
+                    daysAdded: 0,
+                  }}
+                />
+                {data.progress > 0 && data.progress < 1 ? (
+                  <div className="flex items-center justify-start gap-1 text-xs italic opacity-75">
+                    <span className="mb-[-1px] font-mono">
+                      {data.durationToDepartureAbbrString}
+                    </span>
+                    ago
+                  </div>
+                ) : null}
+              </div>
               <div
                 className={classNames(
                   'flex flex-1 flex-wrap items-center gap-x-2',
@@ -269,26 +271,28 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                   ? data.arrivalAirport.region.name
                   : data.arrivalAirport.countryId}
               </div>
-              <FlightTimesDisplay
-                className="justify-end font-mono"
-                data={{
-                  delayStatus: data.arrivalDelayStatus,
-                  actualValue: data.inTimeActualValue,
-                  value: data.inTimeValue,
-                  actualLocal: data.inTimeActualLocal,
-                  local: data.inTimeLocal,
-                  actualDaysAdded: data.inTimeActualDaysAdded,
-                  daysAdded: data.inTimeDaysAdded,
-                }}
-              />
-              {data.progress > 0 && data.progress < 1 ? (
-                <div className="flex items-center justify-end gap-1 text-xs italic opacity-75">
-                  in
-                  <span className="mb-[-1px] font-mono">
-                    {data.durationToArrivalAbbrString}
-                  </span>
-                </div>
-              ) : null}
+              <div className="flex flex-wrap-reverse justify-end gap-x-3">
+                {data.progress > 0 && data.progress < 1 ? (
+                  <div className="flex items-center justify-end gap-1 text-xs italic opacity-75">
+                    in
+                    <span className="mb-[-1px] font-mono">
+                      {data.durationToArrivalAbbrString}
+                    </span>
+                  </div>
+                ) : null}
+                <FlightTimesDisplay
+                  className="justify-end font-mono"
+                  data={{
+                    delayStatus: data.arrivalDelayStatus,
+                    actualValue: data.inTimeActualValue,
+                    value: data.inTimeValue,
+                    actualLocal: data.inTimeActualLocal,
+                    local: data.inTimeLocal,
+                    actualDaysAdded: data.inTimeActualDaysAdded,
+                    daysAdded: data.inTimeDaysAdded,
+                  }}
+                />
+              </div>
               <div
                 className={classNames(
                   'flex flex-1 flex-wrap items-center justify-end gap-x-2',

@@ -31,8 +31,7 @@ const getDatabaseRows = (csv: string): Prisma.countryUpsertArgs[] =>
     };
   });
 
-/* eslint-disable @typescript-eslint/no-floating-promises */
-(async () => {
+export const seedCountries = async (): Promise<void> => {
   console.log('Seeding countries...');
   try {
     const response = await axios.get<string>(
@@ -46,4 +45,4 @@ const getDatabaseRows = (csv: string): Prisma.countryUpsertArgs[] =>
   } catch (err) {
     console.error(err);
   }
-})();
+};
