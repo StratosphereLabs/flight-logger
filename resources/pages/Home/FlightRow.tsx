@@ -53,7 +53,7 @@ export const FlightRow = ({
             {flight.user.username}
           </Link>
         </div>
-        <div className="text-nowrap font-mono text-xs opacity-60 lg:pl-1">
+        <div className="text-nowrap text-xs font-semibold opacity-60 lg:pl-1">
           {flight.outDateLocalAbbreviated}
         </div>
       </div>
