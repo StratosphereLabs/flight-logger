@@ -75,7 +75,7 @@ export const FollowingMapCard = (): JSX.Element => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint]);
   return (
-    <Card className="relative max-w-[1000px] flex-1 bg-base-100">
+    <Card className="relative max-w-[1000px] flex-1 rounded-none bg-base-100 sm:rounded-box">
       <div className="pointer-events-auto absolute left-2 top-2 z-10 flex min-w-[150px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
         <span className="text-lg font-semibold">Live Map</span>
         <span className="text-sm opacity-75">
@@ -84,7 +84,7 @@ export const FollowingMapCard = (): JSX.Element => {
       </div>
       {isLoaded ? (
         <GoogleMap
-          mapContainerClassName="rounded-t-box"
+          mapContainerClassName="rounded-t-none sm:rounded-t-box"
           mapContainerStyle={{
             height: '50dvh',
             width: '100%',
@@ -205,7 +205,7 @@ export const FollowingMapCard = (): JSX.Element => {
         <>
           {data.currentFlights.length > 0 ? (
             <div className="flex flex-col gap-2 p-2">
-              <div className="font-semibold">En Route</div>
+              <div className="text-center font-semibold">En Route</div>
               {data.currentFlights.map(flight => (
                 <FlightRow key={flight.id} flight={flight} />
               ))}
@@ -213,7 +213,7 @@ export const FollowingMapCard = (): JSX.Element => {
           ) : null}
           {data.upcomingFlights.length > 0 ? (
             <div className="flex flex-col gap-2 p-2">
-              <div className="font-semibold">Scheduled</div>
+              <div className="text-center font-semibold">Scheduled</div>
               {data.upcomingFlights.map(flight => (
                 <FlightRow key={flight.id} flight={flight} />
               ))}
@@ -221,7 +221,7 @@ export const FollowingMapCard = (): JSX.Element => {
           ) : null}
           {data.completedFlights.length > 0 ? (
             <div className="flex flex-col gap-2 p-2">
-              <div className="font-semibold">Arrived</div>
+              <div className="text-center font-semibold">Arrived</div>
               {data.completedFlights.map(flight => (
                 <FlightRow key={flight.id} flight={flight} />
               ))}

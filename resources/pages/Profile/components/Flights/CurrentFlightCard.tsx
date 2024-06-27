@@ -119,7 +119,8 @@ export const CurrentFlightCard = (): JSX.Element | null => {
                     {data.flightNumberString}
                   </Link>
                   {data.airframe?.operator !== null &&
-                  data.airframe?.operator !== undefined ? (
+                  data.airframe?.operator !== undefined &&
+                  data.airframe.operator.id !== data.airline?.id ? (
                     <div className="hidden text-xs opacity-75 sm:block">
                       Operated by {data.airframe.operator.name}
                     </div>

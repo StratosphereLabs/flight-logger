@@ -8,7 +8,10 @@ import classNames from 'classnames';
 import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
+import { AppTheme, useThemeStore } from '../../stores';
+import { CARD_COLORS, CARD_COLORS_LOFI } from '../constants';
 import { ActionsCell } from './ActionsCell';
+import { FlightTimesDisplay } from './FlightTimesDisplay';
 
 export interface UserFlightsTableProps {
   className?: string;
@@ -47,6 +50,7 @@ export const UserFlightsTable = ({
     setIsViewDialogOpen,
     setRowSelection,
   } = useFlightsPageStore();
+  const { theme } = useThemeStore();
   return (
     <Table
       className={classNames('table-fixed', className)}
@@ -103,9 +107,18 @@ export const UserFlightsTable = ({
                 <div className="truncate text-xs opacity-75 xl:text-sm">
                   {airportData?.municipality}
                 </div>
-                <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
-                  {row.original.outTimeLocal}
-                </div>
+                <FlightTimesDisplay
+                  className="font-mono font-bold"
+                  data={{
+                    delayStatus: row.original.departureDelayStatus,
+                    actualValue: row.original.outTimeActualValue,
+                    value: row.original.outTimeValue,
+                    actualLocal: row.original.outTimeActualLocal,
+                    local: row.original.outTimeLocal,
+                    actualDaysAdded: row.original.outTimeActualDaysAdded,
+                    daysAdded: 0,
+                  }}
+                />
               </div>
             );
           },
@@ -123,12 +136,18 @@ export const UserFlightsTable = ({
                 <div className="truncate text-xs opacity-75 xl:text-sm">
                   {airportData?.municipality}
                 </div>
-                <div className="font-mono text-xs font-bold opacity-50 xl:text-sm">
-                  {row.original.inTimeLocal}
-                  {row.original.inTimeDaysAdded > 0 ? (
-                    <sup>+{row.original.inTimeDaysAdded}</sup>
-                  ) : null}
-                </div>
+                <FlightTimesDisplay
+                  className="font-mono font-bold"
+                  data={{
+                    delayStatus: row.original.arrivalDelayStatus,
+                    actualValue: row.original.inTimeActualValue,
+                    value: row.original.inTimeValue,
+                    actualLocal: row.original.inTimeActualLocal,
+                    local: row.original.inTimeLocal,
+                    actualDaysAdded: row.original.inTimeActualDaysAdded,
+                    daysAdded: row.original.inTimeDaysAdded,
+                  }}
+                />
               </div>
             );
           },
@@ -219,6 +238,11 @@ export const UserFlightsTable = ({
       getCoreRowModel={getCoreRowModel()}
       highlightWhenSelected
       onRowSelectionChange={setRowSelection}
+      rowClassName={row =>
+        theme === AppTheme.LOFI
+          ? CARD_COLORS_LOFI[row.original.arrivalDelayStatus]
+          : CARD_COLORS[row.original.arrivalDelayStatus]
+      }
       size={size}
       state={{ rowSelection }}
     />

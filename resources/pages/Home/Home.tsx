@@ -5,7 +5,7 @@ import { WelcomeHero } from './WelcomeHero';
 export const Home = (): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   return isLoggedIn ? (
-    <div className="flex flex-1 justify-center p-2 sm:p-3">
+    <div className="flex flex-1 justify-center p-0 sm:p-3">
       <FollowingMapCard />
     </div>
   ) : (
