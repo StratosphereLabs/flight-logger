@@ -1,4 +1,4 @@
-import { type aircraft_type, type airline, type airport } from '@prisma/client';
+import { type aircraft_type, type airline } from '@prisma/client';
 import {
   type Row,
   type RowSelectionOptions,
@@ -62,16 +62,21 @@ export const UserFlightsTable = ({
           cell: ({ getValue, row }) => {
             const date = getValue<string>();
             return (
-              <Badge
-                className="badge-xs font-normal opacity-80 lg:badge-sm lg:font-semibold"
-                color={
-                  typeof dateBadgeColor === 'function'
-                    ? dateBadgeColor(row.original)
-                    : dateBadgeColor
-                }
-              >
-                {date}
-              </Badge>
+              <div className="flex flex-col items-center gap-1">
+                <Badge
+                  className="badge-md font-normal text-white opacity-80 lg:badge-lg"
+                  color={
+                    typeof dateBadgeColor === 'function'
+                      ? dateBadgeColor(row.original)
+                      : dateBadgeColor
+                  }
+                >
+                  {date.split('-')[0]}
+                </Badge>
+                <div className="text-nowrap text-xs font-semibold opacity-60">
+                  {row.original.outDateLocalAbbreviated}
+                </div>
+              </div>
             );
           },
           footer: () => null,
@@ -85,11 +90,18 @@ export const UserFlightsTable = ({
             return airlineData?.logo !== null &&
               airlineData?.logo !== undefined ? (
               <div className="flex w-[110px] justify-center xl:w-[120px]">
-                <img
-                  alt={`${airlineData.name} Logo`}
-                  className="max-h-[55px] max-w-[110px] xl:max-w-[120px]"
-                  src={airlineData.logo}
-                />
+                <a
+                  className="flex flex-1 items-center"
+                  href={airlineData.wiki ?? '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img
+                    alt={`${airlineData.name} Logo`}
+                    className="max-h-[55px] max-w-[110px] xl:max-w-[120px]"
+                    src={airlineData.logo}
+                  />
+                </a>
               </div>
             ) : null;
           },
@@ -100,12 +112,23 @@ export const UserFlightsTable = ({
           accessorKey: 'departureAirport',
           header: () => 'Dep',
           cell: ({ row, getValue }) => {
-            const airportData = getValue<airport>();
+            const airportData =
+              getValue<
+                FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]['departureAirport']
+              >();
             return (
               <div>
-                <div className="text-base font-bold">{airportData?.id}</div>
+                <div className="font-mono text-lg font-bold">
+                  {airportData?.iata}{' '}
+                  <span className="hidden text-sm opacity-50 md:inline-block">
+                    / {airportData?.id}
+                  </span>
+                </div>
                 <div className="truncate text-xs opacity-75 xl:text-sm">
-                  {airportData?.municipality}
+                  {airportData.municipality},{' '}
+                  {airportData.countryId === 'US'
+                    ? airportData.region.name
+                    : airportData.countryId}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono font-bold"
@@ -129,12 +152,23 @@ export const UserFlightsTable = ({
           accessorKey: 'arrivalAirport',
           header: () => 'Arr',
           cell: ({ row, getValue }) => {
-            const airportData = getValue<airport>();
+            const airportData =
+              getValue<
+                FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]['arrivalAirport']
+              >();
             return (
               <div>
-                <div className="text-base font-bold">{airportData?.id}</div>
+                <div className="font-mono text-lg font-bold">
+                  {airportData?.iata}{' '}
+                  <span className="hidden text-sm opacity-50 md:inline-block">
+                    / {airportData?.id}
+                  </span>
+                </div>
                 <div className="truncate text-xs opacity-75 xl:text-sm">
-                  {airportData?.municipality}
+                  {airportData.municipality},{' '}
+                  {airportData.countryId === 'US'
+                    ? airportData.region.name
+                    : airportData.countryId}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono font-bold"
@@ -190,9 +224,22 @@ export const UserFlightsTable = ({
           id: 'tailNumber',
           accessorKey: 'tailNumber',
           header: () => 'Tail #',
-          cell: ({ getValue }) => {
+          cell: ({ getValue, row }) => {
             const tailNumber = getValue<string>();
-            return <div className="font-mono">{tailNumber}</div>;
+            return (
+              <a
+                className="link-hover link pt-[1px] font-mono hover:font-bold hover:no-underline"
+                href={
+                  row.original.airframe !== null
+                    ? `https://www.planespotters.net/hex/${row.original.airframe.icao24.toUpperCase()}`
+                    : `https://www.flightaware.com/resources/registration/${tailNumber}`
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                {tailNumber}
+              </a>
+            );
           },
           footer: () => null,
         },

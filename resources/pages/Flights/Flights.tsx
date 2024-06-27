@@ -198,9 +198,14 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
-                className="table-sm xl:table-md"
+                className="table-sm"
                 data={data.upcomingFlights}
-                dateBadgeColor="secondary"
+                dateBadgeColor={({ outDateISO }) =>
+                  outDateISO.split('-')[0] ===
+                  new Date().getFullYear().toString()
+                    ? 'secondary'
+                    : 'info'
+                }
                 enableRowSelection={enableRowSelection}
                 onCopyLink={({ link }) => {
                   copyToClipboard(
@@ -233,9 +238,14 @@ export const Flights = (): JSX.Element => {
                 rounded
               >
                 <UserFlightsTable
-                  className="table-sm border-separate xl:table-md"
+                  className="table-sm border-separate"
                   data={data.currentFlights}
-                  dateBadgeColor="accent"
+                  dateBadgeColor={({ outDateISO }) =>
+                    outDateISO.split('-')[0] ===
+                    new Date().getFullYear().toString()
+                      ? 'secondary'
+                      : 'info'
+                  }
                   enableRowSelection={enableRowSelection}
                   onCopyLink={({ link }) => {
                     copyToClipboard(
@@ -267,9 +277,14 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
-                className="table-sm xl:table-md"
+                className="table-sm"
                 data={data.completedFlights}
-                dateBadgeColor="ghost"
+                dateBadgeColor={({ outDateISO }) =>
+                  outDateISO.split('-')[0] ===
+                  new Date().getFullYear().toString()
+                    ? 'info'
+                    : 'secondary'
+                }
                 enableRowSelection={enableRowSelection}
                 onCopyLink={({ link }) => {
                   copyToClipboard(
