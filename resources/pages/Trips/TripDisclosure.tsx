@@ -87,12 +87,16 @@ export const TripDisclosure = ({
       rounded
     >
       <UserFlightsTable
+        className="table-xs sm:table-sm"
         data={trip.flights}
-        dateBadgeColor={({ inFuture }) => (inFuture ? 'secondary' : 'ghost')}
+        dateBadgeColor={({ outDateISO }) =>
+          outDateISO.split('-')[0] === new Date().getFullYear().toString()
+            ? 'info'
+            : 'secondary'
+        }
         onCopyLink={({ link }) => {
           copyToClipboard(`${APP_URL}${link}`, 'Link copied to clipboard!');
         }}
-        size="sm"
       />
     </Disclosure>
   );
