@@ -10,8 +10,8 @@ import {
 } from './datetime';
 import {
   DATE_FORMAT,
+  DATE_FORMAT_ABBR,
   DATE_FORMAT_ISO,
-  DATE_FORMAT_SHORT,
   TIME_FORMAT_12H,
   TIME_FORMAT_24H,
 } from '../constants';
@@ -183,7 +183,7 @@ export const getFlightTimestamps = ({
     outDateLocalAbbreviated: formatInTimeZone(
       outTime,
       departureTimeZone,
-      DATE_FORMAT_SHORT,
+      DATE_FORMAT_ABBR,
     ),
     outTimeLocal: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_12H),
     outTimeValue: formatInTimeZone(outTime, departureTimeZone, TIME_FORMAT_24H),

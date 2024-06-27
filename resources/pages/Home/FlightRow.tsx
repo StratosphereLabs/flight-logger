@@ -27,7 +27,7 @@ export const FlightRow = ({
   return (
     <div
       className={classNames(
-        'flex items-center gap-2 rounded-box border-2 px-2 py-0 text-sm sm:gap-4 sm:py-1',
+        'flex items-center gap-2 rounded-box border-2 p-1 text-sm lg:gap-4',
         theme === AppTheme.LOFI
           ? CARD_COLORS_LOFI[flight.delayStatus]
           : CARD_COLORS[flight.delayStatus],
@@ -38,49 +38,56 @@ export const FlightRow = ({
       )}
       {...props}
     >
-      <div className="font-mono text-xs opacity-75 sm:text-sm">
-        {flight.outDateLocalAbbreviated}
+      <div className="flex h-full flex-[2] flex-col">
+        <div className="flex flex-1 flex-col gap-2 overflow-hidden lg:flex-row">
+          <Avatar shapeClassName="w-4 h-4 lg:w-6 lg:h-6 rounded-full">
+            <img alt={flight.user.username} src={flight.user.avatar} />
+          </Avatar>
+          <Link
+            hover
+            onClick={() => {
+              navigate(`/user/${flight.user.username}`);
+            }}
+            className="flex truncate text-xs font-semibold opacity-80 lg:text-sm"
+          >
+            {flight.user.username}
+          </Link>
+        </div>
+        <div className="text-nowrap font-mono text-xs opacity-60 lg:pl-1">
+          {flight.outDateLocalAbbreviated}
+        </div>
       </div>
-      <div className="flex flex-[3] items-center gap-2 truncate sm:flex-[2]">
-        <Avatar
-          className="hidden md:block"
-          shapeClassName="w-8 h-8 rounded-full"
-        >
-          <img alt={flight.user.username} src={flight.user.avatar} />
-        </Avatar>
-        <Link
-          hover
-          onClick={() => {
-            navigate(`/user/${flight.user.username}`);
-          }}
-          className="truncate text-xs font-semibold opacity-80 sm:text-sm"
-        >
-          {flight.user.username}
-        </Link>
+      <div className="flex h-full flex-col flex-nowrap justify-center gap-2">
+        <div className="flex h-[15px] w-[60px] lg:h-[20px] lg:w-[80px]">
+          {flight.airline?.logo !== null &&
+          flight.airline?.logo !== undefined ? (
+            <a
+              className="flex flex-1 items-center"
+              href={flight.airline.wiki ?? '#'}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img
+                alt={`${flight.airline.name} Logo`}
+                className="max-h-[15px] max-w-[60px] lg:max-h-[20px] lg:max-w-[80px]"
+                src={flight.airline.logo}
+              />
+            </a>
+          ) : null}
+        </div>
+        <div className="w-[50px] text-nowrap font-mono text-xs opacity-80 lg:w-[60px] lg:text-sm">
+          <Link
+            hover
+            href={`https://www.flightaware.com/live/flight/${flight.airline?.icao}${flight.flightNumber}`}
+            target="_blank"
+          >
+            {flight.flightNumberString}
+          </Link>
+        </div>
       </div>
-      <div className="flex hidden w-[80px] justify-center md:block">
-        {flight.airline?.logo !== null && flight.airline?.logo !== undefined ? (
-          <a href={flight.airline.wiki ?? '#'} target="_blank" rel="noreferrer">
-            <img
-              alt={`${flight.airline.name} Logo`}
-              className="max-h-[32px] max-w-[80px]"
-              src={flight.airline.logo}
-            />
-          </a>
-        ) : null}
-      </div>
-      <div className="w-[50px] text-nowrap font-mono text-xs sm:w-[60px] sm:text-sm">
-        <Link
-          hover
-          href={`https://www.flightaware.com/live/flight/${flight.airline?.icao}${flight.flightNumber}`}
-          target="_blank"
-        >
-          {flight.flightNumberString}
-        </Link>
-      </div>
-      <div className="flex flex-[3] flex-col">
+      <div className="flex h-full flex-[3] flex-col justify-center overflow-hidden">
         <div className="flex flex-wrap items-center gap-x-3">
-          <div className="font-mono font-semibold sm:text-lg">
+          <div className="font-mono text-lg font-semibold">
             {flight.departureAirport.iata}
           </div>
           <FlightTimesDisplay
@@ -102,9 +109,9 @@ export const FlightRow = ({
             : flight.departureAirport.countryId}
         </div>
       </div>
-      <div className="flex flex-[3] flex-col">
+      <div className="flex h-full flex-[3] flex-col justify-center overflow-hidden">
         <div className="flex flex-wrap items-center gap-x-3">
-          <div className="font-mono font-semibold sm:text-lg">
+          <div className="font-mono text-lg font-semibold">
             {flight.arrivalAirport.iata}
           </div>
           <FlightTimesDisplay
@@ -126,29 +133,31 @@ export const FlightRow = ({
             : flight.arrivalAirport.countryId}
         </div>
       </div>
-      <div className="flex h-full flex-[2] flex-col items-end justify-between text-xs">
+      <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end justify-between overflow-hidden text-xs">
         <div
           className={classNames(
-            'mt-[-2px] flex flex-wrap justify-end gap-x-1 text-right sm:mt-[-5px]',
+            'flex flex-col flex-nowrap justify-end gap-x-1 text-right lg:flex-row',
             flight.delayStatus !== 'none' && 'font-semibold',
             TEXT_COLORS[flight.delayStatus],
           )}
         >
-          {flight.flightStatus}
-          {flight.flightRadarStatus === 'CANCELED' ? (
-            'Canceled'
-          ) : (
-            <>
-              <span className="opacity-40"> | </span>
-              {flight.delayStatus !== 'none' ? (
-                <>
-                  Delayed <span className="text-nowrap">{flight.delay}</span>
-                </>
-              ) : (
-                'On Time'
-              )}
-            </>
-          )}
+          <span>{flight.flightStatus}</span>
+          <span className="flex flex-wrap justify-end gap-x-1">
+            {flight.flightRadarStatus === 'CANCELED' ? (
+              'Canceled'
+            ) : (
+              <>
+                <span className="hidden opacity-40 lg:block">|</span>
+                {flight.delayStatus !== 'none' ? (
+                  <>
+                    Delayed <span className="text-nowrap">{flight.delay}</span>
+                  </>
+                ) : (
+                  'On Time'
+                )}
+              </>
+            )}
+          </span>
         </div>
         <div className="flex">
           {flight.tailNumber !== null && flight.tailNumber.length > 0 ? (

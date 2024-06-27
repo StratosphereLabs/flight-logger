@@ -191,7 +191,7 @@ export const Flights = (): JSX.Element => {
                 color: 'ghost',
                 size: 'lg',
               }}
-              className="bg-info/10"
+              className="bg-base-100"
               defaultOpen={
                 state?.defaultOpen === 'upcoming' || isRowSelectEnabled
               }
@@ -226,7 +226,7 @@ export const Flights = (): JSX.Element => {
                   color: 'ghost',
                   size: 'lg',
                 }}
-                className="bg-accent/10"
+                className="bg-base-100"
                 defaultOpen={
                   isRowSelectEnabled || data.currentFlights.length > 0
                 }
@@ -262,7 +262,7 @@ export const Flights = (): JSX.Element => {
                 color: 'ghost',
                 size: 'lg',
               }}
-              className="bg-success/10"
+              className="bg-base-100"
               defaultOpen={state?.defaultOpen !== 'upcoming'}
               rounded
             >

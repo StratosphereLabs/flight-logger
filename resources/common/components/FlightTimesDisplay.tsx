@@ -23,15 +23,18 @@ export const FlightTimesDisplay = ({
   ...props
 }: FlightTimesDisplayProps): JSX.Element => (
   <div
-    className={classNames('flex flex-wrap items-center gap-x-2', className)}
+    className={classNames(
+      'flex flex-wrap items-center gap-x-2 font-bold',
+      className,
+    )}
     {...props}
   >
     {data.actualValue !== data.value ? (
       <div
         className={classNames(
           data.actualLocal !== null
-            ? 'text-xs line-through opacity-75'
-            : 'text-xs sm:text-sm',
+            ? 'text-xs line-through opacity-50'
+            : 'text-xs lg:text-sm',
         )}
       >
         {data.local}
@@ -41,7 +44,7 @@ export const FlightTimesDisplay = ({
     {data.actualLocal !== null && data.actualDaysAdded !== null ? (
       <div
         className={classNames(
-          'text-nowrap text-xs font-bold sm:text-sm',
+          'text-nowrap text-xs lg:text-sm',
           TEXT_COLORS[data.delayStatus],
         )}
       >
