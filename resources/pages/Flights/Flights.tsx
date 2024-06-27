@@ -198,13 +198,13 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
-                className="table-sm"
+                className="table-xs sm:table-sm"
                 data={data.upcomingFlights}
                 dateBadgeColor={({ outDateISO }) =>
                   outDateISO.split('-')[0] ===
                   new Date().getFullYear().toString()
-                    ? 'secondary'
-                    : 'info'
+                    ? 'info'
+                    : 'secondary'
                 }
                 enableRowSelection={enableRowSelection}
                 onCopyLink={({ link }) => {
@@ -238,13 +238,13 @@ export const Flights = (): JSX.Element => {
                 rounded
               >
                 <UserFlightsTable
-                  className="table-sm border-separate"
+                  className="table-xs border-separate sm:table-sm"
                   data={data.currentFlights}
                   dateBadgeColor={({ outDateISO }) =>
                     outDateISO.split('-')[0] ===
                     new Date().getFullYear().toString()
-                      ? 'secondary'
-                      : 'info'
+                      ? 'info'
+                      : 'secondary'
                   }
                   enableRowSelection={enableRowSelection}
                   onCopyLink={({ link }) => {
@@ -277,7 +277,7 @@ export const Flights = (): JSX.Element => {
               rounded
             >
               <UserFlightsTable
-                className="table-sm"
+                className="table-xs sm:table-sm"
                 data={data.completedFlights}
                 dateBadgeColor={({ outDateISO }) =>
                   outDateISO.split('-')[0] ===
@@ -308,18 +308,21 @@ export const Flights = (): JSX.Element => {
       data !== undefined &&
       data.total > 0 ? (
         <UserFlightsTable
-          className="shadow-sm"
+          className="table-xs shadow-sm sm:table-sm"
           data={[
             ...data.upcomingFlights,
             ...data.currentFlights,
             ...data.completedFlights,
           ]}
-          dateBadgeColor={({ inFuture }) => (inFuture ? 'secondary' : 'ghost')}
+          dateBadgeColor={({ outDateISO }) =>
+            outDateISO.split('-')[0] === new Date().getFullYear().toString()
+              ? 'info'
+              : 'secondary'
+          }
           enableRowSelection={enableRowSelection}
           onCopyLink={({ link }) => {
             copyToClipboard(`${APP_URL}${link}`, 'Link copied to clipboard!');
           }}
-          size="sm"
         />
       ) : null}
       {!isLoading && data?.total === 0 ? (

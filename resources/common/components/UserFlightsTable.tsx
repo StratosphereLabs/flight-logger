@@ -1,4 +1,4 @@
-import { type aircraft_type, type airline } from '@prisma/client';
+import { type aircraft_type } from '@prisma/client';
 import {
   type Row,
   type RowSelectionOptions,
@@ -64,7 +64,7 @@ export const UserFlightsTable = ({
             return (
               <div className="flex flex-col items-center gap-1">
                 <Badge
-                  className="badge-md font-normal text-white opacity-80 lg:badge-lg"
+                  className="badge-sm font-normal text-white opacity-80 sm:badge-md"
                   color={
                     typeof dateBadgeColor === 'function'
                       ? dateBadgeColor(row.original)
@@ -82,28 +82,38 @@ export const UserFlightsTable = ({
           footer: () => null,
         },
         {
-          id: 'airline',
-          accessorKey: 'airline',
-          header: () => 'Airline',
-          cell: ({ getValue }) => {
-            const airlineData = getValue<airline>();
-            return airlineData?.logo !== null &&
-              airlineData?.logo !== undefined ? (
-              <div className="flex w-[110px] justify-center xl:w-[120px]">
-                <a
-                  className="flex flex-1 items-center"
-                  href={airlineData.wiki ?? '#'}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <img
-                    alt={`${airlineData.name} Logo`}
-                    className="max-h-[55px] max-w-[110px] xl:max-w-[120px]"
-                    src={airlineData.logo}
-                  />
-                </a>
+          id: 'flightNumber',
+          accessorKey: 'flightNumber',
+          header: () => 'Flight #',
+          cell: ({ getValue, row }) => {
+            const flightNumber = getValue<number | null>();
+            return (
+              <div className="flex h-full flex-col gap-2">
+                {row.original.airline?.logo !== null &&
+                row.original.airline?.logo !== undefined ? (
+                  <div className="flex w-[60px] flex-1 sm:w-[120px]">
+                    <a
+                      className="flex flex-1 items-center"
+                      href={row.original.airline.wiki ?? '#'}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img
+                        alt={`${row.original.airline.name} Logo`}
+                        className="max-h-[20px] max-w-[60px] sm:max-h-[30px] sm:max-w-[120px]"
+                        src={row.original.airline.logo}
+                      />
+                    </a>
+                  </div>
+                ) : null}
+                <div className="mb-1 flex gap-1 font-mono text-xs opacity-60 sm:text-sm">
+                  <span className="opacity-90">
+                    {row.original.airline?.iata}
+                  </span>
+                  <span className="font-semibold">{flightNumber}</span>
+                </div>
               </div>
-            ) : null;
+            );
           },
           footer: () => null,
         },
@@ -117,14 +127,14 @@ export const UserFlightsTable = ({
                 FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]['departureAirport']
               >();
             return (
-              <div>
+              <div className="flex h-full flex-col">
                 <div className="font-mono text-lg font-bold">
                   {airportData?.iata}{' '}
                   <span className="hidden text-sm opacity-50 md:inline-block">
                     / {airportData?.id}
                   </span>
                 </div>
-                <div className="truncate text-xs opacity-75 xl:text-sm">
+                <div className="truncate text-xs opacity-75">
                   {airportData.municipality},{' '}
                   {airportData.countryId === 'US'
                     ? airportData.region.name
@@ -157,14 +167,14 @@ export const UserFlightsTable = ({
                 FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]['arrivalAirport']
               >();
             return (
-              <div>
+              <div className="flex h-full flex-col">
                 <div className="font-mono text-lg font-bold">
                   {airportData?.iata}{' '}
                   <span className="hidden text-sm opacity-50 md:inline-block">
                     / {airportData?.id}
                   </span>
                 </div>
-                <div className="truncate text-xs opacity-75 xl:text-sm">
+                <div className="truncate text-xs opacity-75">
                   {airportData.municipality},{' '}
                   {airportData.countryId === 'US'
                     ? airportData.region.name
@@ -195,16 +205,6 @@ export const UserFlightsTable = ({
             const duration = getValue<string>();
             return <div className="font-mono">{duration}</div>;
           },
-        },
-        {
-          id: 'flightNumber',
-          accessorKey: 'flightNumberString',
-          header: () => 'Flight #',
-          cell: ({ getValue }) => {
-            const flightNumber = getValue<number | null>();
-            return <div className="opacity-70">{flightNumber}</div>;
-          },
-          footer: () => null,
         },
         {
           id: 'aircraftType',
@@ -270,13 +270,14 @@ export const UserFlightsTable = ({
         },
       ]}
       cellClassNames={{
-        outDateISO: 'w-[100px] lg:w-[120px]',
-        airline: 'w-[135px] hidden sm:table-cell xl:w-[150px]',
+        outDateISO: 'w-[95px] sm:w-[120px]',
+        flightNumber: 'h-[inherit] w-[68px] sm:w-[144px]',
+        departureAirport: 'h-[inherit]',
+        arrivalAirport: 'h-[inherit]',
         duration: 'w-[100px] hidden lg:table-cell',
-        flightNumber: 'w-[100px] hidden md:table-cell xl:w-[120px]',
         aircraftType: 'hidden md:table-cell',
         tailNumber: 'w-[100px] hidden lg:table-cell',
-        actions: 'w-[50px] xl:w-[150px]',
+        actions: 'w-[45px] xl:w-[150px]',
       }}
       data={data ?? []}
       enableRowHover={enableRowSelection}
@@ -286,9 +287,12 @@ export const UserFlightsTable = ({
       highlightWhenSelected
       onRowSelectionChange={setRowSelection}
       rowClassName={row =>
-        theme === AppTheme.LOFI
-          ? CARD_COLORS_LOFI[row.original.arrivalDelayStatus]
-          : CARD_COLORS[row.original.arrivalDelayStatus]
+        classNames(
+          'h-[1px]',
+          theme === AppTheme.LOFI
+            ? CARD_COLORS_LOFI[row.original.arrivalDelayStatus]
+            : CARD_COLORS[row.original.arrivalDelayStatus],
+        )
       }
       size={size}
       state={{ rowSelection }}
