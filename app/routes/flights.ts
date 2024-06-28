@@ -3,7 +3,10 @@ import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 // import { updateFlightTimesData } from '../commands/updateFlightTimesData';
-import { updateFlightRegistrationData } from '../commands/updateFlightRegistrationData';
+import {
+  updateFlightChangeData,
+  updateFlightRegistrationData,
+} from '../commands';
 import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
 import { verifyAuthenticated } from '../middleware';
@@ -621,6 +624,25 @@ export const flightsRouter = router({
       });
       const clearFlightData =
         !isEqual(outTime, flight.outTime) || !isEqual(inTime, flight.inTime);
+      const updatedData = {
+        flightNumber: input.flightNumber,
+        tailNumber: input.airframe?.registration ?? null,
+        outTime,
+        outTimeActual: clearFlightData ? null : undefined,
+        offTime: clearFlightData ? null : undefined,
+        offTimeActual: clearFlightData ? null : undefined,
+        onTime: clearFlightData ? null : undefined,
+        onTimeActual: clearFlightData ? null : undefined,
+        inTime,
+        inTimeActual: clearFlightData ? null : undefined,
+        duration,
+        class: input.class,
+        seatNumber: input.seatNumber,
+        seatPosition: input.seatPosition,
+        reason: input.reason,
+        comments: input.comments,
+        trackingLink: input.trackingLink,
+      };
       const updatedFlightData = await prisma.flight.update({
         where: {
           id,
@@ -654,6 +676,7 @@ export const flightsRouter = router({
                 : undefined,
             disconnect: input.aircraftType === null ? true : undefined,
           },
+          ...updatedData,
           airframe: {
             connect:
               !clearFlightData && input.airframe?.type === 'existing'
@@ -666,26 +689,10 @@ export const flightsRouter = router({
                 ? true
                 : undefined,
           },
-          flightNumber: input.flightNumber,
           tailNumber:
             !clearFlightData && input.airframe !== null
               ? input.airframe.registration
               : null,
-          outTime: outTime.toISOString(),
-          outTimeActual: clearFlightData ? null : undefined,
-          offTime: clearFlightData ? null : undefined,
-          offTimeActual: clearFlightData ? null : undefined,
-          onTime: clearFlightData ? null : undefined,
-          onTimeActual: clearFlightData ? null : undefined,
-          inTime: inTime.toISOString(),
-          inTimeActual: clearFlightData ? null : undefined,
-          duration,
-          class: input.class,
-          seatNumber: input.seatNumber,
-          seatPosition: input.seatPosition,
-          reason: input.reason,
-          comments: input.comments,
-          trackingLink: input.trackingLink,
         },
         include: {
           airline: true,
@@ -693,24 +700,22 @@ export const flightsRouter = router({
           arrivalAirport: true,
         },
       });
+      await updateFlightChangeData(
+        [flight],
+        {
+          departureAirportId: departureAirport.id,
+          arrivalAirportId: arrivalAirport.id,
+          airlineId: input.airline?.id ?? null,
+          aircraftTypeId: input.aircraftType?.id ?? null,
+          ...updatedData,
+        },
+        ctx.user.id,
+      );
       if (clearFlightData) {
         // await updateFlightTimesData([updatedFlightData]);
         await updateFlightRegistrationData([updatedFlightData]);
         await updateTripTimes(updatedFlightData.tripId);
       }
-      const updatedFlight = await prisma.flight.findUnique({
-        where: {
-          id: flight.id,
-        },
-        include: flightIncludeObj,
-      });
-      if (updatedFlight === null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Flight not found.',
-        });
-      }
-      return transformFlightData(updatedFlight);
     }),
   deleteFlight: procedure
     .use(verifyAuthenticated)

@@ -12,24 +12,25 @@ datasource db {
 }
 
 model user {
-  id                 Int            @id @default(autoincrement())
-  username           String         @unique
+  id                 Int              @id @default(autoincrement())
+  username           String           @unique
   password           String?
-  email              String         @unique
+  email              String           @unique
   firstName          String
   lastName           String
-  admin              Boolean        @default(false)
+  admin              Boolean          @default(false)
   passwordResetAt    DateTime?
   passwordResetToken String?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime?      @updatedAt
-  flights            flight[]       @relation("UserFlights")
-  flightsAdded       flight[]       @relation("UserFlightsAdded")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime?        @updatedAt
+  flights            flight[]         @relation("UserFlights")
+  flightsAdded       flight[]         @relation("UserFlightsAdded")
+  flightUpdates      flight_update[]
   itineraries        itinerary[]
   notification       notification[]
   trips              trip[]
-  followedBy         user[]         @relation("UserFollows")
-  following          user[]         @relation("UserFollows")
+  followedBy         user[]           @relation("UserFollows")
+  following          user[]           @relation("UserFollows")
 
   @@index([username])
 }
@@ -140,6 +141,7 @@ model flight_update {
   createdAt          DateTime               @default(now())
   flight             flight                 @relation(fields: [flightId], references: [id])
   changes            flight_update_change[]
+  changedByUser      user?                  @relation(fields: [changedByUserId], references: [id])
 }
 
 model flight_update_change {

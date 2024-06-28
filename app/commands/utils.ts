@@ -1,3 +1,4 @@
+import { isDate, isEqual } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import type { FlightWithData } from './types';
@@ -16,4 +17,12 @@ export const getGroupedFlightsKey = ({
     DATE_FORMAT_ISO,
   );
   return `${airline?.icao}${flightNumber} ${date} ${departureAirportId}-${arrivalAirportId}`;
+};
+
+export const getIsEqual = <Value extends string | number | Date | null>(
+  a: Value,
+  b: Value | undefined,
+): boolean => {
+  if (b === undefined || (a === null && b === null)) return true;
+  return isDate(a) && isDate(b) ? isEqual(a as Date, b as Date) : a === b;
 };
