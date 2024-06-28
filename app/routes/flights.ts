@@ -2,10 +2,10 @@ import type { airport } from '@prisma/client';
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-// import { updateFlightTimesData } from '../commands/updateFlightTimesData';
 import {
   updateFlightChangeData,
   updateFlightRegistrationData,
+  updateFlightTimesData,
 } from '../commands';
 import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
@@ -712,7 +712,7 @@ export const flightsRouter = router({
         ctx.user.id,
       );
       if (clearFlightData) {
-        // await updateFlightTimesData([updatedFlightData]);
+        await updateFlightTimesData([updatedFlightData]);
         await updateFlightRegistrationData([updatedFlightData]);
         await updateTripTimes(updatedFlightData.tripId);
       }

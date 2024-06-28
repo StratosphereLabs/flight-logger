@@ -139,7 +139,7 @@ model flight_update {
   flightId           String                 @db.Uuid
   changedByUserId    Int?
   createdAt          DateTime               @default(now())
-  flight             flight                 @relation(fields: [flightId], references: [id])
+  flight             flight                 @relation(fields: [flightId], references: [id], onDelete: Cascade)
   changes            flight_update_change[]
   changedByUser      user?                  @relation(fields: [changedByUserId], references: [id])
 }
@@ -149,10 +149,8 @@ model flight_update_change {
   updateId           String             @db.Uuid
   field              FlightChangeField
   oldValue           String?
-  oldDisplayValue    String?
   newValue           String?
-  newDisplayValue    String?
-  update             flight_update      @relation(fields: [updateId], references: [id])
+  update             flight_update      @relation(fields: [updateId], references: [id], onDelete: Cascade)
 }
 
 model manufacturer {
