@@ -5,6 +5,7 @@ import { createNewDate } from '../data/utils';
 import { prisma, updateTripTimes } from '../db';
 import { getDurationMinutes } from '../utils';
 import type { FlightWithData } from './types';
+import { updateFlightChangeData } from './updateFlightChangeData';
 import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightTimesData = async (
@@ -48,28 +49,30 @@ export const updateFlightTimesData = async (
       : flight.gateArrivalTimes.estimated !== null
         ? createNewDate(flight.gateArrivalTimes.estimated)
         : null;
+  const updatedData = {
+    duration: getDurationMinutes({
+      start: outTime,
+      end: inTime,
+    }),
+    outTime,
+    outTimeActual,
+    inTime,
+    inTimeActual,
+    departureGate: flight.origin.gate ?? undefined,
+    arrivalGate: flight.destination.gate ?? undefined,
+    departureTerminal: flight.origin.terminal ?? undefined,
+    arrivalTerminal: flight.destination.terminal ?? undefined,
+    arrivalBaggage: undefined,
+  };
   await prisma.flight.updateMany({
     where: {
       id: {
         in: flights.map(({ id }) => id),
       },
     },
-    data: {
-      duration: getDurationMinutes({
-        start: outTime,
-        end: inTime,
-      }),
-      outTime,
-      outTimeActual,
-      inTime,
-      inTimeActual,
-      departureGate: flight.origin.gate ?? undefined,
-      arrivalGate: flight.destination.gate ?? undefined,
-      departureTerminal: flight.origin.terminal ?? undefined,
-      arrivalTerminal: flight.destination.terminal ?? undefined,
-      arrivalBaggage: undefined,
-    },
+    data: updatedData,
   });
+  await updateFlightChangeData(flights, updatedData);
   await Promise.all(
     flights.flatMap(({ tripId }) =>
       tripId !== null ? updateTripTimes(tripId) : [],

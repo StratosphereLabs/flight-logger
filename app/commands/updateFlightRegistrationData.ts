@@ -3,6 +3,7 @@ import { DATE_FORMAT_ISO } from '../constants';
 import { fetchFlightRadarData } from '../data/flightRadar';
 import { prisma } from '../db';
 import type { FlightWithData } from './types';
+import { updateFlightChangeData } from './updateFlightChangeData';
 import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightRegistrationData = async (
@@ -65,20 +66,22 @@ export const updateFlightRegistrationData = async (
           },
         })
       : null;
+  const updatedData = {
+    airframeId: airframe !== undefined ? airframe?.icao24 ?? null : undefined,
+    tailNumber: flight.registration,
+    offTimeActual: flight.offTimeActual,
+    onTimeActual: flight.onTimeActual,
+    aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
+    flightRadarStatus: flight.flightStatus,
+    diversionAirportId: diversionAirport?.id ?? undefined,
+  };
   await prisma.flight.updateMany({
     where: {
       id: {
         in: flights.map(({ id }) => id),
       },
     },
-    data: {
-      airframeId: airframe !== undefined ? airframe?.icao24 ?? null : undefined,
-      tailNumber: flight.registration,
-      offTimeActual: flight.offTimeActual,
-      onTimeActual: flight.onTimeActual,
-      aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
-      flightRadarStatus: flight.flightStatus,
-      diversionAirportId: diversionAirport?.id ?? undefined,
-    },
+    data: updatedData,
   });
+  await updateFlightChangeData(flights, updatedData);
 };

@@ -12,24 +12,25 @@ datasource db {
 }
 
 model user {
-  id                 Int            @id @default(autoincrement())
-  username           String         @unique
+  id                 Int              @id @default(autoincrement())
+  username           String           @unique
   password           String?
-  email              String         @unique
+  email              String           @unique
   firstName          String
   lastName           String
-  admin              Boolean        @default(false)
+  admin              Boolean          @default(false)
   passwordResetAt    DateTime?
   passwordResetToken String?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime?      @updatedAt
-  flights            flight[]       @relation("UserFlights")
-  flightsAdded       flight[]       @relation("UserFlightsAdded")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime?        @updatedAt
+  flights            flight[]         @relation("UserFlights")
+  flightsAdded       flight[]         @relation("UserFlightsAdded")
+  flightUpdates      flight_update[]
   itineraries        itinerary[]
   notification       notification[]
   trips              trip[]
-  followedBy         user[]         @relation("UserFollows")
-  following          user[]         @relation("UserFollows")
+  followedBy         user[]           @relation("UserFollows")
+  following          user[]           @relation("UserFollows")
 
   @@index([username])
 }
@@ -81,10 +82,10 @@ model itinerary_flight {
 }
 
 model flight {
-  id                 String         @id @default(uuid()) @db.Uuid
+  id                 String           @id @default(uuid()) @db.Uuid
   userId             Int
   addedByUserId      Int?
-  tripId             String?        @db.Uuid
+  tripId             String?          @db.Uuid
   departureAirportId String
   arrivalAirportId   String
   diversionAirportId String?
@@ -100,9 +101,9 @@ model flight {
   reason             FlightReason?
   comments           String?
   trackingLink       String?
-  duration           Int            @default(0)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime?      @updatedAt
+  duration           Int              @default(0)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime?        @updatedAt
   outTime            DateTime
   offTime            DateTime?
   onTime             DateTime?
@@ -118,18 +119,40 @@ model flight {
   arrivalTerminal    String?
   departureGate      String?
   departureTerminal  String?
-  aircraftType       aircraft_type? @relation(fields: [aircraftTypeId], references: [id])
-  airframe           airframe?      @relation(fields: [airframeId], references: [icao24])
-  airline            airline?       @relation("flights", fields: [airlineId], references: [id])
-  arrivalAirport     airport        @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
-  departureAirport   airport        @relation("departureFlights", fields: [departureAirportId], references: [id])
-  diversionAirport   airport?       @relation("diversionFlights", fields: [diversionAirportId], references: [id])
-  operatorAirline    airline?       @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
-  trip               trip?          @relation(fields: [tripId], references: [id])
-  user               user           @relation("UserFlights", fields: [userId], references: [id])
-  addedByUser        user?          @relation("UserFlightsAdded", fields: [addedByUserId], references: [id])
+  aircraftType       aircraft_type?   @relation(fields: [aircraftTypeId], references: [id])
+  airframe           airframe?        @relation(fields: [airframeId], references: [icao24])
+  airline            airline?         @relation("flights", fields: [airlineId], references: [id])
+  arrivalAirport     airport          @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
+  departureAirport   airport          @relation("departureFlights", fields: [departureAirportId], references: [id])
+  diversionAirport   airport?         @relation("diversionFlights", fields: [diversionAirportId], references: [id])
+  operatorAirline    airline?         @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
+  trip               trip?            @relation(fields: [tripId], references: [id])
+  user               user             @relation("UserFlights", fields: [userId], references: [id])
+  addedByUser        user?            @relation("UserFlightsAdded", fields: [addedByUserId], references: [id])
+  updates            flight_update[]
 
   @@index([outTime, inTime])
+}
+
+model flight_update {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  flightId           String                 @db.Uuid
+  changedByUserId    Int?
+  createdAt          DateTime               @default(now())
+  flight             flight                 @relation(fields: [flightId], references: [id])
+  changes            flight_update_change[]
+  changedByUser      user?                  @relation(fields: [changedByUserId], references: [id])
+}
+
+model flight_update_change {
+  id                 String             @id @default(uuid()) @db.Uuid
+  updateId           String             @db.Uuid
+  field              FlightChangeField
+  oldValue           String?
+  oldDisplayValue    String?
+  newValue           String?
+  newDisplayValue    String?
+  update             flight_update      @relation(fields: [updateId], references: [id])
 }
 
 model manufacturer {
@@ -275,6 +298,36 @@ enum FlightRadarStatus {
   LANDED_TAXIING
   ARRIVED
   CANCELED
+}
+
+enum FlightChangeField {
+  DEPARTURE_AIRPORT
+  ARRIVAL_AIRPORT
+  DIVERSION_AIRPORT
+  AIRLINE
+  OPERATOR_AIRLINE
+  FLIGHT_NUMBER
+  AIRCRAFT_TYPE
+  TAIL_NUMBER
+  CLASS
+  SEAT_NUMBER
+  SEAT_POSITION
+  REASON
+  COMMENTS
+  TRACKING_LINK
+  OUT_TIME
+  OFF_TIME
+  ON_TIME
+  IN_TIME
+  OUT_TIME_ACTUAL
+  OFF_TIME_ACTUAL
+  ON_TIME_ACTUAL
+  IN_TIME_ACTUAL
+  DEPARTURE_GATE
+  DEPARTURE_TERMINAL
+  ARRIVAL_BAGGAGE
+  ARRIVAL_GATE
+  ARRIVAL_TERMINAL
 }
 
 enum NotificationAction {
