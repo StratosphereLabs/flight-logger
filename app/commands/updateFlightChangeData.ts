@@ -1,5 +1,7 @@
 import type { flight, flight_update_change } from '@prisma/client';
+import { Promise } from 'bluebird';
 import { prisma } from '../db';
+import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { FLIGHT_CHANGE_GETTER_MAP } from './constants';
 import { getIsEqual } from './utils';
 
@@ -25,20 +27,24 @@ export const updateFlightChangeData = async (
       }
     }
   }
-  for (const [flightId, updates] of Object.entries(flightUpdates)) {
-    const flightUpdate = await prisma.flight_update.create({
-      data: {
-        flightId,
-        changedByUserId: userId ?? null,
-      },
-    });
-    for (const update of updates) {
-      await prisma.flight_update_change.create({
+  await Promise.map(
+    Object.entries(flightUpdates),
+    async ([flightId, updates]) => {
+      const flightUpdate = await prisma.flight_update.create({
         data: {
-          updateId: flightUpdate.id,
-          ...update,
+          flightId,
+          changedByUserId: userId ?? null,
         },
       });
-    }
-  }
+      await prisma.flight_update_change.createMany({
+        data: updates.map(update => ({
+          updateId: flightUpdate.id,
+          ...update,
+        })),
+      });
+    },
+    {
+      concurrency: DB_PROMISE_CONCURRENCY,
+    },
+  );
 };
