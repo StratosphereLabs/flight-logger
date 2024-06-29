@@ -6,10 +6,15 @@ import {
   airportSchema,
 } from '../../prisma/generated/zod';
 import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
+import { paginationSchema } from './pagination';
 
 export const getFlightSchema = z.object({
   id: z.string().uuid(),
 });
+
+export const getFlightChangelogSchema = getFlightSchema.extend(
+  paginationSchema.shape,
+);
 
 export const deleteFlightSchema = z.object({
   id: z.string().uuid(),

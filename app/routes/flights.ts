@@ -1,5 +1,6 @@
 import type { airport } from '@prisma/client';
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
+import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import {
@@ -9,11 +10,13 @@ import {
 } from '../commands';
 import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
+import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
   deleteFlightSchema,
   editFlightSchema,
+  getFlightChangelogSchema,
   getFlightSchema,
   getUserFlightsSchema,
   getUserMapDataSchema,
@@ -25,6 +28,8 @@ import {
   type CurrentFlightDataResult,
   type FlightDataWithTimestamps,
   calculateCenterPoint,
+  excludeKeys,
+  fetchGravatarUrl,
   flightIncludeObj,
   getCurrentFlight,
   getDurationString,
@@ -36,6 +41,7 @@ import {
   getToDate,
   getCenterpoint,
   getHeatmap,
+  getPaginatedResponse,
   getRoutes,
   transformCurrentFlightData,
 } from '../utils';
@@ -57,6 +63,179 @@ export const flightsRouter = router({
     }
     return transformFlightData(flight);
   }),
+  getFlightChangelog: procedure
+    .input(getFlightChangelogSchema)
+    .query(async ({ input }) => {
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      const { id } = input;
+      const [flightUpdates, itemCount] = await prisma.$transaction([
+        prisma.flight_update.findMany({
+          where: {
+            flightId: id,
+          },
+          include: {
+            changes: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          skip,
+          take,
+        }),
+        prisma.flight_update.count({
+          where: {
+            flightId: id,
+          },
+        }),
+      ]);
+      const results = await Promise.map(
+        flightUpdates,
+        async flightUpdate => {
+          const changesWithData = [];
+          const user =
+            flightUpdate.changedByUserId !== null
+              ? await prisma.user.findUnique({
+                  where: {
+                    id: flightUpdate.changedByUserId,
+                  },
+                })
+              : null;
+          for (const change of flightUpdate.changes) {
+            switch (change.field) {
+              case 'AIRCRAFT_TYPE': {
+                const oldAircraft =
+                  change.oldValue !== null
+                    ? await prisma.aircraft_type.findUnique({
+                        where: {
+                          id: change.oldValue,
+                        },
+                      })
+                    : null;
+                const newAircraft =
+                  change.newValue !== null
+                    ? await prisma.aircraft_type.findUnique({
+                        where: {
+                          id: change.newValue,
+                        },
+                      })
+                    : null;
+                changesWithData.push({
+                  ...change,
+                  oldValue: oldAircraft,
+                  newValue: newAircraft,
+                });
+                break;
+              }
+              case 'ARRIVAL_AIRPORT':
+              case 'DEPARTURE_AIRPORT':
+              case 'DIVERSION_AIRPORT': {
+                const oldAirport =
+                  change.oldValue !== null
+                    ? await prisma.airport.findUnique({
+                        where: {
+                          id: change.oldValue,
+                        },
+                      })
+                    : null;
+                const newAirport =
+                  change.newValue !== null
+                    ? await prisma.airport.findUnique({
+                        where: {
+                          id: change.newValue,
+                        },
+                      })
+                    : null;
+                changesWithData.push({
+                  ...change,
+                  oldValue: oldAirport,
+                  newValue: newAirport,
+                });
+                break;
+              }
+              case 'AIRLINE':
+              case 'OPERATOR_AIRLINE': {
+                const oldAirline =
+                  change.oldValue !== null
+                    ? await prisma.airline.findUnique({
+                        where: {
+                          id: change.oldValue,
+                        },
+                      })
+                    : null;
+                const newAirline =
+                  change.newValue !== null
+                    ? await prisma.airline.findUnique({
+                        where: {
+                          id: change.newValue,
+                        },
+                      })
+                    : null;
+                changesWithData.push({
+                  ...change,
+                  oldValue: oldAirline,
+                  newValue: newAirline,
+                });
+                break;
+              }
+              case 'TAIL_NUMBER': {
+                const oldAirframe =
+                  change.oldValue !== null
+                    ? await prisma.airframe.findFirst({
+                        where: {
+                          registration: change.oldValue,
+                        },
+                      })
+                    : null;
+                const newAirframe =
+                  change.newValue !== null
+                    ? await prisma.airframe.findFirst({
+                        where: {
+                          registration: change.newValue,
+                        },
+                      })
+                    : null;
+                changesWithData.push({
+                  ...change,
+                  oldValue: oldAirframe ?? change.oldValue,
+                  newValue: newAirframe ?? change.newValue,
+                });
+                break;
+              }
+              default:
+                changesWithData.push(change);
+                break;
+            }
+          }
+          return {
+            ...flightUpdate,
+            changes: changesWithData,
+            changedByUser:
+              user !== null
+                ? {
+                    avatar: fetchGravatarUrl(user.email),
+                    ...excludeKeys(
+                      user,
+                      'admin',
+                      'password',
+                      'id',
+                      'passwordResetToken',
+                      'passwordResetAt',
+                    ),
+                  }
+                : null,
+          };
+        },
+        {
+          concurrency: DB_PROMISE_CONCURRENCY,
+        },
+      );
+      return getPaginatedResponse({
+        itemCount,
+        limit,
+        page,
+        results,
+      });
+    }),
   getUserFlights: procedure
     .input(getUserFlightsSchema)
     .query(async ({ ctx, input }) => {

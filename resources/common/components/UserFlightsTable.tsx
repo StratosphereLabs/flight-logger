@@ -106,7 +106,7 @@ export const UserFlightsTable = ({
                     </a>
                   </div>
                 ) : null}
-                <div className="mb-1 flex gap-1 font-mono text-xs opacity-60 sm:text-sm">
+                <div className="mb-2 flex gap-1 font-mono text-xs opacity-60 sm:text-sm">
                   <span className="opacity-90">
                     {row.original.airline?.iata}
                   </span>
@@ -210,35 +210,26 @@ export const UserFlightsTable = ({
           id: 'aircraftType',
           accessorKey: 'aircraftType',
           header: () => 'Aircraft',
-          cell: ({ getValue }) => {
+          cell: ({ getValue, row }) => {
             const aircraftType = getValue<aircraft_type>();
             return (
-              <div className="truncate italic opacity-70">
-                {aircraftType?.name ?? ''}
+              <div className="flex flex-col gap-1 truncate">
+                <div className="truncate italic opacity-70">
+                  {aircraftType?.name ?? ''}
+                </div>
+                <a
+                  className="link-hover link pt-[1px] font-mono hover:font-bold hover:no-underline"
+                  href={
+                    row.original.airframe !== null
+                      ? `https://www.planespotters.net/hex/${row.original.airframe.icao24.toUpperCase()}`
+                      : `https://www.flightaware.com/resources/registration/${row.original.tailNumber}`
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {row.original.tailNumber}
+                </a>
               </div>
-            );
-          },
-          footer: () => null,
-        },
-        {
-          id: 'tailNumber',
-          accessorKey: 'tailNumber',
-          header: () => 'Tail #',
-          cell: ({ getValue, row }) => {
-            const tailNumber = getValue<string>();
-            return (
-              <a
-                className="link-hover link pt-[1px] font-mono hover:font-bold hover:no-underline"
-                href={
-                  row.original.airframe !== null
-                    ? `https://www.planespotters.net/hex/${row.original.airframe.icao24.toUpperCase()}`
-                    : `https://www.flightaware.com/resources/registration/${tailNumber}`
-                }
-                target="_blank"
-                rel="noreferrer"
-              >
-                {tailNumber}
-              </a>
             );
           },
           footer: () => null,
@@ -270,14 +261,14 @@ export const UserFlightsTable = ({
         },
       ]}
       cellClassNames={{
-        outDateISO: 'w-[95px] sm:w-[120px]',
+        outDateISO: 'px-0 sm:px-1 w-[85px] sm:w-[120px]',
         flightNumber: 'h-[inherit] w-[68px] sm:w-[144px]',
         departureAirport: 'h-[inherit]',
         arrivalAirport: 'h-[inherit]',
         duration: 'w-[100px] hidden lg:table-cell',
-        aircraftType: 'hidden md:table-cell',
+        aircraftType: 'hidden sm:table-cell',
         tailNumber: 'w-[100px] hidden lg:table-cell',
-        actions: 'w-[45px] xl:w-[150px]',
+        actions: 'px-0 sm:px-1 w-[35px] xl:w-[150px]',
       }}
       data={data ?? []}
       enableRowHover={enableRowSelection}
