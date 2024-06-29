@@ -11,7 +11,6 @@ import {
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
-import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { type EditFlightRequest, editFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,
@@ -29,7 +28,7 @@ import { customAirframe, editFlightDefaultValues } from './constants';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export interface EditFlightProps {
-  onSuccess: (data: FlightsRouterOutput['editFlight']) => void;
+  onSuccess: () => void;
 }
 
 export const EditFlightModal = ({
@@ -60,11 +59,12 @@ export const EditFlightModal = ({
   const handleSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
   const { isLoading, mutate } = trpc.flights.editFlight.useMutation({
-    onSuccess: newFlight => {
+    onSuccess: () => {
       handleSuccess('Flight Edited!');
-      onSuccess(newFlight);
+      onSuccess();
       setIsEditDialogOpen(false);
       void utils.users.invalidate();
+      void utils.flights.getFlightChangelog.invalidate();
     },
     onError,
   });
