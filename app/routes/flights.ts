@@ -86,11 +86,11 @@ export const flightsRouter = router({
           },
         }),
       ]);
-      const results = [];
-      for (const flightUpdate of flightUpdates) {
-        const changesWithData = await Promise.map(
-          flightUpdate.changes,
-          async change => {
+      const results = await Promise.map(
+        flightUpdates,
+        async flightUpdate => {
+          const changesWithData = [];
+          for (const change of flightUpdate.changes) {
             switch (change.field) {
               case 'AIRCRAFT_TYPE': {
                 const oldAircraft =
@@ -109,11 +109,12 @@ export const flightsRouter = router({
                         },
                       })
                     : null;
-                return {
+                changesWithData.push({
                   ...change,
                   oldValue: oldAircraft,
                   newValue: newAircraft,
-                };
+                });
+                break;
               }
               case 'ARRIVAL_AIRPORT':
               case 'DEPARTURE_AIRPORT':
@@ -134,11 +135,12 @@ export const flightsRouter = router({
                         },
                       })
                     : null;
-                return {
+                changesWithData.push({
                   ...change,
                   oldValue: oldAirport,
                   newValue: newAirport,
-                };
+                });
+                break;
               }
               case 'AIRLINE':
               case 'OPERATOR_AIRLINE': {
@@ -158,11 +160,12 @@ export const flightsRouter = router({
                         },
                       })
                     : null;
-                return {
+                changesWithData.push({
                   ...change,
                   oldValue: oldAirline,
                   newValue: newAirline,
-                };
+                });
+                break;
               }
               case 'TAIL_NUMBER': {
                 const oldAirframe =
@@ -181,25 +184,27 @@ export const flightsRouter = router({
                         },
                       })
                     : null;
-                return {
+                changesWithData.push({
                   ...change,
                   oldValue: oldAirframe ?? change.oldValue,
                   newValue: newAirframe ?? change.newValue,
-                };
+                });
+                break;
               }
               default:
-                return change;
+                changesWithData.push(change);
+                break;
             }
-          },
-          {
-            concurrency: DB_PROMISE_CONCURRENCY,
-          },
-        );
-        results.push({
-          ...flightUpdate,
-          changes: changesWithData,
-        });
-      }
+          }
+          return {
+            ...flightUpdate,
+            changes: changesWithData,
+          };
+        },
+        {
+          concurrency: DB_PROMISE_CONCURRENCY,
+        },
+      );
       return getPaginatedResponse({
         itemCount,
         limit,
