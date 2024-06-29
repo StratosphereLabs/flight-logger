@@ -28,6 +28,8 @@ import {
   type CurrentFlightDataResult,
   type FlightDataWithTimestamps,
   calculateCenterPoint,
+  excludeKeys,
+  fetchGravatarUrl,
   flightIncludeObj,
   getCurrentFlight,
   getDurationString,
@@ -90,6 +92,14 @@ export const flightsRouter = router({
         flightUpdates,
         async flightUpdate => {
           const changesWithData = [];
+          const user =
+            flightUpdate.changedByUserId !== null
+              ? await prisma.user.findUnique({
+                  where: {
+                    id: flightUpdate.changedByUserId,
+                  },
+                })
+              : null;
           for (const change of flightUpdate.changes) {
             switch (change.field) {
               case 'AIRCRAFT_TYPE': {
@@ -199,6 +209,20 @@ export const flightsRouter = router({
           return {
             ...flightUpdate,
             changes: changesWithData,
+            changedByUser:
+              user !== null
+                ? {
+                    avatar: fetchGravatarUrl(user.email),
+                    ...excludeKeys(
+                      user,
+                      'admin',
+                      'password',
+                      'id',
+                      'passwordResetToken',
+                      'passwordResetAt',
+                    ),
+                  }
+                : null,
           };
         },
         {
