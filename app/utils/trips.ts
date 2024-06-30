@@ -28,7 +28,12 @@ export interface TripWithData extends trip {
 export interface TripResult extends trip {
   user: Omit<
     user,
-    'admin' | 'password' | 'id' | 'passwordResetToken' | 'passwordResetAt'
+    | 'admin'
+    | 'password'
+    | 'id'
+    | 'pushNotifications'
+    | 'passwordResetToken'
+    | 'passwordResetAt'
   >;
   tripDuration: string;
   outDateISO: string;
@@ -44,6 +49,7 @@ export const transformTripData = (trip: TripWithData): TripResult => ({
     'admin',
     'password',
     'id',
+    'pushNotifications',
     'passwordResetToken',
     'passwordResetAt',
   ),

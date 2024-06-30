@@ -104,5 +104,4 @@ dist
 .tern-port
 
 app/db/seeders/data/*.csv
-public
 prisma/generated

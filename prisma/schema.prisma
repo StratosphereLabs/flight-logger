@@ -19,6 +19,7 @@ model user {
   firstName          String
   lastName           String
   admin              Boolean          @default(false)
+  pushNotifications  Boolean          @default(false)
   passwordResetAt    DateTime?
   passwordResetToken String?
   createdAt          DateTime         @default(now())
@@ -31,8 +32,17 @@ model user {
   trips              trip[]
   followedBy         user[]           @relation("UserFollows")
   following          user[]           @relation("UserFollows")
+  fcmTokens          fcm_token[]
 
   @@index([username])
+}
+
+model fcm_token {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    Int
+  token     String
+  timestamp DateTime
+  user      user      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model trip {

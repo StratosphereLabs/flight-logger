@@ -218,6 +218,7 @@ export const flightsRouter = router({
                       'admin',
                       'password',
                       'id',
+                      'pushNotifications',
                       'passwordResetToken',
                       'passwordResetAt',
                     ),
