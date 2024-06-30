@@ -102,7 +102,12 @@ export interface FlightTimeDataResult
     avatar: string;
   } & Omit<
     user,
-    'admin' | 'password' | 'id' | 'passwordResetToken' | 'passwordResetAt'
+    | 'admin'
+    | 'password'
+    | 'id'
+    | 'pushNotifications'
+    | 'passwordResetToken'
+    | 'passwordResetAt'
   >;
   distance: number;
   flightNumberString: string;
@@ -213,6 +218,7 @@ export const transformFlightData = (
         'admin',
         'password',
         'id',
+        'pushNotifications',
         'passwordResetToken',
         'passwordResetAt',
       ),

@@ -10,7 +10,9 @@ import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { useTRPCErrorHandler } from './useTRPCErrorHandler';
 
-export const useLoggedInUserQuery = (): UseTRPCQueryResult<
+export const useLoggedInUserQuery = (
+  onSuccess?: (data: UsersRouterOutput['getUser']) => Promise<void> | void,
+): UseTRPCQueryResult<
   UsersRouterOutput['getUser'],
   TRPCClientErrorLike<UsersRouter>
 > & {
@@ -24,6 +26,7 @@ export const useLoggedInUserQuery = (): UseTRPCQueryResult<
     {
       enabled,
       staleTime: 5 * 60 * 1000,
+      onSuccess,
       onError,
     },
   );

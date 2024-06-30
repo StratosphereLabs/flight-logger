@@ -3,7 +3,13 @@ import { format } from 'date-fns';
 import { DATE_FORMAT_MONTH } from '../constants';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
-import { addFollowerSchema, getUserSchema, getUsersSchema } from '../schemas';
+import {
+  addFollowerSchema,
+  getUserSchema,
+  getUsersSchema,
+  setFCMTokenSchema,
+  togglePushNotificationsSchema,
+} from '../schemas';
 import { procedure, router } from '../trpc';
 import { excludeKeys, fetchGravatarUrl } from '../utils';
 
@@ -109,6 +115,7 @@ export const usersRouter = router({
         'admin',
         'password',
         'id',
+        'pushNotifications',
         'passwordResetToken',
         'passwordResetAt',
       ),
@@ -167,12 +174,65 @@ export const usersRouter = router({
         'admin',
         'password',
         'id',
+        'pushNotifications',
         'passwordResetToken',
         'passwordResetAt',
         '_count',
       ),
     }));
   }),
+  addFCMToken: procedure
+    .use(verifyAuthenticated)
+    .input(setFCMTokenSchema)
+    .mutation(async ({ ctx, input }) => {
+      if (input.token.length === 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Invalid FCM Token.',
+        });
+      }
+      const tokens = await prisma.fcm_token.findMany({
+        where: {
+          userId: ctx.user.id,
+        },
+        select: {
+          id: true,
+          token: true,
+        },
+      });
+      const token = tokens.find(({ token }) => token === input.token);
+      if (token !== undefined) {
+        await prisma.fcm_token.update({
+          where: {
+            id: token.id,
+          },
+          data: {
+            timestamp: new Date(),
+          },
+        });
+      } else {
+        await prisma.fcm_token.create({
+          data: {
+            userId: ctx.user.id,
+            token: input.token,
+            timestamp: new Date(),
+          },
+        });
+      }
+    }),
+  togglePushNotifications: procedure
+    .use(verifyAuthenticated)
+    .input(togglePushNotificationsSchema)
+    .mutation(async ({ ctx, input }) => {
+      await prisma.user.update({
+        where: {
+          id: ctx.user.id,
+        },
+        data: {
+          pushNotifications: input.enabled,
+        },
+      });
+    }),
   addFollower: procedure
     .use(verifyAuthenticated)
     .input(addFollowerSchema)
@@ -194,6 +254,7 @@ export const usersRouter = router({
         'admin',
         'password',
         'id',
+        'pushNotifications',
         'passwordResetToken',
         'passwordResetAt',
       );
@@ -219,6 +280,7 @@ export const usersRouter = router({
         'admin',
         'password',
         'id',
+        'pushNotifications',
         'passwordResetToken',
         'passwordResetAt',
       );

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { getToken } from 'firebase/messaging';
 import { useMemo, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -23,6 +24,7 @@ import {
 import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
 
@@ -39,7 +41,20 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams();
-  const { data, isFetching } = useLoggedInUserQuery();
+  const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
+  const { data, isFetching } = useLoggedInUserQuery(userData => {
+    if (userData.pushNotifications) {
+      getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY as string,
+      })
+        .then(currentToken => {
+          if (currentToken.length > 0) {
+            mutateAddFCMToken({ token: currentToken });
+          }
+        })
+        .catch(() => {});
+    }
+  });
   const isUserPage = useMemo(
     () => pathname.includes('/profile') || pathname.includes('/user/'),
     [pathname],

@@ -67,6 +67,14 @@ export const selectUserSchema = z.object({
     .refine(item => item !== null, 'User is required.'),
 });
 
+export const setFCMTokenSchema = z.object({
+  token: z.string(),
+});
+
+export const togglePushNotificationsSchema = z.object({
+  enabled: z.boolean(),
+});
+
 export const addFollowerSchema = z.object({
   username: z.string().trim(),
 });
