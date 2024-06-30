@@ -38,8 +38,8 @@ export const FlightRow = ({
       )}
       {...props}
     >
-      <div className="flex h-full flex-[2] flex-col">
-        <div className="flex flex-1 flex-col gap-2 overflow-hidden lg:flex-row">
+      <div className="flex h-full flex-[3] flex-col overflow-hidden sm:flex-[2]">
+        <div className="flex flex-1 flex-col gap-2 lg:flex-row">
           <Avatar shapeClassName="w-4 h-4 lg:w-6 lg:h-6 rounded-full">
             <img alt={flight.user.username} src={flight.user.avatar} />
           </Avatar>
@@ -48,7 +48,7 @@ export const FlightRow = ({
             onClick={() => {
               navigate(`/user/${flight.user.username}`);
             }}
-            className="flex truncate text-xs font-semibold opacity-80 lg:text-sm"
+            className="truncate text-xs font-semibold opacity-80 lg:text-sm"
           >
             {flight.user.username}
           </Link>
