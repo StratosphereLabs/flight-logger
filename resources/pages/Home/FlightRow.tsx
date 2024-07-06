@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import { type HTMLProps } from 'react';
+import { useMemo, type HTMLProps } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Link } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { AppTheme, useThemeStore } from '../../stores';
+import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import {
   CARD_BORDER_COLORS,
   CARD_BORDER_COLORS_LOFI,
@@ -15,19 +15,32 @@ import { FlightTimesDisplay } from '../../common/components';
 
 export interface FlightRowProps extends HTMLProps<HTMLDivElement> {
   flight: FlightsRouterOutput['getFollowingFlights']['completedFlights'][number];
+  onFlightClick: () => void;
+  selectedFlightId: string | null;
 }
 
 export const FlightRow = ({
   className,
   flight,
+  onFlightClick,
+  selectedFlightId,
   ...props
 }: FlightRowProps): JSX.Element => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
+  const isDarkMode = useIsDarkMode();
+  const isActive = useMemo(
+    () => flight.id === selectedFlightId,
+    [flight.id, selectedFlightId],
+  );
+  console.log(isActive);
   return (
     <div
       className={classNames(
-        'flex items-center gap-2 rounded-box border-2 p-1 text-sm lg:gap-4',
+        'flex items-center gap-2 rounded-box border-2 p-1 text-sm transition-shadow transition-transform hover:scale-[1.01] hover:cursor-pointer lg:gap-4',
+        isDarkMode
+          ? 'hover:shadow-[0_0px_15px_0_rgba(255,255,255,0.75)]'
+          : 'hover:shadow-[0_0px_15px_0_rgba(0,0,0,0.25)]',
         theme === AppTheme.LOFI
           ? CARD_COLORS_LOFI[flight.delayStatus]
           : CARD_COLORS[flight.delayStatus],
@@ -36,6 +49,11 @@ export const FlightRow = ({
           : CARD_BORDER_COLORS[flight.delayStatus],
         className,
       )}
+      onClick={event => {
+        if ((event.target as HTMLElement).tagName !== 'A') {
+          onFlightClick?.();
+        }
+      }}
       {...props}
     >
       <div className="flex h-full flex-[3] flex-col overflow-hidden sm:flex-[2]">

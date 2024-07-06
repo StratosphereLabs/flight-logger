@@ -18,7 +18,7 @@ import {
 import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { PlaneSolidIcon } from '../../../../common/components';
 import { darkModeStyle } from '../../../../common/mapStyle';
-import { AppTheme, useThemeStore } from '../../../../stores';
+import { useIsDarkMode } from '../../../../stores';
 import { type MapCardFormData } from './MapCard';
 import type { FilteredMapData, MapCoords, MapFlight } from './types';
 
@@ -68,7 +68,7 @@ export const GoogleMap = ({
   useEffect(() => {
     setTimeout(() => heatmap?.setData(heatmapData));
   }, [heatmap, heatmapData]);
-  const { theme } = useThemeStore();
+  const isDarkMode = useIsDarkMode();
   const mapOptions = useMemo(
     () => ({
       center,
@@ -78,21 +78,11 @@ export const GoogleMap = ({
       zoomControl: false,
       streetViewControl: false,
       gestureHandling: 'greedy',
-      styles:
-        theme === AppTheme.DARK ||
-        theme === AppTheme.NIGHT ||
-        theme === AppTheme.SUNSET
-          ? darkModeStyle
-          : undefined,
+      styles: isDarkMode ? darkModeStyle : undefined,
     }),
-    [center, theme],
+    [center, isDarkMode],
   );
-  const aircraftColor =
-    theme === AppTheme.DARK ||
-    theme === AppTheme.NIGHT ||
-    theme === AppTheme.SUNSET
-      ? 'text-blue-500'
-      : 'text-[#0000ff]';
+  const aircraftColor = isDarkMode ? 'text-blue-500' : 'text-[#0000ff]';
   return isLoaded ? (
     <GoogleMapComponent
       mapContainerClassName="rounded-box"
