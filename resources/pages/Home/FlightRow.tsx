@@ -39,7 +39,7 @@ export const FlightRow = ({
       {...props}
     >
       <div className="flex h-full flex-[3] flex-col overflow-hidden sm:flex-[2]">
-        <div className="flex flex-1 flex-col gap-2 lg:flex-row">
+        <div className="flex flex-1 flex-col gap-x-2 lg:flex-row">
           <Avatar shapeClassName="w-4 h-4 lg:w-6 lg:h-6 rounded-full">
             <img alt={flight.user.username} src={flight.user.avatar} />
           </Avatar>
@@ -85,7 +85,7 @@ export const FlightRow = ({
           </Link>
         </div>
       </div>
-      <div className="flex h-full flex-[3] flex-col justify-center overflow-hidden">
+      <div className="flex h-full flex-[3] flex-col justify-start overflow-hidden">
         <div className="flex flex-wrap items-center gap-x-3">
           <div className="font-mono text-lg font-semibold">
             {flight.departureAirport.iata}
@@ -109,7 +109,7 @@ export const FlightRow = ({
             : flight.departureAirport.countryId}
         </div>
       </div>
-      <div className="flex h-full flex-[3] flex-col justify-center overflow-hidden">
+      <div className="flex h-full flex-[3] flex-col justify-start overflow-hidden">
         <div className="flex flex-wrap items-center gap-x-3">
           <div className="font-mono text-lg font-semibold">
             {flight.arrivalAirport.iata}
