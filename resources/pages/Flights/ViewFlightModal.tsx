@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
 import { RightArrowIcon } from '../../common/components';
+import { FlightChangelogTable } from '../Home/FlightChangelogTable';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export const ViewFlightModal = (): JSX.Element => {
@@ -26,6 +27,7 @@ export const ViewFlightModal = (): JSX.Element => {
           onClick: onClose,
         },
       ]}
+      className="w-[95%] max-w-[750px] px-2 sm:px-6"
       onClose={onClose}
       open={isViewDialogOpen}
       title=""
@@ -95,6 +97,9 @@ export const ViewFlightModal = (): JSX.Element => {
           </div>
         </div>
       </div>
+      {activeFlight !== null ? (
+        <FlightChangelogTable className="mt-12" flight={activeFlight} />
+      ) : null}
     </Modal>
   );
 };
