@@ -1,3 +1,5 @@
+import type { FlightChangeField } from '@prisma/client';
+
 export const DIGIT_REGEX = /[0-9]/g;
 export const PASSWORD_REQUIREMENT_REGEX =
   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,255}$/;
@@ -17,3 +19,42 @@ export const TIME_FORMAT_12H = 'h:mm aaa';
 export const TIME_FORMAT_24H = 'HH:mm';
 
 export const EARTH_RADIUS_NM = 3440.065;
+
+export const CHANGE_FIELD_TEXT_MAP: Partial<Record<FlightChangeField, string>> =
+  {
+    DEPARTURE_AIRPORT: 'Departure Airport',
+    ARRIVAL_AIRPORT: 'Arrival Airport',
+    DIVERSION_AIRPORT: 'Diversion Airport',
+    AIRLINE: 'Airline',
+    OPERATOR_AIRLINE: 'Operator Airline',
+    FLIGHT_NUMBER: 'Flight No.',
+    AIRCRAFT_TYPE: 'Aircraft Type',
+    TAIL_NUMBER: 'Airframe',
+    CLASS: 'Class',
+    SEAT_NUMBER: 'Seat No.',
+    SEAT_POSITION: 'Seat Position',
+    REASON: 'Reason',
+    COMMENTS: 'Comments',
+    OUT_TIME: 'Departure Time',
+    OFF_TIME: 'Takeoff Time',
+    ON_TIME: 'Landing Time',
+    IN_TIME: 'Arrival Time',
+    OUT_TIME_ACTUAL: 'Departure Time (actual)',
+    OFF_TIME_ACTUAL: 'Takeoff Time (actual)',
+    ON_TIME_ACTUAL: 'Landing Time (actual)',
+    IN_TIME_ACTUAL: 'Arrival Time (actual)',
+    DEPARTURE_GATE: 'Departure Gate',
+    DEPARTURE_TERMINAL: 'Departure Terminal',
+    ARRIVAL_GATE: 'Arrival Gate',
+    ARRIVAL_TERMINAL: 'Arrival Terminal',
+    ARRIVAL_BAGGAGE: 'Arrival Baggage',
+  };
+
+export const CHANGE_FIELD_ESTIMATED_TEXT_MAP: Partial<
+  Record<FlightChangeField, string>
+> = {
+  OUT_TIME_ACTUAL: 'Departure Time (est.)',
+  OFF_TIME_ACTUAL: 'Takeoff Time (est.)',
+  ON_TIME_ACTUAL: 'Landing Time (est.)',
+  IN_TIME_ACTUAL: 'Arrival Time (est.)',
+};

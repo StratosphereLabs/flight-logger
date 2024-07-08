@@ -16,7 +16,7 @@ import {
   RightArrowIcon,
 } from '../../common/components';
 import { darkModeStyle } from '../../common/mapStyle';
-import { AppTheme, useThemeStore } from '../../stores';
+import { useIsDarkMode } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { type ProfilePageNavigationState } from '../Profile';
 import { DEFAULT_COORDINATES } from './constants';
@@ -27,13 +27,14 @@ export const FollowingMapCard = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
+  const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
     null,
   );
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
-  const { theme } = useThemeStore();
+  const isDarkMode = useIsDarkMode();
   const options = useMemo(
     () => ({
       center,
@@ -43,23 +44,13 @@ export const FollowingMapCard = (): JSX.Element => {
       zoomControl: false,
       streetViewControl: false,
       gestureHandling: 'greedy',
-      styles:
-        theme === AppTheme.DARK ||
-        theme === AppTheme.NIGHT ||
-        theme === AppTheme.SUNSET
-          ? darkModeStyle
-          : undefined,
+      styles: isDarkMode ? darkModeStyle : undefined,
     }),
-    [center, theme],
+    [center, isDarkMode],
   );
   const aircraftColor = useMemo(
-    () =>
-      theme === AppTheme.DARK ||
-      theme === AppTheme.NIGHT ||
-      theme === AppTheme.SUNSET
-        ? 'text-blue-500'
-        : 'text-[#0000ff]',
-    [theme],
+    () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
+    [isDarkMode],
   );
   const { data, isLoading } = trpc.flights.getFollowingFlights.useQuery(
     undefined,
@@ -207,7 +198,17 @@ export const FollowingMapCard = (): JSX.Element => {
             <div className="flex flex-col gap-2 p-2">
               <div className="text-center font-semibold">En Route</div>
               {data.currentFlights.map(flight => (
-                <FlightRow key={flight.id} flight={flight} />
+                <FlightRow
+                  key={flight.id}
+                  flight={flight}
+                  onFlightClick={() => {
+                    setSelectedFlightId(flight.id);
+                  }}
+                  onFlightClose={() => {
+                    setSelectedFlightId(null);
+                  }}
+                  selectedFlightId={selectedFlightId}
+                />
               ))}
             </div>
           ) : null}
@@ -215,7 +216,17 @@ export const FollowingMapCard = (): JSX.Element => {
             <div className="flex flex-col gap-2 p-2">
               <div className="text-center font-semibold">Scheduled</div>
               {data.upcomingFlights.map(flight => (
-                <FlightRow key={flight.id} flight={flight} />
+                <FlightRow
+                  key={flight.id}
+                  flight={flight}
+                  onFlightClick={() => {
+                    setSelectedFlightId(flight.id);
+                  }}
+                  onFlightClose={() => {
+                    setSelectedFlightId(null);
+                  }}
+                  selectedFlightId={selectedFlightId}
+                />
               ))}
             </div>
           ) : null}
@@ -223,7 +234,17 @@ export const FollowingMapCard = (): JSX.Element => {
             <div className="flex flex-col gap-2 p-2">
               <div className="text-center font-semibold">Arrived</div>
               {data.completedFlights.map(flight => (
-                <FlightRow key={flight.id} flight={flight} />
+                <FlightRow
+                  key={flight.id}
+                  flight={flight}
+                  onFlightClick={() => {
+                    setSelectedFlightId(flight.id);
+                  }}
+                  onFlightClose={() => {
+                    setSelectedFlightId(null);
+                  }}
+                  selectedFlightId={selectedFlightId}
+                />
               ))}
             </div>
           ) : null}

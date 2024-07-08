@@ -148,10 +148,14 @@ model flight_update {
   id                 String                 @id @default(uuid()) @db.Uuid
   flightId           String                 @db.Uuid
   changedByUserId    Int?
+  departureAirportId String?
+  arrivalAirportId   String?
   createdAt          DateTime               @default(now())
   flight             flight                 @relation(fields: [flightId], references: [id], onDelete: Cascade)
   changes            flight_update_change[]
   changedByUser      user?                  @relation(fields: [changedByUserId], references: [id])
+  departureAirport   airport?               @relation("departureFlightUpdates", fields: [departureAirportId], references: [id])
+  arrivalAirport     airport?               @relation("arrivalFlightUpdates", fields: [arrivalAirportId], references: [id])
 }
 
 model flight_update_change {
@@ -222,7 +226,7 @@ model airline {
 }
 
 model airport {
-  id                        String             @id
+  id                        String                  @id
   type                      String
   name                      String
   lat                       Float
@@ -238,13 +242,15 @@ model airport {
   gps                       String
   iata                      String
   local                     String
-  country                   country            @relation(fields: [countryId], references: [id])
-  region                    region             @relation(fields: [regionId], references: [id])
-  arrivalFlights            flight[]           @relation("arrivalFlights")
-  departureFlights          flight[]           @relation("departureFlights")
-  diversionFlights          flight[]           @relation("diversionFlights")
-  arrivalItineraryFlights   itinerary_flight[] @relation("arrivalItineraryFlights")
-  departureItineraryFlights itinerary_flight[] @relation("departureItineraryFlights")
+  country                   country                 @relation(fields: [countryId], references: [id])
+  region                    region                  @relation(fields: [regionId], references: [id])
+  arrivalFlights            flight[]                @relation("arrivalFlights")
+  departureFlights          flight[]                @relation("departureFlights")
+  diversionFlights          flight[]                @relation("diversionFlights")
+  arrivalItineraryFlights   itinerary_flight[]      @relation("arrivalItineraryFlights")
+  departureItineraryFlights itinerary_flight[]      @relation("departureItineraryFlights")
+  arrivalFlightUpdates      flight_update[]         @relation("arrivalFlightUpdates")
+  departureFlightUpdates    flight_update[]         @relation("departureFlightUpdates")
 }
 
 model country {

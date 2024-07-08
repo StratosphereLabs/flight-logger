@@ -14,6 +14,12 @@ export enum AppTheme {
   WINTER = 'winter',
 }
 
+export const DARK_MODE_THEMES = [
+  AppTheme.DARK,
+  AppTheme.NIGHT,
+  AppTheme.SUNSET,
+];
+
 interface ThemeState {
   theme: AppTheme;
   setTheme: (theme: AppTheme) => void;
@@ -47,6 +53,11 @@ export const useThemeStore = create<ThemeState>()(
     },
   ),
 );
+
+export const useIsDarkMode = (): boolean => {
+  const { theme } = useThemeStore();
+  return DARK_MODE_THEMES.includes(theme);
+};
 
 useThemeStore.subscribe(({ theme }) => {
   document.getElementsByTagName('html')[0].setAttribute('data-theme', theme);

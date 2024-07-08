@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
 import { RightArrowIcon } from '../../common/components';
-import { trpc } from '../../utils/trpc';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export const ViewFlightModal = (): JSX.Element => {
@@ -18,16 +17,6 @@ export const ViewFlightModal = (): JSX.Element => {
       );
     }
   }, [flightId, navigate, setIsViewDialogOpen, username]);
-  const { data, isLoading } = trpc.flights.getFlightChangelog.useInfiniteQuery(
-    {
-      id: activeFlight?.id ?? '',
-      limit: 5,
-    },
-    {
-      enabled: activeFlight !== null,
-    },
-  );
-  console.log({ data, isLoading });
   return (
     <Modal
       actionButtons={[

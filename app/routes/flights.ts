@@ -35,6 +35,7 @@ import {
   getDurationString,
   getFlightTimes,
   getFlightTimestamps,
+  getFlightUpdateChangeWithData,
   parsePaginationRequest,
   transformFlightData,
   getFromDate,
@@ -75,6 +76,16 @@ export const flightsRouter = router({
           },
           include: {
             changes: true,
+            departureAirport: {
+              select: {
+                timeZone: true,
+              },
+            },
+            arrivalAirport: {
+              select: {
+                timeZone: true,
+              },
+            },
           },
           orderBy: {
             createdAt: 'desc',
@@ -101,110 +112,12 @@ export const flightsRouter = router({
                 })
               : null;
           for (const change of flightUpdate.changes) {
-            switch (change.field) {
-              case 'AIRCRAFT_TYPE': {
-                const oldAircraft =
-                  change.oldValue !== null
-                    ? await prisma.aircraft_type.findUnique({
-                        where: {
-                          id: change.oldValue,
-                        },
-                      })
-                    : null;
-                const newAircraft =
-                  change.newValue !== null
-                    ? await prisma.aircraft_type.findUnique({
-                        where: {
-                          id: change.newValue,
-                        },
-                      })
-                    : null;
-                changesWithData.push({
-                  ...change,
-                  oldValue: oldAircraft,
-                  newValue: newAircraft,
-                });
-                break;
-              }
-              case 'ARRIVAL_AIRPORT':
-              case 'DEPARTURE_AIRPORT':
-              case 'DIVERSION_AIRPORT': {
-                const oldAirport =
-                  change.oldValue !== null
-                    ? await prisma.airport.findUnique({
-                        where: {
-                          id: change.oldValue,
-                        },
-                      })
-                    : null;
-                const newAirport =
-                  change.newValue !== null
-                    ? await prisma.airport.findUnique({
-                        where: {
-                          id: change.newValue,
-                        },
-                      })
-                    : null;
-                changesWithData.push({
-                  ...change,
-                  oldValue: oldAirport,
-                  newValue: newAirport,
-                });
-                break;
-              }
-              case 'AIRLINE':
-              case 'OPERATOR_AIRLINE': {
-                const oldAirline =
-                  change.oldValue !== null
-                    ? await prisma.airline.findUnique({
-                        where: {
-                          id: change.oldValue,
-                        },
-                      })
-                    : null;
-                const newAirline =
-                  change.newValue !== null
-                    ? await prisma.airline.findUnique({
-                        where: {
-                          id: change.newValue,
-                        },
-                      })
-                    : null;
-                changesWithData.push({
-                  ...change,
-                  oldValue: oldAirline,
-                  newValue: newAirline,
-                });
-                break;
-              }
-              case 'TAIL_NUMBER': {
-                const oldAirframe =
-                  change.oldValue !== null
-                    ? await prisma.airframe.findFirst({
-                        where: {
-                          registration: change.oldValue,
-                        },
-                      })
-                    : null;
-                const newAirframe =
-                  change.newValue !== null
-                    ? await prisma.airframe.findFirst({
-                        where: {
-                          registration: change.newValue,
-                        },
-                      })
-                    : null;
-                changesWithData.push({
-                  ...change,
-                  oldValue: oldAirframe ?? change.oldValue,
-                  newValue: newAirframe ?? change.newValue,
-                });
-                break;
-              }
-              default:
-                changesWithData.push(change);
-                break;
-            }
+            changesWithData.push(
+              await getFlightUpdateChangeWithData(
+                change,
+                flightUpdate.createdAt,
+              ),
+            );
           }
           return {
             ...flightUpdate,

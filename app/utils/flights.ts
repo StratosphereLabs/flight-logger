@@ -1,12 +1,13 @@
-import {
-  type FlightRadarStatus,
-  type aircraft_type,
-  type airframe,
-  type airline,
-  type airport,
-  type flight,
-  type region,
-  type user,
+import type {
+  flight_update_change,
+  FlightRadarStatus,
+  aircraft_type,
+  airframe,
+  airline,
+  airport,
+  flight,
+  region,
+  user,
 } from '@prisma/client';
 import {
   add,
@@ -20,6 +21,11 @@ import {
   sub,
 } from 'date-fns';
 import groupBy from 'lodash.groupby';
+import {
+  CHANGE_FIELD_ESTIMATED_TEXT_MAP,
+  CHANGE_FIELD_TEXT_MAP,
+} from '../constants';
+import { prisma } from '../db';
 import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
@@ -134,6 +140,10 @@ export type CurrentFlightDataResult = FlightTimeDataResult & {
   estimatedLocation: Coordinates;
   estimatedHeading: number;
 };
+
+export type FlightUpdateChangeWithData = Awaited<
+  ReturnType<typeof getFlightUpdateChangeWithData>
+>;
 
 const FLIGHT_STATUS_MAP: Record<FlightRadarStatus, string> = {
   SCHEDULED: 'Scheduled',
@@ -409,4 +419,148 @@ export const getToDate = (input: GetProfileFiltersRequest): Date => {
     return new Date(input.toDate);
   }
   return new Date();
+};
+
+export const getFlightUpdateChangeWithData = async (
+  change: flight_update_change,
+  createdAt: Date,
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+) => {
+  switch (change.field) {
+    case 'AIRCRAFT_TYPE': {
+      const oldAircraft =
+        change.oldValue !== null
+          ? await prisma.aircraft_type.findUnique({
+              where: {
+                id: change.oldValue,
+              },
+            })
+          : null;
+      const newAircraft =
+        change.newValue !== null
+          ? await prisma.aircraft_type.findUnique({
+              where: {
+                id: change.newValue,
+              },
+            })
+          : null;
+      return {
+        ...change,
+        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
+        oldValue: oldAircraft,
+        newValue: newAircraft,
+      };
+    }
+    case 'ARRIVAL_AIRPORT':
+    case 'DEPARTURE_AIRPORT':
+    case 'DIVERSION_AIRPORT': {
+      const oldAirport =
+        change.oldValue !== null
+          ? await prisma.airport.findUnique({
+              where: {
+                id: change.oldValue,
+              },
+            })
+          : null;
+      const newAirport =
+        change.newValue !== null
+          ? await prisma.airport.findUnique({
+              where: {
+                id: change.newValue,
+              },
+            })
+          : null;
+      return {
+        ...change,
+        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
+        oldValue: oldAirport,
+        newValue: newAirport,
+      };
+    }
+    case 'AIRLINE':
+    case 'OPERATOR_AIRLINE': {
+      const oldAirline =
+        change.oldValue !== null
+          ? await prisma.airline.findUnique({
+              where: {
+                id: change.oldValue,
+              },
+            })
+          : null;
+      const newAirline =
+        change.newValue !== null
+          ? await prisma.airline.findUnique({
+              where: {
+                id: change.newValue,
+              },
+            })
+          : null;
+      return {
+        ...change,
+        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
+        oldValue: oldAirline,
+        newValue: newAirline,
+      };
+    }
+    case 'TAIL_NUMBER': {
+      const oldAirframe =
+        change.oldValue !== null
+          ? await prisma.airframe.findFirst({
+              where: {
+                registration: change.oldValue,
+              },
+            })
+          : null;
+      const newAirframe =
+        change.newValue !== null
+          ? await prisma.airframe.findFirst({
+              where: {
+                registration: change.newValue,
+              },
+            })
+          : null;
+      return {
+        ...change,
+        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
+        oldValue:
+          {
+            ...oldAirframe,
+            builtDate: oldAirframe?.builtDate?.toISOString() ?? null,
+            registrationDate:
+              oldAirframe?.registrationDate?.toISOString() ?? null,
+            registrationExprDate:
+              oldAirframe?.registrationExprDate?.toISOString() ?? null,
+          } ?? change.oldValue,
+        newValue:
+          {
+            ...newAirframe,
+            builtDate: newAirframe?.builtDate?.toISOString() ?? null,
+            registrationDate:
+              newAirframe?.registrationDate?.toISOString() ?? null,
+            registrationExprDate:
+              newAirframe?.registrationExprDate?.toISOString() ?? null,
+          } ?? change.newValue,
+      };
+    }
+    case 'IN_TIME_ACTUAL':
+    case 'ON_TIME_ACTUAL':
+    case 'OFF_TIME_ACTUAL':
+    case 'OUT_TIME_ACTUAL': {
+      const timeValue = change.newValue ?? change.oldValue;
+      return {
+        ...change,
+        fieldText:
+          timeValue !== null
+            ? isAfter(createdAt, new Date(timeValue))
+              ? CHANGE_FIELD_TEXT_MAP[change.field]
+              : CHANGE_FIELD_ESTIMATED_TEXT_MAP[change.field]
+            : null,
+      };
+    }
+    default:
+      return {
+        ...change,
+        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
+      };
+  }
 };
