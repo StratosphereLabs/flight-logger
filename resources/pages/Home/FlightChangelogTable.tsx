@@ -1,4 +1,5 @@
 import { getCoreRowModel } from '@tanstack/react-table';
+import classNames from 'classnames';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
@@ -10,10 +11,12 @@ import { DATE_FORMAT, TIME_FORMAT_12H } from './constants';
 import { FlightChangeValue } from './FlightChangeValue';
 
 export interface FlightChangelogTableProps {
+  className?: string;
   flight: FlightsRouterOutput['getFollowingFlights']['completedFlights'][number];
 }
 
 export const FlightChangelogTable = ({
+  className,
   flight,
 }: FlightChangelogTableProps): JSX.Element => {
   const navigate = useNavigate();
@@ -29,7 +32,12 @@ export const FlightChangelogTable = ({
       },
     );
   return (
-    <div className="flex w-full flex-col items-center gap-1">
+    <div
+      className={classNames(
+        'flex w-full flex-col items-center gap-1',
+        className,
+      )}
+    >
       {isLoading ? <Loading /> : null}
       {data !== undefined ? (
         <>

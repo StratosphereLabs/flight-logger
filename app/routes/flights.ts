@@ -208,9 +208,9 @@ export const flightsRouter = router({
           }),
         ]);
       return {
-        upcomingFlights: upcomingFlights.map(transformFlightData),
-        currentFlights: currentFlights.map(transformFlightData),
-        completedFlights: completedFlights.map(transformFlightData),
+        upcomingFlights: upcomingFlights.map(transformCurrentFlightData),
+        currentFlights: currentFlights.map(transformCurrentFlightData),
+        completedFlights: completedFlights.map(transformCurrentFlightData),
         total:
           upcomingFlights.length +
           currentFlights.length +
@@ -671,7 +671,6 @@ export const flightsRouter = router({
           message: 'Flight not found.',
         });
       }
-      return transformFlightData(updatedFlight);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
