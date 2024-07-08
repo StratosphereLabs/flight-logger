@@ -10,6 +10,10 @@ export const updateFlightChangeData = async (
   updatedData: Partial<flight>,
   userId?: number,
 ): Promise<void> => {
+  const departureAirportId =
+    updatedData.departureAirportId ?? flights[0].departureAirportId;
+  const arrivalAirportId =
+    updatedData.arrivalAirportId ?? flights[0].arrivalAirportId;
   const flightUpdates: Record<
     string,
     Array<Omit<flight_update_change, 'id' | 'updateId'>>
@@ -17,11 +21,11 @@ export const updateFlightChangeData = async (
   for (const flight of flights) {
     for (const [key, value] of Object.entries(updatedData)) {
       if (!getIsEqual(flight[key as keyof flight], value)) {
-        if (flightUpdates[flight.id] === undefined) {
-          flightUpdates[flight.id] = [];
-        }
         const getUpdate = FLIGHT_CHANGE_GETTER_MAP[key as keyof flight];
         if (getUpdate !== undefined) {
+          if (flightUpdates[flight.id] === undefined) {
+            flightUpdates[flight.id] = [];
+          }
           flightUpdates[flight.id].push(getUpdate(flight, updatedData));
         }
       }
@@ -34,6 +38,8 @@ export const updateFlightChangeData = async (
         data: {
           flightId,
           changedByUserId: userId ?? null,
+          departureAirportId,
+          arrivalAirportId,
         },
       });
       await prisma.flight_update_change.createMany({

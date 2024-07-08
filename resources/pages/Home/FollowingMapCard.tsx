@@ -204,6 +204,9 @@ export const FollowingMapCard = (): JSX.Element => {
                   onFlightClick={() => {
                     setSelectedFlightId(flight.id);
                   }}
+                  onFlightClose={() => {
+                    setSelectedFlightId(null);
+                  }}
                   selectedFlightId={selectedFlightId}
                 />
               ))}
@@ -219,6 +222,9 @@ export const FollowingMapCard = (): JSX.Element => {
                   onFlightClick={() => {
                     setSelectedFlightId(flight.id);
                   }}
+                  onFlightClose={() => {
+                    setSelectedFlightId(null);
+                  }}
                   selectedFlightId={selectedFlightId}
                 />
               ))}
@@ -233,6 +239,9 @@ export const FollowingMapCard = (): JSX.Element => {
                   flight={flight}
                   onFlightClick={() => {
                     setSelectedFlightId(flight.id);
+                  }}
+                  onFlightClose={() => {
+                    setSelectedFlightId(null);
                   }}
                   selectedFlightId={selectedFlightId}
                 />
