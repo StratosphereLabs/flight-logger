@@ -65,6 +65,17 @@ export const FollowingMapCard = (): JSX.Element => {
   useEffect(() => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint]);
+  useEffect(() => {
+    const listener: (this: Window, ev: KeyboardEvent) => void = event => {
+      if (event.key === 'Escape') {
+        setSelectedFlightId(null);
+      }
+    };
+    window.addEventListener('keydown', listener);
+    return () => {
+      window.removeEventListener('keydown', listener);
+    };
+  }, []);
   return (
     <Card className="relative max-w-[1000px] flex-1 rounded-none bg-base-100 sm:rounded-box">
       <div className="pointer-events-auto absolute left-2 top-2 z-10 flex min-w-[150px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">

@@ -3,10 +3,10 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { getDurationDays, getInFuture } from './datetime';
 import {
-  type CurrentFlightDataResult,
   type FlightData,
+  type TransformFlightDataResult,
   flightIncludeObj,
-  transformCurrentFlightData,
+  transformFlightData,
 } from './flights';
 import { excludeKeys } from './server';
 
@@ -38,7 +38,7 @@ export interface TripResult extends trip {
   tripDuration: string;
   outDateISO: string;
   inFuture: boolean;
-  flights: CurrentFlightDataResult[];
+  flights: TransformFlightDataResult[];
   link: string;
 }
 
@@ -66,6 +66,6 @@ export const transformTripData = (trip: TripWithData): TripResult => ({
     DATE_FORMAT_ISO,
   ),
   inFuture: getInFuture(trip.outTime),
-  flights: trip.flights.map(transformCurrentFlightData),
+  flights: trip.flights.map(transformFlightData),
   link: `/user/${trip.user.username}/trips/${trip.id}`,
 });

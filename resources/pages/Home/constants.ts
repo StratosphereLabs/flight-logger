@@ -6,3 +6,5 @@ export const DEFAULT_COORDINATES = {
 export const TIME_FORMAT_12H = 'h:mm aaa';
 
 export const DATE_FORMAT = 'MMM d, yyyy';
+
+export const CHANGELOG_PAGE_SIZE = 10;

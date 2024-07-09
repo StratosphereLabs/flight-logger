@@ -2,7 +2,6 @@ import type {
   airport,
   aircraft_type,
   airline,
-  airframe,
   FlightChangeField,
 } from '@prisma/client';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -43,14 +42,6 @@ export const FlightChangeValue = ({
       const data = value as unknown as airline | null;
       return data !== null ? (
         <div className={className}>{data.iata}</div>
-      ) : null;
-    }
-    case 'TAIL_NUMBER': {
-      const data = value as unknown as airframe | string | null;
-      return data !== null ? (
-        <div className={className}>
-          {typeof data === 'object' ? data.registration : data}
-        </div>
       ) : null;
     }
     case 'OUT_TIME':

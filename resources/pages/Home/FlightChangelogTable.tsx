@@ -7,7 +7,7 @@ import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import viteIcon from '../../../resources/assets/vite.svg';
 import { TimeIcon } from '../../common/components';
 import { trpc } from '../../utils/trpc';
-import { DATE_FORMAT, TIME_FORMAT_12H } from './constants';
+import { CHANGELOG_PAGE_SIZE, DATE_FORMAT, TIME_FORMAT_12H } from './constants';
 import { FlightChangeValue } from './FlightChangeValue';
 
 export interface FlightChangelogTableProps {
@@ -24,7 +24,7 @@ export const FlightChangelogTable = ({
     trpc.flights.getFlightChangelog.useInfiniteQuery(
       {
         id: flight.id,
-        limit: 5,
+        limit: CHANGELOG_PAGE_SIZE,
       },
       {
         getNextPageParam: ({ metadata }) =>
@@ -41,7 +41,7 @@ export const FlightChangelogTable = ({
       {isLoading ? <Loading /> : null}
       {data !== undefined ? (
         <>
-          <div>Flight Changelog</div>
+          <div>Event Log</div>
           <Table
             className="table-fixed"
             cellClassNames={{
@@ -119,7 +119,7 @@ export const FlightChangelogTable = ({
                             {change.fieldText}
                           </div>
                           <div className="flex flex-1 gap-1 text-error">
-                            -
+                            {change.oldValue !== null ? '-' : ''}
                             <FlightChangeValue
                               field={change.field}
                               flightData={row.original}
@@ -127,7 +127,7 @@ export const FlightChangelogTable = ({
                             />
                           </div>
                           <div className="flex flex-1 gap-1 font-semibold text-success">
-                            +
+                            {change.newValue !== null ? '+' : ''}
                             <FlightChangeValue
                               field={change.field}
                               flightData={row.original}
@@ -142,6 +142,7 @@ export const FlightChangelogTable = ({
               },
             ]}
             data={data.pages.flatMap(({ results }) => results)}
+            enableRowHover
             enableSorting={false}
             getCoreRowModel={getCoreRowModel()}
             hideHeader

@@ -12,12 +12,7 @@ import {
   fetchFlightsByFlightNumberSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import {
-  flightIncludeObj,
-  getDurationMinutes,
-  getFlightTimestamps,
-  transformFlightData,
-} from '../utils';
+import { getDurationMinutes, getFlightTimestamps } from '../utils';
 
 export const flightDataRouter = router({
   fetchFlightsByFlightNumber: procedure
@@ -204,19 +199,6 @@ export const flightDataRouter = router({
         },
       });
       await updateFlightRegistrationData([newFlight]);
-      const updatedFlight = await prisma.flight.findUnique({
-        where: {
-          id: newFlight.id,
-        },
-        include: flightIncludeObj,
-      });
-      if (updatedFlight === null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Flight not found.',
-        });
-      }
-      return transformFlightData(updatedFlight);
     }),
 });
 
