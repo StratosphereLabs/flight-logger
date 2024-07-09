@@ -1,2 +1,2 @@
-export * from './CurrentFlightCard';
+export * from './ActiveFlightCard';
 export * from './FlightsCard';

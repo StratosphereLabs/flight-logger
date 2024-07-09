@@ -23,7 +23,7 @@ import {
 import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 
-export const CurrentFlightCard = (): JSX.Element | null => {
+export const ActiveFlightCard = (): JSX.Element | null => {
   const utils = trpc.useUtils();
   const enabled = useProfilePage();
   const { username } = useParams();
@@ -32,7 +32,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
   const onError = useTRPCErrorHandler();
   const [isDeleteFlightModalOpen, setIsDeleteFlightModalOpen] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
-  const { data, isLoading } = trpc.flights.getUserCurrentFlight.useQuery(
+  const { data, isLoading } = trpc.flights.getUserActiveFlight.useQuery(
     {
       username,
     },
@@ -47,7 +47,7 @@ export const CurrentFlightCard = (): JSX.Element | null => {
       onSuccess: () => {
         handleSuccess('Flight Deleted');
         setIsDeleteFlightModalOpen(false);
-        void utils.flights.getUserCurrentFlight.invalidate();
+        void utils.flights.getUserActiveFlight.invalidate();
         void utils.flights.getFollowingFlights.invalidate();
         void utils.statistics.getCounts.invalidate();
       },

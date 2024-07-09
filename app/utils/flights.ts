@@ -1,5 +1,4 @@
 import type {
-  flight_update_change,
   FlightRadarStatus,
   aircraft_type,
   airframe,
@@ -21,11 +20,6 @@ import {
   sub,
 } from 'date-fns';
 import groupBy from 'lodash.groupby';
-import {
-  CHANGE_FIELD_ESTIMATED_TEXT_MAP,
-  CHANGE_FIELD_TEXT_MAP,
-} from '../constants';
-import { prisma } from '../db';
 import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
@@ -101,7 +95,7 @@ export interface HeatmapResult extends LatLng {
 
 export interface FlightsResult extends Array<FlightWithAirports> {}
 
-export interface FlightTimeDataResult
+export interface TransformFlightDataResult
   extends Omit<FlightData, 'user'>,
     FlightTimestampsResult {
   user: {
@@ -118,9 +112,6 @@ export interface FlightTimeDataResult
   distance: number;
   flightNumberString: string;
   link: string;
-}
-
-export type CurrentFlightDataResult = FlightTimeDataResult & {
   minutesToDeparture: number;
   minutesToTakeoff: number;
   minutesToArrival: number;
@@ -139,11 +130,7 @@ export type CurrentFlightDataResult = FlightTimeDataResult & {
   delayStatus: FlightDelayStatus;
   estimatedLocation: Coordinates;
   estimatedHeading: number;
-};
-
-export type FlightUpdateChangeWithData = Awaited<
-  ReturnType<typeof getFlightUpdateChangeWithData>
->;
+}
 
 const FLIGHT_STATUS_MAP: Record<FlightRadarStatus, string> = {
   SCHEDULED: 'Scheduled',
@@ -201,7 +188,7 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
 
 export const transformFlightData = (
   flight: FlightData,
-): FlightTimeDataResult => {
+): TransformFlightDataResult => {
   const timestamps = getFlightTimestamps({
     flightRadarStatus: flight.flightRadarStatus,
     departureTimeZone: flight.departureAirport.timeZone,
@@ -218,37 +205,6 @@ export const transformFlightData = (
     flight.arrivalAirport.lat,
     flight.arrivalAirport.lon,
   );
-  return {
-    ...flight,
-    ...timestamps,
-    user: {
-      avatar: fetchGravatarUrl(flight.user.email),
-      ...excludeKeys(
-        flight.user,
-        'admin',
-        'password',
-        'id',
-        'pushNotifications',
-        'passwordResetToken',
-        'passwordResetAt',
-      ),
-    },
-    tailNumber: flight.airframe?.registration ?? flight.tailNumber,
-    flightNumberString:
-      flight.flightNumber !== null
-        ? `${flight.airline?.iata ?? flight.airline?.icao ?? ''} ${
-            flight.flightNumber
-          }`.trim()
-        : '',
-    distance: Math.round(flightDistance),
-    link: `/user/${flight.user.username}/flights/${flight.id}`,
-  };
-};
-
-export const transformCurrentFlightData = (
-  flightData: FlightData,
-): CurrentFlightDataResult => {
-  const flight = transformFlightData(flightData);
   const departureTime = flight.outTimeActual ?? flight.outTime;
   const arrivalTime = flight.inTimeActual ?? flight.inTime;
   const runwayDepartureTime =
@@ -312,7 +268,7 @@ export const transformCurrentFlightData = (
             : 'ARRIVED';
   const flightStatus =
     FLIGHT_STATUS_MAP[flight.flightRadarStatus ?? estimatedStatus];
-  const distanceTraveled = flightProgress * flight.distance;
+  const distanceTraveled = flightProgress * flightDistance;
   const initialHeading = getBearing(
     flight.departureAirport.lat,
     flight.departureAirport.lon,
@@ -335,13 +291,38 @@ export const transformCurrentFlightData = (
     flight.flightRadarStatus === 'CANCELED'
       ? 'canceled'
       : progress > 0
-        ? flight.arrivalDelayStatus
-        : flight.departureDelayStatus;
+        ? timestamps.arrivalDelayStatus
+        : timestamps.departureDelayStatus;
   const delayValue =
-    progress > 0 ? flight.arrivalDelayValue : flight.departureDelayValue;
-  const delay = progress > 0 ? flight.arrivalDelay : flight.departureDelay;
+    progress > 0
+      ? timestamps.arrivalDelayValue
+      : timestamps.departureDelayValue;
+  const delay =
+    progress > 0 ? timestamps.arrivalDelay : timestamps.departureDelay;
   return {
     ...flight,
+    ...timestamps,
+    user: {
+      avatar: fetchGravatarUrl(flight.user.email),
+      ...excludeKeys(
+        flight.user,
+        'admin',
+        'password',
+        'id',
+        'pushNotifications',
+        'passwordResetToken',
+        'passwordResetAt',
+      ),
+    },
+    tailNumber: flight.airframe?.registration ?? flight.tailNumber,
+    flightNumberString:
+      flight.flightNumber !== null
+        ? `${flight.airline?.iata ?? flight.airline?.icao ?? ''} ${
+            flight.flightNumber
+          }`.trim()
+        : '',
+    distance: Math.round(flightDistance),
+    link: `/user/${flight.user.username}/flights/${flight.id}`,
     minutesToDeparture,
     minutesToTakeoff,
     minutesToArrival,
@@ -363,7 +344,7 @@ export const transformCurrentFlightData = (
   };
 };
 
-export const getCurrentFlight = (
+export const getActiveFlight = (
   flights: FlightData[],
 ): FlightData | undefined =>
   flights.find((currentFlight, index, allFlights) => {
@@ -419,148 +400,4 @@ export const getToDate = (input: GetProfileFiltersRequest): Date => {
     return new Date(input.toDate);
   }
   return new Date();
-};
-
-export const getFlightUpdateChangeWithData = async (
-  change: flight_update_change,
-  createdAt: Date,
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-) => {
-  switch (change.field) {
-    case 'AIRCRAFT_TYPE': {
-      const oldAircraft =
-        change.oldValue !== null
-          ? await prisma.aircraft_type.findUnique({
-              where: {
-                id: change.oldValue,
-              },
-            })
-          : null;
-      const newAircraft =
-        change.newValue !== null
-          ? await prisma.aircraft_type.findUnique({
-              where: {
-                id: change.newValue,
-              },
-            })
-          : null;
-      return {
-        ...change,
-        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
-        oldValue: oldAircraft,
-        newValue: newAircraft,
-      };
-    }
-    case 'ARRIVAL_AIRPORT':
-    case 'DEPARTURE_AIRPORT':
-    case 'DIVERSION_AIRPORT': {
-      const oldAirport =
-        change.oldValue !== null
-          ? await prisma.airport.findUnique({
-              where: {
-                id: change.oldValue,
-              },
-            })
-          : null;
-      const newAirport =
-        change.newValue !== null
-          ? await prisma.airport.findUnique({
-              where: {
-                id: change.newValue,
-              },
-            })
-          : null;
-      return {
-        ...change,
-        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
-        oldValue: oldAirport,
-        newValue: newAirport,
-      };
-    }
-    case 'AIRLINE':
-    case 'OPERATOR_AIRLINE': {
-      const oldAirline =
-        change.oldValue !== null
-          ? await prisma.airline.findUnique({
-              where: {
-                id: change.oldValue,
-              },
-            })
-          : null;
-      const newAirline =
-        change.newValue !== null
-          ? await prisma.airline.findUnique({
-              where: {
-                id: change.newValue,
-              },
-            })
-          : null;
-      return {
-        ...change,
-        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
-        oldValue: oldAirline,
-        newValue: newAirline,
-      };
-    }
-    case 'TAIL_NUMBER': {
-      const oldAirframe =
-        change.oldValue !== null
-          ? await prisma.airframe.findFirst({
-              where: {
-                registration: change.oldValue,
-              },
-            })
-          : null;
-      const newAirframe =
-        change.newValue !== null
-          ? await prisma.airframe.findFirst({
-              where: {
-                registration: change.newValue,
-              },
-            })
-          : null;
-      return {
-        ...change,
-        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
-        oldValue:
-          {
-            ...oldAirframe,
-            builtDate: oldAirframe?.builtDate?.toISOString() ?? null,
-            registrationDate:
-              oldAirframe?.registrationDate?.toISOString() ?? null,
-            registrationExprDate:
-              oldAirframe?.registrationExprDate?.toISOString() ?? null,
-          } ?? change.oldValue,
-        newValue:
-          {
-            ...newAirframe,
-            builtDate: newAirframe?.builtDate?.toISOString() ?? null,
-            registrationDate:
-              newAirframe?.registrationDate?.toISOString() ?? null,
-            registrationExprDate:
-              newAirframe?.registrationExprDate?.toISOString() ?? null,
-          } ?? change.newValue,
-      };
-    }
-    case 'IN_TIME_ACTUAL':
-    case 'ON_TIME_ACTUAL':
-    case 'OFF_TIME_ACTUAL':
-    case 'OUT_TIME_ACTUAL': {
-      const timeValue = change.newValue ?? change.oldValue;
-      return {
-        ...change,
-        fieldText:
-          timeValue !== null
-            ? isAfter(createdAt, new Date(timeValue))
-              ? CHANGE_FIELD_TEXT_MAP[change.field]
-              : CHANGE_FIELD_ESTIMATED_TEXT_MAP[change.field]
-            : null,
-      };
-    }
-    default:
-      return {
-        ...change,
-        fieldText: CHANGE_FIELD_TEXT_MAP[change.field],
-      };
-  }
 };

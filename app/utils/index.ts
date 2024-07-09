@@ -6,6 +6,7 @@ export * from './distance';
 export * from './email';
 export * from './flights';
 export * from './flighttime';
+export * from './flightUpdates';
 export * from './flighty';
 export * from './itineraries';
 export * from './pagination';

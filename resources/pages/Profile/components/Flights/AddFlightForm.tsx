@@ -75,7 +75,7 @@ export const AddFlightForm = (): JSX.Element => {
           setSelectedFlight(null);
           void utils.users.invalidate();
           void utils.statistics.getCounts.invalidate();
-          void utils.flights.getUserCurrentFlight.invalidate();
+          void utils.flights.getUserActiveFlight.invalidate();
           void utils.flights.getFollowingFlights.invalidate();
         }
       },

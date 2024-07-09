@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import {
-  CurrentFlightCard,
+  ActiveFlightCard,
   FlightsCard,
   MapCard,
   StatisticsCard,
@@ -43,7 +43,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
             setIsMapFullScreen={setIsMapFullScreen}
           />
         </div>
-        <CurrentFlightCard />
+        <ActiveFlightCard />
         <div
           className={classNames(
             'flex flex-col items-start gap-4',

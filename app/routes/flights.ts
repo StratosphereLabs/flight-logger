@@ -25,26 +25,25 @@ import {
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
-  type CurrentFlightDataResult,
   type FlightDataWithTimestamps,
+  type TransformFlightDataResult,
   calculateCenterPoint,
   excludeKeys,
   fetchGravatarUrl,
   flightIncludeObj,
-  getCurrentFlight,
+  getActiveFlight,
   getDurationString,
   getFlightTimes,
   getFlightTimestamps,
   getFlightUpdateChangeWithData,
-  parsePaginationRequest,
-  transformFlightData,
   getFromDate,
   getToDate,
   getCenterpoint,
   getHeatmap,
   getPaginatedResponse,
   getRoutes,
-  transformCurrentFlightData,
+  parsePaginationRequest,
+  transformFlightData,
 } from '../utils';
 
 export const flightsRouter = router({
@@ -208,9 +207,9 @@ export const flightsRouter = router({
           }),
         ]);
       return {
-        upcomingFlights: upcomingFlights.map(transformCurrentFlightData),
-        currentFlights: currentFlights.map(transformCurrentFlightData),
-        completedFlights: completedFlights.map(transformCurrentFlightData),
+        upcomingFlights: upcomingFlights.map(transformFlightData),
+        currentFlights: currentFlights.map(transformFlightData),
+        completedFlights: completedFlights.map(transformFlightData),
         total:
           upcomingFlights.length +
           currentFlights.length +
@@ -313,7 +312,7 @@ export const flightsRouter = router({
         count,
       };
     }),
-  getUserCurrentFlight: procedure
+  getUserActiveFlight: procedure
     .input(getUserSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
@@ -360,9 +359,9 @@ export const flightsRouter = router({
           outTime: 'asc',
         },
       });
-      const flight = getCurrentFlight(flights);
+      const flight = getActiveFlight(flights);
       if (flight === undefined) return null;
-      return transformCurrentFlightData(flight);
+      return transformFlightData(flight);
     }),
   getUserCurrentRoute: procedure
     .input(getUserSchema)
@@ -387,7 +386,7 @@ export const flightsRouter = router({
           outTime: 'asc',
         },
       });
-      const currentFlight = getCurrentFlight(flights);
+      const currentFlight = getActiveFlight(flights);
       if (currentFlight === undefined) return [];
       const sortedFlights = flights.reduce<{
         completedFlights: FlightDataWithTimestamps[];
@@ -528,9 +527,9 @@ export const flightsRouter = router({
       });
       const result: {
         airports: Record<string, airport>;
-        completedFlights: CurrentFlightDataResult[];
-        currentFlights: CurrentFlightDataResult[];
-        upcomingFlights: CurrentFlightDataResult[];
+        completedFlights: TransformFlightDataResult[];
+        currentFlights: TransformFlightDataResult[];
+        upcomingFlights: TransformFlightDataResult[];
       } = {
         airports: {},
         completedFlights: [],
@@ -538,7 +537,7 @@ export const flightsRouter = router({
         upcomingFlights: [],
       };
       for (const flightResult of flights) {
-        const flight = transformCurrentFlightData(flightResult);
+        const flight = transformFlightData(flightResult);
         if (flight.flightStatus === 'Scheduled' || flight.flightStatus === '') {
           result.upcomingFlights.push(flight);
         } else if (flight.flightStatus === 'Arrived') {
@@ -833,7 +832,7 @@ export const flightsRouter = router({
         include: flightIncludeObj,
       });
       await updateTripTimes(deletedFlight.tripId);
-      return transformFlightData(deletedFlight);
+      return deletedFlight.id;
     }),
 });
 

@@ -78,16 +78,15 @@ export const MapCard = ({
   });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
-  const { data: currentFlightData } =
-    trpc.flights.getUserCurrentFlight.useQuery(
-      {
-        username,
-      },
-      {
-        enabled,
-        onError,
-      },
-    );
+  const { data: currentFlightData } = trpc.flights.getUserActiveFlight.useQuery(
+    {
+      username,
+    },
+    {
+      enabled,
+      onError,
+    },
+  );
   const { data: countData, isFetching: isCountsFetching } =
     trpc.statistics.getCounts.useQuery({
       username,
