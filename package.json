@@ -72,6 +72,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
+    "react-intersection-observer": "^9.10.3",
     "react-router-dom": "^6.21.1",
     "reflect-metadata": "^0.2.1",
     "resium": "^1.17.2",
