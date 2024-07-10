@@ -85,7 +85,6 @@ export const GoogleMap = ({
   const aircraftColor = isDarkMode ? 'text-blue-500' : 'text-[#0000ff]';
   return isLoaded ? (
     <GoogleMapComponent
-      mapContainerClassName="rounded-box"
       mapContainerStyle={{
         height: '100%',
         width: '100%',
@@ -123,7 +122,7 @@ export const GoogleMap = ({
                         hasSelectedRoute || selectedAirportId === null
                           ? 1
                           : 0.2,
-                      scale: isActive ? 5 : 4,
+                      scale: isActive ? 4.5 : 3.5,
                       strokeColor: 'black',
                       strokeWeight: isActive ? 2 : 1.5,
                       strokeOpacity:
@@ -153,7 +152,7 @@ export const GoogleMap = ({
                   : isCompleted && (!showUpcoming || showCompleted)
                     ? 'red'
                     : 'white',
-                strokeWeight: isActive ? 3 : 1.5,
+                strokeWeight: isActive ? 2 : 1.5,
                 zIndex: isActive ? 10 : inFuture ? 5 : undefined,
                 geodesic: true,
               }}

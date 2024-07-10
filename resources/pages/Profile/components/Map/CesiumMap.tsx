@@ -57,9 +57,6 @@ export const CesiumMap = ({
       }}
       resolutionScale={2}
       scene3DOnly
-      style={{
-        borderRadius: '1rem',
-      }}
       timeline={false}
     >
       {data.routes?.map(
@@ -82,7 +79,7 @@ export const CesiumMap = ({
                   Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
                   Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
                 ],
-                width: isActive ? 3 : 1.5,
+                width: isActive ? 2 : 1.5,
                 zIndex: isActive ? 10 : inFuture ? 5 : undefined,
               }}
             />
@@ -114,7 +111,7 @@ export const CesiumMap = ({
                 hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
               ),
               outlineWidth: isActive ? 1.5 : 1,
-              pixelSize: isActive ? 6 : 5,
+              pixelSize: isActive ? 5 : 4,
             }}
           />
         );
