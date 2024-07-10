@@ -1,7 +1,8 @@
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { format, formatDistanceToNow } from 'date-fns';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
@@ -10,8 +11,6 @@ import { CollapseIcon, ExpandIcon, TimeIcon } from '../../common/components';
 import { trpc } from '../../utils/trpc';
 import {
   DATE_FORMAT,
-  DEFAULT_CONTAINER_HEIGHT,
-  DEFAULT_EXPANDED_CONTAINER_HEIGHT,
   DEFAULT_EXPANDED_PAGE_SIZE,
   DEFAULT_PAGE_SIZE,
   TIME_FORMAT_12H,
@@ -21,9 +20,7 @@ import { FlightChangeValue } from './FlightChangeValue';
 export interface FlightChangelogTableProps {
   className?: string;
   containerClassName?: string;
-  containerHeight?: number;
   expandedContainerClassName?: string;
-  expandedContainerHeight?: number;
   expandedPageSize?: number;
   flight: FlightsRouterOutput['getFollowingFlights']['completedFlights'][number];
   pageSize?: number;
@@ -32,15 +29,12 @@ export interface FlightChangelogTableProps {
 export const FlightChangelogTable = ({
   className,
   containerClassName,
-  containerHeight,
   expandedContainerClassName,
-  expandedContainerHeight,
   expandedPageSize,
   flight,
   pageSize,
 }: FlightChangelogTableProps): JSX.Element | null => {
   const navigate = useNavigate();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [keepPreviousData, setKeepPreviousData] = useState(false);
   const limit = useMemo(
@@ -52,11 +46,11 @@ export const FlightChangelogTable = ({
   );
   const {
     data,
+    fetchNextPage,
     isFetching,
     isFetchingNextPage,
     isLoading,
     hasNextPage,
-    fetchNextPage,
   } = trpc.flights.getFlightChangelog.useInfiniteQuery(
     {
       id: flight.id,
@@ -68,37 +62,23 @@ export const FlightChangelogTable = ({
       keepPreviousData,
     },
   );
-  const tableContainerHeight = useMemo(
-    () =>
-      isExpanded
-        ? expandedContainerHeight ?? DEFAULT_EXPANDED_CONTAINER_HEIGHT
-        : containerHeight ?? DEFAULT_CONTAINER_HEIGHT,
-    [containerHeight, expandedContainerHeight, isExpanded],
-  );
+  const { ref } = useInView({
+    skip: isFetching || hasNextPage !== true,
+    delay: 0,
+    onChange: async inView => {
+      if (inView) {
+        await fetchNextPage();
+      }
+    },
+  });
   useEffect(() => {
     if (!isFetching) {
       setKeepPreviousData(false);
     }
   }, [isFetching]);
   useEffect(() => {
-    if (data !== undefined) {
-      const scrollContainer = scrollContainerRef.current;
-      const callback = (event: Event): void => {
-        const target = event.target as HTMLDivElement;
-        const diff = tableContainerHeight + 25;
-        if (
-          target.scrollHeight - target.scrollTop <= diff &&
-          hasNextPage === true
-        ) {
-          void fetchNextPage();
-        }
-      };
-      scrollContainer?.addEventListener('scroll', callback);
-      return () => {
-        scrollContainer?.removeEventListener('scroll', callback);
-      };
-    }
-  }, [data, fetchNextPage, hasNextPage, tableContainerHeight]);
+    setIsExpanded(false);
+  }, [flight]);
   if (data !== undefined && data.pages[0].metadata.itemCount === 0) {
     return null;
   }
@@ -131,11 +111,11 @@ export const FlightChangelogTable = ({
             </Button>
           </div>
           <div
-            ref={scrollContainerRef}
             className={classNames(
               'flex flex-col gap-2 overflow-y-scroll',
-              isExpanded ? 'max-h-[550px]' : 'max-h-[200px]',
-              isExpanded ? expandedContainerClassName : containerClassName,
+              isExpanded
+                ? expandedContainerClassName ?? 'max-h-[550px]'
+                : containerClassName ?? 'max-h-[200px]',
             )}
           >
             <Table
@@ -244,12 +224,20 @@ export const FlightChangelogTable = ({
               hideHeader
               size="xs"
             />
-            {isFetchingNextPage ? (
-              <div className="flex w-full items-center justify-center gap-2 text-sm opacity-90">
-                <Loading size="xs" />
-                <span>Loading</span>
-              </div>
-            ) : null}
+            <div
+              ref={ref}
+              className={classNames(
+                'min-h-[20px] w-full justify-center',
+                hasNextPage === true ? 'flex' : 'hidden',
+              )}
+            >
+              {isFetchingNextPage ? (
+                <div className="flex gap-2 text-sm opacity-90">
+                  <Loading size="xs" />
+                  <span>Loading</span>
+                </div>
+              ) : null}
+            </div>
           </div>
         </>
       ) : null}
