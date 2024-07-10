@@ -162,11 +162,16 @@ export const MapCard = ({
   const mapCenterpoint =
     currentFlightData?.estimatedLocation ?? data?.centerpoint;
   useEffect(() => {
-    if (
-      selectedAirportId !== null &&
-      data?.airports.every(({ id }) => id !== selectedAirportId) === true
-    ) {
+    const selectedAirport = data?.airports.find(
+      ({ id }) => id === selectedAirportId,
+    );
+    if (selectedAirport === undefined) {
       setSelectedAirportId(null);
+    } else {
+      setCenter({
+        lat: selectedAirport.lat,
+        lng: selectedAirport.lon,
+      });
     }
   }, [data?.airports, selectedAirportId]);
   useEffect(() => {
@@ -179,8 +184,8 @@ export const MapCard = ({
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
           isMapFullScreen
-            ? 'h-[calc(100dvh-175px)]'
-            : 'h-[calc(100dvh-175px-185px)]',
+            ? 'min-h-[calc(100dvh-155px)]'
+            : 'min-h-[calc(100dvh-155px-205px)]',
         )}
       >
         {data !== undefined &&

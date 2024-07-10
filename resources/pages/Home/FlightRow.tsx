@@ -114,52 +114,54 @@ export const FlightRow = ({
             </Link>
           </div>
         </div>
-        <div className="flex h-full flex-[3] flex-col justify-start overflow-hidden">
-          <div className="flex flex-wrap items-center gap-x-3">
-            <div className="font-mono text-lg font-semibold">
-              {flight.departureAirport.iata}
+        <div className="flex h-full flex-[6] gap-2">
+          <div className="flex flex-1 flex-col justify-start overflow-hidden">
+            <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
+              <div className="font-mono text-lg font-semibold">
+                {flight.departureAirport.iata}
+              </div>
+              <FlightTimesDisplay
+                data={{
+                  delayStatus: flight.departureDelayStatus,
+                  actualValue: flight.outTimeActualValue,
+                  value: flight.outTimeValue,
+                  actualLocal: flight.outTimeActualLocal,
+                  local: flight.outTimeLocal,
+                  actualDaysAdded: flight.outTimeActualDaysAdded,
+                  daysAdded: 0,
+                }}
+              />
             </div>
-            <FlightTimesDisplay
-              data={{
-                delayStatus: flight.departureDelayStatus,
-                actualValue: flight.outTimeActualValue,
-                value: flight.outTimeValue,
-                actualLocal: flight.outTimeActualLocal,
-                local: flight.outTimeLocal,
-                actualDaysAdded: flight.outTimeActualDaysAdded,
-                daysAdded: 0,
-              }}
-            />
-          </div>
-          <div className="hidden truncate text-xs opacity-75 sm:block">
-            {flight.departureAirport.municipality},{' '}
-            {flight.departureAirport.countryId === 'US'
-              ? flight.departureAirport.region.name
-              : flight.departureAirport.countryId}
-          </div>
-        </div>
-        <div className="flex h-full flex-[3] flex-col justify-start overflow-hidden">
-          <div className="flex flex-wrap items-center gap-x-3">
-            <div className="font-mono text-lg font-semibold">
-              {flight.arrivalAirport.iata}
+            <div className="hidden truncate text-xs opacity-75 sm:block">
+              {flight.departureAirport.municipality},{' '}
+              {flight.departureAirport.countryId === 'US'
+                ? flight.departureAirport.region.name
+                : flight.departureAirport.countryId}
             </div>
-            <FlightTimesDisplay
-              data={{
-                delayStatus: flight.arrivalDelayStatus,
-                actualValue: flight.inTimeActualValue,
-                value: flight.inTimeValue,
-                actualLocal: flight.inTimeActualLocal,
-                local: flight.inTimeLocal,
-                actualDaysAdded: flight.inTimeActualDaysAdded,
-                daysAdded: flight.inTimeDaysAdded,
-              }}
-            />
           </div>
-          <div className="hidden truncate text-xs opacity-75 sm:block">
-            {flight.arrivalAirport.municipality},{' '}
-            {flight.arrivalAirport.countryId === 'US'
-              ? flight.arrivalAirport.region.name
-              : flight.arrivalAirport.countryId}
+          <div className="flex flex-1 flex-col justify-start overflow-hidden">
+            <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
+              <div className="font-mono text-lg font-semibold">
+                {flight.arrivalAirport.iata}
+              </div>
+              <FlightTimesDisplay
+                data={{
+                  delayStatus: flight.arrivalDelayStatus,
+                  actualValue: flight.inTimeActualValue,
+                  value: flight.inTimeValue,
+                  actualLocal: flight.inTimeActualLocal,
+                  local: flight.inTimeLocal,
+                  actualDaysAdded: flight.inTimeActualDaysAdded,
+                  daysAdded: flight.inTimeDaysAdded,
+                }}
+              />
+            </div>
+            <div className="hidden truncate text-xs opacity-75 sm:block">
+              {flight.arrivalAirport.municipality},{' '}
+              {flight.arrivalAirport.countryId === 'US'
+                ? flight.arrivalAirport.region.name
+                : flight.arrivalAirport.countryId}
+            </div>
           </div>
         </div>
         <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end justify-between overflow-hidden text-xs">
