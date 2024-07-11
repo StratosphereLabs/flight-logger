@@ -7,7 +7,7 @@ import type {
 import { formatInTimeZone } from 'date-fns-tz';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { type FlightUpdateChangeWithData } from '../../../app/utils';
-import { DATE_FORMAT, TIME_FORMAT_12H } from './constants';
+import { DATE_FORMAT, TIME_FORMAT_12H } from '../constants';
 
 export interface FlightChangeValueProps {
   className?: string;

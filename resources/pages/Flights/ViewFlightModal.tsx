@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
-import { RightArrowIcon } from '../../common/components';
-import { FlightChangelogTable } from '../Home/FlightChangelogTable';
+import { FlightChangelogTable, RightArrowIcon } from '../../common/components';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export const ViewFlightModal = (): JSX.Element => {
