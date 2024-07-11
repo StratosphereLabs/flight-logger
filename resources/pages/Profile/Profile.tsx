@@ -40,11 +40,11 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
         isMapFullScreen={isMapFullScreen}
         setIsMapFullScreen={setIsMapFullScreen}
       />
-      <div className="flex flex-1 flex-col gap-3 px-2 pb-2 pt-2 sm:px-3 sm:pb-3">
+      <div className="flex flex-1 flex-col gap-3 p-2 sm:p-3">
         <ActiveFlightCard />
         <div
           className={classNames(
-            'flex flex-col items-start gap-4',
+            'flex flex-col items-start gap-2 sm:gap-3',
             isAddingFlight ? 'lg:flex-col' : 'lg:flex-row',
           )}
         >

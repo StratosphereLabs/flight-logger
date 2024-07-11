@@ -7,15 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import viteIcon from '../../../resources/assets/vite.svg';
-import { CollapseIcon, ExpandIcon, TimeIcon } from '../../common/components';
 import { trpc } from '../../utils/trpc';
 import {
   DATE_FORMAT,
   DEFAULT_EXPANDED_PAGE_SIZE,
   DEFAULT_PAGE_SIZE,
   TIME_FORMAT_12H,
-} from './constants';
-import { FlightChangeValue } from './FlightChangeValue';
+} from '../constants';
+import { CollapseIcon, ExpandIcon, FlightChangeValue, TimeIcon } from '.';
 
 export interface FlightChangelogTableProps {
   className?: string;
@@ -92,10 +91,10 @@ export const FlightChangelogTable = ({
       {isLoading ? <Loading /> : null}
       {data !== undefined ? (
         <>
-          <div className="flex w-full justify-between">
-            <div />
-            <span>Event Log</span>
+          <div className="relative flex w-full justify-center">
+            <span className="mb-2">Event Log</span>
             <Button
+              className="absolute right-0"
               color="ghost"
               onClick={() => {
                 setKeepPreviousData(true);

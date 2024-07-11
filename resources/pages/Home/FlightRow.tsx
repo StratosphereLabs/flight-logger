@@ -3,7 +3,10 @@ import { useMemo, type HTMLProps } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Link } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { FlightTimesDisplay } from '../../common/components';
+import {
+  FlightChangelogTable,
+  FlightTimesDisplay,
+} from '../../common/components';
 import {
   CARD_BORDER_COLORS,
   CARD_BORDER_COLORS_LOFI,
@@ -12,7 +15,6 @@ import {
   TEXT_COLORS,
 } from '../../common/constants';
 import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
-import { FlightChangelogTable } from './FlightChangelogTable';
 
 export interface FlightRowProps extends HTMLProps<HTMLDivElement> {
   flight: FlightsRouterOutput['getFollowingFlights']['completedFlights'][number];
@@ -39,7 +41,7 @@ export const FlightRow = ({
   return (
     <div
       className={classNames(
-        'flex flex-col gap-2 rounded-box border-2 p-1 transition-shadow transition-transform',
+        'flex flex-col items-center gap-2 rounded-box border-2 p-1 transition-shadow transition-transform',
         !isActive && 'hover:scale-[1.01]',
         !isActive &&
           (isDarkMode
@@ -55,7 +57,7 @@ export const FlightRow = ({
       )}
     >
       <div
-        className="flex items-center gap-2 text-sm hover:cursor-pointer lg:gap-4"
+        className="flex w-full items-center gap-2 text-sm hover:cursor-pointer lg:gap-4"
         onClick={event => {
           if ((event.target as HTMLElement).tagName !== 'A') {
             if (isActive) {
