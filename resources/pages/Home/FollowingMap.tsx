@@ -207,7 +207,7 @@ export const FollowingMap = (): JSX.Element => {
       <div className="flex w-full justify-center sm:p-3">
         <Card className="max-w-[1000px] flex-1 rounded-none bg-base-100 sm:rounded-box">
           {isLoading ? (
-            <div className="flex flex-1 items-center justify-center">
+            <div className="flex flex-1 items-center justify-center p-3">
               <Loading />
             </div>
           ) : null}

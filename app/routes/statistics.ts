@@ -21,6 +21,7 @@ import {
 import { procedure, router } from '../trpc';
 import {
   calculateDistance,
+  filterCustomDates,
   getFromDate,
   getToDate,
   parsePaginationRequest,
@@ -33,55 +34,40 @@ export const statisticsRouter = router({
     }
     const fromDate = getFromDate(input);
     const toDate = getToDate(input);
-    const [userData, upcomingFlightCount] = await prisma.$transaction([
-      prisma.user.findUnique({
-        where: {
-          username: input?.username ?? ctx.user?.username,
-        },
-        include: {
-          _count: {
-            select: {
-              flights: {
-                where: {
-                  inTime: {
-                    gte: fromDate,
-                    lte: toDate,
-                  },
-                },
-              },
-              trips: {
-                where: {
-                  inTime: {
-                    gte: fromDate,
-                    lte: toDate,
-                  },
-                },
-              },
+    const userData = await prisma.user.findUnique({
+      where: {
+        username: input?.username ?? ctx.user?.username,
+      },
+      include: {
+        flights: {
+          where: {
+            outTime: {
+              gte: fromDate,
+              lte: toDate,
             },
           },
-        },
-      }),
-      prisma.flight.count({
-        where: {
-          user: {
-            username: input?.username ?? ctx.user?.username,
-          },
-          outTime: {
-            gt: new Date(),
+          select: {
+            departureAirport: {
+              select: {
+                timeZone: true,
+              },
+            },
+            outTime: true,
           },
         },
-      }),
-    ]);
+      },
+    });
     if (userData === null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'User not found.',
       });
     }
+    const completedFlightCount = userData.flights.filter(
+      filterCustomDates(input),
+    ).length;
     return {
-      completedFlightCount: userData._count.flights,
-      upcomingFlightCount,
-      tripCount: userData._count.trips,
+      completedFlightCount,
     };
   }),
   getTopRoutes: procedure
@@ -106,13 +92,15 @@ export const statisticsRouter = router({
           outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
+          outTime: true,
           departureAirport: true,
           arrivalAirport: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const { skip, take } = parsePaginationRequest(input);
       const routeDataMap: Record<string, RouteData> = {};
-      for (const flight of results) {
+      for (const flight of flights) {
         const key = input.cityPairs
           ? [flight.departureAirport.iata, flight.arrivalAirport.iata]
               .sort((a, b) => a.localeCompare(b))
@@ -150,15 +138,17 @@ export const statisticsRouter = router({
           outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
+          outTime: true,
           departureAirport: true,
           arrivalAirport: true,
           airline: true,
           duration: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const { skip, take } = parsePaginationRequest(input);
       const airlineDataMap: Record<string, AirlineData> = {};
-      for (const flight of results) {
+      for (const flight of flights) {
         if (flight.airline === null) continue;
         const key =
           flight.airline.iata !== null ? `${flight.airline.iata}/` : '';
@@ -218,13 +208,15 @@ export const statisticsRouter = router({
           outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
+          outTime: true,
           departureAirport: true,
           arrivalAirport: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const { skip, take } = parsePaginationRequest(input);
       const airportDataMap: Record<string, AirportData> = {};
-      for (const flight of results) {
+      for (const flight of flights) {
         if (input.mode === 'all' || input.mode === 'departure') {
           const departureAirportId = flight.departureAirport.id;
           if (airportDataMap[departureAirportId] === undefined) {
@@ -275,6 +267,7 @@ export const statisticsRouter = router({
           outTime: input.showUpcoming ? 'asc' : 'desc',
         },
         select: {
+          outTime: true,
           aircraftType: true,
           airframe: {
             select: {
@@ -286,9 +279,10 @@ export const statisticsRouter = router({
           duration: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const { skip, take } = parsePaginationRequest(input);
       const aircraftTypeDataMap: Record<string, AircraftTypeData> = {};
-      for (const flight of results) {
+      for (const flight of flights) {
         const aircraftType =
           flight.airframe?.aircraftType ?? flight.aircraftType;
         if (aircraftType === null) continue;
@@ -345,22 +339,26 @@ export const statisticsRouter = router({
           },
         },
         select: {
+          outTime: true,
           duration: true,
           departureAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           arrivalAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           reason: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const reasonDataMap: Record<string, ReasonData> = {
         LEISURE: {
           reason: 'Leisure',
@@ -386,7 +384,7 @@ export const statisticsRouter = router({
         duration,
         departureAirport,
         reason,
-      } of results) {
+      } of flights) {
         if (reason !== null) {
           const distance = calculateDistance(
             departureAirport.lat,
@@ -423,22 +421,26 @@ export const statisticsRouter = router({
           },
         },
         select: {
+          outTime: true,
           duration: true,
           departureAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           arrivalAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           seatPosition: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const seatPositionDataMap: Record<string, SeatPositionData> = {
         AISLE: {
           seatPosition: 'Aisle',
@@ -464,7 +466,7 @@ export const statisticsRouter = router({
         departureAirport,
         duration,
         seatPosition,
-      } of results) {
+      } of flights) {
         if (seatPosition !== null) {
           const distance = calculateDistance(
             departureAirport.lat,
@@ -501,22 +503,26 @@ export const statisticsRouter = router({
           },
         },
         select: {
+          outTime: true,
           duration: true,
           departureAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           arrivalAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           class: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const classDataMap: Record<string, ClassData> = {
         BASIC: {
           flightClass: 'Basic Economy',
@@ -554,7 +560,7 @@ export const statisticsRouter = router({
         class: flightClass,
         departureAirport,
         duration,
-      } of results) {
+      } of flights) {
         if (flightClass !== null) {
           const distance = calculateDistance(
             departureAirport.lat,
@@ -591,11 +597,13 @@ export const statisticsRouter = router({
           },
         },
         select: {
+          outTime: true,
           departureAirport: {
             select: {
               countryId: true,
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           arrivalAirport: {
@@ -603,11 +611,13 @@ export const statisticsRouter = router({
               countryId: true,
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           duration: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const flightTypeDataMap: Record<string, FlightTypeData> = {
         domestic: {
           id: 'Domestic',
@@ -620,7 +630,7 @@ export const statisticsRouter = router({
           value: 0,
         },
       };
-      for (const { departureAirport, arrivalAirport, duration } of results) {
+      for (const { departureAirport, arrivalAirport, duration } of flights) {
         const flightType =
           departureAirport.countryId === arrivalAirport.countryId
             ? 'domestic'
@@ -663,21 +673,25 @@ export const statisticsRouter = router({
           },
         },
         select: {
+          outTime: true,
           duration: true,
           departureAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
           arrivalAirport: {
             select: {
               lat: true,
               lon: true,
+              timeZone: true,
             },
           },
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       const flightLengthDataMap: Record<string, FlightLengthData> = {
         short: {
           flightLength: 'Short',
@@ -704,7 +718,7 @@ export const statisticsRouter = router({
           duration: 0,
         },
       };
-      for (const { departureAirport, duration, arrivalAirport } of results) {
+      for (const { departureAirport, duration, arrivalAirport } of flights) {
         const flightDistance = calculateDistance(
           departureAirport.lat,
           departureAirport.lon,
