@@ -14,11 +14,13 @@ import {
   endOfYear,
   isAfter,
   isBefore,
+  isEqual,
   min,
   startOfMonth,
   startOfYear,
   sub,
 } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
@@ -373,14 +375,17 @@ export const getFromDate = (
   if (input.range === 'customMonth') {
     const year = parseInt(input.year, 10);
     const month = parseInt(input.month, 10);
-    return startOfMonth(new Date(year, month - 1));
+    const monthStart = startOfMonth(new Date(year, month - 1));
+    return sub(monthStart, { days: 1 });
   }
   if (input.range === 'customYear') {
     const year = parseInt(input.year, 10);
-    return startOfYear(new Date(year, 0));
+    const yearStart = startOfYear(new Date(year, 0));
+    return sub(yearStart, { days: 1 });
   }
   if (input.range === 'customRange') {
-    return new Date(input.fromDate);
+    const fromDate = new Date(input.fromDate);
+    return sub(fromDate, { days: 1 });
   }
 };
 
@@ -388,16 +393,61 @@ export const getToDate = (input: GetProfileFiltersRequest): Date => {
   if (input.range === 'customMonth') {
     const year = parseInt(input.year, 10);
     const month = parseInt(input.month, 10);
-    const toDate = endOfMonth(new Date(year, month - 1));
+    const monthEnd = endOfMonth(new Date(year, month - 1));
+    const toDate = add(monthEnd, { days: 1 });
     return min([toDate, new Date()]);
   }
   if (input.range === 'customYear') {
     const year = parseInt(input.year, 10);
-    const toDate = endOfYear(new Date(year, 0));
+    const yearEnd = endOfYear(new Date(year, 0));
+    const toDate = add(yearEnd, { days: 1 });
     return min([toDate, new Date()]);
   }
   if (input.range === 'customRange') {
-    return new Date(input.toDate);
+    const toDate = new Date(input.toDate);
+    return add(toDate, { days: 1 });
   }
   return new Date();
 };
+
+export const filterCustomDates =
+  (input: GetProfileFiltersRequest) =>
+  (
+    flight: Pick<flight, 'outTime'> & {
+      departureAirport: Pick<airport, 'timeZone'>;
+    },
+  ): boolean => {
+    const departureTimeLocal = utcToZonedTime(
+      flight.outTime,
+      flight.departureAirport.timeZone,
+    );
+    const day = departureTimeLocal.getDate();
+    const month = departureTimeLocal.getMonth() + 1;
+    const year = departureTimeLocal.getFullYear();
+    switch (input.range) {
+      case 'customMonth': {
+        return month.toString() === input.month;
+      }
+      case 'customYear': {
+        return year.toString() === input.year;
+      }
+      case 'customRange': {
+        const flightDate = new Date(year, month - 1, day);
+        const [fromYear, fromMonth, fromDay] = input.fromDate
+          .split('-')
+          .map(val => parseInt(val, 10));
+        const [toYear, toMonth, toDay] = input.toDate
+          .split('-')
+          .map(val => parseInt(val, 10));
+        const fromDate = new Date(fromYear, fromMonth - 1, fromDay);
+        const toDate = new Date(toYear, toMonth - 1, toDay);
+        return (
+          isEqual(flightDate, fromDate) ||
+          isEqual(flightDate, toDate) ||
+          (isAfter(flightDate, fromDate) && isBefore(flightDate, toDate))
+        );
+      }
+      default:
+        return true;
+    }
+  };

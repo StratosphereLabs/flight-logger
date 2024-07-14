@@ -4,6 +4,7 @@ import { searchSchema } from '../schemas/search';
 import { procedure, router } from '../trpc';
 import { getAirportSchema, getAirportsSchema } from '../schemas';
 import {
+  filterCustomDates,
   getFromDate,
   getPaginatedResponse,
   getToDate,
@@ -72,30 +73,42 @@ export const airportsRouter = router({
           id,
         },
         include: {
-          _count: {
+          departureFlights: {
+            where: {
+              user: {
+                username,
+              },
+              outTime: {
+                gte: fromDate,
+                lte: toDate,
+              },
+            },
             select: {
-              departureFlights: {
-                where: {
-                  user: {
-                    username,
-                  },
-                  outTime: {
-                    gte: fromDate,
-                    lte: toDate,
-                  },
+              departureAirport: {
+                select: {
+                  timeZone: true,
                 },
               },
-              arrivalFlights: {
-                where: {
-                  user: {
-                    username,
-                  },
-                  outTime: {
-                    gte: fromDate,
-                    lte: toDate,
-                  },
+              outTime: true,
+            },
+          },
+          arrivalFlights: {
+            where: {
+              user: {
+                username,
+              },
+              outTime: {
+                gte: fromDate,
+                lte: toDate,
+              },
+            },
+            select: {
+              departureAirport: {
+                select: {
+                  timeZone: true,
                 },
               },
+              outTime: true,
             },
           },
         },
@@ -106,12 +119,13 @@ export const airportsRouter = router({
           message: 'Airport not found.',
         });
       }
+      const numFlights = [
+        ...airport.arrivalFlights,
+        ...airport.departureFlights,
+      ].filter(filterCustomDates(input)).length;
       return {
         ...airport,
-        numFlights:
-          input.showUpcoming || input.showCompleted
-            ? airport._count.departureFlights + airport._count.arrivalFlights
-            : 0,
+        numFlights,
       };
     }),
 });

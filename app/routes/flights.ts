@@ -30,6 +30,7 @@ import {
   calculateCenterPoint,
   excludeKeys,
   fetchGravatarUrl,
+  filterCustomDates,
   flightIncludeObj,
   getActiveFlight,
   getDurationString,
@@ -445,7 +446,7 @@ export const flightsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
-      const flights = await prisma.flight.findMany({
+      const results = await prisma.flight.findMany({
         where: {
           user: {
             username: input?.username ?? ctx.user?.username,
@@ -460,6 +461,7 @@ export const flightsRouter = router({
           arrivalAirport: true,
         },
       });
+      const flights = results.filter(filterCustomDates(input));
       return {
         centerpoint: getCenterpoint(flights),
         heatmap: getHeatmap(flights),

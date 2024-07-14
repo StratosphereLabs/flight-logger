@@ -70,6 +70,10 @@ export const FlightChangelogTable = ({
       }
     },
   });
+  const tableData = useMemo(
+    () => data?.pages.flatMap(({ results }) => results) ?? [],
+    [data?.pages],
+  );
   useEffect(() => {
     if (!isFetching) {
       setKeepPreviousData(false);
@@ -78,9 +82,6 @@ export const FlightChangelogTable = ({
   useEffect(() => {
     setIsExpanded(false);
   }, [flight]);
-  if (data !== undefined && data.pages[0].metadata.itemCount === 0) {
-    return null;
-  }
   return (
     <div
       className={classNames(
@@ -89,7 +90,7 @@ export const FlightChangelogTable = ({
       )}
     >
       {isLoading ? <Loading /> : null}
-      {data !== undefined ? (
+      {data !== undefined && tableData.length > 0 ? (
         <>
           <div className="relative flex w-full justify-center">
             <span className="mb-2">Event Log</span>
@@ -216,7 +217,7 @@ export const FlightChangelogTable = ({
                   },
                 },
               ]}
-              data={data.pages.flatMap(({ results }) => results)}
+              data={tableData}
               enableRowHover
               enableSorting={false}
               getCoreRowModel={getCoreRowModel()}
@@ -239,6 +240,9 @@ export const FlightChangelogTable = ({
             </div>
           </div>
         </>
+      ) : null}
+      {data !== undefined && tableData.length === 0 ? (
+        <div className="opacity-90">No events found</div>
       ) : null}
     </div>
   );
