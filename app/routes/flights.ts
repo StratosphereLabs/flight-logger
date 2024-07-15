@@ -195,7 +195,7 @@ export const flightsRouter = router({
           where: whereObj,
           include: flightIncludeObj,
           orderBy: {
-            outTime: 'desc',
+            outTime: input.status === 'upcoming' ? 'asc' : 'desc',
           },
           skip,
           take,
