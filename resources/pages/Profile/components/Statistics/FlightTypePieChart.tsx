@@ -22,19 +22,19 @@ export const FlightTypePieChart = ({
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
-  const [range, year, month, fromDate, toDate] = useWatch<
+  const [status, range, year, month, fromDate, toDate] = useWatch<
     ProfileFilterFormData,
-    ['range', 'year', 'month', 'fromDate', 'toDate']
+    ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
   >({
     control: filtersFormControl,
-    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+    name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
   });
   const { data, isFetching } =
     trpc.statistics.getFlightTypeDistribution.useQuery(
       {
         username,
         mode,
-        showUpcoming: false,
+        status,
         range,
         year,
         month,

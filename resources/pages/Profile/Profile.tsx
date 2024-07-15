@@ -25,8 +25,14 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
   };
   const [initialParams] = useState(searchParams);
   const [isAddingFlight, setIsAddingFlight] = useState(false);
+  const [isFlightsFullScreen, setIsFlightsFullScreen] = useState(
+    initialParams.get('isFlightsFullScreen') === 'true',
+  );
   const [isMapFullScreen, setIsMapFullScreen] = useState(
     initialParams.get('isMapFullScreen') === 'true',
+  );
+  const [isStatsFullScreen, setIsStatsFullScreen] = useState(
+    initialParams.get('isStatsFullScreen') === 'true',
   );
   useEffect(() => {
     if (state?.addFlight === true) {
@@ -49,10 +55,19 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
           )}
         >
           <FlightsCard
+            filtersFormControl={filtersFormControl}
             isAddingFlight={isAddingFlight}
+            isFlightsFullScreen={isFlightsFullScreen}
             setIsAddingFlight={setIsAddingFlight}
+            setIsFlightsFullScreen={setIsFlightsFullScreen}
           />
-          <StatisticsCard filtersFormControl={filtersFormControl} />
+          {!isFlightsFullScreen && (
+            <StatisticsCard
+              filtersFormControl={filtersFormControl}
+              isStatsFullScreen={isStatsFullScreen}
+              setIsStatsFullScreen={setIsStatsFullScreen}
+            />
+          )}
         </div>
       </div>
     </div>

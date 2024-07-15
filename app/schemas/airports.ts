@@ -4,8 +4,6 @@ import { profileFiltersSchema } from './users';
 
 export const getAirportSchema = profileFiltersSchema.extend({
   id: z.string().min(1, 'Required'),
-  showCompleted: z.boolean(),
-  showUpcoming: z.boolean(),
   username: z.string().trim().optional(),
 });
 

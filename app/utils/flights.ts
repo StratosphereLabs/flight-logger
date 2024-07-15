@@ -15,7 +15,6 @@ import {
   isAfter,
   isBefore,
   isEqual,
-  min,
   startOfMonth,
   startOfYear,
   sub,
@@ -88,11 +87,6 @@ export interface RouteResult {
   airports: [airport, airport];
   frequency: number;
   isCompleted: boolean;
-  inFuture: boolean;
-}
-
-export interface HeatmapResult extends LatLng {
-  inFuture: boolean;
 }
 
 export interface FlightsResult extends Array<FlightWithAirports> {}
@@ -160,15 +154,13 @@ export const getCenterpoint = (
     : { lat: 0, lng: 0 };
 };
 
-export const getHeatmap = (result?: FlightsResult): HeatmapResult[] =>
+export const getHeatmap = (result?: FlightsResult): LatLng[] =>
   result?.flatMap(flight => [
     {
-      inFuture: getInFuture(flight.outTime),
       lat: flight.departureAirport.lat,
       lng: flight.departureAirport.lon,
     },
     {
-      inFuture: getInFuture(flight.inTime),
       lat: flight.arrivalAirport.lat,
       lng: flight.arrivalAirport.lon,
     },
@@ -183,8 +175,7 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
   return Object.values(groupedFlights).map(flights => ({
     airports: [flights[0].departureAirport, flights[0].arrivalAirport],
     frequency: flights.length,
-    isCompleted: flights.some(({ outTime }) => !getInFuture(outTime)),
-    inFuture: flights.some(({ outTime }) => getInFuture(outTime)),
+    isCompleted: flights.some(({ inTime }) => !getInFuture(inTime)),
   }));
 };
 
@@ -394,20 +385,30 @@ export const getToDate = (input: GetProfileFiltersRequest): Date => {
     const year = parseInt(input.year, 10);
     const month = parseInt(input.month, 10);
     const monthEnd = endOfMonth(new Date(year, month - 1));
-    const toDate = add(monthEnd, { days: 1 });
-    return min([toDate, new Date()]);
+    return add(monthEnd, { days: 1 });
   }
   if (input.range === 'customYear') {
     const year = parseInt(input.year, 10);
     const yearEnd = endOfYear(new Date(year, 0));
-    const toDate = add(yearEnd, { days: 1 });
-    return min([toDate, new Date()]);
+    return add(yearEnd, { days: 1 });
   }
   if (input.range === 'customRange') {
     const toDate = new Date(input.toDate);
     return add(toDate, { days: 1 });
   }
   return new Date();
+};
+
+export const getFromStatusDate = (
+  input: GetProfileFiltersRequest,
+): Date | undefined => {
+  return input.status === 'upcoming' ? new Date() : undefined;
+};
+
+export const getToStatusDate = (
+  input: GetProfileFiltersRequest,
+): Date | undefined => {
+  return input.status === 'completed' ? new Date() : undefined;
 };
 
 export const filterCustomDates =

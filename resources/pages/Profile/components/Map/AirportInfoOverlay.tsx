@@ -8,31 +8,26 @@ import { type ProfileFilterFormData } from '../../hooks';
 export interface AirportInfoOverlayProps {
   airportId: string | null;
   filtersFormControl: Control<ProfileFilterFormData>;
-  showCompleted: boolean;
-  showUpcoming: boolean;
 }
 
 export const AirportInfoOverlay = ({
   airportId,
   filtersFormControl,
-  showCompleted,
-  showUpcoming,
 }: AirportInfoOverlayProps): JSX.Element | null => {
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
-  const [range, year, month, fromDate, toDate] = useWatch<
+  const [status, range, year, month, fromDate, toDate] = useWatch<
     ProfileFilterFormData,
-    ['range', 'year', 'month', 'fromDate', 'toDate']
+    ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
   >({
     control: filtersFormControl,
-    name: ['range', 'year', 'month', 'fromDate', 'toDate'],
+    name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
   });
   const { data, isFetching } = trpc.airports.getAirport.useQuery(
     {
       id: airportId ?? '',
-      showCompleted,
-      showUpcoming,
       username,
+      status,
       range,
       year,
       month,

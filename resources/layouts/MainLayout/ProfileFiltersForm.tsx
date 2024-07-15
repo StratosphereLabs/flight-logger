@@ -59,8 +59,8 @@ export const ProfileFiltersForm = ({
           getItemText={({ label }) => label}
           name="year"
           options={[...Array(75).keys()].map((_, index) => ({
-            id: `${currentDate.getFullYear() - index}`,
-            label: `${currentDate.getFullYear() - index}`,
+            id: `${currentDate.getFullYear() - index + 1}`,
+            label: `${currentDate.getFullYear() - index + 1}`,
           }))}
           menuClassName="w-[150px] right-0 menu-sm sm:menu-md max-h-[200px] overflow-y-scroll flex-nowrap"
         />
@@ -98,6 +98,31 @@ export const ProfileFiltersForm = ({
           {
             id: 'customRange',
             label: 'Custom Range',
+          },
+        ]}
+        menuClassName="w-[175px] right-0 menu-sm sm:menu-md"
+      />
+      <Select
+        buttonProps={{
+          size: 'xs',
+          color: 'neutral',
+        }}
+        className="w-[120px]"
+        formValueMode="id"
+        getItemText={({ label }) => label}
+        name="status"
+        options={[
+          {
+            id: 'completed',
+            label: 'Completed',
+          },
+          {
+            id: 'upcoming',
+            label: 'Upcoming',
+          },
+          {
+            id: 'all',
+            label: 'All',
           },
         ]}
         menuClassName="w-[175px] right-0 menu-sm sm:menu-md"

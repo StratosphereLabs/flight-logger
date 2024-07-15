@@ -47,12 +47,9 @@ export const GoogleMap = ({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
-  const [showCompleted, showUpcoming, mapMode] = useWatch<
-    MapCardFormData,
-    ['mapShowCompleted', 'mapShowUpcoming', 'mapMode']
-  >({
+  const [mapMode] = useWatch<MapCardFormData, ['mapMode']>({
     control: methods.control,
-    name: ['mapShowCompleted', 'mapShowUpcoming', 'mapMode'],
+    name: ['mapMode'],
   });
   const [heatmap, setHeatmap] =
     useState<google.maps.visualization.HeatmapLayer | null>(null);
@@ -138,7 +135,7 @@ export const GoogleMap = ({
         );
       })}
       {data.routes?.map(
-        ({ airports, isCompleted, inFuture, isHover, isSelected }, index) => {
+        ({ airports, isCompleted, isHover, isSelected }, index) => {
           const isActive = isSelected || isHover;
           return (
             <PolylineF
@@ -147,13 +144,9 @@ export const GoogleMap = ({
               options={{
                 strokeOpacity:
                   selectedAirportId === null || isSelected ? 0.75 : 0.1,
-                strokeColor: isActive
-                  ? 'blue'
-                  : isCompleted && (!showUpcoming || showCompleted)
-                    ? 'red'
-                    : 'white',
+                strokeColor: isActive ? 'blue' : isCompleted ? 'red' : 'white',
                 strokeWeight: isActive ? 2 : 1.5,
-                zIndex: isActive ? 10 : inFuture ? 5 : undefined,
+                zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
                 geodesic: true,
               }}
               path={[

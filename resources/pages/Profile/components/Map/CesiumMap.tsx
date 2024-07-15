@@ -1,9 +1,7 @@
 import { Cartesian3, Color, type Viewer as ViewerType } from 'cesium';
 import { useRef, type Dispatch, type SetStateAction, useEffect } from 'react';
-import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { type CesiumComponentRef, Entity, Viewer } from 'resium';
 import planeIconUrl from '../../../../assets/plane.svg';
-import { type MapCardFormData } from './MapCard';
 import type { FilteredMapData, MapCoords, MapFlight } from './types';
 
 export interface CesiumMapProps {
@@ -11,7 +9,6 @@ export interface CesiumMapProps {
   currentFlight?: MapFlight;
   data: FilteredMapData;
   hoverAirportId: string | null;
-  methods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
   setHoverAirportId: Dispatch<SetStateAction<string | null>>;
   setSelectedAirportId: Dispatch<SetStateAction<string | null>>;
@@ -22,19 +19,11 @@ export const CesiumMap = ({
   currentFlight,
   data,
   hoverAirportId,
-  methods,
   selectedAirportId,
   setSelectedAirportId,
   setHoverAirportId,
 }: CesiumMapProps): JSX.Element => {
   const viewerRef = useRef<CesiumComponentRef<ViewerType> | null>(null);
-  const [showCompleted, showUpcoming] = useWatch<
-    MapCardFormData,
-    ['mapShowCompleted', 'mapShowUpcoming']
-  >({
-    control: methods.control,
-    name: ['mapShowCompleted', 'mapShowUpcoming'],
-  });
   useEffect(() => {
     viewerRef.current?.cesiumElement?.camera.setView({
       destination: Cartesian3.fromDegrees(center.lng, center.lat, 10000000),
@@ -60,7 +49,7 @@ export const CesiumMap = ({
       timeline={false}
     >
       {data.routes?.map(
-        ({ airports, inFuture, isCompleted, isHover, isSelected }, index) => {
+        ({ airports, isCompleted, isHover, isSelected }, index) => {
           const isActive = isSelected || isHover;
           return (
             <Entity
@@ -68,11 +57,7 @@ export const CesiumMap = ({
               polyline={{
                 clampToGround: true,
                 material: Color.fromAlpha(
-                  isActive
-                    ? Color.BLUE
-                    : isCompleted && (!showUpcoming || showCompleted)
-                      ? Color.RED
-                      : Color.WHITE,
+                  isActive ? Color.BLUE : isCompleted ? Color.RED : Color.WHITE,
                   selectedAirportId === null || isSelected ? 0.75 : 0.1,
                 ),
                 positions: [
@@ -80,7 +65,7 @@ export const CesiumMap = ({
                   Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
                 ],
                 width: isActive ? 2 : 1.5,
-                zIndex: isActive ? 10 : inFuture ? 5 : undefined,
+                zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
               }}
             />
           );
