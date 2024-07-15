@@ -158,47 +158,58 @@ export const flightsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
+      const { limit, page, skip, take } = parsePaginationRequest(input);
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
       const fromStatusDate = getFromStatusDate(input);
       const toStatusDate = getToStatusDate(input);
-      const flights = await prisma.flight.findMany({
-        where: {
-          user: {
-            username: input?.username ?? ctx.user?.username,
-          },
-          tripId: input?.withTrip === false ? null : undefined,
-          outTime: {
-            gte: fromDate,
-            lte: toDate,
-          },
-          OR:
-            fromStatusDate !== undefined || toStatusDate !== undefined
-              ? [
-                  {
-                    inTime: {
-                      gte: fromStatusDate,
-                      lte: toStatusDate,
-                    },
-                  },
-                  {
-                    inTimeActual: {
-                      gte: fromStatusDate,
-                      lte: toStatusDate,
-                    },
-                  },
-                ]
-              : undefined,
+      const whereObj = {
+        user: {
+          username: input?.username ?? ctx.user?.username,
         },
-        include: flightIncludeObj,
-        orderBy: {
-          outTime: 'desc',
+        tripId: input?.withTrip === false ? null : undefined,
+        outTime: {
+          gte: fromDate,
+          lte: toDate,
         },
-      });
-      return {
-        flights: flights.map(transformFlightData),
-        total: flights.length,
+        OR:
+          fromStatusDate !== undefined || toStatusDate !== undefined
+            ? [
+                {
+                  inTime: {
+                    gte: fromStatusDate,
+                    lte: toStatusDate,
+                  },
+                },
+                {
+                  inTimeActual: {
+                    gte: fromStatusDate,
+                    lte: toStatusDate,
+                  },
+                },
+              ]
+            : undefined,
       };
+      const [flights, itemCount] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: flightIncludeObj,
+          orderBy: {
+            outTime: 'desc',
+          },
+          skip,
+          take,
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return getPaginatedResponse({
+        itemCount,
+        limit,
+        page,
+        results: flights.map(transformFlightData),
+      });
     }),
   getUserCompletedFlights: procedure
     .input(getUserProfileFlightsSchema)

@@ -1,7 +1,9 @@
+import classNames from 'classnames';
 import { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Button } from 'stratosphere-ui';
+import { Button, Loading } from 'stratosphere-ui';
 import { PlusIcon, UserFlightsTable } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import {
@@ -12,6 +14,7 @@ import {
 import { trpc } from '../../utils/trpc';
 import { type ProfileFilterFormData } from '../Profile/hooks';
 import { type TripsPageNavigationState } from '../Trips';
+import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';
 import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
@@ -44,9 +47,8 @@ export const Flights = ({
     state: FlightsPageNavigationState | null;
   };
   const navigate = useNavigate();
-  const { flightId, username } = useParams();
-  const { setActiveFlight, resetRowSelection, setIsViewDialogOpen } =
-    useFlightsPageStore();
+  const { username } = useParams();
+  const { resetRowSelection } = useFlightsPageStore();
   useEffect(() => {
     if (state?.createTrip === true) {
       setIsRowSelectEnabled(true);
@@ -61,7 +63,15 @@ export const Flights = ({
     control: filtersFormControl,
     name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
   });
-  const { data, isLoading, refetch } = trpc.flights.getUserFlights.useQuery(
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  } = trpc.flights.getUserFlights.useInfiniteQuery(
     {
       username,
       withTrip: !isRowSelectEnabled,
@@ -71,44 +81,68 @@ export const Flights = ({
       month,
       fromDate,
       toDate,
+      limit: FETCH_FLIGHTS_PAGE_SIZE,
     },
     {
       enabled,
+      getNextPageParam: ({ metadata }) =>
+        metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
       staleTime: 5 * 60 * 1000,
       onError,
     },
   );
-  useEffect(() => {
-    if (data !== undefined && flightId !== undefined) {
-      const flight = data.flights.find(({ id }) => flightId === id) ?? null;
-      setActiveFlight(flight);
-      setIsViewDialogOpen(true);
-    }
-  }, [data, flightId, setActiveFlight, setIsViewDialogOpen]);
+  const { ref } = useInView({
+    skip: isFetching || hasNextPage !== true,
+    delay: 0,
+    onChange: async inView => {
+      if (inView) {
+        await fetchNextPage();
+      }
+    },
+  });
   return (
     <div className="flex flex-1 flex-col gap-4">
       {isLoading ? (
-        <div className="flex flex-1 justify-center pt-8">
+        <div className="flex flex-1 justify-center py-6">
           <span className="loading loading-spinner" />
         </div>
       ) : null}
-      {!isLoading && data !== undefined && data.total > 0 ? (
-        <UserFlightsTable
-          className="table-xs shadow-sm sm:table-sm"
-          data={data.flights}
-          dateBadgeColor={({ outDateISO }) =>
-            outDateISO.split('-')[0] === new Date().getFullYear().toString()
-              ? 'info'
-              : 'secondary'
-          }
-          enableRowSelection={isRowSelectEnabled}
-          onCopyLink={({ link }) => {
-            copyToClipboard(`${APP_URL}${link}`, 'Link copied to clipboard!');
-          }}
-        />
+      {!isLoading &&
+      data !== undefined &&
+      data.pages[0].metadata.itemCount > 0 ? (
+        <>
+          <UserFlightsTable
+            className="shadow-sm"
+            data={data.pages.flatMap(({ results }) => results)}
+            dateBadgeColor={({ outDateISO }) =>
+              outDateISO.split('-')[0] === new Date().getFullYear().toString()
+                ? 'info'
+                : 'secondary'
+            }
+            enableRowSelection={isRowSelectEnabled}
+            onCopyLink={({ link }) => {
+              copyToClipboard(`${APP_URL}${link}`, 'Link copied to clipboard!');
+            }}
+            size="xs"
+          />
+          <div
+            ref={ref}
+            className={classNames(
+              'h-[20px] w-full justify-center',
+              hasNextPage === true ? 'flex' : 'hidden',
+            )}
+          >
+            {isFetchingNextPage ? (
+              <div className="flex gap-2 text-sm opacity-90">
+                <Loading size="xs" />
+                <span>Loading</span>
+              </div>
+            ) : null}
+          </div>
+        </>
       ) : null}
-      {!isLoading && data?.total === 0 ? (
-        <div className="mt-12 flex justify-center">
+      {!isLoading && data?.pages[0].metadata.itemCount === 0 ? (
+        <div className="my-6 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
             {username === undefined ? (
@@ -125,7 +159,7 @@ export const Flights = ({
           </div>
         </div>
       ) : null}
-      <DeleteFlightModal isRowSelectEnabled={isRowSelectEnabled} />
+      <DeleteFlightModal />
       <EditFlightModal onSuccess={async () => await refetch()} />
       <ViewFlightModal />
       <CreateTripModal

@@ -1,3 +1,5 @@
+export const FETCH_FLIGHTS_PAGE_SIZE = 20;
+
 export const editFlightDefaultValues = {
   id: '',
   departureAirport: null,

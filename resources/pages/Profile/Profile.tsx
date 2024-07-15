@@ -47,27 +47,31 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
         setIsMapFullScreen={setIsMapFullScreen}
       />
       <div className="flex flex-1 flex-col gap-3 p-2 sm:p-3">
-        <ActiveFlightCard />
+        {!isFlightsFullScreen && !isStatsFullScreen ? (
+          <ActiveFlightCard />
+        ) : null}
         <div
           className={classNames(
             'flex flex-col items-start gap-2 sm:gap-3',
             isAddingFlight ? 'lg:flex-col' : 'lg:flex-row',
           )}
         >
-          <FlightsCard
-            filtersFormControl={filtersFormControl}
-            isAddingFlight={isAddingFlight}
-            isFlightsFullScreen={isFlightsFullScreen}
-            setIsAddingFlight={setIsAddingFlight}
-            setIsFlightsFullScreen={setIsFlightsFullScreen}
-          />
-          {!isFlightsFullScreen && (
+          {!isStatsFullScreen ? (
+            <FlightsCard
+              filtersFormControl={filtersFormControl}
+              isAddingFlight={isAddingFlight}
+              isFlightsFullScreen={isFlightsFullScreen}
+              setIsAddingFlight={setIsAddingFlight}
+              setIsFlightsFullScreen={setIsFlightsFullScreen}
+            />
+          ) : null}
+          {!isFlightsFullScreen ? (
             <StatisticsCard
               filtersFormControl={filtersFormControl}
               isStatsFullScreen={isStatsFullScreen}
               setIsStatsFullScreen={setIsStatsFullScreen}
             />
-          )}
+          ) : null}
         </div>
       </div>
     </div>

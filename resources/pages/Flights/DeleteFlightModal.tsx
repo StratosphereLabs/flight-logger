@@ -6,13 +6,7 @@ import {
 import { trpc } from '../../utils/trpc';
 import { useFlightsPageStore } from './flightsPageStore';
 
-export interface DeleteFlightModelProps {
-  isRowSelectEnabled: boolean;
-}
-
-export const DeleteFlightModal = ({
-  isRowSelectEnabled,
-}: DeleteFlightModelProps): JSX.Element => {
+export const DeleteFlightModal = (): JSX.Element => {
   const utils = trpc.useUtils();
   const { activeFlight, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useFlightsPageStore();
