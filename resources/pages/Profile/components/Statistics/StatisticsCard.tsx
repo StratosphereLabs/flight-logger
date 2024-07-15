@@ -1,5 +1,7 @@
+import { type Dispatch, type SetStateAction } from 'react';
 import { type Control, useForm } from 'react-hook-form';
-import { Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
+import { useSearchParams } from 'react-router-dom';
+import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
 import { type ProfileFilterFormData } from '../../hooks';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { FlightLengthRadarChart } from './FlightLengthRadarChart';
@@ -26,11 +28,16 @@ export interface StatisticsFiltersData {
 
 export interface StatisticsProps {
   filtersFormControl: Control<ProfileFilterFormData>;
+  isStatsFullScreen: boolean;
+  setIsStatsFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const StatisticsCard = ({
   filtersFormControl,
+  isStatsFullScreen,
+  setIsStatsFullScreen,
 }: StatisticsProps): JSX.Element => {
+  const [, setSearchParams] = useSearchParams();
   const methods = useForm<StatisticsFiltersData>({
     defaultValues: {
       airlinesMode: 'flights',
@@ -48,7 +55,27 @@ export const StatisticsCard = ({
     <Form methods={methods} className="flex flex-1 flex-col">
       <Card className="flex-1 bg-base-100 shadow-sm" compact>
         <CardBody className="gap-4">
-          <CardTitle>Statistics</CardTitle>
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-1">
+              <CardTitle>Statistics</CardTitle>
+              {!isStatsFullScreen ? (
+                <Button
+                  className="w-[100px]"
+                  color="ghost"
+                  onClick={() => {
+                    setIsStatsFullScreen(true);
+                    setSearchParams(oldSearchParams => ({
+                      ...Object.fromEntries(oldSearchParams),
+                      isFlightsFullScreen: 'true',
+                    }));
+                  }}
+                  size="xs"
+                >
+                  View All
+                </Button>
+              ) : null}
+            </div>
+          </div>
           <div className="flex flex-wrap gap-x-6 gap-y-4">
             <TopAirlinesChart filtersFormControl={filtersFormControl} />
             <TopAircraftTypesChart filtersFormControl={filtersFormControl} />

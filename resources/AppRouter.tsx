@@ -5,7 +5,6 @@ import {
   AddFlight,
   CreateItinerary,
   Data,
-  Flights,
   ForgotPassword,
   Home,
   Itineraries,
@@ -35,7 +34,6 @@ export const AppRouter = (): JSX.Element => {
               path={path === '' ? 'profile' : ''}
               element={<Profile filtersFormControl={methods.control} />}
             />
-            <Route path="flights/:flightId?" element={<Flights />} />
             <Route path="trips/:tripId?" element={<Trips />} />
             <Route path="itineraries" element={<Itineraries />} />
             {path === '' ? (

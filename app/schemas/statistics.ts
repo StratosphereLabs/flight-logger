@@ -5,11 +5,9 @@ import {
   profileFiltersSchema,
 } from './users';
 
-export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema
-  .extend(profileFiltersSchema.shape)
-  .extend({
-    showUpcoming: z.boolean(),
-  });
+export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema.extend(
+  profileFiltersSchema.shape,
+);
 
 export const getCountsSchema = getUserSchema.extend(profileFiltersSchema.shape);
 
@@ -31,11 +29,9 @@ export const getUserTopAirportsSchema = getStatisticsBarGraphSchema.extend({
   mode: z.enum(['all', 'departure', 'arrival']),
 });
 
-export const getStatisticsDistributionSchema = getUserSchema
-  .extend(profileFiltersSchema.shape)
-  .extend({
-    showUpcoming: z.boolean(),
-  });
+export const getStatisticsDistributionSchema = getUserSchema.extend(
+  profileFiltersSchema.shape,
+);
 
 export const getUserFlightTypesSchema = getStatisticsDistributionSchema.extend({
   mode: z.enum(['flights', 'distance', 'duration']),

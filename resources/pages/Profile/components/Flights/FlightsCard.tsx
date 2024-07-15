@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import { type Dispatch, type SetStateAction } from 'react';
-import { useWatch } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, type Dispatch, type SetStateAction } from 'react';
+import { type Control, useWatch } from 'react-hook-form';
+import { useParams, useSearchParams } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -13,11 +13,14 @@ import {
   FormRadioGroupOption,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
-import { PlusIcon } from '../../../../common/components';
+import { CollapseIcon, PlusIcon } from '../../../../common/components';
 import {
   useLoggedInUserQuery,
   useProfileUserQuery,
 } from '../../../../common/hooks';
+import { Flights } from '../../../Flights';
+import { useFlightsPageStore } from '../../../Flights/flightsPageStore';
+import { type ProfileFilterFormData } from '../../hooks';
 import { AddFlightForm } from './AddFlightForm';
 import { CompletedFlights } from './CompletedFlights';
 import { UpcomingFlights } from './UpcomingFlights';
@@ -27,16 +30,25 @@ export interface FlightsModeFormData {
 }
 
 export interface FlightCardProps {
+  filtersFormControl: Control<ProfileFilterFormData>;
   isAddingFlight: boolean;
+  isFlightsFullScreen: boolean;
   setIsAddingFlight: Dispatch<SetStateAction<boolean>>;
+  setIsFlightsFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const FlightsCard = ({
+  filtersFormControl,
   isAddingFlight,
+  isFlightsFullScreen,
   setIsAddingFlight,
+  setIsFlightsFullScreen,
 }: FlightCardProps): JSX.Element => {
-  const navigate = useNavigate();
   const { username } = useParams();
+  const [, setSearchParams] = useSearchParams();
+  const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
+  const { resetRowSelection, rowSelection, setIsCreateTripDialogOpen } =
+    useFlightsPageStore();
   const methods = useFormWithQueryParams<FlightsModeFormData, ['flightsMode']>({
     getDefaultValues: ({ flightsMode }) => ({
       flightsMode:
@@ -57,28 +69,28 @@ export const FlightsCard = ({
     <Card
       className={classNames(
         'w-full bg-base-100',
-        isAddingFlight ? 'lg:w-full' : 'lg:w-[465px]',
+        !isFlightsFullScreen && (isAddingFlight ? 'lg:w-full' : 'lg:w-[480px]'),
       )}
     >
       <CardBody className="p-1 pt-4">
         <div className="flex w-full min-w-[375px] flex-col gap-4 px-3">
-          <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-2">
             <div className="flex items-end gap-1">
               <CardTitle>
                 {isAddingFlight
                   ? `Add Flight${!onOwnProfile ? ` for @${username}` : ''}`
                   : 'Flights'}
               </CardTitle>
-              {!isAddingFlight ? (
+              {!isAddingFlight && !isFlightsFullScreen ? (
                 <Button
                   className="w-[100px]"
                   color="ghost"
                   onClick={() => {
-                    navigate(
-                      username !== undefined
-                        ? `/user/${username}/flights`
-                        : '/flights',
-                    );
+                    setIsFlightsFullScreen(true);
+                    setSearchParams(oldSearchParams => ({
+                      ...Object.fromEntries(oldSearchParams),
+                      isFlightsFullScreen: 'true',
+                    }));
                   }}
                   size="xs"
                 >
@@ -88,7 +100,7 @@ export const FlightsCard = ({
             </div>
             {onOwnProfile ||
             (data?.isFollowedBy === true && data.isFollowing) ? (
-              <div className="flex justify-end gap-4">
+              <div className="flex justify-end gap-3">
                 {isAddingFlight ? (
                   <Button
                     className="flex w-[120px] flex-nowrap"
@@ -102,9 +114,51 @@ export const FlightsCard = ({
                     Done
                   </Button>
                 ) : null}
+                {onOwnProfile && !isAddingFlight ? (
+                  <>
+                    {isRowSelectEnabled ? (
+                      <Button
+                        color="primary"
+                        disabled={Object.keys(rowSelection).length === 0}
+                        onClick={() => {
+                          setIsCreateTripDialogOpen(true);
+                        }}
+                        size="sm"
+                      >
+                        Create ({Object.keys(rowSelection).length})
+                      </Button>
+                    ) : null}
+                    <Button
+                      className={classNames(
+                        !isFlightsFullScreen && 'hidden sm:flex',
+                      )}
+                      color={isRowSelectEnabled ? 'error' : 'secondary'}
+                      onClick={() => {
+                        setIsFlightsFullScreen(true);
+                        setSearchParams(oldSearchParams => ({
+                          ...Object.fromEntries(oldSearchParams),
+                          isFlightsFullScreen: 'true',
+                        }));
+                        setIsRowSelectEnabled(isEnabled => {
+                          if (isEnabled) resetRowSelection();
+                          return !isEnabled;
+                        });
+                      }}
+                      outline
+                      size="sm"
+                    >
+                      {isRowSelectEnabled ? (
+                        <CloseIcon className="h-4 w-4" />
+                      ) : (
+                        <PlusIcon className="h-4 w-4" />
+                      )}
+                      {isRowSelectEnabled ? 'Cancel' : 'Add Trip'}
+                    </Button>
+                  </>
+                ) : null}
                 {!isAddingFlight ? (
                   <Button
-                    className="flex w-[150px] flex-1 flex-nowrap"
+                    className="flex flex-nowrap"
                     color="success"
                     size="sm"
                     onClick={() => {
@@ -114,11 +168,28 @@ export const FlightsCard = ({
                     <PlusIcon className="h-4 w-4" /> Add Flight
                   </Button>
                 ) : null}
+                {isFlightsFullScreen && !isAddingFlight ? (
+                  <Button
+                    color="ghost"
+                    onClick={() => {
+                      setIsFlightsFullScreen(false);
+                      setSearchParams(oldSearchParams => {
+                        oldSearchParams.delete('isFlightsFullScreen');
+                        return oldSearchParams;
+                      });
+                      setIsRowSelectEnabled(false);
+                    }}
+                    size="sm"
+                  >
+                    <CollapseIcon className="h-4 w-4" />{' '}
+                    <span className="hidden sm:inline-block">Collapse</span>
+                  </Button>
+                ) : null}
               </div>
             ) : null}
           </div>
           {isAddingFlight ? <AddFlightForm /> : null}
-          {!isAddingFlight ? (
+          {!isFlightsFullScreen && !isAddingFlight ? (
             <Form methods={methods}>
               <FormRadioGroup className="w-full" name="flightsMode">
                 <FormRadioGroupOption
@@ -141,11 +212,18 @@ export const FlightsCard = ({
             </Form>
           ) : null}
         </div>
-        {!isAddingFlight ? (
+        {!isFlightsFullScreen && !isAddingFlight ? (
           <div className="min-h-[70px]">
             {flightsMode === 'completed' ? <CompletedFlights /> : null}
             {flightsMode === 'upcoming' ? <UpcomingFlights /> : null}
           </div>
+        ) : null}
+        {isFlightsFullScreen && !isAddingFlight ? (
+          <Flights
+            filtersFormControl={filtersFormControl}
+            isRowSelectEnabled={isRowSelectEnabled}
+            setIsRowSelectEnabled={setIsRowSelectEnabled}
+          />
         ) : null}
       </CardBody>
     </Card>

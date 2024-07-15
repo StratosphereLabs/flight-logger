@@ -1,59 +1,28 @@
-import { type Control, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { type FlightsFormData } from './Flights';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export interface DeleteFlightModelProps {
-  formControl: Control<FlightsFormData>;
   isRowSelectEnabled: boolean;
 }
 
 export const DeleteFlightModal = ({
-  formControl,
   isRowSelectEnabled,
 }: DeleteFlightModelProps): JSX.Element => {
   const utils = trpc.useUtils();
-  const { username } = useParams();
   const { activeFlight, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useFlightsPageStore();
-  const layout = useWatch<FlightsFormData, 'layout'>({
-    control: formControl,
-    name: 'layout',
-  });
   const handleSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
   const { isLoading, mutate } = trpc.flights.deleteFlight.useMutation({
-    onSuccess: deletedFlightId => {
+    onSuccess: () => {
       handleSuccess('Flight Deleted');
       setIsDeleteDialogOpen(false);
-      const previousFlights = utils.flights.getUserFlights.getData({
-        username,
-        withTrip: !isRowSelectEnabled,
-        layout,
-      });
-      utils.flights.getUserFlights.setData(
-        { username, withTrip: !isRowSelectEnabled, layout },
-        previousFlights !== undefined
-          ? {
-              upcomingFlights: previousFlights.upcomingFlights.filter(
-                flight => flight.id !== deletedFlightId,
-              ),
-              currentFlights: previousFlights.currentFlights.filter(
-                flight => flight.id !== deletedFlightId,
-              ),
-              completedFlights: previousFlights.completedFlights.filter(
-                flight => flight.id !== deletedFlightId,
-              ),
-              total: previousFlights.total - 1,
-            }
-          : undefined,
-      );
+      void utils.flights.getUserFlights.invalidate();
       void utils.users.invalidate();
     },
     onError,

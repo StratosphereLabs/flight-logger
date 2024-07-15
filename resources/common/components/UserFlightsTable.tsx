@@ -15,23 +15,23 @@ import { FlightTimesDisplay } from './FlightTimesDisplay';
 
 export interface UserFlightsTableProps {
   className?: string;
-  data?: FlightsRouterOutput['getUserFlights']['upcomingFlights'];
+  data?: FlightsRouterOutput['getUserFlights']['flights'];
   dateBadgeColor?:
     | ((
-        flight: FlightsRouterOutput['getUserFlights']['upcomingFlights'][number],
+        flight: FlightsRouterOutput['getUserFlights']['flights'][number],
       ) => BadgeColor)
     | BadgeColor;
   enableRowSelection?: RowSelectionOptions<
-    FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]
+    FlightsRouterOutput['getUserFlights']['flights'][number]
   >['enableRowSelection'];
   onCopyLink?: (
-    flight: FlightsRouterOutput['getUserFlights']['upcomingFlights'][number],
+    flight: FlightsRouterOutput['getUserFlights']['flights'][number],
   ) => void;
   size?: TableSize;
 }
 
 export type FlightsTableRow = Row<
-  FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]
+  FlightsRouterOutput['getUserFlights']['flights'][number]
 >;
 
 export const UserFlightsTable = ({
@@ -124,7 +124,7 @@ export const UserFlightsTable = ({
           cell: ({ row, getValue }) => {
             const airportData =
               getValue<
-                FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]['departureAirport']
+                FlightsRouterOutput['getUserFlights']['flights'][number]['departureAirport']
               >();
             return (
               <div className="flex h-full flex-col">
@@ -164,7 +164,7 @@ export const UserFlightsTable = ({
           cell: ({ row, getValue }) => {
             const airportData =
               getValue<
-                FlightsRouterOutput['getUserFlights']['upcomingFlights'][number]['arrivalAirport']
+                FlightsRouterOutput['getUserFlights']['flights'][number]['arrivalAirport']
               >();
             return (
               <div className="flex h-full flex-col">
@@ -279,7 +279,7 @@ export const UserFlightsTable = ({
       onRowSelectionChange={setRowSelection}
       rowClassName={row =>
         classNames(
-          'h-[1px]',
+          'table-row',
           theme === AppTheme.LOFI
             ? CARD_COLORS_LOFI[row.original.arrivalDelayStatus]
             : CARD_COLORS[row.original.arrivalDelayStatus],

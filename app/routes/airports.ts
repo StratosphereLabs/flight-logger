@@ -6,8 +6,10 @@ import { getAirportSchema, getAirportsSchema } from '../schemas';
 import {
   filterCustomDates,
   getFromDate,
+  getFromStatusDate,
   getPaginatedResponse,
   getToDate,
+  getToStatusDate,
   parsePaginationRequest,
 } from '../utils';
 
@@ -68,6 +70,8 @@ export const airportsRouter = router({
       const username = input?.username ?? ctx.user?.username;
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const airport = await prisma.airport.findUnique({
         where: {
           id,
@@ -82,6 +86,23 @@ export const airportsRouter = router({
                 gte: fromDate,
                 lte: toDate,
               },
+              OR:
+                fromStatusDate !== undefined || toStatusDate !== undefined
+                  ? [
+                      {
+                        inTime: {
+                          gte: fromStatusDate,
+                          lte: toStatusDate,
+                        },
+                      },
+                      {
+                        inTimeActual: {
+                          gte: fromStatusDate,
+                          lte: toStatusDate,
+                        },
+                      },
+                    ]
+                  : undefined,
             },
             select: {
               departureAirport: {
@@ -101,6 +122,23 @@ export const airportsRouter = router({
                 gte: fromDate,
                 lte: toDate,
               },
+              OR:
+                fromStatusDate !== undefined || toStatusDate !== undefined
+                  ? [
+                      {
+                        inTime: {
+                          gte: fromStatusDate,
+                          lte: toStatusDate,
+                        },
+                      },
+                      {
+                        inTimeActual: {
+                          gte: fromStatusDate,
+                          lte: toStatusDate,
+                        },
+                      },
+                    ]
+                  : undefined,
             },
             select: {
               departureAirport: {

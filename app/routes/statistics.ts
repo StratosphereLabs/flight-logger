@@ -23,7 +23,9 @@ import {
   calculateDistance,
   filterCustomDates,
   getFromDate,
+  getFromStatusDate,
   getToDate,
+  getToStatusDate,
   parsePaginationRequest,
 } from '../utils';
 
@@ -34,6 +36,8 @@ export const statisticsRouter = router({
     }
     const fromDate = getFromDate(input);
     const toDate = getToDate(input);
+    const fromStatusDate = getFromStatusDate(input);
+    const toStatusDate = getToStatusDate(input);
     const userData = await prisma.user.findUnique({
       where: {
         username: input?.username ?? ctx.user?.username,
@@ -45,6 +49,23 @@ export const statisticsRouter = router({
               gte: fromDate,
               lte: toDate,
             },
+            OR:
+              fromStatusDate !== undefined || toStatusDate !== undefined
+                ? [
+                    {
+                      inTime: {
+                        gte: fromStatusDate,
+                        lte: toStatusDate,
+                      },
+                    },
+                    {
+                      inTimeActual: {
+                        gte: fromStatusDate,
+                        lte: toStatusDate,
+                      },
+                    },
+                  ]
+                : undefined,
           },
           select: {
             departureAirport: {
@@ -78,6 +99,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -87,9 +110,26 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         orderBy: {
-          outTime: input.showUpcoming ? 'asc' : 'desc',
+          outTime: input.status === 'upcoming' ? 'asc' : 'desc',
         },
         select: {
           outTime: true,
@@ -124,6 +164,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -133,9 +175,26 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         orderBy: {
-          outTime: input.showUpcoming ? 'asc' : 'desc',
+          outTime: input.status === 'upcoming' ? 'asc' : 'desc',
         },
         select: {
           outTime: true,
@@ -194,6 +253,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -203,9 +264,26 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         orderBy: {
-          outTime: input.showUpcoming ? 'asc' : 'desc',
+          outTime: input.status === 'upcoming' ? 'asc' : 'desc',
         },
         select: {
           outTime: true,
@@ -253,6 +331,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -262,9 +342,26 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         orderBy: {
-          outTime: input.showUpcoming ? 'asc' : 'desc',
+          outTime: input.status === 'upcoming' ? 'asc' : 'desc',
         },
         select: {
           outTime: true,
@@ -328,6 +425,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -337,6 +436,23 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         select: {
           outTime: true,
@@ -410,6 +526,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -419,6 +537,23 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         select: {
           outTime: true,
@@ -492,6 +627,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -501,6 +638,23 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         select: {
           outTime: true,
@@ -586,6 +740,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -595,6 +751,23 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         select: {
           outTime: true,
@@ -662,6 +835,8 @@ export const statisticsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -671,6 +846,23 @@ export const statisticsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         select: {
           outTime: true,

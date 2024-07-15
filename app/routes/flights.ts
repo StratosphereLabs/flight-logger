@@ -38,7 +38,9 @@ import {
   getFlightTimestamps,
   getFlightUpdateChangeWithData,
   getFromDate,
+  getFromStatusDate,
   getToDate,
+  getToStatusDate,
   getCenterpoint,
   getHeatmap,
   getPaginatedResponse,
@@ -156,65 +158,46 @@ export const flightsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      const [upcomingFlights, currentFlights, completedFlights] =
-        await prisma.$transaction([
-          prisma.flight.findMany({
-            where: {
-              user: {
-                username: input?.username ?? ctx.user?.username,
-              },
-              tripId: input?.withTrip === false ? null : undefined,
-              outTime: {
-                gt: new Date(),
-              },
-            },
-            include: flightIncludeObj,
-            orderBy: {
-              outTime: input.layout === 'full' ? 'asc' : 'desc',
-            },
-          }),
-          prisma.flight.findMany({
-            where: {
-              user: {
-                username: input?.username ?? ctx.user?.username,
-              },
-              tripId: input?.withTrip === false ? null : undefined,
-              inTime: {
-                gt: new Date(),
-              },
-              outTime: {
-                lte: new Date(),
-              },
-            },
-            include: flightIncludeObj,
-            orderBy: {
-              outTime: input.layout === 'full' ? 'asc' : 'desc',
-            },
-          }),
-          prisma.flight.findMany({
-            where: {
-              user: {
-                username: input?.username ?? ctx.user?.username,
-              },
-              tripId: input?.withTrip === false ? null : undefined,
-              inTime: {
-                lte: new Date(),
-              },
-            },
-            include: flightIncludeObj,
-            orderBy: {
-              outTime: 'desc',
-            },
-          }),
-        ]);
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
+      const flights = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          tripId: input?.withTrip === false ? null : undefined,
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
+          },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
+        },
+        include: flightIncludeObj,
+        orderBy: {
+          outTime: 'desc',
+        },
+      });
       return {
-        upcomingFlights: upcomingFlights.map(transformFlightData),
-        currentFlights: currentFlights.map(transformFlightData),
-        completedFlights: completedFlights.map(transformFlightData),
-        total:
-          upcomingFlights.length +
-          currentFlights.length +
-          completedFlights.length,
+        flights: flights.map(transformFlightData),
+        total: flights.length,
       };
     }),
   getUserCompletedFlights: procedure
@@ -446,6 +429,8 @@ export const flightsRouter = router({
       }
       const fromDate = getFromDate(input);
       const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const results = await prisma.flight.findMany({
         where: {
           user: {
@@ -455,6 +440,23 @@ export const flightsRouter = router({
             gte: fromDate,
             lte: toDate,
           },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
         },
         include: {
           departureAirport: true,
@@ -834,7 +836,6 @@ export const flightsRouter = router({
         include: flightIncludeObj,
       });
       await updateTripTimes(deletedFlight.tripId);
-      return deletedFlight.id;
     }),
 });
 

@@ -8,6 +8,7 @@ import { useCurrentDate } from '../../../common/hooks';
 import { useProfilePage } from './useProfilePage';
 
 export interface ProfileFilterFormData {
+  status: 'completed' | 'upcoming' | 'all';
   range:
     | 'all'
     | 'pastYear'
@@ -39,9 +40,10 @@ export const useProfileFilterForm =
     const { isAuthorized } = useProfilePage();
     return useFormWithQueryParams<
       ProfileFilterFormData,
-      ['range', 'year', 'month', 'fromDate', 'toDate']
+      ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
     >({
-      getDefaultValues: ({ range, year, month, fromDate, toDate }) => ({
+      getDefaultValues: ({ status, range, year, month, fromDate, toDate }) => ({
+        status: (status as ProfileFilterFormData['status']) ?? 'completed',
         range: (range as ProfileFilterFormData['range']) ?? 'all',
         year: year ?? currentDate.getFullYear().toString(),
         month:
@@ -51,12 +53,13 @@ export const useProfileFilterForm =
           fromDate ?? format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
         toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
       }),
-      getSearchParams: ([range, year, month, fromDate, toDate]) => {
+      getSearchParams: ([status, range, year, month, fromDate, toDate]) => {
         const { pathname } = window.location;
         const isProfilePage =
           pathname.includes('/profile') || pathname.includes('/user/');
         if (!isProfilePage || !isAuthorized)
           return {
+            status: '',
             range: '',
             month: '',
             year: '',
@@ -64,6 +67,7 @@ export const useProfileFilterForm =
             toDate: '',
           };
         return {
+          status: status !== 'completed' ? status : '',
           range: range !== 'all' ? range : '',
           month: range === 'customMonth' ? month : '',
           year: range === 'customMonth' || range === 'customYear' ? year : '',
@@ -71,7 +75,7 @@ export const useProfileFilterForm =
           toDate: range === 'customRange' ? toDate : '',
         };
       },
-      includeKeys: ['range', 'year', 'month', 'fromDate', 'toDate'],
+      includeKeys: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
       mode: 'onChange',
       resolver: zodResolver(profileFiltersSchema),
     });
