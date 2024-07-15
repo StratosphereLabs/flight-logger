@@ -15,23 +15,23 @@ import { FlightTimesDisplay } from './FlightTimesDisplay';
 
 export interface UserFlightsTableProps {
   className?: string;
-  data?: FlightsRouterOutput['getUserFlights']['flights'];
+  data?: FlightsRouterOutput['getUserFlights']['results'];
   dateBadgeColor?:
     | ((
-        flight: FlightsRouterOutput['getUserFlights']['flights'][number],
+        flight: FlightsRouterOutput['getUserFlights']['results'][number],
       ) => BadgeColor)
     | BadgeColor;
   enableRowSelection?: RowSelectionOptions<
-    FlightsRouterOutput['getUserFlights']['flights'][number]
+    FlightsRouterOutput['getUserFlights']['results'][number]
   >['enableRowSelection'];
   onCopyLink?: (
-    flight: FlightsRouterOutput['getUserFlights']['flights'][number],
+    flight: FlightsRouterOutput['getUserFlights']['results'][number],
   ) => void;
   size?: TableSize;
 }
 
 export type FlightsTableRow = Row<
-  FlightsRouterOutput['getUserFlights']['flights'][number]
+  FlightsRouterOutput['getUserFlights']['results'][number]
 >;
 
 export const UserFlightsTable = ({
@@ -124,7 +124,7 @@ export const UserFlightsTable = ({
           cell: ({ row, getValue }) => {
             const airportData =
               getValue<
-                FlightsRouterOutput['getUserFlights']['flights'][number]['departureAirport']
+                FlightsRouterOutput['getUserFlights']['results'][number]['departureAirport']
               >();
             return (
               <div className="flex h-full flex-col">
@@ -164,7 +164,7 @@ export const UserFlightsTable = ({
           cell: ({ row, getValue }) => {
             const airportData =
               getValue<
-                FlightsRouterOutput['getUserFlights']['flights'][number]['arrivalAirport']
+                FlightsRouterOutput['getUserFlights']['results'][number]['arrivalAirport']
               >();
             return (
               <div className="flex h-full flex-col">

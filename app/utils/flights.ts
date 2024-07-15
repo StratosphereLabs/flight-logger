@@ -380,7 +380,10 @@ export const getFromDate = (
   }
 };
 
-export const getToDate = (input: GetProfileFiltersRequest): Date => {
+export const getToDate = (
+  input: GetProfileFiltersRequest,
+): Date | undefined => {
+  if (input.range === 'all') return undefined;
   if (input.range === 'customMonth') {
     const year = parseInt(input.year, 10);
     const month = parseInt(input.month, 10);

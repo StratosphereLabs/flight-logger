@@ -2,6 +2,7 @@ import { type Dispatch, type SetStateAction } from 'react';
 import { type Control, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
+import { CollapseIcon } from '../../../../common/components';
 import { type ProfileFilterFormData } from '../../hooks';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { FlightLengthRadarChart } from './FlightLengthRadarChart';
@@ -66,7 +67,7 @@ export const StatisticsCard = ({
                     setIsStatsFullScreen(true);
                     setSearchParams(oldSearchParams => ({
                       ...Object.fromEntries(oldSearchParams),
-                      isFlightsFullScreen: 'true',
+                      isStatsFullScreen: 'true',
                     }));
                   }}
                   size="xs"
@@ -75,17 +76,41 @@ export const StatisticsCard = ({
                 </Button>
               ) : null}
             </div>
+            {isStatsFullScreen ? (
+              <Button
+                color="ghost"
+                onClick={() => {
+                  setIsStatsFullScreen(false);
+                  setSearchParams(oldSearchParams => {
+                    oldSearchParams.delete('isStatsFullScreen');
+                    return oldSearchParams;
+                  });
+                }}
+                size="sm"
+              >
+                <CollapseIcon className="h-4 w-4" />{' '}
+                <span className="hidden sm:inline-block">Collapse</span>
+              </Button>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-4">
             <TopAirlinesChart filtersFormControl={filtersFormControl} />
             <TopAircraftTypesChart filtersFormControl={filtersFormControl} />
             <TopAirportsChart filtersFormControl={filtersFormControl} />
-            <TopRoutesChart filtersFormControl={filtersFormControl} />
+            {isStatsFullScreen ? (
+              <TopRoutesChart filtersFormControl={filtersFormControl} />
+            ) : null}
             <FlightTypePieChart filtersFormControl={filtersFormControl} />
             <FlightLengthRadarChart filtersFormControl={filtersFormControl} />
-            <ReasonRadarChart filtersFormControl={filtersFormControl} />
             <FlightClassRadarChart filtersFormControl={filtersFormControl} />
-            <SeatPositionRadarChart filtersFormControl={filtersFormControl} />
+            {isStatsFullScreen ? (
+              <>
+                <ReasonRadarChart filtersFormControl={filtersFormControl} />
+                <SeatPositionRadarChart
+                  filtersFormControl={filtersFormControl}
+                />
+              </>
+            ) : null}
           </div>
         </CardBody>
       </Card>

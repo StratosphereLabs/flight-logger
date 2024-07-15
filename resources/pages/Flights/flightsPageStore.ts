@@ -3,14 +3,14 @@ import { create } from 'zustand';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 
 interface FlightsPageState {
-  activeFlight: FlightsRouterOutput['getUserFlights']['flights'][number] | null;
+  activeFlight: FlightsRouterOutput['getUserFlights']['results'][number] | null;
   isCreateTripDialogOpen: boolean;
   isDeleteDialogOpen: boolean;
   isEditDialogOpen: boolean;
   isViewDialogOpen: boolean;
   rowSelection: RowSelectionState;
   setActiveFlight: (
-    flight: FlightsRouterOutput['getUserFlights']['flights'][number] | null,
+    flight: FlightsRouterOutput['getUserFlights']['results'][number] | null,
   ) => void;
   setIsCreateTripDialogOpen: (open: boolean) => void;
   setIsDeleteDialogOpen: (open: boolean) => void;
