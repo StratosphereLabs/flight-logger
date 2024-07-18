@@ -116,4 +116,29 @@ export const FLIGHT_CHANGE_GETTER_MAP: Partial<
     oldValue: oldFlight.inTimeActual?.toISOString() ?? null,
     newValue: updatedData.inTimeActual?.toISOString() ?? null,
   }),
+  departureTerminal: (oldFlight, updatedData) => ({
+    field: 'DEPARTURE_TERMINAL',
+    oldValue: oldFlight.departureTerminal,
+    newValue: updatedData.departureTerminal ?? null,
+  }),
+  departureGate: (oldFlight, updatedData) => ({
+    field: 'DEPARTURE_GATE',
+    oldValue: oldFlight.departureGate,
+    newValue: updatedData.departureGate ?? null,
+  }),
+  arrivalTerminal: (oldFlight, updatedData) => ({
+    field: 'ARRIVAL_TERMINAL',
+    oldValue: oldFlight.arrivalTerminal,
+    newValue: updatedData.arrivalTerminal ?? null,
+  }),
+  arrivalGate: (oldFlight, updatedData) => ({
+    field: 'ARRIVAL_GATE',
+    oldValue: oldFlight.arrivalGate,
+    newValue: updatedData.arrivalGate ?? null,
+  }),
+  arrivalBaggage: (oldFlight, updatedData) => ({
+    field: 'ARRIVAL_BAGGAGE',
+    oldValue: oldFlight.arrivalBaggage,
+    newValue: updatedData.arrivalBaggage ?? null,
+  }),
 };
