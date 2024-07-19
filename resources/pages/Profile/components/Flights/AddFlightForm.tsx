@@ -91,19 +91,10 @@ export const AddFlightForm = (): JSX.Element => {
           username,
           airline: currentFormData.airline,
           flightNumber: currentFormData.flightNumber,
-          departureIcao: newFlight.origin.icao,
-          arrivalIcao: newFlight.destination.icao,
-          aircraftTypeIcao: newFlight.aircraftType,
-          departureTime: newFlight.gateDepartureTimes.scheduled,
-          departureTimeEstimated: newFlight.gateDepartureTimes.estimated,
-          departureTimeActual: newFlight.gateDepartureTimes.actual,
-          departureTerminal: newFlight.origin.terminal,
-          departureGate: newFlight.origin.gate,
-          arrivalTime: newFlight.gateArrivalTimes.scheduled,
-          arrivalTimeEstimated: newFlight.gateArrivalTimes.estimated,
-          arrivalTimeActual: newFlight.gateArrivalTimes.actual,
-          arrivalTerminal: newFlight.destination.terminal,
-          arrivalGate: newFlight.destination.gate,
+          departureIcao: newFlight.departureAirport.id,
+          arrivalIcao: newFlight.arrivalAirport.id,
+          outTime: newFlight.outTime,
+          inTime: newFlight.inTime,
         });
     },
     [currentFormData, mutate],
@@ -261,7 +252,7 @@ export const AddFlightForm = (): JSX.Element => {
             },
             {
               id: 'departureAirport',
-              accessorKey: 'origin',
+              accessorKey: 'departureAirport',
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (
@@ -277,7 +268,7 @@ export const AddFlightForm = (): JSX.Element => {
             },
             {
               id: 'arrivalAirport',
-              accessorKey: 'destination',
+              accessorKey: 'arrivalAirport',
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (

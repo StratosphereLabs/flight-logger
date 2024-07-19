@@ -28,17 +28,8 @@ export const addFlightFromDataSchema = fetchFlightsByFlightNumberSchema
     username: z.string().optional(),
     departureIcao: z.string().length(4, 'Length must be 4'),
     arrivalIcao: z.string().length(4, 'Length must be 4'),
-    aircraftTypeIcao: z.string().nullable(),
-    departureTime: z.number().int(),
-    departureTimeEstimated: z.number().int().nullable(),
-    departureTimeActual: z.number().int().nullable(),
-    departureTerminal: z.string().nullable(),
-    departureGate: z.string().nullable(),
-    arrivalTime: z.number().int(),
-    arrivalTimeEstimated: z.number().int().nullable(),
-    arrivalTimeActual: z.number().int().nullable(),
-    arrivalTerminal: z.string().nullable(),
-    arrivalGate: z.string().nullable(),
+    outTime: z.string().datetime(),
+    inTime: z.string().datetime(),
   });
 
 export type FetchFlightsByFlightNumberRequest = z.infer<
