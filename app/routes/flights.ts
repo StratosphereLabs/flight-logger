@@ -553,9 +553,12 @@ export const flightsRouter = router({
       };
       for (const flightResult of flights) {
         const flight = transformFlightData(flightResult);
-        if (flight.flightStatus === 'Scheduled' || flight.flightStatus === '') {
+        if (
+          flight.flightRadarStatus === 'SCHEDULED' ||
+          flight.flightRadarStatus === 'CANCELED'
+        ) {
           result.upcomingFlights.push(flight);
-        } else if (flight.flightStatus === 'Arrived') {
+        } else if (flight.flightRadarStatus === 'ARRIVED') {
           result.completedFlights.unshift(flight);
         } else {
           result.currentFlights.push(flight);

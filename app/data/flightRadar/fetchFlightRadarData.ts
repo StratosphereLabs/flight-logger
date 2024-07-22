@@ -113,7 +113,7 @@ export const fetchFlightRadarData = async ({
   }${flightNumber}`;
   const response = await axios.get<string>(url, { headers: HEADERS });
   const $ = load(response.data);
-  let data: FlightRadarData | null = null;
+  const data: FlightRadarData[] = [];
   $('tbody .data-row').each((_, row) => {
     const timestamp = $(row).attr('data-timestamp');
     if (timestamp === undefined) return;
@@ -166,61 +166,63 @@ export const fetchFlightRadarData = async ({
       .find('.btn-playback')
       .text()
       .trim();
-    if (data === null) {
-      let flightStatus: FlightRadarStatus | null = null;
-      let diversionIata: string | null = null;
-      if (onTimeCell.text().includes('Diverted to')) {
-        const airport = onTimeCell.find('a').eq(0).text().trim();
-        if (airport !== '') diversionIata = airport;
-      }
-      if (onTimeCell.text().includes('Canceled')) {
-        flightStatus = 'CANCELED';
-      } else if (flightLinkText === 'Live') {
-        if (onTimeCell.text().includes('Estimated departure')) {
-          flightStatus = 'DEPARTED_TAXIING';
-        } else if (onTimeCell.text().includes('Landed')) {
-          flightStatus = 'LANDED_TAXIING';
-        } else {
-          flightStatus = 'EN_ROUTE';
-        }
-      } else if (flightLinkText === 'Play') {
-        if (
-          onTimeCell.text().includes('Landed') ||
-          onTimeCell.text().includes('Diverted to')
-        ) {
-          flightStatus = 'ARRIVED';
-        } else if (onTimeCell.text().includes('Unknown')) {
-          flightStatus = null;
-        } else {
-          flightStatus = 'SCHEDULED';
-        }
-      }
-      data = {
-        departureTime,
-        offTimeActual:
-          onTimeTimestamp !== undefined &&
-          onTimeTimestamp.length > 0 &&
-          (flightStatus === 'SCHEDULED' || flightStatus === 'DEPARTED_TAXIING')
-            ? createNewDate(parseInt(onTimeTimestamp, 10))
-            : offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
-              ? createNewDate(parseInt(offTimeTimestamp, 10))
-              : undefined,
-        onTimeActual:
-          onTimeTimestamp !== undefined &&
-          onTimeTimestamp.length > 0 &&
-          (flightStatus === 'EN_ROUTE' ||
-            flightStatus === 'LANDED_TAXIING' ||
-            flightStatus === 'ARRIVED')
-            ? createNewDate(parseInt(onTimeTimestamp, 10))
-            : undefined,
-        departureAirportIATA,
-        arrivalAirportIATA,
-        aircraftTypeCode,
-        registration,
-        flightStatus,
-        diversionIata,
-      };
+    let flightStatus: FlightRadarStatus | null = null;
+    let diversionIata: string | null = null;
+    if (onTimeCell.text().includes('Diverted to')) {
+      const airport = onTimeCell.find('a').eq(0).text().trim();
+      if (airport !== '') diversionIata = airport;
     }
+    if (onTimeCell.text().includes('Canceled')) {
+      flightStatus = 'CANCELED';
+    } else if (flightLinkText === 'Live') {
+      if (onTimeCell.text().includes('Estimated departure')) {
+        flightStatus = 'DEPARTED_TAXIING';
+      } else if (onTimeCell.text().includes('Landed')) {
+        flightStatus = 'LANDED_TAXIING';
+      } else {
+        flightStatus = 'EN_ROUTE';
+      }
+    } else if (flightLinkText === 'Play') {
+      if (
+        onTimeCell.text().includes('Landed') ||
+        onTimeCell.text().includes('Diverted to')
+      ) {
+        flightStatus = 'ARRIVED';
+      } else if (onTimeCell.text().includes('Unknown')) {
+        flightStatus = null;
+      } else {
+        flightStatus = 'SCHEDULED';
+      }
+    }
+    data.push({
+      departureTime,
+      offTimeActual:
+        onTimeTimestamp !== undefined &&
+        onTimeTimestamp.length > 0 &&
+        (flightStatus === 'SCHEDULED' || flightStatus === 'DEPARTED_TAXIING')
+          ? createNewDate(parseInt(onTimeTimestamp, 10))
+          : offTimeTimestamp !== undefined && offTimeTimestamp.length > 0
+            ? createNewDate(parseInt(offTimeTimestamp, 10))
+            : undefined,
+      onTimeActual:
+        onTimeTimestamp !== undefined &&
+        onTimeTimestamp.length > 0 &&
+        (flightStatus === 'EN_ROUTE' ||
+          flightStatus === 'LANDED_TAXIING' ||
+          flightStatus === 'ARRIVED')
+          ? createNewDate(parseInt(onTimeTimestamp, 10))
+          : undefined,
+      departureAirportIATA,
+      arrivalAirportIATA,
+      aircraftTypeCode,
+      registration,
+      flightStatus,
+      diversionIata,
+    });
   });
-  return data;
+  return (
+    data.find(({ flightStatus }) => flightStatus === 'ARRIVED') ??
+    data[0] ??
+    null
+  );
 };

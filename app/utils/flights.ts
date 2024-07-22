@@ -46,6 +46,18 @@ export const flightIncludeObj = {
       region: true,
     },
   },
+  diversionAirport: {
+    select: {
+      iata: true,
+      municipality: true,
+      countryId: true,
+      region: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  },
   airline: true,
   aircraftType: true,
   airframe: {
@@ -69,6 +81,14 @@ export interface FlightData extends flight {
   user: user;
   departureAirport: AirportData;
   arrivalAirport: AirportData;
+  diversionAirport: {
+    iata: string;
+    municipality: string;
+    countryId: string;
+    region: {
+      name: string;
+    };
+  } | null;
   airline: airline | null;
   aircraftType: aircraft_type | null;
   airframe: AirframeData | null;
@@ -260,7 +280,9 @@ export const transformFlightData = (
             ? 'LANDED_TAXIING'
             : 'ARRIVED';
   const flightStatus =
-    FLIGHT_STATUS_MAP[flight.flightRadarStatus ?? estimatedStatus];
+    flight.diversionAirport !== null
+      ? `Diverted to ${flight.diversionAirport.iata}`
+      : FLIGHT_STATUS_MAP[flight.flightRadarStatus ?? estimatedStatus];
   const distanceTraveled = flightProgress * flightDistance;
   const initialHeading = getBearing(
     flight.departureAirport.lat,
