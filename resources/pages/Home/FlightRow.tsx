@@ -38,6 +38,12 @@ export const FlightRow = ({
     () => flight.id === selectedFlightId,
     [flight.id, selectedFlightId],
   );
+  const arrivalMunicipality =
+    flight.diversionAirport?.municipality ?? flight.arrivalAirport.municipality;
+  const arrivalCountryId =
+    flight.diversionAirport?.countryId ?? flight.arrivalAirport.countryId;
+  const arrivalRegionName =
+    flight.diversionAirport?.region.name ?? flight.arrivalAirport.region.name;
   return (
     <div
       className={classNames(
@@ -143,8 +149,18 @@ export const FlightRow = ({
           </div>
           <div className="flex flex-1 flex-col justify-start overflow-hidden">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
-              <div className="font-mono text-lg font-semibold">
-                {flight.arrivalAirport.iata}
+              <div className="flex gap-1 font-mono text-lg font-semibold">
+                <div
+                  className={classNames(
+                    flight.diversionAirport !== null &&
+                      'line-through opacity-50',
+                  )}
+                >
+                  {flight.arrivalAirport.iata}
+                </div>
+                {flight.diversionAirport !== null ? (
+                  <div>{flight.diversionAirport.iata}</div>
+                ) : null}
               </div>
               <FlightTimesDisplay
                 data={{
@@ -159,17 +175,15 @@ export const FlightRow = ({
               />
             </div>
             <div className="hidden truncate text-xs opacity-75 sm:block">
-              {flight.arrivalAirport.municipality},{' '}
-              {flight.arrivalAirport.countryId === 'US'
-                ? flight.arrivalAirport.region.name
-                : flight.arrivalAirport.countryId}
+              {arrivalMunicipality},{' '}
+              {arrivalCountryId === 'US' ? arrivalRegionName : arrivalCountryId}
             </div>
           </div>
         </div>
-        <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end justify-between overflow-hidden text-xs">
+        <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end overflow-hidden text-xs">
           <div
             className={classNames(
-              'flex flex-col flex-nowrap justify-end gap-x-1 text-right lg:flex-row',
+              'flex flex-col flex-nowrap items-end gap-x-1 text-right',
               flight.delayStatus !== 'none' && 'font-semibold',
               TEXT_COLORS[flight.delayStatus],
             )}
@@ -180,7 +194,6 @@ export const FlightRow = ({
                 'Canceled'
               ) : (
                 <>
-                  <span className="hidden opacity-40 lg:block">|</span>
                   {flight.delayStatus !== 'none' ? (
                     <>
                       Delayed{' '}

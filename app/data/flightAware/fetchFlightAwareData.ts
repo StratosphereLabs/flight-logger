@@ -100,11 +100,11 @@ export const fetchFlightAwareData = async ({
 }: FetchFlightDataParams): Promise<FlightAwareFlightData | null> => {
   const url = `https://www.flightaware.com/live/flight/${airline.icao}${flightNumber}`;
   const response = await axios.get<string>(url, { headers: HEADERS });
-  const data = processData(response.data);
-  if (data === null) return null;
+  const flightAwareData = processData(response.data);
+  if (flightAwareData === null) return null;
   return (
-    Object.values(data.flights)[0]?.activityLog?.flights?.find(
-      ({ origin, destination, gateDepartureTimes }) => {
+    Object.values(flightAwareData.flights)[0]?.activityLog?.flights?.find(
+      ({ origin, destination, gateDepartureTimes, gateArrivalTimes }) => {
         const date = createNewDate(gateDepartureTimes.scheduled);
         const formattedDate = formatInTimeZone(
           date,
@@ -114,7 +114,11 @@ export const fetchFlightAwareData = async ({
         return (
           formattedDate === isoDate &&
           origin.iata === departureIata &&
-          destination.iata === arrivalIata
+          destination.iata === arrivalIata &&
+          gateDepartureTimes.scheduled !== null &&
+          gateDepartureTimes.estimated !== null &&
+          gateArrivalTimes.scheduled !== null &&
+          gateArrivalTimes.estimated !== null
         );
       },
     ) ?? null
