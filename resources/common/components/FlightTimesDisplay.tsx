@@ -44,7 +44,7 @@ export const FlightTimesDisplay = ({
     {data.actualLocal !== null && data.actualDaysAdded !== null ? (
       <div
         className={classNames(
-          'text-nowrap text-xs lg:text-sm',
+          'text-xs lg:text-sm',
           TEXT_COLORS[data.delayStatus],
         )}
       >

@@ -75,7 +75,7 @@ export const FlightRow = ({
         }}
         {...props}
       >
-        <div className="flex h-full flex-[3] flex-col overflow-hidden sm:flex-[2]">
+        <div className="flex h-full min-w-[80px] flex-[3] flex-col sm:flex-[2]">
           <div className="flex flex-1 flex-col gap-x-2 lg:flex-row">
             <Avatar shapeClassName="w-4 h-4 lg:w-6 lg:h-6 rounded-full">
               <img alt={flight.user.username} src={flight.user.avatar} />
@@ -118,16 +118,20 @@ export const FlightRow = ({
               href={`https://www.flightaware.com/live/flight/${flight.airline?.icao}${flight.flightNumber}`}
               target="_blank"
             >
-              {flight.flightNumberString}
+              <span>{flight.airline?.iata}</span>{' '}
+              <span className="font-semibold">{flight.flightNumber}</span>
             </Link>
           </div>
         </div>
         <div className="flex h-full flex-[6] gap-2">
-          <div className="flex flex-1 flex-col justify-start overflow-hidden">
+          <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
-              <div className="font-mono text-lg font-semibold">
+              <div className="font-mono text-xl font-semibold">
                 {flight.departureAirport.iata}
               </div>
+              <span className="flex-1 truncate text-xs opacity-75 sm:hidden">
+                {flight.departureAirport.municipality}
+              </span>
               <FlightTimesDisplay
                 data={{
                   delayStatus: flight.departureDelayStatus,
@@ -147,13 +151,13 @@ export const FlightRow = ({
                 : flight.departureAirport.countryId}
             </div>
           </div>
-          <div className="flex flex-1 flex-col justify-start overflow-hidden">
+          <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
-              <div className="flex gap-1 font-mono text-lg font-semibold">
+              <div className="flex gap-1 font-mono text-xl font-semibold">
                 <div
                   className={classNames(
                     flight.diversionAirport !== null &&
-                      'line-through opacity-50',
+                      'text-lg line-through opacity-50',
                   )}
                 >
                   {flight.arrivalAirport.iata}
@@ -161,6 +165,9 @@ export const FlightRow = ({
                 {flight.diversionAirport !== null ? (
                   <div>{flight.diversionAirport.iata}</div>
                 ) : null}
+              </div>
+              <div className="w-full truncate text-xs opacity-75 sm:hidden">
+                {arrivalMunicipality}
               </div>
               <FlightTimesDisplay
                 data={{
@@ -180,7 +187,7 @@ export const FlightRow = ({
             </div>
           </div>
         </div>
-        <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end overflow-hidden text-xs">
+        <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end justify-between text-xs">
           <div
             className={classNames(
               'flex flex-col flex-nowrap items-end gap-x-1 text-right',

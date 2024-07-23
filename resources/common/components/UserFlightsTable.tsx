@@ -128,11 +128,8 @@ export const UserFlightsTable = ({
               >();
             return (
               <div className="flex h-full flex-col">
-                <div className="font-mono text-lg font-bold">
+                <div className="font-mono text-xl font-bold">
                   {airportData?.iata}{' '}
-                  <span className="hidden text-sm opacity-50 md:inline-block">
-                    / {airportData?.id}
-                  </span>
                 </div>
                 <div className="truncate text-xs opacity-75">
                   {airportData.municipality},{' '}
@@ -168,11 +165,8 @@ export const UserFlightsTable = ({
               >();
             return (
               <div className="flex h-full flex-col">
-                <div className="font-mono text-lg font-bold">
+                <div className="font-mono text-xl font-bold">
                   {airportData?.iata}{' '}
-                  <span className="hidden text-sm opacity-50 md:inline-block">
-                    / {airportData?.id}
-                  </span>
                 </div>
                 <div className="truncate text-xs opacity-75">
                   {airportData.municipality},{' '}

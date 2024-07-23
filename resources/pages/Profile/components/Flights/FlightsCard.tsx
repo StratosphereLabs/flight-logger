@@ -100,74 +100,77 @@ export const FlightsCard = ({
             </div>
             {onOwnProfile ||
             (data?.isFollowedBy === true && data.isFollowing) ? (
-              <div className="flex justify-end gap-3">
-                {isAddingFlight ? (
-                  <Button
-                    className="flex w-[120px] flex-nowrap"
-                    color="warning"
-                    size="sm"
-                    onClick={() => {
-                      setIsAddingFlight(false);
-                    }}
-                  >
-                    <CloseIcon className="h-4 w-4" />
-                    Done
-                  </Button>
-                ) : null}
-                {onOwnProfile && !isAddingFlight ? (
-                  <>
-                    {isRowSelectEnabled ? (
-                      <Button
-                        color="primary"
-                        disabled={Object.keys(rowSelection).length === 0}
-                        onClick={() => {
-                          setIsCreateTripDialogOpen(true);
-                        }}
-                        size="sm"
-                      >
-                        Create ({Object.keys(rowSelection).length})
-                      </Button>
-                    ) : null}
+              <div className="flex gap-3">
+                <div className="flex flex-wrap justify-end gap-3">
+                  {isAddingFlight ? (
                     <Button
-                      className={classNames(
-                        !isFlightsFullScreen && 'hidden sm:flex',
-                      )}
-                      color={isRowSelectEnabled ? 'error' : 'secondary'}
-                      onClick={() => {
-                        setIsFlightsFullScreen(true);
-                        setSearchParams(oldSearchParams => ({
-                          ...Object.fromEntries(oldSearchParams),
-                          isFlightsFullScreen: 'true',
-                        }));
-                        setIsRowSelectEnabled(isEnabled => {
-                          if (isEnabled) resetRowSelection();
-                          return !isEnabled;
-                        });
-                      }}
-                      outline
+                      className="flex w-[120px] flex-nowrap"
+                      color="warning"
                       size="sm"
+                      onClick={() => {
+                        setIsAddingFlight(false);
+                      }}
                     >
-                      {isRowSelectEnabled ? (
-                        <CloseIcon className="h-4 w-4" />
-                      ) : (
-                        <PlusIcon className="h-4 w-4" />
-                      )}
-                      {isRowSelectEnabled ? 'Cancel' : 'Add Trip'}
+                      <CloseIcon className="h-4 w-4" />
+                      Done
                     </Button>
-                  </>
-                ) : null}
-                {!isAddingFlight ? (
-                  <Button
-                    className="flex flex-nowrap"
-                    color="success"
-                    size="sm"
-                    onClick={() => {
-                      setIsAddingFlight(true);
-                    }}
-                  >
-                    <PlusIcon className="h-4 w-4" /> Add Flight
-                  </Button>
-                ) : null}
+                  ) : null}
+                  {onOwnProfile && !isAddingFlight ? (
+                    <>
+                      {isRowSelectEnabled ? (
+                        <Button
+                          color="primary"
+                          disabled={Object.keys(rowSelection).length === 0}
+                          onClick={() => {
+                            setIsCreateTripDialogOpen(true);
+                          }}
+                          size="sm"
+                        >
+                          Create ({Object.keys(rowSelection).length})
+                        </Button>
+                      ) : null}
+                      {isFlightsFullScreen ? (
+                        <Button
+                          className={classNames(
+                            !isFlightsFullScreen && 'hidden sm:flex',
+                          )}
+                          color={isRowSelectEnabled ? 'error' : 'secondary'}
+                          onClick={() => {
+                            setSearchParams(oldSearchParams => ({
+                              ...Object.fromEntries(oldSearchParams),
+                              isFlightsFullScreen: 'true',
+                            }));
+                            setIsRowSelectEnabled(isEnabled => {
+                              if (isEnabled) resetRowSelection();
+                              return !isEnabled;
+                            });
+                          }}
+                          outline
+                          size="sm"
+                        >
+                          {isRowSelectEnabled ? (
+                            <CloseIcon className="h-4 w-4" />
+                          ) : (
+                            <PlusIcon className="h-4 w-4" />
+                          )}
+                          {isRowSelectEnabled ? 'Cancel' : 'Add Trip'}
+                        </Button>
+                      ) : null}
+                    </>
+                  ) : null}
+                  {!isAddingFlight ? (
+                    <Button
+                      className="flex flex-nowrap"
+                      color="success"
+                      size="sm"
+                      onClick={() => {
+                        setIsAddingFlight(true);
+                      }}
+                    >
+                      <PlusIcon className="h-4 w-4" /> Add Flight
+                    </Button>
+                  ) : null}
+                </div>
                 {isFlightsFullScreen && !isAddingFlight ? (
                   <Button
                     color="ghost"

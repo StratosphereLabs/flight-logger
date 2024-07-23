@@ -100,7 +100,7 @@ const updateFlightsHourly = async (): Promise<void> => {
   }
 };
 
-const updateFlights = async (): Promise<void> => {
+const updateFlightsEvery15 = async (): Promise<void> => {
   try {
     const flightsToUpdate = await prisma.flight.findMany({
       where: {
@@ -164,33 +164,33 @@ const updateFlights = async (): Promise<void> => {
   }
 };
 
-const updateCurrentFlights = async (): Promise<void> => {
+const updateFlightsEvery5 = async (): Promise<void> => {
   try {
     const flightsToUpdate = await prisma.flight.findMany({
       where: {
         OR: [
           {
             outTimeActual: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 60 }),
+              gt: sub(new Date(), { hours: 1 }),
+              lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             outTime: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 60 }),
+              gt: sub(new Date(), { hours: 1 }),
+              lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             inTimeActual: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 90 }),
+              gt: sub(new Date(), { hours: 1 }),
+              lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             inTime: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 90 }),
+              gt: sub(new Date(), { hours: 1 }),
+              lte: add(new Date(), { hours: 2 }),
             },
           },
         ],
@@ -235,7 +235,7 @@ const updateCurrentFlights = async (): Promise<void> => {
 
 (() => {
   scheduleJob('0 * * * *', updateFlightsHourly);
-  scheduleJob('15,30,45 * * * *', updateFlights);
-  scheduleJob('5,10,20,25,35,40,50,55 * * * *', updateCurrentFlights);
+  scheduleJob('15,30,45 * * * *', updateFlightsEvery15);
+  scheduleJob('5,10,20,25,35,40,50,55 * * * *', updateFlightsEvery5);
   scheduleJob('0 0 1 * *', seedDatabase);
 })();
