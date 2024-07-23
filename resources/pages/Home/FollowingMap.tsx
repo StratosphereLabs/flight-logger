@@ -85,124 +85,130 @@ export const FollowingMap = (): JSX.Element => {
             {numCurrentFlights} Flight{numCurrentFlights !== 1 ? 's' : ''}
           </span>
         </div>
-        {isLoaded ? (
-          <GoogleMap
-            mapContainerStyle={{
-              height: '50dvh',
-              width: '100%',
-            }}
-            zoom={3}
-            options={options}
-            onClick={() => {
-              setSelectedAirportId(null);
-            }}
-          >
-            {Object.values(data?.airports ?? {})?.map(({ id, lat, lon }) => {
-              const isActive =
-                selectedAirportId === id || hoverAirportId === id;
-              const isSelected =
-                selectedAirportId !== null ? selectedAirportId === id : false;
-              return (
-                <MarkerF
-                  visible
-                  key={id}
-                  position={{ lat, lng: lon }}
-                  title={id}
-                  onClick={() => {
-                    setSelectedAirportId(id);
-                  }}
-                  onMouseOver={() => {
-                    setHoverAirportId(id);
-                  }}
-                  onMouseOut={() => {
-                    setHoverAirportId(null);
-                  }}
-                  options={{
-                    icon:
-                      window.google !== undefined
-                        ? {
-                            path: window.google.maps.SymbolPath.CIRCLE,
-                            fillColor: isActive ? 'yellow' : 'white',
-                            fillOpacity:
-                              isSelected || selectedAirportId === null
-                                ? 1
-                                : 0.2,
-                            scale: isActive ? 5 : 4,
-                            strokeColor: 'black',
-                            strokeWeight: isActive ? 2 : 1.5,
-                            strokeOpacity:
-                              isSelected || selectedAirportId === null
-                                ? 1
-                                : 0.2,
-                          }
-                        : null,
-                    zIndex: selectedAirportId === null ? 10 : undefined,
-                  }}
-                />
-              );
-            }) ?? null}
-            {[
-              ...(data?.completedFlights ?? []),
-              ...(data?.currentFlights ?? []),
-              ...(data?.upcomingFlights ?? []),
-            ].map(({ departureAirport, arrivalAirport, inFuture }, index) => {
-              const isSelected =
-                selectedAirportId !== null
-                  ? [departureAirport.id, arrivalAirport.id].includes(
-                      selectedAirportId,
-                    )
-                  : false;
-              const isHover =
-                hoverAirportId !== null
-                  ? [departureAirport.id, arrivalAirport.id].includes(
-                      hoverAirportId,
-                    )
-                  : false;
-              const isActive = isSelected || isHover;
-              return (
-                <PolylineF
-                  visible
-                  key={index}
-                  options={{
-                    strokeOpacity:
-                      selectedAirportId === null || isSelected ? 0.75 : 0.1,
-                    strokeColor: isActive ? 'blue' : inFuture ? 'white' : 'red',
-                    strokeWeight: isActive ? 3 : 1.5,
-                    zIndex: isActive ? 10 : inFuture ? 5 : undefined,
-                    geodesic: true,
-                  }}
-                  path={[
-                    { lat: departureAirport.lat, lng: departureAirport.lon },
-                    { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
-                  ]}
-                />
-              );
-            })}
-            {data?.currentFlights.map(currentFlight => (
-              <OverlayViewF
-                key={currentFlight.id}
-                position={{
-                  lat: currentFlight.estimatedLocation.lat,
-                  lng: currentFlight.estimatedLocation.lng,
-                }}
-                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                getPixelPositionOffset={(width, height) => ({
-                  x: -(width / 2),
-                  y: -(height / 2),
-                })}
-              >
-                <Button size="xs" shape="circle" color="ghost">
-                  <PlaneSolidIcon
-                    className={classNames('h-6 w-6', aircraftColor)}
-                    style={{
-                      transform: `rotate(${Math.round(currentFlight.estimatedHeading - 90)}deg)`,
+        <div className="h-[50dvh] w-full">
+          {isLoaded ? (
+            <GoogleMap
+              mapContainerStyle={{
+                height: '100%',
+                width: '100%',
+              }}
+              zoom={3}
+              options={options}
+              onClick={() => {
+                setSelectedAirportId(null);
+              }}
+            >
+              {Object.values(data?.airports ?? {})?.map(({ id, lat, lon }) => {
+                const isActive =
+                  selectedAirportId === id || hoverAirportId === id;
+                const isSelected =
+                  selectedAirportId !== null ? selectedAirportId === id : false;
+                return (
+                  <MarkerF
+                    visible
+                    key={id}
+                    position={{ lat, lng: lon }}
+                    title={id}
+                    onClick={() => {
+                      setSelectedAirportId(id);
+                    }}
+                    onMouseOver={() => {
+                      setHoverAirportId(id);
+                    }}
+                    onMouseOut={() => {
+                      setHoverAirportId(null);
+                    }}
+                    options={{
+                      icon:
+                        window.google !== undefined
+                          ? {
+                              path: window.google.maps.SymbolPath.CIRCLE,
+                              fillColor: isActive ? 'yellow' : 'white',
+                              fillOpacity:
+                                isSelected || selectedAirportId === null
+                                  ? 1
+                                  : 0.2,
+                              scale: isActive ? 5 : 4,
+                              strokeColor: 'black',
+                              strokeWeight: isActive ? 2 : 1.5,
+                              strokeOpacity:
+                                isSelected || selectedAirportId === null
+                                  ? 1
+                                  : 0.2,
+                            }
+                          : null,
+                      zIndex: selectedAirportId === null ? 10 : undefined,
                     }}
                   />
-                </Button>
-              </OverlayViewF>
-            )) ?? null}
-          </GoogleMap>
-        ) : null}
+                );
+              }) ?? null}
+              {[
+                ...(data?.completedFlights ?? []),
+                ...(data?.currentFlights ?? []),
+                ...(data?.upcomingFlights ?? []),
+              ].map(({ departureAirport, arrivalAirport, inFuture }, index) => {
+                const isSelected =
+                  selectedAirportId !== null
+                    ? [departureAirport.id, arrivalAirport.id].includes(
+                        selectedAirportId,
+                      )
+                    : false;
+                const isHover =
+                  hoverAirportId !== null
+                    ? [departureAirport.id, arrivalAirport.id].includes(
+                        hoverAirportId,
+                      )
+                    : false;
+                const isActive = isSelected || isHover;
+                return (
+                  <PolylineF
+                    visible
+                    key={index}
+                    options={{
+                      strokeOpacity:
+                        selectedAirportId === null || isSelected ? 0.75 : 0.1,
+                      strokeColor: isActive
+                        ? 'blue'
+                        : inFuture
+                          ? 'white'
+                          : 'red',
+                      strokeWeight: isActive ? 3 : 1.5,
+                      zIndex: isActive ? 10 : inFuture ? 5 : undefined,
+                      geodesic: true,
+                    }}
+                    path={[
+                      { lat: departureAirport.lat, lng: departureAirport.lon },
+                      { lat: arrivalAirport.lat, lng: arrivalAirport.lon },
+                    ]}
+                  />
+                );
+              })}
+              {data?.currentFlights.map(currentFlight => (
+                <OverlayViewF
+                  key={currentFlight.id}
+                  position={{
+                    lat: currentFlight.estimatedLocation.lat,
+                    lng: currentFlight.estimatedLocation.lng,
+                  }}
+                  mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                  getPixelPositionOffset={(width, height) => ({
+                    x: -(width / 2),
+                    y: -(height / 2),
+                  })}
+                >
+                  <Button size="xs" shape="circle" color="ghost">
+                    <PlaneSolidIcon
+                      className={classNames('h-6 w-6', aircraftColor)}
+                      style={{
+                        transform: `rotate(${Math.round(currentFlight.estimatedHeading - 90)}deg)`,
+                      }}
+                    />
+                  </Button>
+                </OverlayViewF>
+              )) ?? null}
+            </GoogleMap>
+          ) : null}
+        </div>
       </div>
       <div className="flex w-full justify-center sm:p-3">
         <Card className="max-w-[1000px] flex-1 rounded-none bg-base-100 sm:rounded-box">
