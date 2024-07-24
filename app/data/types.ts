@@ -17,6 +17,7 @@ export interface FetchFlightDataParams
   extends Omit<FetchFlightsByFlightNumberParams, 'customUrl'> {
   arrivalIata: string;
   departureIata: string;
+  fetchTrackingData?: boolean;
 }
 
 export interface FlightSearchDataFetchResult {

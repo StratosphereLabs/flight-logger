@@ -1,3 +1,5 @@
+import type { Prisma } from '@prisma/client';
+import { add, isAfter } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { fetchFlightAwareData } from '../data/flightAware';
@@ -20,12 +22,17 @@ export const updateFlightTimesData = async (
     flights[0].departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
+  const isWithinOneDay = isAfter(
+    add(new Date(), { days: 1 }),
+    flights[0].outTime,
+  );
   const flight = await fetchFlightAwareData({
     airline: flights[0].airline,
     arrivalIata: flights[0].arrivalAirport.iata,
     departureIata: flights[0].departureAirport.iata,
     flightNumber: flights[0].flightNumber,
     isoDate,
+    fetchTrackingData: isWithinOneDay,
   });
   if (flight === null) {
     console.error(
@@ -63,6 +70,14 @@ export const updateFlightTimesData = async (
     departureTerminal: flight.origin.terminal ?? undefined,
     arrivalTerminal: flight.destination.terminal ?? undefined,
     arrivalBaggage: undefined,
+    tracklog:
+      flight.track !== undefined
+        ? (flight.track as Prisma.JsonArray)
+        : undefined,
+    waypoints:
+      flight.waypoints !== undefined
+        ? (flight.waypoints as Prisma.JsonArray)
+        : undefined,
   };
   await prisma.flight.updateMany({
     where: {

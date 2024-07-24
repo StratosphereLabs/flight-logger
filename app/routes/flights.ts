@@ -45,6 +45,7 @@ import {
   getHeatmap,
   getPaginatedResponse,
   getRoutes,
+  getTrackingData,
   parsePaginationRequest,
   transformFlightData,
 } from '../utils';
@@ -246,16 +247,21 @@ export const flightsRouter = router({
         }),
       ]);
       return {
-        results: results.map(flight => ({
-          ...flight,
-          outTimeDate: formatInTimeZone(
-            flight.outTime,
-            flight.departureAirport.timeZone,
-            DATE_FORMAT_SHORT,
-          ),
-          durationString: getDurationString(flight.duration),
-          durationStringAbbreviated: getDurationString(flight.duration, true),
-        })),
+        results: results.map(flight => {
+          const { tracklog, waypoints } = getTrackingData(flight);
+          return {
+            ...flight,
+            outTimeDate: formatInTimeZone(
+              flight.outTime,
+              flight.departureAirport.timeZone,
+              DATE_FORMAT_SHORT,
+            ),
+            durationString: getDurationString(flight.duration),
+            durationStringAbbreviated: getDurationString(flight.duration, true),
+            tracklog,
+            waypoints,
+          };
+        }),
         count,
       };
     }),
@@ -294,16 +300,21 @@ export const flightsRouter = router({
         }),
       ]);
       return {
-        results: results.map(flight => ({
-          ...flight,
-          outTimeDate: formatInTimeZone(
-            flight.outTime,
-            flight.departureAirport.timeZone,
-            DATE_FORMAT_SHORT,
-          ),
-          durationString: getDurationString(flight.duration),
-          durationStringAbbreviated: getDurationString(flight.duration, true),
-        })),
+        results: results.map(flight => {
+          const { tracklog, waypoints } = getTrackingData(flight);
+          return {
+            ...flight,
+            outTimeDate: formatInTimeZone(
+              flight.outTime,
+              flight.departureAirport.timeZone,
+              DATE_FORMAT_SHORT,
+            ),
+            durationString: getDurationString(flight.duration),
+            durationStringAbbreviated: getDurationString(flight.duration, true),
+            tracklog,
+            waypoints,
+          };
+        }),
         count,
       };
     }),

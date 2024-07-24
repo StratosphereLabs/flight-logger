@@ -134,6 +134,8 @@ export const MapCard = ({
             lng: currentFlightData.estimatedLocation.lng,
             heading: currentFlightData.estimatedHeading,
             delayStatus: currentFlightData.delayStatus,
+            tracklog: currentFlightData.tracklog,
+            waypoints: currentFlightData.waypoints,
           }
         : undefined,
     [currentFlightData],
@@ -164,7 +166,7 @@ export const MapCard = ({
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
           isMapFullScreen
             ? 'min-h-[calc(100dvh-155px)]'
-            : 'min-h-[calc(100dvh-155px-225px)]',
+            : 'min-h-[calc(100dvh-155px-200px)]',
         )}
       >
         {data !== undefined &&

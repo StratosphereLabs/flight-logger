@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import { isDate, isEqual } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
@@ -19,7 +20,16 @@ export const getGroupedFlightsKey = ({
   return `${airline?.icao}${flightNumber} ${date} ${departureAirportId}-${arrivalAirportId}`;
 };
 
-export const getIsEqual = <Value extends string | number | Date | null>(
+export const getIsEqual = <
+  Value extends
+    | string
+    | number
+    | Date
+    | null
+    | boolean
+    | Prisma.JsonObject
+    | Prisma.JsonArray,
+>(
   a: Value,
   b: Value | undefined,
 ): boolean => {

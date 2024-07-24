@@ -95,7 +95,7 @@ export interface FlightAwareFlightData {
   fruOverride: boolean;
   timestamp: number | null;
   roundedTimestamp: number | null;
-  permaLink: string;
+  permaLink: string | null;
   taxiIn: null;
   taxiOut: null;
   globalIdent: boolean;
@@ -115,6 +115,16 @@ export interface FlightAwareFlightData {
   };
 }
 
+export interface FlightAwareTracklogItem {
+  [x: string]: unknown;
+  timestamp: number;
+  coord: [number, number];
+  alt: number | null;
+  gs: number | null;
+  type: string;
+  isolated: boolean;
+}
+
 export interface FlightAwareFlight extends FlightAwareFlightData {
   activityLog:
     | {
@@ -122,6 +132,8 @@ export interface FlightAwareFlight extends FlightAwareFlightData {
         additionalLogRowsAvailable: boolean;
       }
     | undefined;
+  track: FlightAwareTracklogItem[] | undefined;
+  waypoints: Array<[number, number]> | undefined;
 }
 
 export interface FlightAwareDataResponse {
