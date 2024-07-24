@@ -1,5 +1,6 @@
 import type { aircraft_type, airline, airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
+import classNames from 'classnames';
 import { Table } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 
@@ -88,9 +89,23 @@ export const FlightsTable = ({
           id: 'arrivalAirport',
           accessorKey: 'arrivalAirport',
           header: () => 'Arr',
-          cell: ({ getValue }) => {
+          cell: ({ getValue, row }) => {
             const airport = getValue<airport>();
-            return <div className="font-bold">{airport.iata}</div>;
+            return (
+              <div className="flex flex-wrap gap-x-1 font-bold">
+                <span
+                  className={classNames(
+                    row.original.diversionAirport !== null &&
+                      'line-through opacity-50',
+                  )}
+                >
+                  {airport.iata}
+                </span>
+                {row.original.diversionAirport !== null ? (
+                  <span>{row.original.diversionAirport.iata}</span>
+                ) : null}
+              </div>
+            );
           },
           footer: () => null,
         },

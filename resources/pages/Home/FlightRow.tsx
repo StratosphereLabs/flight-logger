@@ -154,16 +154,16 @@ export const FlightRow = ({
           <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
               <div className="flex gap-1 font-mono text-xl font-semibold">
-                <div
+                <span
                   className={classNames(
                     flight.diversionAirport !== null &&
                       'text-lg line-through opacity-50',
                   )}
                 >
                   {flight.arrivalAirport.iata}
-                </div>
+                </span>
                 {flight.diversionAirport !== null ? (
-                  <div>{flight.diversionAirport.iata}</div>
+                  <span>{flight.diversionAirport.iata}</span>
                 ) : null}
               </div>
               <div className="w-full truncate text-xs opacity-75 sm:hidden">

@@ -1,6 +1,6 @@
 import type { flight, flight_update_change } from '@prisma/client';
 
-export const UPDATE_CONCURRENCY = 4;
+export const UPDATE_CONCURRENCY = 2;
 
 export const FLIGHT_CHANGE_GETTER_MAP: Partial<
   Record<

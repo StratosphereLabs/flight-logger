@@ -163,16 +163,34 @@ export const UserFlightsTable = ({
               getValue<
                 FlightsRouterOutput['getUserFlights']['results'][number]['arrivalAirport']
               >();
+            const arrivalMunicipality =
+              row.original.diversionAirport?.municipality ??
+              airportData.municipality;
+            const arrivalCountryId =
+              row.original.diversionAirport?.countryId ?? airportData.countryId;
+            const arrivalRegionName =
+              row.original.diversionAirport?.region.name ??
+              airportData.region.name;
             return (
               <div className="flex h-full flex-col">
-                <div className="font-mono text-xl font-bold">
-                  {airportData?.iata}{' '}
+                <div className="flex gap-1 font-mono text-xl font-bold">
+                  <span
+                    className={classNames(
+                      row.original.diversionAirport !== null &&
+                        'text-lg line-through opacity-50',
+                    )}
+                  >
+                    {airportData?.iata}
+                  </span>
+                  {row.original.diversionAirport !== null ? (
+                    <span>{row.original.diversionAirport.iata}</span>
+                  ) : null}
                 </div>
                 <div className="truncate text-xs opacity-75">
-                  {airportData.municipality},{' '}
-                  {airportData.countryId === 'US'
-                    ? airportData.region.name
-                    : airportData.countryId}
+                  {arrivalMunicipality},{' '}
+                  {arrivalCountryId === 'US'
+                    ? arrivalRegionName
+                    : arrivalCountryId}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono font-bold"
