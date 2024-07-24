@@ -22,8 +22,12 @@ const processFlightUpdate = async (
     Object.entries(groupedFlights),
     async ([key, flights]) => {
       console.log(`Updating flight ${key}...`);
-      await updateFlightTimesData(flights);
-      await updateFlightRegistrationData(flights);
+      try {
+        await updateFlightTimesData(flights);
+        await updateFlightRegistrationData(flights);
+      } catch (err) {
+        console.error(err);
+      }
     },
     {
       concurrency: UPDATE_CONCURRENCY,
