@@ -129,6 +129,8 @@ model flight {
   arrivalTerminal    String?
   departureGate      String?
   departureTerminal  String?
+  tracklog           Json?
+  waypoints          Json?
   aircraftType       aircraft_type?   @relation(fields: [aircraftTypeId], references: [id])
   airframe           airframe?        @relation(fields: [airframeId], references: [icao24])
   airline            airline?         @relation("flights", fields: [airlineId], references: [id])

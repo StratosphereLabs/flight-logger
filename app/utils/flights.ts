@@ -21,6 +21,7 @@ import {
 } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
+import type { FlightAwareTracklogItem } from '../data/flightAware/types';
 import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
@@ -111,9 +112,15 @@ export interface RouteResult {
 
 export interface FlightsResult extends Array<FlightWithAirports> {}
 
+export interface FlightTrackingDataResult {
+  tracklog: FlightAwareTracklogItem[] | undefined;
+  waypoints: Array<[number, number]> | undefined;
+}
+
 export interface TransformFlightDataResult
-  extends Omit<FlightData, 'user'>,
-    FlightTimestampsResult {
+  extends Omit<FlightData, 'tracklog' | 'user' | 'waypoints'>,
+    FlightTimestampsResult,
+    FlightTrackingDataResult {
   user: {
     avatar: string;
   } & Omit<
@@ -197,6 +204,22 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
     frequency: flights.length,
     isCompleted: flights.some(({ inTime }) => !getInFuture(inTime)),
   }));
+};
+
+export const getTrackingData = (flight: flight): FlightTrackingDataResult => {
+  const tracklog =
+    flight.tracklog !== null &&
+    typeof flight.tracklog === 'object' &&
+    Array.isArray(flight.tracklog)
+      ? (flight.tracklog as FlightAwareTracklogItem[])
+      : undefined;
+  const waypoints =
+    flight.waypoints !== null &&
+    typeof flight.waypoints === 'object' &&
+    Array.isArray(flight.waypoints)
+      ? (flight.waypoints as Array<[number, number]>)
+      : undefined;
+  return { tracklog, waypoints };
 };
 
 export const transformFlightData = (
@@ -283,6 +306,7 @@ export const transformFlightData = (
     flight.diversionAirport !== null
       ? `Diverted to ${flight.diversionAirport.iata}`
       : FLIGHT_STATUS_MAP[flight.flightRadarStatus ?? estimatedStatus];
+  const { tracklog, waypoints } = getTrackingData(flight);
   const distanceTraveled = flightProgress * flightDistance;
   const initialHeading = getBearing(
     flight.departureAirport.lat,
@@ -290,12 +314,18 @@ export const transformFlightData = (
     flight.arrivalAirport.lat,
     flight.arrivalAirport.lon,
   );
-  const estimatedLocation = getProjectedCoords(
-    flight.departureAirport.lat,
-    flight.departureAirport.lon,
-    distanceTraveled,
-    initialHeading,
-  );
+  const estimatedLocation =
+    tracklog !== undefined && tracklog.length > 0
+      ? {
+          lat: tracklog[tracklog.length - 1].coord[1],
+          lng: tracklog[tracklog.length - 1].coord[0],
+        }
+      : getProjectedCoords(
+          flight.departureAirport.lat,
+          flight.departureAirport.lon,
+          distanceTraveled,
+          initialHeading,
+        );
   const estimatedHeading = getBearing(
     estimatedLocation.lat,
     estimatedLocation.lng,
@@ -356,6 +386,8 @@ export const transformFlightData = (
     delayStatus,
     estimatedLocation,
     estimatedHeading,
+    tracklog,
+    waypoints,
   };
 };
 

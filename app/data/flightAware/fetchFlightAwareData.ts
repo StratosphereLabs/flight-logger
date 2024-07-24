@@ -10,7 +10,11 @@ import type {
   FetchFlightsByFlightNumberParams,
   FlightSearchDataFetchResult,
 } from '../types';
-import type { FlightAwareDataResponse, FlightAwareFlightData } from './types';
+import type {
+  FlightAwareDataResponse,
+  FlightAwareFlight,
+  FlightAwareFlightData,
+} from './types';
 
 export const SCRIPT_BEGIN = 'var trackpollBootstrap = ';
 
@@ -97,12 +101,17 @@ export const fetchFlightAwareData = async ({
   isoDate,
   departureIata,
   arrivalIata,
-}: FetchFlightDataParams): Promise<FlightAwareFlightData | null> => {
+  fetchTrackingData,
+}: FetchFlightDataParams): Promise<
+  | (FlightAwareFlightData &
+      Partial<Pick<FlightAwareFlight, 'waypoints' | 'track'>>)
+  | null
+> => {
   const url = `https://www.flightaware.com/live/flight/${airline.icao}${flightNumber}`;
   const response = await axios.get<string>(url, { headers: HEADERS });
   const flightAwareData = processData(response.data);
   if (flightAwareData === null) return null;
-  return (
+  const flightData =
     Object.values(flightAwareData.flights)[0]?.activityLog?.flights?.find(
       ({ origin, destination, gateDepartureTimes, gateArrivalTimes }) => {
         const date = createNewDate(gateDepartureTimes.scheduled);
@@ -121,6 +130,20 @@ export const fetchFlightAwareData = async ({
           gateArrivalTimes.estimated !== null
         );
       },
-    ) ?? null
-  );
+    ) ?? null;
+  if (flightData === null) return null;
+  if (fetchTrackingData === true && flightData.permaLink !== null) {
+    const flightUrl = `https://www.flightaware.com${flightData.permaLink}`;
+    const flightResponse = await axios.get<string>(flightUrl, {
+      headers: HEADERS,
+    });
+    const tracklogData = processData(flightResponse.data);
+    if (tracklogData === null) return flightData;
+    return {
+      ...flightData,
+      track: Object.values(tracklogData.flights)[0]?.track ?? undefined,
+      waypoints: Object.values(tracklogData.flights)[0]?.waypoints ?? undefined,
+    };
+  }
+  return flightData;
 };

@@ -20,9 +20,9 @@ export const updateFlightChangeData = async (
   > = {};
   for (const flight of flights) {
     for (const [key, value] of Object.entries(updatedData)) {
-      if (!getIsEqual(flight[key as keyof flight], value)) {
-        const getUpdate = FLIGHT_CHANGE_GETTER_MAP[key as keyof flight];
-        if (getUpdate !== undefined) {
+      const getUpdate = FLIGHT_CHANGE_GETTER_MAP[key as keyof flight];
+      if (getUpdate !== undefined) {
+        if (!getIsEqual(flight[key as keyof flight], value)) {
           if (flightUpdates[flight.id] === undefined) {
             flightUpdates[flight.id] = [];
           }

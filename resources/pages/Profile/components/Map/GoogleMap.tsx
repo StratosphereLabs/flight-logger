@@ -21,6 +21,7 @@ import { darkModeStyle } from '../../../../common/mapStyle';
 import { useIsDarkMode } from '../../../../stores';
 import { type MapCardFormData } from './MapCard';
 import type { FilteredMapData, MapCoords, MapFlight } from './types';
+import { getAltitudeColor } from './utils';
 
 export interface GoogleMapProps {
   center: MapCoords;
@@ -80,6 +81,7 @@ export const GoogleMap = ({
     [center, isDarkMode],
   );
   const aircraftColor = isDarkMode ? 'text-blue-500' : 'text-[#0000ff]';
+  let lastAltitude: number | null = null;
   return isLoaded ? (
     <GoogleMapComponent
       mapContainerStyle={{
@@ -157,6 +159,54 @@ export const GoogleMap = ({
           );
         },
       )}
+      {currentFlight?.tracklog?.map(({ alt, coord }, index, allItems) => {
+        const prevItem = allItems[index - 1];
+        if (prevItem === undefined) return null;
+        if (alt !== null) {
+          lastAltitude = alt;
+        }
+        return (
+          <PolylineF
+            visible={mapMode === 'routes'}
+            key={index}
+            options={{
+              strokeOpacity: selectedAirportId === null ? 0.75 : 0.1,
+              strokeColor: getAltitudeColor(
+                lastAltitude !== null ? lastAltitude / 450 : 0,
+              ),
+              strokeWeight: 3,
+              zIndex: 10,
+              geodesic: true,
+            }}
+            path={[
+              { lat: prevItem.coord[1], lng: prevItem.coord[0] },
+              { lat: coord[1], lng: coord[0] },
+            ]}
+          />
+        );
+      }) ?? null}
+      {currentFlight?.waypoints?.map(([lng, lat], index, allCoords) => {
+        const prevCoord = allCoords[index - 1];
+        if (prevCoord === undefined) return null;
+        return (
+          <PolylineF
+            visible={mapMode === 'routes'}
+            key={index}
+            options={{
+              strokeOpacity:
+                selectedAirportId === null ? (isDarkMode ? 0.5 : 1) : 0.1,
+              strokeColor: 'lightblue',
+              strokeWeight: 2,
+              zIndex: 5,
+              geodesic: true,
+            }}
+            path={[
+              { lat: prevCoord[1], lng: prevCoord[0] },
+              { lat, lng },
+            ]}
+          />
+        );
+      }) ?? null}
       {currentFlight !== undefined ? (
         <OverlayViewF
           position={{
