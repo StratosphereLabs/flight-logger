@@ -17,4 +17,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './vitest/setupTests.ts',
   },
+  resolve: {
+    alias: {
+      '.prisma/client/index-browser':
+        './node_modules/.prisma/client/index-browser.js',
+    },
+  },
 });
