@@ -89,7 +89,7 @@ export const FollowingMap = (): JSX.Element => {
             {numCurrentFlights} Flight{numCurrentFlights !== 1 ? 's' : ''}
           </span>
         </div>
-        <div className="h-[65dvh] w-full">
+        <div className="h-[65vh] w-full">
           {isLoaded && data !== undefined ? (
             <GoogleMap
               mapContainerStyle={{

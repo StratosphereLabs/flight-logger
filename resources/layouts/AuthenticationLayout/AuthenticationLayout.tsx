@@ -13,7 +13,7 @@ export const AuthenticationLayout = (): JSX.Element => {
   const { pathname } = useLocation();
   const { alertMessages } = useAlertMessages();
   return (
-    <div className="hero min-h-[calc(100dvh)] bg-base-200">
+    <div className="hero min-h-[100dvh] bg-base-200">
       <div className="hero-content w-full flex-wrap justify-around">
         <div className="text-center lg:text-left">
           <div className="font-title inline-flex text-lg text-primary transition-all duration-200 md:text-5xl">
