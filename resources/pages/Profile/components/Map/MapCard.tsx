@@ -42,7 +42,7 @@ export const MapCard = ({
   isMapFullScreen,
   setIsMapFullScreen,
 }: MapCardProps): JSX.Element => {
-  const enabled = useProfilePage();
+  const isProfilePage = useProfilePage();
   const [, setSearchParams] = useSearchParams();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
@@ -76,7 +76,7 @@ export const MapCard = ({
       username,
     },
     {
-      enabled,
+      enabled: isProfilePage,
       onError,
     },
   );
@@ -102,7 +102,7 @@ export const MapCard = ({
         toDate,
       },
       {
-        enabled,
+        enabled: isProfilePage,
         keepPreviousData: true,
         select: mapData => {
           const filteredRoutes = mapData.routes.flatMap(route => ({
@@ -166,9 +166,7 @@ export const MapCard = ({
         isLoading={data === undefined}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
-          isMapFullScreen
-            ? 'min-h-[calc(100dvh-155px)]'
-            : 'min-h-[calc(100dvh-155px-200px)]',
+          isMapFullScreen ? 'min-h-[100dvh]' : 'min-h-[calc(100dvh-225px)]',
         )}
       >
         {data !== undefined &&
@@ -196,7 +194,10 @@ export const MapCard = ({
           />
         ) : null}
         <Form
-          className="pointer-events-none absolute flex w-full justify-between gap-2 p-2"
+          className={classNames(
+            'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
+            isProfilePage ? 'mt-24' : 'mt-16',
+          )}
           methods={methods}
         >
           <div className="flex flex-col gap-2">
@@ -294,6 +295,7 @@ export const MapCard = ({
       isCountsFetching,
       isMapDataFetching,
       isMapFullScreen,
+      isProfilePage,
       mapMode,
       methods,
       selectedAirportId,

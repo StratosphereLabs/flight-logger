@@ -3,12 +3,9 @@ import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
   Account,
   AddFlight,
-  CreateItinerary,
   Data,
   ForgotPassword,
   Home,
-  Itineraries,
-  Itinerary,
   Login,
   ResetPassword,
   Register,
@@ -26,7 +23,6 @@ export const AppRouter = (): JSX.Element => {
         <Route path="" element={<Home />} />
         <Route path="data" element={<Data />} />
         <Route path="users" element={<Users />} />
-        <Route path="create-itinerary" element={<CreateItinerary />} />
         <Route path="add-flight" element={<AddFlight />} />
         {['', 'user/:username'].map(path => (
           <Route key={path} path={path} element={<ProfileLayout />}>
@@ -35,13 +31,11 @@ export const AppRouter = (): JSX.Element => {
               element={<Profile filtersFormControl={methods.control} />}
             />
             <Route path="trips/:tripId?" element={<Trips />} />
-            <Route path="itineraries" element={<Itineraries />} />
             {path === '' ? (
               <Route path="account" element={<Account />} />
             ) : null}
           </Route>
         ))}
-        <Route path="itinerary/:id" element={<Itinerary />} />
       </Route>
       <Route path="auth" element={<AuthenticationLayout />}>
         <Route path="login" element={<Login />} />

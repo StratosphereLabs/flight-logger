@@ -83,13 +83,13 @@ export const FollowingMap = (): JSX.Element => {
   return (
     <div className="flex flex-col items-center">
       <div className="relative w-full">
-        <div className="pointer-events-auto absolute left-2 top-2 z-10 flex min-w-[150px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
+        <div className="pointer-events-auto absolute left-2 top-2 z-10 mt-16 flex min-w-[150px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
           <span className="text-lg font-semibold">Live Map</span>
           <span className="text-sm opacity-75">
             {numCurrentFlights} Flight{numCurrentFlights !== 1 ? 's' : ''}
           </span>
         </div>
-        <div className="h-[50dvh] w-full">
+        <div className="h-[65dvh] w-full">
           {isLoaded && data !== undefined ? (
             <GoogleMap
               mapContainerStyle={{

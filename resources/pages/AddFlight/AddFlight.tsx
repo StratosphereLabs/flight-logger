@@ -74,7 +74,7 @@ export const AddFlight = (): JSX.Element => {
     }, 100);
   }, [methods]);
   return (
-    <div className="flex flex-1 flex-col p-2 sm:p-3">
+    <div className="mt-16 flex flex-1 flex-col p-2 sm:p-3">
       <article className="prose self-center">
         <h2>Add a Flight</h2>
       </article>

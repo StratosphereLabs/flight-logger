@@ -7,7 +7,7 @@ export interface NotificationsForm {
 
 export const Account = (): JSX.Element => {
   return (
-    <div className="flex flex-col gap-4 p-2 sm:p-3">
+    <div className="mt-16 flex flex-col gap-4 p-2 sm:p-3">
       <article className="prose self-center">
         <h2>My Account</h2>
       </article>
