@@ -103,41 +103,62 @@ export const FollowingMap = (): JSX.Element => {
                 setSelectedFlightId(null);
               }}
             >
-              {Object.values(data.airports)?.map(({ id, lat, lon }) => {
+              {Object.values(data.airports)?.map(({ id, lat, lon, iata }) => {
                 const isActive =
                   selectedAirportId === id || hoverAirportId === id;
                 const isFocused = isActive || !isItemSelected;
                 return (
-                  <MarkerF
-                    visible
-                    key={id}
-                    position={{ lat, lng: lon }}
-                    title={id}
-                    onClick={() => {
-                      setSelectedAirportId(id);
-                    }}
-                    onMouseOver={() => {
-                      setHoverAirportId(id);
-                    }}
-                    onMouseOut={() => {
-                      setHoverAirportId(null);
-                    }}
-                    options={{
-                      icon:
-                        window.google !== undefined
-                          ? {
-                              path: window.google.maps.SymbolPath.CIRCLE,
-                              fillColor: isActive ? 'yellow' : 'white',
-                              fillOpacity: isFocused ? 1 : 0.2,
-                              scale: isActive ? 5 : 4,
-                              strokeColor: 'black',
-                              strokeWeight: isActive ? 2 : 1.5,
-                              strokeOpacity: isFocused ? 1 : 0.2,
-                            }
-                          : null,
-                      zIndex: selectedAirportId === null ? 10 : undefined,
-                    }}
-                  />
+                  <>
+                    <OverlayViewF
+                      getPixelPositionOffset={() => ({
+                        x: -10,
+                        y: -20,
+                      })}
+                      mapPaneName="overlayLayer"
+                      position={{ lat, lng: lon }}
+                      zIndex={30}
+                    >
+                      <span
+                        className={classNames(
+                          'font-mono text-xs',
+                          isActive && 'font-bold',
+                          !isFocused && 'opacity-20',
+                        )}
+                      >
+                        {iata}
+                      </span>
+                    </OverlayViewF>
+                    <MarkerF
+                      visible
+                      key={id}
+                      position={{ lat, lng: lon }}
+                      title={id}
+                      onClick={() => {
+                        setSelectedAirportId(id);
+                      }}
+                      onMouseOver={() => {
+                        setHoverAirportId(id);
+                      }}
+                      onMouseOut={() => {
+                        setHoverAirportId(null);
+                      }}
+                      options={{
+                        icon:
+                          window.google !== undefined
+                            ? {
+                                path: window.google.maps.SymbolPath.CIRCLE,
+                                fillColor: isActive ? 'yellow' : 'white',
+                                fillOpacity: isFocused ? 1 : 0.2,
+                                scale: isActive ? 5 : 4,
+                                strokeColor: 'black',
+                                strokeWeight: isActive ? 2.5 : 1.5,
+                                strokeOpacity: isFocused ? 1 : 0.2,
+                              }
+                            : null,
+                        zIndex: selectedAirportId === null ? 10 : undefined,
+                      }}
+                    />
+                  </>
                 );
               }) ?? null}
               {[

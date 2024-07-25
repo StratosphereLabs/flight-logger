@@ -95,46 +95,61 @@ export const GoogleMap = ({
         setSelectedAirportId(null);
       }}
     >
-      {data.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
+      {data.airports?.map(({ id, lat, lon, hasSelectedRoute, iata }) => {
         const isActive = selectedAirportId === id || hoverAirportId === id;
+        const isFocused = hasSelectedRoute || selectedAirportId === null;
         return (
-          <MarkerF
-            visible={mapMode === 'routes'}
-            key={id}
-            position={{ lat, lng: lon }}
-            title={id}
-            onClick={() => {
-              setSelectedAirportId(id);
-            }}
-            onMouseOver={() => {
-              setHoverAirportId(id);
-            }}
-            onMouseOut={() => {
-              setHoverAirportId(null);
-            }}
-            options={{
-              icon:
-                window.google !== undefined
-                  ? {
-                      path: window.google.maps.SymbolPath.CIRCLE,
-                      fillColor: isActive ? 'yellow' : 'white',
-                      fillOpacity:
-                        hasSelectedRoute || selectedAirportId === null
-                          ? 1
-                          : 0.2,
-                      scale: isActive ? 4.5 : 3.5,
-                      strokeColor: 'black',
-                      strokeWeight: isActive ? 2 : 1.5,
-                      strokeOpacity:
-                        hasSelectedRoute || selectedAirportId === null
-                          ? 1
-                          : 0.2,
-                    }
-                  : null,
-              zIndex:
-                hasSelectedRoute || selectedAirportId === null ? 10 : undefined,
-            }}
-          />
+          <>
+            <OverlayViewF
+              getPixelPositionOffset={() => ({
+                x: -10,
+                y: -20,
+              })}
+              mapPaneName="overlayLayer"
+              position={{ lat, lng: lon }}
+              zIndex={30}
+            >
+              <span
+                className={classNames(
+                  'font-mono text-xs',
+                  isActive && 'font-bold',
+                  !isFocused && 'opacity-20',
+                )}
+              >
+                {iata}
+              </span>
+            </OverlayViewF>
+            <MarkerF
+              visible={mapMode === 'routes'}
+              key={id}
+              position={{ lat, lng: lon }}
+              title={id}
+              onClick={() => {
+                setSelectedAirportId(id);
+              }}
+              onMouseOver={() => {
+                setHoverAirportId(id);
+              }}
+              onMouseOut={() => {
+                setHoverAirportId(null);
+              }}
+              options={{
+                icon:
+                  window.google !== undefined
+                    ? {
+                        path: window.google.maps.SymbolPath.CIRCLE,
+                        fillColor: isActive ? 'yellow' : 'white',
+                        fillOpacity: isFocused ? 1 : 0.2,
+                        scale: isActive ? 5 : 4,
+                        strokeColor: 'black',
+                        strokeWeight: isActive ? 2 : 1.5,
+                        strokeOpacity: isFocused ? 1 : 0.2,
+                      }
+                    : null,
+                zIndex: isFocused ? 10 : undefined,
+              }}
+            />
+          </>
         );
       })}
       {data.routes?.map(
@@ -145,10 +160,13 @@ export const GoogleMap = ({
               visible={mapMode === 'routes'}
               key={index}
               options={{
-                strokeOpacity:
-                  selectedAirportId === null || isSelected ? 0.75 : 0.1,
-                strokeColor: isActive ? 'blue' : isCompleted ? 'red' : 'white',
-                strokeWeight: isActive ? 2 : 1.5,
+                strokeOpacity: isActive
+                  ? 0.75
+                  : selectedAirportId === null
+                    ? 0.5
+                    : 0.1,
+                strokeColor: isActive || isCompleted ? 'blue' : 'lightblue',
+                strokeWeight: isActive ? 2.5 : 1.5,
                 zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
                 geodesic: true,
               }}

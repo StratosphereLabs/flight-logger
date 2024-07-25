@@ -134,7 +134,7 @@ export const FlightRow = ({
         <div className="flex flex-[6] gap-2">
           <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
-              <div className="font-mono text-xl font-bold">
+              <div className="font-mono text-2xl font-bold">
                 {flight.departureAirport.iata}
               </div>
               <span className="flex-1 truncate text-xs opacity-75 sm:hidden">
@@ -161,7 +161,7 @@ export const FlightRow = ({
           </div>
           <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
-              <div className="flex gap-1 font-mono text-xl font-bold">
+              <div className="flex gap-1 font-mono text-2xl font-bold">
                 <span
                   className={classNames(
                     flight.diversionAirport !== null &&
