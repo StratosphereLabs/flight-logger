@@ -166,7 +166,7 @@ export const MapCard = ({
         isLoading={data === undefined}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
-          isMapFullScreen ? 'min-h-[100dvh]' : 'min-h-[calc(100dvh-225px)]',
+          isMapFullScreen ? 'min-h-[100dvh]' : 'min-h-[calc(100vh-225px)]',
         )}
       >
         {data !== undefined &&
