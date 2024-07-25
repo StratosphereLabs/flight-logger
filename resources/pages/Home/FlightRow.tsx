@@ -223,7 +223,7 @@ export const FlightRow = ({
               )}
             </span>
           </div>
-          <div className="flex gap-2 sm:gap-4">
+          <div className="flex flex-wrap-reverse justify-end gap-x-4">
             {flight.tailNumber !== null && flight.tailNumber.length > 0 ? (
               <a
                 className="link-hover link pt-[1px] font-mono font-semibold"
