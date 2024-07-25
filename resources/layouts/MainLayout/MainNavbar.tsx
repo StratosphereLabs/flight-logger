@@ -23,7 +23,7 @@ import {
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
-import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
@@ -36,6 +36,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
+  const isDarkMode = useIsDarkMode();
   const [isSearching, setIsSearching] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname } = useLocation();
@@ -67,15 +68,12 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             [`/user/${username}`]: 'users',
             [`/user/${username}/flights`]: 'users',
             [`/user/${username}/trips`]: 'users',
-            [`/user/${username}/itineraries`]: 'users',
           }
         : {
             '/profile': 'profile',
             '/flights': 'profile',
             '/trips': 'profile',
-            '/itineraries': 'profile',
             '/add-flight': 'profile',
-            '/create-itinerary': 'profile',
           }),
       '/users': 'users',
       '/account': 'profile',
@@ -131,7 +129,14 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   );
   return (
     <>
-      <div className="absolute left-0 top-0 z-30 flex w-full flex-col bg-gradient-to-b from-base-100/90 to-base-100/70 shadow-md backdrop-blur">
+      <div
+        className={classNames(
+          'absolute left-0 top-0 z-30 flex w-full flex-col bg-gradient-to-b shadow-md backdrop-blur',
+          isDarkMode
+            ? 'from-base-100/75 to-base-100/40'
+            : 'from-base-100/90 to-base-100/70',
+        )}
+      >
         <div className="navbar">
           <div className="flex sm:flex-1">
             <DropdownMenu

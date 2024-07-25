@@ -46,7 +46,7 @@ export const Users = (): JSX.Element => {
     { onError },
   );
   return (
-    <div className="flex flex-1 flex-col items-center p-2 sm:p-3">
+    <div className="mt-16 flex flex-1 flex-col items-center p-2 sm:p-3">
       <Card className="flex w-full max-w-[1000px] flex-col justify-center bg-base-100">
         <CardBody>
           <CardTitle className="justify-center">User Search</CardTitle>
