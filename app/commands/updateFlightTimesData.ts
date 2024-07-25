@@ -78,6 +78,7 @@ export const updateFlightTimesData = async (
       flight.waypoints !== undefined
         ? (flight.waypoints as Prisma.JsonArray)
         : undefined,
+    flightAwareLink: flight.permaLink ?? undefined,
   };
   await prisma.flight.updateMany({
     where: {

@@ -28,6 +28,10 @@ export const upsertUser = async (
       lastName: params.lastName ?? '',
       admin: false,
     },
+    omit: {
+      id: false,
+      admin: false,
+    },
     update: {},
   });
   return generateUserToken(user);

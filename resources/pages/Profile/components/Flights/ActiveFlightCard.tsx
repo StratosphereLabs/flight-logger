@@ -120,6 +120,8 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                     'flex',
                     data.delayStatus !== 'none' && 'font-semibold',
                     TEXT_COLORS[data.delayStatus],
+                    [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                      'brightness-90',
                   )}
                 >
                   {data.delayStatus === 'canceled'
@@ -138,7 +140,11 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                     <Link
                       className="pt-1 font-mono"
                       hover
-                      href={`https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`}
+                      href={
+                        data.flightAwareLink !== null
+                          ? `https://www.flightaware.com${data.flightAwareLink}`
+                          : `https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`
+                      }
                       target="_blank"
                     >
                       {data.flightNumberString}
@@ -197,6 +203,8 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                       className={classNames(
                         'absolute right-0 h-9 w-9',
                         TEXT_COLORS[data.delayStatus],
+                        [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                          'brightness-90',
                       )}
                       style={{
                         transform: 'translate(42%, -6%)',
@@ -245,6 +253,8 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   className={classNames(
                     'flex flex-1 flex-wrap items-center gap-x-2',
                     TEXT_COLORS[data.departureDelayStatus],
+                    [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                      'brightness-90',
                   )}
                 >
                   {data.departureGate !== null ? (
@@ -284,6 +294,8 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                     className={classNames(
                       'text-sm font-semibold sm:text-base',
                       TEXT_COLORS[data.arrivalDelayStatus],
+                      [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                        'brightness-90',
                     )}
                   >
                     Baggage Claim {data.arrivalBaggage}
@@ -323,6 +335,8 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   className={classNames(
                     'flex flex-1 flex-wrap items-center justify-end gap-x-2',
                     TEXT_COLORS[data.arrivalDelayStatus],
+                    [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                      'brightness-90',
                   )}
                 >
                   {data.arrivalGate !== null ? (

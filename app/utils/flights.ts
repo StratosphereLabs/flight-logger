@@ -32,8 +32,7 @@ import {
   getFlightTimestamps,
   type FlightDelayStatus,
 } from './flighttime';
-import { excludeKeys } from './server';
-import { fetchGravatarUrl } from './users';
+import { fetchGravatarUrl, type UserData } from './users';
 
 export const flightIncludeObj = {
   user: true,
@@ -79,7 +78,7 @@ export interface AirportData extends airport {
 }
 
 export interface FlightData extends flight {
-  user: user;
+  user: UserData;
   departureAirport: AirportData;
   arrivalAirport: AirportData;
   diversionAirport: {
@@ -206,7 +205,9 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
   }));
 };
 
-export const getTrackingData = (flight: flight): FlightTrackingDataResult => {
+export const getTrackingData = (
+  flight: FlightData,
+): FlightTrackingDataResult => {
   const tracklog =
     flight.tracklog !== null &&
     typeof flight.tracklog === 'object' &&
@@ -218,7 +219,10 @@ export const getTrackingData = (flight: flight): FlightTrackingDataResult => {
     typeof flight.waypoints === 'object' &&
     Array.isArray(flight.waypoints)
       ? (flight.waypoints as Array<[number, number]>)
-      : undefined;
+      : ([
+          [flight.departureAirport.lon, flight.departureAirport.lat],
+          [flight.arrivalAirport.lon, flight.arrivalAirport.lat],
+        ] as Array<[number, number]>);
   return { tracklog, waypoints };
 };
 
@@ -326,12 +330,20 @@ export const transformFlightData = (
           distanceTraveled,
           initialHeading,
         );
-  const estimatedHeading = getBearing(
-    estimatedLocation.lat,
-    estimatedLocation.lng,
-    flight.arrivalAirport.lat,
-    flight.arrivalAirport.lon,
-  );
+  const estimatedHeading =
+    tracklog !== undefined && tracklog.length > 1
+      ? getBearing(
+          tracklog[tracklog.length - 2].coord[1],
+          tracklog[tracklog.length - 2].coord[0],
+          estimatedLocation.lat,
+          estimatedLocation.lng,
+        )
+      : getBearing(
+          estimatedLocation.lat,
+          estimatedLocation.lng,
+          flight.arrivalAirport.lat,
+          flight.arrivalAirport.lon,
+        );
   const delayStatus =
     flight.flightRadarStatus === 'CANCELED'
       ? 'canceled'
@@ -349,15 +361,7 @@ export const transformFlightData = (
     ...timestamps,
     user: {
       avatar: fetchGravatarUrl(flight.user.email),
-      ...excludeKeys(
-        flight.user,
-        'admin',
-        'password',
-        'id',
-        'pushNotifications',
-        'passwordResetToken',
-        'passwordResetAt',
-      ),
+      ...flight.user,
     },
     tailNumber: flight.airframe?.registration ?? flight.tailNumber,
     flightNumberString:

@@ -63,9 +63,12 @@ export const FlightRow = ({
       )}
     >
       <div
-        className="flex w-full items-center gap-2 text-sm hover:cursor-pointer lg:gap-4"
+        className="flex w-full items-center gap-3 text-sm hover:cursor-pointer lg:gap-4"
         onClick={event => {
-          if ((event.target as HTMLElement).tagName !== 'A') {
+          if (
+            (event.target as HTMLElement).tagName !== 'A' &&
+            (event.target as HTMLElement).parentElement?.tagName !== 'A'
+          ) {
             if (isActive) {
               onFlightClose();
             } else {
@@ -75,8 +78,45 @@ export const FlightRow = ({
         }}
         {...props}
       >
-        <div className="flex h-full min-w-[80px] flex-[3] flex-col sm:flex-[2]">
-          <div className="flex flex-1 flex-col gap-x-2 lg:flex-row">
+        <div className="flex h-full w-[100px] flex-col gap-2 overflow-hidden sm:w-[145px] lg:w-auto">
+          <div className="flex w-full flex-1 flex-col gap-x-3 lg:flex-row">
+            <div className="flex h-[20px] w-[100px]">
+              {flight.airline?.logo !== null &&
+              flight.airline?.logo !== undefined ? (
+                <a
+                  className="flex flex-1 items-center"
+                  href={flight.airline.wiki ?? '#'}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img
+                    alt={`${flight.airline.name} Logo`}
+                    className="max-h-full max-w-full"
+                    src={flight.airline.logo}
+                  />
+                </a>
+              ) : null}
+            </div>
+            <div className="flex flex-col items-start gap-x-3 text-xs opacity-80 sm:flex-row sm:items-center lg:text-sm">
+              <Link
+                className="w-[50px] text-nowrap font-mono lg:w-[60px]"
+                hover
+                href={
+                  flight.flightAwareLink !== null
+                    ? `https://www.flightaware.com${flight.flightAwareLink}`
+                    : `https://www.flightaware.com/live/flight/${flight.airline?.icao}${flight.flightNumber}`
+                }
+                target="_blank"
+              >
+                <span>{flight.airline?.iata}</span>{' '}
+                <span className="font-semibold">{flight.flightNumber}</span>
+              </Link>
+              <div className="w-[80px] text-nowrap text-xs font-semibold opacity-80">
+                {flight.outDateLocalAbbreviated}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 overflow-hidden">
             <Avatar shapeClassName="w-4 h-4 lg:w-6 lg:h-6 rounded-full">
               <img alt={flight.user.username} src={flight.user.avatar} />
             </Avatar>
@@ -90,43 +130,11 @@ export const FlightRow = ({
               {flight.user.username}
             </Link>
           </div>
-          <div className="text-nowrap text-xs font-semibold opacity-60 lg:pl-1">
-            {flight.outDateLocalAbbreviated}
-          </div>
         </div>
-        <div className="flex h-full flex-col flex-nowrap justify-center gap-2">
-          <div className="flex h-[15px] w-[60px] lg:h-[20px] lg:w-[80px]">
-            {flight.airline?.logo !== null &&
-            flight.airline?.logo !== undefined ? (
-              <a
-                className="flex flex-1 items-center"
-                href={flight.airline.wiki ?? '#'}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img
-                  alt={`${flight.airline.name} Logo`}
-                  className="max-h-[15px] max-w-[60px] lg:max-h-[20px] lg:max-w-[80px]"
-                  src={flight.airline.logo}
-                />
-              </a>
-            ) : null}
-          </div>
-          <div className="w-[50px] text-nowrap font-mono text-xs opacity-80 lg:w-[60px] lg:text-sm">
-            <Link
-              hover
-              href={`https://www.flightaware.com/live/flight/${flight.airline?.icao}${flight.flightNumber}`}
-              target="_blank"
-            >
-              <span>{flight.airline?.iata}</span>{' '}
-              <span className="font-semibold">{flight.flightNumber}</span>
-            </Link>
-          </div>
-        </div>
-        <div className="flex h-full flex-[6] gap-2">
+        <div className="flex flex-[6] gap-2">
           <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
-              <div className="font-mono text-xl font-semibold">
+              <div className="font-mono text-xl font-bold">
                 {flight.departureAirport.iata}
               </div>
               <span className="flex-1 truncate text-xs opacity-75 sm:hidden">
@@ -153,7 +161,7 @@ export const FlightRow = ({
           </div>
           <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
-              <div className="flex gap-1 font-mono text-xl font-semibold">
+              <div className="flex gap-1 font-mono text-xl font-bold">
                 <span
                   className={classNames(
                     flight.diversionAirport !== null &&
@@ -193,6 +201,8 @@ export const FlightRow = ({
               'flex flex-col flex-nowrap items-end gap-x-1 text-right',
               flight.delayStatus !== 'none' && 'font-semibold',
               TEXT_COLORS[flight.delayStatus],
+              [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                'brightness-90',
             )}
           >
             <span>{flight.flightStatus}</span>
@@ -213,7 +223,7 @@ export const FlightRow = ({
               )}
             </span>
           </div>
-          <div className="flex">
+          <div className="flex gap-2 sm:gap-4">
             {flight.tailNumber !== null && flight.tailNumber.length > 0 ? (
               <a
                 className="link-hover link pt-[1px] font-mono font-semibold"
@@ -229,9 +239,7 @@ export const FlightRow = ({
               </a>
             ) : null}
             {flight.aircraftType !== null ? (
-              <div className="ml-3 hidden opacity-75 sm:block">
-                {flight.aircraftType.icao}
-              </div>
+              <div className="opacity-75">{flight.aircraftType.icao}</div>
             ) : null}
           </div>
         </div>
