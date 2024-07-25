@@ -15,7 +15,8 @@ import {
   PlusIcon,
   RightArrowIcon,
 } from '../../common/components';
-import { darkModeStyle } from '../../common/mapStyle';
+import { TOOLTIP_COLORS } from '../../common/constants';
+import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
 import { useIsDarkMode } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
@@ -47,7 +48,7 @@ export const FollowingMap = (): JSX.Element => {
       zoomControl: false,
       streetViewControl: false,
       gestureHandling: 'greedy',
-      styles: isDarkMode ? darkModeStyle : undefined,
+      styles: isDarkMode ? darkModeStyle : lightModeStyle,
     }),
     [center, isDarkMode],
   );
@@ -89,7 +90,7 @@ export const FollowingMap = (): JSX.Element => {
           </span>
         </div>
         <div className="h-[50dvh] w-full">
-          {isLoaded ? (
+          {isLoaded && data !== undefined ? (
             <GoogleMap
               mapContainerStyle={{
                 height: '100%',
@@ -102,7 +103,7 @@ export const FollowingMap = (): JSX.Element => {
                 setSelectedFlightId(null);
               }}
             >
-              {Object.values(data?.airports ?? {})?.map(({ id, lat, lon }) => {
+              {Object.values(data.airports)?.map(({ id, lat, lon }) => {
                 const isActive =
                   selectedAirportId === id || hoverAirportId === id;
                 const isFocused = isActive || !isItemSelected;
@@ -140,9 +141,9 @@ export const FollowingMap = (): JSX.Element => {
                 );
               }) ?? null}
               {[
-                ...(data?.completedFlights ?? []),
-                ...(data?.currentFlights ?? []),
-                ...(data?.upcomingFlights ?? []),
+                ...data.completedFlights,
+                ...data.currentFlights,
+                ...data.upcomingFlights,
               ].map(
                 (
                   {
@@ -167,7 +168,6 @@ export const FollowingMap = (): JSX.Element => {
                           hoverAirportId,
                         )
                       : false;
-                  const isActive = isSelected || isHover;
                   const isCurrentFlight =
                     flightRadarStatus !== null &&
                     [
@@ -175,8 +175,7 @@ export const FollowingMap = (): JSX.Element => {
                       'EN_ROUTE',
                       'ARRIVED_TAXIING',
                     ].includes(flightRadarStatus);
-                  const isFocused =
-                    isActive || (isCurrentFlight && !isItemSelected);
+                  const isFocused = isSelected || isHover || isCurrentFlight;
                   let lastAltitude: number | null = null;
                   return (
                     <>
@@ -190,7 +189,11 @@ export const FollowingMap = (): JSX.Element => {
                           <PolylineF
                             key={index}
                             options={{
-                              strokeOpacity: isFocused ? 0.75 : 0.2,
+                              strokeOpacity: isFocused
+                                ? 0.75
+                                : !isItemSelected
+                                  ? 0.5
+                                  : 0.25,
                               strokeColor: getAltitudeColor(
                                 lastAltitude !== null ? lastAltitude / 450 : 0,
                               ),
@@ -213,7 +216,7 @@ export const FollowingMap = (): JSX.Element => {
                           visible
                           key={index}
                           options={{
-                            strokeOpacity: isFocused ? 0.75 : 0.2,
+                            strokeOpacity: isFocused ? 0.5 : 0.25,
                             strokeColor: 'lightblue',
                             strokeWeight: isFocused ? 2 : 1.5,
                             zIndex: 5,
@@ -231,7 +234,7 @@ export const FollowingMap = (): JSX.Element => {
                   );
                 },
               )}
-              {data?.currentFlights.map(currentFlight => (
+              {data.currentFlights.map(currentFlight => (
                 <OverlayViewF
                   key={currentFlight.id}
                   position={{
@@ -244,21 +247,29 @@ export const FollowingMap = (): JSX.Element => {
                     y: -(height / 2),
                   })}
                 >
-                  <Button
-                    size="xs"
-                    shape="circle"
-                    color="ghost"
-                    onClick={() => {
-                      setSelectedFlightId(currentFlight.id);
-                    }}
+                  <div
+                    className={classNames(
+                      'tooltip tooltip-open opacity-80',
+                      TOOLTIP_COLORS[currentFlight.delayStatus],
+                    )}
+                    data-tip={`${currentFlight.airline?.icao}${currentFlight.flightNumber}`}
                   >
-                    <PlaneSolidIcon
-                      className={classNames('h-6 w-6', aircraftColor)}
-                      style={{
-                        transform: `rotate(${Math.round(currentFlight.estimatedHeading - 90)}deg)`,
+                    <Button
+                      size="xs"
+                      shape="circle"
+                      color="ghost"
+                      onClick={() => {
+                        setSelectedFlightId(currentFlight.id);
                       }}
-                    />
-                  </Button>
+                    >
+                      <PlaneSolidIcon
+                        className={classNames('h-6 w-6', aircraftColor)}
+                        style={{
+                          transform: `rotate(${Math.round(currentFlight.estimatedHeading - 90)}deg)`,
+                        }}
+                      />
+                    </Button>
+                  </div>
                 </OverlayViewF>
               )) ?? null}
             </GoogleMap>
