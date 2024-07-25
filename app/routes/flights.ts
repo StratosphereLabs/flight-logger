@@ -28,7 +28,6 @@ import {
   type FlightDataWithTimestamps,
   type TransformFlightDataResult,
   calculateCenterPoint,
-  excludeKeys,
   fetchGravatarUrl,
   filterCustomDates,
   flightIncludeObj,
@@ -45,7 +44,6 @@ import {
   getHeatmap,
   getPaginatedResponse,
   getRoutes,
-  getTrackingData,
   parsePaginationRequest,
   transformFlightData,
 } from '../utils';
@@ -129,15 +127,7 @@ export const flightsRouter = router({
               user !== null
                 ? {
                     avatar: fetchGravatarUrl(user.email),
-                    ...excludeKeys(
-                      user,
-                      'admin',
-                      'password',
-                      'id',
-                      'pushNotifications',
-                      'passwordResetToken',
-                      'passwordResetAt',
-                    ),
+                    ...user,
                   }
                 : null,
           };
@@ -248,21 +238,18 @@ export const flightsRouter = router({
         }),
       ]);
       return {
-        results: results.map(flight => {
-          const { tracklog, waypoints } = getTrackingData(flight);
-          return {
-            ...flight,
-            outTimeDate: formatInTimeZone(
-              flight.outTime,
-              flight.departureAirport.timeZone,
-              DATE_FORMAT_SHORT,
-            ),
-            durationString: getDurationString(flight.duration),
-            durationStringAbbreviated: getDurationString(flight.duration, true),
-            tracklog,
-            waypoints,
-          };
-        }),
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
+          tracklog: null,
+          waypoints: null,
+        })),
         count,
       };
     }),
@@ -302,21 +289,18 @@ export const flightsRouter = router({
         }),
       ]);
       return {
-        results: results.map(flight => {
-          const { tracklog, waypoints } = getTrackingData(flight);
-          return {
-            ...flight,
-            outTimeDate: formatInTimeZone(
-              flight.outTime,
-              flight.departureAirport.timeZone,
-              DATE_FORMAT_SHORT,
-            ),
-            durationString: getDurationString(flight.duration),
-            durationStringAbbreviated: getDurationString(flight.duration, true),
-            tracklog,
-            waypoints,
-          };
-        }),
+        results: results.map(flight => ({
+          ...flight,
+          outTimeDate: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_SHORT,
+          ),
+          durationString: getDurationString(flight.duration),
+          durationStringAbbreviated: getDurationString(flight.duration, true),
+          tracklog: null,
+          waypoints: null,
+        })),
         count,
       };
     }),
@@ -365,6 +349,10 @@ export const flightsRouter = router({
         include: flightIncludeObj,
         orderBy: {
           outTime: 'asc',
+        },
+        omit: {
+          tracklog: false,
+          waypoints: false,
         },
       });
       const flight = getActiveFlight(flights);
@@ -502,7 +490,14 @@ export const flightsRouter = router({
           id: ctx.user.id,
         },
         include: {
-          following: true,
+          following: {
+            omit: {
+              id: false,
+            },
+          },
+        },
+        omit: {
+          id: false,
         },
       });
       if (user === null) {
@@ -551,6 +546,10 @@ export const flightsRouter = router({
         include: flightIncludeObj,
         orderBy: {
           outTime: 'asc',
+        },
+        omit: {
+          tracklog: false,
+          waypoints: false,
         },
       });
       const result: {

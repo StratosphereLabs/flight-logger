@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import viteIcon from '../../../resources/assets/vite.svg';
+import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import {
   DATE_FORMAT,
@@ -36,6 +37,7 @@ export const FlightChangelogTable = ({
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [keepPreviousData, setKeepPreviousData] = useState(false);
+  const { theme } = useThemeStore();
   const limit = useMemo(
     () =>
       isExpanded
@@ -194,7 +196,14 @@ export const FlightChangelogTable = ({
                             <div className="flex-1 font-semibold">
                               {change.fieldText}
                             </div>
-                            <div className="flex flex-1 gap-1 text-error">
+                            <div
+                              className={classNames(
+                                'flex flex-1 gap-1 text-error',
+                                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(
+                                  theme,
+                                ) && 'brightness-90',
+                              )}
+                            >
                               {change.oldValue !== null ? '-' : ''}
                               <FlightChangeValue
                                 field={change.field}
@@ -202,7 +211,14 @@ export const FlightChangelogTable = ({
                                 value={change.oldValue}
                               />
                             </div>
-                            <div className="flex flex-1 gap-1 font-semibold text-success">
+                            <div
+                              className={classNames(
+                                'flex flex-1 gap-1 font-semibold text-success',
+                                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(
+                                  theme,
+                                ) && 'brightness-90',
+                              )}
+                            >
                               {change.newValue !== null ? '+' : ''}
                               <FlightChangeValue
                                 field={change.field}

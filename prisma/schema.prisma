@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 generator zod {
@@ -131,6 +132,7 @@ model flight {
   departureTerminal  String?
   tracklog           Json?
   waypoints          Json?
+  flightAwareLink    String?
   aircraftType       aircraft_type?   @relation(fields: [aircraftTypeId], references: [id])
   airframe           airframe?        @relation(fields: [airframeId], references: [icao24])
   airline            airline?         @relation("flights", fields: [airlineId], references: [id])

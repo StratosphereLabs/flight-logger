@@ -58,6 +58,9 @@ export const passwordResetRouter = router({
             gt: new Date(),
           },
         },
+        omit: {
+          id: false,
+        },
       });
       if (user === null) {
         throw new TRPCError({

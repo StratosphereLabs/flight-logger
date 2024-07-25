@@ -8,7 +8,7 @@ import {
   flightIncludeObj,
   transformFlightData,
 } from './flights';
-import { excludeKeys } from './server';
+import { type UserData } from './users';
 
 export const tripIncludeObj = {
   user: true,
@@ -21,7 +21,7 @@ export const tripIncludeObj = {
 };
 
 export interface TripWithData extends trip {
-  user: user;
+  user: UserData;
   flights: FlightData[];
 }
 
@@ -44,15 +44,7 @@ export interface TripResult extends trip {
 
 export const transformTripData = (trip: TripWithData): TripResult => ({
   ...trip,
-  user: excludeKeys(
-    trip.user,
-    'admin',
-    'password',
-    'id',
-    'pushNotifications',
-    'passwordResetToken',
-    'passwordResetAt',
-  ),
+  user: trip.user,
   tripDuration:
     trip.flights.length > 0
       ? getDurationDays({

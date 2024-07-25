@@ -19,9 +19,9 @@ import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { PlaneSolidIcon } from '../../../../common/components';
 import { darkModeStyle } from '../../../../common/mapStyle';
 import { useIsDarkMode } from '../../../../stores';
+import { getAltitudeColor } from '../../../../utils/colors';
 import { type MapCardFormData } from './MapCard';
 import type { FilteredMapData, MapCoords, MapFlight } from './types';
-import { getAltitudeColor } from './utils';
 
 export interface GoogleMapProps {
   center: MapCoords;
@@ -185,28 +185,27 @@ export const GoogleMap = ({
           />
         );
       }) ?? null}
-      {currentFlight?.waypoints?.map(([lng, lat], index, allCoords) => {
-        const prevCoord = allCoords[index - 1];
-        if (prevCoord === undefined) return null;
-        return (
-          <PolylineF
-            visible={mapMode === 'routes'}
-            key={index}
-            options={{
-              strokeOpacity:
-                selectedAirportId === null ? (isDarkMode ? 0.5 : 1) : 0.1,
-              strokeColor: 'lightblue',
-              strokeWeight: 2,
-              zIndex: 5,
-              geodesic: true,
-            }}
-            path={[
-              { lat: prevCoord[1], lng: prevCoord[0] },
-              { lat, lng },
-            ]}
-          />
-        );
-      }) ?? null}
+      <PolylineF
+        visible={mapMode === 'routes'}
+        options={{
+          strokeOpacity:
+            selectedAirportId === null ? (isDarkMode ? 0.5 : 1) : 0.1,
+          strokeColor: 'lightblue',
+          strokeWeight: 2,
+          zIndex: 5,
+          geodesic: true,
+        }}
+        path={currentFlight?.waypoints?.flatMap(
+          ([lng, lat], index, allCoords) => {
+            const prevCoord = allCoords[index - 1];
+            if (prevCoord === undefined) return [];
+            return {
+              lat,
+              lng,
+            };
+          },
+        )}
+      />
       {currentFlight !== undefined ? (
         <OverlayViewF
           position={{

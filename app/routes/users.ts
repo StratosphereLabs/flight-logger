@@ -32,6 +32,9 @@ export const usersRouter = router({
           },
         },
       },
+      omit: {
+        pushNotifications: false,
+      },
     });
     if (userData === null) {
       throw new TRPCError({
@@ -50,15 +53,7 @@ export const usersRouter = router({
       creationDate: format(userData.createdAt, DATE_FORMAT_MONTH),
       isFollowing,
       isFollowedBy,
-      ...excludeKeys(
-        userData,
-        'admin',
-        'followedBy',
-        'id',
-        'password',
-        'passwordResetToken',
-        'passwordResetAt',
-      ),
+      ...excludeKeys(userData, 'followedBy'),
     };
   }),
   getUsers: procedure.input(getUsersSchema).query(async ({ ctx, input }) => {
@@ -109,16 +104,8 @@ export const usersRouter = router({
       },
     });
     return results.map(user => ({
+      ...user,
       id: user.username,
-      ...excludeKeys(
-        user,
-        'admin',
-        'password',
-        'id',
-        'pushNotifications',
-        'passwordResetToken',
-        'passwordResetAt',
-      ),
     }));
   }),
   searchUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
@@ -166,19 +153,10 @@ export const usersRouter = router({
       },
     });
     return results.map(user => ({
-      id: user.username,
+      ...excludeKeys(user, '_count'),
       avatar: fetchGravatarUrl(user.email),
       numFlights: user._count.flights,
-      ...excludeKeys(
-        user,
-        'admin',
-        'password',
-        'id',
-        'pushNotifications',
-        'passwordResetToken',
-        'passwordResetAt',
-        '_count',
-      ),
+      id: user.username,
     }));
   }),
   addFCMToken: procedure
@@ -249,15 +227,7 @@ export const usersRouter = router({
           },
         },
       });
-      return excludeKeys(
-        updatedUser,
-        'admin',
-        'password',
-        'id',
-        'pushNotifications',
-        'passwordResetToken',
-        'passwordResetAt',
-      );
+      return updatedUser;
     }),
   removeFollower: procedure
     .use(verifyAuthenticated)
@@ -275,15 +245,7 @@ export const usersRouter = router({
           },
         },
       });
-      return excludeKeys(
-        updatedUser,
-        'admin',
-        'password',
-        'id',
-        'pushNotifications',
-        'passwordResetToken',
-        'passwordResetAt',
-      );
+      return updatedUser;
     }),
 });
 

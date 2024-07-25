@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { type HTMLProps } from 'react';
+import { AppTheme, useThemeStore } from '../../stores';
 import { TEXT_COLORS } from '../constants';
 import type { FlightDelayStatus } from '../types';
 
@@ -21,36 +22,41 @@ export const FlightTimesDisplay = ({
   className,
   data,
   ...props
-}: FlightTimesDisplayProps): JSX.Element => (
-  <div
-    className={classNames(
-      'flex flex-wrap items-center gap-x-2 font-bold',
-      className,
-    )}
-    {...props}
-  >
-    {data.actualValue !== data.value ? (
-      <div
-        className={classNames(
-          data.actualLocal !== null
-            ? 'text-xs line-through opacity-50'
-            : 'text-xs lg:text-sm',
-        )}
-      >
-        {data.local}
-        {data.daysAdded > 0 ? <sup>+{data.daysAdded}</sup> : null}
-      </div>
-    ) : null}
-    {data.actualLocal !== null && data.actualDaysAdded !== null ? (
-      <div
-        className={classNames(
-          'text-xs lg:text-sm',
-          TEXT_COLORS[data.delayStatus],
-        )}
-      >
-        {data.actualLocal}
-        {data.actualDaysAdded > 0 ? <sup>+{data.actualDaysAdded}</sup> : null}
-      </div>
-    ) : null}
-  </div>
-);
+}: FlightTimesDisplayProps): JSX.Element => {
+  const { theme } = useThemeStore();
+  return (
+    <div
+      className={classNames(
+        'flex flex-wrap items-center gap-x-2 font-bold',
+        className,
+      )}
+      {...props}
+    >
+      {data.actualValue !== data.value ? (
+        <div
+          className={classNames(
+            data.actualLocal !== null
+              ? 'text-xs line-through opacity-50'
+              : 'text-xs sm:text-sm',
+          )}
+        >
+          {data.local}
+          {data.daysAdded > 0 ? <sup>+{data.daysAdded}</sup> : null}
+        </div>
+      ) : null}
+      {data.actualLocal !== null && data.actualDaysAdded !== null ? (
+        <div
+          className={classNames(
+            'text-xs sm:text-sm',
+            TEXT_COLORS[data.delayStatus],
+            [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+              'brightness-90',
+          )}
+        >
+          {data.actualLocal}
+          {data.actualDaysAdded > 0 ? <sup>+{data.actualDaysAdded}</sup> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+};

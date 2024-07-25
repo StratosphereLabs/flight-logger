@@ -102,6 +102,9 @@ export const flightDataRouter = router({
                   },
                 },
               },
+              omit: {
+                id: false,
+              },
             })
           : undefined;
       if (user === null) {

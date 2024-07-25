@@ -12,6 +12,11 @@ export const authRouter = router({
       where: {
         email: email.toLowerCase(),
       },
+      omit: {
+        id: false,
+        admin: false,
+        password: false,
+      },
     });
     if (user === null) {
       throw new TRPCError({
