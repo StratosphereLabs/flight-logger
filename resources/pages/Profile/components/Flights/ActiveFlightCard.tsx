@@ -113,7 +113,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               setIsActive(active => !active);
             }}
           >
-            <div className="flex w-full items-center justify-between gap-2 text-xs sm:text-sm">
+            <div className="flex w-full items-center justify-between gap-3 text-xs sm:text-sm">
               <div className="flex flex-1 flex-col">
                 <div
                   className={classNames(
@@ -179,7 +179,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                 ) : null}
               </div>
             </div>
-            <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-xl font-semibold sm:text-2xl">
+            <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-2xl font-bold sm:text-2xl">
               <div>{data.departureAirport.iata}</div>
               <div className="relative h-full flex-1">
                 <div className="absolute left-0 top-0 flex h-full w-full items-center px-2 opacity-50">
