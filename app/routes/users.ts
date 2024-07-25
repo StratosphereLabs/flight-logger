@@ -153,9 +153,9 @@ export const usersRouter = router({
       },
     });
     return results.map(user => ({
-      ...excludeKeys(user, '_count'),
       avatar: fetchGravatarUrl(user.email),
       numFlights: user._count.flights,
+      ...excludeKeys(user, '_count'),
       id: user.username,
     }));
   }),
