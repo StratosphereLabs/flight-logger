@@ -61,6 +61,13 @@ export const CARD_BORDER_COLORS_LOFI: Record<FlightDelayStatus, string> = {
   canceled: 'border-error/75',
 };
 
+export const TOOLTIP_COLORS: Record<FlightDelayStatus, string> = {
+  none: 'tooltip-success',
+  moderate: 'tooltip-warning',
+  severe: 'tooltip-error',
+  canceled: 'tooltip-error',
+};
+
 export const PROGRESS_BAR_COLORS: Record<FlightDelayStatus, string> = {
   none: 'progress-success',
   moderate: 'progress-warning',

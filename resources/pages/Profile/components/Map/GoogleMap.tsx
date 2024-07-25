@@ -17,7 +17,8 @@ import {
 } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { PlaneSolidIcon } from '../../../../common/components';
-import { darkModeStyle } from '../../../../common/mapStyle';
+import { TOOLTIP_COLORS } from '../../../../common/constants';
+import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
 import { useIsDarkMode } from '../../../../stores';
 import { getAltitudeColor } from '../../../../utils/colors';
 import { type MapCardFormData } from './MapCard';
@@ -76,7 +77,7 @@ export const GoogleMap = ({
       zoomControl: false,
       streetViewControl: false,
       gestureHandling: 'greedy',
-      styles: isDarkMode ? darkModeStyle : undefined,
+      styles: isDarkMode ? darkModeStyle : lightModeStyle,
     }),
     [center, isDarkMode],
   );
@@ -206,7 +207,11 @@ export const GoogleMap = ({
           },
         )}
       />
-      {currentFlight !== undefined ? (
+      {currentFlight?.flightRadarStatus !== undefined &&
+      currentFlight.flightRadarStatus !== null &&
+      ['DEPARTED_TAXIING', 'EN_ROUTE', 'ARRIVED_TAXIING'].includes(
+        currentFlight.flightRadarStatus,
+      ) ? (
         <OverlayViewF
           position={{
             lat: currentFlight.lat,
@@ -218,12 +223,20 @@ export const GoogleMap = ({
             y: -(height / 2),
           })}
         >
-          <PlaneSolidIcon
-            className={classNames('h-6 w-6', aircraftColor)}
-            style={{
-              transform: `rotate(${Math.round(currentFlight.heading - 90)}deg)`,
-            }}
-          />
+          <div
+            className={classNames(
+              'tooltip tooltip-open opacity-80',
+              TOOLTIP_COLORS[currentFlight.delayStatus],
+            )}
+            data-tip={currentFlight.callsign}
+          >
+            <PlaneSolidIcon
+              className={classNames('h-6 w-6', aircraftColor)}
+              style={{
+                transform: `rotate(${Math.round(currentFlight.heading - 90)}deg)`,
+              }}
+            />
+          </div>
         </OverlayViewF>
       ) : null}
       <HeatmapLayerF
