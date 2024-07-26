@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
-import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import viteIcon from '../../../resources/assets/vite.svg';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
@@ -22,7 +21,7 @@ export interface FlightChangelogTableProps {
   containerClassName?: string;
   expandedContainerClassName?: string;
   expandedPageSize?: number;
-  flight: FlightsRouterOutput['getFollowingFlights']['completedFlights'][number];
+  flightId: string;
   pageSize?: number;
 }
 
@@ -31,7 +30,7 @@ export const FlightChangelogTable = ({
   containerClassName,
   expandedContainerClassName,
   expandedPageSize,
-  flight,
+  flightId,
   pageSize,
 }: FlightChangelogTableProps): JSX.Element | null => {
   const navigate = useNavigate();
@@ -54,7 +53,7 @@ export const FlightChangelogTable = ({
     hasNextPage,
   } = trpc.flights.getFlightChangelog.useInfiniteQuery(
     {
-      id: flight.id,
+      id: flightId,
       limit,
     },
     {
@@ -83,7 +82,7 @@ export const FlightChangelogTable = ({
   }, [isFetching]);
   useEffect(() => {
     setIsExpanded(false);
-  }, [flight]);
+  }, [flightId]);
   return (
     <div
       className={classNames(

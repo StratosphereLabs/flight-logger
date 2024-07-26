@@ -79,6 +79,3 @@ export const getDurationString = (
     minutes ?? 0
   }m`;
 };
-
-export const getInFuture = (date: string | number | Date): boolean =>
-  !isBefore(new Date(date), new Date());

@@ -29,6 +29,22 @@ export const usersRouter = router({
           select: {
             following: true,
             followedBy: true,
+            flights: {
+              where: {
+                OR: [
+                  {
+                    inTimeActual: {
+                      lte: new Date(),
+                    },
+                  },
+                  {
+                    inTime: {
+                      lte: new Date(),
+                    },
+                  },
+                ],
+              },
+            },
           },
         },
       },
@@ -138,9 +154,18 @@ export const usersRouter = router({
           select: {
             flights: {
               where: {
-                inTime: {
-                  lte: new Date(),
-                },
+                OR: [
+                  {
+                    inTimeActual: {
+                      lte: new Date(),
+                    },
+                  },
+                  {
+                    inTime: {
+                      lte: new Date(),
+                    },
+                  },
+                ],
               },
             },
           },

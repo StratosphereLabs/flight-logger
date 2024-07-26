@@ -6,7 +6,7 @@ import {
   type itinerary_flight,
 } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { isBefore } from 'date-fns';
+import { isBefore, isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT } from '../constants';
 import {
@@ -14,7 +14,6 @@ import {
   getDurationDays,
   getDurationMinutes,
   getDurationString,
-  getInFuture,
 } from './datetime';
 import { calculateDistance } from './distance';
 import { getFlightTimestamps } from './flighttime';
@@ -160,7 +159,7 @@ export const transformItineraryData = (
       itinerary.flights[0].departureAirport.timeZone,
       DATE_FORMAT,
     ),
-    inFuture: getInFuture(itinerary.flights[0].outTime),
+    inFuture: isFuture(itinerary.flights[0].outTime),
     flights: itineraryFlightsResult,
   };
 };

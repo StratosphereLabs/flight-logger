@@ -7,6 +7,7 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import classNames from 'classnames';
+import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Loading } from 'stratosphere-ui';
@@ -22,8 +23,10 @@ import { useIsDarkMode } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { type ProfilePageNavigationState } from '../Profile';
+import { getAirportsData } from '../Profile/components/Map/utils';
 import { DEFAULT_COORDINATES } from './constants';
 import { FlightRow } from './FlightRow';
+import { getFollowingFlightData } from './utils';
 
 export const FollowingMap = (): JSX.Element => {
   const { isLoaded } = useJsApiLoader({
@@ -62,11 +65,27 @@ export const FollowingMap = (): JSX.Element => {
     undefined,
     {
       refetchInterval: 60000,
+      select: flightResult => {
+        const flightsData = {
+          ...flightResult,
+          airports: getAirportsData(
+            flightResult.flights.map(({ departureAirport, arrivalAirport }) => [
+              departureAirport,
+              arrivalAirport,
+            ]),
+            selectedAirportId,
+          ),
+          flights: flightResult.flights.map(
+            getFollowingFlightData({ hoverAirportId, selectedAirportId }),
+          ),
+        };
+        return flightsData;
+      },
     },
   );
-  const numCurrentFlights = useMemo(
-    () => data?.currentFlights.length ?? 0,
-    [data?.currentFlights.length],
+  const groupedFlights = useMemo(
+    () => groupBy(data?.flights ?? [], ({ flightState }) => flightState),
+    [data?.flights],
   );
   useEffect(() => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
@@ -88,7 +107,8 @@ export const FollowingMap = (): JSX.Element => {
         <div className="pointer-events-auto absolute left-2 top-2 z-10 mt-16 flex min-w-[150px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
           <span className="text-lg font-semibold">Live Map</span>
           <span className="text-sm opacity-75">
-            {numCurrentFlights} Flight{numCurrentFlights !== 1 ? 's' : ''}
+            {groupedFlights.CURRENT?.length ?? '0'} Flight
+            {groupedFlights.CURRENT?.length !== 1 ? 's' : ''}
           </span>
         </div>
         <div className="h-[65vh] w-full">
@@ -105,78 +125,70 @@ export const FollowingMap = (): JSX.Element => {
                 setSelectedFlightId(null);
               }}
             >
-              {Object.values(data.airports)?.map(({ id, lat, lon, iata }) => {
-                const isActive =
-                  selectedAirportId === id || hoverAirportId === id;
-                const isFocused = isActive || !isItemSelected;
-                return (
-                  <>
-                    <AirportLabelOverlay
-                      iata={iata}
-                      isFocused={isFocused}
-                      position={{ lat, lng: lon }}
-                    />
-                    <MarkerF
-                      visible
-                      key={id}
-                      position={{ lat, lng: lon }}
-                      title={id}
-                      onClick={() => {
-                        setSelectedAirportId(id);
-                      }}
-                      onMouseOver={() => {
-                        setHoverAirportId(id);
-                      }}
-                      onMouseOut={() => {
-                        setHoverAirportId(null);
-                      }}
-                      options={{
-                        icon:
-                          window.google !== undefined
-                            ? {
-                                path: window.google.maps.SymbolPath.CIRCLE,
-                                fillColor: isActive ? 'yellow' : 'white',
-                                fillOpacity: isFocused ? 1 : 0.1,
-                                scale: isActive ? 5 : 4,
-                                strokeColor: 'black',
-                                strokeWeight: isActive ? 2.5 : 1.5,
-                                strokeOpacity: isFocused ? 1 : 0.1,
-                              }
-                            : null,
-                        zIndex: isFocused ? 30 : 25,
-                      }}
-                    />
-                  </>
-                );
-              }) ?? null}
-              {[
-                ...data.completedFlights,
-                ...data.currentFlights,
-                ...data.upcomingFlights,
-              ].map(
+              {Object.values(data.airports)?.map(
+                ({ id, lat, lon, iata, hasSelectedRoute }) => {
+                  const isActive =
+                    selectedAirportId === id || hoverAirportId === id;
+                  const isFocused =
+                    hasSelectedRoute || selectedAirportId === null;
+                  return (
+                    <>
+                      <AirportLabelOverlay
+                        iata={iata}
+                        isFocused={isFocused}
+                        position={{ lat, lng: lon }}
+                      />
+                      <MarkerF
+                        key={id}
+                        position={{ lat, lng: lon }}
+                        title={id}
+                        onClick={() => {
+                          setSelectedAirportId(id);
+                        }}
+                        onMouseOver={() => {
+                          setHoverAirportId(id);
+                        }}
+                        onMouseOut={() => {
+                          setHoverAirportId(null);
+                        }}
+                        options={{
+                          icon:
+                            window.google !== undefined
+                              ? {
+                                  path: window.google.maps.SymbolPath.CIRCLE,
+                                  fillColor: isActive ? 'yellow' : 'white',
+                                  fillOpacity: isFocused ? 1 : 0.1,
+                                  scale: isActive ? 5 : 4,
+                                  strokeColor: 'black',
+                                  strokeWeight: isActive ? 2 : 1.5,
+                                  strokeOpacity: isFocused ? 1 : 0.1,
+                                }
+                              : null,
+                          zIndex: isFocused ? 30 : 25,
+                        }}
+                      />
+                    </>
+                  );
+                },
+              ) ?? null}
+              {data.flights.map(
                 (
                   {
                     id,
-                    departureAirport,
-                    arrivalAirport,
+                    isSelected,
+                    isHover,
+                    airline,
+                    flightNumber,
+                    delayStatus,
+                    estimatedLocation,
+                    estimatedHeading,
+                    flightState,
                     flightRadarStatus,
                     tracklog,
                     waypoints,
                   },
                   index,
                 ) => {
-                  const isSelected =
-                    selectedAirportId !== null
-                      ? [departureAirport.id, arrivalAirport.id].includes(
-                          selectedAirportId,
-                        )
-                      : id === selectedFlightId;
-                  const isHover =
-                    hoverAirportId !== null
-                      ? [departureAirport.id, arrivalAirport.id].includes(
-                          hoverAirportId,
-                        )
-                      : false;
                   const isCurrentFlight =
                     flightRadarStatus !== null &&
                     [
@@ -247,53 +259,53 @@ export const FollowingMap = (): JSX.Element => {
                           }
                         />
                       ) : null}
+                      {flightState === 'CURRENT' ? (
+                        <OverlayViewF
+                          key={id}
+                          position={{
+                            lat: estimatedLocation.lat,
+                            lng: estimatedLocation.lng,
+                          }}
+                          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                          getPixelPositionOffset={(width, height) => ({
+                            x: -(width / 2),
+                            y: -(height / 2),
+                          })}
+                          zIndex={100}
+                        >
+                          <div
+                            className={classNames(
+                              'tooltip tooltip-open opacity-80',
+                              TOOLTIP_COLORS[delayStatus],
+                            )}
+                            data-tip={`${airline?.icao}${flightNumber}`}
+                          >
+                            <Button
+                              size="sm"
+                              shape="circle"
+                              color="ghost"
+                              onClick={() => {
+                                setSelectedFlightId(id);
+                                setCenter({
+                                  lat: estimatedLocation.lat,
+                                  lng: estimatedLocation.lng,
+                                });
+                              }}
+                            >
+                              <PlaneSolidIcon
+                                className={classNames('h-6 w-6', aircraftColor)}
+                                style={{
+                                  transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
+                                }}
+                              />
+                            </Button>
+                          </div>
+                        </OverlayViewF>
+                      ) : null}
                     </>
                   );
                 },
               )}
-              {data.currentFlights.map(currentFlight => (
-                <OverlayViewF
-                  key={currentFlight.id}
-                  position={{
-                    lat: currentFlight.estimatedLocation.lat,
-                    lng: currentFlight.estimatedLocation.lng,
-                  }}
-                  mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                  getPixelPositionOffset={(width, height) => ({
-                    x: -(width / 2),
-                    y: -(height / 2),
-                  })}
-                  zIndex={100}
-                >
-                  <div
-                    className={classNames(
-                      'tooltip tooltip-open opacity-80',
-                      TOOLTIP_COLORS[currentFlight.delayStatus],
-                    )}
-                    data-tip={`${currentFlight.airline?.icao}${currentFlight.flightNumber}`}
-                  >
-                    <Button
-                      size="sm"
-                      shape="circle"
-                      color="ghost"
-                      onClick={() => {
-                        setSelectedFlightId(currentFlight.id);
-                        setCenter({
-                          lat: currentFlight.estimatedLocation.lat,
-                          lng: currentFlight.estimatedLocation.lng,
-                        });
-                      }}
-                    >
-                      <PlaneSolidIcon
-                        className={classNames('h-6 w-6', aircraftColor)}
-                        style={{
-                          transform: `rotate(${Math.round(currentFlight.estimatedHeading - 90)}deg)`,
-                        }}
-                      />
-                    </Button>
-                  </div>
-                </OverlayViewF>
-              )) ?? null}
             </GoogleMap>
           ) : null}
         </div>
@@ -307,10 +319,10 @@ export const FollowingMap = (): JSX.Element => {
           ) : null}
           {!isLoading && data !== undefined ? (
             <>
-              {data.currentFlights.length > 0 ? (
+              {groupedFlights.CURRENT?.length > 0 ? (
                 <div className="flex flex-col gap-2 p-1">
                   <div className="text-center font-semibold">En Route</div>
-                  {data.currentFlights.map(flight => (
+                  {groupedFlights.CURRENT.map(flight => (
                     <FlightRow
                       key={flight.id}
                       flight={flight}
@@ -325,10 +337,10 @@ export const FollowingMap = (): JSX.Element => {
                   ))}
                 </div>
               ) : null}
-              {data.upcomingFlights.length > 0 ? (
+              {groupedFlights.UPCOMING?.length > 0 ? (
                 <div className="flex flex-col gap-2 p-1">
                   <div className="text-center font-semibold">Scheduled</div>
-                  {data.upcomingFlights.map(flight => (
+                  {groupedFlights.UPCOMING.map(flight => (
                     <FlightRow
                       key={flight.id}
                       flight={flight}
@@ -343,10 +355,10 @@ export const FollowingMap = (): JSX.Element => {
                   ))}
                 </div>
               ) : null}
-              {data.completedFlights.length > 0 ? (
+              {groupedFlights.COMPLETED?.length > 0 ? (
                 <div className="flex flex-col gap-2 p-1">
                   <div className="text-center font-semibold">Arrived</div>
-                  {data.completedFlights.map(flight => (
+                  {groupedFlights.COMPLETED.map(flight => (
                     <FlightRow
                       key={flight.id}
                       flight={flight}
@@ -362,10 +374,7 @@ export const FollowingMap = (): JSX.Element => {
                 </div>
               ) : null}
               <div className="flex flex-1 flex-col items-center justify-center gap-4">
-                {data.completedFlights.length +
-                  data.currentFlights.length +
-                  data.upcomingFlights.length ===
-                0 ? (
+                {data.flights.length === 0 ? (
                   <article className="prose text-center">
                     <h3>No Flights Found</h3>
                     <p>Expecting to see something here?</p>

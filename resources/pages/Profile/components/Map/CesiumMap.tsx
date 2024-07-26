@@ -57,14 +57,14 @@ export const CesiumMap = ({
               polyline={{
                 clampToGround: true,
                 material: Color.fromAlpha(
-                  isActive ? Color.BLUE : isCompleted ? Color.RED : Color.WHITE,
+                  isActive || isCompleted ? Color.BLUE : Color.WHITE,
                   selectedAirportId === null || isSelected ? 0.75 : 0.1,
                 ),
                 positions: [
                   Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
                   Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
                 ],
-                width: isActive ? 2 : 1.5,
+                width: isActive ? 3 : 2,
                 zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
               }}
             />
@@ -89,11 +89,11 @@ export const CesiumMap = ({
             point={{
               color: Color.fromAlpha(
                 isActive ? Color.YELLOW : Color.WHITE,
-                hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
+                hasSelectedRoute || selectedAirportId === null ? 1 : 0.1,
               ),
               outlineColor: Color.fromAlpha(
                 Color.BLACK,
-                hasSelectedRoute || selectedAirportId === null ? 1 : 0.2,
+                hasSelectedRoute || selectedAirportId === null ? 1 : 0.1,
               ),
               outlineWidth: isActive ? 1.5 : 1,
               pixelSize: isActive ? 5 : 4,

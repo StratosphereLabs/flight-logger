@@ -1,4 +1,3 @@
-import type { airport } from '@prisma/client';
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
@@ -27,7 +26,6 @@ import { procedure, router } from '../trpc';
 import {
   type FlightDataWithTimestamps,
   type TransformFlightDataResult,
-  calculateCenterPoint,
   fetchGravatarUrl,
   filterCustomDates,
   flightIncludeObj,
@@ -507,7 +505,7 @@ export const flightsRouter = router({
         });
       }
       const followingIds = user.following.map(({ id }) => id);
-      const flights = await prisma.flight.findMany({
+      const flightResults = await prisma.flight.findMany({
         where: {
           userId: {
             in: [user.id, ...followingIds],
@@ -552,41 +550,28 @@ export const flightsRouter = router({
           waypoints: false,
         },
       });
-      const result: {
-        airports: Record<string, airport>;
-        completedFlights: TransformFlightDataResult[];
-        currentFlights: TransformFlightDataResult[];
-        upcomingFlights: TransformFlightDataResult[];
-      } = {
-        airports: {},
-        completedFlights: [],
-        currentFlights: [],
-        upcomingFlights: [],
-      };
-      for (const flightResult of flights) {
-        const flight = transformFlightData(flightResult);
-        if (
+      const flights: Array<
+        TransformFlightDataResult & {
+          flightState: 'UPCOMING' | 'CURRENT' | 'COMPLETED';
+        }
+      > = [];
+      for (const result of flightResults) {
+        const flight = transformFlightData(result);
+        const flightState =
           flight.flightRadarStatus === 'SCHEDULED' ||
           flight.flightRadarStatus === 'CANCELED'
-        ) {
-          result.upcomingFlights.push(flight);
-        } else if (flight.flightRadarStatus === 'ARRIVED') {
-          result.completedFlights.unshift(flight);
-        } else {
-          result.currentFlights.push(flight);
-        }
-        result.airports[flight.departureAirportId] = flight.departureAirport;
-        result.airports[flight.arrivalAirportId] = flight.arrivalAirport;
+            ? 'UPCOMING'
+            : flight.flightRadarStatus === 'ARRIVED'
+              ? 'COMPLETED'
+              : 'CURRENT';
+        flights.push({
+          ...flight,
+          flightState,
+        });
       }
-      const airports = Object.values(result.airports);
       return {
-        ...result,
-        centerpoint:
-          airports.length > 0
-            ? calculateCenterPoint(
-                airports.map(({ lat, lon }) => ({ lat, lng: lon })),
-              )
-            : { lat: 0, lng: 0 },
+        flights,
+        centerpoint: getCenterpoint(flights),
       };
     }),
   addFlight: procedure

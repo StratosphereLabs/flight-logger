@@ -1,13 +1,6 @@
 import { type FlightRadarStatus, type airport } from '@prisma/client';
-import { add, isBefore } from 'date-fns';
+import { add, isBefore, isFuture } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
-import {
-  getDaysAdded,
-  getDaysToAdd,
-  getDurationMinutes,
-  getDurationString,
-  getInFuture,
-} from './datetime';
 import {
   DATE_FORMAT,
   DATE_FORMAT_ABBR,
@@ -15,6 +8,12 @@ import {
   TIME_FORMAT_12H,
   TIME_FORMAT_24H,
 } from '../constants';
+import {
+  getDaysAdded,
+  getDaysToAdd,
+  getDurationMinutes,
+  getDurationString,
+} from './datetime';
 
 export type FlightDelayStatus = 'canceled' | 'severe' | 'moderate' | 'none';
 
@@ -177,7 +176,7 @@ export const getFlightTimestamps = ({
   return {
     durationString: getDurationString(duration),
     durationStringAbbreviated: getDurationString(duration, true),
-    inFuture: getInFuture(outTime),
+    inFuture: isFuture(outTime),
     outDateISO: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT_ISO),
     outDateLocal: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT),
     outDateLocalAbbreviated: formatInTimeZone(

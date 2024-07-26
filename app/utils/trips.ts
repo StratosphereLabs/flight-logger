@@ -1,7 +1,8 @@
 import { type trip, type user } from '@prisma/client';
+import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
-import { getDurationDays, getInFuture } from './datetime';
+import { getDurationDays } from './datetime';
 import {
   type FlightData,
   type TransformFlightDataResult,
@@ -57,7 +58,7 @@ export const transformTripData = (trip: TripWithData): TripResult => ({
     trip.flights[0]?.departureAirport.timeZone ?? '',
     DATE_FORMAT_ISO,
   ),
-  inFuture: getInFuture(trip.outTime),
+  inFuture: isFuture(trip.outTime),
   flights: trip.flights.map(transformFlightData),
   link: `/user/${trip.user.username}/trips/${trip.id}`,
 });

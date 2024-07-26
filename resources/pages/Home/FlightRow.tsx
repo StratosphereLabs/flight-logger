@@ -17,7 +17,7 @@ import {
 import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 
 export interface FlightRowProps extends HTMLProps<HTMLDivElement> {
-  flight: FlightsRouterOutput['getFollowingFlights']['completedFlights'][number];
+  flight: FlightsRouterOutput['getFollowingFlights']['flights'][number];
   onFlightClick: () => void;
   onFlightClose: () => void;
   selectedFlightId: string | null;
@@ -244,7 +244,7 @@ export const FlightRow = ({
           </div>
         </div>
       </div>
-      {isActive ? <FlightChangelogTable flight={flight} /> : null}
+      {isActive ? <FlightChangelogTable flightId={flight.id} /> : null}
     </div>
   );
 };

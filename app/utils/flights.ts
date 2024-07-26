@@ -15,6 +15,7 @@ import {
   isAfter,
   isBefore,
   isEqual,
+  isFuture,
   startOfMonth,
   startOfYear,
   sub,
@@ -25,7 +26,7 @@ import type { FlightAwareTracklogItem } from '../data/flightAware/types';
 import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
-import { getDurationMinutes, getDurationString, getInFuture } from './datetime';
+import { getDurationMinutes, getDurationString } from './datetime';
 import { calculateDistance, getBearing, getProjectedCoords } from './distance';
 import {
   type FlightTimestampsResult,
@@ -109,7 +110,8 @@ export interface RouteResult {
   isCompleted: boolean;
 }
 
-export interface FlightsResult extends Array<FlightWithAirports> {}
+export interface FlightsResult
+  extends Array<Omit<FlightWithAirports, 'tracklog' | 'waypoints'>> {}
 
 export interface FlightTrackingDataResult {
   tracklog: FlightAwareTracklogItem[] | undefined;
@@ -201,7 +203,7 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
   return Object.values(groupedFlights).map(flights => ({
     airports: [flights[0].departureAirport, flights[0].arrivalAirport],
     frequency: flights.length,
-    isCompleted: flights.some(({ inTime }) => !getInFuture(inTime)),
+    isCompleted: flights.some(({ inTime }) => !isFuture(inTime)),
   }));
 };
 
@@ -252,14 +254,13 @@ export const transformFlightData = (
   const runwayArrivalTime =
     flight.onTimeActual ?? sub(arrivalTime, { minutes: 10 });
   const hasDeparted =
-    flight.flightRadarStatus !== 'CANCELED' && !getInFuture(departureTime);
+    flight.flightRadarStatus !== 'CANCELED' && !isFuture(departureTime);
   const hasTakenOff =
-    flight.flightRadarStatus !== 'CANCELED' &&
-    !getInFuture(runwayDepartureTime);
+    flight.flightRadarStatus !== 'CANCELED' && !isFuture(runwayDepartureTime);
   const hasLanded =
-    flight.flightRadarStatus !== 'CANCELED' && !getInFuture(runwayArrivalTime);
+    flight.flightRadarStatus !== 'CANCELED' && !isFuture(runwayArrivalTime);
   const hasArrived =
-    flight.flightRadarStatus !== 'CANCELED' && !getInFuture(arrivalTime);
+    flight.flightRadarStatus !== 'CANCELED' && !isFuture(arrivalTime);
   const totalDuration = getDurationMinutes({
     start: departureTime,
     end: arrivalTime,

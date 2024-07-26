@@ -97,7 +97,7 @@ export const ViewFlightModal = (): JSX.Element => {
         </div>
       </div>
       {activeFlight !== null ? (
-        <FlightChangelogTable className="mt-10" flight={activeFlight} />
+        <FlightChangelogTable className="mt-10" flightId={activeFlight.id} />
       ) : null}
     </Modal>
   );
