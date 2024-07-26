@@ -81,6 +81,7 @@ export const GoogleMap = ({
       streetViewControl: false,
       gestureHandling: 'greedy',
       styles: isDarkMode ? darkModeStyle : lightModeStyle,
+      isFractionalZoomEnabled: true,
     }),
     [center, isDarkMode],
   );
@@ -103,11 +104,13 @@ export const GoogleMap = ({
         const isFocused = hasSelectedRoute || selectedAirportId === null;
         return (
           <>
-            <AirportLabelOverlay
-              iata={iata}
-              isFocused={isFocused}
-              position={{ lat, lng: lon }}
-            />
+            {mapMode === 'routes' ? (
+              <AirportLabelOverlay
+                iata={iata}
+                isFocused={isFocused}
+                position={{ lat, lng: lon }}
+              />
+            ) : null}
             <MarkerF
               visible={mapMode === 'routes'}
               key={id}
@@ -128,14 +131,14 @@ export const GoogleMap = ({
                     ? {
                         path: window.google.maps.SymbolPath.CIRCLE,
                         fillColor: isActive ? 'yellow' : 'white',
-                        fillOpacity: isFocused ? 1 : 0.2,
+                        fillOpacity: isFocused ? 1 : 0.1,
                         scale: isActive ? 5 : 4,
                         strokeColor: 'black',
                         strokeWeight: isActive ? 2 : 1.5,
-                        strokeOpacity: isFocused ? 1 : 0.2,
+                        strokeOpacity: isFocused ? 1 : 0.1,
                       }
                     : null,
-                zIndex: isFocused ? 10 : undefined,
+                zIndex: isFocused ? 30 : 25,
               }}
             />
           </>
@@ -163,7 +166,7 @@ export const GoogleMap = ({
                       ? 'lightblue'
                       : 'white',
                 strokeWeight: isActive ? 3 : 2,
-                zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
+                zIndex: isCompleted ? 10 : 5,
                 geodesic: true,
               }}
               path={[
@@ -185,12 +188,12 @@ export const GoogleMap = ({
             visible={mapMode === 'routes'}
             key={index}
             options={{
-              strokeOpacity: selectedAirportId === null ? 0.75 : 0.1,
+              strokeOpacity: selectedAirportId === null ? 1 : 0.1,
               strokeColor: getAltitudeColor(
                 lastAltitude !== null ? lastAltitude / 450 : 0,
               ),
               strokeWeight: 3,
-              zIndex: 10,
+              zIndex: 20,
               geodesic: true,
             }}
             path={[
@@ -207,7 +210,7 @@ export const GoogleMap = ({
             selectedAirportId === null ? (isDarkMode ? 0.5 : 1) : 0.1,
           strokeColor: 'lightblue',
           strokeWeight: 2,
-          zIndex: 5,
+          zIndex: 15,
           geodesic: true,
         }}
         path={currentFlight?.waypoints?.flatMap(
@@ -221,7 +224,8 @@ export const GoogleMap = ({
           },
         )}
       />
-      {currentFlight?.flightRadarStatus !== undefined &&
+      {mapMode === 'routes' &&
+      currentFlight?.flightRadarStatus !== undefined &&
       currentFlight.flightRadarStatus !== null &&
       ['DEPARTED_TAXIING', 'EN_ROUTE', 'ARRIVED_TAXIING'].includes(
         currentFlight.flightRadarStatus,
@@ -236,6 +240,7 @@ export const GoogleMap = ({
             x: -(width / 2),
             y: -(height / 2),
           })}
+          zIndex={100}
         >
           <div
             className={classNames(

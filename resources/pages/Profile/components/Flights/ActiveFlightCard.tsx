@@ -219,7 +219,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               </div>
               <div>{data.arrivalAirport.iata}</div>
             </div>
-            <div className="flex w-full justify-between gap-2">
+            <div className="flex w-full justify-between gap-3">
               <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
                 <div className="truncate text-xs sm:text-sm">
                   {data.departureAirport.municipality},{' '}
