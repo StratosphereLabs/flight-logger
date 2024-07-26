@@ -3,6 +3,11 @@ export const darkModeStyle = [
   { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
   { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
   {
+    featureType: 'administrative',
+    elementType: 'all',
+    stylers: [{ lightness: -25 }],
+  },
+  {
     featureType: 'administrative.locality',
     elementType: 'all',
     stylers: [{ visibility: 'off' }],
@@ -40,6 +45,11 @@ export const darkModeStyle = [
 ];
 
 export const lightModeStyle = [
+  {
+    featureType: 'administrative',
+    elementType: 'all',
+    stylers: [{ lightness: 50 }],
+  },
   {
     featureType: 'administrative.locality',
     elementType: 'all',
