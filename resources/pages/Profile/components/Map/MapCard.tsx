@@ -16,16 +16,21 @@ import {
   Select,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
-import { CollapseIcon, ExpandIcon } from '../../../../common/components';
+import {
+  CollapseIcon,
+  ExpandIcon,
+  FireIcon,
+  GlobeIcon,
+  MapIcon,
+} from '../../../../common/components';
 import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
-import { AirportInfoOverlay } from './AirportInfoOverlay';
 import { CesiumMap } from './CesiumMap';
 import { DEFAULT_COORDINATES } from './constants';
 import { GoogleMap } from './GoogleMap';
 import { ProfileOverlay } from './ProfileOverlay';
-import { getAirports } from './utils';
+import { getAirportsData } from './utils';
 
 export interface MapCardFormData {
   mapMode: 'routes' | 'heatmap' | '3d';
@@ -71,6 +76,23 @@ export const MapCard = ({
   });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
+  const { data: airportData, isFetching: isAirportDataFetching } =
+    trpc.airports.getAirport.useQuery(
+      {
+        id: selectedAirportId ?? '',
+        username,
+        status,
+        range,
+        year,
+        month,
+        fromDate,
+        toDate,
+      },
+      {
+        enabled: selectedAirportId !== null,
+        onError,
+      },
+    );
   const { data: currentFlightData } = trpc.flights.getUserActiveFlight.useQuery(
     {
       username,
@@ -105,7 +127,7 @@ export const MapCard = ({
         enabled: isProfilePage,
         keepPreviousData: true,
         select: mapData => {
-          const filteredRoutes = mapData.routes.flatMap(route => ({
+          const routes = mapData.routes.map(route => ({
             ...route,
             isHover: route.airports.some(({ id }) => id === hoverAirportId),
             isSelected: route.airports.some(
@@ -114,9 +136,12 @@ export const MapCard = ({
           }));
           return {
             ...mapData,
-            routes: filteredRoutes,
-            airports: getAirports(filteredRoutes),
-            numFlights: filteredRoutes.reduce(
+            routes,
+            airports: getAirportsData(
+              mapData.routes.map(({ airports }) => airports),
+              selectedAirportId,
+            ),
+            numFlights: routes.reduce(
               (acc, { frequency }) => acc + frequency,
               0,
             ),
@@ -142,6 +167,8 @@ export const MapCard = ({
         : undefined,
     [currentFlightData],
   );
+  const mapFlightCount =
+    airportData?.numFlights ?? countData?.completedFlightCount ?? 0;
   const mapCenterpoint =
     currentFlightData?.estimatedLocation ?? data?.centerpoint;
   useEffect(() => {
@@ -200,39 +227,28 @@ export const MapCard = ({
           )}
           methods={methods}
         >
-          <div className="flex flex-col gap-2">
+          <div className="flex min-w-[240px] max-w-[350px] flex-1 flex-col gap-2">
             <ProfileOverlay />
-            <AirportInfoOverlay
-              airportId={selectedAirportId}
-              filtersFormControl={filtersFormControl}
-            />
           </div>
-          <div className="flex flex-1 flex-col gap-2">
-            <div className="flex flex-wrap-reverse justify-end gap-2">
-              <div className="flex h-[32px] w-full min-w-[125px] max-w-[150px] items-center justify-center rounded-box bg-base-100/50 backdrop-blur-sm sm:h-[48px]">
-                {isMapDataFetching ||
-                isCountsFetching ||
-                countData === undefined ? (
-                  <Loading />
-                ) : (
-                  <>
-                    <span className="font-semibold">
-                      {countData.completedFlightCount}
-                    </span>
-                    <span className="ml-1 opacity-75">
-                      Flight{countData.completedFlightCount !== 1 ? 's' : ''}
-                    </span>
-                  </>
-                )}
-              </div>
-              <div className="flex flex-wrap-reverse justify-end gap-2">
+          <div className="flex items-start">
+            <div className="flex flex-col items-end justify-end gap-2 sm:flex-row-reverse">
+              <div className="flex gap-2">
                 <Select
                   buttonProps={{
                     className: 'btn-sm sm:btn-md',
+                    children:
+                      mapMode === 'routes' ? (
+                        <MapIcon className="h-6 w-6" />
+                      ) : mapMode === '3d' ? (
+                        <GlobeIcon className="h-6 w-6" />
+                      ) : (
+                        <FireIcon className="h-6 w-6" />
+                      ),
                   }}
-                  className="pointer-events-auto w-[125px] sm:w-[150px]"
+                  className="pointer-events-auto"
                   formValueMode="id"
                   getItemText={({ text }) => text}
+                  hideDropdownIcon
                   options={[
                     {
                       id: 'routes',
@@ -247,7 +263,7 @@ export const MapCard = ({
                       text: '3D',
                     },
                   ]}
-                  menuClassName="right-0 w-full menu-sm sm:menu-md"
+                  menuClassName="right-0 w-[150px]"
                   name="mapMode"
                 />
                 <Button
@@ -280,6 +296,21 @@ export const MapCard = ({
                   </span>
                 </Button>
               </div>
+              <div className="flex h-[32px] items-center justify-center rounded-box bg-base-100/50 px-4 backdrop-blur-sm sm:h-[48px]">
+                {isAirportDataFetching ||
+                isMapDataFetching ||
+                isCountsFetching ||
+                countData === undefined ? (
+                  <Loading />
+                ) : (
+                  <>
+                    <span className="font-semibold">{mapFlightCount}</span>
+                    <span className="ml-1 opacity-75">
+                      Flight{mapFlightCount !== 1 ? 's' : ''}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </Form>
@@ -290,12 +321,13 @@ export const MapCard = ({
       countData,
       currentFlight,
       data,
-      filtersFormControl,
       hoverAirportId,
+      isAirportDataFetching,
       isCountsFetching,
       isMapDataFetching,
       isMapFullScreen,
       isProfilePage,
+      mapFlightCount,
       mapMode,
       methods,
       selectedAirportId,

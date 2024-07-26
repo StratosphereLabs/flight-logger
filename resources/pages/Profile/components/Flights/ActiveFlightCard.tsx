@@ -353,7 +353,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               </div>
             </div>
           </div>
-          {isActive ? <FlightChangelogTable flight={data} /> : null}
+          {isActive ? <FlightChangelogTable flightId={data.id} /> : null}
         </CardBody>
       </Card>
       <Modal

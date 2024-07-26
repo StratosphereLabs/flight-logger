@@ -1,24 +1,30 @@
-import type { AirportResult, RouteInput } from './types';
+import type { airport } from '@prisma/client';
+import type { AirportResult } from './types';
 
-export const getAirports = (result: RouteInput[]): AirportResult[] => {
+export const getAirportsData = (
+  routes: Array<[airport, airport]>,
+  selectedAirportId: string | null,
+): AirportResult[] => {
   const selectedAirportIds = new Set<string>();
-  for (const { isSelected, airports } of result) {
+  for (const [departureAirport, arrivalAirport] of routes) {
+    const isSelected =
+      selectedAirportId !== null
+        ? [departureAirport.id, arrivalAirport.id].includes(selectedAirportId)
+        : false;
     if (isSelected) {
-      selectedAirportIds.add(airports[0].id);
-      selectedAirportIds.add(airports[1].id);
+      selectedAirportIds.add(departureAirport.id);
+      selectedAirportIds.add(arrivalAirport.id);
     }
   }
   const airportsMap: Record<string, AirportResult> = {};
-  for (const { airports } of result) {
-    const airport1 = airports[0];
-    const airport2 = airports[1];
-    airportsMap[airport1.id] = {
-      ...airport1,
-      hasSelectedRoute: selectedAirportIds.has(airport1.id),
+  for (const [departureAirport, arrivalAirport] of routes) {
+    airportsMap[departureAirport.id] = {
+      ...departureAirport,
+      hasSelectedRoute: selectedAirportIds.has(departureAirport.id),
     };
-    airportsMap[airport2.id] = {
-      ...airport2,
-      hasSelectedRoute: selectedAirportIds.has(airport2.id),
+    airportsMap[arrivalAirport.id] = {
+      ...arrivalAirport,
+      hasSelectedRoute: selectedAirportIds.has(arrivalAirport.id),
     };
   }
   return Object.values(airportsMap);
