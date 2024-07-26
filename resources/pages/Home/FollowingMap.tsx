@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Loading } from 'stratosphere-ui';
 import {
+  AirportLabelOverlay,
   PlaneSolidIcon,
   PlusIcon,
   RightArrowIcon,
@@ -109,25 +110,11 @@ export const FollowingMap = (): JSX.Element => {
                 const isFocused = isActive || !isItemSelected;
                 return (
                   <>
-                    <OverlayViewF
-                      getPixelPositionOffset={() => ({
-                        x: -10,
-                        y: -20,
-                      })}
-                      mapPaneName="overlayLayer"
+                    <AirportLabelOverlay
+                      iata={iata}
+                      isFocused={isFocused}
                       position={{ lat, lng: lon }}
-                      zIndex={30}
-                    >
-                      <span
-                        className={classNames(
-                          'font-mono text-xs',
-                          isActive && 'font-bold',
-                          !isFocused && 'opacity-20',
-                        )}
-                      >
-                        {iata}
-                      </span>
-                    </OverlayViewF>
+                    />
                     <MarkerF
                       visible
                       key={id}
@@ -214,7 +201,7 @@ export const FollowingMap = (): JSX.Element => {
                                 ? 0.75
                                 : !isItemSelected
                                   ? 0.5
-                                  : 0.25,
+                                  : 0.1,
                               strokeColor: getAltitudeColor(
                                 lastAltitude !== null ? lastAltitude / 450 : 0,
                               ),
@@ -237,9 +224,15 @@ export const FollowingMap = (): JSX.Element => {
                           visible
                           key={index}
                           options={{
-                            strokeOpacity: isFocused ? 0.5 : 0.25,
-                            strokeColor: 'lightblue',
-                            strokeWeight: isFocused ? 2 : 1.5,
+                            strokeOpacity: isFocused
+                              ? 0.75
+                              : !isItemSelected
+                                ? isDarkMode
+                                  ? 0.5
+                                  : 1
+                                : 0.1,
+                            strokeColor: isDarkMode ? 'lightblue' : 'white',
+                            strokeWeight: isFocused ? 3 : 2,
                             zIndex: 5,
                             geodesic: true,
                           }}

@@ -4,6 +4,7 @@ export * from './AirframeInput';
 export * from './AirlineInput';
 export * from './AirlineLogo';
 export * from './AirportInput';
+export * from './AirportLabelOverlay';
 export * from './FlightChangelogTable';
 export * from './FlightChangeValue';
 export * from './FlightTimesDisplay';

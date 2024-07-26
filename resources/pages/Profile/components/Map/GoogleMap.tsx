@@ -16,7 +16,10 @@ import {
   useState,
 } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
-import { PlaneSolidIcon } from '../../../../common/components';
+import {
+  AirportLabelOverlay,
+  PlaneSolidIcon,
+} from '../../../../common/components';
 import { TOOLTIP_COLORS } from '../../../../common/constants';
 import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
 import { useIsDarkMode } from '../../../../stores';
@@ -100,25 +103,11 @@ export const GoogleMap = ({
         const isFocused = hasSelectedRoute || selectedAirportId === null;
         return (
           <>
-            <OverlayViewF
-              getPixelPositionOffset={() => ({
-                x: -10,
-                y: -20,
-              })}
-              mapPaneName="overlayLayer"
+            <AirportLabelOverlay
+              iata={iata}
+              isFocused={isFocused}
               position={{ lat, lng: lon }}
-              zIndex={30}
-            >
-              <span
-                className={classNames(
-                  'font-mono text-xs',
-                  isActive && 'font-bold',
-                  !isFocused && 'opacity-20',
-                )}
-              >
-                {iata}
-              </span>
-            </OverlayViewF>
+            />
             <MarkerF
               visible={mapMode === 'routes'}
               key={id}
@@ -163,10 +152,17 @@ export const GoogleMap = ({
                 strokeOpacity: isActive
                   ? 0.75
                   : selectedAirportId === null
-                    ? 0.5
+                    ? isDarkMode
+                      ? 0.5
+                      : 1
                     : 0.1,
-                strokeColor: isActive || isCompleted ? 'blue' : 'lightblue',
-                strokeWeight: isActive ? 2.5 : 1.5,
+                strokeColor:
+                  isActive || isCompleted
+                    ? 'blue'
+                    : isDarkMode
+                      ? 'lightblue'
+                      : 'white',
+                strokeWeight: isActive ? 3 : 2,
                 zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
                 geodesic: true,
               }}
