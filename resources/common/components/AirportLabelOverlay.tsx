@@ -4,7 +4,7 @@ import classNames from 'classnames';
 export interface AirportLabelOverlayProps {
   iata: string;
   isFocused: boolean;
-  position: google.maps.LatLng;
+  position: google.maps.LatLngLiteral;
 }
 
 export const AirportLabelOverlay = ({
@@ -14,7 +14,7 @@ export const AirportLabelOverlay = ({
 }: AirportLabelOverlayProps): JSX.Element => (
   <OverlayViewF
     getPixelPositionOffset={() => ({
-      x: -12,
+      x: -13,
       y: -22,
     })}
     mapPaneName="overlayLayer"
@@ -25,7 +25,7 @@ export const AirportLabelOverlay = ({
       className={classNames(
         'rounded-box bg-base-100 bg-opacity-60 px-[3px] font-mono text-xs backdrop-blur-sm',
         'font-bold',
-        !isFocused && 'opacity-20',
+        !isFocused && 'opacity-10',
       )}
     >
       {iata}

@@ -45,7 +45,7 @@ export const ProfileFiltersForm = ({
             id: (key + 1).toString(),
             label: MONTH_NAMES[key],
           }))}
-          menuClassName="w-[150px] right-0 menu-sm sm:menu-md max-h-[200px] overflow-y-scroll flex-nowrap"
+          menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap"
         />
       ) : null}
       {range === 'customYear' || range === 'customMonth' ? (
@@ -62,7 +62,7 @@ export const ProfileFiltersForm = ({
             id: `${currentDate.getFullYear() - index + 1}`,
             label: `${currentDate.getFullYear() - index + 1}`,
           }))}
-          menuClassName="w-[150px] right-0 menu-sm sm:menu-md max-h-[200px] overflow-y-scroll flex-nowrap"
+          menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap"
         />
       ) : null}
       <Select
@@ -100,7 +100,7 @@ export const ProfileFiltersForm = ({
             label: 'Custom Range',
           },
         ]}
-        menuClassName="w-[175px] right-0 menu-sm sm:menu-md"
+        menuClassName="w-[175px] right-0"
       />
       <Select
         buttonProps={{
@@ -125,7 +125,7 @@ export const ProfileFiltersForm = ({
             label: 'All',
           },
         ]}
-        menuClassName="w-[175px] right-0 menu-sm sm:menu-md"
+        menuClassName="w-[175px] right-0"
       />
     </Form>
   );

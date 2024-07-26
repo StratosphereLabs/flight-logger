@@ -50,6 +50,7 @@ export const FollowingMap = (): JSX.Element => {
       streetViewControl: false,
       gestureHandling: 'greedy',
       styles: isDarkMode ? darkModeStyle : lightModeStyle,
+      isFractionalZoomEnabled: true,
     }),
     [center, isDarkMode],
   );
@@ -135,14 +136,14 @@ export const FollowingMap = (): JSX.Element => {
                             ? {
                                 path: window.google.maps.SymbolPath.CIRCLE,
                                 fillColor: isActive ? 'yellow' : 'white',
-                                fillOpacity: isFocused ? 1 : 0.2,
+                                fillOpacity: isFocused ? 1 : 0.1,
                                 scale: isActive ? 5 : 4,
                                 strokeColor: 'black',
                                 strokeWeight: isActive ? 2.5 : 1.5,
-                                strokeOpacity: isFocused ? 1 : 0.2,
+                                strokeOpacity: isFocused ? 1 : 0.1,
                               }
                             : null,
-                        zIndex: selectedAirportId === null ? 10 : undefined,
+                        zIndex: isFocused ? 30 : 25,
                       }}
                     />
                   </>
@@ -197,16 +198,17 @@ export const FollowingMap = (): JSX.Element => {
                           <PolylineF
                             key={index}
                             options={{
-                              strokeOpacity: isFocused
-                                ? 0.75
-                                : !isItemSelected
-                                  ? 0.5
-                                  : 0.1,
+                              strokeOpacity:
+                                isSelected || isHover
+                                  ? 1
+                                  : !isItemSelected
+                                    ? 0.75
+                                    : 0.1,
                               strokeColor: getAltitudeColor(
                                 lastAltitude !== null ? lastAltitude / 450 : 0,
                               ),
                               strokeWeight: isFocused ? 3 : 2,
-                              zIndex: 10,
+                              zIndex: isCurrentFlight ? 20 : 10,
                               geodesic: true,
                             }}
                             path={[
@@ -224,16 +226,17 @@ export const FollowingMap = (): JSX.Element => {
                           visible
                           key={index}
                           options={{
-                            strokeOpacity: isFocused
-                              ? 0.75
-                              : !isItemSelected
-                                ? isDarkMode
-                                  ? 0.5
-                                  : 1
-                                : 0.1,
+                            strokeOpacity:
+                              isSelected || isHover
+                                ? 0.75
+                                : !isItemSelected
+                                  ? isDarkMode
+                                    ? 0.5
+                                    : 1
+                                  : 0.1,
                             strokeColor: isDarkMode ? 'lightblue' : 'white',
-                            strokeWeight: isFocused ? 3 : 2,
-                            zIndex: 5,
+                            strokeWeight: 2,
+                            zIndex: isCurrentFlight ? 15 : 5,
                             geodesic: true,
                           }}
                           path={
@@ -260,6 +263,7 @@ export const FollowingMap = (): JSX.Element => {
                     x: -(width / 2),
                     y: -(height / 2),
                   })}
+                  zIndex={100}
                 >
                   <div
                     className={classNames(
@@ -269,11 +273,15 @@ export const FollowingMap = (): JSX.Element => {
                     data-tip={`${currentFlight.airline?.icao}${currentFlight.flightNumber}`}
                   >
                     <Button
-                      size="xs"
+                      size="sm"
                       shape="circle"
                       color="ghost"
                       onClick={() => {
                         setSelectedFlightId(currentFlight.id);
+                        setCenter({
+                          lat: currentFlight.estimatedLocation.lat,
+                          lng: currentFlight.estimatedLocation.lng,
+                        });
                       }}
                     >
                       <PlaneSolidIcon
