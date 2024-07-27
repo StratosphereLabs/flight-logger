@@ -33,26 +33,46 @@ export const aircraftTypesRouter = router({
     }),
   searchAircraft: procedure.input(searchSchema).query(async ({ input }) => {
     const { query } = input;
-    const aircraftTypes = await prisma.aircraft_type.findMany({
-      take: 5,
-      where: {
-        OR: [
-          {
-            id: {
-              contains: query,
-              mode: 'insensitive',
+    const [codeMatches, allMatches] = await prisma.$transaction([
+      prisma.aircraft_type.findMany({
+        take: 5,
+        where: {
+          OR: [
+            {
+              icao: query.toUpperCase(),
             },
-          },
-          {
-            name: {
-              contains: query,
-              mode: 'insensitive',
+            {
+              iata: query.toUpperCase(),
             },
-          },
-        ],
-      },
-    });
-    return aircraftTypes;
+          ],
+        },
+      }),
+      prisma.aircraft_type.findMany({
+        take: 5,
+        where: {
+          OR: [
+            {
+              id: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+      }),
+    ]);
+    return [
+      ...codeMatches,
+      ...allMatches.filter(({ id }) =>
+        codeMatches.every(match => match.id !== id),
+      ),
+    ].slice(0, 5);
   }),
   getAircraftType: procedure
     .input(getAircraftTypeSchema)

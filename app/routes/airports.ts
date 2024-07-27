@@ -39,26 +39,52 @@ export const airportsRouter = router({
   }),
   searchAirports: procedure.input(searchSchema).query(async ({ input }) => {
     const { query } = input;
-    const airports = await prisma.airport.findMany({
-      take: 5,
-      where: {
-        OR: [
-          {
-            id: {
-              contains: query,
-              mode: 'insensitive',
+    const [codeMatches, allMatches] = await prisma.$transaction([
+      prisma.airport.findMany({
+        take: 5,
+        where: {
+          OR: [
+            {
+              iata: query.toUpperCase(),
             },
-          },
-          {
-            name: {
-              contains: query,
-              mode: 'insensitive',
+            {
+              id: query.toUpperCase(),
             },
-          },
-        ],
-      },
-    });
-    return airports;
+          ],
+        },
+      }),
+      prisma.airport.findMany({
+        take: 5,
+        where: {
+          OR: [
+            {
+              iata: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              municipality: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+      }),
+    ]);
+    return [
+      ...codeMatches,
+      ...allMatches.filter(({ id }) =>
+        codeMatches.every(match => match.id !== id),
+      ),
+    ].slice(0, 5);
   }),
   getAirport: procedure
     .input(getAirportSchema)

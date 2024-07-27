@@ -200,9 +200,6 @@ export const EditFlightModal = ({
           />
         ) : null}
         <AirlineInput
-          getBadgeText={({ iata, icao, name }) =>
-            `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
-          }
           labelText="Airline"
           inputClassName="bg-base-200"
           menuClassName="w-full"

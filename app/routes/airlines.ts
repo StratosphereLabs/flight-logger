@@ -30,26 +30,46 @@ export const airlinesRouter = router({
   }),
   searchAirlines: procedure.input(searchSchema).query(async ({ input }) => {
     const { query } = input;
-    const airlines = await prisma.airline.findMany({
-      take: 5,
-      where: {
-        OR: [
-          {
-            id: {
-              contains: query,
-              mode: 'insensitive',
+    const [codeMatches, allMatches] = await prisma.$transaction([
+      prisma.airline.findMany({
+        take: 5,
+        where: {
+          OR: [
+            {
+              iata: query.toUpperCase(),
             },
-          },
-          {
-            name: {
-              contains: query,
-              mode: 'insensitive',
+            {
+              icao: query.toUpperCase(),
             },
-          },
-        ],
-      },
-    });
-    return airlines;
+          ],
+        },
+      }),
+      prisma.airline.findMany({
+        take: 5,
+        where: {
+          OR: [
+            {
+              id: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+      }),
+    ]);
+    return [
+      ...codeMatches,
+      ...allMatches.filter(({ id }) =>
+        codeMatches.every(match => match.id !== id),
+      ),
+    ].slice(0, 5);
   }),
   getAirline: procedure.input(getAirlineSchema).query(async ({ input }) => {
     const { id } = input;

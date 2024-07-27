@@ -38,8 +38,7 @@ export const FollowingMap = (): JSX.Element => {
     null,
   );
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
-  const isItemSelected =
-    selectedAirportId !== null || selectedFlightId !== null;
+  const isItemSelected = selectedAirportId !== null;
   const navigate = useNavigate();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();

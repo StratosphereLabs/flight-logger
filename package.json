@@ -76,7 +76,7 @@
     "react-router-dom": "^6.21.1",
     "reflect-metadata": "^0.2.1",
     "resium": "^1.17.2",
-    "stratosphere-ui": "^1.8.3",
+    "stratosphere-ui": "^1.8.4",
     "string-similarity": "^4.0.4",
     "zod": "3.23.8",
     "zod-prisma-types": "^3.1.8",
