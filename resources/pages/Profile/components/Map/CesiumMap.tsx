@@ -11,7 +11,7 @@ export interface CesiumMapProps {
   hoverAirportId: string | null;
   selectedAirportId: string | null;
   setHoverAirportId: Dispatch<SetStateAction<string | null>>;
-  setSelectedAirportId: Dispatch<SetStateAction<string | null>>;
+  setSelectedAirportId: (newId: string | null) => void;
 }
 
 export const CesiumMap = ({
@@ -57,7 +57,7 @@ export const CesiumMap = ({
               polyline={{
                 clampToGround: true,
                 material: Color.fromAlpha(
-                  isActive || isCompleted ? Color.BLUE : Color.WHITE,
+                  isActive || isCompleted ? Color.RED : Color.WHITE,
                   selectedAirportId === null || isSelected ? 0.75 : 0.1,
                 ),
                 positions: [

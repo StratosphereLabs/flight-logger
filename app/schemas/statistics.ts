@@ -9,8 +9,6 @@ export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema.extend(
   profileFiltersSchema.shape,
 );
 
-export const getCountsSchema = getUserSchema.extend(profileFiltersSchema.shape);
-
 export const getUserTopRoutesSchema = getStatisticsBarGraphSchema.extend({
   cityPairs: z.boolean(),
 });

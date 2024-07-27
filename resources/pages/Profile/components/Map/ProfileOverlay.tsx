@@ -198,7 +198,8 @@ export const ProfileOverlay = (): JSX.Element => {
                 </div>
               </div>
               <div className="flex items-center opacity-80">
-                {userData._count.flights} Flights
+                {userData._count.flights} Flight
+                {userData._count.flights !== 1 ? 's' : ''}
               </div>
             </div>
             Are you sure you want to unfollow this user?

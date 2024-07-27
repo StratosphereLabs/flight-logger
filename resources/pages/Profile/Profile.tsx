@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import {
@@ -19,12 +19,32 @@ export interface ProfilePageNavigationState {
 }
 
 export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { state } = useLocation() as {
     state: ProfilePageNavigationState | null;
   };
   const [initialParams] = useState(searchParams);
   const [isAddingFlight, setIsAddingFlight] = useState(false);
+  const [selectedAirportId, setSelectedAirportIdFn] = useState<string | null>(
+    initialParams.get('selectedAirportId') ?? null,
+  );
+  const setSelectedAirportId = useCallback(
+    (newId: string | null): void => {
+      setSelectedAirportIdFn(newId);
+      setSearchParams(oldSearchParams => {
+        if (newId === null) {
+          oldSearchParams.delete('selectedAirportId');
+          return oldSearchParams;
+        } else {
+          return {
+            ...Object.fromEntries(oldSearchParams),
+            selectedAirportId: newId,
+          };
+        }
+      });
+    },
+    [setSearchParams],
+  );
   const [isFlightsFullScreen, setIsFlightsFullScreen] = useState(
     initialParams.get('isFlightsFullScreen') === 'true',
   );
@@ -44,7 +64,9 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
       <MapCard
         filtersFormControl={filtersFormControl}
         isMapFullScreen={isMapFullScreen}
+        selectedAirportId={selectedAirportId}
         setIsMapFullScreen={setIsMapFullScreen}
+        setSelectedAirportId={setSelectedAirportId}
       />
       <div className="flex flex-1 flex-col gap-3 p-2 sm:p-3">
         {!isFlightsFullScreen && !isStatsFullScreen ? (
@@ -61,6 +83,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
               filtersFormControl={filtersFormControl}
               isAddingFlight={isAddingFlight}
               isFlightsFullScreen={isFlightsFullScreen}
+              selectedAirportId={selectedAirportId}
               setIsAddingFlight={setIsAddingFlight}
               setIsFlightsFullScreen={setIsFlightsFullScreen}
             />

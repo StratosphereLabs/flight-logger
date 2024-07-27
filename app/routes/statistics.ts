@@ -16,7 +16,6 @@ import {
   getUserTopAirportsSchema,
   getUserFlightTypesSchema,
   getStatisticsDistributionSchema,
-  getCountsSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -30,67 +29,6 @@ import {
 } from '../utils';
 
 export const statisticsRouter = router({
-  getCounts: procedure.input(getCountsSchema).query(async ({ ctx, input }) => {
-    if (input.username === undefined && ctx.user === null) {
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
-    const fromDate = getFromDate(input);
-    const toDate = getToDate(input);
-    const fromStatusDate = getFromStatusDate(input);
-    const toStatusDate = getToStatusDate(input);
-    const userData = await prisma.user.findUnique({
-      where: {
-        username: input?.username ?? ctx.user?.username,
-      },
-      include: {
-        flights: {
-          where: {
-            outTime: {
-              gte: fromDate,
-              lte: toDate,
-            },
-            OR:
-              fromStatusDate !== undefined || toStatusDate !== undefined
-                ? [
-                    {
-                      inTime: {
-                        gte: fromStatusDate,
-                        lte: toStatusDate,
-                      },
-                    },
-                    {
-                      inTimeActual: {
-                        gte: fromStatusDate,
-                        lte: toStatusDate,
-                      },
-                    },
-                  ]
-                : undefined,
-          },
-          select: {
-            departureAirport: {
-              select: {
-                timeZone: true,
-              },
-            },
-            outTime: true,
-          },
-        },
-      },
-    });
-    if (userData === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'User not found.',
-      });
-    }
-    const completedFlightCount = userData.flights.filter(
-      filterCustomDates(input),
-    ).length;
-    return {
-      completedFlightCount,
-    };
-  }),
   getTopRoutes: procedure
     .input(getUserTopRoutesSchema)
     .query(async ({ ctx, input }) => {

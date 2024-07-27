@@ -64,7 +64,6 @@ export const AddFlight = (): JSX.Element => {
       }, 100);
       void utils.users.invalidate();
       void utils.flights.invalidate();
-      void utils.statistics.getCounts.invalidate();
     },
     onError,
   });

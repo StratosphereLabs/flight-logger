@@ -39,21 +39,22 @@ export interface MapCardFormData {
 export interface MapCardProps {
   filtersFormControl: Control<ProfileFilterFormData>;
   isMapFullScreen: boolean;
+  selectedAirportId: string | null;
   setIsMapFullScreen: Dispatch<SetStateAction<boolean>>;
+  setSelectedAirportId: (newId: string | null) => void;
 }
 
 export const MapCard = ({
   filtersFormControl,
   isMapFullScreen,
+  selectedAirportId,
   setIsMapFullScreen,
+  setSelectedAirportId,
 }: MapCardProps): JSX.Element => {
   const isProfilePage = useProfilePage();
   const [, setSearchParams] = useSearchParams();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
-  const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
-    null,
-  );
   const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
     getDefaultValues: ({ mapMode }) => ({
       mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
@@ -76,23 +77,6 @@ export const MapCard = ({
   });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
-  const { data: airportData, isFetching: isAirportDataFetching } =
-    trpc.airports.getAirport.useQuery(
-      {
-        id: selectedAirportId ?? '',
-        username,
-        status,
-        range,
-        year,
-        month,
-        fromDate,
-        toDate,
-      },
-      {
-        enabled: selectedAirportId !== null,
-        onError,
-      },
-    );
   const { data: currentFlightData } = trpc.flights.getUserActiveFlight.useQuery(
     {
       username,
@@ -102,8 +86,8 @@ export const MapCard = ({
       onError,
     },
   );
-  const { data: countData, isFetching: isCountsFetching } =
-    trpc.statistics.getCounts.useQuery({
+  const { data } = trpc.flights.getUserMapData.useQuery(
+    {
       username,
       status,
       range,
@@ -111,46 +95,44 @@ export const MapCard = ({
       month,
       fromDate,
       toDate,
-    });
-  const { data, isFetching: isMapDataFetching } =
-    trpc.flights.getUserMapData.useQuery(
-      {
-        username,
-        status,
-        range,
-        year,
-        month,
-        fromDate,
-        toDate,
+    },
+    {
+      enabled: isProfilePage,
+      keepPreviousData: true,
+      select: mapData => {
+        const routes = mapData.routes.map(route => ({
+          ...route,
+          isHover: route.airports.some(({ id }) => id === hoverAirportId),
+          isSelected: route.airports.some(({ id }) => id === selectedAirportId),
+        }));
+        return {
+          ...mapData,
+          routes,
+          airports: getAirportsData(
+            mapData.routes.map(({ airports }) => airports),
+            selectedAirportId,
+          ),
+          numFlights: routes.reduce((acc, { frequency }) => acc + frequency, 0),
+        };
       },
-      {
-        enabled: isProfilePage,
-        keepPreviousData: true,
-        select: mapData => {
-          const routes = mapData.routes.map(route => ({
-            ...route,
-            isHover: route.airports.some(({ id }) => id === hoverAirportId),
-            isSelected: route.airports.some(
-              ({ id }) => id === selectedAirportId,
-            ),
-          }));
-          return {
-            ...mapData,
-            routes,
-            airports: getAirportsData(
-              mapData.routes.map(({ airports }) => airports),
-              selectedAirportId,
-            ),
-            numFlights: routes.reduce(
-              (acc, { frequency }) => acc + frequency,
-              0,
-            ),
-          };
-        },
-        staleTime: 5 * 60 * 1000,
-        onError,
-      },
-    );
+      staleTime: 5 * 60 * 1000,
+      onError,
+    },
+  );
+  const { data: flightsData } = trpc.flights.getUserFlights.useInfiniteQuery({
+    username,
+    status,
+    range,
+    year,
+    month,
+    fromDate,
+    toDate,
+    selectedAirportId,
+  });
+  const flightsCount = useMemo(
+    () => flightsData?.pages[0].metadata.itemCount ?? null,
+    [flightsData?.pages],
+  );
   const currentFlight = useMemo(
     () =>
       currentFlightData !== undefined && currentFlightData !== null
@@ -167,8 +149,6 @@ export const MapCard = ({
         : undefined,
     [currentFlightData],
   );
-  const mapFlightCount =
-    airportData?.numFlights ?? countData?.completedFlightCount ?? 0;
   const mapCenterpoint =
     currentFlightData?.estimatedLocation ?? data?.centerpoint;
   useEffect(() => {
@@ -183,7 +163,7 @@ export const MapCard = ({
         lng: selectedAirport.lon,
       });
     }
-  }, [data?.airports, selectedAirportId]);
+  }, [data?.airports, selectedAirportId, setSelectedAirportId]);
   useEffect(() => {
     if (mapCenterpoint !== undefined) setCenter(mapCenterpoint);
   }, [mapCenterpoint]);
@@ -297,16 +277,13 @@ export const MapCard = ({
                 </Button>
               </div>
               <div className="flex h-[32px] items-center justify-center rounded-box bg-base-100/50 px-4 backdrop-blur-sm sm:h-[48px]">
-                {isAirportDataFetching ||
-                isMapDataFetching ||
-                isCountsFetching ||
-                countData === undefined ? (
+                {flightsCount === null ? (
                   <Loading />
                 ) : (
                   <>
-                    <span className="font-semibold">{mapFlightCount}</span>
+                    <span className="font-semibold">{flightsCount}</span>
                     <span className="ml-1 opacity-75">
-                      Flight{mapFlightCount !== 1 ? 's' : ''}
+                      Flight{flightsCount !== 1 ? 's' : ''}
                     </span>
                   </>
                 )}
@@ -318,21 +295,18 @@ export const MapCard = ({
     ),
     [
       center,
-      countData,
       currentFlight,
       data,
+      flightsCount,
       hoverAirportId,
-      isAirportDataFetching,
-      isCountsFetching,
-      isMapDataFetching,
       isMapFullScreen,
       isProfilePage,
-      mapFlightCount,
       mapMode,
       methods,
       selectedAirportId,
       setIsMapFullScreen,
       setSearchParams,
+      setSelectedAirportId,
     ],
   );
 };
