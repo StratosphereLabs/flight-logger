@@ -14,8 +14,8 @@ export const AirportLabelOverlay = ({
 }: AirportLabelOverlayProps): JSX.Element => (
   <OverlayViewF
     getPixelPositionOffset={() => ({
-      x: -13,
-      y: -22,
+      x: -16,
+      y: -26,
     })}
     mapPaneName="overlayLayer"
     position={position}
@@ -23,7 +23,7 @@ export const AirportLabelOverlay = ({
   >
     <div
       className={classNames(
-        'rounded-box bg-base-100 bg-opacity-60 px-[3px] font-mono text-xs backdrop-blur-sm',
+        'rounded-box bg-base-100 bg-opacity-60 px-[4px] font-mono text-sm backdrop-blur-sm',
         'font-bold',
         !isFocused && 'opacity-10',
       )}

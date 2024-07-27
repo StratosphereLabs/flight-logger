@@ -161,7 +161,7 @@ export const GoogleMap = ({
                     : 0.1,
                 strokeColor:
                   isActive || isCompleted
-                    ? 'blue'
+                    ? 'red'
                     : isDarkMode
                       ? 'lightblue'
                       : 'white',
@@ -244,8 +244,9 @@ export const GoogleMap = ({
         >
           <div
             className={classNames(
-              'tooltip tooltip-open opacity-80',
+              'tooltip tooltip-open',
               TOOLTIP_COLORS[currentFlight.delayStatus],
+              selectedAirportId === null ? 'opacity-80' : 'opacity-10',
             )}
             data-tip={currentFlight.callsign}
           >

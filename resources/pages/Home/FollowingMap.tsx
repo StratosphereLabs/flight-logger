@@ -274,7 +274,7 @@ export const FollowingMap = (): JSX.Element => {
                         >
                           <div
                             className={classNames(
-                              'tooltip tooltip-open opacity-80',
+                              'tooltip tooltip-open font-semibold opacity-80',
                               TOOLTIP_COLORS[delayStatus],
                             )}
                             data-tip={`${airline?.icao}${flightNumber}`}
