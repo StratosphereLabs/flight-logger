@@ -542,9 +542,6 @@ export const flightsRouter = router({
           ],
         },
         include: flightIncludeObj,
-        orderBy: {
-          outTime: 'asc',
-        },
         omit: {
           tracklog: false,
           waypoints: false,
