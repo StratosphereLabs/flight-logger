@@ -63,8 +63,8 @@ export const AddFlight = (): JSX.Element => {
         methods.setFocus('departureAirport');
       }, 100);
       void utils.users.invalidate();
+      void utils.flights.invalidate();
       void utils.statistics.getCounts.invalidate();
-      void utils.flights.getFollowingFlights.invalidate();
     },
     onError,
   });

@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format, sub } from 'date-fns';
 import { type UseFormReturn } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { useFormWithQueryParams } from 'stratosphere-ui';
 import { DATE_FORMAT_ISO } from '../../../../app/constants';
 import { profileFiltersSchema } from '../../../../app/schemas';
@@ -39,14 +38,12 @@ export const useProfileFilterForm =
   (): UseFormReturn<ProfileFilterFormData> => {
     const currentDate = useCurrentDate();
     const { isAuthorized } = useProfilePage();
-    const { username } = useParams();
-    const defaultStatus = username === undefined ? 'all' : 'completed';
     return useFormWithQueryParams<
       ProfileFilterFormData,
       ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
     >({
       getDefaultValues: ({ status, range, year, month, fromDate, toDate }) => ({
-        status: (status as ProfileFilterFormData['status']) ?? defaultStatus,
+        status: (status as ProfileFilterFormData['status']) ?? 'completed',
         range: (range as ProfileFilterFormData['range']) ?? 'all',
         year: year ?? currentDate.getFullYear().toString(),
         month:
@@ -70,7 +67,7 @@ export const useProfileFilterForm =
             toDate: '',
           };
         return {
-          status: status !== defaultStatus ? status : '',
+          status: status !== 'completed' ? status : '',
           range: range !== 'all' ? range : '',
           month: range === 'customMonth' ? month : '',
           year: range === 'customMonth' || range === 'customYear' ? year : '',
