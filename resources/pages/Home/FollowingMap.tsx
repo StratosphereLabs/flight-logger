@@ -69,7 +69,16 @@ export const FollowingMap = (): JSX.Element => {
     {
       refetchInterval: 60000,
       select: flightResult => {
-        const flightsData = {
+        const flights = flightResult.flights.map(
+          getFollowingFlightData({ hoverAirportId, selectedAirportId }),
+        );
+        const groupedFlights = groupBy(
+          flights.filter(({ isSelected }) =>
+            selectedAirportId === null ? true : isSelected,
+          ) ?? [],
+          ({ flightState }) => flightState,
+        );
+        return {
           ...flightResult,
           airports: getAirportsData(
             flightResult.flights.map(({ departureAirport, arrivalAirport }) => [
@@ -78,17 +87,11 @@ export const FollowingMap = (): JSX.Element => {
             ]),
             selectedAirportId,
           ),
-          flights: flightResult.flights.map(
-            getFollowingFlightData({ hoverAirportId, selectedAirportId }),
-          ),
+          flights,
+          groupedFlights,
         };
-        return flightsData;
       },
     },
-  );
-  const groupedFlights = useMemo(
-    () => groupBy(data?.flights ?? [], ({ flightState }) => flightState),
-    [data?.flights],
   );
   useEffect(() => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
@@ -110,8 +113,8 @@ export const FollowingMap = (): JSX.Element => {
         <div className="pointer-events-auto absolute left-2 top-2 z-10 mt-16 flex min-w-[150px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
           <span className="text-lg font-semibold">Live Map</span>
           <span className="text-sm opacity-75">
-            {groupedFlights.CURRENT?.length ?? '0'} Flight
-            {groupedFlights.CURRENT?.length !== 1 ? 's' : ''}
+            {data?.groupedFlights.CURRENT?.length ?? '0'} Flight
+            {data?.groupedFlights.CURRENT?.length !== 1 ? 's' : ''}
           </span>
         </div>
         <div className="h-[65vh] w-full">
@@ -147,6 +150,7 @@ export const FollowingMap = (): JSX.Element => {
                         title={id}
                         onClick={() => {
                           setSelectedAirportId(id);
+                          setCenter({ lat, lng: lon });
                         }}
                         onMouseOver={() => {
                           setHoverAirportId(id);
@@ -322,64 +326,64 @@ export const FollowingMap = (): JSX.Element => {
           ) : null}
           {!isLoading && data !== undefined ? (
             <>
-              {groupedFlights.CURRENT?.length > 0 ? (
+              {data?.groupedFlights.CURRENT?.length > 0 ? (
                 <div className="flex flex-col gap-2 p-1">
                   <div className="text-center font-semibold">En Route</div>
-                  {groupedFlights.CURRENT.sort(sortByDepartureTimeAsc).map(
-                    flight => (
-                      <FlightRow
-                        key={flight.id}
-                        flight={flight}
-                        onFlightClick={() => {
-                          setSelectedFlightId(flight.id);
-                        }}
-                        onFlightClose={() => {
-                          setSelectedFlightId(null);
-                        }}
-                        selectedFlightId={selectedFlightId}
-                      />
-                    ),
-                  )}
+                  {data?.groupedFlights.CURRENT.sort(
+                    sortByDepartureTimeAsc,
+                  ).map(flight => (
+                    <FlightRow
+                      key={flight.id}
+                      flight={flight}
+                      onFlightClick={() => {
+                        setSelectedFlightId(flight.id);
+                      }}
+                      onFlightClose={() => {
+                        setSelectedFlightId(null);
+                      }}
+                      selectedFlightId={selectedFlightId}
+                    />
+                  ))}
                 </div>
               ) : null}
-              {groupedFlights.UPCOMING?.length > 0 ? (
+              {data?.groupedFlights.UPCOMING?.length > 0 ? (
                 <div className="flex flex-col gap-2 p-1">
                   <div className="text-center font-semibold">Scheduled</div>
-                  {groupedFlights.UPCOMING.sort(sortByDepartureTimeAsc).map(
-                    flight => (
-                      <FlightRow
-                        key={flight.id}
-                        flight={flight}
-                        onFlightClick={() => {
-                          setSelectedFlightId(flight.id);
-                        }}
-                        onFlightClose={() => {
-                          setSelectedFlightId(null);
-                        }}
-                        selectedFlightId={selectedFlightId}
-                      />
-                    ),
-                  )}
+                  {data?.groupedFlights.UPCOMING.sort(
+                    sortByDepartureTimeAsc,
+                  ).map(flight => (
+                    <FlightRow
+                      key={flight.id}
+                      flight={flight}
+                      onFlightClick={() => {
+                        setSelectedFlightId(flight.id);
+                      }}
+                      onFlightClose={() => {
+                        setSelectedFlightId(null);
+                      }}
+                      selectedFlightId={selectedFlightId}
+                    />
+                  ))}
                 </div>
               ) : null}
-              {groupedFlights.COMPLETED?.length > 0 ? (
+              {data?.groupedFlights.COMPLETED?.length > 0 ? (
                 <div className="flex flex-col gap-2 p-1">
                   <div className="text-center font-semibold">Arrived</div>
-                  {groupedFlights.COMPLETED.sort(sortByArrivalTimeDesc).map(
-                    flight => (
-                      <FlightRow
-                        key={flight.id}
-                        flight={flight}
-                        onFlightClick={() => {
-                          setSelectedFlightId(flight.id);
-                        }}
-                        onFlightClose={() => {
-                          setSelectedFlightId(null);
-                        }}
-                        selectedFlightId={selectedFlightId}
-                      />
-                    ),
-                  )}
+                  {data?.groupedFlights.COMPLETED.sort(
+                    sortByArrivalTimeDesc,
+                  ).map(flight => (
+                    <FlightRow
+                      key={flight.id}
+                      flight={flight}
+                      onFlightClick={() => {
+                        setSelectedFlightId(flight.id);
+                      }}
+                      onFlightClose={() => {
+                        setSelectedFlightId(null);
+                      }}
+                      selectedFlightId={selectedFlightId}
+                    />
+                  ))}
                 </div>
               ) : null}
               <div className="flex flex-1 flex-col items-center justify-center gap-4">

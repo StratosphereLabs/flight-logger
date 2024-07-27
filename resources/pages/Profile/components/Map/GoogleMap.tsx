@@ -35,7 +35,7 @@ export interface GoogleMapProps {
   methods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
   setHoverAirportId: Dispatch<SetStateAction<string | null>>;
-  setSelectedAirportId: Dispatch<SetStateAction<string | null>>;
+  setSelectedAirportId: (newId: string | null) => void;
 }
 
 export const GoogleMap = ({

@@ -33,12 +33,14 @@ export interface FlightsFormData {
 export interface FlightsProps {
   filtersFormControl: Control<ProfileFilterFormData>;
   isRowSelectEnabled: boolean;
+  selectedAirportId: string | null;
   setIsRowSelectEnabled: Dispatch<SetStateAction<boolean>>;
 }
 
 export const Flights = ({
   filtersFormControl,
   isRowSelectEnabled,
+  selectedAirportId,
   setIsRowSelectEnabled,
 }: FlightsProps): JSX.Element => {
   const enabled = useProfilePage();
@@ -75,6 +77,7 @@ export const Flights = ({
     {
       username,
       withTrip: !isRowSelectEnabled,
+      selectedAirportId,
       status,
       range,
       year,

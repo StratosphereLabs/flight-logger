@@ -52,7 +52,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         setIsDeleteFlightModalOpen(false);
         void utils.flights.getUserActiveFlight.invalidate();
         void utils.flights.getFollowingFlights.invalidate();
-        void utils.statistics.getCounts.invalidate();
       },
       onError,
     });

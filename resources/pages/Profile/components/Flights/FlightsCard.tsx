@@ -33,6 +33,7 @@ export interface FlightCardProps {
   filtersFormControl: Control<ProfileFilterFormData>;
   isAddingFlight: boolean;
   isFlightsFullScreen: boolean;
+  selectedAirportId: string | null;
   setIsAddingFlight: Dispatch<SetStateAction<boolean>>;
   setIsFlightsFullScreen: Dispatch<SetStateAction<boolean>>;
 }
@@ -41,6 +42,7 @@ export const FlightsCard = ({
   filtersFormControl,
   isAddingFlight,
   isFlightsFullScreen,
+  selectedAirportId,
   setIsAddingFlight,
   setIsFlightsFullScreen,
 }: FlightCardProps): JSX.Element => {
@@ -225,6 +227,7 @@ export const FlightsCard = ({
           <Flights
             filtersFormControl={filtersFormControl}
             isRowSelectEnabled={isRowSelectEnabled}
+            selectedAirportId={selectedAirportId}
             setIsRowSelectEnabled={setIsRowSelectEnabled}
           />
         ) : null}
