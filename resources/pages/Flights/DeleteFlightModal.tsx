@@ -16,7 +16,7 @@ export const DeleteFlightModal = (): JSX.Element => {
     onSuccess: () => {
       handleSuccess('Flight Deleted');
       setIsDeleteDialogOpen(false);
-      void utils.flights.getUserFlights.invalidate();
+      void utils.flights.invalidate();
       void utils.users.invalidate();
     },
     onError,

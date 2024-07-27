@@ -1,8 +1,9 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Avatar, Button, CheckIcon, Loading, Modal } from 'stratosphere-ui';
+import { Avatar, Button, Loading, Modal } from 'stratosphere-ui';
 import {
+  UserCheckIcon,
   UserMinusIcon,
   UserOutlineIcon,
   UserPlusIcon,
@@ -92,9 +93,10 @@ export const ProfileOverlay = (): JSX.Element => {
                   className={classNames(
                     'group btn-sm h-auto py-2',
                     isUnfollowDialogOpen && 'btn-error',
-                    userData.isFollowing
-                      ? 'btn-accent hover:btn-error'
-                      : 'btn-success',
+                    !isUnfollowDialogOpen &&
+                      userData.isFollowing &&
+                      'border-transparent bg-transparent shadow-transparent',
+                    userData.isFollowing ? 'hover:btn-error' : 'btn-success',
                   )}
                   disabled={isAddFollowerLoading}
                   loading={isAddFollowerLoading}
@@ -122,7 +124,7 @@ export const ProfileOverlay = (): JSX.Element => {
                             : 'group-hover:opacity-100',
                         )}
                       />
-                      <CheckIcon
+                      <UserCheckIcon
                         className={classNames(
                           'absolute h-6 w-6 transition-opacity',
                           isUnfollowDialogOpen

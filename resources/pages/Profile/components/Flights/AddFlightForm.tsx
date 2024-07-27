@@ -74,9 +74,8 @@ export const AddFlightForm = (): JSX.Element => {
           setCompletedFlightIds(prevIds => [...prevIds, selectedFlight.id]);
           setSelectedFlight(null);
           void utils.users.invalidate();
+          void utils.flights.invalidate();
           void utils.statistics.getCounts.invalidate();
-          void utils.flights.getUserActiveFlight.invalidate();
-          void utils.flights.getFollowingFlights.invalidate();
         }
       },
       onError,
@@ -122,13 +121,12 @@ export const AddFlightForm = (): JSX.Element => {
           methods.reset(values);
         }}
       >
-        <div className="flex w-full max-w-[750px] flex-col gap-4">
+        <div className="flex w-full max-w-[700px] flex-col gap-4">
           {onOwnProfile ? (
             <FormRadioGroup className="w-full" name="userType">
               <FormRadioGroupOption
                 activeColor="info"
                 className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-                size="sm"
                 value="me"
               >
                 Myself
@@ -136,7 +134,6 @@ export const AddFlightForm = (): JSX.Element => {
               <FormRadioGroupOption
                 activeColor="info"
                 className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-                size="sm"
                 value="other"
               >
                 Other User
@@ -196,10 +193,10 @@ export const AddFlightForm = (): JSX.Element => {
             flightNumber: 'w-[80px] hidden sm:table-cell',
             departureAirport: 'min-w-[76px]',
             arrivalAirport: 'min-w-[76px]',
-            duration: 'w-[90px]',
-            actions: 'w-[90px] sm:w-[125px]',
+            duration: 'w-[55px] sm:w-[80px]',
+            actions: 'w-[100px] sm:w-[130px] pl-0',
           }}
-          className="table-xs table-fixed sm:table-sm"
+          className="table-xs table-fixed"
           columns={[
             {
               id: 'date',
@@ -237,12 +234,14 @@ export const AddFlightForm = (): JSX.Element => {
               id: 'flightNumber',
               accessorKey: 'flightNumber',
               cell: () => (
-                <div className="flex gap-1 opacity-75">
+                <div className="flex gap-1 font-mono opacity-75">
                   <div className="hidden sm:block">
                     {currentFormData?.airline?.iata ??
                       currentFormData?.airline?.icao}
                   </div>
-                  {currentFormData?.flightNumber}
+                  <span className="font-semibold">
+                    {currentFormData?.flightNumber}
+                  </span>
                 </div>
               ),
               footer: () => null,
@@ -253,8 +252,8 @@ export const AddFlightForm = (): JSX.Element => {
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (
-                  <div className="flex flex-wrap items-center">
-                    <div className="mr-2 font-bold">{airport.iata}</div>
+                  <div className="flex flex-wrap items-center gap-x-2 font-bold">
+                    <div className="font-mono text-lg">{airport.iata}</div>
                     <div className="text-xs opacity-75">
                       {row.original.outTimeLocal}
                     </div>
@@ -269,8 +268,8 @@ export const AddFlightForm = (): JSX.Element => {
               cell: ({ getValue, row }) => {
                 const airport = getValue<airport>();
                 return (
-                  <div className="flex flex-wrap items-center">
-                    <div className="mr-2 font-bold">{airport.iata}</div>
+                  <div className="flex flex-wrap items-center gap-x-2 font-bold">
+                    <div className="font-mono text-lg">{airport.iata}</div>
                     <div className="text-xs opacity-75">
                       {row.original.inTimeLocal}
                       {row.original.inTimeDaysAdded > 0 ? (
@@ -308,7 +307,7 @@ export const AddFlightForm = (): JSX.Element => {
                 return (
                   <Button
                     className={classNames(
-                      'btn-xs w-full sm:btn-sm',
+                      'btn-sm w-full sm:btn-md',
                       isAdded ? 'btn-success' : 'btn-info',
                     )}
                     disabled={isLoading}
@@ -333,7 +332,11 @@ export const AddFlightForm = (): JSX.Element => {
                     {!isLoading && isAdded ? (
                       <CheckIcon className="h-4 w-4" />
                     ) : null}
-                    {isAdded ? 'Added' : 'Add'}
+                    {isAdded ? (
+                      <span className="hidden sm:block">Added</span>
+                    ) : (
+                      'Add'
+                    )}
                   </Button>
                 );
               },
@@ -342,6 +345,7 @@ export const AddFlightForm = (): JSX.Element => {
           ]}
           data={data}
           enableSorting={false}
+          enableRowHover
           getCoreRowModel={getCoreRowModel()}
           hideHeader
         />
