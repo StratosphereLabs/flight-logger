@@ -17,8 +17,8 @@ import {
 } from 'stratosphere-ui';
 import { type FlightDataRouterOutput } from '../../../../../app/routes/flightData';
 import {
+  searchFlightDataSchema,
   type FlightSearchFormData,
-  flightSearchFormSchema,
 } from '../../../../../app/schemas';
 import {
   AirlineInput,
@@ -43,7 +43,7 @@ export const AddFlightForm = (): JSX.Element => {
       ...flightSearchFormDefaultValues,
       userType: onOwnProfile ? 'me' : 'other',
     },
-    resolver: zodResolver(flightSearchFormSchema),
+    resolver: zodResolver(searchFlightDataSchema),
     reValidateMode: 'onBlur',
   });
   const [currentFormData, setCurrentFormData] =
@@ -154,9 +154,6 @@ export const AddFlightForm = (): JSX.Element => {
             />
             <AirlineInput
               className="min-w-[250px] max-w-[500px] flex-1"
-              getBadgeText={({ iata, icao, name }) =>
-                `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
-              }
               inputClassName="bg-base-200"
               isRequired
               labelText="Airline"

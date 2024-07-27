@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { type inferRouterOutputs, TRPCError } from '@trpc/server';
 import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -7,40 +8,48 @@ import {
 } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { fetchFlightAwareDataByFlightNumber } from '../data/flightAware';
-import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
+import {
+  fetchFlightRadarDataByFlightNumber,
+  fetchFlightRadarDataByRoute,
+} from '../data/flightRadar';
 import type { FlightSearchDataResult } from '../data/types';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
-import {
-  addFlightFromDataSchema,
-  fetchFlightsByFlightNumberSchema,
-} from '../schemas';
+import { addFlightFromDataSchema, searchFlightDataSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 import { getDurationMinutes, getFlightTimestamps } from '../utils';
 
 export const flightDataRouter = router({
   fetchFlightsByFlightNumber: procedure
-    .input(fetchFlightsByFlightNumberSchema)
+    .input(searchFlightDataSchema)
     .query(async ({ input }) => {
-      const { airline, flightNumber, outDateISO } = input;
-      if (airline === null || flightNumber === null) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Airline and Flight Number are required.',
-        });
-      }
+      const {
+        searchType,
+        airline,
+        flightNumber,
+        outDateISO,
+        departureIata,
+        arrivalIata,
+      } = input;
       const inFuture = isFuture(new Date(input.outDateISO));
-      const flights = inFuture
-        ? await fetchFlightRadarDataByFlightNumber({
-            airline,
-            flightNumber,
-            isoDate: outDateISO,
-          })
-        : await fetchFlightAwareDataByFlightNumber({
-            airline,
-            flightNumber,
-            isoDate: outDateISO,
-          });
+      const flights =
+        searchType === 'ROUTE'
+          ? await fetchFlightRadarDataByRoute({
+              departureAirportIata: departureIata ?? '',
+              arrivalAirportIata: arrivalIata ?? '',
+              isoDate: outDateISO,
+            })
+          : inFuture
+            ? await fetchFlightRadarDataByFlightNumber({
+                airline: airline!,
+                flightNumber: flightNumber!,
+                isoDate: outDateISO,
+              })
+            : await fetchFlightAwareDataByFlightNumber({
+                airline: airline!,
+                flightNumber: flightNumber!,
+                isoDate: outDateISO,
+              });
       if (flights === null) return [];
       const flightData: FlightSearchDataResult[] = flights.flatMap(
         (flight, index) => {
@@ -69,8 +78,6 @@ export const flightDataRouter = router({
               flight.departureAirport.timeZone,
               DATE_FORMAT_SHORT,
             ),
-            airline,
-            flightNumber,
           };
         },
       );

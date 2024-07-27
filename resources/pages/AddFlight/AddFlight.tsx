@@ -155,9 +155,6 @@ export const AddFlight = (): JSX.Element => {
             <AirlineInput
               bordered
               className="w-[400px] min-w-[250px]"
-              getBadgeText={({ iata, icao, name }) =>
-                `${iata !== null ? `${iata}/` : ''}${icao} - ${name}`
-              }
               inputClassName="bg-base-100"
               labelText="Airline"
               menuClassName="w-full"
