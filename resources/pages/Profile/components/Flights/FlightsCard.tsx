@@ -107,7 +107,7 @@ export const FlightsCard = ({
                   {isAddingFlight ? (
                     <Button
                       className="flex w-[120px] flex-nowrap"
-                      color="warning"
+                      color="ghost"
                       size="sm"
                       onClick={() => {
                         setIsAddingFlight(false);
@@ -163,7 +163,7 @@ export const FlightsCard = ({
                   {!isAddingFlight ? (
                     <Button
                       className="flex flex-nowrap"
-                      color="success"
+                      color="primary"
                       size="sm"
                       onClick={() => {
                         setIsAddingFlight(true);

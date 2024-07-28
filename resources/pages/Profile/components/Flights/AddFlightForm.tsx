@@ -308,9 +308,7 @@ export const AddFlightForm = (): JSX.Element => {
                   <Button
                     className={classNames(
                       'btn-sm w-full sm:btn-md',
-                      isAdded
-                        ? 'btn-success'
-                        : 'btn-info border-transparent bg-transparent shadow-transparent',
+                      isAdded ? 'btn-success' : 'btn-primary',
                     )}
                     disabled={isLoading}
                     loading={isLoading}
@@ -356,7 +354,7 @@ export const AddFlightForm = (): JSX.Element => {
         <div className="flex w-full flex-col items-center gap-6 font-semibold">
           {data.length === 0 ? <div>No Flights Found</div> : null}
           <Button
-            color="primary"
+            color={data.length === 0 ? 'primary' : 'ghost'}
             onClick={() => {
               navigate('/add-flight');
             }}
