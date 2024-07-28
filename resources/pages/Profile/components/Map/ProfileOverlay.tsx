@@ -193,7 +193,7 @@ export const ProfileOverlay = (): JSX.Element => {
                   <img src={userData.avatar} alt="User Avatar" />
                 </Avatar>
                 <div className="flex flex-col overflow-hidden">
-                  <div className="text-base text-xl font-medium">{`${userData.firstName} ${userData.lastName}`}</div>
+                  <div className="text-base font-medium">{`${userData.firstName} ${userData.lastName}`}</div>
                   <div className="truncate text-sm opacity-75">{`@${userData.username}`}</div>
                 </div>
               </div>

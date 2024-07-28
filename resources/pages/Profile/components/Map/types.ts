@@ -3,12 +3,7 @@ import type { FlightAwareTracklogItem } from '../../../../../app/data/flightAwar
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 import type { FlightDelayStatus } from '../../../../common/types';
 
-export interface MapCoords {
-  lat: number;
-  lng: number;
-}
-
-export interface MapFlight extends MapCoords {
+export interface MapFlight extends google.maps.LatLngLiteral {
   heading: number;
   delayStatus: FlightDelayStatus;
   flightRadarStatus: FlightRadarStatus | null;
@@ -31,7 +26,7 @@ export type FilteredMapData = Omit<
   FlightsRouterOutput['getUserMapData'],
   'heatmap' | 'routes' | 'airports'
 > & {
-  heatmap: MapCoords[];
+  heatmap: google.maps.LatLngLiteral[];
   routes: RouteInput[];
   airports: AirportResult[];
 };
