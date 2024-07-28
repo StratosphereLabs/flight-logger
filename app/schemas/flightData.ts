@@ -25,12 +25,14 @@ export const searchFlightDataSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Required',
+          path: ['airline'],
         });
       }
       if (val.flightNumber === null) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Required',
+          path: ['flightNumber'],
         });
       }
     } else if (val.searchType === 'ROUTE') {
@@ -38,12 +40,14 @@ export const searchFlightDataSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Required',
+          path: ['departureIata'],
         });
       }
       if (val.arrivalIata === null) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Required',
+          path: ['arrivalIata'],
         });
       }
     }

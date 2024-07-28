@@ -25,10 +25,10 @@ import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
 import { useIsDarkMode } from '../../../../stores';
 import { getAltitudeColor } from '../../../../utils/colors';
 import { type MapCardFormData } from './MapCard';
-import type { FilteredMapData, MapCoords, MapFlight } from './types';
+import type { FilteredMapData, MapFlight } from './types';
 
 export interface GoogleMapProps {
-  center: MapCoords;
+  center: google.maps.LatLngLiteral;
   currentFlight?: MapFlight;
   data: FilteredMapData;
   hoverAirportId: string | null;

@@ -4,7 +4,7 @@ import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   CheckIcon,
@@ -35,6 +35,7 @@ import { UserSelectModal } from './UserSelectModal';
 
 export const AddFlightForm = (): JSX.Element => {
   const utils = trpc.useUtils();
+  const navigate = useNavigate();
   const { username } = useParams();
   const { onOwnProfile } = useLoggedInUserQuery();
   const formRef = useRef<HTMLFormElement>(null);
@@ -307,7 +308,9 @@ export const AddFlightForm = (): JSX.Element => {
                   <Button
                     className={classNames(
                       'btn-sm w-full sm:btn-md',
-                      isAdded ? 'btn-success' : 'btn-info',
+                      isAdded
+                        ? 'btn-success'
+                        : 'btn-info border-transparent bg-transparent shadow-transparent',
                     )}
                     disabled={isLoading}
                     loading={isLoading}
@@ -349,17 +352,17 @@ export const AddFlightForm = (): JSX.Element => {
           hideHeader
         />
       ) : null}
-      {data !== undefined && !isFetching && data.length === 0 ? (
+      {data !== undefined && !isFetching ? (
         <div className="flex w-full flex-col items-center gap-6 font-semibold">
-          <div>No Flights Found</div>
+          {data.length === 0 ? <div>No Flights Found</div> : null}
           <Button
             color="primary"
             onClick={() => {
-              alert('Coming Soon!');
+              navigate('/add-flight');
             }}
           >
             <PlusIcon className="h-6 w-6" />
-            Add Flight Info
+            Add Flight Manually
           </Button>
         </div>
       ) : null}

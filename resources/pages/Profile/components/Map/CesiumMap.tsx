@@ -2,10 +2,10 @@ import { Cartesian3, Color, type Viewer as ViewerType } from 'cesium';
 import { useRef, type Dispatch, type SetStateAction, useEffect } from 'react';
 import { type CesiumComponentRef, Entity, Viewer } from 'resium';
 import planeIconUrl from '../../../../assets/plane.svg';
-import type { FilteredMapData, MapCoords, MapFlight } from './types';
+import type { FilteredMapData, MapFlight } from './types';
 
 export interface CesiumMapProps {
-  center: MapCoords;
+  center: google.maps.LatLngLiteral;
   currentFlight?: MapFlight;
   data: FilteredMapData;
   hoverAirportId: string | null;

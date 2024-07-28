@@ -219,7 +219,8 @@ export const getTrackingData = (
   const waypoints =
     flight.waypoints !== null &&
     typeof flight.waypoints === 'object' &&
-    Array.isArray(flight.waypoints)
+    Array.isArray(flight.waypoints) &&
+    flight.waypoints.length > 0
       ? (flight.waypoints as Array<[number, number]>)
       : ([
           [flight.departureAirport.lon, flight.departureAirport.lat],
