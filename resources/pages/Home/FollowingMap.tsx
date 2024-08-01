@@ -143,6 +143,7 @@ export const FollowingMap = (): JSX.Element => {
                         iata={iata}
                         isFocused={isFocused}
                         position={{ lat, lng: lon }}
+                        show
                       />
                       <MarkerF
                         key={id}
