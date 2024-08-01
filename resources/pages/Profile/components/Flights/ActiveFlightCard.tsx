@@ -73,10 +73,24 @@ export const ActiveFlightCard = (): JSX.Element | null => {
     return null;
   }
   return (
-    <>
+    <Card className="relative m-0 bg-base-100 p-0">
+      {onOwnProfile ? (
+        <Button
+          aria-label="Remove current flight"
+          className="absolute right-0 top-0 z-20 opacity-25 hover:opacity-75"
+          color="ghost"
+          shape="circle"
+          size="sm"
+          onClick={() => {
+            setIsDeleteFlightModalOpen(true);
+          }}
+        >
+          ✕
+        </Button>
+      ) : null}
       <Card
         className={classNames(
-          'border-2 bg-base-100 shadow-sm transition-shadow transition-transform',
+          'border-2 shadow-sm transition-shadow transition-transform',
           !isActive && 'hover:scale-[1.01]',
           !isActive &&
             (isDarkMode
@@ -91,20 +105,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         )}
         bordered
       >
-        {onOwnProfile ? (
-          <Button
-            aria-label="Remove current flight"
-            className="absolute right-0 top-0 z-20 opacity-25 hover:opacity-75"
-            color="ghost"
-            shape="circle"
-            size="sm"
-            onClick={() => {
-              setIsDeleteFlightModalOpen(true);
-            }}
-          >
-            ✕
-          </Button>
-        ) : null}
         <CardBody className="gap-0 px-[0.5rem] py-[0.5rem] sm:px-[1rem] sm:pt-[0.75rem]">
           <div
             className="flex flex-col hover:cursor-pointer"
@@ -390,6 +390,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
           flight?
         </div>
       </Modal>
-    </>
+    </Card>
   );
 };
