@@ -94,7 +94,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         {onOwnProfile ? (
           <Button
             aria-label="Remove current flight"
-            className="absolute right-1 top-1 z-20 opacity-25 hover:opacity-75 sm:right-2 sm:top-2"
+            className="absolute right-2 top-2 z-20 opacity-25 hover:opacity-75"
             color="ghost"
             shape="circle"
             size="sm"
@@ -105,7 +105,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
             ✕
           </Button>
         ) : null}
-        <CardBody className="gap-0 px-[2.5rem] py-[0.5rem] sm:px-[3rem] sm:pt-[0.75rem]">
+        <CardBody className="gap-0 px-[0.5rem] py-[0.5rem] sm:px-[3rem] sm:pt-[0.75rem]">
           <div
             className="flex flex-col hover:cursor-pointer"
             onClick={() => {
