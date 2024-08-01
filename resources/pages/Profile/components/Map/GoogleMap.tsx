@@ -52,10 +52,12 @@ export const GoogleMap = ({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
+  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapMode] = useWatch<MapCardFormData, ['mapMode']>({
     control: methods.control,
     name: ['mapMode'],
   });
+  const [showAirportLabels, setShowAirportLabels] = useState(false);
   const [heatmap, setHeatmap] =
     useState<google.maps.visualization.HeatmapLayer | null>(null);
   const heatmapData = useMemo(
@@ -98,6 +100,15 @@ export const GoogleMap = ({
       onClick={() => {
         setSelectedAirportId(null);
       }}
+      onLoad={map => {
+        setMap(map);
+      }}
+      onZoomChanged={() => {
+        const newZoom = map?.getZoom();
+        if (newZoom !== undefined) {
+          setShowAirportLabels(newZoom > 4);
+        }
+      }}
     >
       {data.airports?.map(({ id, lat, lon, hasSelectedRoute, iata }) => {
         const isActive = selectedAirportId === id || hoverAirportId === id;
@@ -109,6 +120,7 @@ export const GoogleMap = ({
                 iata={iata}
                 isFocused={isFocused}
                 position={{ lat, lng: lon }}
+                show={showAirportLabels}
               />
             ) : null}
             <MarkerF

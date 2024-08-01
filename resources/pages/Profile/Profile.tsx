@@ -68,13 +68,13 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
         setIsMapFullScreen={setIsMapFullScreen}
         setSelectedAirportId={setSelectedAirportId}
       />
-      <div className="flex flex-1 flex-col gap-2 p-2 sm:gap-5 sm:p-10">
+      <div className="flex flex-1 flex-col gap-3 p-2 sm:p-3">
         {!isFlightsFullScreen && !isStatsFullScreen ? (
           <ActiveFlightCard />
         ) : null}
         <div
           className={classNames(
-            'flex flex-col items-start gap-2 sm:gap-5',
+            'flex flex-col items-start gap-2 sm:gap-3',
             isAddingFlight ? 'lg:flex-col' : 'lg:flex-row',
           )}
         >
