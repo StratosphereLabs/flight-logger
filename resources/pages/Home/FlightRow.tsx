@@ -47,7 +47,7 @@ export const FlightRow = ({
   return (
     <div
       className={classNames(
-        'flex flex-col items-center gap-2 rounded-box border-2 p-1 transition-shadow transition-transform',
+        'flex flex-col items-center gap-2 rounded-box border-2 p-1 md:p-4 transition-shadow transition-transform',
         !isActive && 'hover:scale-[1.01]',
         !isActive &&
           (isDarkMode
