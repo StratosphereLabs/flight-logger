@@ -63,6 +63,7 @@ export const flightsRouter = router({
     }
     return transformFlightData(flight);
   }),
+  
   getFlightChangelog: procedure
     .input(getFlightChangelogSchema)
     .query(async ({ input }) => {

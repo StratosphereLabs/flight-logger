@@ -21,6 +21,17 @@ export const ViewFlightModal = (): JSX.Element => {
     <Modal
       actionButtons={[
         {
+          children: 'View Flight',
+          color: 'primary',
+          onClick: () => {
+            navigate(
+              username !== undefined
+                ? `/user/${username}/flights/${activeFlight?.id}`
+                : `/flights/${activeFlight?.id}`,
+            );
+          },
+        },
+        {
           children: 'Done',
           color: 'ghost',
           onClick: onClose,

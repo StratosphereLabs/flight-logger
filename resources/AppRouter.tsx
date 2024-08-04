@@ -14,6 +14,7 @@ import {
   Users,
 } from './pages';
 import { useProfileFilterForm } from './pages/Profile/hooks';
+import { Flight } from './pages/Flights/Flight';
 
 export const AppRouter = (): JSX.Element => {
   const methods = useProfileFilterForm();
@@ -24,6 +25,8 @@ export const AppRouter = (): JSX.Element => {
         <Route path="data" element={<Data />} />
         <Route path="users" element={<Users />} />
         <Route path="add-flight" element={<AddFlight />} />
+        <Route path="flights/:flightId?" element={<Flight />} />
+        
         {['', 'user/:username'].map(path => (
           <Route key={path} path={path} element={<ProfileLayout />}>
             <Route

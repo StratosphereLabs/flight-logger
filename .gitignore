@@ -105,3 +105,9 @@ dist
 
 app/db/seeders/data/*.csv
 prisma/generated
+
+# IDEA files
+.idea
+
+# VSCode files
+.vscode
