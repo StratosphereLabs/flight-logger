@@ -87,7 +87,12 @@ export const GoogleMap = ({
           bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
         }
       });
-      map.fitBounds(bounds);
+      map.fitBounds(bounds, {
+        top: 220,
+        left: 20,
+        right: 20,
+        bottom: 30,
+      });
     }
   }, [data.airports, map, prevSelectedAirportId, selectedAirportId]);
   const isDarkMode = useIsDarkMode();
