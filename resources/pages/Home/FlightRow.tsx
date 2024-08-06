@@ -205,7 +205,7 @@ export const FlightRow = ({
                 'brightness-90',
             )}
           >
-            <span>{flight.flightStatus}</span>
+            <span>{flight.flightStatusText}</span>
             <span className="flex flex-wrap justify-end gap-x-1">
               {flight.flightRadarStatus === 'CANCELED' ? (
                 'Canceled'

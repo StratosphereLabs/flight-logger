@@ -149,24 +149,12 @@ export const MapCard = ({
         : undefined,
     [currentFlightData],
   );
-  const mapCenterpoint =
-    currentFlightData?.estimatedLocation ?? data?.centerpoint;
+  const estimatedLocation = currentFlightData?.estimatedLocation;
   useEffect(() => {
-    const selectedAirport = data?.airports.find(
-      ({ id }) => id === selectedAirportId,
-    );
-    if (selectedAirport === undefined) {
-      setSelectedAirportId(null);
-    } else {
-      setCenter({
-        lat: selectedAirport.lat,
-        lng: selectedAirport.lon,
-      });
+    if (estimatedLocation !== undefined) {
+      setCenter(estimatedLocation);
     }
-  }, [data?.airports, selectedAirportId, setSelectedAirportId]);
-  useEffect(() => {
-    if (mapCenterpoint !== undefined) setCenter(mapCenterpoint);
-  }, [mapCenterpoint]);
+  }, [estimatedLocation]);
   return useMemo(
     () => (
       <LoadingCard
