@@ -493,7 +493,6 @@ export const flightsRouter = router({
       });
       const flights = results.filter(filterCustomDates(input));
       return {
-        centerpoint: getCenterpoint(flights),
         heatmap: getHeatmap(flights),
         routes: getRoutes(flights),
       };
@@ -573,10 +572,10 @@ export const flightsRouter = router({
       for (const result of flightResults) {
         const flight = transformFlightData(result);
         const flightState =
-          flight.flightRadarStatus === 'SCHEDULED' ||
-          flight.flightRadarStatus === 'CANCELED'
+          flight.flightStatus === 'SCHEDULED' ||
+          flight.flightStatus === 'CANCELED'
             ? 'UPCOMING'
-            : flight.flightRadarStatus === 'ARRIVED'
+            : flight.flightStatus === 'ARRIVED'
               ? 'COMPLETED'
               : 'CURRENT';
         flights.push({

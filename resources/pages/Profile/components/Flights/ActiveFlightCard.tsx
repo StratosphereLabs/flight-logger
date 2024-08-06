@@ -158,7 +158,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   </div>
                 </div>
               </div>
-              <div className="font-semibold">{data.flightStatus}</div>
+              <div className="font-semibold">{data.flightStatusText}</div>
               <div className="flex flex-1 flex-col items-end">
                 <div className="opacity-75">{data.aircraftType?.name}</div>
                 {data.tailNumber !== null && data.tailNumber.length > 0 ? (

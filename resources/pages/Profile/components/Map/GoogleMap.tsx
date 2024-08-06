@@ -53,6 +53,9 @@ export const GoogleMap = ({
     libraries: ['visualization'],
   });
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [prevSelectedAirportId, setPrevSelectedAirportId] = useState<
+    string | null
+  >(null);
   const [mapMode] = useWatch<MapCardFormData, ['mapMode']>({
     control: methods.control,
     name: ['mapMode'],
@@ -72,6 +75,21 @@ export const GoogleMap = ({
   useEffect(() => {
     setTimeout(() => heatmap?.setData(heatmapData));
   }, [heatmap, heatmapData]);
+  useEffect(() => {
+    if (
+      map !== null &&
+      (selectedAirportId !== null ||
+        (selectedAirportId === null && prevSelectedAirportId === null))
+    ) {
+      const bounds = new window.google.maps.LatLngBounds();
+      data.airports.forEach(({ lat, lon, hasSelectedRoute }) => {
+        if (selectedAirportId === null || hasSelectedRoute) {
+          bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
+        }
+      });
+      map.fitBounds(bounds);
+    }
+  }, [data.airports, map, prevSelectedAirportId, selectedAirportId]);
   const isDarkMode = useIsDarkMode();
   const mapOptions = useMemo(
     () => ({
@@ -98,7 +116,10 @@ export const GoogleMap = ({
       zoom={3}
       options={mapOptions}
       onClick={() => {
-        setSelectedAirportId(null);
+        if (selectedAirportId !== null) {
+          setPrevSelectedAirportId(selectedAirportId);
+          setSelectedAirportId(null);
+        }
       }}
       onLoad={map => {
         setMap(map);
@@ -106,7 +127,7 @@ export const GoogleMap = ({
       onZoomChanged={() => {
         const newZoom = map?.getZoom();
         if (newZoom !== undefined) {
-          setShowAirportLabels(newZoom > 4);
+          setShowAirportLabels(newZoom > 3.5);
         }
       }}
     >
@@ -120,7 +141,7 @@ export const GoogleMap = ({
                 iata={iata}
                 isFocused={isFocused}
                 position={{ lat, lng: lon }}
-                show={showAirportLabels}
+                show={isActive || hasSelectedRoute || showAirportLabels}
               />
             ) : null}
             <MarkerF
@@ -129,7 +150,10 @@ export const GoogleMap = ({
               position={{ lat, lng: lon }}
               title={id}
               onClick={() => {
-                setSelectedAirportId(id);
+                if (id !== selectedAirportId) {
+                  setPrevSelectedAirportId(selectedAirportId);
+                  setSelectedAirportId(id);
+                }
               }}
               onMouseOver={() => {
                 setHoverAirportId(id);

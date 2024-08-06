@@ -37,6 +37,7 @@ export const FollowingMap = (): JSX.Element => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
+  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
     null,
@@ -97,6 +98,17 @@ export const FollowingMap = (): JSX.Element => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint]);
   useEffect(() => {
+    if (map !== null && data !== undefined && selectedAirportId !== null) {
+      const bounds = new window.google.maps.LatLngBounds();
+      data.airports.forEach(({ lat, lon, hasSelectedRoute }) => {
+        if (hasSelectedRoute) {
+          bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
+        }
+      });
+      map.fitBounds(bounds);
+    }
+  }, [data, map, selectedAirportId]);
+  useEffect(() => {
     const listener: (this: Window, ev: KeyboardEvent) => void = event => {
       if (event.key === 'Escape') {
         setSelectedFlightId(null);
@@ -129,6 +141,9 @@ export const FollowingMap = (): JSX.Element => {
               onClick={() => {
                 setSelectedAirportId(null);
                 setSelectedFlightId(null);
+              }}
+              onLoad={map => {
+                setMap(map);
               }}
             >
               {Object.values(data.airports)?.map(

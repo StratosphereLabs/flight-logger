@@ -149,6 +149,7 @@ export interface TransformFlightDataResult
   progress: number;
   flightProgress: number;
   flightStatus: string;
+  flightStatusText: string;
   delay: string | null;
   delayValue: number | null;
   delayStatus: FlightDelayStatus;
@@ -308,10 +309,11 @@ export const transformFlightData = (
           : progress < 1
             ? 'LANDED_TAXIING'
             : 'ARRIVED';
-  const flightStatus =
+  const flightStatus = flight.flightRadarStatus ?? estimatedStatus;
+  const flightStatusText =
     flight.diversionAirport !== null
       ? `Diverted to ${flight.diversionAirport.iata}`
-      : FLIGHT_STATUS_MAP[flight.flightRadarStatus ?? estimatedStatus];
+      : FLIGHT_STATUS_MAP[flightStatus];
   const { tracklog, waypoints } = getTrackingData(flight);
   const distanceTraveled = flightProgress * flightDistance;
   const initialHeading = getBearing(
@@ -387,6 +389,7 @@ export const transformFlightData = (
     progress,
     flightProgress,
     flightStatus,
+    flightStatusText,
     delay,
     delayValue,
     delayStatus,
