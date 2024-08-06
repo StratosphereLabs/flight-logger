@@ -1,16 +1,21 @@
 import type { airport } from '@prisma/client';
+import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 import type { AirportResult } from './types';
 
 export const getAirportsData = (
   routes: Array<[airport, airport]>,
   selectedAirportId: string | null,
+  selectedFlight?: FlightsRouterOutput['getFollowingFlights']['flights'][number],
 ): AirportResult[] => {
   const selectedAirportIds = new Set<string>();
   for (const [departureAirport, arrivalAirport] of routes) {
     const isSelected =
       selectedAirportId !== null
         ? [departureAirport.id, arrivalAirport.id].includes(selectedAirportId)
-        : false;
+        : selectedFlight !== undefined
+          ? selectedFlight.departureAirportId === departureAirport.id &&
+            selectedFlight.arrivalAirportId === arrivalAirport.id
+          : false;
     if (isSelected) {
       selectedAirportIds.add(departureAirport.id);
       selectedAirportIds.add(arrivalAirport.id);

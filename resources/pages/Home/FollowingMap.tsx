@@ -73,6 +73,9 @@ export const FollowingMap = (): JSX.Element => {
         const flights = flightResult.flights.map(
           getFollowingFlightData({ hoverAirportId, selectedAirportId }),
         );
+        const selectedFlight = flightResult.flights.find(
+          ({ id }) => id === selectedFlightId,
+        );
         const groupedFlights = groupBy(
           flights.filter(({ isSelected }) =>
             selectedAirportId === null ? true : isSelected,
@@ -87,6 +90,7 @@ export const FollowingMap = (): JSX.Element => {
               arrivalAirport,
             ]),
             selectedAirportId,
+            selectedFlight,
           ),
           flights,
           groupedFlights,
@@ -98,16 +102,25 @@ export const FollowingMap = (): JSX.Element => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint]);
   useEffect(() => {
-    if (map !== null && data !== undefined && selectedAirportId !== null) {
+    if (
+      map !== null &&
+      data !== undefined &&
+      (selectedAirportId !== null || selectedFlightId !== null)
+    ) {
       const bounds = new window.google.maps.LatLngBounds();
       data.airports.forEach(({ lat, lon, hasSelectedRoute }) => {
         if (hasSelectedRoute) {
           bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
         }
       });
-      map.fitBounds(bounds);
+      map.fitBounds(bounds, {
+        top: 150,
+        left: 20,
+        right: 20,
+        bottom: 30,
+      });
     }
-  }, [data, map, selectedAirportId]);
+  }, [data, map, selectedAirportId, selectedFlightId]);
   useEffect(() => {
     const listener: (this: Window, ev: KeyboardEvent) => void = event => {
       if (event.key === 'Escape') {
@@ -166,7 +179,6 @@ export const FollowingMap = (): JSX.Element => {
                         title={id}
                         onClick={() => {
                           setSelectedAirportId(id);
-                          setCenter({ lat, lng: lon });
                         }}
                         onMouseOver={() => {
                           setHoverAirportId(id);
@@ -309,10 +321,6 @@ export const FollowingMap = (): JSX.Element => {
                               color="ghost"
                               onClick={() => {
                                 setSelectedFlightId(id);
-                                setCenter({
-                                  lat: estimatedLocation.lat,
-                                  lng: estimatedLocation.lng,
-                                });
                               }}
                             >
                               <PlaneSolidIcon
