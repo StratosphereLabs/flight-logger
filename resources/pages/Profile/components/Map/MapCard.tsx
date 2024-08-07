@@ -102,7 +102,6 @@ export const MapCard = ({
       select: mapData => {
         const routes = mapData.routes.map(route => ({
           ...route,
-          isHover: route.airports.some(({ id }) => id === hoverAirportId),
           isSelected: route.airports.some(({ id }) => id === selectedAirportId),
         }));
         return {
@@ -112,7 +111,6 @@ export const MapCard = ({
             mapData.routes.map(({ airports }) => airports),
             selectedAirportId,
           ),
-          numFlights: routes.reduce((acc, { frequency }) => acc + frequency, 0),
         };
       },
       staleTime: 5 * 60 * 1000,

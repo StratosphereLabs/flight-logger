@@ -48,29 +48,28 @@ export const CesiumMap = ({
       scene3DOnly
       timeline={false}
     >
-      {data.routes?.map(
-        ({ airports, isCompleted, isHover, isSelected }, index) => {
-          const isActive = isSelected || isHover;
-          return (
-            <Entity
-              key={index}
-              polyline={{
-                clampToGround: true,
-                material: Color.fromAlpha(
-                  isActive || isCompleted ? Color.RED : Color.WHITE,
-                  selectedAirportId === null || isSelected ? 0.75 : 0.1,
-                ),
-                positions: [
-                  Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
-                  Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
-                ],
-                width: isActive ? 3 : 2,
-                zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
-              }}
-            />
-          );
-        },
-      )}
+      {data.routes?.map(({ airports, isCompleted, isSelected }, index) => {
+        const isHover = airports.some(({ id }) => id === hoverAirportId);
+        const isActive = isSelected || isHover;
+        return (
+          <Entity
+            key={index}
+            polyline={{
+              clampToGround: true,
+              material: Color.fromAlpha(
+                isActive || isCompleted ? Color.RED : Color.WHITE,
+                selectedAirportId === null || isSelected ? 0.75 : 0.1,
+              ),
+              positions: [
+                Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
+                Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
+              ],
+              width: isActive ? 3 : 2,
+              zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
+            }}
+          />
+        );
+      })}
       {data.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
         const isActive = selectedAirportId === id || hoverAirportId === id;
         return (

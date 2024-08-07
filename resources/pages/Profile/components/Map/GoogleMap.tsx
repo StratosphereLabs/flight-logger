@@ -82,19 +82,32 @@ export const GoogleMap = ({
         (selectedAirportId === null && prevSelectedAirportId === null))
     ) {
       const bounds = new window.google.maps.LatLngBounds();
-      data.airports.forEach(({ lat, lon, hasSelectedRoute }) => {
+      for (const { lat, lon, hasSelectedRoute } of data.airports) {
         if (selectedAirportId === null || hasSelectedRoute) {
-          bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
+          bounds.extend(new window.google.maps.LatLng(lat, lon));
         }
-      });
+      }
+      for (const { midpoint, isSelected } of data.routes) {
+        if (isSelected) {
+          bounds.extend(
+            new window.google.maps.LatLng(midpoint.lat, midpoint.lng),
+          );
+        }
+      }
       map.fitBounds(bounds, {
-        top: 220,
-        left: 20,
-        right: 20,
-        bottom: 30,
+        top: 225,
+        left: 25,
+        right: 25,
+        bottom: 25,
       });
     }
-  }, [data.airports, map, prevSelectedAirportId, selectedAirportId]);
+  }, [
+    data.airports,
+    data.routes,
+    map,
+    prevSelectedAirportId,
+    selectedAirportId,
+  ]);
   const isDarkMode = useIsDarkMode();
   const mapOptions = useMemo(
     () => ({
@@ -138,7 +151,8 @@ export const GoogleMap = ({
     >
       {data.airports?.map(({ id, lat, lon, hasSelectedRoute, iata }) => {
         const isActive = selectedAirportId === id || hoverAirportId === id;
-        const isFocused = hasSelectedRoute || selectedAirportId === null;
+        const isFocused =
+          isActive || hasSelectedRoute || selectedAirportId === null;
         return (
           <>
             {mapMode === 'routes' ? (
@@ -185,39 +199,38 @@ export const GoogleMap = ({
           </>
         );
       })}
-      {data.routes?.map(
-        ({ airports, isCompleted, isHover, isSelected }, index) => {
-          const isActive = isSelected || isHover;
-          return (
-            <PolylineF
-              visible={mapMode === 'routes'}
-              key={index}
-              options={{
-                strokeOpacity: isActive
-                  ? 0.75
-                  : selectedAirportId === null
-                    ? isDarkMode
-                      ? 0.5
-                      : 1
-                    : 0.1,
-                strokeColor:
-                  isActive || isCompleted
-                    ? 'red'
-                    : isDarkMode
-                      ? 'lightblue'
-                      : 'white',
-                strokeWeight: isActive ? 3 : 2,
-                zIndex: isCompleted ? 10 : 5,
-                geodesic: true,
-              }}
-              path={[
-                { lat: airports[0].lat, lng: airports[0].lon },
-                { lat: airports[1].lat, lng: airports[1].lon },
-              ]}
-            />
-          );
-        },
-      )}
+      {data.routes?.map(({ airports, isCompleted, isSelected }, index) => {
+        const isHover = airports.some(({ id }) => id === hoverAirportId);
+        const isActive = isSelected || isHover;
+        return (
+          <PolylineF
+            visible={mapMode === 'routes'}
+            key={index}
+            options={{
+              strokeOpacity: isActive
+                ? 0.75
+                : selectedAirportId === null
+                  ? isDarkMode
+                    ? 0.5
+                    : 1
+                  : 0.1,
+              strokeColor:
+                isActive || isCompleted
+                  ? 'red'
+                  : isDarkMode
+                    ? 'lightblue'
+                    : 'white',
+              strokeWeight: isActive ? 3 : 2,
+              zIndex: isCompleted ? 10 : 5,
+              geodesic: true,
+            }}
+            path={[
+              { lat: airports[0].lat, lng: airports[0].lon },
+              { lat: airports[1].lat, lng: airports[1].lon },
+            ]}
+          />
+        );
+      })}
       {currentFlight?.tracklog?.map(({ alt, coord }, index, allItems) => {
         const prevItem = allItems[index - 1];
         if (prevItem === undefined) return null;
@@ -235,7 +248,6 @@ export const GoogleMap = ({
               ),
               strokeWeight: 3,
               zIndex: 20,
-              geodesic: true,
             }}
             path={[
               { lat: prevItem.coord[1], lng: prevItem.coord[0] },

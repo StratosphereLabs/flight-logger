@@ -14,7 +14,6 @@ export interface MapFlight extends google.maps.LatLngLiteral {
 
 export type RouteInput =
   FlightsRouterOutput['getUserMapData']['routes'][number] & {
-    isHover: boolean;
     isSelected: boolean;
   };
 
