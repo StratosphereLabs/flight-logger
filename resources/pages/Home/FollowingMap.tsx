@@ -129,12 +129,14 @@ export const FollowingMap = (): JSX.Element => {
           }
         }
       }
-      map.fitBounds(bounds, {
-        top: 165,
-        left: 25,
-        right: 25,
-        bottom: 25,
-      });
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, {
+          top: 165,
+          left: 25,
+          right: 25,
+          bottom: 25,
+        });
+      }
     }
   }, [data, map, selectedAirportId, selectedFlightId]);
   useEffect(() => {

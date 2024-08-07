@@ -53,9 +53,6 @@ export const GoogleMap = ({
     libraries: ['visualization'],
   });
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [prevSelectedAirportId, setPrevSelectedAirportId] = useState<
-    string | null
-  >(null);
   const [mapMode] = useWatch<MapCardFormData, ['mapMode']>({
     control: methods.control,
     name: ['mapMode'],
@@ -76,11 +73,7 @@ export const GoogleMap = ({
     setTimeout(() => heatmap?.setData(heatmapData));
   }, [heatmap, heatmapData]);
   useEffect(() => {
-    if (
-      map !== null &&
-      (selectedAirportId !== null ||
-        (selectedAirportId === null && prevSelectedAirportId === null))
-    ) {
+    if (map !== null) {
       const bounds = new window.google.maps.LatLngBounds();
       for (const { lat, lon, hasSelectedRoute } of data.airports) {
         if (selectedAirportId === null || hasSelectedRoute) {
@@ -94,20 +87,16 @@ export const GoogleMap = ({
           );
         }
       }
-      map.fitBounds(bounds, {
-        top: 225,
-        left: 25,
-        right: 25,
-        bottom: 25,
-      });
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, {
+          top: 225,
+          left: 25,
+          right: 25,
+          bottom: 25,
+        });
+      }
     }
-  }, [
-    data.airports,
-    data.routes,
-    map,
-    prevSelectedAirportId,
-    selectedAirportId,
-  ]);
+  }, [data.airports, data.routes, map, selectedAirportId]);
   const isDarkMode = useIsDarkMode();
   const mapOptions = useMemo(
     () => ({
@@ -134,10 +123,7 @@ export const GoogleMap = ({
       zoom={3}
       options={mapOptions}
       onClick={() => {
-        if (selectedAirportId !== null) {
-          setPrevSelectedAirportId(selectedAirportId);
-          setSelectedAirportId(null);
-        }
+        setSelectedAirportId(null);
       }}
       onLoad={map => {
         setMap(map);
@@ -169,10 +155,7 @@ export const GoogleMap = ({
               position={{ lat, lng: lon }}
               title={id}
               onClick={() => {
-                if (id !== selectedAirportId) {
-                  setPrevSelectedAirportId(selectedAirportId);
-                  setSelectedAirportId(id);
-                }
+                setSelectedAirportId(id);
               }}
               onMouseOver={() => {
                 setHoverAirportId(id);
