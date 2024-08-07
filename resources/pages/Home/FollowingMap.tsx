@@ -108,22 +108,39 @@ export const FollowingMap = (): JSX.Element => {
       (selectedAirportId !== null || selectedFlightId !== null)
     ) {
       const bounds = new window.google.maps.LatLngBounds();
-      data.airports.forEach(({ lat, lon, hasSelectedRoute }) => {
+      for (const { lat, lon, hasSelectedRoute } of data.airports) {
         if (hasSelectedRoute) {
           bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
         }
-      });
+      }
+      for (const { id, isSelected, tracklog, waypoints } of data.flights) {
+        if (isSelected || id === selectedFlightId) {
+          if (waypoints !== undefined) {
+            for (const [lng, lat] of waypoints) {
+              bounds.extend(new window.google.maps.LatLng({ lat, lng }));
+            }
+          }
+          if (tracklog !== undefined) {
+            for (const {
+              coord: [lng, lat],
+            } of tracklog) {
+              bounds.extend(new window.google.maps.LatLng({ lat, lng }));
+            }
+          }
+        }
+      }
       map.fitBounds(bounds, {
-        top: 150,
-        left: 20,
-        right: 20,
-        bottom: 30,
+        top: 165,
+        left: 25,
+        right: 25,
+        bottom: 25,
       });
     }
   }, [data, map, selectedAirportId, selectedFlightId]);
   useEffect(() => {
     const listener: (this: Window, ev: KeyboardEvent) => void = event => {
       if (event.key === 'Escape') {
+        setSelectedAirportId(null);
         setSelectedFlightId(null);
       }
     };
@@ -164,7 +181,7 @@ export const FollowingMap = (): JSX.Element => {
                   const isActive =
                     selectedAirportId === id || hoverAirportId === id;
                   const isFocused =
-                    hasSelectedRoute || selectedAirportId === null;
+                    isActive || hasSelectedRoute || selectedAirportId === null;
                   return (
                     <>
                       <AirportLabelOverlay
@@ -256,7 +273,6 @@ export const FollowingMap = (): JSX.Element => {
                               ),
                               strokeWeight: isFocused ? 3 : 2,
                               zIndex: isCurrentFlight ? 20 : 10,
-                              geodesic: true,
                             }}
                             path={[
                               {

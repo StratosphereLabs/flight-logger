@@ -27,7 +27,12 @@ import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
 import { calculateCenterPoint, type Coordinates } from './coordinates';
 import { getDurationMinutes, getDurationString } from './datetime';
-import { calculateDistance, getBearing, getProjectedCoords } from './distance';
+import {
+  calculateDistance,
+  getBearing,
+  getMidpoint,
+  getProjectedCoords,
+} from './distance';
 import {
   type FlightTimestampsResult,
   getFlightTimestamps,
@@ -108,6 +113,7 @@ export interface RouteResult {
   airports: [airport, airport];
   frequency: number;
   isCompleted: boolean;
+  midpoint: Coordinates;
 }
 
 export interface FlightsResult
@@ -205,6 +211,12 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
     airports: [flights[0].departureAirport, flights[0].arrivalAirport],
     frequency: flights.length,
     isCompleted: flights.some(({ inTime }) => !isFuture(inTime)),
+    midpoint: getMidpoint(
+      flights[0].departureAirport.lat,
+      flights[0].departureAirport.lon,
+      flights[0].arrivalAirport.lat,
+      flights[0].arrivalAirport.lon,
+    ),
   }));
 };
 

@@ -19,6 +19,30 @@ export const calculateDistance = (
   return EARTH_RADIUS_NM * c;
 };
 
+export const getMidpoint = (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+): Coordinates => {
+  const Bx =
+    Math.cos(toRadians(lat2)) * Math.cos(toRadians(lon2) - toRadians(lon1));
+  const By =
+    Math.cos(toRadians(lat2)) * Math.sin(toRadians(lon2) - toRadians(lon1));
+  const lat3 = Math.atan2(
+    Math.sin(toRadians(lat1)) + Math.sin(toRadians(lat2)),
+    Math.sqrt(
+      (Math.cos(toRadians(lat1)) + Bx) * (Math.cos(toRadians(lat1)) + Bx) +
+        By * By,
+    ),
+  );
+  const lon3 = toRadians(lon1) + Math.atan2(By, Math.cos(toRadians(lat1)) + Bx);
+  return {
+    lat: toDegrees(lat3),
+    lng: toDegrees(lon3),
+  };
+};
+
 export const getBearing = (
   lat1: number,
   lon1: number,
