@@ -13,7 +13,11 @@ import {
   FormRadioGroupOption,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
-import { CollapseIcon, PlusIcon } from '../../../../common/components';
+import {
+  CollapseIcon,
+  PlusAirplaneIcon,
+  PlusIcon,
+} from '../../../../common/components';
 import {
   useLoggedInUserQuery,
   useProfileUserQuery,
@@ -169,7 +173,7 @@ export const FlightsCard = ({
                         setIsAddingFlight(true);
                       }}
                     >
-                      <PlusIcon className="h-4 w-4" /> Add Flight
+                      <PlusAirplaneIcon className="h-5 w-5" /> Add Flight
                     </Button>
                   ) : null}
                 </div>

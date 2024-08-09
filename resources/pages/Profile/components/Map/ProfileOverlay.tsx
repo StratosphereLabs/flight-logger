@@ -107,6 +107,9 @@ export const ProfileOverlay = (): JSX.Element => {
                       addFollower({ username });
                     }
                   }}
+                  title={
+                    !userData.isFollowing ? 'Follow User' : 'Unfollow User'
+                  }
                 >
                   {!userData.isFollowing ? (
                     <>
@@ -134,6 +137,9 @@ export const ProfileOverlay = (): JSX.Element => {
                       />
                     </div>
                   )}
+                  <span className="sr-only">
+                    {!userData.isFollowing ? 'Follow User' : 'Unfollow User'}
+                  </span>
                 </Button>
               ) : null}
             </div>

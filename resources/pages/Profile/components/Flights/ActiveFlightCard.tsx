@@ -21,7 +21,7 @@ import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
-import { AppTheme, useIsDarkMode, useThemeStore } from '../../../../stores';
+import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 
 export const ActiveFlightCard = (): JSX.Element | null => {
@@ -33,7 +33,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
   const onError = useTRPCErrorHandler();
   const [isDeleteFlightModalOpen, setIsDeleteFlightModalOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const isDarkMode = useIsDarkMode();
   const { onOwnProfile } = useLoggedInUserQuery();
   const { data, isLoading } = trpc.flights.getUserActiveFlight.useQuery(
     {
@@ -76,12 +75,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
     <Card className="relative m-0 bg-base-100 p-0">
       <Card
         className={classNames(
-          'border-2 shadow-sm transition-shadow transition-transform',
-          !isActive && 'hover:scale-[1.01]',
-          !isActive &&
-            (isDarkMode
-              ? 'hover:shadow-[0_0px_15px_0_rgba(255,255,255,0.50)]'
-              : 'hover:shadow-[0_0px_15px_0_rgba(0,0,0,0.25)]'),
+          'border-2 shadow-sm',
           theme === AppTheme.LOFI
             ? CARD_COLORS_LOFI[data.delayStatus]
             : CARD_COLORS[data.delayStatus],
@@ -94,7 +88,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         {onOwnProfile ? (
           <Button
             aria-label="Remove current flight"
-            className="absolute right-0 top-0 z-20 opacity-25 hover:opacity-75"
+            className="absolute right-[-4px] top-[-4px] z-20 opacity-25 hover:opacity-75"
             color="ghost"
             shape="circle"
             size="sm"
@@ -107,7 +101,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         ) : null}
         <CardBody className="gap-0 px-[0.5rem] py-[0.5rem] sm:px-[1rem] sm:pt-[0.75rem]">
           <div
-            className="flex flex-col hover:cursor-pointer"
+            className="flex flex-col gap-1 hover:cursor-pointer"
             onClick={() => {
               setIsActive(active => !active);
             }}
@@ -178,7 +172,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                 ) : null}
               </div>
             </div>
-            <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-2xl font-bold sm:text-2xl">
+            <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-2xl font-bold sm:text-3xl">
               <div>{data.departureAirport.iata}</div>
               <div className="relative h-full flex-1">
                 <div className="absolute left-0 top-0 flex h-full w-full items-center px-2 opacity-50">
@@ -218,9 +212,9 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               </div>
               <div>{data.arrivalAirport.iata}</div>
             </div>
-            <div className="flex w-full justify-between gap-3">
+            <div className="flex w-full justify-between gap-4">
               <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
-                <div className="truncate text-xs sm:text-sm">
+                <div className="truncate text-sm sm:text-base">
                   {data.departureAirport.municipality},{' '}
                   {data.departureAirport.countryId === 'US'
                     ? data.departureAirport.region.name
@@ -302,7 +296,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                 ) : null}
               </div>
               <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
-                <div className="truncate text-right text-xs sm:text-sm">
+                <div className="truncate text-right text-sm sm:text-base">
                   {data.arrivalAirport.municipality},{' '}
                   {data.arrivalAirport.countryId === 'US'
                     ? data.arrivalAirport.region.name
