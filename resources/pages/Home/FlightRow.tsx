@@ -14,7 +14,7 @@ import {
   CARD_COLORS_LOFI,
   TEXT_COLORS,
 } from '../../common/constants';
-import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
+import { AppTheme, useThemeStore } from '../../stores';
 
 export interface FlightRowProps extends HTMLProps<HTMLDivElement> {
   flight: FlightsRouterOutput['getFollowingFlights']['flights'][number];
@@ -33,7 +33,6 @@ export const FlightRow = ({
 }: FlightRowProps): JSX.Element => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
-  const isDarkMode = useIsDarkMode();
   const isActive = useMemo(
     () => flight.id === selectedFlightId,
     [flight.id, selectedFlightId],
@@ -47,12 +46,8 @@ export const FlightRow = ({
   return (
     <div
       className={classNames(
-        'flex flex-col items-center gap-2 rounded-box border-2 p-1 transition-shadow transition-transform',
+        'flex flex-col items-center gap-2 rounded-box border-2 p-2 transition-transform',
         !isActive && 'hover:scale-[1.01]',
-        !isActive &&
-          (isDarkMode
-            ? 'hover:shadow-[0_0px_15px_0_rgba(255,255,255,0.50)]'
-            : 'hover:shadow-[0_0px_15px_0_rgba(0,0,0,0.25)]'),
         theme === AppTheme.LOFI
           ? CARD_COLORS_LOFI[flight.delayStatus]
           : CARD_COLORS[flight.delayStatus],
@@ -137,7 +132,7 @@ export const FlightRow = ({
               <div className="font-mono text-2xl font-bold">
                 {flight.departureAirport.iata}
               </div>
-              <span className="flex-1 truncate text-xs opacity-75 sm:hidden">
+              <span className="flex-1 truncate text-sm opacity-75 sm:hidden">
                 {flight.departureAirport.municipality}
               </span>
               <FlightTimesDisplay
@@ -152,7 +147,7 @@ export const FlightRow = ({
                 }}
               />
             </div>
-            <div className="hidden truncate text-xs opacity-75 sm:block">
+            <div className="hidden truncate text-sm opacity-75 sm:block">
               {flight.departureAirport.municipality},{' '}
               {flight.departureAirport.countryId === 'US'
                 ? flight.departureAirport.region.name
@@ -174,7 +169,7 @@ export const FlightRow = ({
                   <span>{flight.diversionAirport.iata}</span>
                 ) : null}
               </div>
-              <div className="w-full truncate text-xs opacity-75 sm:hidden">
+              <div className="w-full truncate text-sm opacity-75 sm:hidden">
                 {arrivalMunicipality}
               </div>
               <FlightTimesDisplay
@@ -189,7 +184,7 @@ export const FlightRow = ({
                 }}
               />
             </div>
-            <div className="hidden truncate text-xs opacity-75 sm:block">
+            <div className="hidden truncate text-sm opacity-75 sm:block">
               {arrivalMunicipality},{' '}
               {arrivalCountryId === 'US' ? arrivalRegionName : arrivalCountryId}
             </div>

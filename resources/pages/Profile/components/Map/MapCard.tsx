@@ -251,6 +251,7 @@ export const MapCard = ({
                       return newValue;
                     });
                   }}
+                  title={isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
                 >
                   {isMapFullScreen ? (
                     <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />

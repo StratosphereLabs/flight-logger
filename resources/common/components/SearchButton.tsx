@@ -76,6 +76,7 @@ export const SearchButton = ({
           }}
           ref={buttonRef}
           shape="circle"
+          title="Search Users"
         >
           <SearchIcon className="h-5 w-5" />
           <span className="sr-only">Search Users</span>

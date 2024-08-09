@@ -69,7 +69,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
         setSelectedAirportId={setSelectedAirportId}
       />
       <div className="flex flex-1 flex-col gap-3 p-2 sm:p-3">
-        {!isFlightsFullScreen && !isStatsFullScreen ? (
+        {!isFlightsFullScreen && !isStatsFullScreen && !isAddingFlight ? (
           <ActiveFlightCard />
         ) : null}
         <div

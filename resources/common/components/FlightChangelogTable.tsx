@@ -103,12 +103,14 @@ export const FlightChangelogTable = ({
                 setIsExpanded(expanded => !expanded);
               }}
               size="sm"
+              title="Toggle Expand/Collapse"
             >
               {isExpanded ? (
                 <CollapseIcon className="h-4 w-4" />
               ) : (
                 <ExpandIcon className="h-4 w-4" />
               )}
+              <span className="sr-only">Toggle Expand/Collapse</span>
             </Button>
           </div>
           <div

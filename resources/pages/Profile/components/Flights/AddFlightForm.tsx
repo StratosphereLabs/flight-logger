@@ -47,6 +47,10 @@ export const AddFlightForm = (): JSX.Element => {
     resolver: zodResolver(searchFlightDataSchema),
     reValidateMode: 'onBlur',
   });
+  const airline = useWatch<FlightSearchFormData, 'airline'>({
+    control: methods.control,
+    name: 'airline',
+  });
   const [currentFormData, setCurrentFormData] =
     useState<FlightSearchFormData | null>(null);
   const userType = useWatch<FlightSearchFormData, 'userType'>({
@@ -110,6 +114,11 @@ export const AddFlightForm = (): JSX.Element => {
       });
     });
   }, [methods]);
+  useEffect(() => {
+    if (airline !== null) {
+      methods.setFocus('flightNumber');
+    }
+  }, [airline, methods]);
   return (
     <div className="mb-3 flex flex-col gap-3">
       <Form

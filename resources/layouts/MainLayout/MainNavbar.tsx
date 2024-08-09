@@ -17,11 +17,12 @@ import {
   HomeIcon,
   LogoutIcon,
   MenuIcon,
-  PlusIcon,
+  PlusAirplaneIcon,
   SearchButton,
   ThemeButton,
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
+import { type ProfilePageNavigationState } from '../../pages';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
 import { messaging } from '../../utils/firebase';
@@ -162,6 +163,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               onClick={() => {
                 navigate('/');
               }}
+              title="Home"
             >
               <div className="font-title text-xl text-primary transition-all duration-200 sm:text-3xl">
                 <span>Flight</span>
@@ -187,6 +189,22 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             />
             <ThemeButton />
             <Button
+              className="hidden gap-1 sm:inline-flex"
+              color="ghost"
+              onClick={() => {
+                navigate('/profile', {
+                  state: {
+                    addFlight: true,
+                  } as const as ProfilePageNavigationState,
+                });
+              }}
+              shape="circle"
+              title="Add Flight"
+            >
+              <PlusAirplaneIcon className="h-6 w-6" />
+              <span className="sr-only">Add Flight</span>
+            </Button>
+            <Button
               className={classNames(isLoggedIn && 'hidden')}
               color="neutral"
               onClick={() => {
@@ -208,6 +226,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 color: 'ghost',
                 disabled: isFetching,
                 shape: 'circle',
+                title: 'Profile Menu',
               }}
               items={[
                 {
@@ -215,7 +234,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   className: 'rounded-lg',
                   children: (
                     <>
-                      <HomeIcon className="h-4 w-4" />
+                      <HomeIcon className="h-5 w-5" />
                       My Profile
                     </>
                   ),
@@ -228,7 +247,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   className: 'rounded-lg',
                   children: (
                     <>
-                      <PlusIcon className="h-4 w-4" />
+                      <PlusAirplaneIcon className="h-5 w-5" />
                       Add Flight
                     </>
                   ),
@@ -241,7 +260,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   className: 'rounded-lg',
                   children: (
                     <>
-                      <CogIcon className="h-4 w-4" />
+                      <CogIcon className="h-5 w-5" />
                       Settings
                     </>
                   ),
@@ -254,7 +273,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   className: 'rounded-lg bg-red-500/25 font-semibold',
                   children: (
                     <>
-                      <LogoutIcon className="h-4 w-4" />
+                      <LogoutIcon className="h-5 w-5" />
                       Logout
                     </>
                   ),

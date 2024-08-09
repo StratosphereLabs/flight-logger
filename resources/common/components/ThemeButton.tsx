@@ -21,9 +21,10 @@ export const ThemeButton = (): JSX.Element => {
         children: (
           <>
             <ThemeIcon className="h-5 w-5" />
-            <span className="sr-only">Toggle Theme</span>
+            <span className="sr-only">Select Theme</span>
           </>
         ),
+        title: 'Select Theme',
       }}
       items={[
         {
@@ -33,7 +34,7 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <LightModeIcon className="h-4 w-4" />
+              <LightModeIcon className="h-5 w-5" />
               Light
             </>
           ),
@@ -45,7 +46,7 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <DarkModeIcon className="h-4 w-4" />
+              <DarkModeIcon className="h-5 w-5" />
               Dark
             </>
           ),
@@ -57,7 +58,7 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <MusicIcon className="h-4 w-4" />
+              <MusicIcon className="h-5 w-5" />
               Lofi
             </>
           ),
@@ -69,7 +70,7 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <DarkModeOutlineIcon className="h-4 w-4" />
+              <DarkModeOutlineIcon className="h-5 w-5" />
               Night
             </>
           ),
@@ -81,7 +82,7 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <SnowflakeIcon className="h-4 w-4" />
+              <SnowflakeIcon className="h-5 w-5" />
               Nord
             </>
           ),
@@ -93,7 +94,7 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <SunsetIcon className="h-4 w-4" />
+              <SunsetIcon className="h-5 w-5" />
               Sunset
             </>
           ),
@@ -105,13 +106,13 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <CyberpunkIcon className="h-4 w-4" />
+              <CyberpunkIcon className="h-5 w-5" />
               Cyberpunk
             </>
           ),
         },
       ]}
-      menuClassName="rounded-box right-0 bg-base-200"
+      menuClassName="rounded-box right-0 w-48 bg-base-200"
     />
   );
 };
