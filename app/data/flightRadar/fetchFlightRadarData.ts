@@ -114,6 +114,7 @@ export const fetchFlightRadarDataByRoute = async ({
   const url = `https://api.flightradar24.com/common/v1/search.json?query=default&origin=${departureAirportIata}&destination=${arrivalAirportIata}&limit=100`;
   const response = await axios.get<FlightRadarRoutesResponse>(url, {
     headers: HEADERS,
+    withCredentials: true,
   });
   const flightData = response.data.result.response.flight.data;
   const airlineCodes = [
@@ -194,7 +195,10 @@ export const fetchFlightRadarData = async ({
   const url = `https://www.flightradar24.com/data/flights/${
     airline.iata ?? airline.icao
   }${flightNumber}`;
-  const response = await axios.get<string>(url, { headers: HEADERS });
+  const response = await axios.get<string>(url, {
+    headers: HEADERS,
+    withCredentials: true,
+  });
   const $ = load(response.data);
   const data: FlightRadarData[] = [];
   $('tbody .data-row').each((_, row) => {

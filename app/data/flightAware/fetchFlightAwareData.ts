@@ -40,7 +40,10 @@ export const fetchFlightAwareDataByFlightNumber = async ({
   FlightSearchDataFetchResult[] | null
 > => {
   const url = `https://www.flightaware.com/live/flight/${airline.icao}${flightNumber}`;
-  const response = await axios.get<string>(url, { headers: HEADERS });
+  const response = await axios.get<string>(url, {
+    headers: HEADERS,
+    withCredentials: true,
+  });
   const data = processData(response.data);
   if (data === null) return null;
   const flights = Object.values(data.flights)[0]?.activityLog?.flights ?? [];
@@ -108,7 +111,10 @@ export const fetchFlightAwareData = async ({
   | null
 > => {
   const url = `https://www.flightaware.com/live/flight/${airline.icao}${flightNumber}`;
-  const response = await axios.get<string>(url, { headers: HEADERS });
+  const response = await axios.get<string>(url, {
+    headers: HEADERS,
+    withCredentials: true,
+  });
   const flightAwareData = processData(response.data);
   if (flightAwareData === null) return null;
   const flightData =

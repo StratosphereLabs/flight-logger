@@ -47,7 +47,10 @@ const fetchData = async ({
 }: FetchFlightsByFlightNumberParams): Promise<FlightStatsFlightData | null> => {
   if (customUrl !== undefined) {
     const url = `https://www.flightstats.com/v2${customUrl}`;
-    const response = await axios.get<string>(url, { headers: HEADERS });
+    const response = await axios.get<string>(url, {
+      headers: HEADERS,
+      withCredentials: true,
+    });
     const data = processData(response.data);
     return data;
   }
@@ -55,18 +58,27 @@ const fetchData = async ({
   const dateParams = new URLSearchParams({ year, month, day }).toString();
   if (airline.flightStatsCode !== null) {
     const url = `https://www.flightstats.com/v2/flight-tracker/${airline.flightStatsCode}/${flightNumber}?${dateParams}`;
-    const response = await axios.get<string>(url, { headers: HEADERS });
+    const response = await axios.get<string>(url, {
+      headers: HEADERS,
+      withCredentials: true,
+    });
     const data = processData(response.data);
     if (data !== null) return data;
   }
   if (airline.iata !== null) {
     const url = `https://www.flightstats.com/v2/flight-tracker/${airline.iata}/${flightNumber}?${dateParams}`;
-    const response = await axios.get<string>(url, { headers: HEADERS });
+    const response = await axios.get<string>(url, {
+      headers: HEADERS,
+      withCredentials: true,
+    });
     const data = processData(response.data);
     if (data !== null) return data;
   }
   const url = `https://www.flightstats.com/v2/flight-tracker/${airline.icao}/${flightNumber}?${dateParams}`;
-  const response = await axios.get<string>(url, { headers: HEADERS });
+  const response = await axios.get<string>(url, {
+    headers: HEADERS,
+    withCredentials: true,
+  });
   return processData(response.data);
 };
 
