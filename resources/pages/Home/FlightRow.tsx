@@ -73,8 +73,8 @@ export const FlightRow = ({
         }}
         {...props}
       >
-        <div className="flex h-full w-[100px] flex-col gap-2 overflow-hidden sm:w-[145px] lg:w-auto">
-          <div className="flex w-full flex-1 flex-col gap-x-3 lg:flex-row">
+        <div className="flex h-full w-[100px] flex-col gap-2 overflow-hidden sm:w-[175px] lg:w-auto">
+          <div className="flex flex-1 flex-col gap-x-4 gap-y-1 lg:flex-row lg:items-center">
             <div className="flex h-[20px] w-[100px]">
               {flight.airline?.logo !== null &&
               flight.airline?.logo !== undefined ? (
@@ -92,9 +92,9 @@ export const FlightRow = ({
                 </a>
               ) : null}
             </div>
-            <div className="flex flex-col items-start gap-x-3 text-xs opacity-80 sm:flex-row sm:items-center lg:text-sm">
+            <div className="mt-[2px] flex flex-col items-start gap-x-4 text-sm opacity-80 sm:flex-row sm:items-center lg:text-base">
               <Link
-                className="w-[50px] text-nowrap font-mono lg:w-[60px]"
+                className="w-[60px] text-nowrap font-mono lg:w-[70px]"
                 hover
                 href={
                   flight.flightAwareLink !== null
@@ -132,7 +132,7 @@ export const FlightRow = ({
               <div className="font-mono text-2xl font-bold">
                 {flight.departureAirport.iata}
               </div>
-              <span className="flex-1 truncate text-sm opacity-75 sm:hidden">
+              <span className="flex-1 truncate text-sm opacity-90 sm:hidden">
                 {flight.departureAirport.municipality}
               </span>
               <FlightTimesDisplay
@@ -147,7 +147,7 @@ export const FlightRow = ({
                 }}
               />
             </div>
-            <div className="hidden truncate text-sm opacity-75 sm:block">
+            <div className="hidden truncate text-sm opacity-90 sm:block">
               {flight.departureAirport.municipality},{' '}
               {flight.departureAirport.countryId === 'US'
                 ? flight.departureAirport.region.name
@@ -169,7 +169,7 @@ export const FlightRow = ({
                   <span>{flight.diversionAirport.iata}</span>
                 ) : null}
               </div>
-              <div className="w-full truncate text-sm opacity-75 sm:hidden">
+              <div className="w-full truncate text-sm opacity-90 sm:hidden">
                 {arrivalMunicipality}
               </div>
               <FlightTimesDisplay
@@ -184,13 +184,13 @@ export const FlightRow = ({
                 }}
               />
             </div>
-            <div className="hidden truncate text-sm opacity-75 sm:block">
+            <div className="hidden truncate text-sm opacity-90 sm:block">
               {arrivalMunicipality},{' '}
               {arrivalCountryId === 'US' ? arrivalRegionName : arrivalCountryId}
             </div>
           </div>
         </div>
-        <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end justify-between text-xs">
+        <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end justify-between">
           <div
             className={classNames(
               'flex flex-col flex-nowrap items-end gap-x-1 text-right',
@@ -200,8 +200,8 @@ export const FlightRow = ({
                 'brightness-90',
             )}
           >
-            <span>{flight.flightStatusText}</span>
-            <span className="flex flex-wrap justify-end gap-x-1">
+            <span className="text-sm">{flight.flightStatusText}</span>
+            <span className="flex justify-end gap-1 text-xs">
               {flight.flightRadarStatus === 'CANCELED' ? (
                 'Canceled'
               ) : (
