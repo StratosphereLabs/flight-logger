@@ -27,7 +27,7 @@ export const FlightTimesDisplay = ({
   return (
     <div
       className={classNames(
-        'flex flex-wrap items-center gap-x-2 font-bold',
+        'flex flex-wrap items-center gap-x-2 text-nowrap font-bold',
         className,
       )}
       {...props}
@@ -37,7 +37,7 @@ export const FlightTimesDisplay = ({
           className={classNames(
             data.actualLocal !== null
               ? 'text-xs line-through opacity-50'
-              : 'text-xs sm:text-sm',
+              : 'text-sm',
           )}
         >
           {data.local}
@@ -47,7 +47,7 @@ export const FlightTimesDisplay = ({
       {data.actualLocal !== null && data.actualDaysAdded !== null ? (
         <div
           className={classNames(
-            'text-xs sm:text-sm',
+            'text-sm',
             TEXT_COLORS[data.delayStatus],
             [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
               'brightness-90',

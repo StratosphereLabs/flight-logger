@@ -58,40 +58,13 @@ export const UserFlightsTable = ({
         {
           id: 'outDateISO',
           accessorKey: 'outDateISO',
-          header: () => 'Date',
           cell: ({ getValue, row }) => {
             const date = getValue<string>();
             return (
-              <div className="flex flex-col items-center gap-1">
-                <Badge
-                  className="badge-sm font-normal text-white opacity-80 sm:badge-md"
-                  color={
-                    typeof dateBadgeColor === 'function'
-                      ? dateBadgeColor(row.original)
-                      : dateBadgeColor
-                  }
-                >
-                  {date.split('-')[0]}
-                </Badge>
-                <div className="text-nowrap text-xs font-semibold opacity-60">
-                  {row.original.outDateLocalAbbreviated}
-                </div>
-              </div>
-            );
-          },
-          footer: () => null,
-        },
-        {
-          id: 'flightNumber',
-          accessorKey: 'flightNumber',
-          header: () => 'Flight #',
-          cell: ({ getValue, row }) => {
-            const flightNumber = getValue<number | null>();
-            return (
-              <div className="flex h-full flex-col gap-2">
-                {row.original.airline?.logo !== null &&
-                row.original.airline?.logo !== undefined ? (
-                  <div className="flex w-[60px] flex-1 sm:w-[120px]">
+              <div className="flex flex-col gap-2">
+                <div className="flex h-[24px] w-[120px]">
+                  {row.original.airline?.logo !== null &&
+                  row.original.airline?.logo !== undefined ? (
                     <a
                       className="flex flex-1 items-center"
                       href={row.original.airline.wiki ?? '#'}
@@ -100,17 +73,38 @@ export const UserFlightsTable = ({
                     >
                       <img
                         alt={`${row.original.airline.name} Logo`}
-                        className="max-h-[20px] max-w-[60px] sm:max-h-[30px] sm:max-w-[120px]"
+                        className="max-h-full max-w-full"
                         src={row.original.airline.logo}
                       />
                     </a>
+                  ) : null}
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex flex-1 flex-col items-start gap-x-3 gap-y-1 sm:flex-row sm:items-center">
+                    <Badge
+                      className="badge-md font-normal text-white opacity-80"
+                      color={
+                        typeof dateBadgeColor === 'function'
+                          ? dateBadgeColor(row.original)
+                          : dateBadgeColor
+                      }
+                    >
+                      {date.split('-')[0]}
+                    </Badge>
+                    <div className="text-nowrap text-xs font-semibold opacity-60 sm:text-sm">
+                      {row.original.outDateLocalAbbreviated}
+                    </div>
                   </div>
-                ) : null}
-                <div className="mb-2 flex gap-1 font-mono text-xs opacity-60 sm:text-sm">
-                  <span className="opacity-90">
-                    {row.original.airline?.iata}
-                  </span>
-                  <span className="font-semibold">{flightNumber}</span>
+                  <div className="flex w-[46px] sm:w-[62px]">
+                    <div className="flex gap-1 font-mono text-sm opacity-75 sm:text-base">
+                      <span className="opacity-90">
+                        {row.original.airline?.iata}
+                      </span>
+                      <span className="font-semibold">
+                        {row.original.flightNumber}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             );
@@ -120,7 +114,6 @@ export const UserFlightsTable = ({
         {
           id: 'departureAirport',
           accessorKey: 'departureAirport',
-          header: () => 'Dep',
           cell: ({ row, getValue }) => {
             const airportData =
               getValue<
@@ -128,10 +121,10 @@ export const UserFlightsTable = ({
               >();
             return (
               <div className="flex h-full flex-col">
-                <div className="font-mono text-xl font-bold">
+                <div className="font-mono text-2xl font-bold">
                   {airportData?.iata}{' '}
                 </div>
-                <div className="truncate text-xs opacity-75">
+                <div className="truncate text-sm opacity-90">
                   {airportData.municipality},{' '}
                   {airportData.countryId === 'US'
                     ? airportData.region.name
@@ -157,7 +150,6 @@ export const UserFlightsTable = ({
         {
           id: 'arrivalAirport',
           accessorKey: 'arrivalAirport',
-          header: () => 'Arr',
           cell: ({ row, getValue }) => {
             const airportData =
               getValue<
@@ -173,11 +165,11 @@ export const UserFlightsTable = ({
               airportData.region.name;
             return (
               <div className="flex h-full flex-col">
-                <div className="flex gap-1 font-mono text-xl font-bold">
+                <div className="flex gap-1 font-mono text-2xl font-bold">
                   <span
                     className={classNames(
                       row.original.diversionAirport !== null &&
-                        'text-lg line-through opacity-50',
+                        'text-xl line-through opacity-50',
                     )}
                   >
                     {airportData?.iata}
@@ -186,7 +178,7 @@ export const UserFlightsTable = ({
                     <span>{row.original.diversionAirport.iata}</span>
                   ) : null}
                 </div>
-                <div className="truncate text-xs opacity-75">
+                <div className="truncate text-sm opacity-90">
                   {arrivalMunicipality},{' '}
                   {arrivalCountryId === 'US'
                     ? arrivalRegionName
@@ -212,20 +204,18 @@ export const UserFlightsTable = ({
         {
           id: 'duration',
           accessorKey: 'durationString',
-          header: () => 'Duration',
           cell: ({ getValue }) => {
             const duration = getValue<string>();
-            return <div className="font-mono">{duration}</div>;
+            return <div className="font-mono text-sm">{duration}</div>;
           },
         },
         {
           id: 'aircraftType',
           accessorKey: 'aircraftType',
-          header: () => 'Aircraft',
           cell: ({ getValue, row }) => {
             const aircraftType = getValue<aircraft_type>();
             return (
-              <div className="flex flex-col gap-1 truncate">
+              <div className="flex flex-col gap-1 truncate text-sm">
                 <div className="truncate italic opacity-70">
                   {aircraftType?.name ?? ''}
                 </div>
@@ -248,7 +238,6 @@ export const UserFlightsTable = ({
         },
         {
           id: 'actions',
-          header: () => <div className="hidden xl:flex">Actions</div>,
           cell: ({ row }) => (
             <ActionsCell
               deleteMessage="Delete Flight"
@@ -273,8 +262,7 @@ export const UserFlightsTable = ({
         },
       ]}
       cellClassNames={{
-        outDateISO: 'px-0 sm:px-1 w-[85px] sm:w-[120px]',
-        flightNumber: 'h-[inherit] w-[68px] sm:w-[144px]',
+        outDateISO: 'h-[inherit] w-[150px] sm:w-[250px]',
         departureAirport: 'h-[inherit]',
         arrivalAirport: 'h-[inherit]',
         duration: 'w-[100px] hidden lg:table-cell',
@@ -287,6 +275,7 @@ export const UserFlightsTable = ({
       enableRowSelection={enableRowSelection}
       enableSorting={false}
       getCoreRowModel={getCoreRowModel()}
+      hideHeader
       highlightWhenSelected
       onRowSelectionChange={setRowSelection}
       rowClassName={row =>

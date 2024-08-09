@@ -106,11 +106,11 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               setIsActive(active => !active);
             }}
           >
-            <div className="flex w-full items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="flex w-full items-center justify-between gap-3">
               <div className="flex flex-1 flex-col">
                 <div
                   className={classNames(
-                    'flex',
+                    'flex text-xs sm:text-sm',
                     data.delayStatus !== 'none' && 'font-semibold',
                     TEXT_COLORS[data.delayStatus],
                     [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
@@ -123,15 +123,15 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                       ? `Delayed ${data.delay}`
                       : 'On Time'}
                 </div>
-                <div className="flex flex-wrap items-center gap-x-2 whitespace-nowrap">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 whitespace-nowrap">
                   <img
                     alt={`${data.airline?.name} Logo`}
                     className="max-h-[25px] max-w-[100px]"
                     src={data.airline?.logo ?? ''}
                   />
-                  <div className="flex flex-col">
+                  <div className="flex flex-col text-sm">
                     <Link
-                      className="pt-1 font-mono"
+                      className="text-nowrap font-mono"
                       hover
                       href={
                         data.flightAwareLink !== null
@@ -140,7 +140,8 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                       }
                       target="_blank"
                     >
-                      {data.flightNumberString}
+                      <span>{data.airline?.iata}</span>{' '}
+                      <span className="font-semibold">{data.flightNumber}</span>
                     </Link>
                     {data.airframe?.operator !== null &&
                     data.airframe?.operator !== undefined &&
@@ -152,9 +153,13 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   </div>
                 </div>
               </div>
-              <div className="font-semibold">{data.flightStatusText}</div>
-              <div className="flex flex-1 flex-col items-end">
-                <div className="opacity-75">{data.aircraftType?.name}</div>
+              <div className="text-sm font-semibold">
+                {data.flightStatusText}
+              </div>
+              <div className="flex flex-1 flex-col items-end text-xs sm:text-sm">
+                <div className="text-right opacity-75">
+                  {data.aircraftType?.name}
+                </div>
                 {data.tailNumber !== null && data.tailNumber.length > 0 ? (
                   <Link
                     className="ml-3 pt-[1px] font-mono font-semibold"
@@ -172,54 +177,64 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                 ) : null}
               </div>
             </div>
-            <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-2xl font-bold sm:text-3xl">
-              <div>{data.departureAirport.iata}</div>
-              <div className="relative h-full flex-1">
-                <div className="absolute left-0 top-0 flex h-full w-full items-center px-2 opacity-50">
-                  <progress
-                    className={classNames(
-                      'progress left-0 top-0 flex-1',
-                      PROGRESS_BAR_COLORS[data.delayStatus],
-                    )}
-                    value={100 * data.progress}
-                    max="100"
-                  />
-                </div>
-                <div className="absolute left-0 top-0 z-20 h-full w-full px-2">
-                  <div
-                    className="relative h-full overflow-visible"
-                    style={{
-                      width: `${100 * data.progress}%`,
-                    }}
-                  >
-                    <PlaneSolidIcon
+            <div className="flex w-full flex-col">
+              <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-3xl font-bold">
+                <div>{data.departureAirport.iata}</div>
+                <div className="relative h-full flex-1">
+                  <div className="absolute left-0 top-0 flex h-full w-full items-center px-2 opacity-50">
+                    <progress
                       className={classNames(
-                        'absolute right-0 h-9 w-9',
-                        TEXT_COLORS[data.delayStatus],
-                        [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                          'brightness-90',
+                        'progress left-0 top-0 flex-1',
+                        PROGRESS_BAR_COLORS[data.delayStatus],
                       )}
-                      style={{
-                        transform: 'translate(42%, -6%)',
-                      }}
+                      value={100 * data.progress}
+                      max="100"
                     />
                   </div>
+                  <div className="absolute left-0 top-0 z-20 h-full w-full px-2">
+                    <div
+                      className="relative h-full overflow-visible"
+                      style={{
+                        width: `${100 * data.progress}%`,
+                      }}
+                    >
+                      <PlaneSolidIcon
+                        className={classNames(
+                          'absolute right-0 h-9 w-9',
+                          TEXT_COLORS[data.delayStatus],
+                          [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                            'brightness-90',
+                        )}
+                        style={{
+                          transform: 'translate(42%, -6%)',
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="absolute left-0 top-0 z-10 flex h-full w-full items-center justify-between">
+                    <div className="h-4 w-4 rounded-full bg-neutral" />
+                    <div className="h-4 w-4 rounded-full bg-neutral" />
+                  </div>
                 </div>
-                <div className="absolute left-0 top-0 z-10 flex h-full w-full items-center justify-between">
-                  <div className="h-4 w-4 rounded-full bg-neutral" />
-                  <div className="h-4 w-4 rounded-full bg-neutral" />
-                </div>
+                <div>{data.arrivalAirport.iata}</div>
               </div>
-              <div>{data.arrivalAirport.iata}</div>
-            </div>
-            <div className="flex w-full justify-between gap-4">
-              <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
+              <div className="flex w-full justify-between gap-4">
                 <div className="truncate text-sm sm:text-base">
                   {data.departureAirport.municipality},{' '}
                   {data.departureAirport.countryId === 'US'
                     ? data.departureAirport.region.name
                     : data.departureAirport.countryId}
                 </div>
+                <div className="truncate text-right text-sm sm:text-base">
+                  {data.arrivalAirport.municipality},{' '}
+                  {data.arrivalAirport.countryId === 'US'
+                    ? data.arrivalAirport.region.name
+                    : data.arrivalAirport.countryId}
+                </div>
+              </div>
+            </div>
+            <div className="flex w-full justify-between gap-4">
+              <div className="flex flex-1 flex-col gap-1 overflow-hidden whitespace-nowrap">
                 <div className="flex flex-wrap gap-x-3">
                   <FlightTimesDisplay
                     className="font-mono"
@@ -295,13 +310,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   </div>
                 ) : null}
               </div>
-              <div className="flex flex-1 flex-col overflow-hidden whitespace-nowrap">
-                <div className="truncate text-right text-sm sm:text-base">
-                  {data.arrivalAirport.municipality},{' '}
-                  {data.arrivalAirport.countryId === 'US'
-                    ? data.arrivalAirport.region.name
-                    : data.arrivalAirport.countryId}
-                </div>
+              <div className="flex flex-1 flex-col gap-1 overflow-hidden whitespace-nowrap">
                 <div className="flex flex-wrap-reverse justify-end gap-x-3">
                   {data.progress > 0 && data.progress < 1 ? (
                     <div className="flex items-center justify-end gap-1 text-xs italic opacity-75">
