@@ -40,7 +40,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const isDarkMode = useIsDarkMode();
   const [isSearching, setIsSearching] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams();
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
@@ -192,11 +192,14 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className="hidden gap-1 sm:inline-flex"
               color="ghost"
               onClick={() => {
-                navigate('/profile', {
-                  state: {
-                    addFlight: true,
-                  } as const as ProfilePageNavigationState,
-                });
+                navigate(
+                  pathname === '/profile' ? `/profile${search}` : '/profile',
+                  {
+                    state: {
+                      addFlight: true,
+                    } as const as ProfilePageNavigationState,
+                  },
+                );
               }}
               shape="circle"
               title="Add Flight"
