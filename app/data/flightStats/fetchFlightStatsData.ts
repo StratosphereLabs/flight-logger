@@ -2,17 +2,20 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import groupBy from 'lodash.groupby';
 import { DATE_FORMAT_ISO } from '../../constants';
+import { prisma } from '../../db';
+import { getFlightTimes } from '../../utils';
 import { HEADERS } from '../constants';
 import type {
   FetchFlightDataParams,
   FetchFlightsByFlightNumberParams,
+  FlightSearchDataFetchResult,
 } from '../types';
 import type {
   FlightStatsDataResponse,
   FlightStatsFlight,
   FlightStatsFlightData,
-  FlightStatsOtherDayFlight,
 } from './types';
 
 export const SCRIPT_BEGIN = '__NEXT_DATA__ = ';
@@ -87,20 +90,56 @@ export const fetchFlightStatsDataByFlightNumber = async ({
   flightNumber,
   isoDate,
 }: Omit<FetchFlightsByFlightNumberParams, 'customUrl'>): Promise<
-  FlightStatsOtherDayFlight[] | null
+  FlightSearchDataFetchResult[] | null
 > => {
-  const data = await fetchData({
+  const flightStatsData = await fetchData({
     airline,
     flightNumber,
     isoDate,
   });
-  if (data === null) return null;
-  return (
-    data.otherDays.find(({ date1, year }) => {
-      const date = format(new Date(`${year}-${date1}`), DATE_FORMAT_ISO);
-      return date === isoDate;
-    })?.flights ?? null
-  );
+  if (flightStatsData === null) return null;
+  const otherFlights = flightStatsData.otherDays.find(({ date1, year }) => {
+    const date = format(new Date(`${year}-${date1}`), DATE_FORMAT_ISO);
+    return date === isoDate;
+  })?.flights;
+  if (otherFlights === undefined) return null;
+  const airportIds = [
+    ...new Set(
+      otherFlights.flatMap(({ departureAirport, arrivalAirport }) => [
+        departureAirport.iata,
+        arrivalAirport.iata,
+      ]),
+    ),
+  ];
+  const airports = await prisma.airport.findMany({
+    where: {
+      iata: {
+        in: airportIds,
+      },
+    },
+  });
+  const groupedAirports = groupBy(airports, 'iata');
+  return otherFlights.flatMap(flight => {
+    const departureAirport = groupedAirports[flight.departureAirport.iata]?.[0];
+    const arrivalAirport = groupedAirports[flight.arrivalAirport.iata]?.[0];
+    if (departureAirport === undefined || arrivalAirport === undefined)
+      return [];
+    const { outTime, inTime } = getFlightTimes({
+      departureAirport,
+      arrivalAirport,
+      outDateISO: isoDate,
+      outTimeValue: flight.departureTime24,
+      inTimeValue: flight.arrivalTime24,
+    });
+    return {
+      outTime,
+      inTime,
+      airline,
+      flightNumber,
+      departureAirport,
+      arrivalAirport,
+    };
+  });
 };
 
 export const fetchFlightStatsData = async ({
