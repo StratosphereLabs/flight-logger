@@ -10,11 +10,7 @@ import type {
   FetchFlightsByFlightNumberParams,
   FlightSearchDataFetchResult,
 } from '../types';
-import type {
-  FlightAwareDataResponse,
-  FlightAwareFlight,
-  FlightAwareFlightData,
-} from './types';
+import type { FlightAwareDataResponse, FlightAwareDataResult } from './types';
 
 export const SCRIPT_BEGIN = 'var trackpollBootstrap = ';
 
@@ -105,11 +101,7 @@ export const fetchFlightAwareData = async ({
   departureIata,
   arrivalIata,
   fetchTrackingData,
-}: FetchFlightDataParams): Promise<
-  | (FlightAwareFlightData &
-      Partial<Pick<FlightAwareFlight, 'waypoints' | 'track'>>)
-  | null
-> => {
+}: FetchFlightDataParams): Promise<FlightAwareDataResult | null> => {
   const url = `https://www.flightaware.com/live/flight/${airline.icao}${flightNumber}`;
   const response = await axios.get<string>(url, {
     headers: HEADERS,

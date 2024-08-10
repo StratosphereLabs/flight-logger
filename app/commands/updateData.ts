@@ -24,6 +24,10 @@ const processFlightUpdate = async (
       console.log(`Updating flight ${key}...`);
       try {
         await updateFlightTimesData(flights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
         await updateFlightRegistrationData(flights);
       } catch (err) {
         console.error(err);

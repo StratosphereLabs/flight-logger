@@ -141,3 +141,6 @@ export interface FlightAwareDataResponse {
   summary: boolean;
   flights: Record<string, FlightAwareFlight>;
 }
+
+export type FlightAwareDataResult = FlightAwareFlightData &
+  Partial<Pick<FlightAwareFlight, 'waypoints' | 'track'>>;
