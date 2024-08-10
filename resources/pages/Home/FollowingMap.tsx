@@ -231,7 +231,6 @@ export const FollowingMap = (): JSX.Element => {
                     id,
                     isSelected,
                     isHover,
-                    inFuture,
                     user,
                     airline,
                     flightNumber,
@@ -258,7 +257,7 @@ export const FollowingMap = (): JSX.Element => {
                   let lastAltitude: number | null = null;
                   return (
                     <>
-                      {!inFuture && tracklog === undefined ? (
+                      {flightState !== 'UPCOMING' && tracklog === undefined ? (
                         <PolylineF
                           key={index}
                           options={{
