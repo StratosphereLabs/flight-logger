@@ -231,9 +231,12 @@ export const FollowingMap = (): JSX.Element => {
                     id,
                     isSelected,
                     isHover,
+                    inFuture,
                     user,
                     airline,
                     flightNumber,
+                    departureAirport,
+                    arrivalAirport,
                     delayStatus,
                     estimatedLocation,
                     estimatedHeading,
@@ -255,6 +258,37 @@ export const FollowingMap = (): JSX.Element => {
                   let lastAltitude: number | null = null;
                   return (
                     <>
+                      {!inFuture && tracklog === undefined ? (
+                        <PolylineF
+                          key={index}
+                          options={{
+                            geodesic: true,
+                            strokeOpacity:
+                              isSelected || isHover
+                                ? 1
+                                : !isItemSelected
+                                  ? 0.75
+                                  : 0.1,
+                            strokeColor: getAltitudeColor(0.8),
+                            strokeWeight: isFocused ? 3 : 2,
+                            zIndex: isCurrentFlight ? 20 : 10,
+                          }}
+                          path={[
+                            {
+                              lat: departureAirport.lat,
+                              lng: departureAirport.lon,
+                            },
+                            {
+                              lat: isCurrentFlight
+                                ? estimatedLocation.lat
+                                : arrivalAirport.lat,
+                              lng: isCurrentFlight
+                                ? estimatedLocation.lng
+                                : arrivalAirport.lon,
+                            },
+                          ]}
+                        />
+                      ) : null}
                       {tracklog?.map(({ alt, coord }, index, allItems) => {
                         const prevItem = allItems[index - 1];
                         if (prevItem === undefined) return null;

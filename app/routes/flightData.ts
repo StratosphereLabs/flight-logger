@@ -8,11 +8,12 @@ import {
 } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { fetchFlightAwareDataByFlightNumber } from '../data/flightAware';
-import {
-  fetchFlightRadarDataByFlightNumber,
-  fetchFlightRadarDataByRoute,
-} from '../data/flightRadar';
-import type { FlightSearchDataResult } from '../data/types';
+import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
+import { fetchFlightStatsDataByFlightNumber } from '../data/flightStats';
+import type {
+  FlightSearchDataFetchResult,
+  FlightSearchDataResult,
+} from '../data/types';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import { addFlightFromDataSchema, searchFlightDataSchema } from '../schemas';
@@ -23,33 +24,28 @@ export const flightDataRouter = router({
   fetchFlightsByFlightNumber: procedure
     .input(searchFlightDataSchema)
     .query(async ({ input }) => {
-      const {
-        searchType,
-        airline,
-        flightNumber,
-        outDateISO,
-        departureIata,
-        arrivalIata,
-      } = input;
+      const { airline, flightNumber, outDateISO } = input;
       const inFuture = isFuture(new Date(input.outDateISO));
-      const flights =
-        searchType === 'ROUTE'
-          ? await fetchFlightRadarDataByRoute({
-              departureAirportIata: departureIata ?? '',
-              arrivalAirportIata: arrivalIata ?? '',
-              isoDate: outDateISO,
-            })
-          : inFuture
-            ? await fetchFlightRadarDataByFlightNumber({
-                airline: airline!,
-                flightNumber: flightNumber!,
-                isoDate: outDateISO,
-              })
-            : await fetchFlightAwareDataByFlightNumber({
-                airline: airline!,
-                flightNumber: flightNumber!,
-                isoDate: outDateISO,
-              });
+      let flights: FlightSearchDataFetchResult[] | null = null;
+      if (inFuture) {
+        flights = await fetchFlightRadarDataByFlightNumber({
+          airline: airline!,
+          flightNumber: flightNumber!,
+          isoDate: outDateISO,
+        });
+      } else if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightaware') {
+        flights = await fetchFlightAwareDataByFlightNumber({
+          airline: airline!,
+          flightNumber: flightNumber!,
+          isoDate: outDateISO,
+        });
+      } else if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightstats') {
+        flights = await fetchFlightStatsDataByFlightNumber({
+          airline: airline!,
+          flightNumber: flightNumber!,
+          isoDate: outDateISO,
+        });
+      }
       if (flights === null) return [];
       const flightData: FlightSearchDataResult[] = flights.flatMap(
         (flight, index) => {
