@@ -302,7 +302,9 @@ uploadRouter.post(
       return;
     }
     try {
-      const rows = parseFlightyFile(file);
+      const rows = parseFlightyFile(file).filter(
+        flight => flight['Flight Type'] === 'My Flight',
+      );
       const airportIatas = [
         ...new Set(
           rows.flatMap(row => [
