@@ -281,8 +281,10 @@ export const AddFlightForm = (): JSX.Element => {
                     <div className="font-mono text-lg">{airport.iata}</div>
                     <div className="text-xs opacity-75">
                       {row.original.inTimeLocal}
-                      {row.original.inTimeDaysAdded > 0 ? (
-                        <sup>+{row.original.inTimeDaysAdded}</sup>
+                      {row.original.inTimeDaysAdded !== 0 ? (
+                        <sup>
+                          {`${row.original.inTimeDaysAdded > 0 ? '+' : ''}${row.original.inTimeDaysAdded}`}
+                        </sup>
                       ) : null}
                     </div>
                   </div>
