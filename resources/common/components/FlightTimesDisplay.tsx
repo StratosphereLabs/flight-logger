@@ -41,7 +41,9 @@ export const FlightTimesDisplay = ({
           )}
         >
           {data.local}
-          {data.daysAdded > 0 ? <sup>+{data.daysAdded}</sup> : null}
+          {data.daysAdded !== 0 ? (
+            <sup>{`${data.daysAdded > 0 ? '+' : ''}${data.daysAdded}`}</sup>
+          ) : null}
         </div>
       ) : null}
       {data.actualLocal !== null && data.actualDaysAdded !== null ? (
@@ -54,7 +56,11 @@ export const FlightTimesDisplay = ({
           )}
         >
           {data.actualLocal}
-          {data.actualDaysAdded > 0 ? <sup>+{data.actualDaysAdded}</sup> : null}
+          {data.actualDaysAdded !== 0 ? (
+            <sup>
+              {`${data.actualDaysAdded > 0 ? '+' : ''}${data.actualDaysAdded}`}
+            </sup>
+          ) : null}
         </div>
       ) : null}
     </div>

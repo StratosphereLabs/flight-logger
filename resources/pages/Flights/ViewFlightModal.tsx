@@ -73,8 +73,11 @@ export const ViewFlightModal = (): JSX.Element => {
                 </div>
                 <div className="font-mono text-sm font-bold opacity-50">
                   {activeFlight?.inTimeLocal}
-                  {activeFlight !== null && activeFlight.inTimeDaysAdded > 0 ? (
-                    <sup>+{activeFlight.inTimeDaysAdded}</sup>
+                  {activeFlight !== null &&
+                  activeFlight.inTimeDaysAdded !== 0 ? (
+                    <sup>
+                      {`${activeFlight.inTimeDaysAdded > 0 ? '+' : ''}${activeFlight.inTimeDaysAdded}`}
+                    </sup>
                   ) : null}
                 </div>
               </div>

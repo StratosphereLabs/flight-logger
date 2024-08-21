@@ -3,7 +3,9 @@ import {
   formatDuration,
   type Interval,
   intervalToDuration,
+  isAfter,
   isBefore,
+  sub,
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
@@ -30,13 +32,18 @@ export const getDaysAdded = ({
     start: new Date(outDate),
     end: new Date(inDate),
   });
-  return days ?? null;
+  if (days === undefined) return null;
+  return outDate > inDate ? -1 * days : days;
 };
 
 export const getDaysToAdd = ({ outTime, inTime }: DaysToAddOptions): number => {
   const inTimePlusOneDay = add(inTime, {
     days: 1,
   });
+  const inTimeMinusOneDay = sub(inTime, {
+    days: 1,
+  });
+  if (isAfter(inTimeMinusOneDay, outTime)) return -1;
   if (isBefore(inTimePlusOneDay, outTime)) return 2;
   if (isBefore(inTime, outTime)) return 1;
   return 0;
