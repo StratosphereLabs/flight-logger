@@ -27,7 +27,7 @@ const processData = (data: string): FlightStatsFlightData | null => {
     const text = $(script).text();
     if (text.includes(SCRIPT_BEGIN)) {
       flightData = JSON.parse(
-        text.replace(SCRIPT_BEGIN, '').split('module={}')[0],
+        text.replace(SCRIPT_BEGIN, '').split(';__NEXT_LOADED_PAGES__=')[0],
       ) as FlightStatsDataResponse;
     }
   });

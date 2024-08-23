@@ -215,21 +215,17 @@ export interface FlightStatsDataProps {
 }
 
 export interface FlightStatsDataResponse {
-  assetPrefix: string;
   buildId: string;
-  chunks: string[];
-  err: null;
-  nextExport: boolean;
+  dynamicIds: string[];
   page: string;
-  pathname: string;
   props: FlightStatsDataProps;
   query: {
     carrierCode: string;
     flightNumber: string;
-    flightId: string;
-    year: string;
-    month: string;
-    date: string;
+    flightId?: string;
+    year?: string;
+    month?: string;
+    date?: string;
   };
 }
 
