@@ -9,6 +9,16 @@ interface Vincenty {
     initialBearing: number;
     finalBearing: number;
   };
+  destVincenty: (
+    lat1: number,
+    lon1: number,
+    brng: number,
+    d: number,
+  ) => {
+    lat: number;
+    lon: number;
+    finalBearing: number;
+  };
 }
 
 declare module 'node-vincenty' {
