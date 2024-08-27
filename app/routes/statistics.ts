@@ -87,7 +87,6 @@ export const statisticsRouter = router({
             departureAirport.lon,
             arrivalAirport.lat,
             arrivalAirport.lon,
-            true,
           ),
         0,
       );

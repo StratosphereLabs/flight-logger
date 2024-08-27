@@ -60,7 +60,7 @@ export const FlightClassRadarChart = ({
             },
             {
               id: 'distance',
-              text: 'Distance (nm)',
+              text: 'Distance (mi)',
             },
             {
               id: 'duration',
