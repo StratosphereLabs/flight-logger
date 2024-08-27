@@ -1,4 +1,9 @@
-import { EARTH_RADIUS_MI, EARTH_RADIUS_NM } from '../constants';
+import vincenty from 'node-vincenty';
+import {
+  EARTH_RADIUS_NM,
+  METERS_IN_MILE,
+  METERS_IN_NAUTICAL_MILE,
+} from '../constants';
 import { type Coordinates } from './coordinates';
 
 export const calculateDistance = (
@@ -8,16 +13,11 @@ export const calculateDistance = (
   lon2: number,
   statuteMi?: boolean,
 ): number => {
-  const dLat = toRadians(lat2 - lat1);
-  const dLon = toRadians(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return (statuteMi === true ? EARTH_RADIUS_MI : EARTH_RADIUS_NM) * c;
+  const distanceMeters = vincenty.distVincenty(lat1, lon1, lat2, lon2).distance;
+  return (
+    distanceMeters /
+    (statuteMi === true ? METERS_IN_MILE : METERS_IN_NAUTICAL_MILE)
+  );
 };
 
 export const getMidpoint = (

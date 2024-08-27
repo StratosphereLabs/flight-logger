@@ -19,7 +19,9 @@ export const TIME_FORMAT_12H = 'h:mm aaa';
 export const TIME_FORMAT_24H = 'HH:mm';
 
 export const EARTH_RADIUS_NM = 3440.065;
-export const EARTH_RADIUS_MI = 3958.756;
+
+export const METERS_IN_MILE = 1609.344;
+export const METERS_IN_NAUTICAL_MILE = 1852;
 
 export const CHANGE_FIELD_TEXT_MAP: Partial<Record<FlightChangeField, string>> =
   {
