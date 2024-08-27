@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import {
   Loading,
   Stat,
+  StatDesc,
   StatFigure,
   Stats,
   StatTitle,
@@ -65,21 +66,23 @@ export const TotalsChart = ({
           >
             <Stat className="py-2">
               <StatFigure>
-                <DistanceIcon className="h-10 w-10" />
+                <DistanceIcon className="h-10 w-10 opacity-80" />
               </StatFigure>
               <StatTitle>Distance Flown</StatTitle>
               <StatValue className="text-primary/80">
-                {data.totalDistance.toLocaleString()} mi
+                {data.totalDistanceMi.toLocaleString()} mi
               </StatValue>
+              <StatDesc>{data.totalDistanceKm.toLocaleString()} km</StatDesc>
             </Stat>
             <Stat className="py-2">
               <StatFigure>
-                <ClockIcon className="h-10 w-10" />
+                <ClockIcon className="h-10 w-10 opacity-80" />
               </StatFigure>
               <StatTitle>Time Flown</StatTitle>
               <StatValue className="text-secondary/80">
                 {data.totalDuration}
               </StatValue>
+              <StatDesc>{data.totalDurationDays} days</StatDesc>
             </Stat>
           </Stats>
         ) : null}

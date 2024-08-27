@@ -88,13 +88,9 @@ export const getDurationString = (
 };
 
 export const getLongDurationString = (minutes: number): string => {
-  const days = Math.floor(minutes / (60 * 24));
-  const hours = Math.floor((minutes % (60 * 24)) / 60);
+  const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   let durationString = '';
-  if (days > 0) {
-    durationString += `${days}d `;
-  }
   if (hours > 0) {
     durationString += `${hours}h `;
   }

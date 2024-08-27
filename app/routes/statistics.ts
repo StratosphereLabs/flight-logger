@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import { METERS_IN_MILE } from '../constants';
 import { prisma } from '../db';
 import {
   type AirlineData,
@@ -75,25 +76,29 @@ export const statisticsRouter = router({
           outTime: true,
           departureAirport: true,
           arrivalAirport: true,
+          diversionAirport: true,
           duration: true,
         },
       });
       const flights = results.filter(filterCustomDates(input));
-      const distance = flights.reduce(
-        (acc, { departureAirport, arrivalAirport }) =>
+      const distanceMi = flights.reduce(
+        (acc, { departureAirport, arrivalAirport, diversionAirport }) =>
           acc +
           calculateDistance(
             departureAirport.lat,
             departureAirport.lon,
-            arrivalAirport.lat,
-            arrivalAirport.lon,
+            diversionAirport?.lat ?? arrivalAirport.lat,
+            diversionAirport?.lon ?? arrivalAirport.lon,
           ),
         0,
       );
+      const distanceKm = distanceMi * (METERS_IN_MILE / 1000);
       const duration = flights.reduce((acc, { duration }) => acc + duration, 0);
       return {
-        totalDistance: Math.round(distance),
+        totalDistanceMi: Math.round(distanceMi),
+        totalDistanceKm: Math.round(distanceKm),
         totalDuration: getLongDurationString(duration),
+        totalDurationDays: (duration / 1440).toFixed(2),
       };
     }),
   getTopRoutes: procedure
