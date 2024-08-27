@@ -86,3 +86,20 @@ export const getDurationString = (
     minutes ?? 0
   }m`;
 };
+
+export const getLongDurationString = (minutes: number): string => {
+  const days = Math.floor(minutes / (60 * 24));
+  const hours = Math.floor((minutes % (60 * 24)) / 60);
+  const mins = minutes % 60;
+  let durationString = '';
+  if (days > 0) {
+    durationString += `${days}d `;
+  }
+  if (hours > 0) {
+    durationString += `${hours}h `;
+  }
+  if (mins > 0 || durationString === '') {
+    durationString += `${mins}m`;
+  }
+  return durationString.trim();
+};

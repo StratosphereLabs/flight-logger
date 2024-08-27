@@ -16,6 +16,7 @@ import {
   getUserTopAirportsSchema,
   getUserFlightTypesSchema,
   getStatisticsDistributionSchema,
+  getStatisticsBarGraphSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -23,12 +24,79 @@ import {
   filterCustomDates,
   getFromDate,
   getFromStatusDate,
+  getLongDurationString,
   getToDate,
   getToStatusDate,
   parsePaginationRequest,
 } from '../utils';
 
 export const statisticsRouter = router({
+  getTotals: procedure
+    .input(getStatisticsBarGraphSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
+          },
+          OR:
+            fromStatusDate !== undefined || toStatusDate !== undefined
+              ? [
+                  {
+                    inTime: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      gte: fromStatusDate,
+                      lte: toStatusDate,
+                    },
+                  },
+                ]
+              : undefined,
+        },
+        orderBy: {
+          outTime: input.status === 'upcoming' ? 'asc' : 'desc',
+        },
+        select: {
+          outTime: true,
+          departureAirport: true,
+          arrivalAirport: true,
+          duration: true,
+        },
+      });
+      const flights = results.filter(filterCustomDates(input));
+      const distance = flights.reduce(
+        (acc, { departureAirport, arrivalAirport }) =>
+          acc +
+          calculateDistance(
+            departureAirport.lat,
+            departureAirport.lon,
+            arrivalAirport.lat,
+            arrivalAirport.lon,
+            true,
+          ),
+        0,
+      );
+      const duration = flights.reduce((acc, { duration }) => acc + duration, 0);
+      return {
+        totalDistance: Math.round(distance),
+        totalDuration: getLongDurationString(duration),
+      };
+    }),
   getTopRoutes: procedure
     .input(getUserTopRoutesSchema)
     .query(async ({ ctx, input }) => {

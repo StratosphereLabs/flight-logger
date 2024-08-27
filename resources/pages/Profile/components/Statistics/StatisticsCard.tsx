@@ -13,6 +13,7 @@ import { TopAirlinesChart } from './TopAirlinesChart';
 import { TopAircraftTypesChart } from './TopAircraftTypesChart';
 import { TopAirportsChart } from './TopAirportsChart';
 import { TopRoutesChart } from './TopRoutesChart';
+import { TotalsChart } from './TotalsChart';
 import type { StatsAirportMode, StatsTotalsMode } from './types';
 
 export interface StatisticsFiltersData {
@@ -55,7 +56,7 @@ export const StatisticsCard = ({
   return (
     <Form methods={methods} className="flex flex-1 flex-col">
       <Card className="flex-1 bg-base-100 shadow-sm" compact>
-        <CardBody className="gap-4">
+        <CardBody>
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-1">
               <CardTitle>Statistics</CardTitle>
@@ -93,18 +94,25 @@ export const StatisticsCard = ({
               </Button>
             ) : null}
           </div>
+          <TotalsChart filtersFormControl={filtersFormControl} />
           <div className="flex flex-wrap gap-x-6 gap-y-4">
             <TopAirlinesChart filtersFormControl={filtersFormControl} />
-            <TopAircraftTypesChart filtersFormControl={filtersFormControl} />
             <TopAirportsChart filtersFormControl={filtersFormControl} />
             {isStatsFullScreen ? (
-              <TopRoutesChart filtersFormControl={filtersFormControl} />
+              <>
+                <TopAircraftTypesChart
+                  filtersFormControl={filtersFormControl}
+                />
+                <TopRoutesChart filtersFormControl={filtersFormControl} />
+              </>
             ) : null}
             <FlightTypePieChart filtersFormControl={filtersFormControl} />
             <FlightLengthRadarChart filtersFormControl={filtersFormControl} />
-            <FlightClassRadarChart filtersFormControl={filtersFormControl} />
             {isStatsFullScreen ? (
               <>
+                <FlightClassRadarChart
+                  filtersFormControl={filtersFormControl}
+                />
                 <ReasonRadarChart filtersFormControl={filtersFormControl} />
                 <SeatPositionRadarChart
                   filtersFormControl={filtersFormControl}

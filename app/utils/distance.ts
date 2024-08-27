@@ -1,4 +1,4 @@
-import { EARTH_RADIUS_NM } from '../constants';
+import { EARTH_RADIUS_MI, EARTH_RADIUS_NM } from '../constants';
 import { type Coordinates } from './coordinates';
 
 export const calculateDistance = (
@@ -6,6 +6,7 @@ export const calculateDistance = (
   lon1: number,
   lat2: number,
   lon2: number,
+  statuteMi?: boolean,
 ): number => {
   const dLat = toRadians(lat2 - lat1);
   const dLon = toRadians(lon2 - lon1);
@@ -16,7 +17,7 @@ export const calculateDistance = (
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return EARTH_RADIUS_NM * c;
+  return (statuteMi === true ? EARTH_RADIUS_MI : EARTH_RADIUS_NM) * c;
 };
 
 export const getMidpoint = (
