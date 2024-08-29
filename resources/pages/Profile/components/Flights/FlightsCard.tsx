@@ -1,18 +1,8 @@
 import classNames from 'classnames';
 import { useState, type Dispatch, type SetStateAction } from 'react';
-import { type Control, useWatch } from 'react-hook-form';
+import { type Control } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  CloseIcon,
-  Form,
-  FormRadioGroup,
-  FormRadioGroupOption,
-  useFormWithQueryParams,
-} from 'stratosphere-ui';
+import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 import {
   CollapseIcon,
   PlusAirplaneIcon,
@@ -26,12 +16,7 @@ import { Flights } from '../../../Flights';
 import { useFlightsPageStore } from '../../../Flights/flightsPageStore';
 import { type ProfileFilterFormData } from '../../hooks';
 import { AddFlightForm } from './AddFlightForm';
-import { CompletedFlights } from './CompletedFlights';
-import { UpcomingFlights } from './UpcomingFlights';
-
-export interface FlightsModeFormData {
-  flightsMode: 'upcoming' | 'completed';
-}
+import { FlightsTableBasic } from './FlightsTableBasic';
 
 export interface FlightCardProps {
   filtersFormControl: Control<ProfileFilterFormData>;
@@ -55,20 +40,6 @@ export const FlightsCard = ({
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const { resetRowSelection, rowSelection, setIsCreateTripDialogOpen } =
     useFlightsPageStore();
-  const methods = useFormWithQueryParams<FlightsModeFormData, ['flightsMode']>({
-    getDefaultValues: ({ flightsMode }) => ({
-      flightsMode:
-        (flightsMode as FlightsModeFormData['flightsMode']) ?? 'upcoming',
-    }),
-    getSearchParams: ([flightsMode]) => ({
-      flightsMode: flightsMode !== 'upcoming' ? flightsMode : '',
-    }),
-    includeKeys: ['flightsMode'],
-  });
-  const flightsMode = useWatch<FlightsModeFormData, 'flightsMode'>({
-    name: 'flightsMode',
-    control: methods.control,
-  });
   const { onOwnProfile } = useLoggedInUserQuery();
   const { data } = useProfileUserQuery();
   return (
@@ -198,33 +169,10 @@ export const FlightsCard = ({
             ) : null}
           </div>
           {isAddingFlight ? <AddFlightForm /> : null}
-          {!isFlightsFullScreen && !isAddingFlight ? (
-            <Form methods={methods}>
-              <FormRadioGroup className="w-full" name="flightsMode">
-                <FormRadioGroupOption
-                  activeColor="info"
-                  className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-                  size="sm"
-                  value="upcoming"
-                >
-                  Upcoming
-                </FormRadioGroupOption>
-                <FormRadioGroupOption
-                  activeColor="info"
-                  className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-                  size="sm"
-                  value="completed"
-                >
-                  Completed
-                </FormRadioGroupOption>
-              </FormRadioGroup>
-            </Form>
-          ) : null}
         </div>
         {!isFlightsFullScreen && !isAddingFlight ? (
           <div className="min-h-[70px]">
-            {flightsMode === 'completed' ? <CompletedFlights /> : null}
-            {flightsMode === 'upcoming' ? <UpcomingFlights /> : null}
+            <FlightsTableBasic filtersFormControl={filtersFormControl} />
           </div>
         ) : null}
         {isFlightsFullScreen && !isAddingFlight ? (

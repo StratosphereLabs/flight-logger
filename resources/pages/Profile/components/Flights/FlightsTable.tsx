@@ -5,9 +5,7 @@ import { Table } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 
 export interface FlightsTableProps {
-  data: Array<
-    FlightsRouterOutput['getUserCompletedFlights']['results'][number]
-  >;
+  data: Array<FlightsRouterOutput['getUserFlightsBasic']['results'][number]>;
   isLoading: boolean;
 }
 

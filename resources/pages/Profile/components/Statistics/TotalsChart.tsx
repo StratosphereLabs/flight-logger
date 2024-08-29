@@ -64,12 +64,12 @@ export const TotalsChart = ({
         {data !== undefined ? (
           <div
             className={classNames(
-              'flex flex-1 flex-col flex-wrap transition-opacity xl:flex-row',
+              'flex flex-1 flex-col flex-wrap transition-opacity 2xl:flex-row',
               isFetching && 'opacity-50',
             )}
           >
-            <Stats className="stats-vertical flex-1 sm:stats-horizontal">
-              <Stat className="px-4 py-2">
+            <Stats className="stats-horizontal lg:flex-1">
+              <Stat className="p-2">
                 <StatTitle>Flights</StatTitle>
                 <StatValue className="flex items-center gap-2">
                   <MaterialPlaneIcon className="h-8 h-8 opacity-80" />
@@ -77,27 +77,7 @@ export const TotalsChart = ({
                 </StatValue>
                 <StatDesc>{data.onTimePercentage}% on-time</StatDesc>
               </Stat>
-              <Stat className="px-4 py-2">
-                <StatTitle>Distance Flown</StatTitle>
-                <StatValue className="flex items-center gap-2">
-                  <DistanceIcon className="h-8 w-8 opacity-80" />
-                  <span className="text-secondary/80">
-                    {data.totalDistanceMi.toLocaleString()} mi
-                  </span>
-                </StatValue>
-                <StatDesc>{data.totalDistanceKm.toLocaleString()} km</StatDesc>
-              </Stat>
-            </Stats>
-            <Stats className="stats-vertical flex-1 sm:stats-horizontal">
-              <Stat className="px-4 py-2">
-                <StatTitle>Time Flown</StatTitle>
-                <StatValue className="flex items-center gap-2">
-                  <ClockIcon className="h-8 w-8 opacity-80" />
-                  <span className="text-success/80">{data.totalDuration}</span>
-                </StatValue>
-                <StatDesc>{data.totalDurationDays} days</StatDesc>
-              </Stat>
-              <Stat className="px-4 py-2">
+              <Stat className="p-2">
                 <StatTitle>Streak</StatTitle>
                 <StatValue
                   className={classNames(
@@ -115,6 +95,26 @@ export const TotalsChart = ({
                 <StatDesc>
                   on-time flight{data.onTimeStreak !== 1 ? 's' : ''}
                 </StatDesc>
+              </Stat>
+            </Stats>
+            <Stats className="stats-vertical flex-1 lg:stats-horizontal">
+              <Stat className="p-2">
+                <StatTitle>Distance Flown</StatTitle>
+                <StatValue className="flex items-center gap-2">
+                  <DistanceIcon className="h-8 w-8 opacity-80" />
+                  <span className="text-secondary/80">
+                    {data.totalDistanceMi.toLocaleString()} mi
+                  </span>
+                </StatValue>
+                <StatDesc>{data.totalDistanceKm.toLocaleString()} km</StatDesc>
+              </Stat>
+              <Stat className="p-2">
+                <StatTitle>Time Flown</StatTitle>
+                <StatValue className="flex items-center gap-2">
+                  <ClockIcon className="h-8 w-8 opacity-80" />
+                  <span className="text-success/80">{data.totalDuration}</span>
+                </StatValue>
+                <StatDesc>{data.totalDurationDays} days</StatDesc>
               </Stat>
             </Stats>
           </div>
