@@ -4,7 +4,6 @@ import {
   Loading,
   Stat,
   StatDesc,
-  StatFigure,
   Stats,
   StatTitle,
   StatValue,
@@ -16,7 +15,12 @@ import {
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import type { StatisticsChartProps } from './types';
-import { ClockIcon, DistanceIcon } from '../../../../common/components';
+import {
+  ClockIcon,
+  ColoredFireIcon,
+  DistanceIcon,
+  MaterialPlaneIcon,
+} from '../../../../common/components';
 import classNames from 'classnames';
 
 export const TotalsChart = ({
@@ -58,33 +62,62 @@ export const TotalsChart = ({
           </div>
         ) : null}
         {data !== undefined ? (
-          <Stats
+          <div
             className={classNames(
-              'stats-vertical flex-1 transition-opacity sm:stats-horizontal',
+              'flex flex-1 flex-col flex-wrap transition-opacity xl:flex-row',
               isFetching && 'opacity-50',
             )}
           >
-            <Stat className="py-2">
-              <StatFigure>
-                <DistanceIcon className="h-10 w-10 opacity-80" />
-              </StatFigure>
-              <StatTitle>Distance Flown</StatTitle>
-              <StatValue className="text-primary/80">
-                {data.totalDistanceMi.toLocaleString()} mi
-              </StatValue>
-              <StatDesc>{data.totalDistanceKm.toLocaleString()} km</StatDesc>
-            </Stat>
-            <Stat className="py-2">
-              <StatFigure>
-                <ClockIcon className="h-10 w-10 opacity-80" />
-              </StatFigure>
-              <StatTitle>Time Flown</StatTitle>
-              <StatValue className="text-secondary/80">
-                {data.totalDuration}
-              </StatValue>
-              <StatDesc>{data.totalDurationDays} days</StatDesc>
-            </Stat>
-          </Stats>
+            <Stats className="stats-vertical flex-1 sm:stats-horizontal">
+              <Stat className="px-4 py-2">
+                <StatTitle>Flights</StatTitle>
+                <StatValue className="flex items-center gap-2">
+                  <MaterialPlaneIcon className="h-8 h-8 opacity-80" />
+                  <span className="text-primary/80">{data.totalFlights}</span>
+                </StatValue>
+                <StatDesc>{data.onTimePercentage}% on-time</StatDesc>
+              </Stat>
+              <Stat className="px-4 py-2">
+                <StatTitle>Distance Flown</StatTitle>
+                <StatValue className="flex items-center gap-2">
+                  <DistanceIcon className="h-8 w-8 opacity-80" />
+                  <span className="text-secondary/80">
+                    {data.totalDistanceMi.toLocaleString()} mi
+                  </span>
+                </StatValue>
+                <StatDesc>{data.totalDistanceKm.toLocaleString()} km</StatDesc>
+              </Stat>
+            </Stats>
+            <Stats className="stats-vertical flex-1 sm:stats-horizontal">
+              <Stat className="px-4 py-2">
+                <StatTitle>Time Flown</StatTitle>
+                <StatValue className="flex items-center gap-2">
+                  <ClockIcon className="h-8 w-8 opacity-80" />
+                  <span className="text-success/80">{data.totalDuration}</span>
+                </StatValue>
+                <StatDesc>{data.totalDurationDays} days</StatDesc>
+              </Stat>
+              <Stat className="px-4 py-2">
+                <StatTitle>Streak</StatTitle>
+                <StatValue
+                  className={classNames(
+                    'flex items-center gap-2',
+                    data.onTimeStreak < 2
+                      ? 'text-primary/80'
+                      : data.onTimeStreak < 5
+                        ? 'text-warning/80'
+                        : 'text-error/80',
+                  )}
+                >
+                  <ColoredFireIcon className="h-8 w-8" />
+                  {data.onTimeStreak}
+                </StatValue>
+                <StatDesc>
+                  on-time flight{data.onTimeStreak !== 1 ? 's' : ''}
+                </StatDesc>
+              </Stat>
+            </Stats>
+          </div>
         ) : null}
       </div>
     </div>

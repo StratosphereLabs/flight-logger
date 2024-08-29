@@ -234,6 +234,51 @@ export const FireIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   </svg>
 );
 
+export const ColoredFireIcon = (
+  props: SVGProps<SVGSVGElement>,
+): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" {...props}>
+    <radialGradient
+      id="notoFire0"
+      cx={68.884}
+      cy={124.296}
+      r={70.587}
+      gradientTransform="matrix(-1 -.00434 -.00713 1.6408 131.986 -79.345)"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset={0.314} stopColor="#ff9800"></stop>
+      <stop offset={0.662} stopColor="#ff6d00"></stop>
+      <stop offset={0.972} stopColor="#f44336"></stop>
+    </radialGradient>
+    <path
+      fill="url(#notoFire0)"
+      d="M35.56 40.73c-.57 6.08-.97 16.84 2.62 21.42c0 0-1.69-11.82 13.46-26.65c6.1-5.97 7.51-14.09 5.38-20.18c-1.21-3.45-3.42-6.3-5.34-8.29c-1.12-1.17-.26-3.1 1.37-3.03c9.86.44 25.84 3.18 32.63 20.22c2.98 7.48 3.2 15.21 1.78 23.07c-.9 5.02-4.1 16.18 3.2 17.55c5.21.98 7.73-3.16 8.86-6.14c.47-1.24 2.1-1.55 2.98-.56c8.8 10.01 9.55 21.8 7.73 31.95c-3.52 19.62-23.39 33.9-43.13 33.9c-24.66 0-44.29-14.11-49.38-39.65c-2.05-10.31-1.01-30.71 14.89-45.11c1.18-1.08 3.11-.12 2.95 1.5"
+    ></path>
+    <radialGradient
+      id="notoFire1"
+      cx={64.921}
+      cy={54.062}
+      r={73.86}
+      gradientTransform="matrix(-.0101 .9999 .7525 .0076 26.154 -11.267)"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset={0.214} stopColor="#fff176"></stop>
+      <stop offset={0.328} stopColor="#fff27d"></stop>
+      <stop offset={0.487} stopColor="#fff48f"></stop>
+      <stop offset={0.672} stopColor="#fff7ad"></stop>
+      <stop offset={0.793} stopColor="#fff9c4"></stop>
+      <stop offset={0.822} stopColor="#fff8bd" stopOpacity={0.804}></stop>
+      <stop offset={0.863} stopColor="#fff6ab" stopOpacity={0.529}></stop>
+      <stop offset={0.91} stopColor="#fff38d" stopOpacity={0.209}></stop>
+      <stop offset={0.941} stopColor="#fff176" stopOpacity={0}></stop>
+    </radialGradient>
+    <path
+      fill="url(#notoFire1)"
+      d="M76.11 77.42c-9.09-11.7-5.02-25.05-2.79-30.37c.3-.7-.5-1.36-1.13-.93c-3.91 2.66-11.92 8.92-15.65 17.73c-5.05 11.91-4.69 17.74-1.7 24.86c1.8 4.29-.29 5.2-1.34 5.36c-1.02.16-1.96-.52-2.71-1.23a16.1 16.1 0 0 1-4.44-7.6c-.16-.62-.97-.79-1.34-.28c-2.8 3.87-4.25 10.08-4.32 14.47C40.47 113 51.68 124 65.24 124c17.09 0 29.54-18.9 19.72-34.7c-2.85-4.6-5.53-7.61-8.85-11.88"
+    ></path>
+  </svg>
+);
+
 export const GemIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" {...props}>
     <path
@@ -374,6 +419,17 @@ export const MapIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
       strokeLinejoin="round"
       d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"
     />
+  </svg>
+);
+
+export const MaterialPlaneIcon = (
+  props: SVGProps<SVGSVGElement>,
+): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M20.56 3.91c.59.59.59 1.54 0 2.12l-3.89 3.89l2.12 9.19l-1.41 1.42l-3.88-7.43L9.6 17l.36 2.47l-1.07 1.06l-1.76-3.18l-3.19-1.77L5 14.5l2.5.37L11.37 11L3.94 7.09l1.42-1.41l9.19 2.12l3.89-3.89c.56-.58 1.56-.58 2.12 0"
+    ></path>
   </svg>
 );
 
