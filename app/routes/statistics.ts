@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import { isBefore } from 'date-fns';
 import { METERS_IN_MILE } from '../constants';
 import { prisma } from '../db';
 import {
@@ -23,6 +24,7 @@ import { procedure, router } from '../trpc';
 import {
   calculateDistance,
   filterCustomDates,
+  getDurationMinutes,
   getFromDate,
   getFromStatusDate,
   getLongDurationString,
@@ -42,63 +44,120 @@ export const statisticsRouter = router({
       const toDate = getToDate(input);
       const fromStatusDate = getFromStatusDate(input);
       const toStatusDate = getToStatusDate(input);
-      const results = await prisma.flight.findMany({
-        where: {
-          user: {
-            username: input?.username ?? ctx.user?.username,
+      const [streakFlights, totalsFlights] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            inTime: {
+              lte: new Date(),
+            },
           },
-          outTime: {
-            gte: fromDate,
-            lte: toDate,
+          orderBy: {
+            inTime: 'desc',
           },
-          OR:
-            fromStatusDate !== undefined || toStatusDate !== undefined
-              ? [
-                  {
-                    inTime: {
-                      gte: fromStatusDate,
-                      lte: toStatusDate,
+          select: {
+            inTime: true,
+            inTimeActual: true,
+          },
+        }),
+        prisma.flight.findMany({
+          where: {
+            user: {
+              username: input?.username ?? ctx.user?.username,
+            },
+            outTime: {
+              gte: fromDate,
+              lte: toDate,
+            },
+            OR:
+              fromStatusDate !== undefined || toStatusDate !== undefined
+                ? [
+                    {
+                      inTime: {
+                        gte: fromStatusDate,
+                        lte: toStatusDate,
+                      },
                     },
-                  },
-                  {
-                    inTimeActual: {
-                      gte: fromStatusDate,
-                      lte: toStatusDate,
+                    {
+                      inTimeActual: {
+                        gte: fromStatusDate,
+                        lte: toStatusDate,
+                      },
                     },
-                  },
-                ]
-              : undefined,
-        },
-        orderBy: {
-          outTime: input.status === 'upcoming' ? 'asc' : 'desc',
-        },
-        select: {
-          outTime: true,
-          departureAirport: true,
-          arrivalAirport: true,
-          diversionAirport: true,
-          duration: true,
-        },
-      });
-      const flights = results.filter(filterCustomDates(input));
-      const distanceMi = flights.reduce(
-        (acc, { departureAirport, arrivalAirport, diversionAirport }) =>
-          acc +
-          calculateDistance(
-            departureAirport.lat,
-            departureAirport.lon,
-            diversionAirport?.lat ?? arrivalAirport.lat,
-            diversionAirport?.lon ?? arrivalAirport.lon,
-          ),
-        0,
-      );
-      const distanceKm = distanceMi * (METERS_IN_MILE / 1000);
-      const duration = flights.reduce((acc, { duration }) => acc + duration, 0);
+                  ]
+                : undefined,
+          },
+          select: {
+            outTime: true,
+            departureAirport: true,
+            arrivalAirport: true,
+            diversionAirport: true,
+            duration: true,
+            inTime: true,
+            inTimeActual: true,
+          },
+        }),
+      ]);
+      let onTimeStreak = 0;
+      for (const flight of streakFlights) {
+        if (flight.inTimeActual !== null) {
+          const arrivalDelay = isBefore(flight.inTime, flight.inTimeActual)
+            ? getDurationMinutes({
+                start: flight.inTime,
+                end: flight.inTimeActual,
+              })
+            : 0;
+          if (arrivalDelay > 15) {
+            break;
+          }
+          onTimeStreak++;
+        }
+      }
+      let totalDistanceMi = 0;
+      let totalDuration = 0;
+      let totalFlights = 0;
+      let onTimeFlights = 0;
+      let flightsWithInTimeActual = 0;
+      for (const flight of totalsFlights) {
+        if (!filterCustomDates(input)(flight)) {
+          continue;
+        }
+        totalFlights++;
+        const distanceMi = calculateDistance(
+          flight.departureAirport.lat,
+          flight.departureAirport.lon,
+          flight.diversionAirport?.lat ?? flight.arrivalAirport.lat,
+          flight.diversionAirport?.lon ?? flight.arrivalAirport.lon,
+        );
+        totalDistanceMi += distanceMi;
+        totalDuration += flight.duration;
+        if (flight.inTimeActual !== null) {
+          flightsWithInTimeActual++;
+          const arrivalDelay = isBefore(flight.inTime, flight.inTimeActual)
+            ? getDurationMinutes({
+                start: flight.inTime,
+                end: flight.inTimeActual,
+              })
+            : 0;
+          if (arrivalDelay <= 15) {
+            onTimeFlights++;
+          }
+        }
+      }
+      const totalDistanceKm = totalDistanceMi * (METERS_IN_MILE / 1000);
       return {
-        totalDistanceMi: Math.round(distanceMi),
-        totalDistanceKm: Math.round(distanceKm),
-        totalDuration: getLongDurationString(duration),
-        totalDurationDays: (duration / 1440).toFixed(2),
+        onTimeStreak,
+        totalDistanceMi: Math.round(totalDistanceMi),
+        totalDistanceKm: Math.round(totalDistanceKm),
+        totalDuration: getLongDurationString(totalDuration),
+        totalDurationDays: (totalDuration / 1440).toFixed(2),
+        totalFlights,
+        onTimePercentage:
+          flightsWithInTimeActual > 0
+            ? ((100 * onTimeFlights) / flightsWithInTimeActual).toFixed(1)
+            : '0.0',
       };
     }),
   getTopRoutes: procedure
