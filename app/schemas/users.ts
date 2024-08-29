@@ -6,10 +6,6 @@ export const getUserSchema = z.object({
   username: z.string().trim().optional(),
 });
 
-export const getUserProfileFlightsSchema = paginationSchema.extend(
-  getUserSchema.shape,
-);
-
 export const profileFiltersSchema = z.object({
   status: z.enum(['completed', 'upcoming', 'all']),
   range: z.enum([
@@ -46,6 +42,10 @@ export const profileFiltersSchema = z.object({
     .refine(date => isValid(parseISO(date)), 'Invalid From Date'),
   toDate: z.string().refine(date => isValid(parseISO(date)), 'Invalid To Date'),
 });
+
+export const getUserProfileFlightsSchema = paginationSchema
+  .extend(getUserSchema.shape)
+  .extend(profileFiltersSchema.shape);
 
 export const getUserFlightsSchema = getUserSchema
   .extend(paginationSchema.shape)

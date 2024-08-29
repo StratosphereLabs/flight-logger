@@ -218,70 +218,41 @@ export const flightsRouter = router({
         results: flights.map(transformFlightData),
       });
     }),
-  getUserCompletedFlights: procedure
+  getUserFlightsBasic: procedure
     .input(getUserProfileFlightsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      const whereObj = {
-        user: {
-          username: input?.username ?? ctx.user?.username,
-        },
-        inTime: {
-          lte: new Date(),
-        },
-      };
-      const { skip, take } = parsePaginationRequest(input);
-      const [results, count] = await prisma.$transaction([
-        prisma.flight.findMany({
-          where: whereObj,
-          include: {
-            departureAirport: true,
-            arrivalAirport: true,
-            airline: true,
-            aircraftType: true,
-            diversionAirport: true,
-          },
-          skip,
-          take,
-          orderBy: {
-            outTime: 'desc',
-          },
-        }),
-        prisma.flight.count({
-          where: whereObj,
-        }),
-      ]);
-      return {
-        results: results.map(flight => ({
-          ...flight,
-          outTimeDate: formatInTimeZone(
-            flight.outTime,
-            flight.departureAirport.timeZone,
-            DATE_FORMAT_SHORT,
-          ),
-          durationString: getDurationString(flight.duration),
-          durationStringAbbreviated: getDurationString(flight.duration, true),
-          tracklog: null,
-          waypoints: null,
-        })),
-        count,
-      };
-    }),
-  getUserUpcomingFlights: procedure
-    .input(getUserProfileFlightsSchema)
-    .query(async ({ ctx, input }) => {
-      if (input.username === undefined && ctx.user === null) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
       const whereObj = {
         user: {
           username: input?.username ?? ctx.user?.username,
         },
         outTime: {
-          gt: new Date(),
+          gte: fromDate,
+          lte: toDate,
         },
+        OR:
+          fromStatusDate !== undefined || toStatusDate !== undefined
+            ? [
+                {
+                  inTime: {
+                    gte: fromStatusDate,
+                    lte: toStatusDate,
+                  },
+                },
+                {
+                  inTimeActual: {
+                    gte: fromStatusDate,
+                    lte: toStatusDate,
+                  },
+                },
+              ]
+            : undefined,
       };
       const { skip, take } = parsePaginationRequest(input);
       const [results, count] = await prisma.$transaction([
@@ -297,7 +268,7 @@ export const flightsRouter = router({
           skip,
           take,
           orderBy: {
-            outTime: 'asc',
+            outTime: input.status === 'upcoming' ? 'asc' : 'desc',
           },
         }),
         prisma.flight.count({
