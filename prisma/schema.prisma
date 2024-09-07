@@ -289,6 +289,17 @@ model notification {
   user            user                @relation(fields: [userId], references: [id])
 }
 
+model registration {
+  id              String              @id @default(uuid()) @db.Uuid
+  username        String
+  email           String
+  firstName       String
+  lastName        String
+  ipv4            String
+  userAgent       String
+  createdAt       DateTime            @default(now())
+}
+
 enum FlightClass {
   BASIC
   ECONOMY
