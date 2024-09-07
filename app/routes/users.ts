@@ -72,118 +72,124 @@ export const usersRouter = router({
       ...excludeKeys(userData, 'followedBy'),
     };
   }),
-  getUsers: procedure.input(getUsersSchema).query(async ({ ctx, input }) => {
-    const results = await prisma.user.findMany({
-      take: 5,
-      where: {
-        OR: [
-          {
-            username: {
-              contains: input.query,
-              mode: 'insensitive',
+  getUsers: procedure
+    .use(verifyAuthenticated)
+    .input(getUsersSchema)
+    .query(async ({ ctx, input }) => {
+      const results = await prisma.user.findMany({
+        take: 5,
+        where: {
+          OR: [
+            {
+              username: {
+                contains: input.query,
+                mode: 'insensitive',
+              },
             },
-          },
-          {
-            firstName: {
-              contains: input.query,
-              mode: 'insensitive',
+            {
+              firstName: {
+                contains: input.query,
+                mode: 'insensitive',
+              },
             },
-          },
-          {
-            lastName: {
-              contains: input.query,
-              mode: 'insensitive',
+            {
+              lastName: {
+                contains: input.query,
+                mode: 'insensitive',
+              },
             },
-          },
-        ],
-        followedBy:
-          input.followingUsersOnly === true
-            ? {
-                some: {
-                  username: ctx.user?.username,
-                },
-              }
-            : undefined,
-        following:
-          input.followingUsersOnly === true
-            ? {
-                some: {
-                  username: ctx.user?.username,
-                },
-              }
-            : undefined,
-      },
-      orderBy: {
-        flights: {
-          _count: 'desc',
+          ],
+          followedBy:
+            input.followingUsersOnly === true
+              ? {
+                  some: {
+                    username: ctx.user?.username,
+                  },
+                }
+              : undefined,
+          following:
+            input.followingUsersOnly === true
+              ? {
+                  some: {
+                    username: ctx.user?.username,
+                  },
+                }
+              : undefined,
         },
-      },
-    });
-    return results.map(user => ({
-      ...user,
-      id: user.username,
-    }));
-  }),
-  searchUsers: procedure.input(getUsersSchema).query(async ({ input }) => {
-    const results = await prisma.user.findMany({
-      take: 10,
-      where: {
-        OR: [
-          {
-            username: {
-              contains: input.query,
-              mode: 'insensitive',
-            },
+        orderBy: {
+          flights: {
+            _count: 'desc',
           },
-          {
-            firstName: {
-              contains: input.query,
-              mode: 'insensitive',
+        },
+      });
+      return results.map(user => ({
+        ...user,
+        id: user.username,
+      }));
+    }),
+  searchUsers: procedure
+    .use(verifyAuthenticated)
+    .input(getUsersSchema)
+    .query(async ({ input }) => {
+      const results = await prisma.user.findMany({
+        take: 10,
+        where: {
+          OR: [
+            {
+              username: {
+                contains: input.query,
+                mode: 'insensitive',
+              },
             },
-          },
-          {
-            lastName: {
-              contains: input.query,
-              mode: 'insensitive',
+            {
+              firstName: {
+                contains: input.query,
+                mode: 'insensitive',
+              },
             },
-          },
-        ],
-      },
-      include: {
-        _count: {
-          select: {
-            flights: {
-              where: {
-                OR: [
-                  {
-                    inTimeActual: {
-                      lte: new Date(),
+            {
+              lastName: {
+                contains: input.query,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+        include: {
+          _count: {
+            select: {
+              flights: {
+                where: {
+                  OR: [
+                    {
+                      inTimeActual: {
+                        lte: new Date(),
+                      },
                     },
-                  },
-                  {
-                    inTime: {
-                      lte: new Date(),
+                    {
+                      inTime: {
+                        lte: new Date(),
+                      },
                     },
-                  },
-                ],
+                  ],
+                },
               },
             },
           },
         },
-      },
-      orderBy: {
-        flights: {
-          _count: 'desc',
+        orderBy: {
+          flights: {
+            _count: 'desc',
+          },
         },
-      },
-    });
-    return results.map(user => ({
-      avatar: fetchGravatarUrl(user.email),
-      numFlights: user._count.flights,
-      ...excludeKeys(user, '_count'),
-      id: user.username,
-    }));
-  }),
+      });
+      return results.map(user => ({
+        avatar: fetchGravatarUrl(user.email),
+        numFlights: user._count.flights,
+        ...excludeKeys(user, '_count'),
+        id: user.username,
+      }));
+    }),
   addFCMToken: procedure
     .use(verifyAuthenticated)
     .input(setFCMTokenSchema)

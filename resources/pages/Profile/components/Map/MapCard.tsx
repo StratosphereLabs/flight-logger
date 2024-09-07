@@ -11,7 +11,6 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import {
   Button,
   Form,
-  Loading,
   LoadingCard,
   Select,
   useFormWithQueryParams,
@@ -24,6 +23,7 @@ import {
   MapIcon,
 } from '../../../../common/components';
 import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
+import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { CesiumMap } from './CesiumMap';
@@ -51,6 +51,7 @@ export const MapCard = ({
   setIsMapFullScreen,
   setSelectedAirportId,
 }: MapCardProps): JSX.Element => {
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useProfilePage();
   const [, setSearchParams] = useSearchParams();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
@@ -82,7 +83,7 @@ export const MapCard = ({
       username,
     },
     {
-      enabled: isProfilePage,
+      enabled: isLoggedIn,
       onError,
     },
   );
@@ -116,20 +117,6 @@ export const MapCard = ({
       staleTime: 5 * 60 * 1000,
       onError,
     },
-  );
-  const { data: flightsData } = trpc.flights.getUserFlights.useInfiniteQuery({
-    username,
-    status,
-    range,
-    year,
-    month,
-    fromDate,
-    toDate,
-    selectedAirportId,
-  });
-  const flightsCount = useMemo(
-    () => flightsData?.pages[0].metadata.itemCount ?? null,
-    [flightsData?.pages],
   );
   const currentFlight = useMemo(
     () =>
@@ -263,18 +250,6 @@ export const MapCard = ({
                   </span>
                 </Button>
               </div>
-              <div className="flex h-[32px] items-center justify-center rounded-box bg-base-100/50 px-4 backdrop-blur-sm sm:h-[48px]">
-                {flightsCount === null ? (
-                  <Loading />
-                ) : (
-                  <>
-                    <span className="font-semibold">{flightsCount}</span>
-                    <span className="ml-1 opacity-75">
-                      Flight{flightsCount !== 1 ? 's' : ''}
-                    </span>
-                  </>
-                )}
-              </div>
             </div>
           </div>
         </Form>
@@ -284,7 +259,6 @@ export const MapCard = ({
       center,
       currentFlight,
       data,
-      flightsCount,
       hoverAirportId,
       isMapFullScreen,
       isProfilePage,

@@ -13,81 +13,88 @@ import { procedure, router } from '../trpc';
 import { transformTripData, tripIncludeObj } from '../utils';
 
 export const tripsRouter = router({
-  getTrip: procedure.input(getTripSchema).query(async ({ input }) => {
-    const { id } = input;
-    const trip = await prisma.trip.findUnique({
-      where: {
-        id,
-      },
-      include: tripIncludeObj,
-    });
-    if (trip === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Trip not found.',
+  getTrip: procedure
+    .use(verifyAuthenticated)
+    .input(getTripSchema)
+    .query(async ({ input }) => {
+      const { id } = input;
+      const trip = await prisma.trip.findUnique({
+        where: {
+          id,
+        },
+        include: tripIncludeObj,
       });
-    }
-    return transformTripData(trip);
-  }),
-  getUserTrips: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
-    if (input.username === undefined && ctx.user === null) {
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
-    const [upcomingTrips, currentTrips, completedTrips] =
-      await prisma.$transaction([
-        prisma.trip.findMany({
-          where: {
-            user: {
-              username: input?.username ?? ctx.user?.username,
+      if (trip === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Trip not found.',
+        });
+      }
+      return transformTripData(trip);
+    }),
+  getUserTrips: procedure
+    .use(verifyAuthenticated)
+    .input(getUserSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const [upcomingTrips, currentTrips, completedTrips] =
+        await prisma.$transaction([
+          prisma.trip.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              outTime: {
+                gt: new Date(),
+              },
             },
-            outTime: {
-              gt: new Date(),
+            include: tripIncludeObj,
+            orderBy: {
+              outTime: 'asc',
             },
-          },
-          include: tripIncludeObj,
-          orderBy: {
-            outTime: 'asc',
-          },
-        }),
-        prisma.trip.findMany({
-          where: {
-            user: {
-              username: input?.username ?? ctx.user?.username,
+          }),
+          prisma.trip.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              inTime: {
+                gt: new Date(),
+              },
+              outTime: {
+                lte: new Date(),
+              },
             },
-            inTime: {
-              gt: new Date(),
+            include: tripIncludeObj,
+            orderBy: {
+              outTime: 'asc',
             },
-            outTime: {
-              lte: new Date(),
+          }),
+          prisma.trip.findMany({
+            where: {
+              user: {
+                username: input?.username ?? ctx.user?.username,
+              },
+              inTime: {
+                lte: new Date(),
+              },
             },
-          },
-          include: tripIncludeObj,
-          orderBy: {
-            outTime: 'asc',
-          },
-        }),
-        prisma.trip.findMany({
-          where: {
-            user: {
-              username: input?.username ?? ctx.user?.username,
+            include: tripIncludeObj,
+            orderBy: {
+              outTime: 'desc',
             },
-            inTime: {
-              lte: new Date(),
-            },
-          },
-          include: tripIncludeObj,
-          orderBy: {
-            outTime: 'desc',
-          },
-        }),
-      ]);
-    return {
-      upcomingTrips: upcomingTrips.map(transformTripData),
-      currentTrips: currentTrips.map(transformTripData),
-      completedTrips: completedTrips.map(transformTripData),
-      total: upcomingTrips.length + currentTrips.length + completedTrips.length,
-    };
-  }),
+          }),
+        ]);
+      return {
+        upcomingTrips: upcomingTrips.map(transformTripData),
+        currentTrips: currentTrips.map(transformTripData),
+        completedTrips: completedTrips.map(transformTripData),
+        total:
+          upcomingTrips.length + currentTrips.length + completedTrips.length,
+      };
+    }),
   createTrip: procedure
     .use(verifyAuthenticated)
     .input(createTripSchema)

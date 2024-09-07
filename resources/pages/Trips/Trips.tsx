@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 import { PlusIcon } from '../../common/components';
-import { useProfilePage, useTRPCErrorHandler } from '../../common/hooks';
+import { useProtectedPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { type FlightsPageNavigationState, ViewFlightModal } from '../Flights';
 import { DeleteTripModal } from './DeleteTripModal';
@@ -13,7 +13,7 @@ export interface TripsPageNavigationState {
 }
 
 export const Trips = (): JSX.Element => {
-  const enabled = useProfilePage();
+  const isLoggedIn = useProtectedPage();
   const navigate = useNavigate();
   const { tripId, username } = useParams();
   const { state } = useLocation() as {
@@ -25,7 +25,7 @@ export const Trips = (): JSX.Element => {
       username,
     },
     {
-      enabled,
+      enabled: isLoggedIn,
       staleTime: 5 * 60 * 1000,
       onError,
     },

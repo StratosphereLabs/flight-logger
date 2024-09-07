@@ -47,23 +47,27 @@ import {
 } from '../utils';
 
 export const flightsRouter = router({
-  getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
-    const { id } = input;
-    const flight = await prisma.flight.findUnique({
-      where: {
-        id,
-      },
-      include: flightIncludeObj,
-    });
-    if (flight === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Flight not found.',
+  getFlight: procedure
+    .use(verifyAuthenticated)
+    .input(getFlightSchema)
+    .query(async ({ input }) => {
+      const { id } = input;
+      const flight = await prisma.flight.findUnique({
+        where: {
+          id,
+        },
+        include: flightIncludeObj,
       });
-    }
-    return transformFlightData(flight);
-  }),
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      return transformFlightData(flight);
+    }),
   getFlightChangelog: procedure
+    .use(verifyAuthenticated)
     .input(getFlightChangelogSchema)
     .query(async ({ input }) => {
       const { limit, page, skip, take } = parsePaginationRequest(input);
@@ -142,6 +146,7 @@ export const flightsRouter = router({
       });
     }),
   getUserFlights: procedure
+    .use(verifyAuthenticated)
     .input(getUserFlightsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
@@ -219,6 +224,7 @@ export const flightsRouter = router({
       });
     }),
   getUserFlightsBasic: procedure
+    .use(verifyAuthenticated)
     .input(getUserProfileFlightsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
@@ -292,6 +298,7 @@ export const flightsRouter = router({
       };
     }),
   getUserActiveFlight: procedure
+    .use(verifyAuthenticated)
     .input(getUserSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
@@ -347,6 +354,7 @@ export const flightsRouter = router({
       return transformFlightData(flight);
     }),
   getUserCurrentRoute: procedure
+    .use(verifyAuthenticated)
     .input(getUserSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
@@ -423,7 +431,10 @@ export const flightsRouter = router({
   getUserMapData: procedure
     .input(getUserMapDataSchema)
     .query(async ({ ctx, input }) => {
-      if (input.username === undefined && ctx.user === null) {
+      if (
+        ctx.user === null &&
+        (input.username === undefined || input.status !== 'completed')
+      ) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
       const fromDate = getFromDate(input);

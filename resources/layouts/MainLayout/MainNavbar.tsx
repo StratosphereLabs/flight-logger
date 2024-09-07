@@ -58,7 +58,9 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     }
   });
   const isUserPage = useMemo(
-    () => pathname.includes('/profile') || pathname.includes('/user/'),
+    () =>
+      (pathname.includes('/profile') || pathname.includes('/user/')) &&
+      !pathname.includes('/trips'),
     [pathname],
   );
   const pathsToTabsMap: Record<string, string> = useMemo(
@@ -109,15 +111,15 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 navigate(tabsToPathsMap.profile);
               },
             },
+            {
+              id: 'users',
+              children: 'Users',
+              onClick: () => {
+                navigate(tabsToPathsMap.users);
+              },
+            },
           ]
         : []),
-      {
-        id: 'users',
-        children: 'Users',
-        onClick: () => {
-          navigate(tabsToPathsMap.users);
-        },
-      },
       {
         id: 'data',
         children: 'Data',
@@ -183,30 +185,34 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             />
           </div>
           <div className="flex-1 justify-end gap-1">
-            <SearchButton
-              isSearching={isSearching}
-              setIsSearching={setIsSearching}
-            />
+            {isLoggedIn ? (
+              <SearchButton
+                isSearching={isSearching}
+                setIsSearching={setIsSearching}
+              />
+            ) : null}
             <ThemeButton />
-            <Button
-              className="hidden gap-1 sm:inline-flex"
-              color="ghost"
-              onClick={() => {
-                navigate(
-                  pathname === '/profile' ? `/profile${search}` : '/profile',
-                  {
-                    state: {
-                      addFlight: true,
-                    } as const as ProfilePageNavigationState,
-                  },
-                );
-              }}
-              shape="circle"
-              title="Add Flight"
-            >
-              <PlusAirplaneIcon className="h-6 w-6" />
-              <span className="sr-only">Add Flight</span>
-            </Button>
+            {isLoggedIn ? (
+              <Button
+                className="hidden gap-1 sm:inline-flex"
+                color="ghost"
+                onClick={() => {
+                  navigate(
+                    pathname === '/profile' ? `/profile${search}` : '/profile',
+                    {
+                      state: {
+                        addFlight: true,
+                      } as const as ProfilePageNavigationState,
+                    },
+                  );
+                }}
+                shape="circle"
+                title="Add Flight"
+              >
+                <PlusAirplaneIcon className="h-6 w-6" />
+                <span className="sr-only">Add Flight</span>
+              </Button>
+            ) : null}
             <Button
               className={classNames(isLoggedIn && 'hidden')}
               color="neutral"

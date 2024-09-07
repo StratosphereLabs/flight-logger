@@ -3,6 +3,7 @@ import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { Form, FormControl, Select } from 'stratosphere-ui';
 import { MONTH_NAMES } from '../../common/constants';
 import { useCurrentDate } from '../../common/hooks';
+import { getIsLoggedIn, useAuthStore } from '../../stores';
 
 export interface ProfileFiltersFormProps {
   methods: UseFormReturn<ProfileFilterFormData>;
@@ -11,6 +12,7 @@ export interface ProfileFiltersFormProps {
 export const ProfileFiltersForm = ({
   methods,
 }: ProfileFiltersFormProps): JSX.Element => {
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const currentDate = useCurrentDate();
   const [range, fromDate, toDate] = useWatch<
     ProfileFilterFormData,
@@ -116,14 +118,18 @@ export const ProfileFiltersForm = ({
             id: 'completed',
             label: 'Completed',
           },
-          {
-            id: 'upcoming',
-            label: 'Upcoming',
-          },
-          {
-            id: 'all',
-            label: 'All',
-          },
+          ...(isLoggedIn
+            ? [
+                {
+                  id: 'upcoming',
+                  label: 'Upcoming',
+                },
+                {
+                  id: 'all',
+                  label: 'All',
+                },
+              ]
+            : []),
         ]}
         menuClassName="w-[175px] right-0"
       />
