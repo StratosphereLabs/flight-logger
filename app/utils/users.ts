@@ -23,6 +23,6 @@ export const generateUserToken = ({
 }: UserToken): string | null => {
   const secret = process.env.JWT_SECRET;
   return secret !== undefined
-    ? jwt.sign({ id, username, admin }, secret)
+    ? jwt.sign({ id, username, admin }, secret, { expiresIn: '7d' })
     : null;
 };
