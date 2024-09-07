@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import bcrypt from 'bcryptjs';
-import { prisma, upsertUser } from '../db';
+import { prisma } from '../db';
 import { loginSchema, registerSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 import { generateUserToken } from '../utils';
@@ -47,21 +47,25 @@ export const authRouter = router({
     }
     return { token };
   }),
-  register: procedure.input(registerSchema).mutation(async ({ input }) => {
-    const { confirmPassword, password } = input;
-    if (confirmPassword !== password) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Passwords do not match',
-      });
-    }
-    const token = await upsertUser(input);
-    if (token === null) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Missing JWT secret.',
-      });
-    }
-    return { token };
+  register: procedure.input(registerSchema).mutation(() => {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Service temporarily down.',
+    });
+    // const { confirmPassword, password } = input;
+    // if (confirmPassword !== password) {
+    //   throw new TRPCError({
+    //     code: 'BAD_REQUEST',
+    //     message: 'Passwords do not match',
+    //   });
+    // }
+    // const token = await upsertUser(input);
+    // if (token === null) {
+    //   throw new TRPCError({
+    //     code: 'INTERNAL_SERVER_ERROR',
+    //     message: 'Missing JWT secret.',
+    //   });
+    // }
+    // return { token };
   }),
 });

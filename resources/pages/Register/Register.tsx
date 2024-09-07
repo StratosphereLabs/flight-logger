@@ -7,6 +7,7 @@ import {
   Form,
   FormControl,
   PasswordInput,
+  // Tooltip,
 } from 'stratosphere-ui';
 import { registerSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
@@ -30,7 +31,7 @@ export const Register = (): JSX.Element => {
     resolver: zodResolver(registerSchema),
   });
   const onError = useTRPCErrorHandler();
-  const { isLoading, mutate } = trpc.auth.register.useMutation({
+  const { isLoading } = trpc.auth.register.useMutation({
     onSuccess: ({ token }) => {
       setToken(token);
     },
@@ -42,8 +43,9 @@ export const Register = (): JSX.Element => {
       <CardTitle>Register</CardTitle>
       <Form
         methods={methods}
-        onFormSubmit={values => {
-          mutate(values);
+        onFormSubmit={() => {
+          // mutate(values);
+          window.open('https://www.youtube.com/watch?v=xvFZjo5PgG0', '_blank');
         }}
       >
         <fieldset disabled={isLoading}>
