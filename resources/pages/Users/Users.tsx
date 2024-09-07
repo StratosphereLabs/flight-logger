@@ -15,7 +15,7 @@ import {
   useFormWithQueryParams,
 } from 'stratosphere-ui';
 import { SearchIcon } from '../../common/components';
-import { useTRPCErrorHandler } from '../../common/hooks';
+import { useProtectedPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
 export interface SearchUsersFormData {
@@ -23,6 +23,7 @@ export interface SearchUsersFormData {
 }
 
 export const Users = (): JSX.Element => {
+  const isLoggedIn = useProtectedPage();
   const navigate = useNavigate();
   const onError = useTRPCErrorHandler();
   const methods = useFormWithQueryParams<SearchUsersFormData, ['searchQuery']>({
@@ -43,7 +44,7 @@ export const Users = (): JSX.Element => {
     {
       query: query !== '' ? debouncedValue : query,
     },
-    { onError },
+    { enabled: isLoggedIn, onError },
   );
   return (
     <div className="mt-16 flex flex-1 flex-col items-center p-2 sm:p-3">

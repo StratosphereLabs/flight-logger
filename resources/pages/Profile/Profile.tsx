@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { getIsLoggedIn, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,
   FlightsCard,
@@ -19,6 +20,7 @@ export interface ProfilePageNavigationState {
 }
 
 export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();
   const { state } = useLocation() as {
     state: ProfilePageNavigationState | null;
@@ -69,7 +71,10 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
         setSelectedAirportId={setSelectedAirportId}
       />
       <div className="flex flex-1 flex-col gap-3 p-2 sm:p-3">
-        {!isFlightsFullScreen && !isStatsFullScreen && !isAddingFlight ? (
+        {isLoggedIn &&
+        !isFlightsFullScreen &&
+        !isStatsFullScreen &&
+        !isAddingFlight ? (
           <ActiveFlightCard />
         ) : null}
         <div
@@ -78,7 +83,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
             isAddingFlight ? 'lg:flex-col' : 'lg:flex-row',
           )}
         >
-          {!isStatsFullScreen ? (
+          {isLoggedIn && !isStatsFullScreen ? (
             <FlightsCard
               filtersFormControl={filtersFormControl}
               isAddingFlight={isAddingFlight}
