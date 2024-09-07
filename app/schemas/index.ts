@@ -9,6 +9,7 @@ export * from './flights';
 export * from './itineraries';
 export * from './pagination';
 export * from './passwordReset';
+export * from './registrations';
 export * from './regions';
 export * from './search';
 export * from './statistics';
