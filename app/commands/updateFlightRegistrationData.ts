@@ -39,6 +39,9 @@ export const updateFlightRegistrationData = async (
           where: {
             registration: flight.registration,
           },
+          cacheStrategy: {
+            ttl: 24 * 60 * 60,
+          },
         })
       : null;
   const aircraftType =
@@ -56,6 +59,9 @@ export const updateFlightRegistrationData = async (
               },
             ],
           },
+          cacheStrategy: {
+            ttl: 30 * 24 * 60 * 60,
+          },
         })
       : undefined;
   const diversionAirport =
@@ -63,6 +69,9 @@ export const updateFlightRegistrationData = async (
       ? await prisma.airport.findFirst({
           where: {
             iata: flight.diversionIata,
+          },
+          cacheStrategy: {
+            ttl: 30 * 24 * 60 * 60,
           },
         })
       : null;

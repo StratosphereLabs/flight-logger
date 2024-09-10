@@ -108,6 +108,9 @@ export const flightDataRouter = router({
               omit: {
                 id: false,
               },
+              cacheStrategy: {
+                ttl: 5 * 60,
+              },
             })
           : undefined;
       if (user === null) {

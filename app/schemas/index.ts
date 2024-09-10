@@ -1,5 +1,4 @@
 export * from './aircraftTypes';
-export * from './airframes';
 export * from './airlines';
 export * from './airports';
 export * from './auth';

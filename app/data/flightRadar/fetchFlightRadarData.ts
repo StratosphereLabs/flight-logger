@@ -143,12 +143,18 @@ export const fetchFlightRadarDataByRoute = async ({
           };
         }),
       },
+      cacheStrategy: {
+        ttl: 30 * 24 * 60 * 60,
+      },
     }),
     prisma.airport.findMany({
       where: {
         id: {
           in: airportCodes,
         },
+      },
+      cacheStrategy: {
+        ttl: 30 * 24 * 60 * 60,
       },
     }),
   ]);

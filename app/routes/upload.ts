@@ -329,12 +329,18 @@ uploadRouter.post(
             in: airportIatas,
           },
         },
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
+        },
       });
       const airlines = await prisma.airline.findMany({
         where: {
           iata: {
             in: airlineIatas,
           },
+        },
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
         },
       });
       const airframes = await prisma.$queryRaw<
@@ -363,6 +369,9 @@ uploadRouter.post(
           icao: {
             in: aircraftTypeIcaos,
           },
+        },
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
         },
       });
       const airportData = keyBy(airports, 'iata');

@@ -1,7 +1,6 @@
-import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import { procedure, router } from '../trpc';
-import { getRegionSchema, getRegionsSchema, searchSchema } from '../schemas';
+import { getRegionsSchema, searchSchema } from '../schemas';
 import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
 export const regionsRouter = router({
@@ -18,8 +17,15 @@ export const regionsRouter = router({
                 [sortKey]: sort ?? 'asc',
               }
             : undefined,
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
+        },
       }),
-      prisma.region.count(),
+      prisma.region.count({
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
+        },
+      }),
     ]);
     return getPaginatedResponse({
       itemCount,
@@ -50,20 +56,5 @@ export const regionsRouter = router({
       },
     });
     return regions;
-  }),
-  getRegion: procedure.input(getRegionSchema).query(async ({ input }) => {
-    const { id } = input;
-    const region = await prisma.region.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (region === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Region not found.',
-      });
-    }
-    return region;
   }),
 });

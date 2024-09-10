@@ -51,6 +51,9 @@ export const usersRouter = router({
       omit: {
         pushNotifications: false,
       },
+      cacheStrategy: {
+        ttl: 5 * 60,
+      },
     });
     if (userData === null) {
       throw new TRPCError({
@@ -121,6 +124,9 @@ export const usersRouter = router({
             _count: 'desc',
           },
         },
+        cacheStrategy: {
+          ttl: 5 * 60,
+        },
       });
       return results.map(user => ({
         ...user,
@@ -181,6 +187,9 @@ export const usersRouter = router({
           flights: {
             _count: 'desc',
           },
+        },
+        cacheStrategy: {
+          ttl: 5 * 60,
         },
       });
       return results.map(user => ({
