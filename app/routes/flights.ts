@@ -666,7 +666,6 @@ export const flightsRouter = router({
           airline: true,
         },
       });
-      // await updateFlightTimesData([flight]);
       await updateFlightRegistrationData([flight]);
       await updateTripTimes(flight.tripId);
       const updatedFlight = await prisma.flight.findUnique({
