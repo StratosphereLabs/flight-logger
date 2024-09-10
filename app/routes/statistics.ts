@@ -157,7 +157,7 @@ export const statisticsRouter = router({
         onTimePercentage:
           flightsWithInTimeActual > 0
             ? ((100 * onTimeFlights) / flightsWithInTimeActual).toFixed(1)
-            : '0.0',
+            : '-.-',
       };
     }),
   getTopRoutes: procedure
