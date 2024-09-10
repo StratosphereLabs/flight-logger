@@ -1,25 +1,9 @@
-import { TRPCError, type inferRouterOutputs } from '@trpc/server';
+import { type inferRouterOutputs } from '@trpc/server';
 import { prisma } from '../db';
-import { getAirframeSchema, searchSchema } from '../schemas';
+import { searchSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 
 export const airframesRouter = router({
-  getAirframe: procedure.input(getAirframeSchema).query(async ({ input }) => {
-    const { icao24, registration } = input;
-    const airframe = await prisma.airframe.findFirst({
-      where: {
-        icao24,
-        registration,
-      },
-    });
-    if (airframe === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Airframe not found.',
-      });
-    }
-    return airframe;
-  }),
   searchAirframes: procedure.input(searchSchema).query(async ({ input }) => {
     const { query } = input;
     const airframes = await prisma.airframe.findMany({

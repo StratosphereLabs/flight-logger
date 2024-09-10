@@ -1,7 +1,6 @@
-import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
 import { procedure, router } from '../trpc';
-import { getCountriesSchema, getCountrySchema, searchSchema } from '../schemas';
+import { getCountriesSchema, searchSchema } from '../schemas';
 import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
 export const countriesRouter = router({
@@ -18,8 +17,15 @@ export const countriesRouter = router({
                 [sortKey]: sort ?? 'asc',
               }
             : undefined,
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
+        },
       }),
-      prisma.country.count(),
+      prisma.country.count({
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
+        },
+      }),
     ]);
     return getPaginatedResponse({
       itemCount,
@@ -50,20 +56,5 @@ export const countriesRouter = router({
       },
     });
     return countries;
-  }),
-  getCountry: procedure.input(getCountrySchema).query(async ({ input }) => {
-    const { id } = input;
-    const country = await prisma.country.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (country === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Country not found.',
-      });
-    }
-    return country;
   }),
 });

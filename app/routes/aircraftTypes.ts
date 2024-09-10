@@ -1,6 +1,5 @@
-import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { getAircraftTypeSchema, getAircraftTypesSchema } from '../schemas';
+import { getAircraftTypesSchema } from '../schemas';
 import { searchSchema } from '../schemas/search';
 import { procedure, router } from '../trpc';
 import { getPaginatedResponse, parsePaginationRequest } from '../utils';
@@ -21,8 +20,15 @@ export const aircraftTypesRouter = router({
                   [sortKey]: sort ?? 'asc',
                 }
               : undefined,
+          cacheStrategy: {
+            ttl: 30 * 24 * 60 * 60,
+          },
         }),
-        prisma.aircraft_type.count(),
+        prisma.aircraft_type.count({
+          cacheStrategy: {
+            ttl: 30 * 24 * 60 * 60,
+          },
+        }),
       ]);
       return getPaginatedResponse({
         itemCount,
@@ -74,21 +80,4 @@ export const aircraftTypesRouter = router({
       ),
     ].slice(0, 5);
   }),
-  getAircraftType: procedure
-    .input(getAircraftTypeSchema)
-    .query(async ({ input }) => {
-      const { id } = input;
-      const aircraftType = await prisma.aircraft_type.findUnique({
-        where: {
-          id,
-        },
-      });
-      if (aircraftType === null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Aircraft Type not found.',
-        });
-      }
-      return aircraftType;
-    }),
 });

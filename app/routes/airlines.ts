@@ -1,6 +1,5 @@
-import { TRPCError } from '@trpc/server';
 import { prisma } from '../db';
-import { getAirlineSchema, getAirlinesSchema, searchSchema } from '../schemas';
+import { getAirlinesSchema, searchSchema } from '../schemas';
 import { procedure, router } from '../trpc';
 import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
@@ -18,8 +17,15 @@ export const airlinesRouter = router({
                 [sortKey]: sort ?? 'asc',
               }
             : undefined,
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
+        },
       }),
-      prisma.airline.count(),
+      prisma.airline.count({
+        cacheStrategy: {
+          ttl: 30 * 24 * 60 * 60,
+        },
+      }),
     ]);
     return getPaginatedResponse({
       itemCount,
@@ -70,20 +76,5 @@ export const airlinesRouter = router({
         codeMatches.every(match => match.id !== id),
       ),
     ].slice(0, 5);
-  }),
-  getAirline: procedure.input(getAirlineSchema).query(async ({ input }) => {
-    const { id } = input;
-    const airline = await prisma.airline.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (airline === null) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Airline not found.',
-      });
-    }
-    return airline;
   }),
 });
