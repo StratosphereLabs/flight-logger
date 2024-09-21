@@ -1,9 +1,7 @@
-importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js');
-importScripts(
-  'https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js',
-);
+import { initializeApp } from 'firebase/app';
+import { getMessaging } from 'firebase/messaging';
 
-firebase.initializeApp({
+const FlightLoggerFirebaseApp = initializeApp({
   apiKey: 'AIzaSyA3aNvnvseoAlldeZHPAcM09Bt8d5OuhbM',
   authDomain: 'flight-logger-278103.firebaseapp.com',
   projectId: 'flight-logger-278103',
@@ -13,16 +11,27 @@ firebase.initializeApp({
   measurementId: 'G-H5G99GVXN0',
 });
 
-const messaging = firebase.messaging();
-messaging.onBackgroundMessage(payload => {
+const messaging = getMessaging(FlightLoggerFirebaseApp);
+
+// Foreground Message Handler
+messaging.onMessage(payload => {
   console.log(
-    '[firebase-messaging-sw.js] Received background message ',
+    '[firebase-messaging-sw.js] Received foreground message: ',
     payload,
   );
+  // ...
+});
 
-  const notificationTitle = payload.notification.title;
+// Background Message Handler
+messaging.onBackgroundMessage(payload => {
+  console.log(
+    '[firebase-messaging-sw.js] Received background message: ',
+    payload,
+  );
+  // Customize notification here
+  const notificationTitle = 'Background Message Title';
   const notificationOptions = {
-    body: payload.notification.body,
+    body: 'Background Message body.',
     icon: '/firebase-logo.png',
   };
 

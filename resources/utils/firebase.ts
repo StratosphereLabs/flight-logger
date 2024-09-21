@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getMessaging } from 'firebase/messaging';
+import { getMessaging, onMessage } from 'firebase/messaging';
 
 export const firebaseApp = initializeApp({
   apiKey: import.meta.env.VITE_FCM_API_KEY as string,
@@ -12,3 +12,8 @@ export const firebaseApp = initializeApp({
 });
 
 export const messaging = getMessaging(firebaseApp);
+
+onMessage(messaging, payload => {
+  console.log('[firebase.ts] Foreground message received:', payload);
+  // ...
+});

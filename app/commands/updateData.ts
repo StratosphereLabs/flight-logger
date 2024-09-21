@@ -135,7 +135,7 @@ const updateFlightsEvery15 = async (): Promise<void> => {
                 },
               },
               {
-                outTime: {
+                outTime:mmm mmmm  {
                   lte: add(new Date(), { days: 1 }),
                 },
               },
