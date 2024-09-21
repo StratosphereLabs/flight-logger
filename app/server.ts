@@ -1,5 +1,6 @@
 import http from 'http';
 import type { HttpError } from 'http-errors';
+// import { prisma } from './db/prisma';
 
 import app from '.';
 import { normalizePort } from './utils';
@@ -39,3 +40,20 @@ app.set('port', port);
     }
   });
 })();
+
+/* TODO: Implement Prisma Pulse and Accelerate 
+
+// Installing Pulse and Accelerate
+async function main(): Promise<void> {
+  const stream = await prisma.flight_update_change.stream({
+    name: 'flight-update-stream',
+  });
+
+  for await (const event of stream) {
+    console.log('New event:', event);
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
+main();
+*/

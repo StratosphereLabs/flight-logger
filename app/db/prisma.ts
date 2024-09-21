@@ -18,10 +18,14 @@ export const prisma = new PrismaClient({
       waypoints: true,
     },
   },
-})
+}).$extends(withAccelerate());
+
+/*
+
   .$extends(
     withPulse({
       apiKey: process.env.PULSE_API_KEY as string,
     }),
   )
-  .$extends(withAccelerate());
+
+*/
