@@ -15,6 +15,7 @@ import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 // import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { IPIFY_URL, REDIRECT_URL } from './constants';
+import { Icon } from '@iconify/react';
 
 export const Register = (): JSX.Element => {
   useAuthPage();
@@ -47,6 +48,29 @@ export const Register = (): JSX.Element => {
   return (
     <>
       <CardTitle>Register</CardTitle>
+
+      <div className="flex flex-row justify-between gap-3 md:mt-3">
+        <Button
+          className="flex-1"
+          // OnClick
+        >
+          <Icon icon="mdi:google" height={25} width={25} />
+        </Button>
+        <Button
+          className="flex-1"
+          // OnClick
+        >
+          <Icon icon="mdi:github" height={25} width={25} />
+        </Button>
+        <Button
+          className="flex-1"
+          // OnClick
+        >
+          <Icon icon="fa6-brands:x-twitter" height={25} width={25} />
+        </Button>
+      </div>
+      <div className="divider">or</div>
+
       <Form
         methods={methods}
         onFormSubmit={values => {
