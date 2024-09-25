@@ -1,7 +1,4 @@
-import {
-  Outlet,
-  // useLocation, useNavigate
-} from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import {
   AlertMessages,
   Card,
@@ -15,11 +12,11 @@ export const AuthenticationLayout = (): JSX.Element => {
   // const { pathname } = useLocation();
   const { alertMessages } = useAlertMessages();
   return (
-    <div className="hero min-h-[100dvh] bg-base-200">
+    <div className="hero min-h-screen bg-base-200">
       <div className="hero-content w-full flex-wrap justify-around">
         <div className="text-center lg:text-left">
-          <div className="font-title inline-flex text-lg text-primary transition-all duration-200 md:text-5xl">
-            <span>Flight</span>{' '}
+          <div className="font-title inline-flex text-4xl text-primary transition-all duration-200 md:text-5xl">
+            <span>Flight</span>
             <span className="text-base-content">Logger</span>
           </div>
           <p className="py-6">
@@ -40,7 +37,7 @@ export const AuthenticationLayout = (): JSX.Element => {
         */}
         </div>
         <Card className="w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg">
-          <CardBody className="pt-[1rem]">
+          <CardBody className="overflow-auto pt-[1rem]">
             <Outlet />
           </CardBody>
         </Card>
