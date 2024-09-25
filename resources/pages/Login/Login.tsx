@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler, useNavigate } from 'react-router-dom';
 import {
@@ -12,7 +13,6 @@ import { loginSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore, useIsDarkMode } from '../../stores';
 import { trpc } from '../../utils/trpc';
-import { Icon } from '@iconify/react';
 
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
@@ -93,7 +93,7 @@ export const Login = (): JSX.Element => {
             Sign In <Icon icon="mdi:sign-in" width={20} height={20} />
           </Button>
 
-          <div className="mb- mt- divider">
+          <div className="divider">
             Forgot password?
             <a
               onClick={handleForgotPassword}

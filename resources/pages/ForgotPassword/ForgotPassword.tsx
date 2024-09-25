@@ -33,7 +33,21 @@ export const ForgotPassword = (): JSX.Element => {
   }
   return (
     <>
-      <CardTitle>Forgot Password</CardTitle>
+      <div className="flex w-full justify-center">
+        <CardTitle>Forgot Password</CardTitle>
+      </div>
+
+      <div className="divider">
+        <a
+          onClick={handleBackToLogin}
+          className="link-hover link text-base"
+          href="#"
+          tabIndex={0}
+        >
+          Back to Login
+        </a>
+      </div>
+
       <Form
         methods={methods}
         onFormSubmit={values => {
@@ -53,17 +67,8 @@ export const ForgotPassword = (): JSX.Element => {
             name="email"
             type="email"
           />
-          <label className="label">
-            <a
-              onClick={handleBackToLogin}
-              className="link-hover link label-text-alt"
-              href="#"
-              tabIndex={0}
-            >
-              Back to Login
-            </a>
-          </label>
         </fieldset>
+
         <div className="mt-6 flex flex-col">
           <Button color="primary" type="submit" loading={isLoading}>
             Reset Password

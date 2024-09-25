@@ -35,7 +35,9 @@ export const ResetPassword = (): JSX.Element => {
   });
   return (
     <>
-      <CardTitle>Reset Password</CardTitle>
+      <div className="flex w-full justify-center">
+        <CardTitle>Change Password</CardTitle>
+      </div>
       <Form
         methods={methods}
         onFormSubmit={data => {
@@ -58,9 +60,10 @@ export const ResetPassword = (): JSX.Element => {
             name="confirmPassword"
           />
         </fieldset>
+
         <div className="mt-6 flex flex-col">
           <Button color="primary" type="submit" loading={isLoading}>
-            Reset Password
+            Change Password
           </Button>
         </div>
       </Form>
