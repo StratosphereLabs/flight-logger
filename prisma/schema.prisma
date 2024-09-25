@@ -35,6 +35,9 @@ model user {
   followedBy         user[]           @relation("UserFollows")
   following          user[]           @relation("UserFollows")
   fcmTokens          fcm_token[]
+  googleToken        String?
+  githubToken        String?
+  twitterToken       String?
 
   @@index([username])
 }

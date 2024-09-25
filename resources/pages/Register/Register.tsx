@@ -45,9 +45,12 @@ export const Register = (): JSX.Element => {
     trpc.registrations.createRegistration.useMutation({ onError });
   const isLoading = isFetchIpDataLoading || isCreateRegistrationLoading;
   const handleClick = useLinkClickHandler('/auth/login');
+
   return (
     <>
-      <CardTitle>Register</CardTitle>
+      <div className="flex w-full justify-center">
+        <CardTitle>Sign Up</CardTitle>
+      </div>
 
       <div className="flex flex-row justify-between gap-3 md:mt-3">
         <Button
@@ -69,6 +72,7 @@ export const Register = (): JSX.Element => {
           <Icon icon="fa6-brands:x-twitter" height={25} width={25} />
         </Button>
       </div>
+
       <div className="divider">or</div>
 
       <Form
@@ -136,20 +140,21 @@ export const Register = (): JSX.Element => {
             labelText="Confirm Password"
             name="confirmPassword"
           />
-          <label className="label">
+          <div className="divider">
+            Have an account?
             <a
               onClick={handleClick}
-              className="link-hover link label-text-alt"
+              className="link-hover link text-base"
               href="#"
               tabIndex={0}
             >
-              Already registered? Login
+              Sign In
             </a>
-          </label>
+          </div>
         </fieldset>
-        <div className="mt-6 flex flex-col">
+        <div className="mt-5 flex flex-col">
           <Button color="primary" type="submit" loading={isLoading}>
-            Register
+            Sign Up <Icon icon="mdi:register" width={20} height={20} />
           </Button>
         </div>
       </Form>

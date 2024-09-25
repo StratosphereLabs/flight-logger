@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useLinkClickHandler } from 'react-router-dom';
+import { useLinkClickHandler, useNavigate } from 'react-router-dom';
 import {
   Button,
   CardTitle,
@@ -10,10 +10,13 @@ import {
 } from 'stratosphere-ui';
 import { loginSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
-import { useAuthStore } from '../../stores';
+import { useAuthStore, useIsDarkMode } from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { Icon } from '@iconify/react';
 
 export const Login = (): JSX.Element => {
+  const navigate = useNavigate();
+
   useAuthPage();
   const { setToken } = useAuthStore();
   const methods = useForm({
@@ -32,11 +35,36 @@ export const Login = (): JSX.Element => {
     },
     onError,
   });
+  const isDarkMode = useIsDarkMode();
+
   const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
-  const handleRegister = useLinkClickHandler('/auth/register');
   return (
     <>
-      <CardTitle>Sign In</CardTitle>
+      <div className="flex w-full justify-center">
+        <CardTitle>Sign In</CardTitle>
+      </div>
+      <div className="flex flex-row justify-between gap-3 md:mt-3">
+        <Button
+          className="flex-1"
+          // OnClick
+        >
+          <Icon icon="mdi:google" height={25} width={25} />
+        </Button>
+        <Button
+          className="flex-1"
+          // OnClick
+        >
+          <Icon icon="mdi:github" height={25} width={25} />
+        </Button>
+        <Button
+          className="flex-1"
+          // OnClick
+        >
+          <Icon icon="fa6-brands:x-twitter" height={25} width={25} />
+        </Button>
+      </div>
+
+      <div className="divider">or</div>
       <Form
         methods={methods}
         onFormSubmit={data => {
@@ -59,28 +87,32 @@ export const Login = (): JSX.Element => {
             labelText="Password"
             name="password"
           />
-          <label className="label">
+        </fieldset>
+        <div className="mt-5 flex flex-col">
+          <Button color="primary" type="submit" loading={isLoading}>
+            Sign In <Icon icon="mdi:sign-in" width={20} height={20} />
+          </Button>
+
+          <div className="mb- mt- divider">
+            Forgot password?
             <a
               onClick={handleForgotPassword}
+              className="link-hover link text-base"
               href="#"
-              className="link-hover link label-text-alt"
               tabIndex={0}
             >
-              Forgot password?
+              Reset
             </a>
-            <a
-              onClick={handleRegister}
-              href="#"
-              className="link-hover link label-text-alt"
-              tabIndex={0}
-            >
-              Register
-            </a>
-          </label>
-        </fieldset>
-        <div className="mt-6 flex flex-col">
-          <Button color="primary" type="submit" loading={isLoading}>
-            Login
+          </div>
+          <Button
+            color="neutral"
+            outline={!isDarkMode}
+            className="hover:bg-opacity-0 hover:text-base-content/50"
+            onClick={() => {
+              navigate('/auth/register');
+            }}
+          >
+            Sign Up <Icon icon="mdi:register" width={20} height={20} />
           </Button>
         </div>
       </Form>
