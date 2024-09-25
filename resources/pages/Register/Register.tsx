@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { Icon } from '@iconify/react';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import {
@@ -8,18 +8,18 @@ import {
   Form,
   FormControl,
   PasswordInput,
-  // Tooltip,
 } from 'stratosphere-ui';
 import { registerSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
-// import { useAuthStore } from '../../stores';
+import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
-import { IPIFY_URL, REDIRECT_URL } from './constants';
-import { Icon } from '@iconify/react';
+import { SignUpWithGithub } from './SignUpProviders/SignUpWithGithub';
+import { SignUpWithGoogle } from './SignUpProviders/SignUpWithGoogle';
+import { SignUpWithTwitter } from './SignUpProviders/SignUpWithTwitter';
 
 export const Register = (): JSX.Element => {
   useAuthPage();
-  // const { setToken } = useAuthStore();
+  const { setToken } = useAuthStore();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -33,17 +33,15 @@ export const Register = (): JSX.Element => {
     },
     resolver: zodResolver(registerSchema),
   });
+
   const onError = useTRPCErrorHandler();
-  const [isFetchIpDataLoading, setIsFetchIpDataLoading] = useState(false);
-  // const { isLoading } = trpc.auth.register.useMutation({
-  //   onSuccess: ({ token }) => {
-  //     setToken(token);
-  //   },
-  //   onError,
-  // });
-  const { mutate, isLoading: isCreateRegistrationLoading } =
-    trpc.registrations.createRegistration.useMutation({ onError });
-  const isLoading = isFetchIpDataLoading || isCreateRegistrationLoading;
+  const { isLoading, mutate } = trpc.auth.register.useMutation({
+    onSuccess: ({ token }) => {
+      setToken(token);
+    },
+    onError,
+  });
+
   const handleClick = useLinkClickHandler('/auth/login');
 
   return (
@@ -53,24 +51,9 @@ export const Register = (): JSX.Element => {
       </div>
 
       <div className="flex flex-row justify-between gap-3 md:mt-3">
-        <Button
-          className="flex-1"
-          // OnClick
-        >
-          <Icon icon="mdi:google" height={25} width={25} />
-        </Button>
-        <Button
-          className="flex-1"
-          // OnClick
-        >
-          <Icon icon="mdi:github" height={25} width={25} />
-        </Button>
-        <Button
-          className="flex-1"
-          // OnClick
-        >
-          <Icon icon="fa6-brands:x-twitter" height={25} width={25} />
-        </Button>
+        <SignUpWithGoogle />
+        <SignUpWithGithub />
+        <SignUpWithTwitter />
       </div>
 
       <div className="divider">or</div>
@@ -78,7 +61,15 @@ export const Register = (): JSX.Element => {
       <Form
         methods={methods}
         onFormSubmit={values => {
+          mutate(values);
+
+          /*
           setIsFetchIpDataLoading(true);
+
+          This rickrolls people who try to sign up because ETHAN is a fucking cunt.
+          AND TUI is a stalker. 
+          TODO: REMOVE THIS FUCKING SHIT AND PUT A SWITCH ON THE BACKEND LIKE A NORMAL DEV!!!!!!!!
+
           const redirect = (): void => {
             setIsFetchIpDataLoading(false);
             window.open(REDIRECT_URL, '_blank');
@@ -96,6 +87,7 @@ export const Register = (): JSX.Element => {
               );
             })
             .catch(redirect);
+            */
         }}
       >
         <fieldset disabled={isLoading}>
