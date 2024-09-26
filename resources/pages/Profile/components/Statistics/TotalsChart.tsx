@@ -72,7 +72,7 @@ export const TotalsChart = ({
               <Stat className="p-2">
                 <StatTitle>Flights</StatTitle>
                 <StatValue className="flex items-center gap-2">
-                  <MaterialPlaneIcon className="h-8 h-8 opacity-80" />
+                  <MaterialPlaneIcon className="h-8 opacity-80" />
                   <span className="text-primary/80">{data.totalFlights}</span>
                 </StatValue>
                 <StatDesc>{data.onTimePercentage}% on-time</StatDesc>

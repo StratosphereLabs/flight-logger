@@ -40,8 +40,8 @@ export const FlightChangelogTable = ({
   const limit = useMemo(
     () =>
       isExpanded
-        ? expandedPageSize ?? DEFAULT_EXPANDED_PAGE_SIZE
-        : pageSize ?? DEFAULT_PAGE_SIZE,
+        ? (expandedPageSize ?? DEFAULT_EXPANDED_PAGE_SIZE)
+        : (pageSize ?? DEFAULT_PAGE_SIZE),
     [expandedPageSize, isExpanded, pageSize],
   );
   const {
@@ -117,8 +117,8 @@ export const FlightChangelogTable = ({
             className={classNames(
               'flex flex-col gap-2 overflow-y-scroll',
               isExpanded
-                ? expandedContainerClassName ?? 'max-h-[550px]'
-                : containerClassName ?? 'max-h-[200px]',
+                ? (expandedContainerClassName ?? 'max-h-[550px]')
+                : (containerClassName ?? 'max-h-[200px]'),
             )}
           >
             <Table

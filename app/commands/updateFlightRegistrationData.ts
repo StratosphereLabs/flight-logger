@@ -76,7 +76,7 @@ export const updateFlightRegistrationData = async (
         })
       : null;
   const updatedData = {
-    airframeId: airframe !== undefined ? airframe?.icao24 ?? null : undefined,
+    airframeId: airframe !== undefined ? (airframe?.icao24 ?? null) : undefined,
     tailNumber: flight.registration,
     offTimeActual: flight.offTimeActual,
     onTimeActual: flight.onTimeActual,

@@ -63,7 +63,7 @@ export const AirportsCard = (): JSX.Element => {
             countryId: 'w-[120px] hidden sm:table-cell',
             type: 'w-[120px] hidden sm:table-cell',
           }}
-          className="table-fixed  border-separate bg-base-100"
+          className="table-fixed border-separate bg-base-100"
           columns={[
             {
               id: 'iata',

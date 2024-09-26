@@ -63,9 +63,9 @@ export const GoogleMap = ({
   const heatmapData = useMemo(
     () =>
       window.google !== undefined && mapMode === 'heatmap'
-        ? data.heatmap.map(
+        ? (data.heatmap.map(
             ({ lat, lng }) => new window.google.maps.LatLng(lat, lng),
-          ) ?? []
+          ) ?? [])
         : [],
     [data.heatmap, mapMode],
   );
