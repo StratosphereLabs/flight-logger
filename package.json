@@ -37,6 +37,7 @@
     "@trpc/client": "10.45.2",
     "@trpc/react-query": "10.45.2",
     "@trpc/server": "10.45.2",
+    "@vitejs/plugin-react": "^4.3.1",
     "axios": "^1.6.3",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
@@ -82,6 +83,8 @@
     "stratosphere-ui": "^1.8.5",
     "string-similarity": "^4.0.4",
     "vite-node": "^2.1.1",
+    "vite-plugin-cesium": "^1.2.22",
+    "vite-plugin-eslint": "^1.8.1",
     "zod": "3.23.8",
     "zod-prisma-types": "^3.1.8",
     "zustand": "^4.5.2"
@@ -113,7 +116,6 @@
     "@types/validator": "^13.11.7",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "@vitejs/plugin-react": "^4.3.1",
     "@vitest/coverage-v8": "^1.4.0",
     "autoprefixer": "^10.4.16",
     "child_process": "^1.0.2",
@@ -136,8 +138,6 @@
     "ts-node": "^10.9.2",
     "typescript": "5.6.2",
     "vite": "^5.4.8",
-    "vite-plugin-cesium": "^1.2.22",
-    "vite-plugin-eslint": "^1.8.1",
     "vitest": "^1.4.0",
     "vitest-fetch-mock": "^0.2.2"
   }
