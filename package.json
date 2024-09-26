@@ -29,7 +29,6 @@
     "@nivo/radar": "0.85.0",
     "@prisma/client": "^5.19.1",
     "@prisma/extension-accelerate": "^1.1.0",
-    "@prisma/extension-pulse": "^1.2.0",
     "@react-google-maps/api": "^2.19.2",
     "@react-oauth/google": "^0.12.1",
     "@tanstack/react-query": "^4.36.1",
