@@ -12,6 +12,7 @@ import {
 import { loginSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
 import { useAuthStore, useIsDarkMode } from '../../stores';
+import { handleProviderSignIn } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 
 export const Login = (): JSX.Element => {
@@ -38,6 +39,7 @@ export const Login = (): JSX.Element => {
   const isDarkMode = useIsDarkMode();
 
   const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
+
   return (
     <>
       <div className="flex w-full justify-center">
@@ -46,19 +48,25 @@ export const Login = (): JSX.Element => {
       <div className="flex flex-row justify-between gap-3 md:mt-3">
         <Button
           className="flex-1"
-          // OnClick
+          onClick={() => {
+            void handleProviderSignIn('google');
+          }}
         >
           <Icon icon="mdi:google" height={25} width={25} />
         </Button>
         <Button
           className="flex-1"
-          // OnClick
+          onClick={() => {
+            void handleProviderSignIn('github');
+          }}
         >
           <Icon icon="mdi:github" height={25} width={25} />
         </Button>
         <Button
           className="flex-1"
-          // OnClick
+          onClick={() => {
+            void handleProviderSignIn('twitter');
+          }}
         >
           <Icon icon="fa6-brands:x-twitter" height={25} width={25} />
         </Button>

@@ -8,9 +8,8 @@ import {
 import { ThemeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => {
-  // const navigate = useNavigate();
-  // const { pathname } = useLocation();
   const { alertMessages } = useAlertMessages();
+
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content w-full flex-wrap justify-around">
@@ -22,19 +21,6 @@ export const AuthenticationLayout = (): JSX.Element => {
           <p className="py-6">
             Welcome! Please login to access your flights and trips
           </p>
-          {/*
-          {pathname === '/auth/login' ? (
-            <Button
-              color="secondary"
-              onClick={() => {
-                navigate('/auth/register');
-              }}
-            >
-              Register{' '}
-              <Icon icon="mdi:arrow-right-thin" width={20} height={20} />
-            </Button>
-          ) : null}
-        */}
         </div>
         <Card className="w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg">
           <CardBody className="overflow-auto pt-[1rem]">

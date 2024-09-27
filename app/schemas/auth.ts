@@ -47,4 +47,7 @@ export const registerSchema = z.object({
     .regex(PASSWORD_REQUIREMENT_REGEX, {
       message: PASSWORD_REQUIREMENT_STRING,
     }),
+  googleId: z.string().optional(),
+  githubId: z.string().optional(),
+  twitterId: z.string().optional(),
 });

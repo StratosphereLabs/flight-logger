@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { prisma } from './prisma';
 import { generateUserToken } from '../utils';
+import { prisma } from './prisma';
 
 export interface UpsertUserParams {
   email: string;
@@ -8,6 +8,9 @@ export interface UpsertUserParams {
   username?: string;
   firstName?: string;
   lastName?: string;
+  githubId?: string;
+  googleId?: string;
+  twitterId?: string;
 }
 
 export const upsertUser = async (
@@ -27,6 +30,9 @@ export const upsertUser = async (
       firstName: params.firstName ?? '',
       lastName: params.lastName ?? '',
       admin: false,
+      githubId: params.githubId ?? '',
+      googleId: params.googleId ?? '',
+      twitterId: params.twitterId ?? '',
     },
     omit: {
       id: false,

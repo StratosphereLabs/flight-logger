@@ -238,6 +238,7 @@ export const usersRouter = router({
         });
       }
     }),
+
   togglePushNotifications: procedure
     .use(verifyAuthenticated)
     .input(togglePushNotificationsSchema)
