@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
 import { useMemo, useState } from 'react';
@@ -15,7 +16,6 @@ import {
 import {
   CogIcon,
   HomeIcon,
-  LogoutIcon,
   MenuIcon,
   PlusAirplaneIcon,
   SearchButton,
@@ -44,6 +44,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const navigate = useNavigate();
   const { username } = useParams();
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
+
   const { data, isFetching } = useLoggedInUserQuery(userData => {
     if (userData.pushNotifications) {
       getToken(messaging, {
@@ -57,6 +58,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         .catch(() => {});
     }
   });
+
   const isUserPage = useMemo(
     () =>
       (pathname.includes('/profile') || pathname.includes('/user/')) &&
@@ -282,8 +284,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   className: 'rounded-lg bg-red-500/25 font-semibold',
                   children: (
                     <>
-                      <LogoutIcon className="h-5 w-5" />
-                      Logout
+                      <Icon icon="mdi:logout" />
+                      Sign Out
                     </>
                   ),
                   onClick: () => {
@@ -308,7 +310,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             },
           },
           {
-            children: 'Log out',
+            children: 'Sign out',
             color: 'primary',
             onClick: async () => {
               logout();
@@ -325,7 +327,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         title="Are you sure?"
       >
         <div className="pt-4">
-          Please press <strong>Log Out</strong> to sign out of{' '}
+          Please press <strong>Sign Out</strong> to sign out of{' '}
           <strong>{data?.username}</strong>
         </div>
       </Modal>

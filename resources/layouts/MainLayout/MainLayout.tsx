@@ -11,8 +11,9 @@ export interface MainLayoutProps {
 
 export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { alertMessages } = useAlertMessages();
+
   return (
-    <div className="relative flex h-[100dvh] flex-col justify-between">
+    <div className="relative flex min-h-screen flex-col justify-between">
       <MainNavbar methods={methods} />
       <div className="flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll bg-base-200">
         <Outlet />

@@ -1,4 +1,5 @@
 export * from './Account';
+export * from './Admin';
 export * from './AddFlight';
 export * from './Data';
 export * from './Flights';

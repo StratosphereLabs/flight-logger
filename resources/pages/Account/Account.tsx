@@ -1,4 +1,5 @@
 import { DataImport } from './DataImport';
+import { LinkAccount } from './LinkAccount';
 import { Notifications } from './Notifications';
 
 export interface NotificationsForm {
@@ -11,8 +12,20 @@ export const Account = (): JSX.Element => {
       <article className="prose self-center">
         <h2>My Account</h2>
       </article>
-      <Notifications />
-      <DataImport />
+      <div className="flex flex-row gap-3">
+        <div className="flex-1">
+          <LinkAccount />
+        </div>
+        <div className="flex">
+          <Notifications />
+        </div>
+      </div>
+
+      <div className="flex flex-row">
+        <div className="flex">
+          <DataImport />
+        </div>
+      </div>
     </div>
   );
 };
