@@ -1,7 +1,7 @@
 import { type Prisma } from '@prisma/client';
 import axios from 'axios';
 import { Promise } from 'bluebird';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 import { prisma } from '../prisma';
 import {
   ICAO_AIRLINE_CODE_REGEX,
@@ -85,7 +85,7 @@ export const getAirlineDocument = async (
 const getUpdate = (
   element: cheerio.Element,
 ): Promise<Prisma.airlineUpsertArgs | null> | null => {
-  const $ = cheerio.load(element);
+  const $ = load(element);
   const link = $('td').eq(2).find('a').eq(0);
   const href = link.attr('href');
   if (href === '' || href?.slice(0, 6) !== '/wiki/') {

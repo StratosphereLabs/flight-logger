@@ -1,6 +1,6 @@
 import { type Prisma } from '@prisma/client';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { prisma } from '../prisma';
 import { FREIGHTER_AIRCRAFT_REGEX } from './constants';
 import { getText, getWikipediaDataTable, seedConcurrently } from './helpers';
@@ -40,10 +40,9 @@ const getUpdate = (
 
 const getDatabaseRows = (html: string): Prisma.aircraft_typeUpsertArgs[] => {
   const rows = getWikipediaDataTable(html);
-  const documents = rows
+  return rows
     .map(item => getUpdate(item))
     .filter(document => document !== null);
-  return documents as Prisma.aircraft_typeUpsertArgs[];
 };
 
 export const seedAircraftTypes = async (): Promise<void> => {

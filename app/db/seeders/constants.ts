@@ -1,6 +1,6 @@
 export const LOGGING_INTERVAL = 1000;
 export const DB_PROMISE_CONCURRENCY = 10;
-export const WIKI_PROMISE_CONCURRENCY = 5;
+export const WIKI_PROMISE_CONCURRENCY = 2;
 
 export const FREIGHTER_AIRCRAFT_REGEX = /F$|Freighter|sharklets/i;
 

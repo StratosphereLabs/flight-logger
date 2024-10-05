@@ -1,6 +1,6 @@
 import { type Prisma } from '@prisma/client';
 import { Promise } from 'bluebird';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 import { parse } from 'csv-parse/sync';
 import { DB_PROMISE_CONCURRENCY } from './constants';
 
@@ -14,7 +14,7 @@ export const csvToJson = <Data>(csv: string, skipError?: boolean): Data[] => {
 };
 
 export const parseWikipediaData = (data: string): cheerio.Root =>
-  cheerio.load(data, { decodeEntities: false });
+  load(data, { decodeEntities: false });
 
 export const getWikipediaDataTable = (html: string): cheerio.Element[] => {
   const $ = parseWikipediaData(html);
