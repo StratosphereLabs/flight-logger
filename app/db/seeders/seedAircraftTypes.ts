@@ -7,7 +7,7 @@ import { getText, getWikipediaDataTable, seedConcurrently } from './helpers';
 
 const getUpdate = (
   element: cheerio.Element,
-): Prisma.aircraft_typeUpsertArgs | null => {
+): Prisma.AircraftTypeUpsertArgs | null => {
   const $ = cheerio.load(element);
   const tds = $('td');
   const icao = getText(tds.eq(0));
@@ -38,7 +38,7 @@ const getUpdate = (
   };
 };
 
-const getDatabaseRows = (html: string): Prisma.aircraft_typeUpsertArgs[] => {
+const getDatabaseRows = (html: string): Prisma.AircraftTypeUpsertArgs[] => {
   const rows = getWikipediaDataTable(html);
   return rows
     .map(item => getUpdate(item))
@@ -53,7 +53,7 @@ export const seedAircraftTypes = async (): Promise<void> => {
     );
     const rows = getDatabaseRows(response.data);
     const count = await seedConcurrently(rows, row =>
-      prisma.aircraft_type.upsert(row),
+      prisma.aircraftType.upsert(row),
     );
     console.log(`  Added ${count} aircraft types`);
   } catch (err) {

@@ -12,7 +12,7 @@ interface CountryResponse {
   keywords: string;
 }
 
-const getDatabaseRows = (csv: string): Prisma.countryUpsertArgs[] =>
+const getDatabaseRows = (csv: string): Prisma.CountryUpsertArgs[] =>
   csvToJson<CountryResponse>(csv).map(row => {
     const data = {
       name: row.name,

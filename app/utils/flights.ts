@@ -1,12 +1,12 @@
 import type {
   FlightRadarStatus,
-  aircraft_type,
-  airframe,
-  airline,
-  airport,
-  flight,
-  region,
-  user,
+  AircraftType,
+  Airframe,
+  Airline,
+  Airport,
+  Flight,
+  Region,
+  User,
 } from '@prisma/client';
 import {
   add,
@@ -74,16 +74,16 @@ export const flightIncludeObj = {
   },
 };
 
-export interface AirframeData extends airframe {
-  aircraftType: aircraft_type | null;
-  operator: airline | null;
+export interface AirframeData extends Airframe {
+  aircraftType: AircraftType | null;
+  operator: Airline | null;
 }
 
-export interface AirportData extends airport {
-  region: region;
+export interface AirportData extends Airport {
+  region: Region;
 }
 
-export interface FlightData extends flight {
+export interface FlightData extends Flight {
   user: UserData;
   departureAirport: AirportData;
   arrivalAirport: AirportData;
@@ -95,22 +95,22 @@ export interface FlightData extends flight {
       name: string;
     };
   } | null;
-  airline: airline | null;
-  aircraftType: aircraft_type | null;
+  airline: Airline | null;
+  aircraftType: AircraftType | null;
   airframe: AirframeData | null;
 }
 
 export interface Route {
-  departureAirport: airport;
-  arrivalAirport: airport;
+  departureAirport: Airport;
+  arrivalAirport: Airport;
 }
 
-export type FlightWithAirports = flight & Route;
+export type FlightWithAirports = Flight & Route;
 
 export type FlightDataWithTimestamps = FlightData & FlightTimestampsResult;
 
 export interface RouteResult {
-  airports: [airport, airport];
+  airports: [Airport, Airport];
   frequency: number;
   isCompleted: boolean;
   midpoint: Coordinates;
@@ -131,7 +131,7 @@ export interface TransformFlightDataResult
   user: {
     avatar: string;
   } & Omit<
-    user,
+    User,
     | 'admin'
     | 'password'
     | 'id'
@@ -175,7 +175,7 @@ const FLIGHT_STATUS_MAP: Record<FlightRadarStatus, string> = {
 export const getCenterpoint = (
   result?: FlightsResult,
 ): Coordinates | undefined => {
-  const airportMap: Record<string, airport> = {};
+  const airportMap: Record<string, Airport> = {};
   if (result !== undefined) {
     if (result.length === 0) return undefined;
     for (const { departureAirport, arrivalAirport } of result) {
@@ -492,8 +492,8 @@ export const getToStatusDate = (
 export const filterCustomDates =
   (input: GetProfileFiltersRequest) =>
   (
-    flight: Pick<flight, 'outTime'> & {
-      departureAirport: Pick<airport, 'timeZone'>;
+    flight: Pick<Flight, 'outTime'> & {
+      departureAirport: Pick<Airport, 'timeZone'>;
     },
   ): boolean => {
     const departureTimeLocal = utcToZonedTime(

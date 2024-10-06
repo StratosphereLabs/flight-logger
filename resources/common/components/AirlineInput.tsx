@@ -1,4 +1,4 @@
-import { type airline } from '@prisma/client';
+import { type Airline } from '@prisma/client';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { type FieldValues } from 'react-hook-form';
@@ -9,7 +9,7 @@ import { trpc } from '../../utils/trpc';
 
 export interface AirlineInputProps<Values extends FieldValues>
   extends Omit<
-    TypeaheadSelectProps<airline, Values>,
+    TypeaheadSelectProps<Airline, Values>,
     'getItemText' | 'onDebouncedChange' | 'options'
   > {}
 

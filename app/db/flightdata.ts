@@ -1,8 +1,8 @@
 import {
-  type airframe,
-  type aircraft_type,
-  type airline,
-  type airport,
+  type Airframe,
+  type AircraftType,
+  type Airline,
+  type Airport,
 } from '@prisma/client';
 import groupBy from 'lodash.groupby';
 import keyBy from 'lodash.keyby';
@@ -19,10 +19,10 @@ export interface FlightDataFetchInput {
 }
 
 export interface FlightDataFetchResults {
-  airports: Record<string, airport>;
-  airlines: Record<string, airline>;
-  aircraftTypes: Record<string, aircraft_type[]>;
-  airframes: Record<string, airframe>;
+  airports: Record<string, Airport>;
+  airlines: Record<string, Airline>;
+  aircraftTypes: Record<string, AircraftType[]>;
+  airframes: Record<string, Airframe>;
 }
 
 export const fetchFlightData = async ({
@@ -74,7 +74,7 @@ export const fetchFlightData = async ({
           ttl: 30 * 24 * 60 * 60,
         },
       }),
-      prisma.aircraft_type.findMany({
+      prisma.aircraftType.findMany({
         where: {
           id:
             aircraftSearchType === 'id'

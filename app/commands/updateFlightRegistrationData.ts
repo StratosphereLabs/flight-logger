@@ -48,7 +48,7 @@ export const updateFlightRegistrationData = async (
     flight.aircraftTypeCode.length >= 3 &&
     (airframe?.aircraftTypeId === null ||
       airframe?.aircraftTypeId === undefined)
-      ? await prisma.aircraft_type.findFirst({
+      ? await prisma.aircraftType.findFirst({
           where: {
             OR: [
               {

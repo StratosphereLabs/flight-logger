@@ -1,4 +1,4 @@
-import type { FlightRadarStatus, airline } from '@prisma/client';
+import type { FlightRadarStatus, Airline } from '@prisma/client';
 import axios from 'axios';
 import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -15,7 +15,7 @@ import { HEADERS } from '../constants';
 import type { FlightRadarData, FlightRadarRoutesResponse } from './types';
 
 export interface FetchFlightRadarDataParams {
-  airline: airline;
+  airline: Airline;
   arrivalAirport: FlightWithDataAirport;
   departureAirport: FlightWithDataAirport;
   flightNumber: number;

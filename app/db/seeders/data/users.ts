@@ -1,6 +1,6 @@
 import { type Prisma } from '@prisma/client';
 
-export const usersData: Prisma.Enumerable<Prisma.userCreateManyInput> = [
+export const usersData: Prisma.Enumerable<Prisma.UserCreateManyInput> = [
   {
     id: 1,
     username: 'EchoSierra98',

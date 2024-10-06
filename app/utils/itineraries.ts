@@ -1,9 +1,9 @@
 import {
-  type itinerary,
-  type aircraft_type,
-  type airline,
-  type airport,
-  type itinerary_flight,
+  type Itinerary,
+  type AircraftType,
+  type Airline,
+  type Airport,
+  type ItineraryFlight,
 } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { isBefore, isFuture } from 'date-fns';
@@ -32,11 +32,11 @@ export const itinerariesIncludeObj = {
   },
 };
 
-export interface ItineraryFlightData extends itinerary_flight {
-  departureAirport: airport;
-  arrivalAirport: airport;
-  airline: airline | null;
-  aircraftType: aircraft_type | null;
+export interface ItineraryFlightData extends ItineraryFlight {
+  departureAirport: Airport;
+  arrivalAirport: Airport;
+  airline: Airline | null;
+  aircraftType: AircraftType | null;
 }
 
 export interface ItineraryFlightResult
@@ -50,11 +50,11 @@ export interface ItineraryFlightResult
   durationString: string;
 }
 
-export interface ItineraryWithData extends itinerary {
+export interface ItineraryWithData extends Itinerary {
   flights: ItineraryFlightData[];
 }
 
-export interface ItineraryResult extends itinerary {
+export interface ItineraryResult extends Itinerary {
   distance: number;
   numFlights: number;
   itineraryDuration: string;

@@ -11,7 +11,7 @@ export const aircraftTypesRouter = router({
       const { limit, page, skip, take } = parsePaginationRequest(input);
       const { sort, sortKey } = input;
       const [results, itemCount] = await prisma.$transaction([
-        prisma.aircraft_type.findMany({
+        prisma.aircraftType.findMany({
           skip,
           take,
           orderBy:
@@ -24,7 +24,7 @@ export const aircraftTypesRouter = router({
             ttl: 30 * 24 * 60 * 60,
           },
         }),
-        prisma.aircraft_type.count({
+        prisma.aircraftType.count({
           cacheStrategy: {
             ttl: 30 * 24 * 60 * 60,
           },
@@ -40,7 +40,7 @@ export const aircraftTypesRouter = router({
   searchAircraft: procedure.input(searchSchema).query(async ({ input }) => {
     const { query } = input;
     const [codeMatches, allMatches] = await prisma.$transaction([
-      prisma.aircraft_type.findMany({
+      prisma.aircraftType.findMany({
         take: 5,
         where: {
           OR: [
@@ -53,7 +53,7 @@ export const aircraftTypesRouter = router({
           ],
         },
       }),
-      prisma.aircraft_type.findMany({
+      prisma.aircraftType.findMany({
         take: 5,
         where: {
           OR: [

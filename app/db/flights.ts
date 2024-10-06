@@ -1,4 +1,4 @@
-import { type flight } from '@prisma/client';
+import { type Flight } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { prisma } from './prisma';
 
@@ -14,7 +14,7 @@ export const deleteAllUserFlights = async (userId: number): Promise<number> => {
 export const validateUserFlights = async (
   flightIds: string[],
   userId: number,
-): Promise<flight[]> => {
+): Promise<Flight[]> => {
   const flights = await prisma.flight.findMany({
     where: {
       id: {

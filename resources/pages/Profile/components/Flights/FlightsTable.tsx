@@ -1,4 +1,4 @@
-import type { aircraft_type, airline, airport } from '@prisma/client';
+import type { AircraftType, Airline, Airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { Table } from 'stratosphere-ui';
@@ -41,7 +41,7 @@ export const FlightsTable = ({
           accessorKey: 'airline',
           header: () => 'Airline',
           cell: ({ getValue }) => {
-            const airlineData = getValue<airline | null>();
+            const airlineData = getValue<Airline | null>();
             return airlineData?.logo !== null &&
               airlineData?.logo !== undefined ? (
               <div className="flex justify-start">
@@ -78,7 +78,7 @@ export const FlightsTable = ({
           accessorKey: 'departureAirport',
           header: () => 'Dep',
           cell: ({ getValue }) => {
-            const airport = getValue<airport>();
+            const airport = getValue<Airport>();
             return <div className="font-bold">{airport.iata}</div>;
           },
           footer: () => null,
@@ -88,7 +88,7 @@ export const FlightsTable = ({
           accessorKey: 'arrivalAirport',
           header: () => 'Arr',
           cell: ({ getValue, row }) => {
-            const airport = getValue<airport>();
+            const airport = getValue<Airport>();
             return (
               <div className="flex flex-wrap gap-x-1 font-bold">
                 <span
@@ -121,7 +121,7 @@ export const FlightsTable = ({
           accessorKey: 'aircraftType',
           header: () => 'Acft',
           cell: ({ getValue }) => {
-            const aircraftType = getValue<aircraft_type | null>();
+            const aircraftType = getValue<AircraftType | null>();
             return <div className="opacity-75">{aircraftType?.icao}</div>;
           },
           footer: () => null,

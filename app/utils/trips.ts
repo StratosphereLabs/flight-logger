@@ -1,4 +1,4 @@
-import { type trip, type user } from '@prisma/client';
+import { type Trip, type User } from '@prisma/client';
 import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
@@ -21,14 +21,14 @@ export const tripIncludeObj = {
   },
 };
 
-export interface TripWithData extends trip {
+export interface TripWithData extends Trip {
   user: UserData;
   flights: FlightData[];
 }
 
-export interface TripResult extends trip {
+export interface TripResult extends Trip {
   user: Omit<
-    user,
+    User,
     | 'admin'
     | 'password'
     | 'id'

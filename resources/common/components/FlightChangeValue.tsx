@@ -1,7 +1,7 @@
 import type {
-  airport,
-  aircraft_type,
-  airline,
+  Airport,
+  AircraftType,
+  Airline,
   FlightChangeField,
 } from '@prisma/client';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -24,7 +24,7 @@ export const FlightChangeValue = ({
 }: FlightChangeValueProps): JSX.Element | null => {
   switch (field) {
     case 'AIRCRAFT_TYPE': {
-      const data = value as unknown as aircraft_type | null;
+      const data = value as unknown as AircraftType | null;
       return data !== null ? (
         <div className={className}>{data.icao}</div>
       ) : null;
@@ -32,14 +32,14 @@ export const FlightChangeValue = ({
     case 'ARRIVAL_AIRPORT':
     case 'DEPARTURE_AIRPORT':
     case 'DIVERSION_AIRPORT': {
-      const data = value as unknown as airport | null;
+      const data = value as unknown as Airport | null;
       return data !== null ? (
         <div className={className}>{data.ident}</div>
       ) : null;
     }
     case 'AIRLINE':
     case 'OPERATOR_AIRLINE': {
-      const data = value as unknown as airline | null;
+      const data = value as unknown as Airline | null;
       return data !== null ? (
         <div className={className}>{data.iata}</div>
       ) : null;

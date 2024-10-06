@@ -1,4 +1,4 @@
-import type { flight, flight_update_change } from '@prisma/client';
+import type { Flight, FlightUpdateChange } from '@prisma/client';
 import { Promise } from 'bluebird';
 import { prisma } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
@@ -6,8 +6,8 @@ import { FLIGHT_CHANGE_GETTER_MAP } from './constants';
 import { getIsEqual } from './utils';
 
 export const updateFlightChangeData = async (
-  flights: flight[],
-  updatedData: Partial<flight>,
+  flights: Flight[],
+  updatedData: Partial<Flight>,
   userId?: number,
 ): Promise<void> => {
   const departureAirportId =
@@ -16,13 +16,13 @@ export const updateFlightChangeData = async (
     updatedData.arrivalAirportId ?? flights[0].arrivalAirportId;
   const flightUpdates: Record<
     string,
-    Array<Omit<flight_update_change, 'id' | 'updateId'>>
+    Array<Omit<FlightUpdateChange, 'id' | 'updateId'>>
   > = {};
   for (const flight of flights) {
     for (const [key, value] of Object.entries(updatedData)) {
-      const getUpdate = FLIGHT_CHANGE_GETTER_MAP[key as keyof flight];
+      const getUpdate = FLIGHT_CHANGE_GETTER_MAP[key as keyof Flight];
       if (getUpdate !== undefined) {
-        if (!getIsEqual(flight[key as keyof flight], value)) {
+        if (!getIsEqual(flight[key as keyof Flight], value)) {
           if (flightUpdates[flight.id] === undefined) {
             flightUpdates[flight.id] = [];
           }
@@ -34,7 +34,7 @@ export const updateFlightChangeData = async (
   await Promise.map(
     Object.entries(flightUpdates),
     async ([flightId, updates]) => {
-      const flightUpdate = await prisma.flight_update.create({
+      const flightUpdate = await prisma.flightUpdateCommit.create({
         data: {
           flightId,
           changedByUserId: userId ?? null,
@@ -42,7 +42,7 @@ export const updateFlightChangeData = async (
           arrivalAirportId,
         },
       });
-      await prisma.flight_update_change.createMany({
+      await prisma.flightUpdateChange.createMany({
         data: updates.map(update => ({
           updateId: flightUpdate.id,
           ...update,

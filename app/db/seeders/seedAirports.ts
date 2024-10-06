@@ -29,8 +29,8 @@ interface AirportResponse {
   keywords: string;
 }
 
-const getDatabaseRows = (csv: string): Prisma.airportUpsertArgs[] =>
-  csvToJson<AirportResponse>(csv).reduce<Prisma.airportUpsertArgs[]>(
+const getDatabaseRows = (csv: string): Prisma.AirportUpsertArgs[] =>
+  csvToJson<AirportResponse>(csv).reduce<Prisma.AirportUpsertArgs[]>(
     (acc, row) => {
       if (row.iata_code === '') return acc;
       const lat = parseFloat(row.latitude_deg);

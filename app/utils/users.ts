@@ -1,10 +1,10 @@
-import { type user } from '@prisma/client';
+import { type User } from '@prisma/client';
 import { url } from 'gravatar';
 import jwt from 'jsonwebtoken';
 import { type UserToken } from '../context';
 
 export type UserData = Omit<
-  user,
+  User,
   | 'id'
   | 'admin'
   | 'pushNotifications'

@@ -1,4 +1,4 @@
-import type { flight_update_change } from '@prisma/client';
+import type { FlightUpdateChange } from '@prisma/client';
 import { isAfter } from 'date-fns';
 import {
   CHANGE_FIELD_ESTIMATED_TEXT_MAP,
@@ -11,7 +11,7 @@ export type FlightUpdateChangeWithData = Awaited<
 >;
 
 export const getFlightUpdateChangeWithData = async (
-  change: flight_update_change,
+  change: FlightUpdateChange,
   createdAt: Date,
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 ) => {
@@ -19,7 +19,7 @@ export const getFlightUpdateChangeWithData = async (
     case 'AIRCRAFT_TYPE': {
       const oldAircraft =
         change.oldValue !== null
-          ? await prisma.aircraft_type.findUnique({
+          ? await prisma.aircraftType.findUnique({
               where: {
                 id: change.oldValue,
               },
@@ -30,7 +30,7 @@ export const getFlightUpdateChangeWithData = async (
           : null;
       const newAircraft =
         change.newValue !== null
-          ? await prisma.aircraft_type.findUnique({
+          ? await prisma.aircraftType.findUnique({
               where: {
                 id: change.newValue,
               },
