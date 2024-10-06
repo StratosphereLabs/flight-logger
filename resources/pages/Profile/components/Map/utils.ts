@@ -1,9 +1,9 @@
-import type { airport } from '@prisma/client';
+import type { Airport } from '@prisma/client';
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 import type { AirportResult } from './types';
 
 export const getAirportsData = (
-  routes: Array<[airport, airport]>,
+  routes: Array<[Airport, Airport]>,
   selectedAirportId: string | null,
   selectedFlight?: FlightsRouterOutput['getFollowingFlights']['flights'][number],
 ): AirportResult[] => {
