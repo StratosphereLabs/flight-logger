@@ -14,7 +14,7 @@ interface RegionResponse {
   keywords: string;
 }
 
-const getDatabaseRows = (csv: string): Prisma.regionUpsertArgs[] =>
+const getDatabaseRows = (csv: string): Prisma.RegionUpsertArgs[] =>
   csvToJson<RegionResponse>(csv).map(row => {
     const data = {
       name: row.name,

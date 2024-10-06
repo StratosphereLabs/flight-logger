@@ -1,8 +1,8 @@
-import { type user } from '@prisma/client';
+import { type User } from '@prisma/client';
 import type * as trpcExpress from '@trpc/server/adapters/express';
 import jwt from 'jsonwebtoken';
 
-export type UserToken = Pick<user, 'id' | 'username' | 'admin'>;
+export type UserToken = Pick<User, 'id' | 'username' | 'admin'>;
 
 export interface Context {
   user: UserToken | null;

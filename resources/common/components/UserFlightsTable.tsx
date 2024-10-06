@@ -1,4 +1,4 @@
-import { type aircraft_type } from '@prisma/client';
+import { type AircraftType } from '@prisma/client';
 import {
   type Row,
   type RowSelectionOptions,
@@ -213,7 +213,7 @@ export const UserFlightsTable = ({
           id: 'aircraftType',
           accessorKey: 'aircraftType',
           cell: ({ getValue, row }) => {
-            const aircraftType = getValue<aircraft_type>();
+            const aircraftType = getValue<AircraftType>();
             return (
               <div className="flex flex-col gap-1 truncate text-sm">
                 <div className="truncate italic opacity-70">

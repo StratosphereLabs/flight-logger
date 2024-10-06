@@ -121,7 +121,7 @@ export const itinerariesRouter = router({
             outTimeValue: flight.outTimeValue,
             inTimeValue: flight.inTimeValue,
           });
-          return prisma.itinerary_flight.create({
+          return prisma.itineraryFlight.create({
             data: {
               itinerary: {
                 connect: {
@@ -194,7 +194,7 @@ export const itinerariesRouter = router({
           message: 'Itinerary not found.',
         });
       }
-      await prisma.itinerary_flight.deleteMany({
+      await prisma.itineraryFlight.deleteMany({
         where: {
           id: {
             in: itinerary.flights.map(({ id }) => id),

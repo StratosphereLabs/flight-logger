@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { airlineSchema } from '../../prisma/generated/zod';
+import { AirlineSchema } from '../../prisma/generated/zod';
 import { DATE_REGEX_ISO } from '../constants';
 
 export const searchFlightDataSchema = z
@@ -10,7 +10,7 @@ export const searchFlightDataSchema = z
       .string()
       .min(1, 'Required')
       .regex(DATE_REGEX_ISO, 'Invalid Date'),
-    airline: airlineSchema.nullable(),
+    airline: AirlineSchema.nullable(),
     flightNumber: z
       .number()
       .int()
@@ -56,7 +56,7 @@ export const searchFlightDataSchema = z
 
 export const addFlightFromDataSchema = z.object({
   username: z.string().optional(),
-  airline: airlineSchema.nullable(),
+  airline: AirlineSchema.nullable(),
   flightNumber: z
     .number()
     .int()

@@ -1,4 +1,4 @@
-import { type airport } from '@prisma/client';
+import { type Airport } from '@prisma/client';
 import { useState } from 'react';
 import { type FieldValues } from 'react-hook-form';
 import { TypeaheadSelect, type TypeaheadSelectProps } from 'stratosphere-ui';
@@ -7,7 +7,7 @@ import { useTRPCErrorHandler } from '../hooks';
 
 export interface AirportInputProps<Values extends FieldValues>
   extends Omit<
-    TypeaheadSelectProps<airport, Values>,
+    TypeaheadSelectProps<Airport, Values>,
     'dropdownInputClassName' | 'getItemText' | 'onDebouncedChange' | 'options'
   > {}
 

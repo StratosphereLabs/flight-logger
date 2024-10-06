@@ -73,7 +73,7 @@ export const flightsRouter = router({
       const { limit, page, skip, take } = parsePaginationRequest(input);
       const { id } = input;
       const [flightUpdates, itemCount] = await prisma.$transaction([
-        prisma.flight_update.findMany({
+        prisma.flightUpdateCommit.findMany({
           where: {
             flightId: id,
           },
@@ -96,7 +96,7 @@ export const flightsRouter = router({
           skip,
           take,
         }),
-        prisma.flight_update.count({
+        prisma.flightUpdateCommit.count({
           where: {
             flightId: id,
           },

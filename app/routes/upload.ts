@@ -364,7 +364,7 @@ uploadRouter.post(
           ),
         ),
       ];
-      const aircraftTypes = await prisma.aircraft_type.findMany({
+      const aircraftTypes = await prisma.aircraftType.findMany({
         where: {
           icao: {
             in: aircraftTypeIcaos,

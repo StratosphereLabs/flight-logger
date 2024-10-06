@@ -209,7 +209,7 @@ export const usersRouter = router({
           message: 'Invalid FCM Token.',
         });
       }
-      const tokens = await prisma.fcm_token.findMany({
+      const tokens = await prisma.fcmToken.findMany({
         where: {
           userId: ctx.user.id,
         },
@@ -220,7 +220,7 @@ export const usersRouter = router({
       });
       const token = tokens.find(({ token }) => token === input.token);
       if (token !== undefined) {
-        await prisma.fcm_token.update({
+        await prisma.fcmToken.update({
           where: {
             id: token.id,
           },
@@ -229,7 +229,7 @@ export const usersRouter = router({
           },
         });
       } else {
-        await prisma.fcm_token.create({
+        await prisma.fcmToken.create({
           data: {
             userId: ctx.user.id,
             token: input.token,

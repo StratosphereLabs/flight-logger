@@ -8,7 +8,7 @@ interface ManufacturerResponse {
   Name: string;
 }
 
-const getDatabaseRows = (csv: string): Prisma.manufacturerUpsertArgs[] =>
+const getDatabaseRows = (csv: string): Prisma.ManufacturerUpsertArgs[] =>
   csvToJson<ManufacturerResponse>(csv, true).map(row => ({
     where: {
       code: row.Code,

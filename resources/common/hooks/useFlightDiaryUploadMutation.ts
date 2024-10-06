@@ -1,4 +1,4 @@
-import { type flight } from '@prisma/client';
+import { type Flight } from '@prisma/client';
 import { type UseMutationResult, useMutation } from '@tanstack/react-query';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import { useAuthStore } from '../../stores';
@@ -8,7 +8,7 @@ import useErrorResponseHandler from './useErrorResponseHandler';
 import { useSuccessResponseHandler } from './useSuccessResponseHandler';
 
 interface FlightDiaryUploadResponse {
-  flights: flight[];
+  flights: Flight[];
 }
 
 export const useFlightDiaryUploadMutation = (): UseMutationResult<

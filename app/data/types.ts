@@ -1,4 +1,4 @@
-import type { airline, airport } from '@prisma/client';
+import type { Airline, Airport } from '@prisma/client';
 import type { FlightTimestampsResult } from '../utils';
 
 export interface FlightWithDataAirport {
@@ -7,7 +7,7 @@ export interface FlightWithDataAirport {
 }
 
 export interface FetchFlightsByFlightNumberParams {
-  airline: airline;
+  airline: Airline;
   customUrl?: string;
   flightNumber: number;
   isoDate: string;
@@ -23,10 +23,10 @@ export interface FetchFlightDataParams
 export interface FlightSearchDataFetchResult {
   outTime: Date;
   inTime: Date;
-  airline: airline;
+  airline: Airline;
   flightNumber: number;
-  departureAirport: airport;
-  arrivalAirport: airport;
+  departureAirport: Airport;
+  arrivalAirport: Airport;
 }
 
 export interface FlightSearchDataResult

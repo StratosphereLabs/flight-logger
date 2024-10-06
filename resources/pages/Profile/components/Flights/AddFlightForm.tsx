@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { airport } from '@prisma/client';
+import type { Airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -259,7 +259,7 @@ export const AddFlightForm = (): JSX.Element => {
               id: 'departureAirport',
               accessorKey: 'departureAirport',
               cell: ({ getValue, row }) => {
-                const airport = getValue<airport>();
+                const airport = getValue<Airport>();
                 return (
                   <div className="flex flex-wrap items-center gap-x-2 font-bold">
                     <div className="font-mono text-lg">{airport.iata}</div>
@@ -275,7 +275,7 @@ export const AddFlightForm = (): JSX.Element => {
               id: 'arrivalAirport',
               accessorKey: 'arrivalAirport',
               cell: ({ getValue, row }) => {
-                const airport = getValue<airport>();
+                const airport = getValue<Airport>();
                 return (
                   <div className="flex flex-wrap items-center gap-x-2 font-bold">
                     <div className="font-mono text-lg">{airport.iata}</div>

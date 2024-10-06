@@ -1,4 +1,4 @@
-import { type airframe } from '@prisma/client';
+import { type Airframe } from '@prisma/client';
 import axios from 'axios';
 import fs, { type ReadStream } from 'fs';
 import { findBestMatch } from 'string-similarity';
@@ -45,7 +45,7 @@ const getDatabaseRows = (csv: string): AirframeResponse[] =>
 
 const updateAirframe = async (
   row: AirframeResponse,
-): Promise<airframe | null> => {
+): Promise<Airframe | null> => {
   const manufacturer = await prisma.manufacturer.findFirst({
     where: {
       code: {
@@ -66,7 +66,7 @@ const updateAirframe = async (
   });
   const aircraftType =
     row.typecode.length > 0
-      ? await prisma.aircraft_type.findFirst({
+      ? await prisma.aircraftType.findFirst({
           where: {
             icao: row.typecode,
           },

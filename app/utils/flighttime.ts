@@ -1,4 +1,4 @@
-import { type FlightRadarStatus, type airport } from '@prisma/client';
+import { type FlightRadarStatus, type Airport } from '@prisma/client';
 import { add, isBefore, isFuture } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
 import {
@@ -18,8 +18,8 @@ import {
 export type FlightDelayStatus = 'canceled' | 'severe' | 'moderate' | 'none';
 
 export interface FlightTimesInput {
-  departureAirport: airport;
-  arrivalAirport: airport;
+  departureAirport: Airport;
+  arrivalAirport: Airport;
   outDateISO: string;
   outTimeValue: string;
   offTimeActualValue?: string;

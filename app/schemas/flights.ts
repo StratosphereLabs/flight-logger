@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import {
-  aircraft_typeSchema,
-  airframeSchema,
-  airlineSchema,
-  airportSchema,
+  AircraftTypeSchema,
+  AirframeSchema,
+  AirlineSchema,
+  AirportSchema,
 } from '../../prisma/generated/zod';
 import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
 import { paginationSchema } from './pagination';
@@ -22,26 +22,26 @@ export const deleteFlightSchema = z.object({
 
 export const addFlightSchema = z.object({
   tripId: z.string().uuid('Must be valid UUID').optional(),
-  departureAirport: airportSchema
-    .nullable()
-    .refine(item => item !== null, 'Airport is required.'),
-  arrivalAirport: airportSchema
-    .nullable()
-    .refine(item => item !== null, 'Airport is required.'),
-  airline: airlineSchema.nullable(),
-  aircraftType: aircraft_typeSchema.nullable(),
+  departureAirport: AirportSchema.nullable().refine(
+    item => item !== null,
+    'Airport is required.',
+  ),
+  arrivalAirport: AirportSchema.nullable().refine(
+    item => item !== null,
+    'Airport is required.',
+  ),
+  airline: AirlineSchema.nullable(),
+  aircraftType: AircraftTypeSchema.nullable(),
   flightNumber: z
     .number()
     .int()
     .lte(9999, 'Must be 4 digits or less')
     .nullable(),
-  airframe: airframeSchema
-    .extend({
-      type: z.enum(['existing', 'custom']),
-      operator: airlineSchema.nullable(),
-      aircraftType: aircraft_typeSchema.nullable(),
-    })
-    .nullable(),
+  airframe: AirframeSchema.extend({
+    type: z.enum(['existing', 'custom']),
+    operator: AirlineSchema.nullable(),
+    aircraftType: AircraftTypeSchema.nullable(),
+  }).nullable(),
   outDateISO: z
     .string()
     .min(1, 'Required')

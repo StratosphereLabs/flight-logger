@@ -1,13 +1,13 @@
 import { type Prisma } from '@prisma/client';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { prisma } from '../prisma';
 import { FREIGHTER_AIRCRAFT_REGEX } from './constants';
 import { getText, getWikipediaDataTable, seedConcurrently } from './helpers';
 
 const getUpdate = (
   element: cheerio.Element,
-): Prisma.aircraft_typeUpsertArgs | null => {
+): Prisma.AircraftTypeUpsertArgs | null => {
   const $ = cheerio.load(element);
   const tds = $('td');
   const icao = getText(tds.eq(0));
@@ -38,12 +38,11 @@ const getUpdate = (
   };
 };
 
-const getDatabaseRows = (html: string): Prisma.aircraft_typeUpsertArgs[] => {
+const getDatabaseRows = (html: string): Prisma.AircraftTypeUpsertArgs[] => {
   const rows = getWikipediaDataTable(html);
-  const documents = rows
+  return rows
     .map(item => getUpdate(item))
     .filter(document => document !== null);
-  return documents as Prisma.aircraft_typeUpsertArgs[];
 };
 
 export const seedAircraftTypes = async (): Promise<void> => {
@@ -54,7 +53,7 @@ export const seedAircraftTypes = async (): Promise<void> => {
     );
     const rows = getDatabaseRows(response.data);
     const count = await seedConcurrently(rows, row =>
-      prisma.aircraft_type.upsert(row),
+      prisma.aircraftType.upsert(row),
     );
     console.log(`  Added ${count} aircraft types`);
   } catch (err) {

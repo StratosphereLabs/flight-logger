@@ -1,14 +1,14 @@
-import type { flight, flight_update_change } from '@prisma/client';
+import type { Flight, FlightUpdateChange } from '@prisma/client';
 
 export const UPDATE_CONCURRENCY = 2;
 
 export const FLIGHT_CHANGE_GETTER_MAP: Partial<
   Record<
-    keyof flight,
+    keyof Flight,
     (
-      oldFlight: flight,
-      updatedData: Partial<flight>,
-    ) => Omit<flight_update_change, 'id' | 'updateId'>
+      oldFlight: Flight,
+      updatedData: Partial<Flight>,
+    ) => Omit<FlightUpdateChange, 'id' | 'updateId'>
   >
 > = {
   departureAirportId: (oldFlight, updatedData) => ({

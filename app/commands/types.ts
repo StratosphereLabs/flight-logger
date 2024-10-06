@@ -1,8 +1,8 @@
-import type { airline, flight } from '@prisma/client';
+import type { Airline, Flight } from '@prisma/client';
 import type { FlightWithDataAirport } from '../data/types';
 
-export type FlightWithData = flight & {
-  airline: airline | null;
+export type FlightWithData = Flight & {
+  airline: Airline | null;
   departureAirport: FlightWithDataAirport;
   arrivalAirport: FlightWithDataAirport;
 };
