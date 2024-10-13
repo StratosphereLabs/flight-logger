@@ -555,9 +555,6 @@ export const flightsRouter = router({
           tracklog: false,
           waypoints: false,
         },
-        cacheStrategy: {
-          swr: 60,
-        },
       });
       const flights: Array<
         TransformFlightDataResult & {
