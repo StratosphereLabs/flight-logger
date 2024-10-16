@@ -502,10 +502,6 @@ export const flightsRouter = router({
         omit: {
           id: false,
         },
-        cacheStrategy: {
-          ttl: 5 * 60,
-          swr: 60,
-        },
       });
       if (user === null) {
         throw new TRPCError({
@@ -554,6 +550,9 @@ export const flightsRouter = router({
         omit: {
           tracklog: false,
           waypoints: false,
+        },
+        cacheStrategy: {
+          swr: 60,
         },
       });
       const flights: Array<
