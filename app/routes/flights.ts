@@ -112,9 +112,6 @@ export const flightsRouter = router({
                   where: {
                     id: flightUpdate.changedByUserId,
                   },
-                  cacheStrategy: {
-                    ttl: 5 * 60,
-                  },
                 })
               : null;
           for (const change of flightUpdate.changes) {
@@ -351,9 +348,6 @@ export const flightsRouter = router({
           tracklog: false,
           waypoints: false,
         },
-        cacheStrategy: {
-          swr: 60,
-        },
       });
       const flight = getActiveFlight(flights);
       if (flight === undefined) return null;
@@ -551,9 +545,6 @@ export const flightsRouter = router({
           tracklog: false,
           waypoints: false,
         },
-        cacheStrategy: {
-          swr: 60,
-        },
       });
       const flights: Array<
         TransformFlightDataResult & {
@@ -588,16 +579,10 @@ export const flightsRouter = router({
           where: {
             id: input.departureAirport?.id,
           },
-          cacheStrategy: {
-            ttl: 30 * 24 * 60 * 60,
-          },
         }),
         prisma.airport.findUnique({
           where: {
             id: input.arrivalAirport?.id,
-          },
-          cacheStrategy: {
-            ttl: 30 * 24 * 60 * 60,
           },
         }),
       ]);
@@ -718,16 +703,10 @@ export const flightsRouter = router({
           where: {
             id: input.departureAirport?.id,
           },
-          cacheStrategy: {
-            ttl: 30 * 24 * 60 * 60,
-          },
         }),
         prisma.airport.findUnique({
           where: {
             id: input.arrivalAirport?.id,
-          },
-          cacheStrategy: {
-            ttl: 30 * 24 * 60 * 60,
           },
         }),
       ]);

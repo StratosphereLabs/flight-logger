@@ -51,9 +51,6 @@ export const fetchFlightData = async ({
                 }
               : undefined,
         },
-        cacheStrategy: {
-          ttl: 30 * 24 * 60 * 60,
-        },
       }),
       prisma.airline.findMany({
         where: {
@@ -69,9 +66,6 @@ export const fetchFlightData = async ({
                   in: airlineIds,
                 }
               : undefined,
-        },
-        cacheStrategy: {
-          ttl: 30 * 24 * 60 * 60,
         },
       }),
       prisma.aircraftType.findMany({
@@ -89,18 +83,12 @@ export const fetchFlightData = async ({
                 }
               : undefined,
         },
-        cacheStrategy: {
-          ttl: 30 * 24 * 60 * 60,
-        },
       }),
       prisma.airframe.findMany({
         where: {
           registration: {
             in: registrations ?? [],
           },
-        },
-        cacheStrategy: {
-          ttl: 24 * 60 * 60,
         },
       }),
     ]);
