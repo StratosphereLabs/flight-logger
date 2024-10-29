@@ -17,15 +17,8 @@ export const airlinesRouter = router({
                 [sortKey]: sort ?? 'asc',
               }
             : undefined,
-        cacheStrategy: {
-          ttl: 30 * 24 * 60 * 60,
-        },
       }),
-      prisma.airline.count({
-        cacheStrategy: {
-          ttl: 30 * 24 * 60 * 60,
-        },
-      }),
+      prisma.airline.count(),
     ]);
     return getPaginatedResponse({
       itemCount,

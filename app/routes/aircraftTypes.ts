@@ -20,15 +20,8 @@ export const aircraftTypesRouter = router({
                   [sortKey]: sort ?? 'asc',
                 }
               : undefined,
-          cacheStrategy: {
-            ttl: 30 * 24 * 60 * 60,
-          },
         }),
-        prisma.aircraftType.count({
-          cacheStrategy: {
-            ttl: 30 * 24 * 60 * 60,
-          },
-        }),
+        prisma.aircraftType.count(),
       ]);
       return getPaginatedResponse({
         itemCount,

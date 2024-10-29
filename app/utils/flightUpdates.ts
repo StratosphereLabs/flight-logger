@@ -23,9 +23,6 @@ export const getFlightUpdateChangeWithData = async (
               where: {
                 id: change.oldValue,
               },
-              cacheStrategy: {
-                ttl: 30 * 24 * 60 * 60,
-              },
             })
           : null;
       const newAircraft =
@@ -33,9 +30,6 @@ export const getFlightUpdateChangeWithData = async (
           ? await prisma.aircraftType.findUnique({
               where: {
                 id: change.newValue,
-              },
-              cacheStrategy: {
-                ttl: 30 * 24 * 60 * 60,
               },
             })
           : null;
@@ -55,9 +49,6 @@ export const getFlightUpdateChangeWithData = async (
               where: {
                 id: change.oldValue,
               },
-              cacheStrategy: {
-                ttl: 30 * 24 * 60 * 60,
-              },
             })
           : null;
       const newAirport =
@@ -65,9 +56,6 @@ export const getFlightUpdateChangeWithData = async (
           ? await prisma.airport.findUnique({
               where: {
                 id: change.newValue,
-              },
-              cacheStrategy: {
-                ttl: 30 * 24 * 60 * 60,
               },
             })
           : null;
@@ -86,9 +74,6 @@ export const getFlightUpdateChangeWithData = async (
               where: {
                 id: change.oldValue,
               },
-              cacheStrategy: {
-                ttl: 30 * 24 * 60 * 60,
-              },
             })
           : null;
       const newAirline =
@@ -96,9 +81,6 @@ export const getFlightUpdateChangeWithData = async (
           ? await prisma.airline.findUnique({
               where: {
                 id: change.newValue,
-              },
-              cacheStrategy: {
-                ttl: 30 * 24 * 60 * 60,
               },
             })
           : null;

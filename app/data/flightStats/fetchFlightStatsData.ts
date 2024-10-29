@@ -117,9 +117,6 @@ export const fetchFlightStatsDataByFlightNumber = async ({
         in: airportIds,
       },
     },
-    cacheStrategy: {
-      ttl: 30 * 24 * 60 * 60,
-    },
   });
   const groupedAirports = groupBy(airports, 'iata');
   return otherFlights.flatMap(flight => {

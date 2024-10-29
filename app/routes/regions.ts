@@ -17,15 +17,8 @@ export const regionsRouter = router({
                 [sortKey]: sort ?? 'asc',
               }
             : undefined,
-        cacheStrategy: {
-          ttl: 30 * 24 * 60 * 60,
-        },
       }),
-      prisma.region.count({
-        cacheStrategy: {
-          ttl: 30 * 24 * 60 * 60,
-        },
-      }),
+      prisma.region.count(),
     ]);
     return getPaginatedResponse({
       itemCount,
