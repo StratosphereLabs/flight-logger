@@ -7,6 +7,7 @@ import {
   ICAO_AIRLINE_CODE_REGEX,
   IATA_AIRLINE_CODE_REGEX,
   WIKI_PROMISE_CONCURRENCY,
+  ALL_SPACES_REGEX,
 } from './constants';
 import {
   getInt,
@@ -21,23 +22,25 @@ export const getAirlineDocument = async (
 ): Promise<Prisma.AirlineUpsertArgs | null> => {
   const url = `https://en.wikipedia.org${href}`;
   try {
+    console.log(`Fetching data from ${url}...`);
     const res = await axios.get<string>(url);
     const $ = parseWikipediaData(res.data);
 
     const name = $('#firstHeading').text().split('(airline')[0].trim();
+    console.log(`  Fetched data for ${name}`);
 
     const infoTable = $('.infobox.vcard').find('table').eq(0);
     const headers = infoTable.find('th a').text();
     const infoTableCells = infoTable
       .find('td')
-      .map((i, td) => getText($(td)))
+      .map((_, td) => getText($(td)))
       .get();
     const iata = (infoTableCells[0] as string | undefined)?.slice(0, 2) ?? '';
     const icao = (infoTableCells[1] as string | undefined)?.slice(0, 3) ?? '';
     const callsign = (infoTableCells[2] as string | undefined) ?? '';
 
     if (
-      headers !== 'IATAICAOCallsign' ||
+      headers.replace(ALL_SPACES_REGEX, '') !== 'IATAICAOCallsign' ||
       (iata.length > 0 && !IATA_AIRLINE_CODE_REGEX.test(iata)) ||
       !ICAO_AIRLINE_CODE_REGEX.test(icao)
     ) {
@@ -48,7 +51,7 @@ export const getAirlineDocument = async (
     const destinations = getInt($('th:contains("Destinations")').next());
 
     const id = `${iata.length > 0 ? `${iata}_` : ''}${icao}_${name.replace(
-      / /g,
+      ALL_SPACES_REGEX,
       '_',
     )}`;
 
