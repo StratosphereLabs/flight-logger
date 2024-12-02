@@ -12,6 +12,7 @@ import type {
 } from '../types';
 import { createNewDate } from '../utils';
 import { HEADERS } from '../constants';
+import { NOT_AVAILABLE } from './constants';
 import type { FlightRadarData, FlightRadarRoutesResponse } from './types';
 
 export interface FetchFlightRadarDataParams {
@@ -228,7 +229,9 @@ export const fetchFlightRadarData = async ({
       .text()
       .trim();
     const registration =
-      registrationText.length > 1 ? registrationText : undefined;
+      registrationText.length > 1 && registrationText !== NOT_AVAILABLE
+        ? registrationText
+        : undefined;
     const departureTime = createNewDate(parseInt(timestamp, 10));
     const departureDate = formatInTimeZone(
       departureTime,
