@@ -229,9 +229,11 @@ export const fetchFlightRadarData = async ({
       .text()
       .trim();
     const registration =
-      registrationText.length > 1 && registrationText !== NOT_AVAILABLE
-        ? registrationText
-        : undefined;
+      registrationText === NOT_AVAILABLE
+        ? null
+        : registrationText.length > 1
+          ? registrationText
+          : undefined;
     const departureTime = createNewDate(parseInt(timestamp, 10));
     const departureDate = formatInTimeZone(
       departureTime,
