@@ -7,7 +7,7 @@ export interface FlightRadarData {
   offTimeActual: Date | undefined;
   onTimeActual: Date | undefined;
   aircraftTypeCode: string;
-  registration: string | undefined;
+  registration: string | null | undefined;
   flightStatus: FlightRadarStatus | null;
   diversionIata: string | null;
 }

@@ -34,7 +34,7 @@ export const updateFlightRegistrationData = async (
     return;
   }
   const airframe =
-    flight.registration !== undefined
+    flight.registration !== undefined && flight.registration !== null
       ? await prisma.airframe.findFirst({
           where: {
             registration: flight.registration,
