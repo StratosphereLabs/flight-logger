@@ -7,4 +7,5 @@ export type StatsAirportMode = 'all' | 'departure' | 'arrival';
 
 export interface StatisticsChartProps {
   filtersFormControl: Control<ProfileFilterFormData>;
+  selectedAirportId: string | null;
 }

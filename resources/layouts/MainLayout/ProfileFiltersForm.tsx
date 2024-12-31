@@ -26,20 +26,51 @@ export const ProfileFiltersForm = ({
       methods={methods}
       className="sticky top-0 z-10 flex w-full items-center justify-end gap-2 px-2 pb-2 sm:px-3"
     >
+      {range !== 'pastMonth' &&
+      range !== 'pastYear' &&
+      range !== 'customRange' ? (
+        <Select
+          buttonProps={{
+            size: 'sm',
+            color: 'neutral',
+          }}
+          formValueMode="id"
+          getItemText={({ label }) => label}
+          name="status"
+          options={[
+            {
+              id: 'completed',
+              label: 'Completed',
+            },
+            ...(isLoggedIn
+              ? [
+                  {
+                    id: 'upcoming',
+                    label: 'Upcoming',
+                  },
+                  {
+                    id: 'all',
+                    label: 'All',
+                  },
+                ]
+              : []),
+          ]}
+          menuClassName="w-[175px] right-0"
+        />
+      ) : null}
       {range === 'customRange' ? (
         <div className="flex items-center gap-2 text-sm">
-          <FormControl name="fromDate" size="xs" type="date" max={toDate} />
+          <FormControl name="fromDate" size="sm" type="date" max={toDate} />
           to
-          <FormControl name="toDate" size="xs" type="date" min={fromDate} />
+          <FormControl name="toDate" size="sm" type="date" min={fromDate} />
         </div>
       ) : null}
       {range === 'customMonth' ? (
         <Select
           buttonProps={{
-            size: 'xs',
+            size: 'sm',
             color: 'neutral',
           }}
-          className="w-[100px]"
           formValueMode="id"
           getItemText={({ label }) => label}
           name="month"
@@ -53,10 +84,9 @@ export const ProfileFiltersForm = ({
       {range === 'customYear' || range === 'customMonth' ? (
         <Select
           buttonProps={{
-            size: 'xs',
+            size: 'sm',
             color: 'neutral',
           }}
-          className="w-[100px]"
           formValueMode="id"
           getItemText={({ label }) => label}
           name="year"
@@ -69,10 +99,9 @@ export const ProfileFiltersForm = ({
       ) : null}
       <Select
         buttonProps={{
-          size: 'xs',
+          size: 'sm',
           color: 'neutral',
         }}
-        className="w-[140px]"
         formValueMode="id"
         getItemText={({ label }) => label}
         name="range"
@@ -101,35 +130,6 @@ export const ProfileFiltersForm = ({
             id: 'customRange',
             label: 'Custom Range',
           },
-        ]}
-        menuClassName="w-[175px] right-0"
-      />
-      <Select
-        buttonProps={{
-          size: 'xs',
-          color: 'neutral',
-        }}
-        className="w-[120px]"
-        formValueMode="id"
-        getItemText={({ label }) => label}
-        name="status"
-        options={[
-          {
-            id: 'completed',
-            label: 'Completed',
-          },
-          ...(isLoggedIn
-            ? [
-                {
-                  id: 'upcoming',
-                  label: 'Upcoming',
-                },
-                {
-                  id: 'all',
-                  label: 'All',
-                },
-              ]
-            : []),
         ]}
         menuClassName="w-[175px] right-0"
       />

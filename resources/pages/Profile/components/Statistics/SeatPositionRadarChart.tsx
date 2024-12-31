@@ -15,6 +15,7 @@ import type { StatisticsChartProps } from './types';
 
 export const SeatPositionRadarChart = ({
   filtersFormControl,
+  selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
   const mode = useWatch<StatisticsFiltersData, 'seatPositionMode'>({
@@ -39,6 +40,7 @@ export const SeatPositionRadarChart = ({
         month,
         fromDate,
         toDate,
+        selectedAirportId,
       },
       {
         enabled: userData !== undefined,

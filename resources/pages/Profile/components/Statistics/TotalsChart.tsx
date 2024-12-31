@@ -25,6 +25,7 @@ import classNames from 'classnames';
 
 export const TotalsChart = ({
   filtersFormControl,
+  selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
@@ -46,6 +47,7 @@ export const TotalsChart = ({
       month,
       fromDate,
       toDate,
+      selectedAirportId,
     },
     {
       enabled: userData !== undefined,
