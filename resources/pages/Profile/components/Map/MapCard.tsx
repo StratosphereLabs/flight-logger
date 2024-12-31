@@ -176,7 +176,7 @@ export const MapCard = ({
         <Form
           className={classNames(
             'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
-            isProfilePage ? 'mt-24' : 'mt-16',
+            isProfilePage ? 'mt-[102px]' : 'mt-16',
           )}
           methods={methods}
         >

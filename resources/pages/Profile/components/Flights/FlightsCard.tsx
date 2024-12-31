@@ -172,7 +172,10 @@ export const FlightsCard = ({
         </div>
         {!isFlightsFullScreen && !isAddingFlight ? (
           <div className="min-h-[70px]">
-            <FlightsTableBasic filtersFormControl={filtersFormControl} />
+            <FlightsTableBasic
+              filtersFormControl={filtersFormControl}
+              selectedAirportId={selectedAirportId}
+            />
           </div>
         ) : null}
         {isFlightsFullScreen && !isAddingFlight ? (

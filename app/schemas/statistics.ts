@@ -27,12 +27,15 @@ export const getUserTopAirportsSchema = getStatisticsBarGraphSchema.extend({
   mode: z.enum(['all', 'departure', 'arrival']),
 });
 
-export const getStatisticsDistributionSchema = getUserSchema.extend(
-  profileFiltersSchema.shape,
-);
+export const getStatisticsDistributionSchema = getUserSchema
+  .extend(profileFiltersSchema.shape)
+  .extend({
+    selectedAirportId: z.string().nullable(),
+  });
 
 export const getUserFlightTypesSchema = getStatisticsDistributionSchema.extend({
   mode: z.enum(['flights', 'distance', 'duration']),
+  selectedAirportId: z.string().nullable(),
 });
 
 export const routeDataSchema = z.object({

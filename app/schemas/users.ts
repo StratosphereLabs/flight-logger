@@ -45,7 +45,10 @@ export const profileFiltersSchema = z.object({
 
 export const getUserProfileFlightsSchema = paginationSchema
   .extend(getUserSchema.shape)
-  .extend(profileFiltersSchema.shape);
+  .extend(profileFiltersSchema.shape)
+  .extend({
+    selectedAirportId: z.string().nullable(),
+  });
 
 export const getUserFlightsSchema = getUserSchema
   .extend(paginationSchema.shape)

@@ -480,13 +480,23 @@ export const getToDate = (
 export const getFromStatusDate = (
   input: GetProfileFiltersRequest,
 ): Date | undefined => {
-  return input.status === 'upcoming' ? new Date() : undefined;
+  return input.status === 'upcoming' &&
+    input.range !== 'pastMonth' &&
+    input.range !== 'pastYear' &&
+    input.range !== 'customRange'
+    ? new Date()
+    : undefined;
 };
 
 export const getToStatusDate = (
   input: GetProfileFiltersRequest,
 ): Date | undefined => {
-  return input.status === 'completed' ? new Date() : undefined;
+  return input.status === 'completed' &&
+    input.range !== 'pastMonth' &&
+    input.range !== 'pastYear' &&
+    input.range !== 'customRange'
+    ? new Date()
+    : undefined;
 };
 
 export const filterCustomDates =

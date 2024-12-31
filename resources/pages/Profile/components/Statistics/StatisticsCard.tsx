@@ -31,12 +31,14 @@ export interface StatisticsFiltersData {
 export interface StatisticsProps {
   filtersFormControl: Control<ProfileFilterFormData>;
   isStatsFullScreen: boolean;
+  selectedAirportId: string | null;
   setIsStatsFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const StatisticsCard = ({
   filtersFormControl,
   isStatsFullScreen,
+  selectedAirportId,
   setIsStatsFullScreen,
 }: StatisticsProps): JSX.Element => {
   const [, setSearchParams] = useSearchParams();
@@ -94,28 +96,52 @@ export const StatisticsCard = ({
               </Button>
             ) : null}
           </div>
-          <TotalsChart filtersFormControl={filtersFormControl} />
+          <TotalsChart
+            filtersFormControl={filtersFormControl}
+            selectedAirportId={selectedAirportId}
+          />
           <div className="flex flex-wrap gap-x-6 gap-y-4">
-            <TopAirlinesChart filtersFormControl={filtersFormControl} />
-            <TopAirportsChart filtersFormControl={filtersFormControl} />
+            <TopAirlinesChart
+              filtersFormControl={filtersFormControl}
+              selectedAirportId={selectedAirportId}
+            />
+            <TopAirportsChart
+              filtersFormControl={filtersFormControl}
+              selectedAirportId={selectedAirportId}
+            />
             {isStatsFullScreen ? (
               <>
                 <TopAircraftTypesChart
                   filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
                 />
-                <TopRoutesChart filtersFormControl={filtersFormControl} />
+                <TopRoutesChart
+                  filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
+                />
               </>
             ) : null}
-            <FlightTypePieChart filtersFormControl={filtersFormControl} />
-            <FlightLengthRadarChart filtersFormControl={filtersFormControl} />
+            <FlightTypePieChart
+              filtersFormControl={filtersFormControl}
+              selectedAirportId={selectedAirportId}
+            />
+            <FlightLengthRadarChart
+              filtersFormControl={filtersFormControl}
+              selectedAirportId={selectedAirportId}
+            />
             {isStatsFullScreen ? (
               <>
                 <FlightClassRadarChart
                   filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
                 />
-                <ReasonRadarChart filtersFormControl={filtersFormControl} />
+                <ReasonRadarChart
+                  filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
+                />
                 <SeatPositionRadarChart
                   filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
                 />
               </>
             ) : null}

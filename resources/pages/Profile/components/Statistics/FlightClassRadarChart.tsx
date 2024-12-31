@@ -15,6 +15,7 @@ import type { StatisticsChartProps } from './types';
 
 export const FlightClassRadarChart = ({
   filtersFormControl,
+  selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
   const mode = useWatch<StatisticsFiltersData, 'flightClassMode'>({
@@ -38,6 +39,7 @@ export const FlightClassRadarChart = ({
       month,
       fromDate,
       toDate,
+      selectedAirportId,
     },
     {
       enabled: userData !== undefined,

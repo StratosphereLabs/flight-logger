@@ -11,10 +11,12 @@ import { type ProfileFilterFormData } from '../../hooks';
 
 export interface CompletedFlightsProps {
   filtersFormControl: Control<ProfileFilterFormData>;
+  selectedAirportId: string | null;
 }
 
 export const FlightsTableBasic = ({
   filtersFormControl,
+  selectedAirportId,
 }: CompletedFlightsProps): JSX.Element | null => {
   const { username } = useParams();
   const { data: userData } = useProfileUserQuery();
@@ -32,6 +34,7 @@ export const FlightsTableBasic = ({
         limit: 5,
         username,
         status,
+        selectedAirportId,
         range,
         year,
         month,

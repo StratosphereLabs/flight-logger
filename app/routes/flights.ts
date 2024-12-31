@@ -207,7 +207,7 @@ export const flightsRouter = router({
           where: whereObj,
           include: flightIncludeObj,
           orderBy: {
-            outTime: input.status === 'upcoming' ? 'asc' : 'desc',
+            outTime: input.status === 'completed' ? 'desc' : 'asc',
           },
           skip,
           take,
@@ -242,23 +242,41 @@ export const flightsRouter = router({
           gte: fromDate,
           lte: toDate,
         },
-        OR:
-          fromStatusDate !== undefined || toStatusDate !== undefined
+        AND: [
+          {
+            OR:
+              fromStatusDate !== undefined || toStatusDate !== undefined
+                ? [
+                    {
+                      inTime: {
+                        gte: fromStatusDate,
+                        lte: toStatusDate,
+                      },
+                    },
+                    {
+                      inTimeActual: {
+                        gte: fromStatusDate,
+                        lte: toStatusDate,
+                      },
+                    },
+                  ]
+                : undefined,
+          },
+          ...(input.selectedAirportId !== null
             ? [
                 {
-                  inTime: {
-                    gte: fromStatusDate,
-                    lte: toStatusDate,
-                  },
-                },
-                {
-                  inTimeActual: {
-                    gte: fromStatusDate,
-                    lte: toStatusDate,
-                  },
+                  OR: [
+                    {
+                      departureAirportId: input.selectedAirportId,
+                    },
+                    {
+                      arrivalAirportId: input.selectedAirportId,
+                    },
+                  ],
                 },
               ]
-            : undefined,
+            : []),
+        ],
       };
       const { skip, take } = parsePaginationRequest(input);
       const [results, count] = await prisma.$transaction([
@@ -274,7 +292,7 @@ export const flightsRouter = router({
           skip,
           take,
           orderBy: {
-            outTime: input.status === 'upcoming' ? 'asc' : 'desc',
+            outTime: input.status === 'completed' ? 'desc' : 'asc',
           },
         }),
         prisma.flight.count({

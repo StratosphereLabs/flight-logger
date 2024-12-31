@@ -97,6 +97,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
             <StatisticsCard
               filtersFormControl={filtersFormControl}
               isStatsFullScreen={isStatsFullScreen}
+              selectedAirportId={selectedAirportId}
               setIsStatsFullScreen={setIsStatsFullScreen}
             />
           ) : null}
