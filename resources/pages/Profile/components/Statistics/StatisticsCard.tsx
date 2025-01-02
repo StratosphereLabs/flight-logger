@@ -2,7 +2,7 @@ import { type Dispatch, type SetStateAction } from 'react';
 import { type Control, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
-import { CollapseIcon } from '../../../../common/components';
+import { CollapseIcon, ExpandIcon } from '../../../../common/components';
 import { type ProfileFilterFormData } from '../../hooks';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { FlightLengthRadarChart } from './FlightLengthRadarChart';
@@ -63,41 +63,31 @@ export const StatisticsCard = ({
       <Card className="flex-1 bg-base-100 shadow-sm" compact>
         <CardBody>
           <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-1">
-              <CardTitle>Statistics</CardTitle>
-              {!isStatsFullScreen ? (
-                <Button
-                  className="w-[100px]"
-                  color="ghost"
-                  onClick={() => {
-                    setIsStatsFullScreen(true);
-                    setSearchParams(oldSearchParams => ({
-                      ...Object.fromEntries(oldSearchParams),
-                      isStatsFullScreen: 'true',
-                    }));
-                  }}
-                  size="xs"
-                >
-                  View All
-                </Button>
-              ) : null}
-            </div>
-            {isStatsFullScreen ? (
-              <Button
-                color="ghost"
-                onClick={() => {
-                  setIsStatsFullScreen(false);
-                  setSearchParams(oldSearchParams => {
+            <CardTitle>Statistics</CardTitle>
+            <Button
+              color="ghost"
+              onClick={() => {
+                setSearchParams(oldSearchParams => {
+                  if (isStatsFullScreen) {
                     oldSearchParams.delete('isStatsFullScreen');
                     return oldSearchParams;
-                  });
-                }}
-                size="sm"
-              >
-                <CollapseIcon className="h-4 w-4" />{' '}
-                <span className="hidden sm:inline-block">Collapse</span>
-              </Button>
-            ) : null}
+                  }
+                  return {
+                    ...Object.fromEntries(oldSearchParams),
+                    isStatsFullScreen: 'true',
+                  };
+                });
+                setIsStatsFullScreen(isFullScreen => !isFullScreen);
+              }}
+              size="sm"
+            >
+              {isStatsFullScreen ? (
+                <CollapseIcon className="h-4 w-4" />
+              ) : (
+                <ExpandIcon className="h-4 w-4" />
+              )}
+              <span>{isStatsFullScreen ? 'Collapse' : 'View All'}</span>
+            </Button>
           </div>
           <TotalsChart
             filtersFormControl={filtersFormControl}

@@ -121,9 +121,9 @@ export const TopCountriesChart = ({
                       {value}
                     </text>
                     <image
-                      x={x - 33}
-                      y={y - 7}
-                      height="14"
+                      x={x - 35}
+                      y={y - 8}
+                      height="16"
                       href={`/flags/svg/${value.toLowerCase()}.svg`}
                     />
                   </>
