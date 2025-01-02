@@ -7,16 +7,18 @@ import {
   type AircraftTypeData,
   type AirportData,
   type ClassData,
+  type CountryData,
   type FlightLengthData,
   type FlightTypeData,
   type ReasonData,
   type RouteData,
   type SeatPositionData,
+  getUserFlightTypesSchema,
   getUserTopRoutesSchema,
   getUserTopAirlinesSchema,
   getUserTopAircraftTypesSchema,
   getUserTopAirportsSchema,
-  getUserFlightTypesSchema,
+  getUserTopCountriesSchema,
   getStatisticsDistributionSchema,
   getStatisticsBarGraphSchema,
 } from '../schemas';
@@ -249,8 +251,8 @@ export const statisticsRouter = router({
         const key = input.cityPairs
           ? [flight.departureAirport.iata, flight.arrivalAirport.iata]
               .sort((a, b) => a.localeCompare(b))
-              .join('-')
-          : `${flight.departureAirport.iata}-${flight.arrivalAirport.iata}`;
+              .join('↔')
+          : `${flight.departureAirport.iata}→${flight.arrivalAirport.iata}`;
         if (routeDataMap[key] === undefined) {
           routeDataMap[key] = { route: key, flights: 0 };
         }
@@ -574,6 +576,115 @@ export const statisticsRouter = router({
           ...result,
           distance: Math.round(result.distance),
         }))
+        .reverse();
+    }),
+  getTopCountries: procedure
+    .input(getUserTopCountriesSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const fromDate = getFromDate(input);
+      const toDate = getToDate(input);
+      const fromStatusDate = getFromStatusDate(input);
+      const toStatusDate = getToStatusDate(input);
+      const results = await prisma.flight.findMany({
+        where: {
+          user: {
+            username: input?.username ?? ctx.user?.username,
+          },
+          outTime: {
+            gte: fromDate,
+            lte: toDate,
+          },
+          AND: [
+            {
+              OR:
+                fromStatusDate !== undefined || toStatusDate !== undefined
+                  ? [
+                      {
+                        inTime: {
+                          gte: fromStatusDate,
+                          lte: toStatusDate,
+                        },
+                      },
+                      {
+                        inTimeActual: {
+                          gte: fromStatusDate,
+                          lte: toStatusDate,
+                        },
+                      },
+                    ]
+                  : undefined,
+            },
+            ...(input.selectedAirportId !== null
+              ? [
+                  {
+                    OR: [
+                      {
+                        departureAirportId: input.selectedAirportId,
+                      },
+                      {
+                        arrivalAirportId: input.selectedAirportId,
+                      },
+                    ],
+                  },
+                ]
+              : []),
+          ],
+        },
+        orderBy: {
+          outTime: input.status === 'completed' ? 'desc' : 'asc',
+        },
+        select: {
+          outTime: true,
+          departureAirport: {
+            select: {
+              country: true,
+              timeZone: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              country: true,
+              timeZone: true,
+            },
+          },
+        },
+      });
+      const flights = results.filter(filterCustomDates(input));
+      const { skip, take } = parsePaginationRequest(input);
+      const countriesDataMap: Record<string, CountryData> = {};
+      for (const flight of flights) {
+        const departureCountryId = flight.departureAirport.country.id;
+        const arrivalCountryId = flight.arrivalAirport.country.id;
+        if (input.mode === 'all' || input.mode === 'departure') {
+          if (countriesDataMap[departureCountryId] === undefined) {
+            countriesDataMap[departureCountryId] = {
+              id: departureCountryId,
+              country: flight.departureAirport.country.name,
+              flights: 0,
+            };
+          }
+          countriesDataMap[departureCountryId].flights++;
+        }
+        if (
+          (input.mode === 'all' && departureCountryId !== arrivalCountryId) ||
+          input.mode === 'arrival'
+        ) {
+          if (countriesDataMap[arrivalCountryId] === undefined) {
+            countriesDataMap[arrivalCountryId] = {
+              id: arrivalCountryId,
+              country: flight.arrivalAirport.country.name,
+              flights: 0,
+            };
+          }
+          countriesDataMap[arrivalCountryId].flights++;
+        }
+      }
+      return Object.values(countriesDataMap)
+        .sort((a, b) => b.flights - a.flights)
+        .slice(skip, skip + take)
         .reverse();
     }),
   getReasonDistribution: procedure
