@@ -27,6 +27,10 @@ export const getUserTopAirportsSchema = getStatisticsBarGraphSchema.extend({
   mode: z.enum(['all', 'departure', 'arrival']),
 });
 
+export const getUserTopCountriesSchema = getStatisticsBarGraphSchema.extend({
+  mode: z.enum(['all', 'departure', 'arrival']),
+});
+
 export const getStatisticsDistributionSchema = getUserSchema
   .extend(profileFiltersSchema.shape)
   .extend({
@@ -63,6 +67,12 @@ export const aircraftTypeDataSchema = z.object({
   flights: z.number().int().positive(),
   duration: z.number().int().positive(),
   distance: z.number().positive(),
+});
+
+export const countryDataSchema = z.object({
+  id: z.string(),
+  country: z.string(),
+  flights: z.number().int().positive(),
 });
 
 export const reasonDataSchema = z.object({
@@ -118,6 +128,8 @@ export type AirlineData = z.infer<typeof airlineDataSchema>;
 export type AirportData = z.infer<typeof airportDataSchema>;
 
 export type AircraftTypeData = z.infer<typeof aircraftTypeDataSchema>;
+
+export type CountryData = z.infer<typeof countryDataSchema>;
 
 export type ReasonData = z.infer<typeof reasonDataSchema>;
 

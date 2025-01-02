@@ -12,6 +12,7 @@ import { SeatPositionRadarChart } from './SeatPositionRadarChart';
 import { TopAirlinesChart } from './TopAirlinesChart';
 import { TopAircraftTypesChart } from './TopAircraftTypesChart';
 import { TopAirportsChart } from './TopAirportsChart';
+import { TopCountriesChart } from './TopCountriesChart';
 import { TopRoutesChart } from './TopRoutesChart';
 import { TotalsChart } from './TotalsChart';
 import type { StatsAirportMode, StatsTotalsMode } from './types';
@@ -20,6 +21,7 @@ export interface StatisticsFiltersData {
   airlinesMode: StatsTotalsMode;
   aircraftTypesMode: StatsTotalsMode;
   airportsMode: StatsAirportMode;
+  countriesMode: StatsAirportMode;
   routesCityPairs: boolean;
   flightTypeMode: StatsTotalsMode;
   flightLengthMode: StatsTotalsMode;
@@ -47,6 +49,7 @@ export const StatisticsCard = ({
       airlinesMode: 'flights',
       aircraftTypesMode: 'flights',
       airportsMode: 'all',
+      countriesMode: 'all',
       routesCityPairs: false,
       flightTypeMode: 'flights',
       flightLengthMode: 'flights',
@@ -111,6 +114,10 @@ export const StatisticsCard = ({
             />
             {isStatsFullScreen ? (
               <>
+                <TopCountriesChart
+                  filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
+                />
                 <TopAircraftTypesChart
                   filtersFormControl={filtersFormControl}
                   selectedAirportId={selectedAirportId}
