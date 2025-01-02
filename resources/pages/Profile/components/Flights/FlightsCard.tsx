@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 import {
   CollapseIcon,
+  ExpandIcon,
   PlusAirplaneIcon,
   PlusIcon,
 } from '../../../../common/components';
@@ -51,33 +52,15 @@ export const FlightsCard = ({
     >
       <CardBody className="p-1 pt-4">
         <div className="flex w-full min-w-[375px] flex-col gap-4 px-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-end gap-1">
-              <CardTitle>
-                {isAddingFlight
-                  ? `Add Flight${!onOwnProfile ? ` for @${username}` : ''}`
-                  : 'Flights'}
-              </CardTitle>
-              {!isAddingFlight && !isFlightsFullScreen ? (
-                <Button
-                  className="w-[100px]"
-                  color="ghost"
-                  onClick={() => {
-                    setIsFlightsFullScreen(true);
-                    setSearchParams(oldSearchParams => ({
-                      ...Object.fromEntries(oldSearchParams),
-                      isFlightsFullScreen: 'true',
-                    }));
-                  }}
-                  size="xs"
-                >
-                  View All
-                </Button>
-              ) : null}
-            </div>
+          <div className="flex items-start justify-between gap-4">
+            <CardTitle>
+              {isAddingFlight
+                ? `Add Flight${!onOwnProfile ? ` for @${username}` : ''}`
+                : 'Flights'}
+            </CardTitle>
             {onOwnProfile ||
             (data?.isFollowedBy === true && data.isFollowing) ? (
-              <div className="flex gap-3">
+              <div className="flex flex-1 justify-between gap-3">
                 <div className="flex flex-wrap justify-end gap-3">
                   {isAddingFlight ? (
                     <Button
@@ -148,21 +131,36 @@ export const FlightsCard = ({
                     </Button>
                   ) : null}
                 </div>
-                {isFlightsFullScreen && !isAddingFlight ? (
+                {!isAddingFlight ? (
                   <Button
                     color="ghost"
                     onClick={() => {
-                      setIsFlightsFullScreen(false);
                       setSearchParams(oldSearchParams => {
-                        oldSearchParams.delete('isFlightsFullScreen');
-                        return oldSearchParams;
+                        if (isFlightsFullScreen) {
+                          oldSearchParams.delete('isFlightsFullScreen');
+                          return oldSearchParams;
+                        }
+                        return {
+                          ...Object.fromEntries(oldSearchParams),
+                          isFlightsFullScreen: 'true',
+                        };
                       });
-                      setIsRowSelectEnabled(false);
+                      setIsFlightsFullScreen(isFullScreen => !isFullScreen);
                     }}
                     size="sm"
                   >
-                    <CollapseIcon className="h-4 w-4" />{' '}
-                    <span className="hidden sm:inline-block">Collapse</span>
+                    {isFlightsFullScreen ? (
+                      <CollapseIcon className="h-4 w-4" />
+                    ) : (
+                      <ExpandIcon className="h-4 w-4" />
+                    )}
+                    <span
+                      className={classNames(
+                        isFlightsFullScreen && 'hidden sm:block',
+                      )}
+                    >
+                      {isFlightsFullScreen ? 'Collapse' : 'View All'}
+                    </span>
                   </Button>
                 ) : null}
               </div>
