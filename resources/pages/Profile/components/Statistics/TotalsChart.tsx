@@ -1,13 +1,21 @@
+import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
   Loading,
   Stat,
   StatDesc,
-  Stats,
   StatTitle,
   StatValue,
+  Stats,
 } from 'stratosphere-ui';
+
+import {
+  ClockIcon,
+  ColoredFireIcon,
+  DistanceIcon,
+  MaterialPlaneIcon,
+} from '../../../../common/components';
 import {
   useProfileUserQuery,
   useTRPCErrorHandler,
@@ -15,13 +23,6 @@ import {
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import type { StatisticsChartProps } from './types';
-import {
-  ClockIcon,
-  ColoredFireIcon,
-  DistanceIcon,
-  MaterialPlaneIcon,
-} from '../../../../common/components';
-import classNames from 'classnames';
 
 export const TotalsChart = ({
   filtersFormControl,

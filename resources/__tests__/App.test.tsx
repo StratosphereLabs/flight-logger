@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { AppRouter } from '../AppRouter';
 import { render } from '../common/test-utils';
 

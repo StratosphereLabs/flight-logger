@@ -9,9 +9,10 @@ import {
   DropdownMenu,
   Loading,
   Modal,
-  Tabs,
   type TabData,
+  Tabs,
 } from 'stratosphere-ui';
+
 import {
   CogIcon,
   HomeIcon,

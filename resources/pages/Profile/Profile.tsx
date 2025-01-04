@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
+
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,

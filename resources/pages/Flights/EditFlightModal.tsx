@@ -11,6 +11,7 @@ import {
   integerInputTransformer,
   nullEmptyStringTransformer,
 } from 'stratosphere-ui';
+
 import { type EditFlightRequest, editFlightSchema } from '../../../app/schemas';
 import {
   AircraftTypeInput,

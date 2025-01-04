@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
+
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 

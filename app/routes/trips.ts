@@ -1,5 +1,6 @@
 import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import difference from 'lodash.difference';
+
 import { prisma, updateTripTimes, validateUserFlights } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {

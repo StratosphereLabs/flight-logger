@@ -1,7 +1,7 @@
 import { prisma } from '../db';
+import { getAirportsSchema } from '../schemas';
 import { searchSchema } from '../schemas/search';
 import { procedure, router } from '../trpc';
-import { getAirportsSchema } from '../schemas';
 import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
 export const airportsRouter = router({

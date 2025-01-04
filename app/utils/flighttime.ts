@@ -1,6 +1,7 @@
-import { type FlightRadarStatus, type Airport } from '@prisma/client';
+import { type Airport, type FlightRadarStatus } from '@prisma/client';
 import { add, isBefore, isFuture } from 'date-fns';
 import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
+
 import {
   DATE_FORMAT,
   DATE_FORMAT_ABBR,

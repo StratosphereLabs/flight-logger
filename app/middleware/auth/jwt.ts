@@ -1,7 +1,8 @@
 import { TRPCError } from '@trpc/server';
 import { type NextFunction, type RequestHandler, type Response } from 'express';
-import { expressjwt, type Request as JwtRequest } from 'express-jwt';
+import { type Request as JwtRequest, expressjwt } from 'express-jwt';
 import createHttpError from 'http-errors';
+
 import { type UserToken } from '../../context';
 import { middleware } from '../../trpc';
 

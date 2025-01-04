@@ -2,10 +2,11 @@ import { type Prisma } from '@prisma/client';
 import axios from 'axios';
 import { Promise } from 'bluebird';
 import { load } from 'cheerio';
+
 import { prisma } from '../prisma';
 import {
-  ICAO_AIRLINE_CODE_REGEX,
   IATA_AIRLINE_CODE_REGEX,
+  ICAO_AIRLINE_CODE_REGEX,
   WIKI_PROMISE_CONCURRENCY,
 } from './constants';
 import {

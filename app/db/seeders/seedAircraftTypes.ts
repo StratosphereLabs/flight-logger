@@ -1,6 +1,7 @@
 import { type Prisma } from '@prisma/client';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+
 import { prisma } from '../prisma';
 import { FREIGHTER_AIRCRAFT_REGEX } from './constants';
 import { getText, getWikipediaDataTable, seedConcurrently } from './helpers';

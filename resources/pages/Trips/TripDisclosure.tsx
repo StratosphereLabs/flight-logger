@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Badge, Disclosure } from 'stratosphere-ui';
+
 import { type TripsRouterOutput } from '../../../app/routes/trips';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
 import { APP_URL } from '../../common/constants';

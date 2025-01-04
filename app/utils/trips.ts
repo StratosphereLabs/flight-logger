@@ -1,6 +1,7 @@
 import { type Trip, type User } from '@prisma/client';
 import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import { DATE_FORMAT_ISO } from '../constants';
 import { getDurationDays } from './datetime';
 import {

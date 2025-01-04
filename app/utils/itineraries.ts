@@ -1,13 +1,14 @@
 import {
-  type Itinerary,
   type AircraftType,
   type Airline,
   type Airport,
+  type Itinerary,
   type ItineraryFlight,
 } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { isBefore, isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import { DATE_FORMAT } from '../constants';
 import {
   getDaysToAdd,

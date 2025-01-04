@@ -1,10 +1,11 @@
 import { z } from 'zod';
-import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
+
 import {
   AircraftTypeSchema,
   AirlineSchema,
   AirportSchema,
 } from '../../prisma/generated/zod';
+import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
 
 export const itineraryFlightSchema = z.object({
   id: z.string().uuid(),

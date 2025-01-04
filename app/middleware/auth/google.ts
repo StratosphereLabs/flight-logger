@@ -1,6 +1,7 @@
 import { type CredentialResponse } from '@react-oauth/google';
 import { type NextFunction, type Request, type Response } from 'express';
 import createHttpError from 'http-errors';
+
 import { upsertUser } from '../../db';
 import { verifyGoogleIdToken } from '../../utils';
 

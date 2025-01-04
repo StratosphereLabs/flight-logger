@@ -1,8 +1,9 @@
-import { useWatch, type UseFormReturn } from 'react-hook-form';
-import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
+import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { Form, FormControl, Select } from 'stratosphere-ui';
+
 import { MONTH_NAMES } from '../../common/constants';
 import { useCurrentDate } from '../../common/hooks';
+import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 
 export interface ProfileFiltersFormProps {

@@ -15,10 +15,11 @@ import {
   Table,
   integerInputTransformer,
 } from 'stratosphere-ui';
+
 import { type FlightDataRouterOutput } from '../../../../../app/routes/flightData';
 import {
-  searchFlightDataSchema,
   type FlightSearchFormData,
+  searchFlightDataSchema,
 } from '../../../../../app/schemas';
 import {
   AirlineInput,
@@ -30,8 +31,8 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
-import { flightSearchFormDefaultValues } from './constants';
 import { UserSelectModal } from './UserSelectModal';
+import { flightSearchFormDefaultValues } from './constants';
 
 export const AddFlightForm = (): JSX.Element => {
   const utils = trpc.useUtils();

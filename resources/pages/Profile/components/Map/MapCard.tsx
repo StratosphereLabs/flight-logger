@@ -15,6 +15,7 @@ import {
   Select,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
+
 import {
   CollapseIcon,
   ExpandIcon,
@@ -27,9 +28,9 @@ import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { CesiumMap } from './CesiumMap';
-import { DEFAULT_COORDINATES } from './constants';
 import { GoogleMap } from './GoogleMap';
 import { ProfileOverlay } from './ProfileOverlay';
+import { DEFAULT_COORDINATES } from './constants';
 import { getAirportsData } from './utils';
 
 export interface MapCardFormData {

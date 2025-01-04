@@ -8,9 +8,10 @@ import {
   Form,
   FormFileInput,
 } from 'stratosphere-ui';
+
 import { fileUploadSchema } from '../../../app/schemas';
-import { WarningModal } from './WarningModal';
 import { useFlightDiaryUploadMutation } from '../../common/hooks';
+import { WarningModal } from './WarningModal';
 import { useAccountPageStore } from './accountPageStore';
 
 export const DataImport = (): JSX.Element => {

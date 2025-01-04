@@ -1,5 +1,6 @@
 import { type Flight } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+
 import { prisma } from './prisma';
 
 export const deleteAllUserFlights = async (userId: number): Promise<number> => {

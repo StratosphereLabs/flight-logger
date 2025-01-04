@@ -1,10 +1,11 @@
 import type {
-  Airport,
   AircraftType,
   Airline,
+  Airport,
   FlightChangeField,
 } from '@prisma/client';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { type FlightUpdateChangeWithData } from '../../../app/utils';
 import { DATE_FORMAT, TIME_FORMAT_12H } from '../constants';

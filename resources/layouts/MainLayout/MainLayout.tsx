@@ -1,6 +1,7 @@
 import { type UseFormReturn } from 'react-hook-form';
 import { Outlet } from 'react-router-dom';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
+
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';

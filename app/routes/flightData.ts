@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { type inferRouterOutputs, TRPCError } from '@trpc/server';
+import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import {
   updateFlightRegistrationData,
   updateFlightTimesData,

@@ -1,6 +1,6 @@
 import { prisma } from '../db';
-import { procedure, router } from '../trpc';
 import { getRegionsSchema, searchSchema } from '../schemas';
+import { procedure, router } from '../trpc';
 import { getPaginatedResponse, parsePaginationRequest } from '../utils';
 
 export const regionsRouter = router({

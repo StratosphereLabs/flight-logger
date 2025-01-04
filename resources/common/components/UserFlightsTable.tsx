@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
+
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { AppTheme, useThemeStore } from '../../stores';

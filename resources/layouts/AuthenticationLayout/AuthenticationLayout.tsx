@@ -6,6 +6,7 @@ import {
   CardBody,
   useAlertMessages,
 } from 'stratosphere-ui';
+
 import { RightArrowIcon, ThemeButton } from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => {

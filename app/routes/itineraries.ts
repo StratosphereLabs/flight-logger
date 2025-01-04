@@ -1,4 +1,5 @@
 import { TRPCError, type inferRouterOutputs } from '@trpc/server';
+
 import { fetchFlightData, prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {

@@ -2,6 +2,7 @@ import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, useOutsideClick } from 'stratosphere-ui';
+
 import { type UsersRouterOutput } from '../../../app/routes/users';
 import { SearchIcon } from './Icons';
 import { UserSelect } from './UserInput';

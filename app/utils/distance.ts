@@ -1,4 +1,5 @@
 import vincenty from 'node-vincenty';
+
 import { METERS_IN_MILE } from '../constants';
 import { type Coordinates } from './coordinates';
 

@@ -1,10 +1,11 @@
 import {
-  getCoreRowModel,
   type PaginationState,
   type SortingState,
+  getCoreRowModel,
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Card, CardBody, CardTitle, Table } from 'stratosphere-ui';
+
 import { AirlineLogo } from '../../common/components';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';

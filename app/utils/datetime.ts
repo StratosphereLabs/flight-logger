@@ -1,13 +1,14 @@
 import {
+  type Interval,
   add,
   formatDuration,
-  type Interval,
   intervalToDuration,
   isAfter,
   isBefore,
   sub,
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import { DATE_FORMAT_ISO } from '../constants';
 
 export interface DaysToAddOptions {

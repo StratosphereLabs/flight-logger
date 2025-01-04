@@ -1,5 +1,6 @@
 import { parse } from 'csv-parse/sync';
 import createHttpError from 'http-errors';
+
 import { DIGIT_REGEX } from '../constants';
 
 export const AIRPORT_ID_REGEX = /\([A-Z]{3}\/[A-Z]{4}\)/g;

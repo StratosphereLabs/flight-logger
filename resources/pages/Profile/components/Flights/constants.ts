@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+
 import { DATE_FORMAT_ISO } from '../../../../../app/constants';
 import { type FlightSearchFormData } from '../../../../../app/schemas';
 

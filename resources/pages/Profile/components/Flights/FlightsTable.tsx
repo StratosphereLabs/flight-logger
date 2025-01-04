@@ -2,6 +2,7 @@ import type { AircraftType, Airline, Airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { Table } from 'stratosphere-ui';
+
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 
 export interface FlightsTableProps {

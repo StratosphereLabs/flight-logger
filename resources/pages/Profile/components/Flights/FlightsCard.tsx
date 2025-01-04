@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
+
 import {
   CollapseIcon,
   ExpandIcon,

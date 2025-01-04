@@ -1,4 +1,5 @@
 import { type inferRouterOutputs } from '@trpc/server';
+
 import { prisma } from '../db';
 import { createRegistationSchema } from '../schemas';
 import { procedure, router } from '../trpc';

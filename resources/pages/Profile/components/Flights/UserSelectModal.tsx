@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Form, Modal } from 'stratosphere-ui';
+
 import {
   type UserSelectFormData,
   selectUserSchema,

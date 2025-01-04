@@ -3,14 +3,15 @@ import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { FormToggleSwitch, Loading, Tooltip } from 'stratosphere-ui';
+
 import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
-import { BAR_CHART_THEME } from './constants';
 import { type StatisticsFiltersData } from './StatisticsCard';
+import { BAR_CHART_THEME } from './constants';
 import type { StatisticsChartProps } from './types';
 
 export const TopRoutesChart = ({

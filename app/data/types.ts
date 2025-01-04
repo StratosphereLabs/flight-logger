@@ -1,4 +1,5 @@
 import type { Airline, Airport } from '@prisma/client';
+
 import type { FlightTimestampsResult } from '../utils';
 
 export interface FlightWithDataAirport {

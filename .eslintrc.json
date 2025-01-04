@@ -13,7 +13,7 @@
     "standard-with-typescript",
     "prettier"
   ],
-  "ignorePatterns": ["coverage", "prisma", "public", "node_modules"],
+  "ignorePatterns": ["coverage", "dist", "node_modules", "public", "prisma"],
   "overrides": [],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

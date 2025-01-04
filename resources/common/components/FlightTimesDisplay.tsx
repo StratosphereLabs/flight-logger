@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { type HTMLProps } from 'react';
+
 import { AppTheme, useThemeStore } from '../../stores';
 import { TEXT_COLORS } from '../constants';
 import type { FlightDelayStatus } from '../types';
