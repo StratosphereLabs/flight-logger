@@ -202,7 +202,7 @@ export const flightsRouter = router({
             : []),
         ],
       };
-      const [flights, itemCount] = await prisma.$transaction([
+      const [results, itemCount] = await prisma.$transaction([
         prisma.flight.findMany({
           where: whereObj,
           include: flightIncludeObj,
@@ -216,6 +216,7 @@ export const flightsRouter = router({
           where: whereObj,
         }),
       ]);
+      const flights = results.filter(filterCustomDates(input));
       return getPaginatedResponse({
         itemCount,
         limit,
@@ -299,8 +300,9 @@ export const flightsRouter = router({
           where: whereObj,
         }),
       ]);
+      const flights = results.filter(filterCustomDates(input));
       return {
-        results: results.map(flight => ({
+        results: flights.map(flight => ({
           ...flight,
           outTimeDate: formatInTimeZone(
             flight.outTime,

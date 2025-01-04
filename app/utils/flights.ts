@@ -515,7 +515,9 @@ export const filterCustomDates =
     const year = departureTimeLocal.getFullYear();
     switch (input.range) {
       case 'customMonth': {
-        return month.toString() === input.month;
+        return (
+          month.toString() === input.month && year.toString() === input.year
+        );
       }
       case 'customYear': {
         return year.toString() === input.year;
