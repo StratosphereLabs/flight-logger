@@ -3,6 +3,7 @@ import { load } from 'cheerio';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
+
 import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getFlightTimes } from '../../utils';

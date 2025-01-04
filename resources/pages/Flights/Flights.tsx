@@ -4,22 +4,24 @@ import { type Control, useWatch } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button, Loading } from 'stratosphere-ui';
+
 import { PlusIcon, UserFlightsTable } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import {
   useCopyToClipboard,
+  useLoggedInUserQuery,
   useProfilePage,
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { type ProfileFilterFormData } from '../Profile/hooks';
 import { type TripsPageNavigationState } from '../Trips';
-import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';
 import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
-import { useFlightsPageStore } from './flightsPageStore';
 import { ViewFlightModal } from './ViewFlightModal';
+import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';
+import { useFlightsPageStore } from './flightsPageStore';
 
 export interface FlightsPageNavigationState {
   createTrip: boolean | undefined;
@@ -50,6 +52,7 @@ export const Flights = ({
   };
   const navigate = useNavigate();
   const { username } = useParams();
+  const { onOwnProfile } = useLoggedInUserQuery();
   const { resetRowSelection } = useFlightsPageStore();
   useEffect(() => {
     if (state?.createTrip === true) {
@@ -148,7 +151,7 @@ export const Flights = ({
         <div className="my-6 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
-            {username === undefined ? (
+            {onOwnProfile ? (
               <Button
                 color="primary"
                 onClick={() => {

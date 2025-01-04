@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Form, FormControl, Modal } from 'stratosphere-ui';
+
 import { createTripFormSchema } from '../../../app/schemas';
 import {
   useSuccessResponseHandler,

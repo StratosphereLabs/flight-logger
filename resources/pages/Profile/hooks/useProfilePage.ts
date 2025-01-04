@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+
 import { getIsLoggedIn, useAuthStore } from '../../../stores';
 
 export interface UseProfilePageResult {

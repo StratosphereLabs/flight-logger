@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { AlertMessagesProvider } from 'stratosphere-ui';
+
 import { TRPCProvider } from './providers';
 
 export interface AppWrapperProps {

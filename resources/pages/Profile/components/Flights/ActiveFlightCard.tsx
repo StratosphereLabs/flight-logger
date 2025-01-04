@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Card, CardBody, Link, Modal, Progress } from 'stratosphere-ui';
+
 import {
   FlightChangelogTable,
   FlightTimesDisplay,

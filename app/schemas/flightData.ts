@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { AirlineSchema } from '../../prisma/generated/zod';
 import { DATE_REGEX_ISO } from '../constants';
 

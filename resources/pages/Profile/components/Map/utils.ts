@@ -1,4 +1,5 @@
 import type { Airport } from '@prisma/client';
+
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 import type { AirportResult } from './types';
 

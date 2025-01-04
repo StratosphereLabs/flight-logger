@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import { isDate, isEqual } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import { DATE_FORMAT_ISO } from '../constants';
 import type { FlightWithData } from './types';
 

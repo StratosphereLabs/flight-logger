@@ -94,6 +94,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
     "@testing-library/react": "^14.1.2",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/bluebird": "^3.5.42",
     "@types/cheerio": "^0.22.35",

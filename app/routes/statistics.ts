@@ -1,10 +1,11 @@
 import { TRPCError } from '@trpc/server';
 import { isBefore } from 'date-fns';
+
 import { METERS_IN_MILE } from '../constants';
 import { prisma } from '../db';
 import {
-  type AirlineData,
   type AircraftTypeData,
+  type AirlineData,
   type AirportData,
   type ClassData,
   type CountryData,
@@ -13,14 +14,14 @@ import {
   type ReasonData,
   type RouteData,
   type SeatPositionData,
+  getStatisticsBarGraphSchema,
+  getStatisticsDistributionSchema,
   getUserFlightTypesSchema,
-  getUserTopRoutesSchema,
-  getUserTopAirlinesSchema,
   getUserTopAircraftTypesSchema,
+  getUserTopAirlinesSchema,
   getUserTopAirportsSchema,
   getUserTopCountriesSchema,
-  getStatisticsDistributionSchema,
-  getStatisticsBarGraphSchema,
+  getUserTopRoutesSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {

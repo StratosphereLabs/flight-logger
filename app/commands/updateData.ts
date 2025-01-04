@@ -2,12 +2,13 @@ import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 import { scheduleJob } from 'node-schedule';
+
 import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
-import { updateFlightTimesData } from './updateFlightTimesData';
 import { updateFlightRegistrationData } from './updateFlightRegistrationData';
+import { updateFlightTimesData } from './updateFlightTimesData';
 import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (

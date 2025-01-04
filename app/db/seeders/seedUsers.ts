@@ -1,5 +1,5 @@
-import { usersData } from './data';
 import { prisma } from '../prisma';
+import { usersData } from './data';
 
 /* eslint-disable @typescript-eslint/no-floating-promises */
 (async () => {

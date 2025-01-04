@@ -11,6 +11,7 @@ import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Loading } from 'stratosphere-ui';
+
 import {
   AirportLabelOverlay,
   PlaneSolidIcon,
@@ -24,8 +25,8 @@ import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { type ProfilePageNavigationState } from '../Profile';
 import { getAirportsData } from '../Profile/components/Map/utils';
-import { DEFAULT_COORDINATES } from './constants';
 import { FlightRow } from './FlightRow';
+import { DEFAULT_COORDINATES } from './constants';
 import {
   getFollowingFlightData,
   sortByArrivalTimeDesc,

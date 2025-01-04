@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import bcrypt from 'bcryptjs';
+
 import { prisma } from '../db';
 import { loginSchema, registerSchema } from '../schemas';
 import { procedure, router } from '../trpc';

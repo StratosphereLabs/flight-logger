@@ -1,4 +1,5 @@
 import { Modal } from 'stratosphere-ui';
+
 import { useAccountPageStore } from './accountPageStore';
 
 export interface WarningModalProps {

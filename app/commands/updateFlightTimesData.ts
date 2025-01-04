@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import { add, isAfter } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import { DATE_FORMAT_ISO } from '../constants';
 import { fetchFlightAwareData } from '../data/flightAware';
 import type { FlightAwareDataResult } from '../data/flightAware/types';

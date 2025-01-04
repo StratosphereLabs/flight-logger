@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+
 import { useProfilePage } from '../../pages/Profile/hooks';
 
 export const ProfileLayout = (): JSX.Element => {

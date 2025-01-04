@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
+
+import { CollapseIcon, ExpandIcon, FlightChangeValue, TimeIcon } from '.';
 import viteIcon from '../../../resources/assets/vite.svg';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
@@ -14,7 +16,6 @@ import {
   DEFAULT_PAGE_SIZE,
   TIME_FORMAT_12H,
 } from '../constants';
-import { CollapseIcon, ExpandIcon, FlightChangeValue, TimeIcon } from '.';
 
 export interface FlightChangelogTableProps {
   className?: string;

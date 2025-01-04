@@ -1,5 +1,6 @@
 import type { FlightUpdateChange } from '@prisma/client';
 import { isAfter } from 'date-fns';
+
 import {
   CHANGE_FIELD_ESTIMATED_TEXT_MAP,
   CHANGE_FIELD_TEXT_MAP,

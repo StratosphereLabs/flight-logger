@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 
 export const useProtectedPage = (): boolean => {

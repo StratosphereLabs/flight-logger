@@ -1,7 +1,8 @@
 import classNames from 'classnames';
-import { useMemo, type HTMLProps } from 'react';
+import { type HTMLProps, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Link } from 'stratosphere-ui';
+
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import {
   FlightChangelogTable,

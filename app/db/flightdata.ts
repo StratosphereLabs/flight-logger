@@ -1,11 +1,12 @@
 import {
-  type Airframe,
   type AircraftType,
+  type Airframe,
   type Airline,
   type Airport,
 } from '@prisma/client';
 import groupBy from 'lodash.groupby';
 import keyBy from 'lodash.keyby';
+
 import { prisma } from './prisma';
 
 export interface FlightDataFetchInput {

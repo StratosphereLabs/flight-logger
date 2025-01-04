@@ -1,5 +1,6 @@
 import { type OnChangeFn, type RowSelectionState } from '@tanstack/react-table';
 import { create } from 'zustand';
+
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 
 interface FlightsPageState {

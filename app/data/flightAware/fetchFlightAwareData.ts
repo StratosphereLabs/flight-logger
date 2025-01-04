@@ -1,15 +1,16 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
+
 import { DATE_FORMAT_ISO } from '../../constants';
 import { fetchFlightData } from '../../db';
 import { HEADERS } from '../constants';
-import { createNewDate } from '../utils';
 import type {
   FetchFlightDataParams,
   FetchFlightsByFlightNumberParams,
   FlightSearchDataFetchResult,
 } from '../types';
+import { createNewDate } from '../utils';
 import type { FlightAwareDataResponse, FlightAwareDataResult } from './types';
 
 export const SCRIPT_BEGIN = 'var trackpollBootstrap = ';

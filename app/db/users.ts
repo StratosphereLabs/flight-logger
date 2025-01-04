@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
-import { prisma } from './prisma';
+
 import { generateUserToken } from '../utils';
+import { prisma } from './prisma';
 
 export interface UpsertUserParams {
   email: string;

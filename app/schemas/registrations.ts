@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { registerSchema } from './auth';
 
 export const createRegistationSchema = registerSchema.extend({

@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink, httpLink, splitLink } from '@trpc/client';
 import { type ReactNode } from 'react';
+
 import { TRPC_API_URL } from '../common/constants';
 import { useAuthStore } from '../stores';
 import { trpc } from '../utils/trpc';

@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Avatar, Button, Loading, Modal } from 'stratosphere-ui';
+
 import {
   UserCheckIcon,
   UserMinusIcon,

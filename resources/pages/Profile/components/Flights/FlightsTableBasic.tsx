@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+
 import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
-import { FlightsTable } from './FlightsTable';
 import { type ProfileFilterFormData } from '../../hooks';
+import { FlightsTable } from './FlightsTable';
 
 export interface CompletedFlightsProps {
   filtersFormControl: Control<ProfileFilterFormData>;

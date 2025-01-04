@@ -1,6 +1,7 @@
 import { type TRPCClientErrorBase } from '@trpc/client';
 import { useCallback } from 'react';
 import { useAlertMessages } from 'stratosphere-ui';
+
 import { useAuthStore } from '../../stores';
 import { type DefaultErrorShape } from '../types';
 

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import {
   PASSWORD_REQUIREMENT_REGEX,
   PASSWORD_REQUIREMENT_STRING,

@@ -1,4 +1,5 @@
 import type { Airport, FlightRadarStatus } from '@prisma/client';
+
 import type { FlightAwareTracklogItem } from '../../../../../app/data/flightAware/types';
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 import type { FlightDelayStatus } from '../../../../common/types';

@@ -1,5 +1,6 @@
 import type { Flight, FlightUpdateChange } from '@prisma/client';
 import { Promise } from 'bluebird';
+
 import { prisma } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { FLIGHT_CHANGE_GETTER_MAP } from './constants';

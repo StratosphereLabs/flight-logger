@@ -1,6 +1,7 @@
 import { type Flight } from '@prisma/client';
 import { type UseMutationResult, useMutation } from '@tanstack/react-query';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
+
 import { useAuthStore } from '../../stores';
 import { REST_API_URL } from '../constants';
 import { type ErrorResponse } from '../types';

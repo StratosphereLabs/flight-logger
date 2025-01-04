@@ -2,6 +2,7 @@ import { type Dispatch, type SetStateAction } from 'react';
 import { type Control, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
+
 import { CollapseIcon, ExpandIcon } from '../../../../common/components';
 import { type ProfileFilterFormData } from '../../hooks';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
@@ -9,8 +10,8 @@ import { FlightLengthRadarChart } from './FlightLengthRadarChart';
 import { FlightTypePieChart } from './FlightTypePieChart';
 import { ReasonRadarChart } from './ReasonRadarChart';
 import { SeatPositionRadarChart } from './SeatPositionRadarChart';
-import { TopAirlinesChart } from './TopAirlinesChart';
 import { TopAircraftTypesChart } from './TopAircraftTypesChart';
+import { TopAirlinesChart } from './TopAirlinesChart';
 import { TopAirportsChart } from './TopAirportsChart';
 import { TopCountriesChart } from './TopCountriesChart';
 import { TopRoutesChart } from './TopRoutesChart';

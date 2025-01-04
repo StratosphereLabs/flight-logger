@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Badge, Disclosure } from 'stratosphere-ui';
+
 import { type TripsRouterOutput } from '../../../app/routes/trips';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
 import { APP_URL } from '../../common/constants';
-import { useCopyToClipboard } from '../../common/hooks';
+import { useCopyToClipboard, useLoggedInUserQuery } from '../../common/hooks';
 import { type TripsPageNavigationState } from './Trips';
 import { useTripsPageStore } from './tripsPageStore';
 
@@ -22,7 +23,8 @@ export const TripDisclosure = ({
   const { state } = useLocation() as {
     state: TripsPageNavigationState | null;
   };
-  const { tripId, username } = useParams();
+  const { tripId } = useParams();
+  const { onOwnProfile } = useLoggedInUserQuery();
   const { setActiveTrip, setIsDeleteDialogOpen } = useTripsPageStore();
   useEffect(() => {
     if (tripId !== undefined && tripId === trip.id) {
@@ -60,7 +62,7 @@ export const TripDisclosure = ({
                 <LinkIcon className="h-5 w-5" />
                 <span className="sr-only">Copy Link</span>
               </a>
-              {username === undefined ? (
+              {onOwnProfile ? (
                 <a
                   className="btn btn-circle btn-ghost btn-sm sm:btn-md"
                   onClick={event => {

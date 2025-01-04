@@ -1,10 +1,10 @@
 import type {
-  FlightRadarStatus,
   AircraftType,
   Airframe,
   Airline,
   Airport,
   Flight,
+  FlightRadarStatus,
   Region,
   User,
 } from '@prisma/client';
@@ -22,10 +22,11 @@ import {
 } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
+
 import type { FlightAwareTracklogItem } from '../data/flightAware/types';
 import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
-import { calculateCenterPoint, type Coordinates } from './coordinates';
+import { type Coordinates, calculateCenterPoint } from './coordinates';
 import { getDurationMinutes, getDurationString } from './datetime';
 import {
   calculateDistance,
@@ -34,11 +35,11 @@ import {
   getProjectedCoords,
 } from './distance';
 import {
+  type FlightDelayStatus,
   type FlightTimestampsResult,
   getFlightTimestamps,
-  type FlightDelayStatus,
 } from './flighttime';
-import { fetchGravatarUrl, type UserData } from './users';
+import { type UserData, fetchGravatarUrl } from './users';
 
 export const flightIncludeObj = {
   user: true,

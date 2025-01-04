@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import { type TripsRouterOutput } from '../../../app/routes/trips';
 
 interface TripsPageState {

@@ -1,17 +1,18 @@
 import {
-  getCoreRowModel,
   type PaginationState,
   type SortingState,
+  getCoreRowModel,
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import {
   Badge,
   type BadgeColor,
-  Table,
   Card,
   CardBody,
   CardTitle,
+  Table,
 } from 'stratosphere-ui';
+
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 

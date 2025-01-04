@@ -1,17 +1,18 @@
-import type { FlightRadarStatus, Airline } from '@prisma/client';
+import type { Airline, FlightRadarStatus } from '@prisma/client';
 import axios from 'axios';
 import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
+
 import { DATE_FORMAT_ISO } from '../../constants';
 import { fetchFlightData, prisma } from '../../db';
+import { HEADERS } from '../constants';
 import type {
   FetchFlightsByFlightNumberParams,
   FlightSearchDataFetchResult,
   FlightWithDataAirport,
 } from '../types';
 import { createNewDate } from '../utils';
-import { HEADERS } from '../constants';
 import { NOT_AVAILABLE } from './constants';
 import type { FlightRadarData, FlightRadarRoutesResponse } from './types';
 

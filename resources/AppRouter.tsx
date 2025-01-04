@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
   Account,
@@ -7,9 +8,9 @@ import {
   ForgotPassword,
   Home,
   Login,
-  ResetPassword,
-  Register,
   Profile,
+  Register,
+  ResetPassword,
   Trips,
   Users,
 } from './pages';

@@ -14,6 +14,7 @@ import {
   useDebouncedValue,
   useFormWithQueryParams,
 } from 'stratosphere-ui';
+
 import { SearchIcon } from '../../common/components';
 import { useProtectedPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';

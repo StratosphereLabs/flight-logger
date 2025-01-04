@@ -1,11 +1,12 @@
 import {
-  render,
   type RenderOptions,
   type RenderResult,
+  render,
 } from '@testing-library/react';
 import { type InitialEntry } from 'history';
 import React, { type ReactElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+
 import { AppWrapper } from '../AppWrapper';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {

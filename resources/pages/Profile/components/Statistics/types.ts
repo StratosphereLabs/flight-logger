@@ -1,4 +1,5 @@
 import { type Control } from 'react-hook-form';
+
 import { type ProfileFilterFormData } from '../../hooks';
 
 export type StatsTotalsMode = 'flights' | 'distance' | 'duration';
