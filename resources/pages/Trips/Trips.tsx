@@ -2,7 +2,11 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 import { PlusIcon } from '../../common/components';
-import { useProtectedPage, useTRPCErrorHandler } from '../../common/hooks';
+import {
+  useLoggedInUserQuery,
+  useProtectedPage,
+  useTRPCErrorHandler,
+} from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { type FlightsPageNavigationState, ViewFlightModal } from '../Flights';
 import { DeleteTripModal } from './DeleteTripModal';
@@ -16,6 +20,7 @@ export const Trips = (): JSX.Element => {
   const isLoggedIn = useProtectedPage();
   const navigate = useNavigate();
   const { tripId, username } = useParams();
+  const { onOwnProfile } = useLoggedInUserQuery();
   const { state } = useLocation() as {
     state: TripsPageNavigationState | null;
   };
@@ -82,7 +87,7 @@ export const Trips = (): JSX.Element => {
         <div className="mt-12 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Trips</p>
-            {username === undefined ? (
+            {onOwnProfile ? (
               <Button
                 color="primary"
                 onClick={() => {

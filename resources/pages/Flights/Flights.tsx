@@ -8,6 +8,7 @@ import { PlusIcon, UserFlightsTable } from '../../common/components';
 import { APP_URL } from '../../common/constants';
 import {
   useCopyToClipboard,
+  useLoggedInUserQuery,
   useProfilePage,
   useTRPCErrorHandler,
 } from '../../common/hooks';
@@ -50,6 +51,7 @@ export const Flights = ({
   };
   const navigate = useNavigate();
   const { username } = useParams();
+  const { onOwnProfile } = useLoggedInUserQuery();
   const { resetRowSelection } = useFlightsPageStore();
   useEffect(() => {
     if (state?.createTrip === true) {
@@ -148,7 +150,7 @@ export const Flights = ({
         <div className="my-6 flex justify-center">
           <div className="flex flex-col items-center gap-8">
             <p className="opacity-75">No Flights</p>
-            {username === undefined ? (
+            {onOwnProfile ? (
               <Button
                 color="primary"
                 onClick={() => {
