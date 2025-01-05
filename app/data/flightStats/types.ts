@@ -116,7 +116,42 @@ export interface FlightStatsFlight {
   isScheduled: boolean;
   isTracking: boolean;
   operatedBy: null;
-  positional: Record<string, unknown>;
+  positional: {
+    departureAirportCode: string;
+    arrivalAirportCode: string;
+    divertedAirportCode: string | null;
+    flexFlightStatus: string;
+    flexTrack?: {
+      flightId: number;
+      carrierFsCode: string;
+      flightNumber: string;
+      tailNumber: string;
+      callsign: string;
+      departureAirportFsCode: string;
+      arrivalAirportFsCode: string;
+      departureDate: {
+        dateUtc: string;
+        dateLocal: string;
+      };
+      equipment: string;
+      delayMinutes: number;
+      bearing: number;
+      heading: number;
+      positions?: Array<{
+        lon: number;
+        lat: number;
+        speedMph: number;
+        altitudeFt: number;
+        source: string;
+        date: string;
+        course: number;
+        vrateMps: number;
+        lastObserved: string;
+      }>;
+      irregularOperations: [];
+      fleetAircraftId: number;
+    };
+  };
   schedule: FlightStatsSchedule;
   sortTime: string;
   status: FlightStatsStatus;
@@ -167,39 +202,14 @@ export interface FlightStatsOtherDay {
 }
 
 export interface FlightStatsDataProps {
-  initialProps: {
-    pageProps: {
-      head: {
-        canonical: string;
-        description: string;
-        keywords: string;
-        noIndex: boolean;
-        title: string;
-      };
-      hostname: string;
-      isHistoricalFlight: boolean;
-      isOutOfDateRange: boolean;
-      params: {
-        carrierCode: string;
-        date: string;
-        flightId: string;
-        flightNumber: string;
-        month: string;
-        year: string;
-      };
-    };
-    user: Record<string, unknown>;
-  };
+  isServer: boolean;
   initialState: {
     app: {
-      appHost: string;
       user: Record<string, unknown>;
+      appHost: string;
     };
     elasticSearch: Record<string, unknown>;
-    error: {
-      LOAD_FLIGHT_TRACKER_FLIGHT: string;
-      LOAD_FLIGHT_TRACKER_OTHER_DAYS: string;
-    };
+    error?: Record<string, string>;
     flick: Record<string, unknown>;
     flightTracker: {
       flight?: FlightStatsFlight;
@@ -211,14 +221,35 @@ export interface FlightStatsDataProps {
       LOAD_FLIGHT_TRACKER_OTHER_DAYS: boolean;
     };
   };
-  isServer: boolean;
+  initialProps: {
+    user: Record<string, unknown>;
+    pageProps: {
+      params: {
+        carrierCode: string;
+        flightNumber: string;
+        year: string;
+        month: string;
+        date: string;
+        flightId: string;
+      };
+      isHistoricalFlight: boolean;
+      isOutOfDateRange: boolean;
+      head: {
+        title: string;
+        description: string;
+        keywords: string;
+        canonical: string;
+        noIndex: boolean;
+      };
+      userAgent: string;
+      hostname: string;
+    };
+  };
 }
 
 export interface FlightStatsDataResponse {
-  buildId: string;
-  dynamicIds: string[];
-  page: string;
   props: FlightStatsDataProps;
+  page: string;
   query: {
     carrierCode: string;
     flightNumber: string;
@@ -227,6 +258,8 @@ export interface FlightStatsDataResponse {
     month?: string;
     date?: string;
   };
+  buildId: string;
+  dynamicIds: number[];
 }
 
 export interface FlightStatsFlightData {
