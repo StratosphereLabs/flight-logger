@@ -84,14 +84,14 @@ export const getFlightStatsUpdatedData = (flight: FlightStatsFlight) => {
     arrivalTerminal: flight.arrivalAirport.terminal ?? undefined,
     arrivalBaggage: flight.arrivalAirport.baggage ?? undefined,
     tracklog:
-      (flight.positional.flexTrack?.positions?.map(
-        ({ date, lat, lon, altitudeFt, speedMph }) => ({
+      (flight.positional.flexTrack?.positions
+        ?.reverse()
+        .map(({ date, lat, lon, altitudeFt, speedMph }) => ({
           timestamp: Math.round(getTime(parseISO(date)) / 1000),
           coord: [lon, lat],
           alt: altitudeFt / 100,
           gs: Math.round((10 * speedMph) / KTS_TO_MPH) / 10,
-        }),
-      ) as Prisma.JsonArray | undefined) ?? undefined,
+        })) as Prisma.JsonArray | undefined) ?? undefined,
   };
 };
 
