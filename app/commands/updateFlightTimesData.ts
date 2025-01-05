@@ -89,7 +89,7 @@ export const getFlightStatsUpdatedData = (flight: FlightStatsFlight) => {
           timestamp: Math.round(getTime(parseISO(date)) / 1000),
           coord: [lon, lat],
           alt: altitudeFt / 100,
-          gs: speedMph / KTS_TO_MPH,
+          gs: Math.round((10 * speedMph) / KTS_TO_MPH) / 10,
         }),
       ) as Prisma.JsonArray | undefined) ?? undefined,
   };
