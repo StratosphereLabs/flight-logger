@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { add, isAfter } from 'date-fns';
+import { add, getTime, isAfter, parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DATE_FORMAT_ISO } from '../constants';
@@ -10,6 +10,7 @@ import type { FlightStatsFlight } from '../data/flightStats/types';
 import { createNewDate } from '../data/utils';
 import { prisma, updateTripTimes } from '../db';
 import { getDurationMinutes } from '../utils';
+import { KTS_TO_MPH } from './constants';
 import type { FlightWithData } from './types';
 import { updateFlightChangeData } from './updateFlightChangeData';
 import { getGroupedFlightsKey } from './utils';
@@ -84,9 +85,11 @@ export const getFlightStatsUpdatedData = (flight: FlightStatsFlight) => {
     arrivalBaggage: flight.arrivalAirport.baggage ?? undefined,
     tracklog:
       (flight.positional.flexTrack?.positions?.map(
-        ({ lat, lon, altitudeFt }) => ({
-          alt: altitudeFt / 100,
+        ({ date, lat, lon, altitudeFt, speedMph }) => ({
+          timestamp: Math.round(getTime(parseISO(date)) / 1000),
           coord: [lon, lat],
+          alt: altitudeFt / 100,
+          gs: speedMph / KTS_TO_MPH,
         }),
       ) as Prisma.JsonArray | undefined) ?? undefined,
   };
