@@ -20,6 +20,8 @@ export const TIME_FORMAT_24H = 'HH:mm';
 
 export const METERS_IN_MILE = 1609.344;
 
+export const SECONDS_IN_HOUR = 3600;
+
 export const CHANGE_FIELD_TEXT_MAP: Partial<Record<FlightChangeField, string>> =
   {
     DEPARTURE_AIRPORT: 'Departure Airport',
