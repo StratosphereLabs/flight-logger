@@ -1,6 +1,6 @@
 import type { Airport, FlightRadarStatus } from '@prisma/client';
 
-import type { FlightAwareTracklogItem } from '../../../../../app/data/flightAware/types';
+import type { TracklogItem } from '../../../../../app/data/types';
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 import type { FlightDelayStatus } from '../../../../common/types';
 
@@ -9,7 +9,7 @@ export interface MapFlight extends google.maps.LatLngLiteral {
   delayStatus: FlightDelayStatus;
   flightRadarStatus: FlightRadarStatus | null;
   callsign: string;
-  tracklog: FlightAwareTracklogItem[] | undefined;
+  tracklog: TracklogItem[] | undefined;
   waypoints: Array<[number, number]> | undefined;
 }
 

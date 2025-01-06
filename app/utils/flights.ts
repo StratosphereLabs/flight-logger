@@ -12,6 +12,8 @@ import {
   add,
   endOfMonth,
   endOfYear,
+  getTime,
+  getUnixTime,
   isAfter,
   isBefore,
   isEqual,
@@ -23,7 +25,9 @@ import {
 import { utcToZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
-import type { FlightAwareTracklogItem } from '../data/flightAware/types';
+import { KTS_TO_MPH } from '../commands/constants';
+import { SECONDS_IN_HOUR } from '../constants';
+import type { TracklogItem } from '../data/types';
 import { type GetProfileFiltersRequest } from '../schemas';
 import { type LatLng } from '../types';
 import { type Coordinates, calculateCenterPoint } from './coordinates';
@@ -121,7 +125,7 @@ export interface FlightsResult
   extends Array<Omit<FlightWithAirports, 'tracklog' | 'waypoints'>> {}
 
 export interface FlightTrackingDataResult {
-  tracklog: FlightAwareTracklogItem[] | undefined;
+  tracklog: TracklogItem[] | undefined;
   waypoints: Array<[number, number]> | undefined;
 }
 
@@ -228,7 +232,7 @@ export const getTrackingData = (
     flight.tracklog !== null &&
     typeof flight.tracklog === 'object' &&
     Array.isArray(flight.tracklog)
-      ? (flight.tracklog as FlightAwareTracklogItem[])
+      ? (flight.tracklog as TracklogItem[])
       : undefined;
   const waypoints =
     flight.waypoints !== null &&
@@ -241,6 +245,58 @@ export const getTrackingData = (
           [flight.arrivalAirport.lon, flight.arrivalAirport.lat],
         ] as Array<[number, number]>);
   return { tracklog, waypoints };
+};
+
+export const getAverageSpeedFromTracklog = (
+  secondLastWaypoint: TracklogItem,
+  lastWaypoint: TracklogItem,
+): number => {
+  const distanceTraveled = calculateDistance(
+    secondLastWaypoint.coord[1],
+    secondLastWaypoint.coord[0],
+    lastWaypoint.coord[1],
+    lastWaypoint.coord[0],
+  );
+  const timeDiffHours =
+    (lastWaypoint.timestamp - secondLastWaypoint.timestamp) / SECONDS_IN_HOUR;
+  return distanceTraveled / timeDiffHours;
+};
+
+export const getEstimatedSpeedFromTracklog = (
+  tracklog: TracklogItem[],
+): number => {
+  const secondLastWaypoint = tracklog[tracklog.length - 2];
+  const lastWaypoint = tracklog[tracklog.length - 1];
+  const averageSpeedFromTracklog = getAverageSpeedFromTracklog(
+    secondLastWaypoint,
+    lastWaypoint,
+  );
+  return lastWaypoint.gs !== null
+    ? (lastWaypoint.gs * KTS_TO_MPH + averageSpeedFromTracklog) / 2
+    : averageSpeedFromTracklog;
+};
+
+export const getProjectedCoordsFromTracklog = (
+  tracklog: TracklogItem[],
+  estimatedSpeed: number,
+): Coordinates => {
+  const secondLastWaypoint = tracklog[tracklog.length - 2];
+  const lastWaypoint = tracklog[tracklog.length - 1];
+  const secondsSinceLastWaypoint =
+    getUnixTime(new Date()) - lastWaypoint.timestamp;
+  const estimatedDistanceTraveled =
+    (secondsSinceLastWaypoint / SECONDS_IN_HOUR) * estimatedSpeed;
+  return getProjectedCoords(
+    lastWaypoint.coord[1],
+    lastWaypoint.coord[0],
+    estimatedDistanceTraveled,
+    getBearing(
+      secondLastWaypoint.coord[1],
+      secondLastWaypoint.coord[0],
+      lastWaypoint.coord[1],
+      lastWaypoint.coord[0],
+    ),
+  );
 };
 
 export const transformFlightData = (
@@ -335,12 +391,13 @@ export const transformFlightData = (
     flight.arrivalAirport.lat,
     flight.arrivalAirport.lon,
   );
+  const estimatedSpeed =
+    tracklog !== undefined && tracklog.length > 1
+      ? getEstimatedSpeedFromTracklog(tracklog)
+      : null;
   const estimatedLocation =
-    tracklog !== undefined && tracklog.length > 0
-      ? {
-          lat: tracklog[tracklog.length - 1].coord[1],
-          lng: tracklog[tracklog.length - 1].coord[0],
-        }
+    tracklog !== undefined && tracklog.length > 1 && estimatedSpeed !== null
+      ? getProjectedCoordsFromTracklog(tracklog, estimatedSpeed)
       : getProjectedCoords(
           flight.departureAirport.lat,
           flight.departureAirport.lon,
@@ -361,6 +418,24 @@ export const transformFlightData = (
           flight.arrivalAirport.lat,
           flight.arrivalAirport.lon,
         );
+  const tracklogWithLocation = [
+    ...(tracklog ?? []),
+    ...(tracklog !== undefined &&
+    tracklog.length > 0 &&
+    flight.flightRadarStatus === 'EN_ROUTE'
+      ? [
+          {
+            timestamp: getTime(new Date()),
+            alt: tracklog[tracklog.length - 1]?.alt ?? 0,
+            coord: [estimatedLocation.lng, estimatedLocation.lat] as [
+              number,
+              number,
+            ],
+            gs: estimatedSpeed !== null ? estimatedSpeed / KTS_TO_MPH : null,
+          },
+        ]
+      : []),
+  ];
   const delayStatus =
     flight.flightRadarStatus === 'CANCELED'
       ? 'canceled'
@@ -408,7 +483,7 @@ export const transformFlightData = (
     delayStatus,
     estimatedLocation,
     estimatedHeading,
-    tracklog,
+    tracklog: tracklogWithLocation,
     waypoints,
   };
 };

@@ -1,11 +1,17 @@
 import type { Airline, Airport } from '@prisma/client';
 
 import type { FlightTimestampsResult } from '../utils';
+import type { FlightAwareTracklogItem } from './flightAware/types';
 
 export interface FlightWithDataAirport {
   iata: string;
   timeZone: string;
 }
+
+export type TracklogItem = Pick<
+  FlightAwareTracklogItem,
+  'timestamp' | 'coord' | 'alt' | 'gs'
+>;
 
 export interface FetchFlightsByFlightNumberParams {
   airline: Airline;
