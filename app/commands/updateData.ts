@@ -5,6 +5,7 @@ import { scheduleJob } from 'node-schedule';
 
 import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
+import { saveWeatherReports } from '../utils';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
 import { updateFlightRegistrationData } from './updateFlightRegistrationData';
@@ -167,6 +168,14 @@ const updateFlightsEvery15 = async (): Promise<void> => {
       },
     });
     await processFlightUpdate(flightsToUpdate);
+    await saveWeatherReports([
+      ...new Set(
+        flightsToUpdate.flatMap(({ departureAirportId, arrivalAirportId }) => [
+          departureAirportId,
+          arrivalAirportId,
+        ]),
+      ),
+    ]);
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);

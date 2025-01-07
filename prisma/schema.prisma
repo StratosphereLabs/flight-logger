@@ -267,6 +267,7 @@ model Airport {
   departureItineraryFlights ItineraryFlight[]      @relation("departureItineraryFlights")
   arrivalFlightUpdates      FlightUpdateCommit[]   @relation("arrivalFlightUpdates")
   departureFlightUpdates    FlightUpdateCommit[]   @relation("departureFlightUpdates")
+  weatherReports            WeatherReport[]
   @@map("airport")
 }
 
@@ -315,6 +316,27 @@ model Registration {
   userAgent       String
   createdAt       DateTime            @default(now())
   @@map("registration")
+}
+
+model WeatherReport {
+  id                Int               @id
+  airportId         String
+  airport           Airport           @relation(fields: [airportId], references: [id])
+  obsTime           DateTime
+  temp              Float
+  dewp              Float
+  wdir              Int
+  wspd              Int
+  wgst              Int
+  visib             String
+  altim             Float
+  wxString          String?
+  vertVis           Int?
+  rawOb             String
+  clouds            Json[]
+
+  @@index([airportId, obsTime])
+  @@map("weather_report")
 }
 
 enum FlightClass {

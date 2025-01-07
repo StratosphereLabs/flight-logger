@@ -13,3 +13,4 @@ export * from './pagination';
 export * from './server';
 export * from './trips';
 export * from './users';
+export * from './weather';
