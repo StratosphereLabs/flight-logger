@@ -143,7 +143,44 @@ export const flightsRouter = router({
             : []),
         ]);
       return {
-        onTimePerformance,
+        onTimePerformance:
+          onTimePerformance !== null
+            ? {
+                ...onTimePerformance,
+                chartData: [
+                  {
+                    id: 'onTime',
+                    label: 'On Time',
+                    flights: onTimePerformance.onTime,
+                  },
+                  {
+                    id: 'late',
+                    label: 'Late',
+                    flights: onTimePerformance.late,
+                  },
+                  {
+                    id: 'veryLate',
+                    label: 'Very Late',
+                    flights: onTimePerformance.veryLate,
+                  },
+                  {
+                    id: 'excessive',
+                    label: 'Excessive',
+                    flights: onTimePerformance.excessive,
+                  },
+                  {
+                    id: 'cancelled',
+                    label: 'Cancelled',
+                    flights: onTimePerformance.cancelled,
+                  },
+                  {
+                    id: 'diverted',
+                    label: 'Diverted',
+                    flights: onTimePerformance.diverted,
+                  },
+                ].reverse(),
+              }
+            : null,
         departureWeather,
         arrivalWeather,
         diversionWeather,

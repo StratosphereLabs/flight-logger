@@ -53,8 +53,7 @@ export const FlightTypePieChart = ({
   return (
     <div className="flex h-[200px] min-w-[284px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-sm">Flight Type</div>
-
+        <div className="text-base">Flight Type</div>
         <Select
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"

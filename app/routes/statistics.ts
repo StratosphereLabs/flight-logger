@@ -1016,7 +1016,7 @@ export const statisticsRouter = router({
           duration: 0,
         },
         PREMIUM: {
-          flightClass: 'Premium Econ.',
+          flightClass: 'Premium',
           flights: 0,
           distance: 0,
           duration: 0,

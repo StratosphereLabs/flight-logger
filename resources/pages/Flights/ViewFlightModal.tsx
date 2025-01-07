@@ -2,8 +2,11 @@ import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Modal } from 'stratosphere-ui';
 
-import { FlightChangelogTable, RightArrowIcon } from '../../common/components';
-import { trpc } from '../../utils/trpc';
+import {
+  FlightChangelogTable,
+  OnTimePerformanceChart,
+  RightArrowIcon,
+} from '../../common/components';
 import { useFlightsPageStore } from './flightsPageStore';
 
 export const ViewFlightModal = (): JSX.Element => {
@@ -19,15 +22,6 @@ export const ViewFlightModal = (): JSX.Element => {
       );
     }
   }, [flightId, navigate, setIsViewDialogOpen, username]);
-  const { data, isLoading } = trpc.flights.getExtraFlightData.useQuery(
-    {
-      flightId: activeFlight?.id ?? '',
-    },
-    {
-      enabled: activeFlight !== null,
-    },
-  );
-  console.log({ data, isLoading });
   return (
     <Modal
       actionButtons={[
@@ -111,7 +105,10 @@ export const ViewFlightModal = (): JSX.Element => {
         </div>
       </div>
       {activeFlight !== null ? (
-        <FlightChangelogTable className="mt-10" flightId={activeFlight.id} />
+        <>
+          <OnTimePerformanceChart flightId={activeFlight.id} />
+          <FlightChangelogTable className="mt-4" flightId={activeFlight.id} />
+        </>
       ) : null}
     </Modal>
   );

@@ -53,7 +53,7 @@ export const TopAircraftTypesChart = ({
   return (
     <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-sm">Top Aircraft Types</div>
+        <div className="text-base">Top Aircraft Types</div>
         <Select
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"

@@ -199,7 +199,7 @@ export const AddFlight = (): JSX.Element => {
                 },
                 {
                   id: 'PREMIUM',
-                  label: 'Premium Economy',
+                  label: 'Premium',
                   value: 'PREMIUM',
                 },
                 {

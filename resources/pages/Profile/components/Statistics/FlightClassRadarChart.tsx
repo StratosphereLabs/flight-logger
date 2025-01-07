@@ -51,7 +51,7 @@ export const FlightClassRadarChart = ({
   return (
     <div className="flex h-[195px] min-w-[254px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-sm">Flight Class</div>
+        <div className="text-base">Flight Class</div>
         <Select
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"

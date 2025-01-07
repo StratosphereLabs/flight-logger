@@ -7,6 +7,7 @@ import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import {
   FlightChangelogTable,
   FlightTimesDisplay,
+  OnTimePerformanceChart,
 } from '../../common/components';
 import {
   CARD_BORDER_COLORS,
@@ -240,7 +241,12 @@ export const FlightRow = ({
           </div>
         </div>
       </div>
-      {isActive ? <FlightChangelogTable flightId={flight.id} /> : null}
+      {isActive ? (
+        <>
+          <OnTimePerformanceChart flightId={flight.id} />
+          <FlightChangelogTable flightId={flight.id} />
+        </>
+      ) : null}
     </div>
   );
 };

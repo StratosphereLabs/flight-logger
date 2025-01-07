@@ -239,7 +239,7 @@ export const EditFlightModal = ({
             },
             {
               id: 'PREMIUM',
-              label: 'Premium Economy',
+              label: 'Premium',
               value: 'PREMIUM',
             },
             {

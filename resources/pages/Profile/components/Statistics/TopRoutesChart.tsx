@@ -54,7 +54,7 @@ export const TopRoutesChart = ({
   return (
     <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex w-full items-center justify-between">
-        <div className="text-sm">{title}</div>
+        <div className="text-base">{title}</div>
         <FormToggleSwitch
           className="my-[-3px]"
           labelText="City Pairs"
