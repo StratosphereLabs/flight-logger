@@ -95,7 +95,7 @@ export const FlightChangelogTable = ({
       {data !== undefined && tableData.length > 0 ? (
         <>
           <div className="relative flex w-full justify-center">
-            <span className="mb-2">Event Log</span>
+            <span className="my-2 w-full font-semibold">Event Log</span>
             <Button
               className="absolute right-0"
               color="ghost"

@@ -54,7 +54,7 @@ export const TopCountriesChart = ({
   return (
     <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-sm">Top Countries</div>
+        <div className="text-base">Top Countries</div>
         <Select
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
@@ -114,7 +114,7 @@ export const TopCountriesChart = ({
                         fontFamily:
                           "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
                         fontWeight: 600,
-                        fontSize: '11px',
+                        fontSize: '12px',
                         outlineWidth: '0px',
                         outlineColor: 'transparent',
                       }}

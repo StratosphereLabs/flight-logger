@@ -6,6 +6,7 @@ import { Button, Card, CardBody, Link, Modal, Progress } from 'stratosphere-ui';
 import {
   FlightChangelogTable,
   FlightTimesDisplay,
+  OnTimePerformanceChart,
   PlaneSolidIcon,
 } from '../../../../common/components';
 import {
@@ -356,7 +357,12 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               </div>
             </div>
           </div>
-          {isActive ? <FlightChangelogTable flightId={data.id} /> : null}
+          {isActive ? (
+            <>
+              <OnTimePerformanceChart flightId={data.id} />
+              <FlightChangelogTable flightId={data.id} />
+            </>
+          ) : null}
         </CardBody>
       </Card>
       <Modal

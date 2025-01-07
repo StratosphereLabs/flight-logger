@@ -8,6 +8,7 @@ export const STATS_TOTALS_MODE_UNITS: Record<StatsTotalsMode, string> = {
 
 export const BAR_CHART_THEME = {
   text: {
+    fontSize: '12px',
     fontFamily:
       'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
   },
