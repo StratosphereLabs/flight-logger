@@ -223,7 +223,7 @@ model AircraftType {
 }
 
 model Airline {
-  id                       String             @id
+  id                       String                     @id
   iata                     String?
   icao                     String
   name                     String
@@ -234,15 +234,16 @@ model Airline {
   wiki                     String?
   flightStatsCode          String?
   airframes                Airframe[]
-  flights                  Flight[]           @relation("flights")
-  operatorFlights          Flight[]           @relation("operatorFlights")
-  itineraryFlights         ItineraryFlight[] @relation("itineraryFlights")
-  operatorItineraryFlights ItineraryFlight[] @relation("operatorItineraryFlights")
+  flights                  Flight[]                   @relation("flights")
+  operatorFlights          Flight[]                   @relation("operatorFlights")
+  itineraryFlights         ItineraryFlight[]          @relation("itineraryFlights")
+  operatorItineraryFlights ItineraryFlight[]          @relation("operatorItineraryFlights")
+  airlineOnTimeRatings     OnTimePerformanceRating[]  @relation("airlineOnTimeRatings")
   @@map("airline")
 }
 
 model Airport {
-  id                        String                 @id
+  id                        String                    @id
   type                      String
   name                      String
   lat                       Float
@@ -258,15 +259,17 @@ model Airport {
   gps                       String
   iata                      String
   local                     String
-  country                   Country                @relation(fields: [countryId], references: [id])
-  region                    Region                 @relation(fields: [regionId], references: [id])
-  arrivalFlights            Flight[]               @relation("arrivalFlights")
-  departureFlights          Flight[]               @relation("departureFlights")
-  diversionFlights          Flight[]               @relation("diversionFlights")
-  arrivalItineraryFlights   ItineraryFlight[]      @relation("arrivalItineraryFlights")
-  departureItineraryFlights ItineraryFlight[]      @relation("departureItineraryFlights")
-  arrivalFlightUpdates      FlightUpdateCommit[]   @relation("arrivalFlightUpdates")
-  departureFlightUpdates    FlightUpdateCommit[]   @relation("departureFlightUpdates")
+  country                   Country                   @relation(fields: [countryId], references: [id])
+  region                    Region                    @relation(fields: [regionId], references: [id])
+  arrivalFlights            Flight[]                  @relation("arrivalFlights")
+  departureFlights          Flight[]                  @relation("departureFlights")
+  diversionFlights          Flight[]                  @relation("diversionFlights")
+  arrivalItineraryFlights   ItineraryFlight[]         @relation("arrivalItineraryFlights")
+  departureItineraryFlights ItineraryFlight[]         @relation("departureItineraryFlights")
+  arrivalFlightUpdates      FlightUpdateCommit[]      @relation("arrivalFlightUpdates")
+  departureFlightUpdates    FlightUpdateCommit[]      @relation("departureFlightUpdates")
+  departureOnTimeRatings    OnTimePerformanceRating[] @relation("departureOnTimeRatings")
+  arrivalOnTimeRatings      OnTimePerformanceRating[] @relation("arrivalOnTimeRatings")
   weatherReports            WeatherReport[]
   @@map("airport")
 }
@@ -343,6 +346,7 @@ model OnTimePerformanceRating {
   airlineId           String
   flightNumber        Int
   departureAirportId  String
+  arrivalAirportId    String
   validFrom           DateTime
   validTo             DateTime
   onTime              Int
@@ -358,7 +362,10 @@ model OnTimePerformanceRating {
   min                 Int
   max                 Int
   onTimePercent       Int
-  @@id([airlineId, flightNumber, departureAirportId, validFrom, validTo])
+  airline             Airline     @relation(name: "airlineOnTimeRatings", fields: [airlineId], references: [id])
+  departureAirport    Airport     @relation(name: "departureOnTimeRatings", fields: [departureAirportId], references: [id])
+  arrivalAirport      Airport     @relation(name: "arrivalOnTimeRatings", fields: [arrivalAirportId], references: [id])
+  @@id([airlineId, flightNumber, departureAirportId, arrivalAirportId, validFrom])
   @@map("on_time_performance_rating")
 }
 

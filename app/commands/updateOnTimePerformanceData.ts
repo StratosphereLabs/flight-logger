@@ -16,17 +16,15 @@ export const updateOnTimePerformanceData = async (
     return;
   }
   if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightstats') {
-    const flightNumberString = `${flights[0].airline.iata}${flights[0].flightNumber}`;
-    const departureAirportIata = flights[0].departureAirport.iata;
-    console.log(
-      `Updating On-Time Performance data for ${flightNumberString} departing from ${departureAirportIata}...`,
-    );
+    const flightDataString = `${flights[0].airline.iata}${flights[0].flightNumber} ${flights[0].departureAirport.iata}-${flights[0].arrivalAirport.iata}`;
+    console.log(`Updating On-Time Performance data for ${flightDataString}...`);
     const twoMonthsAgo = sub(new Date(), { months: 2 });
     const rating = await prisma.onTimePerformanceRating.findFirst({
       where: {
         airlineId: flights[0].airline.id,
         flightNumber: flights[0].flightNumber,
         departureAirportId: flights[0].departureAirportId,
+        arrivalAirportId: flights[0].arrivalAirportId,
       },
       orderBy: {
         validTo: 'desc',
@@ -38,7 +36,7 @@ export const updateOnTimePerformanceData = async (
       isAfter(rating.validTo, twoMonthsAgo)
     ) {
       console.log(
-        `  On-Time Performance data already found for ${flightNumberString} departing from ${departureAirportIata}.`,
+        `  On-Time Performance data already found for ${flightDataString}.`,
       );
       return;
     }
@@ -48,20 +46,34 @@ export const updateOnTimePerformanceData = async (
       flightNumber: flights[0].flightNumber,
       departureIata: flights[0].departureAirport.iata,
     });
-    if (onTimePerformanceData === null) {
+    if (
+      onTimePerformanceData === null ||
+      flights[0].arrivalAirportId !== onTimePerformanceData.arrivalAirport.icao
+    ) {
       console.error(
-        `  On-Time Performance data not found for ${flightNumberString} departing from ${departureAirportIata}. Please try again later.`,
+        `  On-Time Performance data not found for ${flightDataString}. Please try again later.`,
       );
       return;
     }
-    console.log(
-      `  On-Time Performance data found for ${flightNumberString} departing from ${departureAirportIata}.`,
-    );
+    console.log(`  On-Time Performance data found for ${flightDataString}.`);
     await prisma.onTimePerformanceRating.create({
       data: {
-        airlineId: flights[0].airline.id,
+        airline: {
+          connect: {
+            id: flights[0].airline.id,
+          },
+        },
         flightNumber: flights[0].flightNumber,
-        departureAirportId: flights[0].departureAirport.id,
+        departureAirport: {
+          connect: {
+            id: onTimePerformanceData.departureAirport.icao,
+          },
+        },
+        arrivalAirport: {
+          connect: {
+            id: onTimePerformanceData.arrivalAirport.icao,
+          },
+        },
         validFrom: onTimePerformanceData.validFrom,
         validTo: onTimePerformanceData.validTo,
         onTime: onTimePerformanceData.chart.onTime,

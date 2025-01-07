@@ -95,13 +95,14 @@ export const flightsRouter = router({
             airlineId: flight.airline.id,
             flightNumber: flight.flightNumber,
             departureAirportId: flight.departureAirportId,
+            arrivalAirportId: flight.arrivalAirportId,
           },
           orderBy: {
             validTo: 'desc',
           },
         });
       }
-      const [departureWeather, arrivalWeather, diversionWeather] =
+      const [departureWeather, arrivalWeather, diversionWeather = null] =
         await prisma.$transaction([
           prisma.weatherReport.findFirst({
             where: {
