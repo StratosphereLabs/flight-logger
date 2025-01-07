@@ -147,6 +147,9 @@ export const flightsRouter = router({
           onTimePerformance !== null
             ? {
                 ...onTimePerformance,
+                averageDelay: getDurationString(
+                  Math.round(onTimePerformance.mean),
+                ),
                 chartData: [
                   {
                     id: 'onTime',
@@ -155,17 +158,17 @@ export const flightsRouter = router({
                   },
                   {
                     id: 'late',
-                    label: 'Late',
+                    label: 'Late >15m',
                     flights: onTimePerformance.late,
                   },
                   {
                     id: 'veryLate',
-                    label: 'Very Late',
+                    label: 'Very Late >30m',
                     flights: onTimePerformance.veryLate,
                   },
                   {
                     id: 'excessive',
-                    label: 'Excessive',
+                    label: 'Excessive >45m',
                     flights: onTimePerformance.excessive,
                   },
                   {
