@@ -17,6 +17,10 @@ export const getFlightChangelogSchema = getFlightSchema.extend(
   paginationSchema.shape,
 );
 
+export const getExtraFlightDataSchema = z.object({
+  flightId: z.string().uuid(),
+});
+
 export const deleteFlightSchema = z.object({
   id: z.string().uuid(),
 });
