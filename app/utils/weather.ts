@@ -44,7 +44,7 @@ export interface AviationWeatherReport {
   }>;
 }
 
-export const fetchWeatherReportByAirportIds = async (
+export const fetchWeatherReportsByAirportIds = async (
   airportIds: string[],
 ): Promise<AviationWeatherReport[] | null> => {
   try {
@@ -62,10 +62,10 @@ export const saveWeatherReports = async (
   airportIds: string[],
 ): Promise<void> => {
   const airportList = airportIds.join(',');
-  console.log(`Fetching weather report for ${airportList}...`);
-  const weatherData = await fetchWeatherReportByAirportIds(airportIds);
+  console.log(`Fetching weather reports for ${airportList}...`);
+  const weatherData = await fetchWeatherReportsByAirportIds(airportIds);
   if (weatherData !== null) {
-    console.log(`  Saving weather report for ${airportList} to database...`);
+    console.log(`  Saving weather reports for ${airportList} to database...`);
     await prisma.weatherReport.createMany({
       data: weatherData.map(data => ({
         id: data.metar_id,
@@ -86,6 +86,6 @@ export const saveWeatherReports = async (
       skipDuplicates: true,
     });
   } else {
-    console.error(`  Unable to fetch weather report for ${airportList}`);
+    console.error(`  Unable to fetch weather reports for ${airportList}`);
   }
 };
