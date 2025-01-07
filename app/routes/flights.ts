@@ -1,3 +1,4 @@
+import type { OnTimePerformanceRating } from '@prisma/client';
 import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
@@ -17,6 +18,7 @@ import {
   addFlightSchema,
   deleteFlightSchema,
   editFlightSchema,
+  getExtraFlightDataSchema,
   getFlightChangelogSchema,
   getFlightSchema,
   getUserFlightsSchema,
@@ -67,6 +69,84 @@ export const flightsRouter = router({
         });
       }
       return transformFlightData(flight);
+    }),
+  getExtraFlightData: procedure
+    .use(verifyAuthenticated)
+    .input(getExtraFlightDataSchema)
+    .query(async ({ input }) => {
+      const flight = await prisma.flight.findUnique({
+        where: {
+          id: input.flightId,
+        },
+        include: {
+          airline: true,
+        },
+      });
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      let onTimePerformance: OnTimePerformanceRating | null = null;
+      if (flight.airline !== null && flight.flightNumber !== null) {
+        onTimePerformance = await prisma.onTimePerformanceRating.findFirst({
+          where: {
+            airlineId: flight.airline.id,
+            flightNumber: flight.flightNumber,
+            departureAirportId: flight.departureAirportId,
+          },
+          orderBy: {
+            validTo: 'desc',
+          },
+        });
+      }
+      const [departureWeather, arrivalWeather, diversionWeather] =
+        await prisma.$transaction([
+          prisma.weatherReport.findFirst({
+            where: {
+              airportId: flight.departureAirportId,
+              obsTime: {
+                lte: flight.offTime ?? flight.outTime,
+              },
+            },
+            orderBy: {
+              obsTime: 'desc',
+            },
+          }),
+          prisma.weatherReport.findFirst({
+            where: {
+              airportId: flight.arrivalAirportId,
+              obsTime: {
+                lte: flight.onTime ?? flight.inTime,
+              },
+            },
+            orderBy: {
+              obsTime: 'desc',
+            },
+          }),
+          ...(flight.diversionAirportId !== null
+            ? [
+                prisma.weatherReport.findFirst({
+                  where: {
+                    airportId: flight.diversionAirportId,
+                    obsTime: {
+                      lte: flight.onTime ?? flight.inTime,
+                    },
+                  },
+                  orderBy: {
+                    obsTime: 'desc',
+                  },
+                }),
+              ]
+            : []),
+        ]);
+      return {
+        onTimePerformance,
+        departureWeather,
+        arrivalWeather,
+        diversionWeather,
+      };
     }),
   getFlightChangelog: procedure
     .use(verifyAuthenticated)
