@@ -11,7 +11,7 @@ export interface AviationWeatherReport {
   reportTime: string;
   temp: number;
   dewp: number;
-  wdir: number;
+  wdir: string | number;
   wspd: number;
   wgst: number | null;
   visib: string | number;
@@ -46,12 +46,12 @@ export interface AviationWeatherReport {
 
 export const fetchWeatherReportByAirportIds = async (
   airportIds: string[],
-): Promise<AviationWeatherReport | null> => {
+): Promise<AviationWeatherReport[] | null> => {
   try {
     const response = await axios.get<AviationWeatherReport[]>(
       `https://aviationweather.gov/api/data/metar?ids=${airportIds.join(',')}&format=json`,
     );
-    return response.data[0] ?? null;
+    return response.data;
   } catch (err) {
     console.error(err);
     return null;
@@ -63,17 +63,17 @@ export const saveWeatherReports = async (
 ): Promise<void> => {
   const airportList = airportIds.join(',');
   console.log(`Fetching weather report for ${airportList}...`);
-  const data = await fetchWeatherReportByAirportIds(airportIds);
-  if (data !== null) {
+  const weatherData = await fetchWeatherReportByAirportIds(airportIds);
+  if (weatherData !== null) {
     console.log(`  Saving weather report for ${airportList} to database...`);
     await prisma.weatherReport.createMany({
-      data: airportIds.map(airportId => ({
+      data: weatherData.map(data => ({
         id: data.metar_id,
-        airportId,
+        airportId: data.icaoId,
         obsTime: fromUnixTime(data.obsTime),
         temp: data.temp,
         dewp: data.dewp,
-        wdir: data.wdir,
+        wdir: data.wdir.toString(),
         wspd: data.wspd,
         wgst: data.wgst ?? 0,
         visib: data.visib.toString(),
