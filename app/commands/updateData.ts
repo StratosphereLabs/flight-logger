@@ -10,6 +10,7 @@ import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
 import { updateFlightRegistrationData } from './updateFlightRegistrationData';
 import { updateFlightTimesData } from './updateFlightTimesData';
+import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
 import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (
@@ -31,6 +32,11 @@ const processFlightUpdate = async (
       }
       try {
         await updateFlightRegistrationData(flights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateOnTimePerformanceData(flights);
       } catch (err) {
         console.error(err);
       }
@@ -91,12 +97,14 @@ const updateFlightsHourly = async (): Promise<void> => {
         airline: true,
         departureAirport: {
           select: {
+            id: true,
             iata: true,
             timeZone: true,
           },
         },
         arrivalAirport: {
           select: {
+            id: true,
             iata: true,
             timeZone: true,
           },
@@ -155,12 +163,14 @@ const updateFlightsEvery15 = async (): Promise<void> => {
         airline: true,
         departureAirport: {
           select: {
+            id: true,
             iata: true,
             timeZone: true,
           },
         },
         arrivalAirport: {
           select: {
+            id: true,
             iata: true,
             timeZone: true,
           },
@@ -223,12 +233,14 @@ const updateFlightsEvery5 = async (): Promise<void> => {
         airline: true,
         departureAirport: {
           select: {
+            id: true,
             iata: true,
             timeZone: true,
           },
         },
         arrivalAirport: {
           select: {
+            id: true,
             iata: true,
             timeZone: true,
           },

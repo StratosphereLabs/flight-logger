@@ -6,6 +6,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import {
   updateFlightRegistrationData,
   updateFlightTimesData,
+  updateOnTimePerformanceData,
 } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { fetchFlightAwareDataByFlightNumber } from '../data/flightAware';
@@ -168,6 +169,7 @@ export const flightDataRouter = router({
       });
       await updateFlightTimesData([newFlight]);
       await updateFlightRegistrationData([newFlight]);
+      await updateOnTimePerformanceData([newFlight]);
     }),
 });
 

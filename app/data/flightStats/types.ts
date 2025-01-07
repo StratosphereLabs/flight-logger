@@ -266,3 +266,93 @@ export interface FlightStatsFlightData {
   flight: FlightStatsFlight;
   otherDays: FlightStatsOtherDay[];
 }
+
+export interface FlightStatsOnTimePerformanceRating {
+  airline: {
+    fs: string;
+    iata: string;
+    icao: string;
+    name: string;
+    active: boolean;
+    category: string;
+    flightNumber: string;
+  };
+  departureAirport: {
+    fs: string;
+    iata: string;
+    icao: string;
+    name: string;
+    city: string;
+    state: string;
+    country: string;
+    active: boolean;
+    classification: number;
+    timeZoneRegionName: string;
+  };
+  arrivalAirport: {
+    fs: string;
+    iata: string;
+    icao: string;
+    name: string;
+    city: string;
+    state: string;
+    country: string;
+    active: boolean;
+    classification: number;
+    timeZoneRegionName: string;
+  };
+  flightNumber: string;
+  chart: {
+    onTime: number;
+    late: number;
+    veryLate: number;
+    excessive: number;
+    cancelled: number;
+    diverted: number;
+  };
+  statistics: {
+    totalObservations: number;
+    delayObservations: number;
+    codeshares: number;
+    mean: number;
+    standardDeviation: number;
+    min: number;
+    max: number;
+  };
+  details: {
+    overall: {
+      stars: number;
+      roundedStars: number;
+      appraisal: string;
+      ontimePercent: number;
+      cumulative: number;
+      delayMean: number;
+    };
+    otp: {
+      stars: number;
+      roundedStars: number;
+      appraisal: string;
+      ontimePercent: number;
+      cumulative: number;
+    };
+    delayPerformance: {
+      stars: number;
+      roundedStars: number;
+      appraisal: string;
+      cumulative: number;
+      delayMean: number;
+      standardDeviation: number;
+    };
+  };
+  otherStops: [];
+}
+
+export interface FlightStatsOnTimePerformanceResponse {
+  OnTimePerformance: {
+    error: null;
+    loadAttempts: number;
+    loading: boolean;
+    loaded: boolean;
+    ratings: FlightStatsOnTimePerformanceRating[];
+  };
+}

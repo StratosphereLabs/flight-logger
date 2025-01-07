@@ -339,6 +339,29 @@ model WeatherReport {
   @@map("weather_report")
 }
 
+model OnTimePerformanceRating {
+  airlineId           String
+  flightNumber        Int
+  departureAirportId  String
+  validFrom           DateTime
+  validTo             DateTime
+  onTime              Int
+  late                Int
+  veryLate            Int
+  excessive           Int
+  cancelled           Int
+  diverted            Int
+  totalObservations   Int
+  delayObservations   Int
+  mean                Float
+  standardDeviation   Float
+  min                 Int
+  max                 Int
+  onTimePercent       Int
+  @@id([airlineId, flightNumber, departureAirportId, validFrom, validTo])
+  @@map("on_time_performance_rating")
+}
+
 enum FlightClass {
   BASIC
   ECONOMY

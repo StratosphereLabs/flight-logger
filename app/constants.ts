@@ -17,6 +17,7 @@ export const DATE_FORMAT_WITH_DAY = 'EEE, LLL d';
 export const DATE_FORMAT_ISO = 'yyyy-MM-dd';
 export const TIME_FORMAT_12H = 'h:mm aaa';
 export const TIME_FORMAT_24H = 'HH:mm';
+export const ON_TIME_PERFORMANCE_DATE_FORMAT = 'dd-LLL-yyyy';
 
 export const METERS_IN_MILE = 1609.344;
 

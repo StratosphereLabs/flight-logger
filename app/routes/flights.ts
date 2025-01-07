@@ -7,6 +7,7 @@ import {
   updateFlightChangeData,
   updateFlightRegistrationData,
   updateFlightTimesData,
+  updateOnTimePerformanceData,
 } from '../commands';
 import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
@@ -689,6 +690,7 @@ export const flightsRouter = router({
       });
       await updateFlightRegistrationData([flight]);
       await updateTripTimes(flight.tripId);
+      await updateOnTimePerformanceData([flight]);
       const updatedFlight = await prisma.flight.findUnique({
         where: {
           id: flight.id,
@@ -744,20 +746,33 @@ export const flightsRouter = router({
         outTimeValue: input.outTimeValue,
         inTimeValue: input.inTimeValue,
       });
-      const clearFlightData =
-        !isEqual(outTime, flight.outTime) || !isEqual(inTime, flight.inTime);
+      const flightDataChanged =
+        !isEqual(outTime, flight.outTime) ||
+        !isEqual(inTime, flight.inTime) ||
+        flight.airlineId !== (input.airline?.id ?? null) ||
+        flight.flightNumber !== input.flightNumber ||
+        flight.departureAirportId !== input.departureAirport.id ||
+        flight.arrivalAirportId !== input.arrivalAirport.id;
       const updatedData = {
         flightNumber: input.flightNumber,
         tailNumber: input.airframe?.registration ?? null,
         outTime,
-        outTimeActual: clearFlightData ? null : undefined,
-        offTime: clearFlightData ? null : undefined,
-        offTimeActual: clearFlightData ? null : undefined,
-        onTime: clearFlightData ? null : undefined,
-        onTimeActual: clearFlightData ? null : undefined,
+        outTimeActual: flightDataChanged ? null : undefined,
+        offTime: flightDataChanged ? null : undefined,
+        offTimeActual: flightDataChanged ? null : undefined,
+        onTime: flightDataChanged ? null : undefined,
+        onTimeActual: flightDataChanged ? null : undefined,
         inTime,
-        inTimeActual: clearFlightData ? null : undefined,
+        inTimeActual: flightDataChanged ? null : undefined,
         duration,
+        flightRadarStatus: flightDataChanged ? null : undefined,
+        departureGate: flightDataChanged ? null : undefined,
+        departureTerminal: flightDataChanged ? null : undefined,
+        arrivalBaggage: flightDataChanged ? null : undefined,
+        arrivalGate: flightDataChanged ? null : undefined,
+        arrivalTerminal: flightDataChanged ? null : undefined,
+        tracklog: flightDataChanged ? [] : undefined,
+        waypoints: flightDataChanged ? [] : undefined,
         class: input.class,
         seatNumber: input.seatNumber,
         seatPosition: input.seatPosition,
@@ -801,18 +816,18 @@ export const flightsRouter = router({
           ...updatedData,
           airframe: {
             connect:
-              !clearFlightData && input.airframe?.type === 'existing'
+              !flightDataChanged && input.airframe?.type === 'existing'
                 ? {
                     icao24: input.airframe.icao24,
                   }
                 : undefined,
             disconnect:
-              clearFlightData || input.airframe?.type !== 'existing'
+              flightDataChanged || input.airframe?.type !== 'existing'
                 ? true
                 : undefined,
           },
           tailNumber:
-            !clearFlightData && input.airframe !== null
+            !flightDataChanged && input.airframe !== null
               ? input.airframe.registration
               : null,
         },
@@ -833,10 +848,11 @@ export const flightsRouter = router({
         },
         ctx.user.id,
       );
-      if (clearFlightData) {
+      if (flightDataChanged) {
         await updateFlightTimesData([updatedFlightData]);
         await updateFlightRegistrationData([updatedFlightData]);
         await updateTripTimes(updatedFlightData.tripId);
+        await updateOnTimePerformanceData([updatedFlightData]);
       }
     }),
   deleteFlight: procedure
