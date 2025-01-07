@@ -13,7 +13,7 @@ import type {
 import { createNewDate } from '../utils';
 import type { FlightAwareDataResponse, FlightAwareDataResult } from './types';
 
-export const SCRIPT_BEGIN = 'var trackpollBootstrap = ';
+const SCRIPT_BEGIN = 'var trackpollBootstrap = ';
 
 const processData = (data: string): FlightAwareDataResponse | null => {
   const $ = load(data);

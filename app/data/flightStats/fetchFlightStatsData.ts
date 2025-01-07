@@ -19,7 +19,7 @@ import type {
   FlightStatsFlightData,
 } from './types';
 
-export const SCRIPT_BEGIN = '__NEXT_DATA__ = ';
+const SCRIPT_BEGIN = '__NEXT_DATA__ = ';
 
 const processData = (data: string): FlightStatsFlightData | null => {
   const $ = load(data);

@@ -4,6 +4,7 @@ import type { FlightTimestampsResult } from '../utils';
 import type { FlightAwareTracklogItem } from './flightAware/types';
 
 export interface FlightWithDataAirport {
+  id: string;
   iata: string;
   timeZone: string;
 }
@@ -18,6 +19,12 @@ export interface FetchFlightsByFlightNumberParams {
   customUrl?: string;
   flightNumber: number;
   isoDate: string;
+}
+
+export interface FetchOnTimePerformanceDataParams {
+  airlineIata: string;
+  flightNumber: number;
+  departureIata: string;
 }
 
 export interface FetchFlightDataParams
