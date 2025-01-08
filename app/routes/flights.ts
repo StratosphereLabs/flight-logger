@@ -47,6 +47,7 @@ import {
   getToDate,
   getToStatusDate,
   parsePaginationRequest,
+  saveWeatherReports,
   transformFlightData,
 } from '../utils';
 
@@ -812,18 +813,16 @@ export const flightsRouter = router({
       await updateFlightRegistrationData([flight]);
       await updateTripTimes(flight.tripId);
       await updateOnTimePerformanceData([flight]);
-      const updatedFlight = await prisma.flight.findUnique({
-        where: {
-          id: flight.id,
+      await saveWeatherReports([
+        {
+          id: flight.departureAirportId,
+          date: flight.offTime ?? flight.outTime,
         },
-        include: flightIncludeObj,
-      });
-      if (updatedFlight === null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Flight not found.',
-        });
-      }
+        {
+          id: flight.arrivalAirportId,
+          date: flight.onTime ?? flight.inTime,
+        },
+      ]);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -974,6 +973,16 @@ export const flightsRouter = router({
         await updateFlightRegistrationData([updatedFlightData]);
         await updateTripTimes(updatedFlightData.tripId);
         await updateOnTimePerformanceData([updatedFlightData]);
+        await saveWeatherReports([
+          {
+            id: updatedFlightData.departureAirportId,
+            date: updatedFlightData.offTime ?? updatedFlightData.outTime,
+          },
+          {
+            id: updatedFlightData.arrivalAirportId,
+            date: updatedFlightData.onTime ?? updatedFlightData.inTime,
+          },
+        ]);
       }
     }),
   deleteFlight: procedure

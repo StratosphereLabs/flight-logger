@@ -82,14 +82,14 @@ export const updateFlightRegistrationData = async (
     ['SCHEDULED', 'DEPARTED_TAXIING'].includes(flights[0].flightRadarStatus) &&
     updatedData.flightRadarStatus === 'EN_ROUTE'
   ) {
-    await saveWeatherReports([flights[0].departureAirportId]);
+    await saveWeatherReports([{ id: flights[0].departureAirportId }]);
   }
   if (
     updatedData.flightRadarStatus !== null &&
     flights[0].flightRadarStatus === 'EN_ROUTE' &&
     ['LANDED_TAXIING', 'ARRIVED'].includes(updatedData.flightRadarStatus)
   ) {
-    await saveWeatherReports([flights[0].arrivalAirportId]);
+    await saveWeatherReports([{ id: flights[0].arrivalAirportId }]);
   }
   await prisma.flight.updateMany({
     where: {

@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { fromUnixTime } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import groupBy from 'lodash.groupby';
 
+import { TIMESTAMP_FORMAT_ISO } from '../constants';
 import { prisma } from '../db';
 
 export interface AviationWeatherReport {
@@ -45,13 +48,18 @@ export interface AviationWeatherReport {
 }
 
 export const fetchWeatherReportsByAirportIds = async (
-  airportIds: string[],
+  airports: Array<{ id: string; date?: Date }>,
 ): Promise<AviationWeatherReport[] | null> => {
+  const groupedAirports = groupBy(airports, 'date');
   try {
-    const response = await axios.get<AviationWeatherReport[]>(
-      `https://aviationweather.gov/api/data/metar?ids=${airportIds.join(',')}&format=json`,
+    const responses = await Promise.all(
+      Object.values(groupedAirports).map(airports =>
+        axios.get<AviationWeatherReport[]>(
+          `https://aviationweather.gov/api/data/metar?ids=${airports.map(({ id }) => id).join(',')}&format=json${airports[0].date !== undefined ? `&date=${formatInTimeZone(airports[0].date, 'UTC', TIMESTAMP_FORMAT_ISO)}` : ''}`,
+        ),
+      ),
     );
-    return response.data;
+    return responses.flatMap(({ data }) => data);
   } catch (err) {
     console.error(err);
     return null;
@@ -59,11 +67,11 @@ export const fetchWeatherReportsByAirportIds = async (
 };
 
 export const saveWeatherReports = async (
-  airportIds: string[],
+  airports: Array<{ id: string; date?: Date }>,
 ): Promise<void> => {
-  const airportList = airportIds.join(',');
+  const airportList = airports.map(({ id }) => id).join(',');
   console.log(`Fetching weather reports for ${airportList}...`);
-  const weatherData = await fetchWeatherReportsByAirportIds(airportIds);
+  const weatherData = await fetchWeatherReportsByAirportIds(airports);
   if (weatherData !== null) {
     console.log(`  Saving weather reports for ${airportList} to database...`);
     await prisma.weatherReport.createMany({
