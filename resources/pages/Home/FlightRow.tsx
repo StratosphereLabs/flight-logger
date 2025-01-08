@@ -8,6 +8,7 @@ import {
   FlightChangelogTable,
   FlightTimesDisplay,
   OnTimePerformanceChart,
+  WeatherInfo,
 } from '../../common/components';
 import {
   CARD_BORDER_COLORS,
@@ -244,6 +245,7 @@ export const FlightRow = ({
       {isActive ? (
         <>
           <OnTimePerformanceChart flightId={flight.id} />
+          <WeatherInfo flightId={flight.id} />
           <FlightChangelogTable flightId={flight.id} />
         </>
       ) : null}

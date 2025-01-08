@@ -8,6 +8,7 @@ import {
   FlightTimesDisplay,
   OnTimePerformanceChart,
   PlaneSolidIcon,
+  WeatherInfo,
 } from '../../../../common/components';
 import {
   CARD_BORDER_COLORS,
@@ -360,6 +361,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
           {isActive ? (
             <>
               <OnTimePerformanceChart flightId={data.id} />
+              <WeatherInfo flightId={data.id} />
               <FlightChangelogTable flightId={data.id} />
             </>
           ) : null}
