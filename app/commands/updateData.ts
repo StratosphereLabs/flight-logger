@@ -40,6 +40,20 @@ const processFlightUpdate = async (
       } catch (err) {
         console.error(err);
       }
+      try {
+        await saveWeatherReports(
+          [
+            ...new Set(
+              flights.flatMap(({ departureAirportId, arrivalAirportId }) => [
+                departureAirportId,
+                arrivalAirportId,
+              ]),
+            ),
+          ].map(id => ({ id })),
+        );
+      } catch (err) {
+        console.error(err);
+      }
     },
     {
       concurrency: UPDATE_CONCURRENCY,
@@ -178,14 +192,6 @@ const updateFlightsEvery15 = async (): Promise<void> => {
       },
     });
     await processFlightUpdate(flightsToUpdate);
-    await saveWeatherReports([
-      ...new Set(
-        flightsToUpdate.flatMap(({ departureAirportId, arrivalAirportId }) => [
-          departureAirportId,
-          arrivalAirportId,
-        ]),
-      ),
-    ]);
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);

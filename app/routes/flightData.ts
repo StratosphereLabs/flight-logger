@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { TRPCError, type inferRouterOutputs } from '@trpc/server';
-import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import {
@@ -9,45 +8,28 @@ import {
   updateOnTimePerformanceData,
 } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
-import { fetchFlightAwareDataByFlightNumber } from '../data/flightAware';
 import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
-import { fetchFlightStatsDataByFlightNumber } from '../data/flightStats';
-import type {
-  FlightSearchDataFetchResult,
-  FlightSearchDataResult,
-} from '../data/types';
+import type { FlightSearchDataResult } from '../data/types';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import { addFlightFromDataSchema, searchFlightDataSchema } from '../schemas';
 import { procedure, router } from '../trpc';
-import { getDurationMinutes, getFlightTimestamps } from '../utils';
+import {
+  getDurationMinutes,
+  getFlightTimestamps,
+  saveWeatherReports,
+} from '../utils';
 
 export const flightDataRouter = router({
   fetchFlightsByFlightNumber: procedure
     .input(searchFlightDataSchema)
     .query(async ({ input }) => {
       const { airline, flightNumber, outDateISO } = input;
-      const inFuture = isFuture(new Date(input.outDateISO));
-      let flights: FlightSearchDataFetchResult[] | null = null;
-      if (inFuture) {
-        flights = await fetchFlightRadarDataByFlightNumber({
-          airline: airline!,
-          flightNumber: flightNumber!,
-          isoDate: outDateISO,
-        });
-      } else if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightaware') {
-        flights = await fetchFlightAwareDataByFlightNumber({
-          airline: airline!,
-          flightNumber: flightNumber!,
-          isoDate: outDateISO,
-        });
-      } else if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightstats') {
-        flights = await fetchFlightStatsDataByFlightNumber({
-          airline: airline!,
-          flightNumber: flightNumber!,
-          isoDate: outDateISO,
-        });
-      }
+      const flights = await fetchFlightRadarDataByFlightNumber({
+        airline: airline!,
+        flightNumber: flightNumber!,
+        isoDate: outDateISO,
+      });
       if (flights === null) return [];
       const flightData: FlightSearchDataResult[] = flights.flatMap(
         (flight, index) => {
@@ -170,6 +152,16 @@ export const flightDataRouter = router({
       await updateFlightTimesData([newFlight]);
       await updateFlightRegistrationData([newFlight]);
       await updateOnTimePerformanceData([newFlight]);
+      await saveWeatherReports([
+        {
+          id: newFlight.departureAirportId,
+          date: newFlight.offTime ?? newFlight.outTime,
+        },
+        {
+          id: newFlight.arrivalAirportId,
+          date: newFlight.onTime ?? newFlight.inTime,
+        },
+      ]);
     }),
 });
 
