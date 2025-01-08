@@ -6,6 +6,7 @@ import {
   FlightChangelogTable,
   OnTimePerformanceChart,
   RightArrowIcon,
+  WeatherInfo,
 } from '../../common/components';
 import { useFlightsPageStore } from './flightsPageStore';
 
@@ -107,6 +108,7 @@ export const ViewFlightModal = (): JSX.Element => {
       {activeFlight !== null ? (
         <>
           <OnTimePerformanceChart flightId={activeFlight.id} />
+          <WeatherInfo flightId={activeFlight.id} />
           <FlightChangelogTable className="mt-4" flightId={activeFlight.id} />
         </>
       ) : null}

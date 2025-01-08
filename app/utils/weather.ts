@@ -1,3 +1,4 @@
+import type { WeatherReport } from '@prisma/client';
 import axios from 'axios';
 import { fromUnixTime } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -5,6 +6,12 @@ import groupBy from 'lodash.groupby';
 
 import { TIMESTAMP_FORMAT_ISO } from '../constants';
 import { prisma } from '../db';
+
+export interface WeatherReportCloudCoverItem {
+  [x: string]: string | number | null;
+  cover: string;
+  base: number | null;
+}
 
 export interface AviationWeatherReport {
   metar_id: number;
@@ -41,11 +48,27 @@ export interface AviationWeatherReport {
   elev: number;
   prior: number;
   name: string;
-  clouds: Array<{
-    cover: string;
-    base: number;
-  }>;
+  clouds: WeatherReportCloudCoverItem[];
 }
+
+export interface WeatherReportData extends Omit<WeatherReport, 'clouds'> {
+  clouds: WeatherReportCloudCoverItem[];
+}
+
+export const getWeatherReportCloudCoverData = (
+  weatherReport: WeatherReport | null,
+): WeatherReportData | null =>
+  weatherReport !== null
+    ? {
+        ...weatherReport,
+        clouds:
+          weatherReport.clouds !== null &&
+          typeof weatherReport.clouds === 'object' &&
+          Array.isArray(weatherReport.clouds)
+            ? (weatherReport.clouds as unknown as WeatherReportCloudCoverItem[])
+            : [],
+      }
+    : null;
 
 export const fetchWeatherReportsByAirportIds = async (
   airports: Array<{ id: string; date?: Date }>,

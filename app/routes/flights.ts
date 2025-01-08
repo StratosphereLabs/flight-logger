@@ -46,6 +46,7 @@ import {
   getRoutes,
   getToDate,
   getToStatusDate,
+  getWeatherReportCloudCoverData,
   parsePaginationRequest,
   saveWeatherReports,
   transformFlightData,
@@ -185,9 +186,9 @@ export const flightsRouter = router({
                 ].reverse(),
               }
             : null,
-        departureWeather,
-        arrivalWeather,
-        diversionWeather,
+        departureWeather: getWeatherReportCloudCoverData(departureWeather),
+        arrivalWeather: getWeatherReportCloudCoverData(arrivalWeather),
+        diversionWeather: getWeatherReportCloudCoverData(diversionWeather),
       };
     }),
   getFlightChangelog: procedure

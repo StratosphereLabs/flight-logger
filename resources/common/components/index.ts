@@ -14,3 +14,4 @@ export * from './SearchButton';
 export * from './ThemeButton';
 export * from './UserFlightsTable';
 export * from './UserInput';
+export * from './WeatherInfo';
