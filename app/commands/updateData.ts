@@ -5,12 +5,12 @@ import { scheduleJob } from 'node-schedule';
 
 import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
+import { updateFlightWeatherReports } from '../utils';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
 import { updateFlightRegistrationData } from './updateFlightRegistrationData';
 import { updateFlightTimesData } from './updateFlightTimesData';
 import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
-import { updateWeatherData } from './updateWeatherData';
 import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (
@@ -41,7 +41,7 @@ const processFlightUpdate = async (
         console.error(err);
       }
       try {
-        await updateWeatherData(flights);
+        await updateFlightWeatherReports(flights);
       } catch (err) {
         console.error(err);
       }

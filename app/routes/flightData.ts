@@ -6,7 +6,6 @@ import {
   updateFlightRegistrationData,
   updateFlightTimesData,
   updateOnTimePerformanceData,
-  updateWeatherData,
 } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
@@ -15,7 +14,11 @@ import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import { addFlightFromDataSchema, searchFlightDataSchema } from '../schemas';
 import { procedure, router } from '../trpc';
-import { getDurationMinutes, getFlightTimestamps } from '../utils';
+import {
+  getDurationMinutes,
+  getFlightTimestamps,
+  updateFlightWeatherReports,
+} from '../utils';
 
 export const flightDataRouter = router({
   fetchFlightsByFlightNumber: procedure
@@ -150,7 +153,7 @@ export const flightDataRouter = router({
       await updateFlightTimesData([newFlight]);
       await updateFlightRegistrationData([newFlight]);
       await updateOnTimePerformanceData([newFlight]);
-      await updateWeatherData([newFlight]);
+      await updateFlightWeatherReports([newFlight]);
     }),
 });
 
