@@ -10,6 +10,7 @@ import {
   updateFlightTimesData,
   updateOnTimePerformanceData,
 } from '../commands';
+import type { FlightWithData } from '../commands/types';
 import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
@@ -779,10 +780,10 @@ export const flightsRouter = router({
           airline: true,
         },
       });
-      await updateFlightRegistrationData([flight]);
+      const updatedFlights = await updateFlightRegistrationData([flight]);
       await updateTripTimes(flight.tripId);
-      await updateOnTimePerformanceData([flight]);
-      await updateFlightWeatherReports([flight]);
+      await updateOnTimePerformanceData(updatedFlights ?? [flight]);
+      await updateFlightWeatherReports(updatedFlights ?? [flight]);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -930,11 +931,17 @@ export const flightsRouter = router({
         ctx.user.id,
       );
       if (flightDataChanged) {
-        await updateFlightTimesData([updatedFlight]);
-        await updateFlightRegistrationData([updatedFlight]);
-        await updateTripTimes(updatedFlight.tripId);
-        await updateOnTimePerformanceData([updatedFlight]);
-        await updateFlightWeatherReports([updatedFlight]);
+        let updatedTimesFlights: FlightWithData[] | null = null;
+        updatedTimesFlights = await updateFlightTimesData([updatedFlight]);
+        updatedTimesFlights = await updateFlightRegistrationData(
+          updatedTimesFlights ?? [updatedFlight],
+        );
+        await updateOnTimePerformanceData(
+          updatedTimesFlights ?? [updatedFlight],
+        );
+        await updateFlightWeatherReports(
+          updatedTimesFlights ?? [updatedFlight],
+        );
       }
     }),
   deleteFlight: procedure

@@ -25,23 +25,26 @@ const processFlightUpdate = async (
     Object.entries(groupedFlights),
     async ([key, flights]) => {
       console.log(`Updating flight ${key}...`);
+      let updatedFlights: FlightWithData[] | null = null;
       try {
-        await updateFlightTimesData(flights);
+        updatedFlights = await updateFlightTimesData(flights);
       } catch (err) {
         console.error(err);
       }
       try {
-        await updateFlightRegistrationData(flights);
+        updatedFlights = await updateFlightRegistrationData(
+          updatedFlights ?? flights,
+        );
       } catch (err) {
         console.error(err);
       }
       try {
-        await updateOnTimePerformanceData(flights);
+        await updateOnTimePerformanceData(updatedFlights ?? flights);
       } catch (err) {
         console.error(err);
       }
       try {
-        await updateFlightWeatherReports(flights);
+        await updateFlightWeatherReports(updatedFlights ?? flights);
       } catch (err) {
         console.error(err);
       }
