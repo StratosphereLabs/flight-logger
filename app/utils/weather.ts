@@ -150,6 +150,13 @@ export const updateFlightWeatherReports = async (
   if (diversionAirportId !== null) {
     diversionWeather = await fetchSingleReport(diversionAirportId, arrivalTime);
   }
+  if (
+    departureWeather === null &&
+    arrivalWeather === null &&
+    diversionWeather === null
+  ) {
+    return;
+  }
   console.log(
     `Updating weather data for ${airline?.iata}${flightNumber} ${departureAirport.iata}-${arrivalAirport.iata} at ${outTime.toISOString()}...`,
   );
