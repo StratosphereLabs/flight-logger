@@ -111,6 +111,9 @@ model Flight {
   callsign           String?
   aircraftTypeId     String?
   tailNumber         String?
+  departureWeatherId Int?
+  arrivalWeatherId   Int?
+  diversionWeatherId Int?
   class              FlightClass?
   seatNumber         String?
   seatPosition       SeatPosition?
@@ -138,7 +141,7 @@ model Flight {
   tracklog           Json?
   waypoints          Json?
   flightAwareLink    String?
-  aircraftType       AircraftType?   @relation(fields: [aircraftTypeId], references: [id])
+  aircraftType       AircraftType?    @relation(fields: [aircraftTypeId], references: [id])
   airframe           Airframe?        @relation(fields: [airframeId], references: [icao24])
   airline            Airline?         @relation("flights", fields: [airlineId], references: [id])
   arrivalAirport     Airport          @relation("arrivalFlights", fields: [arrivalAirportId], references: [id])
@@ -148,6 +151,9 @@ model Flight {
   trip               Trip?            @relation(fields: [tripId], references: [id])
   user               User             @relation("UserFlights", fields: [userId], references: [id])
   addedByUser        User?            @relation("UserFlightsAdded", fields: [addedByUserId], references: [id])
+  departureWeather   WeatherReport?   @relation("departureWeather", fields: [departureWeatherId], references: [id])
+  arrivalWeather     WeatherReport?   @relation("arrivalWeather", fields: [arrivalWeatherId], references: [id])
+  diversionWeather   WeatherReport?   @relation("diversionWeather", fields: [diversionWeatherId], references: [id])
   updates            FlightUpdateCommit[]
 
   @@index([outTime, inTime])
@@ -337,6 +343,9 @@ model WeatherReport {
   vertVis           Int?
   rawOb             String
   clouds            Json[]
+  departureFlights  Flight[]          @relation("departureWeather")
+  arrivalFlights    Flight[]          @relation("arrivalWeather")
+  diversionFlights  Flight[]          @relation("diversionWeather")
 
   @@index([airportId, obsTime])
   @@map("weather_report")

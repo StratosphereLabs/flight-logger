@@ -9,6 +9,7 @@ import {
   updateFlightRegistrationData,
   updateFlightTimesData,
   updateOnTimePerformanceData,
+  updateWeatherData,
 } from '../commands';
 import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
@@ -48,7 +49,6 @@ import {
   getToStatusDate,
   getWeatherReportCloudCoverData,
   parsePaginationRequest,
-  saveWeatherReports,
   transformFlightData,
 } from '../utils';
 
@@ -82,6 +82,9 @@ export const flightsRouter = router({
         },
         include: {
           airline: true,
+          departureWeather: true,
+          arrivalWeather: true,
+          diversionWeather: true,
         },
       });
       if (flight === null) {
@@ -104,46 +107,6 @@ export const flightsRouter = router({
           },
         });
       }
-      const [departureWeather, arrivalWeather, diversionWeather = null] =
-        await prisma.$transaction([
-          prisma.weatherReport.findFirst({
-            where: {
-              airportId: flight.departureAirportId,
-              obsTime: {
-                lte: flight.offTime ?? flight.outTime,
-              },
-            },
-            orderBy: {
-              obsTime: 'desc',
-            },
-          }),
-          prisma.weatherReport.findFirst({
-            where: {
-              airportId: flight.arrivalAirportId,
-              obsTime: {
-                lte: flight.onTime ?? flight.inTime,
-              },
-            },
-            orderBy: {
-              obsTime: 'desc',
-            },
-          }),
-          ...(flight.diversionAirportId !== null
-            ? [
-                prisma.weatherReport.findFirst({
-                  where: {
-                    airportId: flight.diversionAirportId,
-                    obsTime: {
-                      lte: flight.onTime ?? flight.inTime,
-                    },
-                  },
-                  orderBy: {
-                    obsTime: 'desc',
-                  },
-                }),
-              ]
-            : []),
-        ]);
       return {
         onTimePerformance:
           onTimePerformance !== null
@@ -186,9 +149,13 @@ export const flightsRouter = router({
                 ].reverse(),
               }
             : null,
-        departureWeather: getWeatherReportCloudCoverData(departureWeather),
-        arrivalWeather: getWeatherReportCloudCoverData(arrivalWeather),
-        diversionWeather: getWeatherReportCloudCoverData(diversionWeather),
+        departureWeather: getWeatherReportCloudCoverData(
+          flight.departureWeather,
+        ),
+        arrivalWeather: getWeatherReportCloudCoverData(flight.arrivalWeather),
+        diversionWeather: getWeatherReportCloudCoverData(
+          flight.diversionWeather,
+        ),
       };
     }),
   getFlightChangelog: procedure
@@ -808,22 +775,14 @@ export const flightsRouter = router({
         include: {
           departureAirport: true,
           arrivalAirport: true,
+          diversionAirport: true,
           airline: true,
         },
       });
       await updateFlightRegistrationData([flight]);
       await updateTripTimes(flight.tripId);
       await updateOnTimePerformanceData([flight]);
-      await saveWeatherReports([
-        {
-          id: flight.departureAirportId,
-          date: flight.offTime ?? flight.outTime,
-        },
-        {
-          id: flight.arrivalAirportId,
-          date: flight.onTime ?? flight.inTime,
-        },
-      ]);
+      await updateWeatherData([flight]);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -901,7 +860,7 @@ export const flightsRouter = router({
         comments: input.comments,
         trackingLink: input.trackingLink,
       };
-      const updatedFlightData = await prisma.flight.update({
+      const updatedFlight = await prisma.flight.update({
         where: {
           id,
         },
@@ -956,6 +915,7 @@ export const flightsRouter = router({
           airline: true,
           departureAirport: true,
           arrivalAirport: true,
+          diversionAirport: true,
         },
       });
       await updateFlightChangeData(
@@ -970,20 +930,11 @@ export const flightsRouter = router({
         ctx.user.id,
       );
       if (flightDataChanged) {
-        await updateFlightTimesData([updatedFlightData]);
-        await updateFlightRegistrationData([updatedFlightData]);
-        await updateTripTimes(updatedFlightData.tripId);
-        await updateOnTimePerformanceData([updatedFlightData]);
-        await saveWeatherReports([
-          {
-            id: updatedFlightData.departureAirportId,
-            date: updatedFlightData.offTime ?? updatedFlightData.outTime,
-          },
-          {
-            id: updatedFlightData.arrivalAirportId,
-            date: updatedFlightData.onTime ?? updatedFlightData.inTime,
-          },
-        ]);
+        await updateFlightTimesData([updatedFlight]);
+        await updateFlightRegistrationData([updatedFlight]);
+        await updateTripTimes(updatedFlight.tripId);
+        await updateOnTimePerformanceData([updatedFlight]);
+        await updateWeatherData([updatedFlight]);
       }
     }),
   deleteFlight: procedure
