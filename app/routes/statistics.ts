@@ -259,10 +259,13 @@ export const statisticsRouter = router({
         }
         routeDataMap[key].flights++;
       }
-      return Object.values(routeDataMap)
-        .sort((a, b) => b.flights - a.flights)
-        .slice(skip, skip + take)
-        .reverse();
+      return {
+        count: Object.keys(routeDataMap).length,
+        chartData: Object.values(routeDataMap)
+          .sort((a, b) => b.flights - a.flights)
+          .slice(skip, skip + take)
+          .reverse(),
+      };
     }),
   getTopAirlines: procedure
     .input(getUserTopAirlinesSchema)
@@ -342,6 +345,7 @@ export const statisticsRouter = router({
           airlineDataMap[airlineKey] = {
             id: flight.airline.id,
             airline: airlineKey,
+            name: flight.airline.name,
             flights: 0,
             distance: 0,
             duration: 0,
@@ -358,18 +362,21 @@ export const statisticsRouter = router({
         airlineData.distance += distance;
         airlineData.duration += flight.duration;
       }
-      return Object.values(airlineDataMap)
-        .sort((a, b) => {
-          if (input.mode === 'distance') return b.distance - a.distance;
-          if (input.mode === 'duration') return b.duration - a.duration;
-          return b.flights - a.flights;
-        })
-        .slice(skip, skip + take)
-        .map(result => ({
-          ...result,
-          distance: Math.round(result.distance),
-        }))
-        .reverse();
+      return {
+        count: Object.keys(airlineDataMap).length,
+        chartData: Object.values(airlineDataMap)
+          .sort((a, b) => {
+            if (input.mode === 'distance') return b.distance - a.distance;
+            if (input.mode === 'duration') return b.duration - a.duration;
+            return b.flights - a.flights;
+          })
+          .slice(skip, skip + take)
+          .map(result => ({
+            ...result,
+            distance: Math.round(result.distance),
+          }))
+          .reverse(),
+      };
     }),
   getTopAirports: procedure
     .input(getUserTopAirportsSchema)
@@ -445,6 +452,7 @@ export const statisticsRouter = router({
             airportDataMap[departureAirportId] = {
               id: departureAirportId,
               airport: flight.departureAirport.iata,
+              name: flight.departureAirport.name,
               flights: 0,
             };
           }
@@ -456,16 +464,20 @@ export const statisticsRouter = router({
             airportDataMap[arrivalAirportId] = {
               id: arrivalAirportId,
               airport: flight.arrivalAirport.iata,
+              name: flight.arrivalAirport.name,
               flights: 0,
             };
           }
           airportDataMap[arrivalAirportId].flights++;
         }
       }
-      return Object.values(airportDataMap)
-        .sort((a, b) => b.flights - a.flights)
-        .slice(skip, skip + take)
-        .reverse();
+      return {
+        count: Object.keys(airportDataMap).length,
+        chartData: Object.values(airportDataMap)
+          .sort((a, b) => b.flights - a.flights)
+          .slice(skip, skip + take)
+          .reverse(),
+      };
     }),
   getTopAircraftTypes: procedure
     .input(getUserTopAircraftTypesSchema)
@@ -550,6 +562,7 @@ export const statisticsRouter = router({
           aircraftTypeDataMap[icao] = {
             id: aircraftType.id,
             aircraftType: icao,
+            name: aircraftType.name,
             flights: 0,
             distance: 0,
             duration: 0,
@@ -566,18 +579,21 @@ export const statisticsRouter = router({
         aircraftTypeData.distance += distance;
         aircraftTypeData.duration += flight.duration;
       }
-      return Object.values(aircraftTypeDataMap)
-        .sort((a, b) => {
-          if (input.mode === 'distance') return b.distance - a.distance;
-          if (input.mode === 'duration') return b.duration - a.duration;
-          return b.flights - a.flights;
-        })
-        .slice(skip, skip + take)
-        .map(result => ({
-          ...result,
-          distance: Math.round(result.distance),
-        }))
-        .reverse();
+      return {
+        count: Object.keys(aircraftTypeDataMap).length,
+        chartData: Object.values(aircraftTypeDataMap)
+          .sort((a, b) => {
+            if (input.mode === 'distance') return b.distance - a.distance;
+            if (input.mode === 'duration') return b.duration - a.duration;
+            return b.flights - a.flights;
+          })
+          .slice(skip, skip + take)
+          .map(result => ({
+            ...result,
+            distance: Math.round(result.distance),
+          }))
+          .reverse(),
+      };
     }),
   getTopCountries: procedure
     .input(getUserTopCountriesSchema)
@@ -683,10 +699,13 @@ export const statisticsRouter = router({
           countriesDataMap[arrivalCountryId].flights++;
         }
       }
-      return Object.values(countriesDataMap)
-        .sort((a, b) => b.flights - a.flights)
-        .slice(skip, skip + take)
-        .reverse();
+      return {
+        count: Object.keys(countriesDataMap).length,
+        chartData: Object.values(countriesDataMap)
+          .sort((a, b) => b.flights - a.flights)
+          .slice(skip, skip + take)
+          .reverse(),
+      };
     }),
   getReasonDistribution: procedure
     .input(getStatisticsDistributionSchema)

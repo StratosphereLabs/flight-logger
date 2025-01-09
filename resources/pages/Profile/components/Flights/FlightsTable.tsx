@@ -1,7 +1,7 @@
 import type { AircraftType, Airline, Airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { Table } from 'stratosphere-ui';
+import { Badge, Table } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
 
@@ -24,6 +24,26 @@ export const FlightsTable = ({
       }}
       className="table-xs w-full min-w-[375px] max-w-[750px] table-fixed border-separate lg:table-sm lg:min-w-[465px]"
       columns={[
+        {
+          id: 'year',
+          accessorKey: 'outTimeYear',
+          header: () => 'Year',
+          cell: ({ getValue }) => {
+            const outDateYear = getValue<string>();
+            return (
+              <Badge
+                className="badge-md font-normal text-white opacity-80"
+                color={
+                  outDateYear === new Date().getFullYear().toString()
+                    ? 'info'
+                    : 'secondary'
+                }
+              >
+                {outDateYear}
+              </Badge>
+            );
+          },
+        },
         {
           id: 'date',
           accessorKey: 'outTimeDate',
@@ -107,15 +127,6 @@ export const FlightsTable = ({
             );
           },
           footer: () => null,
-        },
-        {
-          id: 'duration',
-          accessorKey: 'durationStringAbbreviated',
-          header: () => 'Dur',
-          cell: ({ getValue }) => {
-            const duration = getValue<string>();
-            return <div className="font-mono opacity-75">{duration}</div>;
-          },
         },
         {
           id: 'aircraftType',

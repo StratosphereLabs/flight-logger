@@ -51,12 +51,14 @@ export const routeDataSchema = z.object({
 export const airportDataSchema = z.object({
   id: z.string(),
   airport: z.string(),
+  name: z.string(),
   flights: z.number().int().positive(),
 });
 
 export const airlineDataSchema = z.object({
   id: z.string(),
   airline: z.string(),
+  name: z.string(),
   flights: z.number().int().positive(),
   duration: z.number().int().positive(),
   distance: z.number().positive(),
@@ -65,6 +67,7 @@ export const airlineDataSchema = z.object({
 export const aircraftTypeDataSchema = z.object({
   id: z.string(),
   aircraftType: z.string(),
+  name: z.string(),
   flights: z.number().int().positive(),
   duration: z.number().int().positive(),
   distance: z.number().positive(),

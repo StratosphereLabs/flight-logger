@@ -103,32 +103,32 @@ export const StatisticsCard = ({
               filtersFormControl={filtersFormControl}
               selectedAirportId={selectedAirportId}
             />
+            <TopAircraftTypesChart
+              filtersFormControl={filtersFormControl}
+              selectedAirportId={selectedAirportId}
+            />
+            <TopCountriesChart
+              filtersFormControl={filtersFormControl}
+              selectedAirportId={selectedAirportId}
+            />
             {isStatsFullScreen ? (
               <>
-                <TopCountriesChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
-                <TopAircraftTypesChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
                 <TopRoutesChart
                   filtersFormControl={filtersFormControl}
                   selectedAirportId={selectedAirportId}
                 />
               </>
             ) : null}
-            <FlightTypePieChart
-              filtersFormControl={filtersFormControl}
-              selectedAirportId={selectedAirportId}
-            />
-            <FlightLengthRadarChart
-              filtersFormControl={filtersFormControl}
-              selectedAirportId={selectedAirportId}
-            />
             {isStatsFullScreen ? (
               <>
+                <FlightTypePieChart
+                  filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
+                />
+                <FlightLengthRadarChart
+                  filtersFormControl={filtersFormControl}
+                  selectedAirportId={selectedAirportId}
+                />
                 <FlightClassRadarChart
                   filtersFormControl={filtersFormControl}
                   selectedAirportId={selectedAirportId}
