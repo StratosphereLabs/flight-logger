@@ -1,9 +1,11 @@
-import type { WeatherReport } from '@prisma/client';
+import type { Prisma, WeatherReport } from '@prisma/client';
 import axios, { type AxiosResponse } from 'axios';
+import { fromUnixTime } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import type { FlightWithData } from '../commands/types';
 import { TIMESTAMP_FORMAT_ISO } from '../constants';
+import { prisma } from '../db';
 
 export interface WeatherReportCloudCoverItem {
   [x: string]: string | number | null;
@@ -68,73 +70,129 @@ export const getWeatherReportCloudCoverData = (
       }
     : null;
 
-export const getUrl = (
-  departureAirportId: string,
-  departureTime: Date,
-): string =>
+const getUrl = (departureAirportId: string, departureTime: Date): string =>
   `https://aviationweather.gov/api/data/metar?ids=${departureAirportId}&format=json&date=${formatInTimeZone(departureTime, 'UTC', TIMESTAMP_FORMAT_ISO)}`;
 
-export const fetchWeatherReports = async (
+const fetchSingleReport = async (
+  airportId: string,
+  time: Date,
+): Promise<AviationWeatherReport | null> => {
+  let departureResult: AxiosResponse<AviationWeatherReport[]> | undefined;
+  try {
+    console.log(
+      `Fetching weather report for ${airportId} at ${time.toISOString()}...`,
+    );
+    departureResult = await axios.get<AviationWeatherReport[]>(
+      getUrl(airportId, time),
+    );
+    console.log(
+      `  Found ${departureResult.data.length} result${departureResult.data.length !== 1 ? 's' : ''} for ${airportId} at ${time.toISOString()}.`,
+    );
+  } catch (err) {
+    console.log(
+      `  Unable to fetch weather report for ${airportId} at ${time.toISOString()}.`,
+    );
+    console.error(err);
+  }
+  return departureResult?.data[0] ?? null;
+};
+
+const getUpdateObject = (
+  data: AviationWeatherReport,
+): Prisma.WeatherReportCreateInput => ({
+  id: data.metar_id,
+  airport: {
+    connect: {
+      id: data.icaoId,
+    },
+  },
+  obsTime: fromUnixTime(data.obsTime),
+  temp: data.temp,
+  dewp: data.dewp,
+  wdir: data.wdir.toString(),
+  wspd: data.wspd,
+  wgst: data.wgst ?? 0,
+  visib: data.visib.toString(),
+  altim: data.altim,
+  wxString: data.wxString,
+  vertVis: data.vertVis,
+  rawOb: data.rawOb,
+  clouds: data.clouds,
+});
+
+export const updateFlightWeatherReports = async (
   flights: FlightWithData[],
-): Promise<Array<{
-  id: string;
-  departureWeather: AviationWeatherReport | null;
-  arrivalWeather: AviationWeatherReport | null;
-  diversionWeather: AviationWeatherReport | null;
-}> | null> =>
-  await Promise.all(
-    flights.map(
-      async ({
-        id,
-        arrivalAirportId,
-        departureAirportId,
-        diversionAirportId,
-        inTime,
-        inTimeActual,
-        offTime,
-        offTimeActual,
-        onTime,
-        onTimeActual,
-        outTime,
-        outTimeActual,
-      }) => {
-        const departureTime =
-          offTimeActual ?? offTime ?? outTimeActual ?? outTime;
-        const arrivalTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
-        let departureResult: AxiosResponse<AviationWeatherReport[]> | null =
-          null;
-        try {
-          departureResult = await axios.get<AviationWeatherReport[]>(
-            getUrl(departureAirportId, departureTime),
-          );
-        } catch (err) {
-          console.error(err);
-        }
-        let arrivalResult: AxiosResponse<AviationWeatherReport[]> | null = null;
-        try {
-          arrivalResult = await axios.get<AviationWeatherReport[]>(
-            getUrl(arrivalAirportId, arrivalTime),
-          );
-        } catch (err) {
-          console.error(err);
-        }
-        let diversionResult: AxiosResponse<AviationWeatherReport[]> | null =
-          null;
-        if (diversionAirportId !== null) {
-          try {
-            diversionResult = await axios.get<AviationWeatherReport[]>(
-              getUrl(diversionAirportId, arrivalTime),
-            );
-          } catch (err) {
-            console.error(err);
-          }
-        }
-        return {
-          id,
-          departureWeather: departureResult?.data[0] ?? null,
-          arrivalWeather: arrivalResult?.data[0] ?? null,
-          diversionWeather: diversionResult?.data[0] ?? null,
-        };
-      },
+): Promise<void> => {
+  const {
+    airline,
+    flightNumber,
+    departureAirport,
+    arrivalAirport,
+    diversionAirportId,
+    inTime,
+    inTimeActual,
+    offTime,
+    offTimeActual,
+    onTime,
+    onTimeActual,
+    outTime,
+    outTimeActual,
+  } = flights[0];
+  const departureTime = offTimeActual ?? offTime ?? outTimeActual ?? outTime;
+  const arrivalTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
+  const departureWeather: AviationWeatherReport | null =
+    await fetchSingleReport(departureAirport.id, departureTime);
+  const arrivalWeather: AviationWeatherReport | null = await fetchSingleReport(
+    arrivalAirport.id,
+    arrivalTime,
+  );
+  let diversionWeather: AviationWeatherReport | null = null;
+  if (diversionAirportId !== null) {
+    diversionWeather = await fetchSingleReport(diversionAirportId, arrivalTime);
+  }
+  console.log(
+    `Updating weather data for ${airline?.iata}${flightNumber} ${departureAirport.iata}-${arrivalAirport.iata} at ${outTime.toISOString()}...`,
+  );
+  await prisma.$transaction(
+    flights.map(({ id }) =>
+      prisma.flight.update({
+        where: { id },
+        data: {
+          departureWeather:
+            departureWeather !== null
+              ? {
+                  connectOrCreate: {
+                    where: {
+                      id: departureWeather.metar_id,
+                    },
+                    create: getUpdateObject(departureWeather),
+                  },
+                }
+              : undefined,
+          arrivalWeather:
+            arrivalWeather !== null
+              ? {
+                  connectOrCreate: {
+                    where: {
+                      id: arrivalWeather.metar_id,
+                    },
+                    create: getUpdateObject(arrivalWeather),
+                  },
+                }
+              : undefined,
+          diversionWeather:
+            diversionWeather !== null
+              ? {
+                  connectOrCreate: {
+                    where: {
+                      id: diversionWeather.metar_id,
+                    },
+                    create: getUpdateObject(diversionWeather),
+                  },
+                }
+              : undefined,
+        },
+      }),
     ),
   );
+};

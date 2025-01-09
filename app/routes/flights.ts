@@ -9,7 +9,6 @@ import {
   updateFlightRegistrationData,
   updateFlightTimesData,
   updateOnTimePerformanceData,
-  updateWeatherData,
 } from '../commands';
 import { DATE_FORMAT_SHORT } from '../constants';
 import { prisma, updateTripTimes } from '../db';
@@ -50,6 +49,7 @@ import {
   getWeatherReportCloudCoverData,
   parsePaginationRequest,
   transformFlightData,
+  updateFlightWeatherReports,
 } from '../utils';
 
 export const flightsRouter = router({
@@ -782,7 +782,7 @@ export const flightsRouter = router({
       await updateFlightRegistrationData([flight]);
       await updateTripTimes(flight.tripId);
       await updateOnTimePerformanceData([flight]);
-      await updateWeatherData([flight]);
+      await updateFlightWeatherReports([flight]);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -934,7 +934,7 @@ export const flightsRouter = router({
         await updateFlightRegistrationData([updatedFlight]);
         await updateTripTimes(updatedFlight.tripId);
         await updateOnTimePerformanceData([updatedFlight]);
-        await updateWeatherData([updatedFlight]);
+        await updateFlightWeatherReports([updatedFlight]);
       }
     }),
   deleteFlight: procedure

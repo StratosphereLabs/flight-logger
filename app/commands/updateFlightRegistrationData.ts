@@ -5,7 +5,6 @@ import { fetchFlightRadarData } from '../data/flightRadar';
 import { prisma } from '../db';
 import type { FlightWithData } from './types';
 import { updateFlightChangeData } from './updateFlightChangeData';
-import { updateWeatherData } from './updateWeatherData';
 import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightRegistrationData = async (
@@ -77,20 +76,6 @@ export const updateFlightRegistrationData = async (
     flightRadarStatus: flight.flightStatus,
     diversionAirportId: diversionAirport?.id ?? undefined,
   };
-  if (
-    flights[0].flightRadarStatus !== null &&
-    ['SCHEDULED', 'DEPARTED_TAXIING'].includes(flights[0].flightRadarStatus) &&
-    updatedData.flightRadarStatus === 'EN_ROUTE'
-  ) {
-    await updateWeatherData(flights);
-  }
-  if (
-    updatedData.flightRadarStatus !== null &&
-    flights[0].flightRadarStatus === 'EN_ROUTE' &&
-    ['LANDED_TAXIING', 'ARRIVED'].includes(updatedData.flightRadarStatus)
-  ) {
-    await updateWeatherData(flights);
-  }
   await prisma.flight.updateMany({
     where: {
       id: {
