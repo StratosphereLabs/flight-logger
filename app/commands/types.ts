@@ -6,4 +6,5 @@ export type FlightWithData = Flight & {
   airline: Airline | null;
   departureAirport: FlightWithDataAirport;
   arrivalAirport: FlightWithDataAirport;
+  diversionAirport: FlightWithDataAirport | null;
 };

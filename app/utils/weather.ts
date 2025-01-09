@@ -1,11 +1,9 @@
 import type { WeatherReport } from '@prisma/client';
-import axios from 'axios';
-import { fromUnixTime } from 'date-fns';
+import axios, { type AxiosResponse } from 'axios';
 import { formatInTimeZone } from 'date-fns-tz';
-import groupBy from 'lodash.groupby';
 
+import type { FlightWithData } from '../commands/types';
 import { TIMESTAMP_FORMAT_ISO } from '../constants';
-import { prisma } from '../db';
 
 export interface WeatherReportCloudCoverItem {
   [x: string]: string | number | null;
@@ -70,53 +68,73 @@ export const getWeatherReportCloudCoverData = (
       }
     : null;
 
-export const fetchWeatherReportsByAirportIds = async (
-  airports: Array<{ id: string; date?: Date }>,
-): Promise<AviationWeatherReport[] | null> => {
-  const groupedAirports = groupBy(airports, 'date');
-  try {
-    const responses = await Promise.all(
-      Object.values(groupedAirports).map(airports =>
-        axios.get<AviationWeatherReport[]>(
-          `https://aviationweather.gov/api/data/metar?ids=${airports.map(({ id }) => id).join(',')}&format=json${airports[0].date !== undefined ? `&date=${formatInTimeZone(airports[0].date, 'UTC', TIMESTAMP_FORMAT_ISO)}` : ''}`,
-        ),
-      ),
-    );
-    return responses.flatMap(({ data }) => data);
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
+export const getUrl = (
+  departureAirportId: string,
+  departureTime: Date,
+): string =>
+  `https://aviationweather.gov/api/data/metar?ids=${departureAirportId}&format=json&date=${formatInTimeZone(departureTime, 'UTC', TIMESTAMP_FORMAT_ISO)}`;
 
-export const saveWeatherReports = async (
-  airports: Array<{ id: string; date?: Date }>,
-): Promise<void> => {
-  const airportList = airports.map(({ id }) => id).join(',');
-  console.log(`Fetching weather reports for ${airportList}...`);
-  const weatherData = await fetchWeatherReportsByAirportIds(airports);
-  if (weatherData !== null) {
-    console.log(`  Saving weather reports for ${airportList} to database...`);
-    await prisma.weatherReport.createMany({
-      data: weatherData.map(data => ({
-        id: data.metar_id,
-        airportId: data.icaoId,
-        obsTime: fromUnixTime(data.obsTime),
-        temp: data.temp,
-        dewp: data.dewp,
-        wdir: data.wdir.toString(),
-        wspd: data.wspd,
-        wgst: data.wgst ?? 0,
-        visib: data.visib.toString(),
-        altim: data.altim,
-        wxString: data.wxString,
-        vertVis: data.vertVis,
-        rawOb: data.rawOb,
-        clouds: data.clouds,
-      })),
-      skipDuplicates: true,
-    });
-  } else {
-    console.error(`  Unable to fetch weather reports for ${airportList}`);
-  }
-};
+export const fetchWeatherReports = async (
+  flights: FlightWithData[],
+): Promise<Array<{
+  id: string;
+  departureWeather: AviationWeatherReport | null;
+  arrivalWeather: AviationWeatherReport | null;
+  diversionWeather: AviationWeatherReport | null;
+}> | null> =>
+  await Promise.all(
+    flights.map(
+      async ({
+        id,
+        arrivalAirportId,
+        departureAirportId,
+        diversionAirportId,
+        inTime,
+        inTimeActual,
+        offTime,
+        offTimeActual,
+        onTime,
+        onTimeActual,
+        outTime,
+        outTimeActual,
+      }) => {
+        const departureTime =
+          offTimeActual ?? offTime ?? outTimeActual ?? outTime;
+        const arrivalTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
+        let departureResult: AxiosResponse<AviationWeatherReport[]> | null =
+          null;
+        try {
+          departureResult = await axios.get<AviationWeatherReport[]>(
+            getUrl(departureAirportId, departureTime),
+          );
+        } catch (err) {
+          console.error(err);
+        }
+        let arrivalResult: AxiosResponse<AviationWeatherReport[]> | null = null;
+        try {
+          arrivalResult = await axios.get<AviationWeatherReport[]>(
+            getUrl(arrivalAirportId, arrivalTime),
+          );
+        } catch (err) {
+          console.error(err);
+        }
+        let diversionResult: AxiosResponse<AviationWeatherReport[]> | null =
+          null;
+        if (diversionAirportId !== null) {
+          try {
+            diversionResult = await axios.get<AviationWeatherReport[]>(
+              getUrl(diversionAirportId, arrivalTime),
+            );
+          } catch (err) {
+            console.error(err);
+          }
+        }
+        return {
+          id,
+          departureWeather: departureResult?.data[0] ?? null,
+          arrivalWeather: arrivalResult?.data[0] ?? null,
+          diversionWeather: diversionResult?.data[0] ?? null,
+        };
+      },
+    ),
+  );

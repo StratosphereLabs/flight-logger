@@ -3,9 +3,9 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { fetchFlightRadarData } from '../data/flightRadar';
 import { prisma } from '../db';
-import { saveWeatherReports } from '../utils';
 import type { FlightWithData } from './types';
 import { updateFlightChangeData } from './updateFlightChangeData';
+import { updateWeatherData } from './updateWeatherData';
 import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightRegistrationData = async (
@@ -82,14 +82,14 @@ export const updateFlightRegistrationData = async (
     ['SCHEDULED', 'DEPARTED_TAXIING'].includes(flights[0].flightRadarStatus) &&
     updatedData.flightRadarStatus === 'EN_ROUTE'
   ) {
-    await saveWeatherReports([{ id: flights[0].departureAirportId }]);
+    await updateWeatherData(flights);
   }
   if (
     updatedData.flightRadarStatus !== null &&
     flights[0].flightRadarStatus === 'EN_ROUTE' &&
     ['LANDED_TAXIING', 'ARRIVED'].includes(updatedData.flightRadarStatus)
   ) {
-    await saveWeatherReports([{ id: flights[0].arrivalAirportId }]);
+    await updateWeatherData(flights);
   }
   await prisma.flight.updateMany({
     where: {
