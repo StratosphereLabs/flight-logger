@@ -97,10 +97,10 @@ export const getFlightStatsUpdatedData = (flight: FlightStatsFlight) => {
 
 export const updateFlightTimesData = async (
   flights: FlightWithData[],
-): Promise<void> => {
+): Promise<FlightWithData[] | null> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
     console.error('Airline and flight number are required.');
-    return;
+    return null;
   }
   const isoDate = formatInTimeZone(
     flights[0].outTime,
@@ -126,23 +126,50 @@ export const updateFlightTimesData = async (
           flights[0],
         )}. Please try again later.`,
       );
-      return;
+      return null;
     }
     const updatedData = getFlightAwareUpdatedData(flightAwareResponse);
-    await prisma.flight.updateMany({
-      where: {
-        id: {
-          in: flights.map(({ id }) => id),
-        },
-      },
-      data: updatedData,
-    });
+    const updatedFlights = await prisma.$transaction(
+      flights.map(({ id }) =>
+        prisma.flight.update({
+          where: {
+            id,
+          },
+          data: updatedData,
+          include: {
+            airline: true,
+            departureAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+            arrivalAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+            diversionAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+          },
+        }),
+      ),
+    );
     await updateFlightChangeData(flights, updatedData);
     await Promise.all(
       flights.flatMap(({ tripId }) =>
         tripId !== null ? updateTripTimes(tripId) : [],
       ),
     );
+    return updatedFlights;
   } else if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightstats') {
     const flightStatsResponse = await fetchFlightStatsData({
       airline: flights[0].airline,
@@ -157,22 +184,50 @@ export const updateFlightTimesData = async (
           flights[0],
         )}. Please try again later.`,
       );
-      return;
+      return null;
     }
     const updatedData = getFlightStatsUpdatedData(flightStatsResponse);
-    await prisma.flight.updateMany({
-      where: {
-        id: {
-          in: flights.map(({ id }) => id),
-        },
-      },
-      data: updatedData,
-    });
+    const updatedFlights = await prisma.$transaction(
+      flights.map(({ id }) =>
+        prisma.flight.update({
+          where: {
+            id,
+          },
+          data: updatedData,
+          include: {
+            airline: true,
+            departureAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+            arrivalAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+            diversionAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+          },
+        }),
+      ),
+    );
     await updateFlightChangeData(flights, updatedData);
     await Promise.all(
       flights.flatMap(({ tripId }) =>
         tripId !== null ? updateTripTimes(tripId) : [],
       ),
     );
+    return updatedFlights;
   }
+  return null;
 };

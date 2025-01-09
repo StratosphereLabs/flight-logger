@@ -9,10 +9,10 @@ import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightRegistrationData = async (
   flights: FlightWithData[],
-): Promise<void> => {
+): Promise<FlightWithData[] | null> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
     console.error('Airline and flight number are required.');
-    return;
+    return null;
   }
   const isoDate = formatInTimeZone(
     flights[0].outTime,
@@ -32,7 +32,7 @@ export const updateFlightRegistrationData = async (
         flights[0],
       )}. Please try again later.`,
     );
-    return;
+    return null;
   }
   const airframe =
     flight.registration !== undefined && flight.registration !== null
@@ -76,13 +76,40 @@ export const updateFlightRegistrationData = async (
     flightRadarStatus: flight.flightStatus,
     diversionAirportId: diversionAirport?.id ?? undefined,
   };
-  await prisma.flight.updateMany({
-    where: {
-      id: {
-        in: flights.map(({ id }) => id),
-      },
-    },
-    data: updatedData,
-  });
+  const updatedFlights = await prisma.$transaction(
+    flights.map(({ id }) =>
+      prisma.flight.update({
+        where: {
+          id,
+        },
+        data: updatedData,
+        include: {
+          airline: true,
+          departureAirport: {
+            select: {
+              id: true,
+              iata: true,
+              timeZone: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              id: true,
+              iata: true,
+              timeZone: true,
+            },
+          },
+          diversionAirport: {
+            select: {
+              id: true,
+              iata: true,
+              timeZone: true,
+            },
+          },
+        },
+      }),
+    ),
+  );
   await updateFlightChangeData(flights, updatedData);
+  return updatedFlights;
 };
