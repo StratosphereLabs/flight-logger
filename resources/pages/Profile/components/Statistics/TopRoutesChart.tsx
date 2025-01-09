@@ -2,7 +2,15 @@ import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { FormToggleSwitch, Loading, Tooltip } from 'stratosphere-ui';
+import {
+  FormToggleSwitch,
+  Loading,
+  Stat,
+  StatTitle,
+  StatValue,
+  Stats,
+  Tooltip,
+} from 'stratosphere-ui';
 
 import {
   useProfileUserQuery,
@@ -50,11 +58,11 @@ export const TopRoutesChart = ({
       onError,
     },
   );
-  const title = cityPairs ? 'Top City Pairs' : 'Top Routes';
+  const title = cityPairs ? 'City Pairs' : 'Routes';
   return (
-    <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex w-full items-center justify-between">
-        <div className="text-base">{title}</div>
+        <div className="text-lg">{title}</div>
         <FormToggleSwitch
           className="my-[-3px]"
           labelText="City Pairs"
@@ -62,6 +70,12 @@ export const TopRoutesChart = ({
           size="xs"
         />
       </div>
+      <Stats className="h-24 w-full">
+        <Stat className="flex items-center py-0">
+          <StatValue className="text-warning/80">{data?.count}</StatValue>
+          <StatTitle>Total {cityPairs ? 'City Pairs' : 'Routes'}</StatTitle>
+        </Stat>
+      </Stats>
       <div className="relative h-full w-full">
         {isFetching ? (
           <div className="absolute flex h-full w-full items-center justify-center">
@@ -78,7 +92,7 @@ export const TopRoutesChart = ({
             <ResponsiveBar
               theme={BAR_CHART_THEME}
               layout="horizontal"
-              data={data}
+              data={data.chartData}
               keys={['flights']}
               indexBy="route"
               enableGridY={false}

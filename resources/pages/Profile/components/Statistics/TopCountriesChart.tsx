@@ -3,7 +3,15 @@ import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Loading, Select, Tooltip } from 'stratosphere-ui';
+import {
+  Loading,
+  Select,
+  Stat,
+  StatTitle,
+  StatValue,
+  Stats,
+  Tooltip,
+} from 'stratosphere-ui';
 
 import {
   useProfileUserQuery,
@@ -52,9 +60,9 @@ export const TopCountriesChart = ({
     },
   );
   return (
-    <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-base">Top Countries</div>
+        <div className="text-lg">Countries</div>
         <Select
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
@@ -78,6 +86,12 @@ export const TopCountriesChart = ({
           name="countriesMode"
         />
       </div>
+      <Stats className="h-24 w-full">
+        <Stat className="flex items-center py-0">
+          <StatValue className="text-accent/80">{data?.count}</StatValue>
+          <StatTitle>Total Countries</StatTitle>
+        </Stat>
+      </Stats>
       <div className="relative h-full w-full">
         {isFetching ? (
           <div className="absolute flex h-full w-full items-center justify-center">
@@ -94,7 +108,7 @@ export const TopCountriesChart = ({
             <ResponsiveBar
               theme={BAR_CHART_THEME}
               layout="horizontal"
-              data={data}
+              data={data.chartData}
               keys={['flights']}
               indexBy="id"
               enableGridY={false}

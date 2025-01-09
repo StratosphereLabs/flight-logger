@@ -11,7 +11,7 @@ import {
   updateOnTimePerformanceData,
 } from '../commands';
 import type { FlightWithData } from '../commands/types';
-import { DATE_FORMAT_SHORT } from '../constants';
+import { DATE_FORMAT_SHORT, DATE_FORMAT_YEAR } from '../constants';
 import { prisma, updateTripTimes } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';
@@ -397,13 +397,16 @@ export const flightsRouter = router({
       return {
         results: flights.map(flight => ({
           ...flight,
+          outTimeYear: formatInTimeZone(
+            flight.outTime,
+            flight.departureAirport.timeZone,
+            DATE_FORMAT_YEAR,
+          ),
           outTimeDate: formatInTimeZone(
             flight.outTime,
             flight.departureAirport.timeZone,
             DATE_FORMAT_SHORT,
           ),
-          durationString: getDurationString(flight.duration),
-          durationStringAbbreviated: getDurationString(flight.duration, true),
           tracklog: null,
           waypoints: null,
         })),

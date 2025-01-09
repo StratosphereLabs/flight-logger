@@ -12,6 +12,7 @@ export const DATE_REGEX_ISO = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
 export const DATE_FORMAT = 'iii, MMM d, yyyy';
 export const DATE_FORMAT_ABBR = 'iii, MMM d';
 export const DATE_FORMAT_MONTH = 'MMMM yyyy';
+export const DATE_FORMAT_YEAR = 'yyyy';
 export const DATE_FORMAT_SHORT = 'M/d';
 export const DATE_FORMAT_WITH_DAY = 'EEE, LLL d';
 export const DATE_FORMAT_ISO = 'yyyy-MM-dd';

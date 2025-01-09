@@ -2,7 +2,15 @@ import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { Loading, Select, Tooltip } from 'stratosphere-ui';
+import {
+  Loading,
+  Select,
+  Stat,
+  StatTitle,
+  StatValue,
+  Stats,
+  Tooltip,
+} from 'stratosphere-ui';
 
 import {
   useProfileUserQuery,
@@ -51,9 +59,9 @@ export const TopAirlinesChart = ({
     },
   );
   return (
-    <div className="flex h-[180px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-base">Top Airlines</div>
+        <div className="text-lg">Airlines</div>
         <Select
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
@@ -77,6 +85,12 @@ export const TopAirlinesChart = ({
           name="airlinesMode"
         />
       </div>
+      <Stats className="h-24 w-full">
+        <Stat className="flex items-center py-0">
+          <StatValue className="text-info/80">{data?.count}</StatValue>
+          <StatTitle>Total Airlines</StatTitle>
+        </Stat>
+      </Stats>
       <div className="relative h-full w-full">
         {isFetching ? (
           <div className="absolute flex h-full w-full items-center justify-center">
@@ -93,7 +107,7 @@ export const TopAirlinesChart = ({
             <ResponsiveBar
               theme={BAR_CHART_THEME}
               layout="horizontal"
-              data={data}
+              data={data.chartData}
               keys={[mode]}
               indexBy="airline"
               enableGridY={false}
@@ -113,9 +127,7 @@ export const TopAirlinesChart = ({
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${tooltipData.data.airline}: ${
-                    tooltipData.data[mode]
-                  } ${
+                  text={`${tooltipData.data.name}: ${tooltipData.data[mode]} ${
                     tooltipData.data[mode] > 1
                       ? STATS_TOTALS_MODE_UNITS[mode]
                       : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)

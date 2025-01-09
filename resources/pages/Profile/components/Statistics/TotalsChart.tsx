@@ -57,7 +57,7 @@ export const TotalsChart = ({
     },
   );
   return (
-    <div className="flex w-full flex-col items-center gap-1 font-semibold">
+    <div className="mb-2 flex w-full flex-col items-center gap-1 font-semibold">
       <div className="relative flex h-full w-full">
         {isFetching ? (
           <div className="absolute flex h-full w-full items-center justify-center">
@@ -67,11 +67,11 @@ export const TotalsChart = ({
         {data !== undefined ? (
           <div
             className={classNames(
-              'flex flex-1 flex-col flex-wrap transition-opacity 2xl:flex-row',
+              'flex flex-1 flex-col flex-wrap transition-opacity lg:flex-row',
               isFetching && 'opacity-50',
             )}
           >
-            <Stats className="stats-horizontal lg:flex-1">
+            <Stats className="stats-horizontal sm:flex-1">
               <Stat className="p-2">
                 <StatTitle>Flights</StatTitle>
                 <StatValue className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export const TotalsChart = ({
                 </StatDesc>
               </Stat>
             </Stats>
-            <Stats className="stats-vertical flex-1 lg:stats-horizontal">
+            <Stats className="stats-vertical flex-1 sm:stats-horizontal">
               <Stat className="p-2">
                 <StatTitle>Distance Flown</StatTitle>
                 <StatValue className="flex items-center gap-2">
