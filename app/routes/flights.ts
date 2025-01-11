@@ -279,6 +279,113 @@ export const flightsRouter = router({
                   ]
                 : undefined,
           },
+          ...(input.searchQuery.length > 0
+            ? [
+                {
+                  OR: [
+                    {
+                      airline: {
+                        name: {
+                          contains: input.searchQuery,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                    },
+                    {
+                      airline: {
+                        icao: input.searchQuery.toUpperCase(),
+                      },
+                    },
+                    {
+                      airline: {
+                        iata: input.searchQuery.toUpperCase(),
+                      },
+                    },
+                    ...(!isNaN(Number(input.searchQuery))
+                      ? [
+                          {
+                            flightNumber: {
+                              equals: Number(input.searchQuery),
+                            },
+                          },
+                        ]
+                      : []),
+                    {
+                      departureAirport: {
+                        name: {
+                          contains: input.searchQuery,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                    },
+                    {
+                      departureAirport: {
+                        municipality: {
+                          contains: input.searchQuery,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                    },
+                    {
+                      departureAirportId: input.searchQuery.toUpperCase(),
+                    },
+                    {
+                      departureAirport: {
+                        iata: input.searchQuery.toUpperCase(),
+                      },
+                    },
+                    {
+                      arrivalAirport: {
+                        name: {
+                          contains: input.searchQuery,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                    },
+                    {
+                      arrivalAirport: {
+                        municipality: {
+                          contains: input.searchQuery,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                    },
+                    {
+                      arrivalAirportId: input.searchQuery.toUpperCase(),
+                    },
+                    {
+                      arrivalAirport: {
+                        iata: input.searchQuery.toUpperCase(),
+                      },
+                    },
+                    {
+                      aircraftType: {
+                        name: {
+                          contains: input.searchQuery,
+                          mode: 'insensitive' as const,
+                        },
+                      },
+                    },
+                    {
+                      aircraftType: {
+                        icao: input.searchQuery.toUpperCase(),
+                      },
+                    },
+                    {
+                      aircraftType: {
+                        iata: input.searchQuery.toUpperCase(),
+                      },
+                    },
+                    {
+                      tailNumber: {
+                        contains: input.searchQuery,
+                        mode: 'insensitive' as const,
+                      },
+                    },
+                  ],
+                },
+              ]
+            : []),
           ...(input.selectedAirportId !== null
             ? [
                 {

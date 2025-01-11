@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Button, Loading } from 'stratosphere-ui';
+import { Button, Loading, useDebouncedValue } from 'stratosphere-ui';
 
 import { PlusIcon, UserFlightsTable } from '../../common/components';
 import { APP_URL } from '../../common/constants';
@@ -14,6 +14,7 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { type FlightFiltersFormData } from '../Profile/components';
 import { type ProfileFilterFormData } from '../Profile/hooks';
 import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
@@ -34,6 +35,7 @@ export interface FlightsFormData {
 
 export interface FlightsProps {
   filtersFormControl: Control<ProfileFilterFormData>;
+  flightFiltersFormControl: Control<FlightFiltersFormData>;
   isRowSelectEnabled: boolean;
   selectedAirportId: string | null;
   setIsRowSelectEnabled: Dispatch<SetStateAction<boolean>>;
@@ -41,6 +43,7 @@ export interface FlightsProps {
 
 export const Flights = ({
   filtersFormControl,
+  flightFiltersFormControl,
   isRowSelectEnabled,
   selectedAirportId,
   setIsRowSelectEnabled,
@@ -68,6 +71,11 @@ export const Flights = ({
     control: filtersFormControl,
     name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
   });
+  const query = useWatch<FlightFiltersFormData, 'searchQuery'>({
+    control: flightFiltersFormControl,
+    name: 'searchQuery',
+  });
+  const { debouncedValue } = useDebouncedValue(query, 400);
   const {
     data,
     fetchNextPage,
@@ -87,6 +95,7 @@ export const Flights = ({
       month,
       fromDate,
       toDate,
+      searchQuery: debouncedValue,
       limit: FETCH_FLIGHTS_PAGE_SIZE,
     },
     {
