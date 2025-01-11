@@ -1,10 +1,7 @@
 import { z } from 'zod';
 
-import {
-  getUserProfileFlightsSchema,
-  getUserSchema,
-  profileFiltersSchema,
-} from './users';
+import { getUserProfileFlightsSchema, profileFiltersSchema } from './flights';
+import { getUserSchema } from './users';
 
 export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema.extend(
   profileFiltersSchema.shape,
