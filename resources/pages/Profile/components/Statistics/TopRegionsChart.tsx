@@ -19,16 +19,16 @@ import {
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { type StatisticsFiltersData } from './StatisticsCard';
-import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
+import { BAR_CHART_THEME } from './constants';
 import type { StatisticsChartProps } from './types';
 
-export const TopAirlinesChart = ({
+export const TopRegionsChart = ({
   filtersFormControl,
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
-  const mode = useWatch<StatisticsFiltersData, 'airlinesMode'>({
-    name: 'airlinesMode',
+  const mode = useWatch<StatisticsFiltersData, 'regionsMode'>({
+    name: 'regionsMode',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
@@ -47,7 +47,7 @@ export const TopAirlinesChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getTopAirlines.useQuery(
+  const { data, isFetching } = trpc.statistics.getTopRegions.useQuery(
     {
       username,
       limit: 5,
@@ -70,34 +70,34 @@ export const TopAirlinesChart = ({
   return (
     <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-lg">Airlines</div>
+        <div className="text-lg">Regions</div>
         <Select
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
           getItemText={({ text }) => text}
           options={[
             {
-              id: 'flights',
-              text: 'Flights',
+              id: 'all',
+              text: 'All',
             },
             {
-              id: 'distance',
-              text: 'Distance (mi)',
+              id: 'departure',
+              text: 'Departure',
             },
             {
-              id: 'duration',
-              text: 'Duration (min)',
+              id: 'arrival',
+              text: 'Arrival',
             },
           ]}
           menuSize="sm"
           menuClassName="w-[185px] right-0"
-          name="airlinesMode"
+          name="regionsMode"
         />
       </div>
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
           <StatValue className="text-info/80">{data?.count}</StatValue>
-          <StatTitle>Total Airlines</StatTitle>
+          <StatTitle>Total Regions</StatTitle>
         </Stat>
       </Stats>
       <div className="relative h-full w-full">
@@ -117,30 +117,27 @@ export const TopAirlinesChart = ({
               theme={BAR_CHART_THEME}
               layout="horizontal"
               data={data.chartData}
-              keys={[mode]}
-              indexBy="airline"
+              keys={['flights']}
+              indexBy="id"
               enableGridY={false}
               axisBottom={{
                 tickSize: 0,
               }}
               axisLeft={{
                 tickSize: 0,
-                tickPadding: 10,
+                tickPadding: 20,
               }}
               margin={{
                 left: 65,
               }}
               colors={['var(--fallback-in,oklch(var(--in)/0.75))']}
-              borderColor="#000000"
               tooltip={tooltipData => (
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${tooltipData.data.name}: ${tooltipData.data[mode]} ${
-                    tooltipData.data[mode] > 1
-                      ? STATS_TOTALS_MODE_UNITS[mode]
-                      : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)
-                  }`}
+                  text={`${tooltipData.data.region}: ${
+                    tooltipData.data.flights
+                  } ${tooltipData.data.flights > 1 ? 'flights' : 'flight'}`}
                 />
               )}
             />

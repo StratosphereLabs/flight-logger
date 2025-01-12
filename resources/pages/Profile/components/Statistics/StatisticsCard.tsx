@@ -14,6 +14,7 @@ import { TopAircraftTypesChart } from './TopAircraftTypesChart';
 import { TopAirlinesChart } from './TopAirlinesChart';
 import { TopAirportsChart } from './TopAirportsChart';
 import { TopCountriesChart } from './TopCountriesChart';
+import { TopRegionsChart } from './TopRegionsChart';
 import { TopRoutesChart } from './TopRoutesChart';
 import { TotalsChart } from './TotalsChart';
 import type { StatsAirportMode, StatsTotalsMode } from './types';
@@ -23,6 +24,7 @@ export interface StatisticsFiltersData {
   aircraftTypesMode: StatsTotalsMode;
   airportsMode: StatsAirportMode;
   countriesMode: StatsAirportMode;
+  regionsMode: StatsAirportMode;
   routesCityPairs: boolean;
   flightTypeMode: StatsTotalsMode;
   flightLengthMode: StatsTotalsMode;
@@ -51,6 +53,7 @@ export const StatisticsCard = ({
       aircraftTypesMode: 'flights',
       airportsMode: 'all',
       countriesMode: 'all',
+      regionsMode: 'all',
       routesCityPairs: false,
       flightTypeMode: 'flights',
       flightLengthMode: 'flights',
@@ -107,17 +110,21 @@ export const StatisticsCard = ({
               filtersFormControl={filtersFormControl}
               selectedAirportId={selectedAirportId}
             />
+            {isStatsFullScreen ? (
+              <TopRoutesChart
+                filtersFormControl={filtersFormControl}
+                selectedAirportId={selectedAirportId}
+              />
+            ) : null}
             <TopCountriesChart
               filtersFormControl={filtersFormControl}
               selectedAirportId={selectedAirportId}
             />
             {isStatsFullScreen ? (
-              <>
-                <TopRoutesChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
-              </>
+              <TopRegionsChart
+                filtersFormControl={filtersFormControl}
+                selectedAirportId={selectedAirportId}
+              />
             ) : null}
             {isStatsFullScreen ? (
               <>
