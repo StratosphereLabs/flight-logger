@@ -31,6 +31,7 @@ import {
   getFromDate,
   getFromStatusDate,
   getLongDurationString,
+  getSearchQueryWhereInput,
   getToDate,
   getToStatusDate,
   parsePaginationRequest,
@@ -94,6 +95,9 @@ export const statisticsRouter = router({
                       ]
                     : undefined,
               },
+              ...(input.searchQuery.length > 0
+                ? [getSearchQueryWhereInput(input.searchQuery)]
+                : []),
               ...(input.selectedAirportId !== null
                 ? [
                     {
@@ -220,6 +224,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -306,6 +313,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -417,6 +427,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -518,6 +531,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -634,6 +650,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -746,6 +765,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -865,6 +887,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -984,6 +1009,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -1115,6 +1143,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {
@@ -1228,6 +1259,9 @@ export const statisticsRouter = router({
                     ]
                   : undefined,
             },
+            ...(input.searchQuery.length > 0
+              ? [getSearchQueryWhereInput(input.searchQuery)]
+              : []),
             ...(input.selectedAirportId !== null
               ? [
                   {

@@ -19,7 +19,6 @@ import {
   LogoutIcon,
   MenuIcon,
   PlusAirplaneIcon,
-  SearchButton,
   ThemeButton,
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
@@ -39,7 +38,6 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
   const isDarkMode = useIsDarkMode();
-  const [isSearching, setIsSearching] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
@@ -158,10 +156,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               menuClassName="rounded-box w-48 bg-base-200"
             />
             <Button
-              className={classNames(
-                'inline-flex px-1 normal-case sm:px-4',
-                isSearching && 'hidden sm:block',
-              )}
+              className="inline-flex px-1 normal-case sm:px-4"
               color="ghost"
               onClick={() => {
                 navigate('/');
@@ -186,12 +181,6 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             />
           </div>
           <div className="flex-1 justify-end gap-1">
-            {isLoggedIn ? (
-              <SearchButton
-                isSearching={isSearching}
-                setIsSearching={setIsSearching}
-              />
-            ) : null}
             <ThemeButton />
             {isLoggedIn ? (
               <Button

@@ -70,12 +70,20 @@ export const MapCard = ({
     control: methods.control,
     name: ['mapMode'],
   });
-  const [status, range, year, month, fromDate, toDate] = useWatch<
+  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
     ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
+    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
   >({
     control: filtersFormControl,
-    name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
+    name: [
+      'status',
+      'range',
+      'year',
+      'month',
+      'fromDate',
+      'toDate',
+      'searchQuery',
+    ],
   });
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
@@ -97,6 +105,7 @@ export const MapCard = ({
       month,
       fromDate,
       toDate,
+      searchQuery,
     },
     {
       enabled: isProfilePage,
@@ -147,7 +156,7 @@ export const MapCard = ({
         isLoading={data === undefined}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
-          isMapFullScreen ? 'min-h-[100dvh]' : 'min-h-[calc(100vh-250px)]',
+          isMapFullScreen ? 'min-h-[100dvh]' : 'min-h-[calc(100vh-242px)]',
         )}
       >
         {data !== undefined &&
@@ -177,7 +186,7 @@ export const MapCard = ({
         <Form
           className={classNames(
             'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
-            isProfilePage ? 'mt-[102px]' : 'mt-16',
+            isProfilePage ? 'mt-[110px]' : 'mt-16',
           )}
           methods={methods}
         >

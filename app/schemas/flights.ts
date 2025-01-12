@@ -50,6 +50,7 @@ export const profileFiltersSchema = z.object({
     .string()
     .refine(date => isValid(parseISO(date)), 'Invalid From Date'),
   toDate: z.string().refine(date => isValid(parseISO(date)), 'Invalid To Date'),
+  searchQuery: z.string().trim(),
 });
 
 export const getUserFlightsSchema = getUserSchema
@@ -58,7 +59,6 @@ export const getUserFlightsSchema = getUserSchema
   .extend({
     withTrip: z.boolean().optional(),
     selectedAirportId: z.string().nullable(),
-    searchQuery: z.string().trim(),
   });
 
 export const getUserProfileFlightsSchema = paginationSchema

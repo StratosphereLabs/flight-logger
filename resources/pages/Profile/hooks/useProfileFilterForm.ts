@@ -33,6 +33,7 @@ export interface ProfileFilterFormData {
     | '12';
   fromDate: string;
   toDate: string;
+  searchQuery: string;
 }
 
 export const useProfileFilterForm =
@@ -41,9 +42,17 @@ export const useProfileFilterForm =
     const { isAuthorized } = useProfilePage();
     return useFormWithQueryParams<
       ProfileFilterFormData,
-      ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
+      ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
     >({
-      getDefaultValues: ({ status, range, year, month, fromDate, toDate }) => ({
+      getDefaultValues: ({
+        status,
+        range,
+        year,
+        month,
+        fromDate,
+        toDate,
+        searchQuery,
+      }) => ({
         status: (status as ProfileFilterFormData['status']) ?? 'completed',
         range: (range as ProfileFilterFormData['range']) ?? 'all',
         year: year ?? currentDate.getFullYear().toString(),
@@ -53,8 +62,17 @@ export const useProfileFilterForm =
         fromDate:
           fromDate ?? format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
         toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
+        searchQuery: searchQuery ?? '',
       }),
-      getSearchParams: ([status, range, year, month, fromDate, toDate]) => {
+      getSearchParams: ([
+        status,
+        range,
+        year,
+        month,
+        fromDate,
+        toDate,
+        searchQuery,
+      ]) => {
         const { pathname } = window.location;
         const isProfilePage =
           pathname.includes('/profile') || pathname.includes('/user/');
@@ -66,6 +84,7 @@ export const useProfileFilterForm =
             year: '',
             fromDate: '',
             toDate: '',
+            searchQuery: '',
           };
         return {
           status: status !== 'completed' ? status : '',
@@ -74,9 +93,18 @@ export const useProfileFilterForm =
           year: range === 'customMonth' || range === 'customYear' ? year : '',
           fromDate: range === 'customRange' ? fromDate : '',
           toDate: range === 'customRange' ? toDate : '',
+          searchQuery,
         };
       },
-      includeKeys: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
+      includeKeys: [
+        'status',
+        'range',
+        'year',
+        'month',
+        'fromDate',
+        'toDate',
+        'searchQuery',
+      ],
       mode: 'onChange',
       resolver: zodResolver(profileFiltersSchema),
     });

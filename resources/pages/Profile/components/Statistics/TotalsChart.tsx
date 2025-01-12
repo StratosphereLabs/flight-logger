@@ -31,12 +31,20 @@ export const TotalsChart = ({
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
-  const [status, range, year, month, fromDate, toDate] = useWatch<
+  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
     ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
+    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
   >({
     control: filtersFormControl,
-    name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
+    name: [
+      'status',
+      'range',
+      'year',
+      'month',
+      'fromDate',
+      'toDate',
+      'searchQuery',
+    ],
   });
   const { data, isFetching } = trpc.statistics.getTotals.useQuery(
     {
@@ -49,6 +57,7 @@ export const TotalsChart = ({
       fromDate,
       toDate,
       selectedAirportId,
+      searchQuery,
     },
     {
       enabled: userData !== undefined,
