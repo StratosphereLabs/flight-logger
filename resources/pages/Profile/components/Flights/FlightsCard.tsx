@@ -2,22 +2,12 @@ import classNames from 'classnames';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  CloseIcon,
-  Form,
-  FormControl,
-  useFormWithQueryParams,
-} from 'stratosphere-ui';
+import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 
 import {
   CollapseIcon,
   ExpandIcon,
   PlusAirplaneIcon,
-  SearchIcon,
 } from '../../../../common/components';
 import {
   useLoggedInUserQuery,
@@ -54,18 +44,6 @@ export const FlightsCard = ({
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
   const { data } = useProfileUserQuery();
-  const methods = useFormWithQueryParams<
-    FlightFiltersFormData,
-    ['searchQuery']
-  >({
-    getDefaultValues: ({ searchQuery }) => ({
-      searchQuery: searchQuery ?? '',
-    }),
-    getSearchParams: ([searchQuery]) => ({
-      searchQuery,
-    }),
-    includeKeys: ['searchQuery'],
-  });
   return (
     <Card
       className={classNames(
@@ -97,16 +75,7 @@ export const FlightsCard = ({
                     Done
                   </Button>
                 ) : null}
-                <Form className="flex gap-2" methods={methods}>
-                  {isFlightsFullScreen && !isAddingFlight ? (
-                    <FormControl
-                      elementLeft={<SearchIcon className="h-4 w-4" />}
-                      inputClassName="bg-base-200 pl-8"
-                      name="searchQuery"
-                      placeholder="Search Flights..."
-                      size="sm"
-                    />
-                  ) : null}
+                <div className="flex gap-2">
                   {!isAddingFlight ? (
                     <Button
                       className="flex flex-nowrap"
@@ -118,13 +87,7 @@ export const FlightsCard = ({
                       }}
                     >
                       <PlusAirplaneIcon className="h-5 w-5" />
-                      <span
-                        className={classNames(
-                          isFlightsFullScreen && 'hidden sm:block',
-                        )}
-                      >
-                        Add Flight
-                      </span>
+                      Add Flight
                     </Button>
                   ) : null}
                   {!isAddingFlight ? (
@@ -159,7 +122,7 @@ export const FlightsCard = ({
                       </span>
                     </Button>
                   ) : null}
-                </Form>
+                </div>
               </div>
             ) : null}
           </div>
@@ -176,7 +139,6 @@ export const FlightsCard = ({
         {isFlightsFullScreen ? (
           <Flights
             filtersFormControl={filtersFormControl}
-            flightFiltersFormControl={methods.control}
             isRowSelectEnabled={isRowSelectEnabled}
             selectedAirportId={selectedAirportId}
             setIsRowSelectEnabled={setIsRowSelectEnabled}

@@ -14,7 +14,6 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { type FlightFiltersFormData } from '../Profile/components';
 import { type ProfileFilterFormData } from '../Profile/hooks';
 import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
@@ -35,7 +34,6 @@ export interface FlightsFormData {
 
 export interface FlightsProps {
   filtersFormControl: Control<ProfileFilterFormData>;
-  flightFiltersFormControl: Control<FlightFiltersFormData>;
   isRowSelectEnabled: boolean;
   selectedAirportId: string | null;
   setIsRowSelectEnabled: Dispatch<SetStateAction<boolean>>;
@@ -43,7 +41,6 @@ export interface FlightsProps {
 
 export const Flights = ({
   filtersFormControl,
-  flightFiltersFormControl,
   isRowSelectEnabled,
   selectedAirportId,
   setIsRowSelectEnabled,
@@ -64,18 +61,22 @@ export const Flights = ({
     }
   }, [setIsRowSelectEnabled, state?.createTrip]);
   const onError = useTRPCErrorHandler();
-  const [status, range, year, month, fromDate, toDate] = useWatch<
+  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
     ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
+    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
   >({
     control: filtersFormControl,
-    name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
+    name: [
+      'status',
+      'range',
+      'year',
+      'month',
+      'fromDate',
+      'toDate',
+      'searchQuery',
+    ],
   });
-  const query = useWatch<FlightFiltersFormData, 'searchQuery'>({
-    control: flightFiltersFormControl,
-    name: 'searchQuery',
-  });
-  const { debouncedValue } = useDebouncedValue(query, 400);
+  const { debouncedValue } = useDebouncedValue(searchQuery, 400);
   const {
     data,
     fetchNextPage,

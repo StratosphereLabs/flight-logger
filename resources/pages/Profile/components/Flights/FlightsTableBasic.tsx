@@ -22,12 +22,20 @@ export const FlightsTableBasic = ({
   const { username } = useParams();
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
-  const [status, range, year, month, fromDate, toDate] = useWatch<
+  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
     ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate']
+    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
   >({
     control: filtersFormControl,
-    name: ['status', 'range', 'year', 'month', 'fromDate', 'toDate'],
+    name: [
+      'status',
+      'range',
+      'year',
+      'month',
+      'fromDate',
+      'toDate',
+      'searchQuery',
+    ],
   });
   const { data, isFetching } =
     trpc.flights.getUserFlightsBasic.useInfiniteQuery(
@@ -41,6 +49,7 @@ export const FlightsTableBasic = ({
         month,
         fromDate,
         toDate,
+        searchQuery,
       },
       {
         enabled: userData !== undefined,

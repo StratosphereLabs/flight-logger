@@ -225,6 +225,146 @@ export const getRoutes = (result?: FlightsResult): RouteResult[] => {
   }));
 };
 
+export const getSearchQueryWhereInput = (
+  searchQuery: string,
+): Record<string, unknown> => ({
+  OR: [
+    {
+      airline: {
+        name: {
+          contains: searchQuery,
+          mode: 'insensitive' as const,
+        },
+      },
+    },
+    {
+      airline: {
+        icao: searchQuery.toUpperCase(),
+      },
+    },
+    {
+      airline: {
+        iata: searchQuery.toUpperCase(),
+      },
+    },
+    ...(!isNaN(Number(searchQuery))
+      ? [
+          {
+            flightNumber: {
+              equals: Number(searchQuery),
+            },
+          },
+        ]
+      : []),
+    {
+      departureAirport: {
+        name: {
+          contains: searchQuery,
+          mode: 'insensitive' as const,
+        },
+      },
+    },
+    {
+      departureAirport: {
+        municipality: {
+          contains: searchQuery,
+          mode: 'insensitive' as const,
+        },
+      },
+    },
+    {
+      departureAirportId: searchQuery.toUpperCase(),
+    },
+    {
+      departureAirport: {
+        iata: searchQuery.toUpperCase(),
+      },
+    },
+    {
+      departureAirport: {
+        country: {
+          name: {
+            contains: searchQuery,
+            mode: 'insensitive' as const,
+          },
+        },
+      },
+    },
+    {
+      departureAirport: {
+        country: {
+          id: searchQuery.toUpperCase(),
+        },
+      },
+    },
+    {
+      arrivalAirport: {
+        name: {
+          contains: searchQuery,
+          mode: 'insensitive' as const,
+        },
+      },
+    },
+    {
+      arrivalAirport: {
+        municipality: {
+          contains: searchQuery,
+          mode: 'insensitive' as const,
+        },
+      },
+    },
+    {
+      arrivalAirportId: searchQuery.toUpperCase(),
+    },
+    {
+      arrivalAirport: {
+        iata: searchQuery.toUpperCase(),
+      },
+    },
+    {
+      arrivalAirport: {
+        country: {
+          name: {
+            contains: searchQuery,
+            mode: 'insensitive' as const,
+          },
+        },
+      },
+    },
+    {
+      arrivalAirport: {
+        country: {
+          id: searchQuery.toUpperCase(),
+        },
+      },
+    },
+    {
+      aircraftType: {
+        name: {
+          contains: searchQuery,
+          mode: 'insensitive' as const,
+        },
+      },
+    },
+    {
+      aircraftType: {
+        icao: searchQuery.toUpperCase(),
+      },
+    },
+    {
+      aircraftType: {
+        iata: searchQuery.toUpperCase(),
+      },
+    },
+    {
+      tailNumber: {
+        contains: searchQuery,
+        mode: 'insensitive' as const,
+      },
+    },
+  ],
+});
+
 export const getTrackingData = (
   flight: FlightData,
 ): FlightTrackingDataResult => {

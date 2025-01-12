@@ -90,7 +90,7 @@ export const GoogleMap = ({
       }
       if (!bounds.isEmpty()) {
         map.fitBounds(bounds, {
-          top: 225,
+          top: 233,
           left: 25,
           right: 25,
           bottom: 25,
@@ -132,7 +132,7 @@ export const GoogleMap = ({
       onZoomChanged={() => {
         const newZoom = map?.getZoom();
         if (newZoom !== undefined) {
-          setShowAirportLabels(newZoom > 3.5);
+          setShowAirportLabels(newZoom > 3);
         }
       }}
     >
