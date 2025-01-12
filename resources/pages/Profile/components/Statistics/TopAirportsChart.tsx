@@ -128,7 +128,7 @@ export const TopAirportsChart = ({
                 tickPadding: 20,
               }}
               margin={{
-                left: 55,
+                left: 65,
               }}
               colors={['var(--fallback-su,oklch(var(--su)/0.75))']}
               tooltip={tooltipData => (

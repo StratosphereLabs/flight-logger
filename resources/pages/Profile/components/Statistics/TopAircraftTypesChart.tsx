@@ -128,7 +128,7 @@ export const TopAircraftTypesChart = ({
                 tickPadding: 15,
               }}
               margin={{
-                left: 55,
+                left: 65,
               }}
               colors={['var(--fallback-er,oklch(var(--er)/0.75))']}
               tooltip={tooltipData => (

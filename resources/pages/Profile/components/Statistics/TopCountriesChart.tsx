@@ -154,7 +154,7 @@ export const TopCountriesChart = ({
                 ),
               }}
               margin={{
-                left: 55,
+                left: 65,
               }}
               colors={['var(--fallback-a,oklch(var(--a)/0.75))']}
               tooltip={tooltipData => (

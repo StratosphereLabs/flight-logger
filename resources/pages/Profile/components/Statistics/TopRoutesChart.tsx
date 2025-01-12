@@ -112,7 +112,7 @@ export const TopRoutesChart = ({
                 tickSize: 0,
               }}
               margin={{
-                left: 55,
+                left: 65,
               }}
               colors={['var(--fallback-wa,oklch(var(--wa)/0.75))']}
               tooltip={tooltipData => (
