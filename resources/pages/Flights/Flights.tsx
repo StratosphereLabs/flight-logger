@@ -14,6 +14,7 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { useAddFlightStore } from '../Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../Profile/hooks';
 import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
@@ -52,6 +53,7 @@ export const Flights = ({
   };
   const navigate = useNavigate();
   const { username } = useParams();
+  const { setIsAddingFlight } = useAddFlightStore();
   const { onOwnProfile } = useLoggedInUserQuery();
   const { resetRowSelection } = useFlightsPageStore();
   useEffect(() => {
@@ -165,7 +167,7 @@ export const Flights = ({
               <Button
                 color="primary"
                 onClick={() => {
-                  navigate('/add-flight');
+                  setIsAddingFlight(true);
                 }}
               >
                 <PlusIcon className="h-6 w-6" />

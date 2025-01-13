@@ -27,6 +27,7 @@ import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
+import { useAddFlightStore } from '../Flights/addFlightStore';
 import { CesiumMap } from './CesiumMap';
 import { GoogleMap } from './GoogleMap';
 import { ProfileOverlay } from './ProfileOverlay';
@@ -55,6 +56,7 @@ export const MapCard = ({
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useProfilePage();
   const [, setSearchParams] = useSearchParams();
+  const { isAddingFlight } = useAddFlightStore();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
@@ -156,7 +158,11 @@ export const MapCard = ({
         isLoading={data === undefined}
         className={classNames(
           'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
-          isMapFullScreen ? 'min-h-[100dvh]' : 'min-h-[calc(100vh-242px)]',
+          isMapFullScreen
+            ? 'min-h-[100dvh]'
+            : isAddingFlight
+              ? 'min-h-[50vh]'
+              : 'min-h-[calc(100vh-242px)]',
         )}
       >
         {data !== undefined &&
@@ -186,7 +192,7 @@ export const MapCard = ({
         <Form
           className={classNames(
             'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
-            isProfilePage ? 'mt-[110px]' : 'mt-16',
+            isProfilePage && !isAddingFlight ? 'mt-[110px]' : 'mt-16',
           )}
           methods={methods}
         >
@@ -270,6 +276,7 @@ export const MapCard = ({
       currentFlight,
       data,
       hoverAirportId,
+      isAddingFlight,
       isMapFullScreen,
       isProfilePage,
       mapMode,

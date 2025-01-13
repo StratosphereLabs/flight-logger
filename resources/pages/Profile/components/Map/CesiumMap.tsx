@@ -3,6 +3,7 @@ import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { type CesiumComponentRef, Entity, Viewer } from 'resium';
 
 import planeIconUrl from '../../../../assets/plane.svg';
+import { useAddFlightStore } from '../Flights/addFlightStore';
 import type { FilteredMapData, MapFlight } from './types';
 
 export interface CesiumMapProps {
@@ -24,6 +25,7 @@ export const CesiumMap = ({
   setSelectedAirportId,
   setHoverAirportId,
 }: CesiumMapProps): JSX.Element => {
+  const { isAddingFlight } = useAddFlightStore();
   const viewerRef = useRef<CesiumComponentRef<ViewerType> | null>(null);
   useEffect(() => {
     viewerRef.current?.cesiumElement?.camera.setView({
@@ -49,59 +51,61 @@ export const CesiumMap = ({
       scene3DOnly
       timeline={false}
     >
-      {data.routes?.map(({ airports, isCompleted, isSelected }, index) => {
-        const isHover = airports.some(({ id }) => id === hoverAirportId);
-        const isActive = isSelected || isHover;
-        return (
-          <Entity
-            key={index}
-            polyline={{
-              clampToGround: true,
-              material: Color.fromAlpha(
-                isActive || isCompleted ? Color.RED : Color.WHITE,
-                selectedAirportId === null || isSelected ? 0.75 : 0.1,
-              ),
-              positions: [
-                Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
-                Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
-              ],
-              width: isActive ? 3 : 2,
-              zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
-            }}
-          />
-        );
-      })}
-      {data.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
-        const isActive = selectedAirportId === id || hoverAirportId === id;
-        return (
-          <Entity
-            key={id}
-            onClick={() => {
-              setSelectedAirportId(id);
-            }}
-            onMouseEnter={() => {
-              setHoverAirportId(id);
-            }}
-            onMouseLeave={() => {
-              setHoverAirportId(null);
-            }}
-            position={Cartesian3.fromDegrees(lon, lat, 10)}
-            point={{
-              color: Color.fromAlpha(
-                isActive ? Color.YELLOW : Color.WHITE,
-                hasSelectedRoute || selectedAirportId === null ? 1 : 0.1,
-              ),
-              outlineColor: Color.fromAlpha(
-                Color.BLACK,
-                hasSelectedRoute || selectedAirportId === null ? 1 : 0.1,
-              ),
-              outlineWidth: isActive ? 1.5 : 1,
-              pixelSize: isActive ? 5 : 4,
-            }}
-          />
-        );
-      })}
-      {currentFlight !== undefined ? (
+      {!isAddingFlight &&
+        data.routes?.map(({ airports, isCompleted, isSelected }, index) => {
+          const isHover = airports.some(({ id }) => id === hoverAirportId);
+          const isActive = isSelected || isHover;
+          return (
+            <Entity
+              key={index}
+              polyline={{
+                clampToGround: true,
+                material: Color.fromAlpha(
+                  isActive || isCompleted ? Color.RED : Color.WHITE,
+                  selectedAirportId === null || isSelected ? 0.75 : 0.1,
+                ),
+                positions: [
+                  Cartesian3.fromDegrees(airports[0].lon, airports[0].lat, 0),
+                  Cartesian3.fromDegrees(airports[1].lon, airports[1].lat, 0),
+                ],
+                width: isActive ? 3 : 2,
+                zIndex: isActive ? 10 : !isCompleted ? 5 : undefined,
+              }}
+            />
+          );
+        })}
+      {!isAddingFlight &&
+        data.airports?.map(({ id, lat, lon, hasSelectedRoute }) => {
+          const isActive = selectedAirportId === id || hoverAirportId === id;
+          return (
+            <Entity
+              key={id}
+              onClick={() => {
+                setSelectedAirportId(id);
+              }}
+              onMouseEnter={() => {
+                setHoverAirportId(id);
+              }}
+              onMouseLeave={() => {
+                setHoverAirportId(null);
+              }}
+              position={Cartesian3.fromDegrees(lon, lat, 10)}
+              point={{
+                color: Color.fromAlpha(
+                  isActive ? Color.YELLOW : Color.WHITE,
+                  hasSelectedRoute || selectedAirportId === null ? 1 : 0.1,
+                ),
+                outlineColor: Color.fromAlpha(
+                  Color.BLACK,
+                  hasSelectedRoute || selectedAirportId === null ? 1 : 0.1,
+                ),
+                outlineWidth: isActive ? 1.5 : 1,
+                pixelSize: isActive ? 5 : 4,
+              }}
+            />
+          );
+        })}
+      {!isAddingFlight && currentFlight !== undefined ? (
         <Entity
           position={Cartesian3.fromDegrees(
             currentFlight.lng,

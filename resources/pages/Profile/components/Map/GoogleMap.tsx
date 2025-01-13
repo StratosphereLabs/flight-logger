@@ -25,6 +25,8 @@ import { TOOLTIP_COLORS } from '../../../../common/constants';
 import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
 import { useIsDarkMode } from '../../../../stores';
 import { getAltitudeColor } from '../../../../utils/colors';
+import { useAddFlightStore } from '../Flights/addFlightStore';
+import { AddFlightOverlays } from './AddFlightOverlays';
 import { type MapCardFormData } from './MapCard';
 import type { FilteredMapData, MapFlight } from './types';
 
@@ -70,11 +72,12 @@ export const GoogleMap = ({
         : [],
     [data.heatmap, mapMode],
   );
+  const { isAddingFlight } = useAddFlightStore();
   useEffect(() => {
     setTimeout(() => heatmap?.setData(heatmapData));
   }, [heatmap, heatmapData]);
   useEffect(() => {
-    if (map !== null) {
+    if (map !== null && !isAddingFlight) {
       const bounds = new window.google.maps.LatLngBounds();
       for (const { lat, lon, hasSelectedRoute } of data.airports) {
         if (selectedAirportId === null || hasSelectedRoute) {
@@ -97,7 +100,7 @@ export const GoogleMap = ({
         });
       }
     }
-  }, [data.airports, data.routes, map, selectedAirportId]);
+  }, [data.airports, data.routes, isAddingFlight, map, selectedAirportId]);
   const isDarkMode = useIsDarkMode();
   const mapOptions = useMemo(
     () => ({
@@ -136,110 +139,115 @@ export const GoogleMap = ({
         }
       }}
     >
-      {data.airports?.map(({ id, lat, lon, hasSelectedRoute, iata }) => {
-        const isActive = selectedAirportId === id || hoverAirportId === id;
-        const isFocused =
-          isActive || hasSelectedRoute || selectedAirportId === null;
-        return (
-          <>
-            {mapMode === 'routes' ? (
-              <AirportLabelOverlay
-                iata={iata}
-                isFocused={isFocused}
+      {!isAddingFlight &&
+        data.airports?.map(({ id, lat, lon, hasSelectedRoute, iata }) => {
+          const isActive = selectedAirportId === id || hoverAirportId === id;
+          const isFocused =
+            isActive || hasSelectedRoute || selectedAirportId === null;
+          return (
+            <>
+              {mapMode === 'routes' ? (
+                <AirportLabelOverlay
+                  iata={iata}
+                  isFocused={isFocused}
+                  position={{ lat, lng: lon }}
+                  show={isActive || hasSelectedRoute || showAirportLabels}
+                />
+              ) : null}
+              <MarkerF
+                visible={mapMode === 'routes'}
+                key={id}
                 position={{ lat, lng: lon }}
-                show={isActive || hasSelectedRoute || showAirportLabels}
+                title={id}
+                onClick={() => {
+                  setSelectedAirportId(id);
+                }}
+                onMouseOver={() => {
+                  setHoverAirportId(id);
+                }}
+                onMouseOut={() => {
+                  setHoverAirportId(null);
+                }}
+                options={{
+                  icon:
+                    window.google !== undefined
+                      ? {
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          fillColor: isActive ? 'yellow' : 'white',
+                          fillOpacity: isFocused ? 1 : 0.1,
+                          scale: isActive ? 5 : 4,
+                          strokeColor: 'black',
+                          strokeWeight: isActive ? 2 : 1.5,
+                          strokeOpacity: isFocused ? 1 : 0.1,
+                        }
+                      : null,
+                  zIndex: isFocused ? 30 : 25,
+                }}
               />
-            ) : null}
-            <MarkerF
+            </>
+          );
+        })}
+      {!isAddingFlight &&
+        data.routes?.map(({ airports, isCompleted, isSelected }, index) => {
+          const isHover = airports.some(({ id }) => id === hoverAirportId);
+          const isActive = isSelected || isHover;
+          return (
+            <PolylineF
               visible={mapMode === 'routes'}
-              key={id}
-              position={{ lat, lng: lon }}
-              title={id}
-              onClick={() => {
-                setSelectedAirportId(id);
-              }}
-              onMouseOver={() => {
-                setHoverAirportId(id);
-              }}
-              onMouseOut={() => {
-                setHoverAirportId(null);
-              }}
+              key={index}
               options={{
-                icon:
-                  window.google !== undefined
-                    ? {
-                        path: window.google.maps.SymbolPath.CIRCLE,
-                        fillColor: isActive ? 'yellow' : 'white',
-                        fillOpacity: isFocused ? 1 : 0.1,
-                        scale: isActive ? 5 : 4,
-                        strokeColor: 'black',
-                        strokeWeight: isActive ? 2 : 1.5,
-                        strokeOpacity: isFocused ? 1 : 0.1,
-                      }
-                    : null,
-                zIndex: isFocused ? 30 : 25,
+                strokeOpacity: isActive
+                  ? 0.75
+                  : selectedAirportId === null
+                    ? isDarkMode
+                      ? 0.5
+                      : 1
+                    : 0.1,
+                strokeColor:
+                  isActive || isCompleted
+                    ? 'red'
+                    : isDarkMode
+                      ? 'lightblue'
+                      : 'white',
+                strokeWeight: isActive ? 3 : 2,
+                zIndex: isCompleted ? 10 : 5,
+                geodesic: true,
               }}
+              path={[
+                { lat: airports[0].lat, lng: airports[0].lon },
+                { lat: airports[1].lat, lng: airports[1].lon },
+              ]}
             />
-          </>
-        );
-      })}
-      {data.routes?.map(({ airports, isCompleted, isSelected }, index) => {
-        const isHover = airports.some(({ id }) => id === hoverAirportId);
-        const isActive = isSelected || isHover;
-        return (
-          <PolylineF
-            visible={mapMode === 'routes'}
-            key={index}
-            options={{
-              strokeOpacity: isActive
-                ? 0.75
-                : selectedAirportId === null
-                  ? isDarkMode
-                    ? 0.5
-                    : 1
-                  : 0.1,
-              strokeColor:
-                isActive || isCompleted
-                  ? 'red'
-                  : isDarkMode
-                    ? 'lightblue'
-                    : 'white',
-              strokeWeight: isActive ? 3 : 2,
-              zIndex: isCompleted ? 10 : 5,
-              geodesic: true,
-            }}
-            path={[
-              { lat: airports[0].lat, lng: airports[0].lon },
-              { lat: airports[1].lat, lng: airports[1].lon },
-            ]}
-          />
-        );
-      })}
-      {currentFlight?.tracklog?.map(({ alt, coord }, index, allItems) => {
-        const prevItem = allItems[index - 1];
-        if (prevItem === undefined) return null;
-        if (alt !== null) {
-          lastAltitude = alt;
-        }
-        return (
-          <PolylineF
-            visible={mapMode === 'routes'}
-            key={index}
-            options={{
-              strokeOpacity: selectedAirportId === null ? 1 : 0.1,
-              strokeColor: getAltitudeColor(
-                lastAltitude !== null ? lastAltitude / 450 : 0,
-              ),
-              strokeWeight: 3,
-              zIndex: 20,
-            }}
-            path={[
-              { lat: prevItem.coord[1], lng: prevItem.coord[0] },
-              { lat: coord[1], lng: coord[0] },
-            ]}
-          />
-        );
-      }) ?? null}
+          );
+        })}
+      {!isAddingFlight &&
+        (currentFlight?.tracklog?.map(({ alt, coord }, index, allItems) => {
+          const prevItem = allItems[index - 1];
+          if (prevItem === undefined) return null;
+          if (alt !== null) {
+            lastAltitude = alt;
+          }
+          return (
+            <PolylineF
+              visible={mapMode === 'routes'}
+              key={index}
+              options={{
+                strokeOpacity: selectedAirportId === null ? 1 : 0.1,
+                strokeColor: getAltitudeColor(
+                  lastAltitude !== null ? lastAltitude / 450 : 0,
+                ),
+                strokeWeight: 3,
+                zIndex: 20,
+              }}
+              path={[
+                { lat: prevItem.coord[1], lng: prevItem.coord[0] },
+                { lat: coord[1], lng: coord[0] },
+              ]}
+            />
+          );
+        }) ??
+          null)}
+      <AddFlightOverlays map={map} />
       <PolylineF
         visible={mapMode === 'routes'}
         options={{

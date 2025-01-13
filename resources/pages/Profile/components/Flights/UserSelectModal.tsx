@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Dispatch, type SetStateAction, useEffect } from 'react';
+import { useEffect } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { Form, Modal } from 'stratosphere-ui';
 
@@ -8,20 +8,19 @@ import {
   selectUserSchema,
 } from '../../../../../app/schemas';
 import { UserSelect } from '../../../../common/components';
+import { useAddFlightStore } from './addFlightStore';
 
 export interface UserSelectModalProps {
   isLoading: boolean;
-  isOpen: boolean;
   onSubmit: SubmitHandler<UserSelectFormData>;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const UserSelectModal = ({
   isLoading,
-  isOpen,
   onSubmit,
-  setIsOpen,
 }: UserSelectModalProps): JSX.Element => {
+  const { isUserSelectModalOpen, setIsUserSelectModalOpen } =
+    useAddFlightStore();
   const methods = useForm<UserSelectFormData>({
     defaultValues: {
       username: null,
@@ -29,12 +28,12 @@ export const UserSelectModal = ({
     resolver: zodResolver(selectUserSchema),
   });
   useEffect(() => {
-    if (isOpen) {
+    if (isUserSelectModalOpen) {
       setTimeout(() => {
         methods.setFocus('username');
       });
     }
-  }, [isOpen, methods]);
+  }, [isUserSelectModalOpen, methods]);
   return (
     <Modal
       actionButtons={[
@@ -42,7 +41,7 @@ export const UserSelectModal = ({
           children: 'Cancel',
           color: 'secondary',
           onClick: () => {
-            setIsOpen(false);
+            setIsUserSelectModalOpen(false);
           },
           outline: true,
         },
@@ -56,9 +55,9 @@ export const UserSelectModal = ({
       ]}
       className="flex flex-col overflow-y-visible"
       onClose={() => {
-        setIsOpen(false);
+        setIsUserSelectModalOpen(false);
       }}
-      open={isOpen}
+      open={isUserSelectModalOpen}
       title="Select User"
     >
       <p className="py-4">Please select a user for this flight.</p>
