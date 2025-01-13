@@ -1,10 +1,9 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import type { Airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { type UseFormReturn, useWatch } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 import {
   Button,
   CheckIcon,
@@ -17,10 +16,7 @@ import {
 } from 'stratosphere-ui';
 
 import { type FlightDataRouterOutput } from '../../../../../app/routes/flightData';
-import {
-  type FlightSearchFormData,
-  searchFlightDataSchema,
-} from '../../../../../app/schemas';
+import { type FlightSearchFormData } from '../../../../../app/schemas';
 import {
   AirlineInput,
   PlusIcon,
@@ -32,43 +28,40 @@ import {
 } from '../../../../common/hooks';
 import { trpc } from '../../../../utils/trpc';
 import { UserSelectModal } from './UserSelectModal';
+import { useAddFlightStore } from './addFlightStore';
 import { flightSearchFormDefaultValues } from './constants';
 
-export const AddFlightForm = (): JSX.Element => {
+export interface AddFlightFormProps {
+  methods: UseFormReturn<FlightSearchFormData>;
+}
+
+export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
   const utils = trpc.useUtils();
-  const navigate = useNavigate();
   const { username } = useParams();
   const { onOwnProfile } = useLoggedInUserQuery();
   const formRef = useRef<HTMLFormElement>(null);
-  const methods = useForm<FlightSearchFormData>({
-    defaultValues: {
-      ...flightSearchFormDefaultValues,
-      userType: onOwnProfile ? 'me' : 'other',
-    },
-    resolver: zodResolver(searchFlightDataSchema),
-    reValidateMode: 'onBlur',
-  });
+  const {
+    flightSearchFormData,
+    selectedFlight,
+    setFlightSearchFormData,
+    setIsUserSelectModalOpen,
+    setSelectedFlight,
+  } = useAddFlightStore();
   const airline = useWatch<FlightSearchFormData, 'airline'>({
     control: methods.control,
     name: 'airline',
   });
-  const [currentFormData, setCurrentFormData] =
-    useState<FlightSearchFormData | null>(null);
   const userType = useWatch<FlightSearchFormData, 'userType'>({
     name: 'userType',
     control: methods.control,
   });
-  const [isUserSelectModalOpen, setIsUserSelectModalOpen] = useState(false);
-  const [selectedFlight, setSelectedFlight] = useState<
-    FlightDataRouterOutput['fetchFlightsByFlightNumber'][number] | null
-  >(null);
   const [completedFlightIds, setCompletedFlightIds] = useState<number[]>([]);
   const onError = useTRPCErrorHandler();
   const { data, isFetching } =
     trpc.flightData.fetchFlightsByFlightNumber.useQuery(
-      currentFormData ?? flightSearchFormDefaultValues,
+      flightSearchFormData ?? flightSearchFormDefaultValues,
       {
-        enabled: currentFormData !== null,
+        enabled: flightSearchFormData !== null,
         onError,
       },
     );
@@ -87,21 +80,21 @@ export const AddFlightForm = (): JSX.Element => {
     });
   const addFlight = useCallback(
     (
-      newFlight: FlightDataRouterOutput['fetchFlightsByFlightNumber'][number],
+      newFlight: FlightDataRouterOutput['fetchFlightsByFlightNumber']['results'][number],
       username?: string,
     ) => {
-      if (currentFormData !== null)
+      if (flightSearchFormData !== null)
         mutate({
           username,
-          airline: currentFormData.airline,
-          flightNumber: currentFormData.flightNumber,
+          airline: flightSearchFormData.airline,
+          flightNumber: flightSearchFormData.flightNumber,
           departureIcao: newFlight.departureAirport.id,
           arrivalIcao: newFlight.arrivalAirport.id,
           outTime: newFlight.outTime,
           inTime: newFlight.inTime,
         });
     },
-    [currentFormData, mutate],
+    [flightSearchFormData, mutate],
   );
   useEffect(() => {
     setCompletedFlightIds([]);
@@ -109,10 +102,6 @@ export const AddFlightForm = (): JSX.Element => {
   useEffect(() => {
     setTimeout(() => {
       methods.setFocus('outDateISO');
-      formRef.current?.scrollIntoView({
-        block: 'center',
-        behavior: 'smooth',
-      });
     });
   }, [methods]);
   useEffect(() => {
@@ -121,17 +110,17 @@ export const AddFlightForm = (): JSX.Element => {
     }
   }, [airline, methods]);
   return (
-    <div className="mb-3 flex flex-col gap-3">
+    <div className="mb-3 flex w-full max-w-[900px] flex-col items-center gap-6">
       <Form
         formRef={formRef}
         methods={methods}
-        className="flex w-full flex-col justify-between gap-8 sm:flex-row"
+        className="flex w-full flex-col justify-center gap-8 sm:flex-row"
         onFormSubmit={values => {
-          setCurrentFormData(values);
+          setFlightSearchFormData(values);
           methods.reset(values);
         }}
       >
-        <div className="flex w-full max-w-[700px] flex-col gap-4">
+        <div className="flex w-full flex-col gap-4">
           {onOwnProfile ? (
             <FormRadioGroup className="w-full" name="userType">
               <FormRadioGroupOption
@@ -150,49 +139,49 @@ export const AddFlightForm = (): JSX.Element => {
               </FormRadioGroupOption>
             </FormRadioGroup>
           ) : null}
-          <div className="flex flex-1 flex-wrap gap-x-4 gap-y-2">
-            <FormControl
-              className="w-[150px]"
-              inputClassName="bg-base-200"
-              isRequired
-              labelText="Departure Date"
-              name="outDateISO"
-              type="date"
-            />
-            <AirlineInput
-              className="min-w-[250px] max-w-[500px] flex-1"
-              inputClassName="bg-base-200"
-              isRequired
-              labelText="Airline"
-              menuClassName="w-full"
-              name="airline"
-            />
-            <FormControl
-              className="w-[150px]"
-              labelText="Flight No."
-              inputClassName="bg-base-200"
-              isRequired
-              name="flightNumber"
-              transform={integerInputTransformer}
-              maxLength={4}
-            />
+          <div className="flex flex-col gap-4 md:flex-row md:gap-2">
+            <div className="flex flex-1 flex-wrap gap-x-2 gap-y-1">
+              <FormControl
+                className="w-[160px]"
+                inputClassName="bg-base-200"
+                isRequired
+                labelText="Departure Date"
+                name="outDateISO"
+                type="date"
+              />
+              <AirlineInput
+                className="min-w-[250px] max-w-[500px] flex-1"
+                inputClassName="bg-base-200"
+                isRequired
+                labelText="Airline"
+                menuClassName="w-full"
+                name="airline"
+              />
+              <FormControl
+                className="w-[120px]"
+                labelText="Flight No."
+                inputClassName="bg-base-200"
+                isRequired
+                name="flightNumber"
+                transform={integerInputTransformer}
+                maxLength={4}
+              />
+            </div>
+            <Button
+              className="w-full md:mt-9 md:w-[120px]"
+              color="neutral"
+              loading={isFetching}
+              disabled={!methods.formState.isDirty}
+              type="submit"
+            >
+              {!isFetching ? (
+                <div className="flex w-6 justify-center">
+                  <SearchIcon className="h-5 w-5" />
+                </div>
+              ) : null}
+              Search
+            </Button>
           </div>
-        </div>
-        <div className="flex w-full items-end justify-center sm:w-auto">
-          <Button
-            className="w-full min-w-[120px] max-w-[250px] sm:mt-9"
-            color="neutral"
-            loading={isFetching}
-            disabled={!methods.formState.isDirty}
-            type="submit"
-          >
-            {!isFetching ? (
-              <div className="flex w-6 justify-center">
-                <SearchIcon className="h-5 w-5" />
-              </div>
-            ) : null}
-            Search
-          </Button>
         </div>
       </Form>
       {data !== undefined && !isFetching ? (
@@ -227,13 +216,13 @@ export const AddFlightForm = (): JSX.Element => {
               id: 'airline',
               accessorKey: 'airline',
               cell: ({ getValue }) => {
-                return currentFormData?.airline?.logo !== null &&
-                  currentFormData?.airline?.logo !== undefined ? (
+                return flightSearchFormData?.airline?.logo !== null &&
+                  flightSearchFormData?.airline?.logo !== undefined ? (
                   <div className="flex justify-start">
                     <img
-                      alt={`${currentFormData.airline.name} Logo`}
+                      alt={`${flightSearchFormData.airline.name} Logo`}
                       className="mr-[-12px] max-h-[20px] max-w-[68px] sm:max-h-[28px]"
-                      src={currentFormData.airline.logo}
+                      src={flightSearchFormData.airline.logo}
                     />
                   </div>
                 ) : null;
@@ -246,11 +235,11 @@ export const AddFlightForm = (): JSX.Element => {
               cell: () => (
                 <div className="flex gap-1 font-mono opacity-75">
                   <div className="hidden sm:block">
-                    {currentFormData?.airline?.iata ??
-                      currentFormData?.airline?.icao}
+                    {flightSearchFormData?.airline?.iata ??
+                      flightSearchFormData?.airline?.icao}
                   </div>
                   <span className="font-semibold">
-                    {currentFormData?.flightNumber}
+                    {flightSearchFormData?.flightNumber}
                   </span>
                 </div>
               ),
@@ -355,7 +344,7 @@ export const AddFlightForm = (): JSX.Element => {
               footer: () => null,
             },
           ]}
-          data={data}
+          data={data.results}
           enableSorting={false}
           enableRowHover
           getCoreRowModel={getCoreRowModel()}
@@ -364,11 +353,11 @@ export const AddFlightForm = (): JSX.Element => {
       ) : null}
       {data !== undefined && !isFetching ? (
         <div className="flex w-full flex-col items-center gap-6 font-semibold">
-          {data.length === 0 ? <div>No Flights Found</div> : null}
+          {data.results.length === 0 ? <div>No Flights Found</div> : null}
           <Button
-            color={data.length === 0 ? 'primary' : 'ghost'}
+            color={data.results.length === 0 ? 'primary' : 'ghost'}
             onClick={() => {
-              navigate('/add-flight');
+              alert('Coming Soon!');
             }}
           >
             <PlusIcon className="h-6 w-6" />
@@ -378,12 +367,10 @@ export const AddFlightForm = (): JSX.Element => {
       ) : null}
       <UserSelectModal
         isLoading={isFlightDataLoading}
-        isOpen={isUserSelectModalOpen}
         onSubmit={({ username: selectedUsername }) => {
           if (selectedFlight !== null && selectedUsername !== null)
             addFlight(selectedFlight, selectedUsername);
         }}
-        setIsOpen={setIsUserSelectModalOpen}
       />
     </div>
   );

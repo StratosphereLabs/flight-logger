@@ -1,9 +1,14 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import classNames from 'classnames';
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import { type Control } from 'react-hook-form';
+import { type Control, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 
+import {
+  type FlightSearchFormData,
+  searchFlightDataSchema,
+} from '../../../../../app/schemas';
 import {
   CollapseIcon,
   ExpandIcon,
@@ -17,13 +22,13 @@ import { Flights } from '../../../Flights';
 import { type ProfileFilterFormData } from '../../hooks';
 import { AddFlightForm } from './AddFlightForm';
 import { FlightsTableBasic } from './FlightsTableBasic';
+import { useAddFlightStore } from './addFlightStore';
+import { flightSearchFormDefaultValues } from './constants';
 
 export interface FlightCardProps {
   filtersFormControl: Control<ProfileFilterFormData>;
-  isAddingFlight: boolean;
   isFlightsFullScreen: boolean;
   selectedAirportId: string | null;
-  setIsAddingFlight: Dispatch<SetStateAction<boolean>>;
   setIsFlightsFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -33,26 +38,44 @@ export interface FlightFiltersFormData {
 
 export const FlightsCard = ({
   filtersFormControl,
-  isAddingFlight,
   isFlightsFullScreen,
   selectedAirportId,
-  setIsAddingFlight,
   setIsFlightsFullScreen,
 }: FlightCardProps): JSX.Element => {
   const { username } = useParams();
   const [, setSearchParams] = useSearchParams();
+  const { isAddingFlight, setIsAddingFlight, setFlightSearchFormData } =
+    useAddFlightStore();
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
+  const methods = useForm<FlightSearchFormData>({
+    defaultValues: {
+      ...flightSearchFormDefaultValues,
+      userType: onOwnProfile ? 'me' : 'other',
+    },
+    resolver: zodResolver(searchFlightDataSchema),
+    reValidateMode: 'onBlur',
+  });
   const { data } = useProfileUserQuery();
   return (
     <Card
       className={classNames(
         'w-full bg-base-100',
-        !isFlightsFullScreen && (isAddingFlight ? 'lg:w-full' : 'lg:w-[480px]'),
+        isFlightsFullScreen || isAddingFlight ? 'flex-1' : 'lg:w-[480px]',
       )}
     >
-      <CardBody className="gap-4 p-1 pt-4">
-        <div className="flex w-full min-w-[375px] flex-col gap-4 px-3">
+      <CardBody
+        className={classNames(
+          'items-center gap-4 pt-4',
+          isAddingFlight ? 'p-3' : 'p-1',
+        )}
+      >
+        <div
+          className={classNames(
+            'flex w-full min-w-[375px] flex-col gap-4',
+            isAddingFlight ? 'px-0' : 'px-3',
+          )}
+        >
           <div className="flex items-center justify-between gap-4">
             <CardTitle>
               {isAddingFlight
@@ -69,14 +92,19 @@ export const FlightsCard = ({
                     size="sm"
                     onClick={() => {
                       setIsAddingFlight(false);
+                      methods.reset({
+                        ...flightSearchFormDefaultValues,
+                        userType: onOwnProfile ? 'me' : 'other',
+                      });
+                      setFlightSearchFormData(null);
                     }}
                   >
                     <CloseIcon className="h-4 w-4" />
                     Done
                   </Button>
                 ) : null}
-                <div className="flex gap-2">
-                  {!isAddingFlight ? (
+                {!isAddingFlight ? (
+                  <div className="flex gap-2">
                     <Button
                       className="flex flex-nowrap"
                       color="primary"
@@ -89,8 +117,6 @@ export const FlightsCard = ({
                       <PlusAirplaneIcon className="h-5 w-5" />
                       Add Flight
                     </Button>
-                  ) : null}
-                  {!isAddingFlight ? (
                     <Button
                       color="ghost"
                       onClick={() => {
@@ -121,14 +147,14 @@ export const FlightsCard = ({
                         {isFlightsFullScreen ? 'Collapse' : 'View All'}
                       </span>
                     </Button>
-                  ) : null}
-                </div>
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </div>
         </div>
-        {isAddingFlight ? <AddFlightForm /> : null}
-        {!isFlightsFullScreen ? (
+        {isAddingFlight ? <AddFlightForm methods={methods} /> : null}
+        {!isFlightsFullScreen && !isAddingFlight ? (
           <div className="min-h-[70px]">
             <FlightsTableBasic
               filtersFormControl={filtersFormControl}
@@ -136,7 +162,7 @@ export const FlightsCard = ({
             />
           </div>
         ) : null}
-        {isFlightsFullScreen ? (
+        {isFlightsFullScreen && !isAddingFlight ? (
           <Flights
             filtersFormControl={filtersFormControl}
             isRowSelectEnabled={isRowSelectEnabled}

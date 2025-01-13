@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import type { Airport } from '@prisma/client';
 import { TRPCError, type inferRouterOutputs } from '@trpc/server';
+import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import groupBy from 'lodash.groupby';
 
 import {
   updateFlightRegistrationData,
@@ -18,6 +21,7 @@ import { procedure, router } from '../trpc';
 import {
   getDurationMinutes,
   getFlightTimestamps,
+  getMidpoint,
   updateFlightWeatherReports,
 } from '../utils';
 
@@ -31,7 +35,6 @@ export const flightDataRouter = router({
         flightNumber: flightNumber!,
         isoDate: outDateISO,
       });
-      if (flights === null) return [];
       const flightData: FlightSearchDataResult[] = flights.flatMap(
         (flight, index) => {
           const duration = getDurationMinutes({
@@ -62,7 +65,36 @@ export const flightDataRouter = router({
           };
         },
       );
-      return flightData;
+      const groupedFlights = groupBy(
+        flightData,
+        ({ departureAirport, arrivalAirport }) =>
+          [departureAirport.id, arrivalAirport.id].sort().join('-'),
+      );
+      const routes = Object.values(groupedFlights).map(flights => ({
+        airports: [flights[0].departureAirport, flights[0].arrivalAirport],
+        frequency: flights.length,
+        isCompleted: flights.some(({ inTime }) => !isFuture(inTime)),
+        midpoint: getMidpoint(
+          flights[0].departureAirport.lat,
+          flights[0].departureAirport.lon,
+          flights[0].arrivalAirport.lat,
+          flights[0].arrivalAirport.lon,
+        ),
+      }));
+      return {
+        routes,
+        airports: Object.values(
+          routes.reduce<Record<string, Airport>>(
+            (acc, { airports }) => ({
+              ...acc,
+              [airports[0].id]: airports[0],
+              [airports[1].id]: airports[1],
+            }),
+            {},
+          ),
+        ),
+        results: flightData,
+      };
     }),
   addFlightFromData: procedure
     .use(verifyAuthenticated)

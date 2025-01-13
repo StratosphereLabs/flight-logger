@@ -23,6 +23,7 @@ import {
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfilePageNavigationState } from '../../pages';
+import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
 import { messaging } from '../../utils/firebase';
@@ -37,6 +38,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
+  const { isAddingFlight } = useAddFlightStore();
   const isDarkMode = useIsDarkMode();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
@@ -285,7 +287,9 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             />
           </div>
         </div>
-        {isUserPage ? <ProfileFiltersForm methods={methods} /> : null}
+        {isUserPage && !isAddingFlight ? (
+          <ProfileFiltersForm methods={methods} />
+        ) : null}
       </div>
       <Modal
         actionButtons={[

@@ -10,6 +10,7 @@ import {
   MapCard,
   StatisticsCard,
 } from './components';
+import { useAddFlightStore } from './components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from './hooks';
 
 export interface ProfileProps {
@@ -27,7 +28,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
     state: ProfilePageNavigationState | null;
   };
   const [initialParams] = useState(searchParams);
-  const [isAddingFlight, setIsAddingFlight] = useState(false);
+  const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
   const [selectedAirportId, setSelectedAirportIdFn] = useState<string | null>(
     initialParams.get('selectedAirportId') ?? null,
   );
@@ -61,7 +62,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
     if (state?.addFlight === true) {
       setIsAddingFlight(true);
     }
-  }, [state?.addFlight]);
+  }, [setIsAddingFlight, state?.addFlight]);
   return (
     <div className="flex flex-1 flex-col">
       <MapCard
@@ -81,16 +82,14 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
         <div
           className={classNames(
             'flex flex-col items-start gap-2 sm:gap-3',
-            isAddingFlight ? 'lg:flex-col' : 'lg:flex-row',
+            isAddingFlight ? 'flex-1 lg:flex-col' : 'lg:flex-row',
           )}
         >
           {isLoggedIn && !isStatsFullScreen ? (
             <FlightsCard
               filtersFormControl={filtersFormControl}
-              isAddingFlight={isAddingFlight}
               isFlightsFullScreen={isFlightsFullScreen}
               selectedAirportId={selectedAirportId}
-              setIsAddingFlight={setIsAddingFlight}
               setIsFlightsFullScreen={setIsFlightsFullScreen}
             />
           ) : null}
