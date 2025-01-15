@@ -4,6 +4,7 @@ import { Modal } from 'stratosphere-ui';
 
 import {
   FlightChangelogTable,
+  FlightTimesDisplay,
   OnTimePerformanceChart,
   RightArrowIcon,
   WeatherInfo,
@@ -37,7 +38,7 @@ export const ViewFlightModal = (): JSX.Element => {
       open={isViewDialogOpen}
       title=""
     >
-      <div className="flex flex-1 flex-col items-center gap-8">
+      <div className="flex flex-1 flex-col items-center gap-6">
         {typeof activeFlight?.airline?.logo === 'string' ? (
           <div className="flex w-[200px] justify-center">
             <img
@@ -49,7 +50,7 @@ export const ViewFlightModal = (): JSX.Element => {
         ) : null}
         <div className="flex w-full flex-col gap-2">
           <div className="text-center text-lg font-bold opacity-75">
-            Flight #{activeFlight?.flightNumber}
+            {activeFlight?.airline?.iata} {activeFlight?.flightNumber}
           </div>
           <div className="text-center text-sm opacity-75">
             {activeFlight?.outDateLocal}
@@ -57,35 +58,51 @@ export const ViewFlightModal = (): JSX.Element => {
           <div className="flex items-center gap-4">
             <div className="flex flex-1 justify-center">
               <div className="max-w-[100px] sm:max-w-[200px]">
-                <div className="text-xl font-bold">
-                  {activeFlight?.departureAirportId}
+                <div className="font-mono text-4xl font-semibold">
+                  {activeFlight?.departureAirport.iata}
                 </div>
-                <div className="truncate text-sm opacity-75">
+                <div className="truncate opacity-75">
                   {activeFlight?.departureAirport?.municipality}
                 </div>
-                <div className="font-mono text-sm font-bold opacity-50">
-                  {activeFlight?.outTimeLocal}
-                </div>
+                {activeFlight !== null ? (
+                  <FlightTimesDisplay
+                    className="font-mono"
+                    data={{
+                      delayStatus: activeFlight.departureDelayStatus,
+                      actualValue: activeFlight.outTimeActualValue,
+                      value: activeFlight.outTimeValue,
+                      actualLocal: activeFlight.outTimeActualLocal,
+                      local: activeFlight.outTimeLocal,
+                      actualDaysAdded: activeFlight.outTimeActualDaysAdded,
+                      daysAdded: 0,
+                    }}
+                  />
+                ) : null}
               </div>
             </div>
             <RightArrowIcon className="h-8 w-8 opacity-75" />
             <div className="flex flex-1 justify-center">
               <div className="max-w-[100px] sm:max-w-[200px]">
-                <div className="text-xl font-bold">
-                  {activeFlight?.arrivalAirportId}
+                <div className="font-mono text-4xl font-semibold">
+                  {activeFlight?.arrivalAirport.iata}
                 </div>
-                <div className="truncate text-sm opacity-75">
+                <div className="truncate opacity-75">
                   {activeFlight?.arrivalAirport?.municipality}
                 </div>
-                <div className="font-mono text-sm font-bold opacity-50">
-                  {activeFlight?.inTimeLocal}
-                  {activeFlight !== null &&
-                  activeFlight.inTimeDaysAdded !== 0 ? (
-                    <sup>
-                      {`${activeFlight.inTimeDaysAdded > 0 ? '+' : ''}${activeFlight.inTimeDaysAdded}`}
-                    </sup>
-                  ) : null}
-                </div>
+                {activeFlight !== null ? (
+                  <FlightTimesDisplay
+                    className="font-mono"
+                    data={{
+                      delayStatus: activeFlight.arrivalDelayStatus,
+                      actualValue: activeFlight.inTimeActualValue,
+                      value: activeFlight.inTimeValue,
+                      actualLocal: activeFlight.inTimeActualLocal,
+                      local: activeFlight.inTimeLocal,
+                      actualDaysAdded: activeFlight.inTimeActualDaysAdded,
+                      daysAdded: activeFlight.inTimeDaysAdded,
+                    }}
+                  />
+                ) : null}
               </div>
             </div>
           </div>
@@ -105,6 +122,7 @@ export const ViewFlightModal = (): JSX.Element => {
           </div>
         </div>
       </div>
+      <div className="divider" />
       {activeFlight !== null ? (
         <>
           <OnTimePerformanceChart flightId={activeFlight.id} />
