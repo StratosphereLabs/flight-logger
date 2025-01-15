@@ -18,10 +18,10 @@ const SCRIPT_BEGIN = 'window.__data=';
 const processData = (
   html: string,
 ): {
-  data: FlightStatsOnTimePerformanceResponse | null;
+  data: FlightStatsOnTimePerformanceResponse;
   validFrom: string;
   validTo: string;
-} => {
+} | null => {
   const $ = load(html);
   let data: FlightStatsOnTimePerformanceResponse | null = null;
   $('script').each((_, script) => {
@@ -33,6 +33,9 @@ const processData = (
     }
   });
   const dateRangeText = $('p.date-subtitle').text();
+  if (data === null || dateRangeText === '') {
+    return null;
+  }
   const [fromDateString, toDateString] = dateRangeText.split(' to ');
   const validFromDate = format(
     parse(fromDateString, ON_TIME_PERFORMANCE_DATE_FORMAT, new Date()),
@@ -65,12 +68,12 @@ export const fetchOnTimePerformanceData = async ({
     headers: HEADERS,
     withCredentials: true,
   });
-  const { data, validFrom, validTo } = processData(response.data);
-  return data !== null
+  const onTimeData = processData(response.data);
+  return onTimeData !== null
     ? {
-        ...data?.OnTimePerformance.ratings[0],
-        validFrom,
-        validTo,
+        ...onTimeData.data.OnTimePerformance.ratings[0],
+        validFrom: onTimeData.validFrom,
+        validTo: onTimeData.validTo,
       }
     : null;
 };
