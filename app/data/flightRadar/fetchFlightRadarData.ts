@@ -83,7 +83,13 @@ export const fetchFlightRadarDataByFlightNumber = async ({
     const tableCells = $(row).find('td.hidden-xs.hidden-sm');
     const outTimeTimestamp = tableCells.eq(6).attr('data-timestamp');
     const inTimeTimestamp = tableCells.eq(8).attr('data-timestamp');
-    if (outTimeTimestamp === undefined || inTimeTimestamp === undefined) return;
+    if (
+      outTimeTimestamp === undefined ||
+      outTimeTimestamp === '' ||
+      inTimeTimestamp === undefined ||
+      inTimeTimestamp === ''
+    )
+      return;
     const outTime = createNewDate(parseInt(outTimeTimestamp, 10));
     const inTime = createNewDate(parseInt(inTimeTimestamp, 10));
     const departureDate = formatInTimeZone(
