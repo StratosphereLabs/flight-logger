@@ -62,8 +62,8 @@ export const UserFlightsTable = ({
           cell: ({ getValue, row }) => {
             const date = getValue<string>();
             return (
-              <div className="flex flex-col gap-2">
-                <div className="flex h-[24px] w-[120px]">
+              <div className="flex flex-col gap-1 text-sm">
+                <div className="mb-2 flex h-[24px] w-[120px]">
                   {row.original.airline?.logo !== null &&
                   row.original.airline?.logo !== undefined ? (
                     <a
@@ -80,32 +80,29 @@ export const UserFlightsTable = ({
                     </a>
                   ) : null}
                 </div>
-                <div className="flex gap-2">
-                  <div className="flex flex-1 flex-col items-start gap-x-3 gap-y-1 sm:flex-row sm:items-center">
-                    <Badge
-                      className="badge-md font-normal text-white opacity-80"
-                      color={
-                        typeof dateBadgeColor === 'function'
-                          ? dateBadgeColor(row.original)
-                          : dateBadgeColor
-                      }
-                    >
-                      {date.split('-')[0]}
-                    </Badge>
-                    <div className="text-nowrap text-xs font-semibold opacity-60 sm:text-sm">
-                      {row.original.outDateLocalAbbreviated}
-                    </div>
+                <div className="flex justify-between gap-3">
+                  <Badge
+                    className="badge-md font-normal text-white"
+                    color={
+                      typeof dateBadgeColor === 'function'
+                        ? dateBadgeColor(row.original)
+                        : dateBadgeColor
+                    }
+                  >
+                    {date.split('-')[0]}
+                  </Badge>
+                  <div className="hidden flex-1 text-nowrap font-semibold opacity-80 sm:block">
+                    {row.original.outDateLocalAbbreviated}
                   </div>
-                  <div className="flex w-[46px] sm:w-[62px]">
-                    <div className="flex gap-1 font-mono text-sm opacity-75 sm:text-base">
-                      <span className="opacity-90">
-                        {row.original.airline?.iata}
-                      </span>
-                      <span className="font-semibold">
-                        {row.original.flightNumber}
-                      </span>
-                    </div>
+                  <div className="flex gap-1 font-mono opacity-90 sm:text-base">
+                    <span>{row.original.airline?.iata}</span>
+                    <span className="font-semibold">
+                      {row.original.flightNumber}
+                    </span>
                   </div>
+                </div>
+                <div className="block text-nowrap font-semibold opacity-80 sm:hidden">
+                  {row.original.outDateLocalAbbreviated}
                 </div>
               </div>
             );
@@ -120,16 +117,17 @@ export const UserFlightsTable = ({
               getValue<
                 FlightsRouterOutput['getUserFlights']['results'][number]['departureAirport']
               >();
+            const departureRegion =
+              airportData.countryId === 'US' || airportData.countryId === 'CA'
+                ? airportData.region.id.split('-')[1]
+                : airportData.countryId;
             return (
               <div className="flex h-full flex-col">
                 <div className="font-mono text-2xl font-bold">
-                  {airportData?.iata}{' '}
+                  {airportData?.iata}
                 </div>
-                <div className="truncate text-sm opacity-90">
-                  {airportData.municipality},{' '}
-                  {airportData.countryId === 'US'
-                    ? airportData.region.name
-                    : airportData.countryId}
+                <div className="truncate text-sm">
+                  {airportData.municipality}, {departureRegion}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono font-bold"
@@ -159,18 +157,19 @@ export const UserFlightsTable = ({
             const arrivalMunicipality =
               row.original.diversionAirport?.municipality ??
               airportData.municipality;
-            const arrivalCountryId =
-              row.original.diversionAirport?.countryId ?? airportData.countryId;
-            const arrivalRegionName =
-              row.original.diversionAirport?.region.name ??
-              airportData.region.name;
+            const arrivalAirport = row.original.diversionAirport ?? airportData;
+            const arrivalRegion =
+              arrivalAirport.countryId === 'US' ||
+              arrivalAirport.countryId === 'CA'
+                ? arrivalAirport.region.id.split('-')[1]
+                : arrivalAirport.countryId;
             return (
               <div className="flex h-full flex-col">
                 <div className="flex gap-1 font-mono text-2xl font-bold">
                   <span
                     className={classNames(
                       row.original.diversionAirport !== null &&
-                        'text-xl line-through opacity-50',
+                        'line-through opacity-60',
                     )}
                   >
                     {airportData?.iata}
@@ -179,11 +178,8 @@ export const UserFlightsTable = ({
                     <span>{row.original.diversionAirport.iata}</span>
                   ) : null}
                 </div>
-                <div className="truncate text-sm opacity-90">
-                  {arrivalMunicipality},{' '}
-                  {arrivalCountryId === 'US'
-                    ? arrivalRegionName
-                    : arrivalCountryId}
+                <div className="truncate text-sm">
+                  {arrivalMunicipality}, {arrivalRegion}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono font-bold"
@@ -217,7 +213,7 @@ export const UserFlightsTable = ({
             const aircraftType = getValue<AircraftType>();
             return (
               <div className="flex flex-col gap-1 truncate text-sm">
-                <div className="truncate italic opacity-70">
+                <div className="truncate italic opacity-80">
                   {aircraftType?.name ?? ''}
                 </div>
                 <a

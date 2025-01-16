@@ -64,6 +64,7 @@ export const flightIncludeObj = {
       countryId: true,
       region: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -97,6 +98,7 @@ export interface FlightData extends Flight {
     municipality: string;
     countryId: string;
     region: {
+      id: string;
       name: string;
     };
   } | null;
