@@ -32,7 +32,7 @@ export const FlightsTable = ({
             const outDateYear = getValue<string>();
             return (
               <Badge
-                className="badge-md font-normal text-white opacity-80"
+                className="badge-md font-normal text-white"
                 color={
                   outDateYear === new Date().getFullYear().toString()
                     ? 'info'
@@ -51,7 +51,7 @@ export const FlightsTable = ({
           cell: ({ getValue }) => {
             const outTimeDate = getValue<string>();
             return (
-              <div className="font-mono font-bold opacity-70">
+              <div className="font-mono text-sm font-bold opacity-80">
                 {outTimeDate}
               </div>
             );
@@ -84,11 +84,11 @@ export const FlightsTable = ({
             const airline = row.original.airline;
             const flightNumber = getValue<number | null>();
             return (
-              <div className="flex gap-1 opacity-75">
+              <div className="flex gap-1 font-mono text-sm opacity-90">
                 <div className="hidden lg:block">
                   {airline?.iata ?? airline?.icao}
                 </div>
-                {flightNumber}
+                <div className="font-semibold">{flightNumber}</div>
               </div>
             );
           },
@@ -100,7 +100,9 @@ export const FlightsTable = ({
           header: () => 'Dep',
           cell: ({ getValue }) => {
             const airport = getValue<Airport>();
-            return <div className="font-bold">{airport.iata}</div>;
+            return (
+              <div className="font-mono text-sm font-bold">{airport.iata}</div>
+            );
           },
           footer: () => null,
         },
@@ -111,11 +113,11 @@ export const FlightsTable = ({
           cell: ({ getValue, row }) => {
             const airport = getValue<Airport>();
             return (
-              <div className="flex flex-wrap gap-x-1 font-bold">
+              <div className="flex flex-wrap gap-x-1 font-mono text-sm font-bold">
                 <span
                   className={classNames(
                     row.original.diversionAirport !== null &&
-                      'line-through opacity-50',
+                      'line-through opacity-60',
                   )}
                 >
                   {airport.iata}
@@ -134,7 +136,11 @@ export const FlightsTable = ({
           header: () => 'Acft',
           cell: ({ getValue }) => {
             const aircraftType = getValue<AircraftType | null>();
-            return <div className="opacity-75">{aircraftType?.icao}</div>;
+            return (
+              <div className="font-mono text-sm opacity-80">
+                {aircraftType?.icao}
+              </div>
+            );
           },
           footer: () => null,
         },
