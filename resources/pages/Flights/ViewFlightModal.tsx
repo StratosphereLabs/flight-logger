@@ -49,7 +49,7 @@ export const ViewFlightModal = (): JSX.Element => {
           </div>
         ) : null}
         <div className="flex w-full flex-col gap-2">
-          <div className="text-center text-lg font-bold opacity-75">
+          <div className="text-center font-mono text-lg font-bold opacity-75">
             {activeFlight?.airline?.iata} {activeFlight?.flightNumber}
           </div>
           <div className="text-center text-sm opacity-75">
@@ -57,12 +57,16 @@ export const ViewFlightModal = (): JSX.Element => {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex flex-1 justify-center">
-              <div className="max-w-[100px] sm:max-w-[200px]">
-                <div className="font-mono text-4xl font-semibold">
+              <div className="max-w-[250px]">
+                <div className="font-mono text-4xl font-bold">
                   {activeFlight?.departureAirport.iata}
                 </div>
+                <div className="hidden truncate text-sm opacity-75 sm:block">
+                  {activeFlight?.departureAirport.name}
+                </div>
                 <div className="truncate opacity-75">
-                  {activeFlight?.departureAirport?.municipality}
+                  {activeFlight?.departureAirport.municipality},{' '}
+                  {activeFlight?.departureAirport.region.name}
                 </div>
                 {activeFlight !== null ? (
                   <FlightTimesDisplay
@@ -82,12 +86,16 @@ export const ViewFlightModal = (): JSX.Element => {
             </div>
             <RightArrowIcon className="h-8 w-8 opacity-75" />
             <div className="flex flex-1 justify-center">
-              <div className="max-w-[100px] sm:max-w-[200px]">
-                <div className="font-mono text-4xl font-semibold">
+              <div className="max-w-[250px]">
+                <div className="font-mono text-4xl font-bold">
                   {activeFlight?.arrivalAirport.iata}
                 </div>
+                <div className="hidden truncate text-sm opacity-75 sm:block">
+                  {activeFlight?.arrivalAirport.name}
+                </div>
                 <div className="truncate opacity-75">
-                  {activeFlight?.arrivalAirport?.municipality}
+                  {activeFlight?.arrivalAirport.municipality},{' '}
+                  {activeFlight?.arrivalAirport.region.name}
                 </div>
                 {activeFlight !== null ? (
                   <FlightTimesDisplay
@@ -107,7 +115,7 @@ export const ViewFlightModal = (): JSX.Element => {
             </div>
           </div>
           <div className="flex justify-center italic opacity-50">
-            {activeFlight?.durationString} ({activeFlight?.distance} mi)
+            {activeFlight?.durationString} ({activeFlight?.distance} miles)
           </div>
         </div>
         <div className="flex w-full items-center justify-center gap-12">
