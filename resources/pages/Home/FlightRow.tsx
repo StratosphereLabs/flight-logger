@@ -40,12 +40,18 @@ export const FlightRow = ({
     () => flight.id === selectedFlightId,
     [flight.id, selectedFlightId],
   );
+  const departureRegion =
+    flight.departureAirport.countryId === 'US' ||
+    flight.departureAirport.countryId === 'CA'
+      ? flight.departureAirport.region.id.split('-')[1]
+      : flight.departureAirport.countryId;
   const arrivalMunicipality =
     flight.diversionAirport?.municipality ?? flight.arrivalAirport.municipality;
-  const arrivalCountryId =
-    flight.diversionAirport?.countryId ?? flight.arrivalAirport.countryId;
-  const arrivalRegionName =
-    flight.diversionAirport?.region.name ?? flight.arrivalAirport.region.name;
+  const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
+  const arrivalRegion =
+    arrivalAirport.countryId === 'US' || arrivalAirport.countryId === 'CA'
+      ? arrivalAirport.region.id.split('-')[1]
+      : arrivalAirport.countryId;
   return (
     <div
       className={classNames(
@@ -95,9 +101,9 @@ export const FlightRow = ({
                 </a>
               ) : null}
             </div>
-            <div className="mt-[2px] flex flex-col items-start gap-x-4 text-sm opacity-80 sm:flex-row sm:items-center lg:text-base">
+            <div className="mt-[2px] flex flex-col items-start gap-x-4 text-sm sm:flex-row sm:items-center lg:text-base">
               <Link
-                className="w-[60px] text-nowrap font-mono lg:w-[70px]"
+                className="w-[60px] text-nowrap font-mono opacity-90 lg:w-[70px]"
                 hover
                 href={
                   flight.flightAwareLink !== null
@@ -109,13 +115,13 @@ export const FlightRow = ({
                 <span>{flight.airline?.iata}</span>{' '}
                 <span className="font-semibold">{flight.flightNumber}</span>
               </Link>
-              <div className="w-[80px] text-nowrap text-xs font-semibold opacity-80">
+              <div className="w-[80px] text-nowrap text-sm font-semibold opacity-80">
                 {flight.outDateLocalAbbreviated}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1 overflow-hidden">
-            <Avatar shapeClassName="w-4 h-4 lg:w-6 lg:h-6 rounded-full">
+          <div className="flex items-center gap-1 overflow-hidden sm:gap-2">
+            <Avatar shapeClassName="w-4 h-4 sm:w-6 sm:h-6 rounded-full">
               <img alt={flight.user.username} src={flight.user.avatar} />
             </Avatar>
             <Link
@@ -123,7 +129,7 @@ export const FlightRow = ({
               onClick={() => {
                 navigate(`/user/${flight.user.username}`);
               }}
-              className="truncate text-xs font-semibold opacity-80 lg:text-sm"
+              className="truncate text-sm font-semibold opacity-90 sm:text-base"
             >
               {flight.user.username}
             </Link>
@@ -135,8 +141,8 @@ export const FlightRow = ({
               <div className="font-mono text-2xl font-bold">
                 {flight.departureAirport.iata}
               </div>
-              <span className="flex-1 truncate text-sm opacity-90 sm:hidden">
-                {flight.departureAirport.municipality}
+              <span className="flex-1 truncate text-sm sm:hidden">
+                {flight.departureAirport.municipality}, {departureRegion}
               </span>
               <FlightTimesDisplay
                 data={{
@@ -150,11 +156,8 @@ export const FlightRow = ({
                 }}
               />
             </div>
-            <div className="hidden truncate text-sm opacity-90 sm:block">
-              {flight.departureAirport.municipality},{' '}
-              {flight.departureAirport.countryId === 'US'
-                ? flight.departureAirport.region.name
-                : flight.departureAirport.countryId}
+            <div className="hidden truncate text-sm sm:block">
+              {flight.departureAirport.municipality}, {departureRegion}
             </div>
           </div>
           <div className="flex w-0 flex-1 flex-col justify-start">
@@ -163,7 +166,7 @@ export const FlightRow = ({
                 <span
                   className={classNames(
                     flight.diversionAirport !== null &&
-                      'text-lg line-through opacity-50',
+                      'line-through opacity-60',
                   )}
                 >
                   {flight.arrivalAirport.iata}
@@ -172,8 +175,8 @@ export const FlightRow = ({
                   <span>{flight.diversionAirport.iata}</span>
                 ) : null}
               </div>
-              <div className="w-full truncate text-sm opacity-90 sm:hidden">
-                {arrivalMunicipality}
+              <div className="w-full truncate text-sm sm:hidden">
+                {arrivalMunicipality}, {arrivalRegion}
               </div>
               <FlightTimesDisplay
                 data={{
@@ -187,9 +190,8 @@ export const FlightRow = ({
                 }}
               />
             </div>
-            <div className="hidden truncate text-sm opacity-90 sm:block">
-              {arrivalMunicipality},{' '}
-              {arrivalCountryId === 'US' ? arrivalRegionName : arrivalCountryId}
+            <div className="hidden truncate text-sm sm:block">
+              {arrivalMunicipality}, {arrivalRegion}
             </div>
           </div>
         </div>
@@ -237,7 +239,7 @@ export const FlightRow = ({
               </a>
             ) : null}
             {flight.aircraftType !== null ? (
-              <div className="opacity-75">{flight.aircraftType.icao}</div>
+              <div className="opacity-80">{flight.aircraftType.icao}</div>
             ) : null}
           </div>
         </div>
