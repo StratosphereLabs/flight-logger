@@ -332,6 +332,7 @@ export const flightsRouter = router({
       const toDate = getToDate(input);
       const fromStatusDate = getFromStatusDate(input);
       const toStatusDate = getToStatusDate(input);
+      console.log({ fromDate, toDate, fromStatusDate, toStatusDate });
       const whereObj = {
         user: {
           username: input?.username ?? ctx.user?.username,
