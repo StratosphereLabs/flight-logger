@@ -731,6 +731,7 @@ export const filterCustomDates =
     const day = departureTimeLocal.getDate();
     const month = departureTimeLocal.getMonth() + 1;
     const year = departureTimeLocal.getFullYear();
+    console.log({ day, month, year });
     switch (input.range) {
       case 'customMonth': {
         return (
