@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { type Control } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { useFormWithQueryParams } from 'stratosphere-ui';
 
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import {
@@ -21,6 +22,10 @@ export interface ProfilePageNavigationState {
   addFlight: boolean;
 }
 
+export interface MapCardFormData {
+  mapMode: 'routes' | 'heatmap' | '3d';
+}
+
 export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,6 +37,15 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
   const [selectedAirportId, setSelectedAirportIdFn] = useState<string | null>(
     initialParams.get('selectedAirportId') ?? null,
   );
+  const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
+    getDefaultValues: ({ mapMode }) => ({
+      mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
+    }),
+    getSearchParams: ([mapMode]) => ({
+      mapMode: mapMode !== 'routes' ? mapMode : '',
+    }),
+    includeKeys: ['mapMode'],
+  });
   const setSelectedAirportId = useCallback(
     (newId: string | null): void => {
       setSelectedAirportIdFn(newId);
@@ -68,6 +82,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
       <MapCard
         filtersFormControl={filtersFormControl}
         isMapFullScreen={isMapFullScreen}
+        mapFormMethods={methods}
         selectedAirportId={selectedAirportId}
         setIsMapFullScreen={setIsMapFullScreen}
         setSelectedAirportId={setSelectedAirportId}
@@ -89,8 +104,10 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
             <FlightsCard
               filtersFormControl={filtersFormControl}
               isFlightsFullScreen={isFlightsFullScreen}
+              mapFormMethods={methods}
               selectedAirportId={selectedAirportId}
               setIsFlightsFullScreen={setIsFlightsFullScreen}
+              setIsMapFullScreen={setIsMapFullScreen}
             />
           ) : null}
           {!isFlightsFullScreen ? (

@@ -6,15 +6,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { type Control, useWatch } from 'react-hook-form';
+import { type Control, type UseFormReturn, useWatch } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import {
-  Button,
-  Form,
-  LoadingCard,
-  Select,
-  useFormWithQueryParams,
-} from 'stratosphere-ui';
+import { Button, Form, LoadingCard, Select } from 'stratosphere-ui';
 
 import {
   CollapseIcon,
@@ -26,6 +20,7 @@ import {
 import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
+import { type MapCardFormData } from '../../Profile';
 import { type ProfileFilterFormData } from '../../hooks';
 import { useAddFlightStore } from '../Flights/addFlightStore';
 import { CesiumMap } from './CesiumMap';
@@ -34,13 +29,10 @@ import { ProfileOverlay } from './ProfileOverlay';
 import { DEFAULT_COORDINATES } from './constants';
 import { getAirportsData } from './utils';
 
-export interface MapCardFormData {
-  mapMode: 'routes' | 'heatmap' | '3d';
-}
-
 export interface MapCardProps {
   filtersFormControl: Control<ProfileFilterFormData>;
   isMapFullScreen: boolean;
+  mapFormMethods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
   setIsMapFullScreen: Dispatch<SetStateAction<boolean>>;
   setSelectedAirportId: (newId: string | null) => void;
@@ -49,6 +41,7 @@ export interface MapCardProps {
 export const MapCard = ({
   filtersFormControl,
   isMapFullScreen,
+  mapFormMethods,
   selectedAirportId,
   setIsMapFullScreen,
   setSelectedAirportId,
@@ -59,17 +52,8 @@ export const MapCard = ({
   const { isAddingFlight } = useAddFlightStore();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
-  const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
-    getDefaultValues: ({ mapMode }) => ({
-      mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
-    }),
-    getSearchParams: ([mapMode]) => ({
-      mapMode: mapMode !== 'routes' ? mapMode : '',
-    }),
-    includeKeys: ['mapMode'],
-  });
   const [mapMode] = useWatch<MapCardFormData, ['mapMode']>({
-    control: methods.control,
+    control: mapFormMethods.control,
     name: ['mapMode'],
   });
   const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
@@ -172,7 +156,7 @@ export const MapCard = ({
             currentFlight={currentFlight}
             data={data}
             hoverAirportId={hoverAirportId}
-            methods={methods}
+            methods={mapFormMethods}
             selectedAirportId={selectedAirportId}
             setSelectedAirportId={setSelectedAirportId}
             setHoverAirportId={setHoverAirportId}
@@ -189,86 +173,88 @@ export const MapCard = ({
             setSelectedAirportId={setSelectedAirportId}
           />
         ) : null}
-        <Form
-          className={classNames(
-            'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
-            isProfilePage && !isAddingFlight ? 'mt-[110px]' : 'mt-16',
-          )}
-          methods={methods}
-        >
-          <div className="flex min-w-[240px] max-w-[350px] flex-1 flex-col gap-2">
-            <ProfileOverlay />
-          </div>
-          <div className="flex items-start">
-            <div className="flex flex-col items-end justify-end gap-2 sm:flex-row-reverse">
-              <div className="flex gap-2">
-                <Select
-                  buttonProps={{
-                    className: 'btn-sm sm:btn-md',
-                    children:
-                      mapMode === 'routes' ? (
-                        <MapIcon className="h-6 w-6" />
-                      ) : mapMode === '3d' ? (
-                        <GlobeIcon className="h-6 w-6" />
-                      ) : (
-                        <FireIcon className="h-6 w-6" />
-                      ),
-                  }}
-                  className="pointer-events-auto"
-                  formValueMode="id"
-                  getItemText={({ text }) => text}
-                  hideDropdownIcon
-                  options={[
-                    {
-                      id: 'routes',
-                      text: 'Routes',
-                    },
-                    {
-                      id: 'heatmap',
-                      text: 'Heatmap',
-                    },
-                    {
-                      id: '3d',
-                      text: '3D',
-                    },
-                  ]}
-                  menuClassName="right-0 w-[150px]"
-                  name="mapMode"
-                />
-                <Button
-                  className="btn-sm pointer-events-auto px-3 sm:btn-md"
-                  onClick={() => {
-                    setIsMapFullScreen(isFullScreen => {
-                      const newValue = !isFullScreen;
-                      setSearchParams(oldSearchParams => {
-                        if (newValue) {
-                          return {
-                            ...Object.fromEntries(oldSearchParams),
-                            isMapFullScreen: 'true',
-                          };
-                        } else {
-                          oldSearchParams.delete('isMapFullScreen');
-                          return oldSearchParams;
-                        }
+        {!isAddingFlight ? (
+          <Form
+            className={classNames(
+              'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
+              isProfilePage && !isAddingFlight ? 'mt-[110px]' : 'mt-16',
+            )}
+            methods={mapFormMethods}
+          >
+            <div className="flex min-w-[240px] max-w-[350px] flex-1 flex-col gap-2">
+              <ProfileOverlay />
+            </div>
+            <div className="flex items-start">
+              <div className="flex flex-col items-end justify-end gap-2 sm:flex-row-reverse">
+                <div className="flex gap-2">
+                  <Select
+                    buttonProps={{
+                      className: 'btn-sm sm:btn-md',
+                      children:
+                        mapMode === 'routes' ? (
+                          <MapIcon className="h-6 w-6" />
+                        ) : mapMode === '3d' ? (
+                          <GlobeIcon className="h-6 w-6" />
+                        ) : (
+                          <FireIcon className="h-6 w-6" />
+                        ),
+                    }}
+                    className="pointer-events-auto"
+                    formValueMode="id"
+                    getItemText={({ text }) => text}
+                    hideDropdownIcon
+                    options={[
+                      {
+                        id: 'routes',
+                        text: 'Routes',
+                      },
+                      {
+                        id: 'heatmap',
+                        text: 'Heatmap',
+                      },
+                      {
+                        id: '3d',
+                        text: '3D',
+                      },
+                    ]}
+                    menuClassName="right-0 w-[150px]"
+                    name="mapMode"
+                  />
+                  <Button
+                    className="btn-sm pointer-events-auto px-3 sm:btn-md"
+                    onClick={() => {
+                      setIsMapFullScreen(isFullScreen => {
+                        const newValue = !isFullScreen;
+                        setSearchParams(oldSearchParams => {
+                          if (newValue) {
+                            return {
+                              ...Object.fromEntries(oldSearchParams),
+                              isMapFullScreen: 'true',
+                            };
+                          } else {
+                            oldSearchParams.delete('isMapFullScreen');
+                            return oldSearchParams;
+                          }
+                        });
+                        return newValue;
                       });
-                      return newValue;
-                    });
-                  }}
-                  title={isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
-                >
-                  {isMapFullScreen ? (
-                    <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-                  ) : (
-                    <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
-                  )}
-                  <span className="sr-only">
-                    {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
-                  </span>
-                </Button>
+                    }}
+                    title={isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
+                  >
+                    {isMapFullScreen ? (
+                      <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                    ) : (
+                      <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                    )}
+                    <span className="sr-only">
+                      {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
+                    </span>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </Form>
+          </Form>
+        ) : null}
       </LoadingCard>
     ),
     [
@@ -279,8 +265,8 @@ export const MapCard = ({
       isAddingFlight,
       isMapFullScreen,
       isProfilePage,
+      mapFormMethods,
       mapMode,
-      methods,
       selectedAirportId,
       setIsMapFullScreen,
       setSearchParams,

@@ -25,9 +25,9 @@ import { TOOLTIP_COLORS } from '../../../../common/constants';
 import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
 import { useIsDarkMode } from '../../../../stores';
 import { getAltitudeColor } from '../../../../utils/colors';
+import { type MapCardFormData } from '../../Profile';
 import { useAddFlightStore } from '../Flights/addFlightStore';
 import { AddFlightOverlays } from './AddFlightOverlays';
-import { type MapCardFormData } from './MapCard';
 import type { FilteredMapData, MapFlight } from './types';
 
 export interface GoogleMapProps {

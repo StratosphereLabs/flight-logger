@@ -5,7 +5,6 @@ import { DATE_REGEX_ISO } from '../constants';
 
 export const searchFlightDataSchema = z
   .object({
-    userType: z.enum(['me', 'other']),
     searchType: z.enum(['FLIGHT_NUMBER', 'ROUTE']),
     outDateISO: z
       .string()

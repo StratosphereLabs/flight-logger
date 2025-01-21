@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import classNames from 'classnames';
-import { type Dispatch, type SetStateAction, useState } from 'react';
-import { type Control, useForm } from 'react-hook-form';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { type Control, type UseFormReturn, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 
@@ -19,6 +19,7 @@ import {
   useProfileUserQuery,
 } from '../../../../common/hooks';
 import { Flights } from '../../../Flights';
+import { type MapCardFormData } from '../../Profile';
 import { type ProfileFilterFormData } from '../../hooks';
 import { AddFlightForm } from './AddFlightForm';
 import { FlightsTableBasic } from './FlightsTableBasic';
@@ -28,8 +29,10 @@ import { flightSearchFormDefaultValues } from './constants';
 export interface FlightCardProps {
   filtersFormControl: Control<ProfileFilterFormData>;
   isFlightsFullScreen: boolean;
+  mapFormMethods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
   setIsFlightsFullScreen: Dispatch<SetStateAction<boolean>>;
+  setIsMapFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface FlightFiltersFormData {
@@ -39,8 +42,10 @@ export interface FlightFiltersFormData {
 export const FlightsCard = ({
   filtersFormControl,
   isFlightsFullScreen,
+  mapFormMethods,
   selectedAirportId,
   setIsFlightsFullScreen,
+  setIsMapFullScreen,
 }: FlightCardProps): JSX.Element => {
   const { username } = useParams();
   const [, setSearchParams] = useSearchParams();
@@ -49,14 +54,14 @@ export const FlightsCard = ({
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
   const methods = useForm<FlightSearchFormData>({
-    defaultValues: {
-      ...flightSearchFormDefaultValues,
-      userType: onOwnProfile ? 'me' : 'other',
-    },
+    defaultValues: flightSearchFormDefaultValues,
     resolver: zodResolver(searchFlightDataSchema),
     reValidateMode: 'onBlur',
   });
   const { data } = useProfileUserQuery();
+  useEffect(() => {
+    setIsAddingFlight(false);
+  }, [setIsAddingFlight, username]);
   return (
     <Card
       className={classNames(
@@ -92,10 +97,7 @@ export const FlightsCard = ({
                     size="sm"
                     onClick={() => {
                       setIsAddingFlight(false);
-                      methods.reset({
-                        ...flightSearchFormDefaultValues,
-                        userType: onOwnProfile ? 'me' : 'other',
-                      });
+                      methods.reset(flightSearchFormDefaultValues);
                       setFlightSearchFormData(null);
                     }}
                   >
@@ -110,6 +112,8 @@ export const FlightsCard = ({
                       color="primary"
                       size="sm"
                       onClick={() => {
+                        setIsMapFullScreen(false);
+                        mapFormMethods.setValue('mapMode', 'routes');
                         setIsFlightsFullScreen(true);
                         setIsAddingFlight(true);
                       }}

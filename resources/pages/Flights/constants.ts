@@ -1,3 +1,5 @@
+import { type EditFlightRequest } from '../../../app/schemas';
+
 export const FETCH_FLIGHTS_PAGE_SIZE = 20;
 
 export const editFlightDefaultValues = {
@@ -17,7 +19,7 @@ export const editFlightDefaultValues = {
   reason: null,
   comments: '',
   trackingLink: '',
-};
+} as unknown as EditFlightRequest;
 
 export const customAirframe = {
   type: 'custom' as const,
