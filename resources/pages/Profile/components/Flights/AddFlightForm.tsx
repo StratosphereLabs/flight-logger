@@ -9,8 +9,6 @@ import {
   CheckIcon,
   Form,
   FormControl,
-  FormRadioGroup,
-  FormRadioGroupOption,
   Table,
   integerInputTransformer,
 } from 'stratosphere-ui';
@@ -50,10 +48,6 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
   const airline = useWatch<FlightSearchFormData, 'airline'>({
     control: methods.control,
     name: 'airline',
-  });
-  const userType = useWatch<FlightSearchFormData, 'userType'>({
-    name: 'userType',
-    control: methods.control,
   });
   const [completedFlightIds, setCompletedFlightIds] = useState<number[]>([]);
   const onError = useTRPCErrorHandler();
@@ -121,24 +115,6 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
         }}
       >
         <div className="flex w-full flex-col gap-4">
-          {onOwnProfile ? (
-            <FormRadioGroup className="w-full" name="userType">
-              <FormRadioGroupOption
-                activeColor="info"
-                className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-                value="me"
-              >
-                Myself
-              </FormRadioGroupOption>
-              <FormRadioGroupOption
-                activeColor="info"
-                className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
-                value="other"
-              >
-                Other User
-              </FormRadioGroupOption>
-            </FormRadioGroup>
-          ) : null}
           <div className="flex flex-col gap-4 md:flex-row md:gap-2">
             <div className="flex flex-1 flex-wrap gap-x-2 gap-y-1">
               <FormControl
@@ -301,7 +277,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               id: 'actions',
               cell: ({ row }) => {
                 const isLoading =
-                  (userType === 'me' || !onOwnProfile) &&
+                  !onOwnProfile &&
                   row.original.id === selectedFlight?.id &&
                   isFlightDataLoading;
                 const isAdded = completedFlightIds.includes(row.original.id);
@@ -316,23 +292,19 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                     onClick={() => {
                       if (!isAdded) {
                         setSelectedFlight(row.original);
-                        if (userType === 'other' && onOwnProfile) {
+                        if (onOwnProfile) {
                           setIsUserSelectModalOpen(true);
                         } else {
-                          addFlight(
-                            row.original,
-                            !onOwnProfile ? username : undefined,
-                          );
+                          addFlight(row.original, username);
                         }
                       }
                     }}
                   >
-                    {!isLoading && !isAdded ? (
-                      <PlusIcon className="h-4 w-4" />
-                    ) : null}
-                    {!isLoading && isAdded ? (
+                    {isAdded ? (
                       <CheckIcon className="h-4 w-4" />
-                    ) : null}
+                    ) : (
+                      <PlusIcon className="h-4 w-4" />
+                    )}
                     {isAdded ? (
                       <span className="hidden sm:block">Added</span>
                     ) : (
@@ -367,9 +339,17 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
       ) : null}
       <UserSelectModal
         isLoading={isFlightDataLoading}
-        onSubmit={({ username: selectedUsername }) => {
-          if (selectedFlight !== null && selectedUsername !== null)
-            addFlight(selectedFlight, selectedUsername);
+        onSubmit={({ userType, username: selectedUsername }) => {
+          if (selectedFlight !== null) {
+            addFlight(
+              selectedFlight,
+              userType === 'other' &&
+                selectedUsername !== null &&
+                selectedUsername !== ''
+                ? selectedUsername
+                : undefined,
+            );
+          }
         }}
       />
     </div>

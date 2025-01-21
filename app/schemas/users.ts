@@ -9,12 +9,23 @@ export const getUsersSchema = z.object({
   followingUsersOnly: z.boolean().optional(),
 });
 
-export const selectUserSchema = z.object({
-  username: z
-    .string()
-    .nullable()
-    .refine(item => item !== null, 'User is required.'),
-});
+export const selectUserSchema = z
+  .object({
+    userType: z.enum(['me', 'other']),
+    username: z.string().nullable(),
+  })
+  .superRefine((values, ctx) => {
+    if (
+      values.userType === 'other' &&
+      (values.username === null || values.username === '')
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Required',
+        path: ['username'],
+      });
+    }
+  });
 
 export const setFCMTokenSchema = z.object({
   token: z.string(),

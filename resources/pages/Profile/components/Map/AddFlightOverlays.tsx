@@ -39,7 +39,7 @@ export const AddFlightOverlays = ({
       }
       if (!bounds.isEmpty()) {
         map.fitBounds(bounds, {
-          top: 250,
+          top: 150,
           left: 50,
           right: 50,
           bottom: 50,

@@ -1,5 +1,6 @@
+import { useEffect, useRef } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
@@ -12,10 +13,18 @@ export interface MainLayoutProps {
 
 export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { alertMessages } = useAlertMessages();
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const { username } = useParams();
+  useEffect(() => {
+    scrollContainerRef.current?.scrollTo(0, 0);
+  }, [username]);
   return (
     <div className="relative flex h-[100dvh] flex-col justify-between">
       <MainNavbar methods={methods} />
-      <div className="flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll bg-base-200">
+      <div
+        className="flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll bg-base-200"
+        ref={scrollContainerRef}
+      >
         <Outlet />
         <MainFooter />
       </div>

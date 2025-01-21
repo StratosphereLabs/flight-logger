@@ -1,3 +1,5 @@
+import { type AddFlightRequest } from '../../../app/schemas';
+
 export const addFlightDefaultValues = {
   departureAirport: null,
   arrivalAirport: null,
@@ -14,4 +16,4 @@ export const addFlightDefaultValues = {
   reason: null,
   comments: '',
   trackingLink: '',
-};
+} as unknown as AddFlightRequest;

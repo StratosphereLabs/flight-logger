@@ -1,13 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import classNames from 'classnames';
 import { useEffect } from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
-import { Form, Modal } from 'stratosphere-ui';
+import { type SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import {
+  Form,
+  FormRadioGroup,
+  FormRadioGroupOption,
+  Modal,
+} from 'stratosphere-ui';
 
 import {
   type UserSelectFormData,
   selectUserSchema,
 } from '../../../../../app/schemas';
 import { UserSelect } from '../../../../common/components';
+import { useLoggedInUserQuery } from '../../../../common/hooks';
 import { useAddFlightStore } from './addFlightStore';
 
 export interface UserSelectModalProps {
@@ -21,19 +28,28 @@ export const UserSelectModal = ({
 }: UserSelectModalProps): JSX.Element => {
   const { isUserSelectModalOpen, setIsUserSelectModalOpen } =
     useAddFlightStore();
+  const { onOwnProfile } = useLoggedInUserQuery();
   const methods = useForm<UserSelectFormData>({
     defaultValues: {
+      userType: 'me',
       username: null,
-    },
+    } as unknown as UserSelectFormData,
     resolver: zodResolver(selectUserSchema),
   });
+  const userType = useWatch<UserSelectFormData, 'userType'>({
+    name: 'userType',
+    control: methods.control,
+  });
   useEffect(() => {
-    if (isUserSelectModalOpen) {
+    if (userType === 'other' && isUserSelectModalOpen) {
       setTimeout(() => {
         methods.setFocus('username');
       });
     }
-  }, [isUserSelectModalOpen, methods]);
+  }, [isUserSelectModalOpen, methods, userType]);
+  useEffect(() => {
+    methods.clearErrors('username');
+  }, [methods, userType]);
   return (
     <Modal
       actionButtons={[
@@ -61,9 +77,30 @@ export const UserSelectModal = ({
       title="Select User"
     >
       <p className="py-4">Please select a user for this flight.</p>
-      <Form className="flex flex-1" methods={methods}>
+      <Form className="flex flex-1 flex-col gap-6" methods={methods}>
+        {onOwnProfile ? (
+          <FormRadioGroup className="w-full" name="userType">
+            <FormRadioGroupOption
+              activeColor="info"
+              className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              value="me"
+            >
+              Myself
+            </FormRadioGroupOption>
+            <FormRadioGroupOption
+              activeColor="info"
+              className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              value="other"
+            >
+              Other User
+            </FormRadioGroupOption>
+          </FormRadioGroup>
+        ) : null}
         <UserSelect
-          className="w-[200px]"
+          className={classNames(
+            'w-[200px]',
+            userType === 'me' && 'pointer-events-none opacity-60',
+          )}
           followingUsersOnly
           formValueMode="id"
           getBadgeText={({ username }) => username}
