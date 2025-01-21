@@ -343,7 +343,9 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
           if (selectedFlight !== null) {
             addFlight(
               selectedFlight,
-              userType === 'other' && selectedUsername !== null
+              userType === 'other' &&
+                selectedUsername !== null &&
+                selectedUsername !== ''
                 ? selectedUsername
                 : undefined,
             );

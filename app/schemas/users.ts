@@ -15,7 +15,10 @@ export const selectUserSchema = z
     username: z.string().nullable(),
   })
   .superRefine((values, ctx) => {
-    if (values.userType === 'other' && values.username === null) {
+    if (
+      values.userType === 'other' &&
+      (values.username === null || values.username === '')
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Required',
