@@ -11,15 +11,12 @@ import type {
 import {
   add,
   endOfMonth,
-  endOfYear,
   getTime,
   getUnixTime,
   isAfter,
   isBefore,
   isEqual,
   isFuture,
-  startOfMonth,
-  startOfYear,
   sub,
 } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -659,16 +656,18 @@ export const getFromDate = (
   if (input.range === 'customMonth') {
     const year = parseInt(input.year, 10);
     const month = parseInt(input.month, 10);
-    const monthStart = startOfMonth(new Date(year, month - 1));
+    const monthStart = new Date(
+      `${year}-${month < 10 ? '0' : ''}${month}-01T00:00:00.000Z`,
+    );
     return sub(monthStart, { days: 1 });
   }
   if (input.range === 'customYear') {
     const year = parseInt(input.year, 10);
-    const yearStart = startOfYear(new Date(year, 0));
+    const yearStart = new Date(`${year}-01-01T00:00:00.000Z`);
     return sub(yearStart, { days: 1 });
   }
   if (input.range === 'customRange') {
-    const fromDate = new Date(input.fromDate);
+    const fromDate = new Date(`${input.fromDate}T00:00:00.000Z`);
     return sub(fromDate, { days: 1 });
   }
 };
@@ -681,15 +680,19 @@ export const getToDate = (
     const year = parseInt(input.year, 10);
     const month = parseInt(input.month, 10);
     const monthEnd = endOfMonth(new Date(year, month - 1));
-    return add(monthEnd, { days: 1 });
+    const date = monthEnd.getDate();
+    const monthEndDate = new Date(
+      `${year}-${month < 10 ? '0' : ''}${month}-${date < 10 ? '0' : ''}${date}T23:59:59.999Z`,
+    );
+    return add(monthEndDate, { days: 1 });
   }
   if (input.range === 'customYear') {
     const year = parseInt(input.year, 10);
-    const yearEnd = endOfYear(new Date(year, 0));
+    const yearEnd = new Date(`${year}-12-31T23:59:59.999Z`);
     return add(yearEnd, { days: 1 });
   }
   if (input.range === 'customRange') {
-    const toDate = new Date(input.toDate);
+    const toDate = new Date(`${input.toDate}T23:59:59.999Z`);
     return add(toDate, { days: 1 });
   }
   return new Date();

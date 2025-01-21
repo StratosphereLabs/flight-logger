@@ -299,26 +299,19 @@ export const flightsRouter = router({
             : []),
         ],
       };
-      const [results, itemCount] = await prisma.$transaction([
-        prisma.flight.findMany({
-          where: whereObj,
-          include: flightIncludeObj,
-          orderBy: {
-            outTime: input.status === 'completed' ? 'desc' : 'asc',
-          },
-          skip,
-          take,
-        }),
-        prisma.flight.count({
-          where: whereObj,
-        }),
-      ]);
+      const results = await prisma.flight.findMany({
+        where: whereObj,
+        include: flightIncludeObj,
+        orderBy: {
+          outTime: input.status === 'completed' ? 'desc' : 'asc',
+        },
+      });
       const flights = results.filter(filterCustomDates(input));
       return getPaginatedResponse({
-        itemCount,
+        itemCount: flights.length,
         limit,
         page,
-        results: flights.map(transformFlightData),
+        results: flights.slice(skip, skip + take).map(transformFlightData),
       });
     }),
   getUserFlightsBasic: procedure
@@ -332,7 +325,6 @@ export const flightsRouter = router({
       const toDate = getToDate(input);
       const fromStatusDate = getFromStatusDate(input);
       const toStatusDate = getToStatusDate(input);
-      console.log({ fromDate, toDate, fromStatusDate, toStatusDate });
       const whereObj = {
         user: {
           username: input?.username ?? ctx.user?.username,
@@ -380,30 +372,26 @@ export const flightsRouter = router({
             : []),
         ],
       };
-      const { skip, take } = parsePaginationRequest(input);
-      const [results, count] = await prisma.$transaction([
-        prisma.flight.findMany({
-          where: whereObj,
-          include: {
-            departureAirport: true,
-            arrivalAirport: true,
-            airline: true,
-            aircraftType: true,
-            diversionAirport: true,
-          },
-          skip,
-          take,
-          orderBy: {
-            outTime: input.status === 'completed' ? 'desc' : 'asc',
-          },
-        }),
-        prisma.flight.count({
-          where: whereObj,
-        }),
-      ]);
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      const results = await prisma.flight.findMany({
+        where: whereObj,
+        include: {
+          departureAirport: true,
+          arrivalAirport: true,
+          airline: true,
+          aircraftType: true,
+          diversionAirport: true,
+        },
+        orderBy: {
+          outTime: input.status === 'completed' ? 'desc' : 'asc',
+        },
+      });
       const flights = results.filter(filterCustomDates(input));
-      return {
-        results: flights.map(flight => ({
+      return getPaginatedResponse({
+        itemCount: flights.length,
+        limit,
+        page,
+        results: flights.slice(skip, skip + take).map(flight => ({
           ...flight,
           outTimeYear: formatInTimeZone(
             flight.outTime,
@@ -418,8 +406,7 @@ export const flightsRouter = router({
           tracklog: null,
           waypoints: null,
         })),
-        count,
-      };
+      });
     }),
   getUserActiveFlight: procedure
     .use(verifyAuthenticated)
