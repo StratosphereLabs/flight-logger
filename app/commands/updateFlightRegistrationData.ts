@@ -74,7 +74,7 @@ export const updateFlightRegistrationData = async (
     onTimeActual: flight.onTimeActual,
     aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
     flightRadarStatus: flight.flightStatus,
-    diversionAirportId: diversionAirport?.id ?? undefined,
+    diversionAirportId: diversionAirport?.id ?? null,
   };
   const updatedFlights = await prisma.$transaction(
     flights.map(({ id }) =>
