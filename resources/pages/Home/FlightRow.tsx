@@ -115,7 +115,7 @@ export const FlightRow = ({
                 <span>{flight.airline?.iata}</span>{' '}
                 <span className="font-semibold">{flight.flightNumber}</span>
               </Link>
-              <div className="w-[80px] text-nowrap text-sm font-semibold opacity-80">
+              <div className="w-[95px] text-nowrap text-sm font-semibold opacity-80">
                 {flight.outDateLocalAbbreviated}
               </div>
             </div>
