@@ -7,7 +7,8 @@ import {
   AirlineSchema,
   AirportSchema,
 } from '../../prisma/generated/zod';
-import { DATE_REGEX_ISO, TIME_REGEX_24H } from '../constants';
+import { TIME_REGEX_24H } from '../constants';
+import { searchFlightDataSchema } from './flightData';
 import { paginationSchema } from './pagination';
 import { getUserSchema } from './users';
 
@@ -84,8 +85,7 @@ export const deleteFlightSchema = z.object({
   id: z.string().uuid(),
 });
 
-export const addFlightSchema = z.object({
-  tripId: z.string().uuid('Must be valid UUID').optional(),
+export const addFlightSchema = searchFlightDataSchema.extend({
   departureAirport: AirportSchema.nullable().refine(
     item => item !== null,
     'Airport is required.',
@@ -94,22 +94,12 @@ export const addFlightSchema = z.object({
     item => item !== null,
     'Airport is required.',
   ),
-  airline: AirlineSchema.nullable(),
   aircraftType: AircraftTypeSchema.nullable(),
-  flightNumber: z
-    .number()
-    .int()
-    .lte(9999, 'Must be 4 digits or less')
-    .nullable(),
   airframe: AirframeSchema.extend({
     type: z.enum(['existing', 'custom']),
     operator: AirlineSchema.nullable(),
     aircraftType: AircraftTypeSchema.nullable(),
   }).nullable(),
-  outDateISO: z
-    .string()
-    .min(1, 'Required')
-    .regex(DATE_REGEX_ISO, 'Invalid Date'),
   outTimeValue: z
     .string()
     .min(1, 'Required')
@@ -125,7 +115,6 @@ export const addFlightSchema = z.object({
   seatPosition: z.enum(['AISLE', 'MIDDLE', 'WINDOW']).nullable(),
   reason: z.enum(['BUSINESS', 'LEISURE', 'CREW']).nullable(),
   comments: z.string().trim(),
-  trackingLink: z.string().trim(),
 });
 
 export const editFlightSchema = addFlightSchema.extend({

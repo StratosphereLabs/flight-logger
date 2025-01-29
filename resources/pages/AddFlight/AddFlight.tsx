@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { Airline } from '@prisma/client';
 import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -50,8 +51,8 @@ export const AddFlight = (): JSX.Element => {
     [departureDate],
   );
   useEffect(() => {
-    if (typeof airframe?.operator === 'object') {
-      methods.setValue('airline', airframe.operator);
+    if (Object.keys(airframe?.operator ?? {}).length > 0) {
+      methods.setValue('airline', airframe?.operator as Airline);
     }
   }, [airframe, methods]);
   const handleSuccess = useSuccessResponseHandler();

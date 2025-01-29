@@ -1,7 +1,8 @@
 import type { Airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { add, isAfter, isBefore, sub } from 'date-fns';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
@@ -45,11 +46,16 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
     setIsUserSelectModalOpen,
     setSelectedFlight,
   } = useAddFlightStore();
+  const outDateISO = useWatch<FlightSearchFormData, 'outDateISO'>({
+    control: methods.control,
+    name: 'outDateISO',
+  });
   const airline = useWatch<FlightSearchFormData, 'airline'>({
     control: methods.control,
     name: 'airline',
   });
   const [completedFlightIds, setCompletedFlightIds] = useState<number[]>([]);
+  const [isShowingFlightForm, setIsShowingFlightForm] = useState(false);
   const onError = useTRPCErrorHandler();
   const { data, isFetching } =
     trpc.flightData.fetchFlightsByFlightNumber.useQuery(
@@ -72,7 +78,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
       },
       onError,
     });
-  const addFlight = useCallback(
+  const addFlightFromData = useCallback(
     (
       newFlight: FlightDataRouterOutput['fetchFlightsByFlightNumber']['results'][number],
       username?: string,
@@ -90,6 +96,15 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
     },
     [flightSearchFormData, mutate],
   );
+  const shouldShowFlightForm = useMemo(
+    () =>
+      isBefore(new Date(outDateISO), sub(new Date(), { days: 7 })) ||
+      isAfter(new Date(outDateISO), add(new Date(), { days: 8 })),
+    [outDateISO],
+  );
+  useEffect(() => {
+    setIsShowingFlightForm(shouldShowFlightForm);
+  }, [shouldShowFlightForm]);
   useEffect(() => {
     setCompletedFlightIds([]);
   }, [data]);
@@ -147,7 +162,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               className="w-full md:mt-9 md:w-[120px]"
               color="neutral"
               loading={isFetching}
-              disabled={!methods.formState.isDirty}
+              disabled={!methods.formState.isDirty || shouldShowFlightForm}
               type="submit"
             >
               {!isFetching ? (
@@ -160,7 +175,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
           </div>
         </div>
       </Form>
-      {data !== undefined && !isFetching ? (
+      {data !== undefined && !isFetching && !isShowingFlightForm ? (
         <Table
           cellClassNames={{
             date: 'w-[50px] sm:w-[105px]',
@@ -295,7 +310,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                         if (onOwnProfile) {
                           setIsUserSelectModalOpen(true);
                         } else {
-                          addFlight(row.original, username);
+                          addFlightFromData(row.original, username);
                         }
                       }
                     }}
@@ -329,7 +344,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
           <Button
             color={data.results.length === 0 ? 'primary' : 'ghost'}
             onClick={() => {
-              alert('Coming Soon!');
+              setIsShowingFlightForm(true);
             }}
           >
             <PlusIcon className="h-6 w-6" />
@@ -338,10 +353,11 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
         </div>
       ) : null}
       <UserSelectModal
+        flight={selectedFlight}
         isLoading={isFlightDataLoading}
         onSubmit={({ userType, username: selectedUsername }) => {
           if (selectedFlight !== null) {
-            addFlight(
+            addFlightFromData(
               selectedFlight,
               userType === 'other' &&
                 selectedUsername !== null &&
