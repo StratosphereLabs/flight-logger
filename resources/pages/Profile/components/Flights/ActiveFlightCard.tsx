@@ -379,7 +379,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
           },
           {
             children: !isDeleteFlightLoading ? 'Delete Flight' : null,
-            className: 'w-[125px]',
+            className: 'w-[150px]',
             loading: isDeleteFlightLoading,
             color: 'primary',
             onClick: () => {

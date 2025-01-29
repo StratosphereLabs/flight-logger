@@ -353,6 +353,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
         </div>
       ) : null}
       <UserSelectModal
+        flight={selectedFlight}
         isLoading={isFlightDataLoading}
         onSubmit={({ userType, username: selectedUsername }) => {
           if (selectedFlight !== null) {
