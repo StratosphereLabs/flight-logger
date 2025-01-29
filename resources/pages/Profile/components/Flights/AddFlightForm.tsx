@@ -18,6 +18,7 @@ import { type FlightDataRouterOutput } from '../../../../../app/routes/flightDat
 import { type FlightSearchFormData } from '../../../../../app/schemas';
 import {
   AirlineInput,
+  FlightTimesDisplay,
   PlusIcon,
   SearchIcon,
 } from '../../../../common/components';
@@ -103,16 +104,15 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
     [outDateISO],
   );
   useEffect(() => {
-    setIsShowingFlightForm(shouldShowFlightForm);
-  }, [shouldShowFlightForm]);
-  useEffect(() => {
     setCompletedFlightIds([]);
   }, [data]);
   useEffect(() => {
+    methods.reset();
+    setIsShowingFlightForm(shouldShowFlightForm);
     setTimeout(() => {
       methods.setFocus('outDateISO');
     });
-  }, [methods]);
+  }, [methods, shouldShowFlightForm]);
   useEffect(() => {
     if (airline !== null) {
       methods.setFocus('flightNumber');
@@ -178,15 +178,15 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
       {data !== undefined && !isFetching && !isShowingFlightForm ? (
         <Table
           cellClassNames={{
-            date: 'w-[50px] sm:w-[105px]',
-            airline: 'w-[80px] py-[2px] sm:py-1 hidden sm:table-cell',
-            flightNumber: 'w-[80px] hidden sm:table-cell',
+            date: 'w-[50px] sm:w-[115px]',
+            airline: 'w-[120px] py-[2px] sm:py-1 hidden lg:table-cell',
+            flightNumber: 'w-[80px] hidden lg:table-cell',
             departureAirport: 'min-w-[76px]',
             arrivalAirport: 'min-w-[76px]',
-            duration: 'w-[55px] sm:w-[80px]',
+            duration: 'w-[55px] sm:w-[80px] hidden sm:table-cell',
             actions: 'w-[100px] sm:w-[130px] pl-0',
           }}
-          className="table-xs table-fixed"
+          className="table-xs table-fixed sm:table-sm"
           columns={[
             {
               id: 'date',
@@ -194,7 +194,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               cell: ({ getValue, row }) => {
                 const outTimeDate = getValue<string>();
                 return (
-                  <div className="whitespace-nowrap font-mono text-xs font-semibold opacity-70">
+                  <div className="whitespace-nowrap font-mono font-semibold opacity-70">
                     <div className="block sm:hidden">
                       {row.original.outTimeDateAbbreviated}
                     </div>
@@ -212,7 +212,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                   <div className="flex justify-start">
                     <img
                       alt={`${flightSearchFormData.airline.name} Logo`}
-                      className="mr-[-12px] max-h-[20px] max-w-[68px] sm:max-h-[28px]"
+                      className="mr-[-12px] max-h-[20px] max-w-[100px] sm:max-h-[28px]"
                       src={flightSearchFormData.airline.logo}
                     />
                   </div>
@@ -224,7 +224,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               id: 'flightNumber',
               accessorKey: 'flightNumber',
               cell: () => (
-                <div className="flex gap-1 font-mono opacity-75">
+                <div className="flex gap-1 font-mono text-base opacity-75">
                   <div className="hidden sm:block">
                     {flightSearchFormData?.airline?.iata ??
                       flightSearchFormData?.airline?.icao}
@@ -241,12 +241,33 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               accessorKey: 'departureAirport',
               cell: ({ getValue, row }) => {
                 const airport = getValue<Airport>();
+                const displayData = {
+                  delayStatus: row.original.departureDelayStatus,
+                  actualValue: row.original.outTimeActualValue,
+                  value: row.original.outTimeValue,
+                  actualLocal: row.original.outTimeActualLocal,
+                  local: row.original.outTimeLocal,
+                  actualDaysAdded: row.original.outTimeActualDaysAdded,
+                  daysAdded: 0,
+                };
                 return (
-                  <div className="flex flex-wrap items-center gap-x-2 font-bold">
-                    <div className="font-mono text-lg">{airport.iata}</div>
-                    <div className="text-xs opacity-75">
-                      {row.original.outTimeLocal}
+                  <div className="flex flex-col">
+                    <div className="flex flex-row gap-x-2 font-bold">
+                      <div className="font-mono text-xl sm:text-2xl">
+                        {airport.iata}
+                      </div>
+                      <FlightTimesDisplay
+                        className="hidden sm:flex"
+                        data={displayData}
+                      />
                     </div>
+                    <div className="truncate">
+                      {row.original.departureMunicipalityText}
+                    </div>
+                    <FlightTimesDisplay
+                      className="block sm:hidden"
+                      data={displayData}
+                    />
                   </div>
                 );
               },
@@ -257,17 +278,33 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               accessorKey: 'arrivalAirport',
               cell: ({ getValue, row }) => {
                 const airport = getValue<Airport>();
+                const displayData = {
+                  delayStatus: row.original.arrivalDelayStatus,
+                  actualValue: row.original.inTimeActualValue,
+                  value: row.original.inTimeValue,
+                  actualLocal: row.original.inTimeActualLocal,
+                  local: row.original.inTimeLocal,
+                  actualDaysAdded: row.original.inTimeActualDaysAdded,
+                  daysAdded: row.original.inTimeDaysAdded,
+                };
                 return (
-                  <div className="flex flex-wrap items-center gap-x-2 font-bold">
-                    <div className="font-mono text-lg">{airport.iata}</div>
-                    <div className="text-xs opacity-75">
-                      {row.original.inTimeLocal}
-                      {row.original.inTimeDaysAdded !== 0 ? (
-                        <sup>
-                          {`${row.original.inTimeDaysAdded > 0 ? '+' : ''}${row.original.inTimeDaysAdded}`}
-                        </sup>
-                      ) : null}
+                  <div className="flex flex-col">
+                    <div className="flex flex-col gap-x-2 font-bold sm:flex-row">
+                      <div className="font-mono text-xl sm:text-2xl">
+                        {airport.iata}
+                      </div>
+                      <FlightTimesDisplay
+                        className="hidden sm:flex"
+                        data={displayData}
+                      />
                     </div>
+                    <div className="truncate">
+                      {row.original.arrivalMunicipalityText}
+                    </div>
+                    <FlightTimesDisplay
+                      className="block sm:hidden"
+                      data={displayData}
+                    />
                   </div>
                 );
               },

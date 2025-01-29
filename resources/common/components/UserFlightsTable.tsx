@@ -117,17 +117,13 @@ export const UserFlightsTable = ({
               getValue<
                 FlightsRouterOutput['getUserFlights']['results'][number]['departureAirport']
               >();
-            const departureRegion =
-              airportData.countryId === 'US' || airportData.countryId === 'CA'
-                ? airportData.region.id.split('-')[1]
-                : airportData.countryId;
             return (
               <div className="flex h-full flex-col">
                 <div className="font-mono text-2xl font-bold">
                   {airportData?.iata}
                 </div>
                 <div className="truncate text-sm">
-                  {airportData.municipality}, {departureRegion}
+                  {row.original.departureMunicipalityText}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono font-bold"
@@ -154,15 +150,6 @@ export const UserFlightsTable = ({
               getValue<
                 FlightsRouterOutput['getUserFlights']['results'][number]['arrivalAirport']
               >();
-            const arrivalMunicipality =
-              row.original.diversionAirport?.municipality ??
-              airportData.municipality;
-            const arrivalAirport = row.original.diversionAirport ?? airportData;
-            const arrivalRegion =
-              arrivalAirport.countryId === 'US' ||
-              arrivalAirport.countryId === 'CA'
-                ? arrivalAirport.region.id.split('-')[1]
-                : arrivalAirport.countryId;
             return (
               <div className="flex h-full flex-col">
                 <div className="flex gap-1 font-mono text-2xl font-bold">
@@ -179,7 +166,7 @@ export const UserFlightsTable = ({
                   ) : null}
                 </div>
                 <div className="truncate text-sm">
-                  {arrivalMunicipality}, {arrivalRegion}
+                  {row.original.arrivalMunicipalityText}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono font-bold"

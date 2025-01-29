@@ -71,8 +71,7 @@ export const ViewFlightModal = (): JSX.Element | null => {
                   {activeFlight.departureAirport.iata}
                 </div>
                 <div className="truncate text-sm sm:text-base">
-                  {activeFlight.departureAirport.municipality},{' '}
-                  {activeFlight.departureAirport.region.name}
+                  {activeFlight.departureMunicipalityText}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono"
@@ -97,8 +96,7 @@ export const ViewFlightModal = (): JSX.Element | null => {
                   {activeFlight.arrivalAirport.iata}
                 </div>
                 <div className="truncate text-sm sm:text-base">
-                  {activeFlight.arrivalAirport.municipality},{' '}
-                  {activeFlight.arrivalAirport.region.name}
+                  {activeFlight.arrivalMunicipalityText}
                 </div>
                 <FlightTimesDisplay
                   className="font-mono"

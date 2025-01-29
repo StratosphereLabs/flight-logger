@@ -107,7 +107,7 @@ export const fetchFlightRadarDataByFlightNumber = async ({
       arrivalAirport,
     });
   });
-  return data;
+  return data.toReversed();
 };
 
 export const fetchFlightRadarDataByRoute = async ({

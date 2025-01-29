@@ -125,6 +125,7 @@ export const usersRouter = router({
       });
       return results.map(user => ({
         ...user,
+        avatar: fetchGravatarUrl(user.email),
         id: user.username,
       }));
     }),

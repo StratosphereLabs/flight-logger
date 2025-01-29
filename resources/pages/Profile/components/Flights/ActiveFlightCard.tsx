@@ -223,16 +223,10 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               </div>
               <div className="flex w-full justify-between gap-4">
                 <div className="truncate text-sm sm:text-base">
-                  {data.departureAirport.municipality},{' '}
-                  {data.departureAirport.countryId === 'US'
-                    ? data.departureAirport.region.name
-                    : data.departureAirport.countryId}
+                  {data.departureMunicipalityText}
                 </div>
                 <div className="truncate text-right text-sm sm:text-base">
-                  {data.arrivalAirport.municipality},{' '}
-                  {data.arrivalAirport.countryId === 'US'
-                    ? data.arrivalAirport.region.name
-                    : data.arrivalAirport.countryId}
+                  {data.arrivalMunicipalityText}
                 </div>
               </div>
             </div>
