@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useEffect } from 'react';
 import { type SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import {
+  Avatar,
   Form,
   FormRadioGroup,
   FormRadioGroupOption,
@@ -37,7 +38,7 @@ export const UserSelectModal = ({
 }: UserSelectModalProps): JSX.Element => {
   const { isUserSelectModalOpen, setIsUserSelectModalOpen } =
     useAddFlightStore();
-  const { onOwnProfile } = useLoggedInUserQuery();
+  const { data, onOwnProfile } = useLoggedInUserQuery();
   const methods = useForm<UserSelectFormData>({
     defaultValues: {
       userType: 'me',
@@ -64,20 +65,6 @@ export const UserSelectModal = ({
       methods.reset();
     }
   }, [isUserSelectModalOpen, methods]);
-  const departureMunicipality = flight?.departureAirport.municipality;
-  const departureAirport = flight?.departureAirport;
-  const departureRegion =
-    departureAirport !== undefined &&
-    (departureAirport.countryId === 'US' || departureAirport.countryId === 'CA')
-      ? departureAirport.regionId.split('-')[1]
-      : departureAirport?.countryId;
-  const arrivalMunicipality = flight?.arrivalAirport.municipality;
-  const arrivalAirport = flight?.arrivalAirport;
-  const arrivalRegion =
-    arrivalAirport !== undefined &&
-    (arrivalAirport.countryId === 'US' || arrivalAirport.countryId === 'CA')
-      ? arrivalAirport.regionId.split('-')[1]
-      : arrivalAirport?.countryId;
   return (
     <Modal
       actionButtons={[
@@ -106,7 +93,7 @@ export const UserSelectModal = ({
     >
       <div className="flex flex-col gap-2 py-4">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex flex-col gap-x-4 lg:flex-row lg:items-center">
+          <div className="flex flex-col gap-x-4 gap-y-1 lg:flex-row lg:items-center">
             <div className="flex h-[30px] w-[125px]">
               {flight?.airline?.logo !== null &&
               flight?.airline?.logo !== undefined ? (
@@ -142,7 +129,7 @@ export const UserSelectModal = ({
           <div className="flex gap-2">
             <div className="flex flex-1 flex-col overflow-hidden">
               <div className="truncate text-sm">
-                {departureMunicipality}, {departureRegion}
+                {flight?.departureMunicipalityText}
               </div>
               {flight !== null ? (
                 <FlightTimesDisplay
@@ -160,7 +147,7 @@ export const UserSelectModal = ({
             </div>
             <div className="flex flex-1 flex-col overflow-hidden">
               <div className="truncate text-right text-sm">
-                {arrivalMunicipality}, {arrivalRegion}
+                {flight?.arrivalMunicipalityText}
               </div>
               {flight !== null ? (
                 <FlightTimesDisplay
@@ -181,13 +168,16 @@ export const UserSelectModal = ({
         </div>
       </div>
       <Form className="flex flex-1 flex-col items-end gap-6" methods={methods}>
-        {onOwnProfile ? (
+        {onOwnProfile && data !== undefined ? (
           <FormRadioGroup className="w-full" name="userType">
             <FormRadioGroupOption
               activeColor="info"
               className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
               value="me"
             >
+              <Avatar shapeClassName="w-5 h-5 rounded-full">
+                <img alt={data.username} src={data.avatar} />
+              </Avatar>
               Myself
             </FormRadioGroupOption>
             <FormRadioGroupOption
@@ -200,13 +190,13 @@ export const UserSelectModal = ({
           </FormRadioGroup>
         ) : null}
         <UserSelect
+          bordered
           className={classNames(
             'w-[250px]',
             userType === 'me' && 'pointer-events-none opacity-60',
           )}
           followingUsersOnly
           formValueMode="id"
-          getBadgeText={({ username }) => username}
           inputClassName="bg-base-200"
           menuClassName="max-h-[200px] overflow-y-scroll w-[250px] bg-base-200"
           name="username"

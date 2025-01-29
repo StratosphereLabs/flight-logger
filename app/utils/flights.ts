@@ -145,6 +145,8 @@ export interface TransformFlightDataResult
   >;
   distance: number;
   flightNumberString: string;
+  departureMunicipalityText: string;
+  arrivalMunicipalityText: string;
   link: string;
   minutesToDeparture: number;
   minutesToTakeoff: number;
@@ -522,6 +524,20 @@ export const transformFlightData = (
     flight.diversionAirport !== null
       ? `Diverted to ${flight.diversionAirport.iata}`
       : FLIGHT_STATUS_MAP[flightStatus];
+  const departureRegion =
+    flight.departureAirport.countryId === 'US' ||
+    flight.departureAirport.countryId === 'CA'
+      ? flight.departureAirport.region.id.split('-')[1]
+      : flight.departureAirport.countryId;
+  const departureMunicipalityText = `${flight.departureAirport.municipality}, ${departureRegion}`;
+  const arrivalMunicipality =
+    flight.diversionAirport?.municipality ?? flight.arrivalAirport.municipality;
+  const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
+  const arrivalRegion =
+    arrivalAirport.countryId === 'US' || arrivalAirport.countryId === 'CA'
+      ? arrivalAirport.region.id.split('-')[1]
+      : arrivalAirport.countryId;
+  const arrivalMunicipalityText = `${arrivalMunicipality}, ${arrivalRegion}`;
   const { tracklog, waypoints } = getTrackingData(flight);
   const distanceTraveled = flightProgress * flightDistance;
   const initialHeading = getBearing(
@@ -601,6 +617,8 @@ export const transformFlightData = (
             flight.flightNumber
           }`.trim()
         : '',
+    departureMunicipalityText,
+    arrivalMunicipalityText,
     distance: Math.round(flightDistance),
     link: `/user/${flight.user.username}/flights/${flight.id}`,
     minutesToDeparture,

@@ -35,7 +35,7 @@ export const flightDataRouter = router({
         flightNumber,
         isoDate: outDateISO,
       });
-      const flightData: FlightSearchDataResult[] = flights.flatMap(
+      const flightData: FlightSearchDataResult[] = flights.map(
         (flight, index) => {
           const duration = getDurationMinutes({
             start: flight.outTime,
@@ -48,10 +48,24 @@ export const flightDataRouter = router({
             outTime: flight.outTime,
             inTime: flight.inTime,
           });
+          const departureRegion =
+            flight.departureAirport.countryId === 'US' ||
+            flight.departureAirport.countryId === 'CA'
+              ? flight.departureAirport.regionId.split('-')[1]
+              : flight.departureAirport.countryId;
+          const departureMunicipalityText = `${flight.departureAirport.municipality}, ${departureRegion}`;
+          const arrivalRegion =
+            flight.arrivalAirport.countryId === 'US' ||
+            flight.arrivalAirport.countryId === 'CA'
+              ? flight.arrivalAirport.regionId.split('-')[1]
+              : flight.arrivalAirport.countryId;
+          const arrivalMunicipalityText = `${flight.arrivalAirport.municipality}, ${arrivalRegion}`;
           return {
             ...timestamps,
             ...flight,
             id: index,
+            departureMunicipalityText,
+            arrivalMunicipalityText,
             outTimeDate: formatInTimeZone(
               flight.outTime,
               flight.departureAirport.timeZone,

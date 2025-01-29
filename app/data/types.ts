@@ -47,6 +47,8 @@ export interface FlightSearchDataResult
   extends FlightSearchDataFetchResult,
     FlightTimestampsResult {
   id: number;
+  departureMunicipalityText: string;
+  arrivalMunicipalityText: string;
   outTimeDate: string;
   outTimeDateAbbreviated: string;
 }

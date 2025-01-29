@@ -1,8 +1,14 @@
+import classNames from 'classnames';
 import { useState } from 'react';
 import { type FieldValues } from 'react-hook-form';
-import { TypeaheadSelect, type TypeaheadSelectProps } from 'stratosphere-ui';
+import {
+  Avatar,
+  TypeaheadSelect,
+  type TypeaheadSelectProps,
+} from 'stratosphere-ui';
 
 import { type UsersRouterOutput } from '../../../app/routes/users';
+import { useIsDarkMode } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { useTRPCErrorHandler } from '../hooks';
 
@@ -18,6 +24,7 @@ export const UserSelect = <Values extends FieldValues>({
   followingUsersOnly,
   ...props
 }: UserSelectProps<Values>): JSX.Element => {
+  const isDarkMode = useIsDarkMode();
   const [query, setQuery] = useState('');
   const onError = useTRPCErrorHandler();
   const { data } = trpc.users.getUsers.useQuery(
@@ -26,7 +33,17 @@ export const UserSelect = <Values extends FieldValues>({
   );
   return (
     <TypeaheadSelect
-      getItemText={({ username }) => username}
+      getBadgeClassName={() =>
+        classNames('badge-lg', !isDarkMode && 'badge-ghost bg-base-100')
+      }
+      getItemText={({ avatar, username }) => (
+        <div className="flex items-center gap-2 overflow-hidden text-sm">
+          <Avatar shapeClassName="w-5 h-5 rounded-full">
+            <img alt={username} src={avatar} />
+          </Avatar>
+          <span className="flex-1 truncate">{username}</span>
+        </div>
+      )}
       onDebouncedChange={setQuery}
       options={data}
       {...props}

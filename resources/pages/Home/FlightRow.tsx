@@ -40,18 +40,6 @@ export const FlightRow = ({
     () => flight.id === selectedFlightId,
     [flight.id, selectedFlightId],
   );
-  const departureRegion =
-    flight.departureAirport.countryId === 'US' ||
-    flight.departureAirport.countryId === 'CA'
-      ? flight.departureAirport.region.id.split('-')[1]
-      : flight.departureAirport.countryId;
-  const arrivalMunicipality =
-    flight.diversionAirport?.municipality ?? flight.arrivalAirport.municipality;
-  const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
-  const arrivalRegion =
-    arrivalAirport.countryId === 'US' || arrivalAirport.countryId === 'CA'
-      ? arrivalAirport.region.id.split('-')[1]
-      : arrivalAirport.countryId;
   return (
     <div
       className={classNames(
@@ -142,7 +130,7 @@ export const FlightRow = ({
                 {flight.departureAirport.iata}
               </div>
               <span className="flex-1 truncate text-sm sm:hidden">
-                {flight.departureAirport.municipality}, {departureRegion}
+                {flight.departureMunicipalityText}
               </span>
               <FlightTimesDisplay
                 data={{
@@ -157,7 +145,7 @@ export const FlightRow = ({
               />
             </div>
             <div className="hidden truncate text-sm sm:block">
-              {flight.departureAirport.municipality}, {departureRegion}
+              {flight.departureMunicipalityText}
             </div>
           </div>
           <div className="flex w-0 flex-1 flex-col justify-start">
@@ -176,7 +164,7 @@ export const FlightRow = ({
                 ) : null}
               </div>
               <div className="w-full truncate text-sm sm:hidden">
-                {arrivalMunicipality}, {arrivalRegion}
+                {flight.arrivalMunicipalityText}
               </div>
               <FlightTimesDisplay
                 data={{
@@ -191,7 +179,7 @@ export const FlightRow = ({
               />
             </div>
             <div className="hidden truncate text-sm sm:block">
-              {arrivalMunicipality}, {arrivalRegion}
+              {flight.arrivalMunicipalityText}
             </div>
           </div>
         </div>
