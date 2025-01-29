@@ -94,7 +94,7 @@ export const EditFlightModal = ({
         id: activeFlight.id,
         departureAirport: activeFlight.departureAirport,
         arrivalAirport: activeFlight.arrivalAirport,
-        airline: activeFlight.airline,
+        airline: activeFlight.airline ?? undefined,
         aircraftType: activeFlight.aircraftType,
         airframe:
           activeFlight.airframe !== null
@@ -116,7 +116,7 @@ export const EditFlightModal = ({
                   registration: activeFlight.tailNumber,
                 }
               : null,
-        flightNumber: activeFlight.flightNumber,
+        flightNumber: activeFlight.flightNumber ?? undefined,
         outDateISO: activeFlight.outDateISO,
         outTimeValue: activeFlight.outTimeValue,
         inTimeValue: activeFlight.inTimeValue,
@@ -125,7 +125,6 @@ export const EditFlightModal = ({
         seatPosition: activeFlight.seatPosition,
         reason: activeFlight.reason,
         comments: activeFlight.comments ?? '',
-        trackingLink: activeFlight.trackingLink ?? '',
       });
     }
   }, [activeFlight, methods]);

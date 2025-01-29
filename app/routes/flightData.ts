@@ -31,8 +31,8 @@ export const flightDataRouter = router({
     .query(async ({ input }) => {
       const { airline, flightNumber, outDateISO } = input;
       const flights = await fetchFlightRadarDataByFlightNumber({
-        airline: airline!,
-        flightNumber: flightNumber!,
+        airline,
+        flightNumber,
         isoDate: outDateISO,
       });
       const flightData: FlightSearchDataResult[] = flights.flatMap(

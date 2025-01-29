@@ -725,14 +725,6 @@ export const flightsRouter = router({
               id: ctx.user.id,
             },
           },
-          trip:
-            input.tripId !== undefined
-              ? {
-                  connect: {
-                    id: input.tripId,
-                  },
-                }
-              : undefined,
           departureAirport: {
             connect: {
               id: departureAirport.id,
@@ -777,7 +769,6 @@ export const flightsRouter = router({
           seatPosition: input.seatPosition,
           reason: input.reason,
           comments: input.comments,
-          trackingLink: input.trackingLink,
         },
         include: {
           departureAirport: true,
@@ -865,7 +856,6 @@ export const flightsRouter = router({
         seatPosition: input.seatPosition,
         reason: input.reason,
         comments: input.comments,
-        trackingLink: input.trackingLink,
       };
       const updatedFlight = await prisma.flight.update({
         where: {
