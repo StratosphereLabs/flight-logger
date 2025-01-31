@@ -253,7 +253,11 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     </>
                   ),
                   onClick: () => {
-                    navigate('/add-flight');
+                    navigate('/profile', {
+                      state: {
+                        addFlight: true,
+                      } as const as ProfilePageNavigationState,
+                    });
                   },
                 },
                 {

@@ -6,7 +6,7 @@ import { useTRPCErrorHandler } from '../../../../common/hooks';
 import { useIsDarkMode } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { useAddFlightStore } from '../Flights/addFlightStore';
-import { flightSearchFormDefaultValues } from '../Flights/constants';
+import { addFlightFormDefaultValues } from '../Flights/constants';
 
 export interface AddFlightOverlaysProps {
   map: google.maps.Map | null;
@@ -20,7 +20,7 @@ export const AddFlightOverlays = ({
   const isDarkMode = useIsDarkMode();
   const { data: flightSearchData } =
     trpc.flightData.fetchFlightsByFlightNumber.useQuery(
-      flightSearchFormData ?? flightSearchFormDefaultValues,
+      flightSearchFormData ?? addFlightFormDefaultValues,
       {
         enabled: flightSearchFormData !== null,
         onError,

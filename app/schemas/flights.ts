@@ -86,6 +86,7 @@ export const deleteFlightSchema = z.object({
 });
 
 export const addFlightSchema = searchFlightDataSchema.extend({
+  username: z.string().optional(),
   departureAirport: AirportSchema.nullable().refine(
     item => item !== null,
     'Airport is required.',
@@ -108,13 +109,12 @@ export const addFlightSchema = searchFlightDataSchema.extend({
     .string()
     .min(1, 'Required')
     .regex(TIME_REGEX_24H, 'Invalid Time'),
+  seatNumber: z.string().trim(),
+  seatPosition: z.enum(['AISLE', 'MIDDLE', 'WINDOW']).nullable(),
   class: z
     .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
     .nullable(),
-  seatNumber: z.string().trim(),
-  seatPosition: z.enum(['AISLE', 'MIDDLE', 'WINDOW']).nullable(),
   reason: z.enum(['BUSINESS', 'LEISURE', 'CREW']).nullable(),
-  comments: z.string().trim(),
 });
 
 export const editFlightSchema = addFlightSchema.extend({

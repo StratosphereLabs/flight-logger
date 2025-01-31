@@ -3,7 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
   Account,
-  AddFlight,
   Data,
   ForgotPassword,
   Home,
@@ -24,7 +23,6 @@ export const AppRouter = (): JSX.Element => {
         <Route path="" element={<Home />} />
         <Route path="data" element={<Data />} />
         <Route path="users" element={<Users />} />
-        <Route path="add-flight" element={<AddFlight />} />
         {['', 'user/:username'].map(path => (
           <Route key={path} path={path} element={<ProfileLayout />}>
             <Route

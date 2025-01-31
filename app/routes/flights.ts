@@ -693,6 +693,33 @@ export const flightsRouter = router({
     .use(verifyAuthenticated)
     .input(addFlightSchema)
     .mutation(async ({ ctx, input }) => {
+      const user =
+        input.username !== undefined
+          ? await prisma.user.findUnique({
+              where: {
+                username: input.username,
+                followedBy: {
+                  some: {
+                    username: ctx.user.username,
+                  },
+                },
+                following: {
+                  some: {
+                    username: ctx.user.username,
+                  },
+                },
+              },
+              omit: {
+                id: false,
+              },
+            })
+          : undefined;
+      if (user === null) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: `Unable to add flight for user @${input.username}`,
+        });
+      }
       const [departureAirport, arrivalAirport] = await prisma.$transaction([
         prisma.airport.findUnique({
           where: {
@@ -722,9 +749,17 @@ export const flightsRouter = router({
         data: {
           user: {
             connect: {
-              id: ctx.user.id,
+              id: user?.id ?? ctx.user.id,
             },
           },
+          addedByUser:
+            user !== undefined
+              ? {
+                  connect: {
+                    id: ctx.user.id,
+                  },
+                }
+              : undefined,
           departureAirport: {
             connect: {
               id: departureAirport.id,
@@ -768,7 +803,6 @@ export const flightsRouter = router({
           seatNumber: input.seatNumber,
           seatPosition: input.seatPosition,
           reason: input.reason,
-          comments: input.comments,
         },
         include: {
           departureAirport: true,
@@ -855,7 +889,6 @@ export const flightsRouter = router({
         seatNumber: input.seatNumber,
         seatPosition: input.seatPosition,
         reason: input.reason,
-        comments: input.comments,
       };
       const updatedFlight = await prisma.flight.update({
         where: {

@@ -91,47 +91,47 @@ export const UserSelectModal = ({
       open={isUserSelectModalOpen}
       title="Select User"
     >
-      <div className="flex flex-col gap-2 py-4">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex flex-col gap-x-4 gap-y-1 lg:flex-row lg:items-center">
-            <div className="flex h-[30px] w-[125px]">
-              {flight?.airline?.logo !== null &&
-              flight?.airline?.logo !== undefined ? (
-                <a
-                  className="flex flex-1 items-center"
-                  href={flight.airline.wiki ?? '#'}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <img
-                    alt={`${flight.airline.name} Logo`}
-                    className="max-h-full max-w-full"
-                    src={flight.airline.logo}
-                  />
-                </a>
-              ) : null}
-            </div>
-            <div className="w-[70px] font-mono opacity-90">
-              <span>{flight?.airline?.iata}</span>{' '}
-              <span className="font-semibold">{flight?.flightNumber}</span>
-            </div>
-          </div>
-          <div className="w-[145px] text-nowrap text-right text-sm font-semibold opacity-80">
-            {flight?.outDateLocal}
-          </div>
-        </div>
-        <div className="flex flex-1 flex-col">
-          <div className="flex flex-1 items-center justify-between font-mono text-3xl font-semibold">
-            <div>{flight?.departureAirport.iata}</div>
-            <RightArrowIcon className="h-6 w-6" />
-            <div>{flight?.arrivalAirport.iata}</div>
-          </div>
-          <div className="flex gap-2">
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <div className="truncate text-sm">
-                {flight?.departureMunicipalityText}
+      {flight !== null ? (
+        <div className="flex flex-col gap-2 py-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-col gap-x-4 gap-y-1 lg:flex-row lg:items-center">
+              <div className="flex h-[30px] w-[125px]">
+                {flight.airline?.logo !== null &&
+                flight.airline?.logo !== undefined ? (
+                  <a
+                    className="flex flex-1 items-center"
+                    href={flight.airline.wiki ?? '#'}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <img
+                      alt={`${flight.airline.name} Logo`}
+                      className="max-h-full max-w-full"
+                      src={flight.airline.logo}
+                    />
+                  </a>
+                ) : null}
               </div>
-              {flight !== null ? (
+              <div className="w-[70px] font-mono opacity-90">
+                <span>{flight.airline?.iata}</span>{' '}
+                <span className="font-semibold">{flight.flightNumber}</span>
+              </div>
+            </div>
+            <div className="w-[145px] text-nowrap text-right text-sm font-semibold opacity-80">
+              {flight.outDateLocal}
+            </div>
+          </div>
+          <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 items-center justify-between font-mono text-3xl font-semibold">
+              <div>{flight.departureAirport.iata}</div>
+              <RightArrowIcon className="h-6 w-6" />
+              <div>{flight.arrivalAirport.iata}</div>
+            </div>
+            <div className="flex gap-2">
+              <div className="flex flex-1 flex-col overflow-hidden">
+                <div className="truncate text-sm">
+                  {flight.departureMunicipalityText}
+                </div>
                 <FlightTimesDisplay
                   data={{
                     delayStatus: flight.departureDelayStatus,
@@ -143,13 +143,11 @@ export const UserSelectModal = ({
                     daysAdded: 0,
                   }}
                 />
-              ) : null}
-            </div>
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <div className="truncate text-right text-sm">
-                {flight?.arrivalMunicipalityText}
               </div>
-              {flight !== null ? (
+              <div className="flex flex-1 flex-col overflow-hidden">
+                <div className="truncate text-right text-sm">
+                  {flight.arrivalMunicipalityText}
+                </div>
                 <FlightTimesDisplay
                   className="justify-end"
                   data={{
@@ -162,12 +160,15 @@ export const UserSelectModal = ({
                     daysAdded: flight.inTimeDaysAdded ?? 0,
                   }}
                 />
-              ) : null}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <Form className="flex flex-1 flex-col items-end gap-6" methods={methods}>
+      ) : null}
+      <Form
+        className="mt-4 flex flex-1 flex-col items-end gap-6"
+        methods={methods}
+      >
         {onOwnProfile && data !== undefined ? (
           <FormRadioGroup className="w-full" name="userType">
             <FormRadioGroupOption
