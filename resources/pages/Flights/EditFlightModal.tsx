@@ -65,7 +65,8 @@ export const EditFlightModal = ({
       onSuccess();
       setIsEditDialogOpen(false);
       void utils.users.invalidate();
-      void utils.flights.getFlightChangelog.invalidate();
+      void utils.flights.invalidate();
+      void utils.statistics.invalidate();
     },
     onError,
   });

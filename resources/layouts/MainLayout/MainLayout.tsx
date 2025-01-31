@@ -6,6 +6,7 @@ import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
+import { useMainLayoutStore } from './mainLayoutStore';
 
 export interface MainLayoutProps {
   methods: UseFormReturn<ProfileFilterFormData>;
@@ -15,6 +16,10 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { username } = useParams();
+  const { setScrollContainerRef } = useMainLayoutStore();
+  useEffect(() => {
+    setScrollContainerRef(scrollContainerRef);
+  }, [setScrollContainerRef]);
   useEffect(() => {
     scrollContainerRef.current?.scrollTo(0, 0);
   }, [username]);

@@ -23,6 +23,7 @@ export const AddFlightOverlays = ({
       flightSearchFormData ?? addFlightFormDefaultValues,
       {
         enabled: flightSearchFormData !== null,
+        keepPreviousData: true,
         onError,
       },
     );
