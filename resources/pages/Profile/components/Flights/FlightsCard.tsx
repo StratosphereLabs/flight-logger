@@ -143,13 +143,7 @@ export const FlightsCard = ({
                       ) : (
                         <ExpandIcon className="h-4 w-4" />
                       )}
-                      <span
-                        className={classNames(
-                          isFlightsFullScreen && 'hidden sm:block',
-                        )}
-                      >
-                        {isFlightsFullScreen ? 'Collapse' : 'View All'}
-                      </span>
+                      {isFlightsFullScreen ? 'Collapse' : 'View All'}
                     </Button>
                   </div>
                 ) : null}

@@ -247,7 +247,7 @@ export const GoogleMap = ({
           );
         }) ??
           null)}
-      <AddFlightOverlays map={map} />
+      {isAddingFlight ? <AddFlightOverlays map={map} /> : null}
       <PolylineF
         visible={mapMode === 'routes'}
         options={{

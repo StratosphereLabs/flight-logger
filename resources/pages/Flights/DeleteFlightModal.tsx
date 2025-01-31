@@ -19,6 +19,7 @@ export const DeleteFlightModal = (): JSX.Element => {
       setIsDeleteDialogOpen(false);
       void utils.flights.invalidate();
       void utils.users.invalidate();
+      void utils.statistics.invalidate();
     },
     onError,
   });

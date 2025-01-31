@@ -52,8 +52,9 @@ export const ActiveFlightCard = (): JSX.Element | null => {
       onSuccess: () => {
         handleSuccess('Flight Deleted');
         setIsDeleteFlightModalOpen(false);
-        void utils.flights.getUserActiveFlight.invalidate();
-        void utils.flights.getFollowingFlights.invalidate();
+        void utils.flights.invalidate();
+        void utils.users.invalidate();
+        void utils.statistics.invalidate();
       },
       onError,
     });
