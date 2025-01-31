@@ -29,7 +29,15 @@ export const AirportInput = <Values extends FieldValues>(
   return (
     <TypeaheadSelect
       dropdownInputClassName="bg-base-200"
-      getItemText={({ id, name }) => `${id} - ${name}`}
+      getItemText={({ iata, id, name }) => (
+        <div className="flex items-center gap-2 overflow-hidden text-sm">
+          <span className="font-mono font-bold">
+            {iata !== null ? `${iata}/` : ''}
+            {id}
+          </span>
+          <span className="flex-1 truncate">{name}</span>
+        </div>
+      )}
       onDebouncedChange={setQuery}
       options={data}
       {...props}

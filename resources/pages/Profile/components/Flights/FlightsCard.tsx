@@ -6,8 +6,8 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 
 import {
-  type FlightSearchFormData,
-  searchFlightDataSchema,
+  type AddFlightRequest,
+  addFlightSchema,
 } from '../../../../../app/schemas';
 import {
   CollapseIcon,
@@ -24,7 +24,7 @@ import { type ProfileFilterFormData } from '../../hooks';
 import { AddFlightForm } from './AddFlightForm';
 import { FlightsTableBasic } from './FlightsTableBasic';
 import { useAddFlightStore } from './addFlightStore';
-import { flightSearchFormDefaultValues } from './constants';
+import { addFlightFormDefaultValues } from './constants';
 
 export interface FlightCardProps {
   filtersFormControl: Control<ProfileFilterFormData>;
@@ -53,9 +53,9 @@ export const FlightsCard = ({
     useAddFlightStore();
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
-  const methods = useForm<FlightSearchFormData>({
-    defaultValues: flightSearchFormDefaultValues,
-    resolver: zodResolver(searchFlightDataSchema),
+  const methods = useForm<AddFlightRequest>({
+    defaultValues: addFlightFormDefaultValues,
+    resolver: zodResolver(addFlightSchema),
     reValidateMode: 'onBlur',
   });
   const { data } = useProfileUserQuery();
@@ -97,7 +97,7 @@ export const FlightsCard = ({
                     size="sm"
                     onClick={() => {
                       setIsAddingFlight(false);
-                      methods.reset(flightSearchFormDefaultValues);
+                      methods.reset(addFlightFormDefaultValues);
                       setFlightSearchFormData(null);
                     }}
                   >

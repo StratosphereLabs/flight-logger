@@ -124,7 +124,6 @@ export const EditFlightModal = ({
         seatNumber: activeFlight.seatNumber ?? '',
         seatPosition: activeFlight.seatPosition,
         reason: activeFlight.reason,
-        comments: activeFlight.comments ?? '',
       });
     }
   }, [activeFlight, methods]);
@@ -227,11 +226,6 @@ export const EditFlightModal = ({
           name="class"
           options={[
             {
-              id: 'BASIC',
-              label: 'Basic Economy',
-              value: 'BASIC',
-            },
-            {
               id: 'ECONOMY',
               label: 'Economy',
               value: 'ECONOMY',
@@ -302,18 +296,6 @@ export const EditFlightModal = ({
               value: 'CREW',
             },
           ]}
-          showDirty
-        />
-        <FormControl
-          labelText="Comments"
-          inputClassName="bg-base-200"
-          name="comments"
-          showDirty
-        />
-        <FormControl
-          labelText="Tracking Link"
-          inputClassName="bg-base-200"
-          name="trackingLink"
           showDirty
         />
         <div className="modal-action">

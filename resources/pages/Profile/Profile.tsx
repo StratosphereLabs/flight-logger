@@ -74,6 +74,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
   );
   useEffect(() => {
     if (state?.addFlight === true) {
+      setIsFlightsFullScreen(true);
       setIsAddingFlight(true);
     }
   }, [setIsAddingFlight, state?.addFlight]);
@@ -110,7 +111,7 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
               setIsMapFullScreen={setIsMapFullScreen}
             />
           ) : null}
-          {!isFlightsFullScreen ? (
+          {!isFlightsFullScreen && !isAddingFlight ? (
             <StatisticsCard
               filtersFormControl={filtersFormControl}
               isStatsFullScreen={isStatsFullScreen}
