@@ -19,7 +19,7 @@ import {
   isFuture,
   sub,
 } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
 import { KTS_TO_MPH } from '../commands/constants';
@@ -745,7 +745,7 @@ export const filterCustomDates =
       departureAirport: Pick<Airport, 'timeZone'>;
     },
   ): boolean => {
-    const departureTimeLocal = utcToZonedTime(
+    const departureTimeLocal = toZonedTime(
       flight.outTime,
       flight.departureAirport.timeZone,
     );

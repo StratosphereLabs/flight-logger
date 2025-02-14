@@ -1,17 +1,46 @@
 import { parse } from 'csv-parse/sync';
+import { fromZonedTime } from 'date-fns-tz';
 import createHttpError from 'http-errors';
 
 interface FlightyRow {
-  'Flight Number': string;
-  'Departure Airport': string;
-  'Arrival Airport': string;
-  'Scheduled Departure Date': string;
-  'Actual Departure Date': string;
-  'Scheduled Arrival Date': string;
-  'Actual Arrival Date': string;
+  Date: string;
+  Airline: string;
+  Flight: string;
+  From: string;
+  To: string;
+  'Dep Terminal': string;
+  'Dep Gate': string;
+  'Arr Terminal': string;
+  'Arr Gate': string;
+  Canceled: string;
+  'Diverted To': string;
+  'Gate Departure (Scheduled)': string;
+  'Gate Departure (Actual)': string;
+  'Take off (Scheduled)': string;
+  'Take off (Actual)': string;
+  'Landing (Scheduled)': string;
+  'Landing (Actual)': string;
+  'Gate Arrival (Scheduled)': string;
+  'Gate Arrival (Actual)': string;
+  'Aircraft Type Name': string;
   'Tail Number': string;
-  'Flight Type': string;
+  PNR: string;
+  Seat: string;
+  'Seat Type': string;
+  'Cabin Class': string;
+  'Flight Reason': string;
+  Notes: string;
 }
+
+export const parseFlightyDateTime = (
+  dateString: string,
+  timeZone: string,
+): Date | null => {
+  const [date, time] = dateString.split(' ');
+  return date !== '' && time !== '' && time !== undefined
+    ? fromZonedTime(new Date(`${date} ${time}`), timeZone)
+    : null;
+};
 
 export const parseFlightyFile = (file?: Express.Multer.File): FlightyRow[] => {
   if (file === undefined) {

@@ -1,6 +1,6 @@
 import { type Airport, type FlightRadarStatus } from '@prisma/client';
 import { add, isBefore, isFuture } from 'date-fns';
-import { formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz';
+import { formatInTimeZone, fromZonedTime } from 'date-fns-tz';
 
 import {
   DATE_FORMAT,
@@ -82,24 +82,24 @@ export const getFlightTimes = ({
   inTimeValue,
   onTimeActualValue,
 }: FlightTimesInput): FlightTimesResult => {
-  const outTimeUtc = zonedTimeToUtc(
+  const outTimeUtc = fromZonedTime(
     `${outDateISO} ${outTimeValue}`,
     departureAirport.timeZone,
   );
   const offTimeActualUtc =
     offTimeActualValue !== undefined
-      ? zonedTimeToUtc(
+      ? fromZonedTime(
           `${outDateISO} ${offTimeActualValue}`,
           departureAirport.timeZone,
         )
       : undefined;
-  const inTimeUtc = zonedTimeToUtc(
+  const inTimeUtc = fromZonedTime(
     `${outDateISO} ${inTimeValue}`,
     arrivalAirport.timeZone,
   );
   const onTimeActualUtc =
     onTimeActualValue !== undefined
-      ? zonedTimeToUtc(
+      ? fromZonedTime(
           `${outDateISO} ${onTimeActualValue}`,
           arrivalAirport.timeZone,
         )

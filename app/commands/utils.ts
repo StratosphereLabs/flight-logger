@@ -35,5 +35,5 @@ export const getIsEqual = <
   b: Value | undefined,
 ): boolean => {
   if (b === undefined || (a === null && b === null)) return true;
-  return isDate(a) && isDate(b) ? isEqual(a as Date, b as Date) : a === b;
+  return isDate(a) && isDate(b) ? isEqual(a, b) : a === b;
 };
