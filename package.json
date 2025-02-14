@@ -13,7 +13,7 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:reset": "prisma migrate reset",
     "seed": "vite-node app/commands/seedDatabase.ts",
-    "build": "rm -rf prisma/generated dist && npm run generate && vite build",
+    "build": "rm -rf prisma/generated dist && npm run generate && NODE_ENV=\"production\" vite build",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "coverage": "vitest --coverage",

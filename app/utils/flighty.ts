@@ -1,3 +1,4 @@
+import type { FlightClass } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
 import { fromZonedTime } from 'date-fns-tz';
 import createHttpError from 'http-errors';
@@ -31,6 +32,13 @@ interface FlightyRow {
   'Flight Reason': string;
   Notes: string;
 }
+
+export const FLIGHTY_CLASS_MAP: Record<string, FlightClass> = {
+  ECONOMY: 'ECONOMY',
+  PREMIUM_ECONOMY: 'PREMIUM',
+  BUSINESS: 'BUSINESS',
+  FIRST: 'FIRST',
+};
 
 export const parseFlightyDateTime = (
   dateString: string,
