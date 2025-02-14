@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { fromZonedTime } from 'date-fns-tz';
 import express from 'express';
 import { type Request } from 'express-jwt';
 import createHttpError from 'http-errors';
@@ -15,6 +16,7 @@ import {
   getFlightTimes,
   getFlightyFlightNumber,
   parseCSVFile,
+  parseFlightyDateTime,
   parseFlightyFile,
 } from '../utils';
 import {
@@ -304,19 +306,12 @@ uploadRouter.post(
     }
     try {
       const rows = parseFlightyFile(file).filter(
-        flight => flight['Flight Type'] === 'My Flight',
+        flight => flight.Canceled === 'FALSE',
       );
       const airportIatas = [
-        ...new Set(
-          rows.flatMap(row => [
-            row['Departure Airport'],
-            row['Arrival Airport'],
-          ]),
-        ),
+        ...new Set(rows.flatMap(row => [row.From, row.To])),
       ];
-      const airlineIatas = [
-        ...new Set(rows.map(row => row['Flight Number'].slice(0, 2))),
-      ];
+      const airlineIcaos = [...new Set(rows.map(row => row.Airline))];
       const registrations = [
         ...new Set(
           rows.flatMap(row =>
@@ -324,6 +319,7 @@ uploadRouter.post(
           ),
         ),
       ];
+      console.time(`airports query (${airportIatas.length})`);
       const airports = await prisma.airport.findMany({
         where: {
           iata: {
@@ -331,13 +327,17 @@ uploadRouter.post(
           },
         },
       });
+      console.timeEnd(`airports query (${airportIatas.length})`);
+      console.time(`airlines query (${airlineIcaos.length})`);
       const airlines = await prisma.airline.findMany({
         where: {
-          iata: {
-            in: airlineIatas,
+          icao: {
+            in: airlineIcaos,
           },
         },
       });
+      console.timeEnd(`airlines query (${airlineIcaos.length})`);
+      console.time(`airframes query (${registrations.length})`);
       const airframes = await prisma.$queryRaw<
         Array<{
           registration: string;
@@ -350,6 +350,7 @@ uploadRouter.post(
           registrations.map(reg => reg.split('').join('%')),
         )}])
       ;`;
+      console.timeEnd(`airframes query (${registrations.length})`);
       const aircraftTypeIcaos = [
         ...new Set(
           airframes.flatMap(({ aircraftTypeId, typeCode }) =>
@@ -359,6 +360,7 @@ uploadRouter.post(
           ),
         ),
       ];
+      console.time(`aircraft types query (${aircraftTypeIcaos.length})`);
       const aircraftTypes = await prisma.aircraftType.findMany({
         where: {
           icao: {
@@ -366,18 +368,20 @@ uploadRouter.post(
           },
         },
       });
+      console.timeEnd(`aircraft types query (${aircraftTypeIcaos.length})`);
       const airportData = keyBy(airports, 'iata');
-      const airlineData = keyBy(airlines, 'iata');
+      const airlineData = keyBy(airlines, 'icao');
       const aircraftTypeData = groupBy(aircraftTypes, 'icao');
+      console.time(`flights query (${rows.length})`);
       const flights = await prisma.$transaction(
         rows.flatMap(row => {
-          const departureAirport = airportData[row['Departure Airport']];
-          const arrivalAirport = airportData[row['Arrival Airport']];
+          const departureAirport = airportData[row.From];
+          const arrivalAirport = airportData[row.To];
           if (departureAirport === undefined || arrivalAirport === undefined)
             return [];
-          const airlineIata = row['Flight Number'].slice(0, 2);
-          const flightNumber = row['Flight Number'].slice(2);
-          const airline = airlineData[airlineIata];
+          const airlineIcao = row.Airline;
+          const flightNumber = row.Flight;
+          const airline = airlineData[airlineIcao];
           const airframe =
             row['Tail Number'].length > 0
               ? airframes.find(({ registration }) =>
@@ -392,18 +396,55 @@ uploadRouter.post(
           const aircraftTypeId =
             airframe?.aircraftTypeId ??
             (airframe?.typeCode !== undefined && airframe?.typeCode !== null
-              ? aircraftTypeData[airframe.typeCode][0].id
+              ? (aircraftTypeData[airframe.typeCode]?.[0].id ?? null)
               : null);
-          const outTime = new Date(`${row['Scheduled Departure Date']}Z`);
-          const outTimeActual =
-            row['Actual Departure Date'] !== ''
-              ? new Date(`${row['Actual Departure Date']}Z`)
-              : undefined;
-          const inTime = new Date(`${row['Scheduled Arrival Date']}Z`);
-          const inTimeActual =
-            row['Actual Arrival Date'] !== ''
-              ? new Date(`${row['Actual Arrival Date']}Z`)
-              : undefined;
+          if (
+            row['Gate Departure (Scheduled)'] === '' ||
+            row['Gate Arrival (Scheduled)'] === ''
+          ) {
+            console.error(
+              `  Missing departure/arrival time information for ${airlineIcao}${flightNumber} on ${row['Gate Departure (Scheduled)']}`,
+            );
+            return [];
+          }
+          const [gateDepartureScheduledDate, gateDepartureScheduledTime] =
+            row['Gate Departure (Scheduled)'].split(' ');
+          const [gateArrivalScheduledDate, gateArrivalScheduledTime] =
+            row['Gate Arrival (Scheduled)'].split(' ');
+          const outTime = fromZonedTime(
+            new Date(
+              `${gateDepartureScheduledDate} ${gateDepartureScheduledTime}`,
+            ),
+            departureAirport.timeZone,
+          );
+          const outTimeActual = parseFlightyDateTime(
+            row['Gate Departure (Actual)'],
+            departureAirport.timeZone,
+          );
+          const offTime = parseFlightyDateTime(
+            row['Take off (Scheduled)'],
+            departureAirport.timeZone,
+          );
+          const offTimeActual = parseFlightyDateTime(
+            row['Take off (Actual)'],
+            departureAirport.timeZone,
+          );
+          const onTime = parseFlightyDateTime(
+            row['Landing (Scheduled)'],
+            arrivalAirport.timeZone,
+          );
+          const onTimeActual = parseFlightyDateTime(
+            row['Landing (Actual)'],
+            arrivalAirport.timeZone,
+          );
+          const inTime = fromZonedTime(
+            new Date(`${gateArrivalScheduledDate} ${gateArrivalScheduledTime}`),
+            arrivalAirport.timeZone,
+          );
+          const inTimeActual = parseFlightyDateTime(
+            row['Gate Arrival (Actual)'],
+            arrivalAirport.timeZone,
+          );
           const duration = getDurationMinutes({
             start: outTime,
             end: inTime,
@@ -458,6 +499,10 @@ uploadRouter.post(
                     : undefined),
                 outTime,
                 outTimeActual,
+                offTime,
+                offTimeActual,
+                onTime,
+                onTimeActual,
                 inTime,
                 inTimeActual,
                 duration,
@@ -466,6 +511,7 @@ uploadRouter.post(
           ];
         }),
       );
+      console.timeEnd(`flights query (${rows.length})`);
       res.status(200).json({ flights });
     } catch (err) {
       next(err);
