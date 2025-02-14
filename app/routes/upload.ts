@@ -498,6 +498,18 @@ uploadRouter.post(
                   (row['Tail Number'].length > 0
                     ? row['Tail Number']
                     : undefined),
+                departureTerminal:
+                  row['Dep Terminal'].length > 0
+                    ? row['Dep Terminal']
+                    : undefined,
+                departureGate:
+                  row['Dep Gate'].length > 0 ? row['Dep Gate'] : undefined,
+                arrivalTerminal:
+                  row['Arr Terminal'].length > 0
+                    ? row['Arr Terminal']
+                    : undefined,
+                arrivalGate:
+                  row['Arr Gate'].length > 0 ? row['Arr Gate'] : undefined,
                 seatNumber: row.Seat.length > 0 ? row.Seat : undefined,
                 seatPosition:
                   row['Seat Type'].length > 0
