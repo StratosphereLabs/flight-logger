@@ -50,6 +50,7 @@ export const usersRouter = router({
         },
       },
       omit: {
+        id: false,
         pushNotifications: false,
       },
     });

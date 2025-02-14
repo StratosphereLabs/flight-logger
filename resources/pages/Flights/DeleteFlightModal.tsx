@@ -1,6 +1,7 @@
 import { Modal } from 'stratosphere-ui';
 
 import {
+  useLoggedInUserQuery,
   useSuccessResponseHandler,
   useTRPCErrorHandler,
 } from '../../common/hooks';
@@ -9,6 +10,7 @@ import { useFlightsPageStore } from './flightsPageStore';
 
 export const DeleteFlightModal = (): JSX.Element => {
   const utils = trpc.useUtils();
+  const { data } = useLoggedInUserQuery();
   const { activeFlight, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useFlightsPageStore();
   const handleSuccess = useSuccessResponseHandler();
@@ -50,7 +52,14 @@ export const DeleteFlightModal = (): JSX.Element => {
       title="Delete Flight"
     >
       <div className="pt-4">
-        Are you sure you want to delete your{' '}
+        Are you sure you want to delete{' '}
+        {activeFlight?.userId !== data?.id ? (
+          <>
+            <strong>{activeFlight?.user.username}</strong>&apos;s
+          </>
+        ) : (
+          'your'
+        )}{' '}
         <strong>
           {activeFlight?.departureAirport.iata ?? ''} -{' '}
           {activeFlight?.arrivalAirport.iata ?? ''}
