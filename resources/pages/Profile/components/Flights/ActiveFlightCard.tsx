@@ -29,6 +29,7 @@ import { trpc } from '../../../../utils/trpc';
 
 export const ActiveFlightCard = (): JSX.Element | null => {
   const utils = trpc.useUtils();
+  const { data: userData } = useLoggedInUserQuery();
   const enabled = useProfilePage();
   const { username } = useParams();
   const { theme } = useThemeStore();
@@ -89,7 +90,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         )}
         bordered
       >
-        {onOwnProfile ? (
+        {onOwnProfile || userData?.id === data.addedByUserId ? (
           <Button
             aria-label="Remove current flight"
             className="absolute right-[-4px] top-[-4px] z-20 opacity-25 hover:opacity-75"
@@ -389,7 +390,14 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         title="Delete Flight"
       >
         <div className="pt-4">
-          Are you sure you want to delete your{' '}
+          Are you sure you want to delete{' '}
+          {data?.userId !== userData?.id ? (
+            <>
+              <strong>{data?.user.username}</strong>&apos;s
+            </>
+          ) : (
+            'your'
+          )}{' '}
           <strong>
             {data?.departureAirport.iata ?? ''} -{' '}
             {data?.arrivalAirport.iata ?? ''}

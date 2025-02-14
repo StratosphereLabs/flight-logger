@@ -224,6 +224,7 @@ export const UserFlightsTable = ({
           id: 'actions',
           cell: ({ row }) => (
             <ActionsCell
+              data={row.original}
               deleteMessage="Delete Flight"
               editMessage="Edit Flight"
               viewMessage="View Flight"

@@ -978,11 +978,19 @@ export const flightsRouter = router({
     .input(deleteFlightSchema)
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
+      const deleteFlightWhere = {
+        id,
+        OR: [
+          {
+            userId: ctx.user.id,
+          },
+          {
+            addedByUserId: ctx.user.id,
+          },
+        ],
+      };
       const flight = await prisma.flight.findFirst({
-        where: {
-          id,
-          userId: ctx.user.id,
-        },
+        where: deleteFlightWhere,
       });
       if (flight === null) {
         throw new TRPCError({
@@ -991,9 +999,7 @@ export const flightsRouter = router({
         });
       }
       const deletedFlight = await prisma.flight.delete({
-        where: {
-          id,
-        },
+        where: deleteFlightWhere,
         include: flightIncludeObj,
       });
       await updateTripTimes(deletedFlight.tripId);
