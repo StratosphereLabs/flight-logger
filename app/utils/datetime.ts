@@ -33,7 +33,7 @@ export const getDaysAdded = ({
     start: new Date(outDate),
     end: new Date(inDate),
   });
-  if (days === undefined) return null;
+  if (days === undefined) return 0;
   return outDate > inDate ? -1 * days : days;
 };
 
