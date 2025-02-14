@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, type SeatPosition } from '@prisma/client';
 import { fromZonedTime } from 'date-fns-tz';
 import express from 'express';
 import { type Request } from 'express-jwt';
@@ -12,6 +12,7 @@ import { type UserToken } from '../context';
 import { fetchFlightData, prisma } from '../db';
 import { authorizeToken, verifyAdminRest } from '../middleware';
 import {
+  FLIGHTY_CLASS_MAP,
   getDurationMinutes,
   getFlightTimes,
   getFlightyFlightNumber,
@@ -497,6 +498,16 @@ uploadRouter.post(
                   (row['Tail Number'].length > 0
                     ? row['Tail Number']
                     : undefined),
+                seatNumber: row.Seat.length > 0 ? row.Seat : undefined,
+                seatPosition:
+                  row['Seat Type'].length > 0
+                    ? (row['Seat Type'] as SeatPosition)
+                    : undefined,
+                class:
+                  row['Cabin Class'].length > 0
+                    ? FLIGHTY_CLASS_MAP[row['Cabin Class']]
+                    : undefined,
+                comments: row.Notes.length > 0 ? row.Notes : undefined,
                 outTime,
                 outTimeActual,
                 offTime,
