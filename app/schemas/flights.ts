@@ -135,6 +135,10 @@ export type GetUserProfileFlightsRequest = z.infer<
   typeof getUserProfileFlightsSchema
 >;
 
+export type GetUserProfileStatisticsRequest = z.infer<
+  typeof getUserProfileStatisticsSchema
+>;
+
 export type GetUserMapDataRequest = z.infer<typeof getUserMapDataSchema>;
 
 export type GetFlightRequest = z.infer<typeof getFlightSchema>;

@@ -25,7 +25,10 @@ import groupBy from 'lodash.groupby';
 import { KTS_TO_MPH } from '../commands/constants';
 import { SECONDS_IN_HOUR } from '../constants';
 import type { TracklogItem } from '../data/types';
-import { type GetProfileFiltersRequest } from '../schemas';
+import {
+  type GetProfileFiltersRequest,
+  type GetUserProfileStatisticsRequest,
+} from '../schemas';
 import { type LatLng } from '../types';
 import { type Coordinates, calculateCenterPoint } from './coordinates';
 import { getDurationMinutes, getDurationString } from './datetime';
@@ -365,6 +368,63 @@ export const getSearchQueryWhereInput = (
     },
   ],
 });
+
+export const getProfileFlightsWhereInput = (
+  input: GetUserProfileStatisticsRequest,
+  username?: string,
+): Record<string, unknown> => {
+  const fromDate = getFromDate(input);
+  const toDate = getToDate(input);
+  const fromStatusDate = getFromStatusDate(input);
+  const toStatusDate = getToStatusDate(input);
+  return {
+    user: {
+      username: input?.username ?? username,
+    },
+    outTime: {
+      gte: fromDate,
+      lte: toDate,
+    },
+    AND: [
+      {
+        OR:
+          fromStatusDate !== undefined || toStatusDate !== undefined
+            ? [
+                {
+                  inTime: {
+                    gte: fromStatusDate,
+                    lte: toStatusDate,
+                  },
+                },
+                {
+                  inTimeActual: {
+                    gte: fromStatusDate,
+                    lte: toStatusDate,
+                  },
+                },
+              ]
+            : undefined,
+      },
+      ...(input.searchQuery.length > 0
+        ? [getSearchQueryWhereInput(input.searchQuery)]
+        : []),
+      ...(input.selectedAirportId !== null
+        ? [
+            {
+              OR: [
+                {
+                  departureAirportId: input.selectedAirportId,
+                },
+                {
+                  arrivalAirportId: input.selectedAirportId,
+                },
+              ],
+            },
+          ]
+        : []),
+    ],
+  };
+};
 
 export const getTrackingData = (
   flight: FlightData,
