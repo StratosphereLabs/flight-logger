@@ -1,5 +1,6 @@
 import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
@@ -50,8 +51,6 @@ export const TopRegionsChart = ({
   const { data, isFetching } = trpc.statistics.getTopRegions.useQuery(
     {
       username,
-      limit: 5,
-      mode,
       status,
       range,
       year,
@@ -66,6 +65,16 @@ export const TopRegionsChart = ({
       keepPreviousData: true,
       onError,
     },
+  );
+  const chartData = useMemo(
+    () =>
+      data !== undefined
+        ? data.chartData
+            .sort((a, b) => b[mode] - a[mode])
+            .slice(0, 5)
+            .reverse()
+        : [],
+    [data, mode],
   );
   return (
     <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
@@ -116,9 +125,10 @@ export const TopRegionsChart = ({
             <ResponsiveBar
               theme={BAR_CHART_THEME}
               layout="horizontal"
-              data={data.chartData}
-              keys={['flights']}
+              data={chartData}
+              keys={[mode]}
               indexBy="id"
+              label={d => d.data[mode].toLocaleString()}
               enableGridY={false}
               axisBottom={{
                 tickSize: 0,
@@ -135,9 +145,9 @@ export const TopRegionsChart = ({
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${tooltipData.data.region}: ${
-                    tooltipData.data.flights
-                  } ${tooltipData.data.flights > 1 ? 'flights' : 'flight'}`}
+                  text={`${tooltipData.data.region}: ${tooltipData.data[
+                    mode
+                  ].toLocaleString()} ${tooltipData.data[mode] > 1 ? 'flights' : 'flight'}`}
                 />
               )}
             />

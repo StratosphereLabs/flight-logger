@@ -69,6 +69,12 @@ export const getUserProfileFlightsSchema = paginationSchema
     selectedAirportId: z.string().nullable(),
   });
 
+export const getUserProfileStatisticsSchema = getUserSchema
+  .extend(profileFiltersSchema.shape)
+  .extend({
+    selectedAirportId: z.string().nullable(),
+  });
+
 export const getUserMapDataSchema = getUserSchema.extend(
   profileFiltersSchema.shape,
 );

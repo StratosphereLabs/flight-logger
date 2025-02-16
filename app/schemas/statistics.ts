@@ -1,49 +1,5 @@
 import { z } from 'zod';
 
-import { getUserProfileFlightsSchema, profileFiltersSchema } from './flights';
-import { getUserSchema } from './users';
-
-export const getStatisticsBarGraphSchema = getUserProfileFlightsSchema.extend(
-  profileFiltersSchema.shape,
-);
-
-export const getUserTopRoutesSchema = getStatisticsBarGraphSchema.extend({
-  cityPairs: z.boolean(),
-});
-
-export const getUserTopAirlinesSchema = getStatisticsBarGraphSchema.extend({
-  mode: z.enum(['flights', 'distance', 'duration']),
-});
-
-export const getUserTopAircraftTypesSchema = getStatisticsBarGraphSchema.extend(
-  {
-    mode: z.enum(['flights', 'distance', 'duration']),
-  },
-);
-
-export const getUserTopAirportsSchema = getStatisticsBarGraphSchema.extend({
-  mode: z.enum(['all', 'departure', 'arrival']),
-});
-
-export const getUserTopCountriesSchema = getStatisticsBarGraphSchema.extend({
-  mode: z.enum(['all', 'departure', 'arrival']),
-});
-
-export const getUserTopRegionsSchema = getStatisticsBarGraphSchema.extend({
-  mode: z.enum(['all', 'departure', 'arrival']),
-});
-
-export const getStatisticsDistributionSchema = getUserSchema
-  .extend(profileFiltersSchema.shape)
-  .extend({
-    selectedAirportId: z.string().nullable(),
-  });
-
-export const getUserFlightTypesSchema = getStatisticsDistributionSchema.extend({
-  mode: z.enum(['flights', 'distance', 'duration']),
-  selectedAirportId: z.string().nullable(),
-});
-
 export const routeDataSchema = z.object({
   route: z.string(),
   flights: z.number().int().positive(),
@@ -53,7 +9,9 @@ export const airportDataSchema = z.object({
   id: z.string(),
   airport: z.string(),
   name: z.string(),
-  flights: z.number().int().positive(),
+  all: z.number().int().positive(),
+  departure: z.number().int().positive(),
+  arrival: z.number().int().positive(),
 });
 
 export const airlineDataSchema = z.object({
@@ -77,13 +35,17 @@ export const aircraftTypeDataSchema = z.object({
 export const countryDataSchema = z.object({
   id: z.string(),
   country: z.string(),
-  flights: z.number().int().positive(),
+  all: z.number().int().positive(),
+  departure: z.number().int().positive(),
+  arrival: z.number().int().positive(),
 });
 
 export const regionDataSchema = z.object({
   id: z.string(),
   region: z.string(),
-  flights: z.number().int().positive(),
+  all: z.number().int().positive(),
+  departure: z.number().int().positive(),
+  arrival: z.number().int().positive(),
 });
 
 export const reasonDataSchema = z.object({
@@ -110,7 +72,9 @@ export const classDataSchema = z.object({
 export const flightTypeSchema = z.object({
   id: z.string(),
   label: z.string(),
-  value: z.number().int().positive(),
+  flights: z.number().int().positive(),
+  duration: z.number().int().positive(),
+  distance: z.number().positive(),
 });
 
 export const flightLengthSchema = z.object({
@@ -119,18 +83,6 @@ export const flightLengthSchema = z.object({
   duration: z.number().int().positive(),
   distance: z.number().positive(),
 });
-
-export type GetUserTopRoutesSchema = z.infer<typeof getUserTopRoutesSchema>;
-
-export type GetUserTopAirlinesSchema = z.infer<typeof getUserTopAirlinesSchema>;
-
-export type GetUserTopAircraftTypesSchema = z.infer<
-  typeof getUserTopAircraftTypesSchema
->;
-
-export type GetUserTopAirportsSchema = z.infer<typeof getUserTopAirportsSchema>;
-
-export type GetUserFlightTypesSchema = z.infer<typeof getUserFlightTypesSchema>;
 
 export type RouteData = z.infer<typeof routeDataSchema>;
 

@@ -1,5 +1,6 @@
 import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import {
@@ -50,8 +51,6 @@ export const TopRoutesChart = ({
   const { data, isFetching } = trpc.statistics.getTopRoutes.useQuery(
     {
       username,
-      limit: 5,
-      cityPairs,
       status,
       range,
       year,
@@ -68,6 +67,16 @@ export const TopRoutesChart = ({
     },
   );
   const title = cityPairs ? 'City Pairs' : 'Routes';
+  const chartData = useMemo(
+    () =>
+      data !== undefined
+        ? (cityPairs ? data.cityPairChartData : data.routeChartData)
+            .sort((a, b) => b.flights - a.flights)
+            .slice(0, 5)
+            .reverse()
+        : [],
+    [cityPairs, data],
+  );
   return (
     <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex w-full items-center justify-between">
@@ -81,7 +90,9 @@ export const TopRoutesChart = ({
       </div>
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
-          <StatValue className="text-warning/80">{data?.count}</StatValue>
+          <StatValue className="text-warning/80">
+            {cityPairs ? data?.cityPairCount : data?.routeCount}
+          </StatValue>
           <StatTitle>Total {cityPairs ? 'City Pairs' : 'Routes'}</StatTitle>
         </Stat>
       </Stats>
@@ -101,9 +112,10 @@ export const TopRoutesChart = ({
             <ResponsiveBar
               theme={BAR_CHART_THEME}
               layout="horizontal"
-              data={data.chartData}
+              data={chartData}
               keys={['flights']}
               indexBy="route"
+              label={d => d.data.flights.toLocaleString()}
               enableGridY={false}
               axisBottom={{
                 tickSize: 0,
@@ -119,9 +131,7 @@ export const TopRoutesChart = ({
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${tooltipData.data.route}: ${
-                    tooltipData.data.flights
-                  } ${tooltipData.data.flights > 1 ? 'flights' : 'flight'}`}
+                  text={`${tooltipData.data.route}: ${tooltipData.data.flights.toLocaleString()} ${tooltipData.data.flights > 1 ? 'flights' : 'flight'}`}
                 />
               )}
             />

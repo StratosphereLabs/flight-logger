@@ -64,9 +64,7 @@ export const OnTimePerformanceChart = ({
               <Tooltip
                 className="translate-y-[-20px]"
                 open
-                text={`${tooltipData.data.label}: ${
-                  tooltipData.data.flights
-                } Flights`}
+                text={`${tooltipData.data.label}: ${tooltipData.data.flights.toLocaleString()} Flights`}
               />
             )}
           />

@@ -49,7 +49,6 @@ export const TotalsChart = ({
   const { data, isFetching } = trpc.statistics.getTotals.useQuery(
     {
       username,
-      limit: 5,
       status,
       range,
       year,
@@ -85,7 +84,9 @@ export const TotalsChart = ({
                 <StatTitle>Flights</StatTitle>
                 <StatValue className="flex items-center gap-2">
                   <MaterialPlaneIcon className="h-8 opacity-80" />
-                  <span className="text-primary/80">{data.totalFlights}</span>
+                  <span className="text-primary/80">
+                    {data.totalFlights.toLocaleString()}
+                  </span>
                 </StatValue>
                 <StatDesc>{data.onTimePercentage}% on-time</StatDesc>
               </Stat>
