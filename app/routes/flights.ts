@@ -40,14 +40,10 @@ import {
   getFlightTimes,
   getFlightTimestamps,
   getFlightUpdateChangeWithData,
-  getFromDate,
-  getFromStatusDate,
   getHeatmap,
   getPaginatedResponse,
+  getProfileFlightsWhereInput,
   getRoutes,
-  getSearchQueryWhereInput,
-  getToDate,
-  getToStatusDate,
   getWeatherReportCloudCoverData,
   parsePaginationRequest,
   transformFlightData,
@@ -247,60 +243,15 @@ export const flightsRouter = router({
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
       const { limit, page, skip, take } = parsePaginationRequest(input);
-      const fromDate = getFromDate(input);
-      const toDate = getToDate(input);
-      const fromStatusDate = getFromStatusDate(input);
-      const toStatusDate = getToStatusDate(input);
-      const whereObj = {
-        user: {
-          username: input?.username ?? ctx.user?.username,
-        },
-        tripId: input?.withTrip === false ? null : undefined,
-        outTime: {
-          gte: fromDate,
-          lte: toDate,
-        },
-        AND: [
-          {
-            OR:
-              fromStatusDate !== undefined || toStatusDate !== undefined
-                ? [
-                    {
-                      inTime: {
-                        gte: fromStatusDate,
-                        lte: toStatusDate,
-                      },
-                    },
-                    {
-                      inTimeActual: {
-                        gte: fromStatusDate,
-                        lte: toStatusDate,
-                      },
-                    },
-                  ]
-                : undefined,
-          },
-          ...(input.searchQuery.length > 0
-            ? [getSearchQueryWhereInput(input.searchQuery)]
-            : []),
-          ...(input.selectedAirportId !== null
-            ? [
-                {
-                  OR: [
-                    {
-                      departureAirportId: input.selectedAirportId,
-                    },
-                    {
-                      arrivalAirportId: input.selectedAirportId,
-                    },
-                  ],
-                },
-              ]
-            : []),
-        ],
-      };
+      const profileFlightsWhere = getProfileFlightsWhereInput(
+        input,
+        ctx.user?.username,
+      );
       const results = await prisma.flight.findMany({
-        where: whereObj,
+        where: {
+          ...profileFlightsWhere,
+          tripId: input?.withTrip === false ? null : undefined,
+        },
         include: flightIncludeObj,
         orderBy: {
           outTime: input.status === 'completed' ? 'desc' : 'asc',
@@ -321,60 +272,13 @@ export const flightsRouter = router({
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      const fromDate = getFromDate(input);
-      const toDate = getToDate(input);
-      const fromStatusDate = getFromStatusDate(input);
-      const toStatusDate = getToStatusDate(input);
-      const whereObj = {
-        user: {
-          username: input?.username ?? ctx.user?.username,
-        },
-        outTime: {
-          gte: fromDate,
-          lte: toDate,
-        },
-        AND: [
-          {
-            OR:
-              fromStatusDate !== undefined || toStatusDate !== undefined
-                ? [
-                    {
-                      inTime: {
-                        gte: fromStatusDate,
-                        lte: toStatusDate,
-                      },
-                    },
-                    {
-                      inTimeActual: {
-                        gte: fromStatusDate,
-                        lte: toStatusDate,
-                      },
-                    },
-                  ]
-                : undefined,
-          },
-          ...(input.searchQuery.length > 0
-            ? [getSearchQueryWhereInput(input.searchQuery)]
-            : []),
-          ...(input.selectedAirportId !== null
-            ? [
-                {
-                  OR: [
-                    {
-                      departureAirportId: input.selectedAirportId,
-                    },
-                    {
-                      arrivalAirportId: input.selectedAirportId,
-                    },
-                  ],
-                },
-              ]
-            : []),
-        ],
-      };
+      const profileFlightsWhere = getProfileFlightsWhereInput(
+        input,
+        ctx.user?.username,
+      );
       const { limit, page, skip, take } = parsePaginationRequest(input);
       const results = await prisma.flight.findMany({
-        where: whereObj,
+        where: profileFlightsWhere,
         include: {
           departureAirport: true,
           arrivalAirport: true,
@@ -548,45 +452,15 @@ export const flightsRouter = router({
       ) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-      const fromDate = getFromDate(input);
-      const toDate = getToDate(input);
-      const fromStatusDate = getFromStatusDate(input);
-      const toStatusDate = getToStatusDate(input);
-      const results = await prisma.flight.findMany({
-        where: {
-          user: {
-            username: input?.username ?? ctx.user?.username,
-          },
-          outTime: {
-            gte: fromDate,
-            lte: toDate,
-          },
-          AND: [
-            ...(fromStatusDate !== undefined || toStatusDate !== undefined
-              ? [
-                  {
-                    OR: [
-                      {
-                        inTime: {
-                          gte: fromStatusDate,
-                          lte: toStatusDate,
-                        },
-                      },
-                      {
-                        inTimeActual: {
-                          gte: fromStatusDate,
-                          lte: toStatusDate,
-                        },
-                      },
-                    ],
-                  },
-                ]
-              : []),
-            ...(input.searchQuery.length > 0
-              ? [getSearchQueryWhereInput(input.searchQuery)]
-              : []),
-          ],
+      const profileFlightsWhere = getProfileFlightsWhereInput(
+        {
+          ...input,
+          selectedAirportId: null,
         },
+        ctx.user?.username,
+      );
+      const results = await prisma.flight.findMany({
+        where: profileFlightsWhere,
         include: {
           departureAirport: true,
           arrivalAirport: true,
