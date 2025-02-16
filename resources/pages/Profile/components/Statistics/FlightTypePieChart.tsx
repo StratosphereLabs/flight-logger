@@ -1,5 +1,6 @@
 import { ResponsivePie } from '@nivo/pie';
 import classNames from 'classnames';
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { Loading, Select, Tooltip } from 'stratosphere-ui';
@@ -43,7 +44,6 @@ export const FlightTypePieChart = ({
     trpc.statistics.getFlightTypeDistribution.useQuery(
       {
         username,
-        mode,
         status,
         range,
         year,
@@ -59,6 +59,16 @@ export const FlightTypePieChart = ({
         onError,
       },
     );
+  const chartData = useMemo(
+    () =>
+      data !== undefined
+        ? data.map(flightType => ({
+            ...flightType,
+            value: flightType[mode],
+          }))
+        : [],
+    [data, mode],
+  );
   return (
     <div className="flex h-[200px] min-w-[284px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
@@ -101,7 +111,8 @@ export const FlightTypePieChart = ({
           >
             <ResponsivePie
               theme={BAR_CHART_THEME}
-              data={data}
+              data={chartData}
+              arcLabel={d => d.data[mode].toLocaleString()}
               margin={{ top: 25, right: 40, bottom: 25, left: 40 }}
               colors={[
                 'var(--fallback-er,oklch(var(--in)/0.50))',
@@ -121,10 +132,10 @@ export const FlightTypePieChart = ({
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${tooltipData.datum.data.label}: ${
-                    tooltipData.datum.data.value
-                  } ${
-                    tooltipData.datum.data.value !== 1 || mode !== 'flights'
+                  text={`${tooltipData.datum.data.label}: ${tooltipData.datum.data[
+                    mode
+                  ].toLocaleString()} ${
+                    tooltipData.datum.data[mode] !== 1 || mode !== 'flights'
                       ? STATS_TOTALS_MODE_UNITS[mode]
                       : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)
                   }`}

@@ -115,7 +115,7 @@ export const FlightLengthRadarChart = ({
                 <Tooltip
                   className="translate-y-[-20px]"
                   open
-                  text={`${tooltipData.index}: ${tooltipData.data[0].value} ${
+                  text={`${tooltipData.index}: ${tooltipData.data[0].value.toLocaleString()} ${
                     tooltipData.data[0].value !== 1 || mode !== 'flights'
                       ? STATS_TOTALS_MODE_UNITS[mode]
                       : STATS_TOTALS_MODE_UNITS[mode].slice(0, -1)

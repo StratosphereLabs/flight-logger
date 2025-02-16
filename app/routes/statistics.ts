@@ -15,15 +15,7 @@ import {
   type RegionData,
   type RouteData,
   type SeatPositionData,
-  getStatisticsBarGraphSchema,
-  getStatisticsDistributionSchema,
-  getUserFlightTypesSchema,
-  getUserTopAircraftTypesSchema,
-  getUserTopAirlinesSchema,
-  getUserTopAirportsSchema,
-  getUserTopCountriesSchema,
-  getUserTopRegionsSchema,
-  getUserTopRoutesSchema,
+  getUserProfileStatisticsSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
 import {
@@ -36,12 +28,11 @@ import {
   getSearchQueryWhereInput,
   getToDate,
   getToStatusDate,
-  parsePaginationRequest,
 } from '../utils';
 
 export const statisticsRouter = router({
   getTotals: procedure
-    .input(getStatisticsBarGraphSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -188,7 +179,7 @@ export const statisticsRouter = router({
       };
     }),
   getTopRoutes: procedure
-    .input(getUserTopRoutesSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -255,29 +246,34 @@ export const statisticsRouter = router({
         },
       });
       const flights = results.filter(filterCustomDates(input));
-      const { skip, take } = parsePaginationRequest(input);
       const routeDataMap: Record<string, RouteData> = {};
+      const cityPairDataMap: Record<string, RouteData> = {};
       for (const flight of flights) {
-        const key = input.cityPairs
-          ? [flight.departureAirport.iata, flight.arrivalAirport.iata]
-              .sort((a, b) => a.localeCompare(b))
-              .join('↔')
-          : `${flight.departureAirport.iata}→${flight.arrivalAirport.iata}`;
-        if (routeDataMap[key] === undefined) {
-          routeDataMap[key] = { route: key, flights: 0 };
+        const routeKey = `${flight.departureAirport.iata}→${flight.arrivalAirport.iata}`;
+        const cityPairKey = [
+          flight.departureAirport.iata,
+          flight.arrivalAirport.iata,
+        ]
+          .sort((a, b) => a.localeCompare(b))
+          .join('↔');
+        if (routeDataMap[routeKey] === undefined) {
+          routeDataMap[routeKey] = { route: routeKey, flights: 0 };
         }
-        routeDataMap[key].flights++;
+        if (cityPairDataMap[cityPairKey] === undefined) {
+          cityPairDataMap[cityPairKey] = { route: cityPairKey, flights: 0 };
+        }
+        routeDataMap[routeKey].flights++;
+        cityPairDataMap[cityPairKey].flights++;
       }
       return {
-        count: Object.keys(routeDataMap).length,
-        chartData: Object.values(routeDataMap)
-          .sort((a, b) => b.flights - a.flights)
-          .slice(skip, skip + take)
-          .reverse(),
+        routeCount: Object.keys(routeDataMap).length,
+        routeChartData: Object.values(routeDataMap),
+        cityPairCount: Object.keys(cityPairDataMap).length,
+        cityPairChartData: Object.values(cityPairDataMap),
       };
     }),
   getTopAirlines: procedure
-    .input(getUserTopAirlinesSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -346,7 +342,6 @@ export const statisticsRouter = router({
         },
       });
       const flights = results.filter(filterCustomDates(input));
-      const { skip, take } = parsePaginationRequest(input);
       const airlineDataMap: Record<string, AirlineData> = {};
       for (const flight of flights) {
         if (flight.airline === null) continue;
@@ -376,22 +371,11 @@ export const statisticsRouter = router({
       }
       return {
         count: Object.keys(airlineDataMap).length,
-        chartData: Object.values(airlineDataMap)
-          .sort((a, b) => {
-            if (input.mode === 'distance') return b.distance - a.distance;
-            if (input.mode === 'duration') return b.duration - a.duration;
-            return b.flights - a.flights;
-          })
-          .slice(skip, skip + take)
-          .map(result => ({
-            ...result,
-            distance: Math.round(result.distance),
-          }))
-          .reverse(),
+        chartData: Object.values(airlineDataMap),
       };
     }),
   getTopAirports: procedure
-    .input(getUserTopAirportsSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -458,44 +442,42 @@ export const statisticsRouter = router({
         },
       });
       const flights = results.filter(filterCustomDates(input));
-      const { skip, take } = parsePaginationRequest(input);
       const airportDataMap: Record<string, AirportData> = {};
       for (const flight of flights) {
-        if (input.mode === 'all' || input.mode === 'departure') {
-          const departureAirportId = flight.departureAirport.id;
-          if (airportDataMap[departureAirportId] === undefined) {
-            airportDataMap[departureAirportId] = {
-              id: departureAirportId,
-              airport: flight.departureAirport.iata,
-              name: flight.departureAirport.name,
-              flights: 0,
-            };
-          }
-          airportDataMap[departureAirportId].flights++;
+        const departureAirportId = flight.departureAirport.id;
+        if (airportDataMap[departureAirportId] === undefined) {
+          airportDataMap[departureAirportId] = {
+            id: departureAirportId,
+            airport: flight.departureAirport.iata,
+            name: flight.departureAirport.name,
+            all: 0,
+            departure: 0,
+            arrival: 0,
+          };
         }
-        if (input.mode === 'all' || input.mode === 'arrival') {
-          const arrivalAirportId = flight.arrivalAirport.id;
-          if (airportDataMap[arrivalAirportId] === undefined) {
-            airportDataMap[arrivalAirportId] = {
-              id: arrivalAirportId,
-              airport: flight.arrivalAirport.iata,
-              name: flight.arrivalAirport.name,
-              flights: 0,
-            };
-          }
-          airportDataMap[arrivalAirportId].flights++;
+        airportDataMap[departureAirportId].all++;
+        airportDataMap[departureAirportId].departure++;
+        const arrivalAirportId = flight.arrivalAirport.id;
+        if (airportDataMap[arrivalAirportId] === undefined) {
+          airportDataMap[arrivalAirportId] = {
+            id: arrivalAirportId,
+            airport: flight.arrivalAirport.iata,
+            name: flight.arrivalAirport.name,
+            all: 0,
+            departure: 0,
+            arrival: 0,
+          };
         }
+        airportDataMap[arrivalAirportId].all++;
+        airportDataMap[arrivalAirportId].arrival++;
       }
       return {
         count: Object.keys(airportDataMap).length,
-        chartData: Object.values(airportDataMap)
-          .sort((a, b) => b.flights - a.flights)
-          .slice(skip, skip + take)
-          .reverse(),
+        chartData: Object.values(airportDataMap),
       };
     }),
   getTopAircraftTypes: procedure
-    .input(getUserTopAircraftTypesSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -569,7 +551,6 @@ export const statisticsRouter = router({
         },
       });
       const flights = results.filter(filterCustomDates(input));
-      const { skip, take } = parsePaginationRequest(input);
       const aircraftTypeDataMap: Record<string, AircraftTypeData> = {};
       for (const flight of flights) {
         const aircraftType =
@@ -599,22 +580,14 @@ export const statisticsRouter = router({
       }
       return {
         count: Object.keys(aircraftTypeDataMap).length,
-        chartData: Object.values(aircraftTypeDataMap)
-          .sort((a, b) => {
-            if (input.mode === 'distance') return b.distance - a.distance;
-            if (input.mode === 'duration') return b.duration - a.duration;
-            return b.flights - a.flights;
-          })
-          .slice(skip, skip + take)
-          .map(result => ({
-            ...result,
-            distance: Math.round(result.distance),
-          }))
-          .reverse(),
+        chartData: Object.values(aircraftTypeDataMap).map(result => ({
+          ...result,
+          distance: Math.round(result.distance),
+        })),
       };
     }),
   getTopCountries: procedure
-    .input(getUserTopCountriesSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -691,45 +664,42 @@ export const statisticsRouter = router({
         },
       });
       const flights = results.filter(filterCustomDates(input));
-      const { skip, take } = parsePaginationRequest(input);
       const countriesDataMap: Record<string, CountryData> = {};
       for (const flight of flights) {
         const departureCountryId = flight.departureAirport.country.id;
         const arrivalCountryId = flight.arrivalAirport.country.id;
-        if (input.mode === 'all' || input.mode === 'departure') {
-          if (countriesDataMap[departureCountryId] === undefined) {
-            countriesDataMap[departureCountryId] = {
-              id: departureCountryId,
-              country: flight.departureAirport.country.name,
-              flights: 0,
-            };
-          }
-          countriesDataMap[departureCountryId].flights++;
+        if (countriesDataMap[departureCountryId] === undefined) {
+          countriesDataMap[departureCountryId] = {
+            id: departureCountryId,
+            country: flight.departureAirport.country.name,
+            all: 0,
+            departure: 0,
+            arrival: 0,
+          };
         }
-        if (
-          (input.mode === 'all' && departureCountryId !== arrivalCountryId) ||
-          input.mode === 'arrival'
-        ) {
-          if (countriesDataMap[arrivalCountryId] === undefined) {
-            countriesDataMap[arrivalCountryId] = {
-              id: arrivalCountryId,
-              country: flight.arrivalAirport.country.name,
-              flights: 0,
-            };
-          }
-          countriesDataMap[arrivalCountryId].flights++;
+        countriesDataMap[departureCountryId].all++;
+        countriesDataMap[departureCountryId].departure++;
+        if (countriesDataMap[arrivalCountryId] === undefined) {
+          countriesDataMap[arrivalCountryId] = {
+            id: arrivalCountryId,
+            country: flight.arrivalAirport.country.name,
+            all: 0,
+            departure: 0,
+            arrival: 0,
+          };
         }
+        if (departureCountryId !== arrivalCountryId) {
+          countriesDataMap[arrivalCountryId].all++;
+        }
+        countriesDataMap[arrivalCountryId].arrival++;
       }
       return {
         count: Object.keys(countriesDataMap).length,
-        chartData: Object.values(countriesDataMap)
-          .sort((a, b) => b.flights - a.flights)
-          .slice(skip, skip + take)
-          .reverse(),
+        chartData: Object.values(countriesDataMap),
       };
     }),
   getTopRegions: procedure
-    .input(getUserTopRegionsSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -806,45 +776,42 @@ export const statisticsRouter = router({
         },
       });
       const flights = results.filter(filterCustomDates(input));
-      const { skip, take } = parsePaginationRequest(input);
       const regionsDataMap: Record<string, RegionData> = {};
       for (const flight of flights) {
         const departureRegionId = flight.departureAirport.region.id;
         const arrivalRegionId = flight.arrivalAirport.region.id;
-        if (input.mode === 'all' || input.mode === 'departure') {
-          if (regionsDataMap[departureRegionId] === undefined) {
-            regionsDataMap[departureRegionId] = {
-              id: departureRegionId,
-              region: flight.departureAirport.region.name,
-              flights: 0,
-            };
-          }
-          regionsDataMap[departureRegionId].flights++;
+        if (regionsDataMap[departureRegionId] === undefined) {
+          regionsDataMap[departureRegionId] = {
+            id: departureRegionId,
+            region: flight.departureAirport.region.name,
+            all: 0,
+            departure: 0,
+            arrival: 0,
+          };
         }
-        if (
-          (input.mode === 'all' && departureRegionId !== arrivalRegionId) ||
-          input.mode === 'arrival'
-        ) {
-          if (regionsDataMap[arrivalRegionId] === undefined) {
-            regionsDataMap[arrivalRegionId] = {
-              id: arrivalRegionId,
-              region: flight.arrivalAirport.region.name,
-              flights: 0,
-            };
-          }
-          regionsDataMap[arrivalRegionId].flights++;
+        regionsDataMap[departureRegionId].all++;
+        regionsDataMap[departureRegionId].departure++;
+        if (regionsDataMap[arrivalRegionId] === undefined) {
+          regionsDataMap[arrivalRegionId] = {
+            id: arrivalRegionId,
+            region: flight.arrivalAirport.region.name,
+            all: 0,
+            departure: 0,
+            arrival: 0,
+          };
         }
+        if (departureRegionId !== arrivalRegionId) {
+          regionsDataMap[arrivalRegionId].all++;
+        }
+        regionsDataMap[arrivalRegionId].arrival++;
       }
       return {
         count: Object.keys(regionsDataMap).length,
-        chartData: Object.values(regionsDataMap)
-          .sort((a, b) => b.flights - a.flights)
-          .slice(skip, skip + take)
-          .reverse(),
+        chartData: Object.values(regionsDataMap),
       };
     }),
   getReasonDistribution: procedure
-    .input(getStatisticsDistributionSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -966,7 +933,7 @@ export const statisticsRouter = router({
       }));
     }),
   getSeatPositionDistribution: procedure
-    .input(getStatisticsDistributionSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -1088,7 +1055,7 @@ export const statisticsRouter = router({
       }));
     }),
   getClassDistribution: procedure
-    .input(getStatisticsDistributionSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -1222,7 +1189,7 @@ export const statisticsRouter = router({
       }));
     }),
   getFlightTypeDistribution: procedure
-    .input(getUserFlightTypesSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
@@ -1305,12 +1272,16 @@ export const statisticsRouter = router({
         domestic: {
           id: 'Domestic',
           label: 'Domestic',
-          value: 0,
+          flights: 0,
+          duration: 0,
+          distance: 0,
         },
         international: {
           id: "Int'l",
           label: 'International',
-          value: 0,
+          flights: 0,
+          duration: 0,
+          distance: 0,
         },
       };
       for (const { departureAirport, arrivalAirport, duration } of flights) {
@@ -1318,27 +1289,23 @@ export const statisticsRouter = router({
           departureAirport.countryId === arrivalAirport.countryId
             ? 'domestic'
             : 'international';
-        if (input.mode === 'flights') {
-          flightTypeDataMap[flightType].value++;
-        } else if (input.mode === 'distance') {
-          const distance = calculateDistance(
-            departureAirport.lat,
-            departureAirport.lon,
-            arrivalAirport.lat,
-            arrivalAirport.lon,
-          );
-          flightTypeDataMap[flightType].value += distance;
-        } else if (input.mode === 'duration') {
-          flightTypeDataMap[flightType].value += duration;
-        }
+        const distance = calculateDistance(
+          departureAirport.lat,
+          departureAirport.lon,
+          arrivalAirport.lat,
+          arrivalAirport.lon,
+        );
+        flightTypeDataMap[flightType].flights++;
+        flightTypeDataMap[flightType].duration += duration;
+        flightTypeDataMap[flightType].distance += distance;
       }
       return Object.values(flightTypeDataMap).map(result => ({
         ...result,
-        value: Math.round(result.value),
+        distance: Math.round(result.distance),
       }));
     }),
   getFlightLengthDistribution: procedure
-    .input(getStatisticsDistributionSchema)
+    .input(getUserProfileStatisticsSchema)
     .query(async ({ ctx, input }) => {
       if (input.username === undefined && ctx.user === null) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
