@@ -39,7 +39,7 @@ export const ReasonRadarChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getReasonDistribution.useQuery(
+  const { data, isFetching } = trpc.statistics.getAllStatistics.useQuery(
     {
       username,
       status,
@@ -99,7 +99,7 @@ export const ReasonRadarChart = ({
           >
             <ResponsiveRadar
               theme={BAR_CHART_THEME}
-              data={data}
+              data={data.reasonData}
               keys={[mode]}
               indexBy="reason"
               margin={{ left: 20, top: 30, bottom: 5, right: 20 }}

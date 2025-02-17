@@ -11,6 +11,7 @@ export * from './flighty';
 export * from './itineraries';
 export * from './pagination';
 export * from './server';
+export * from './statistics';
 export * from './trips';
 export * from './users';
 export * from './weather';

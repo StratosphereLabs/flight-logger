@@ -48,7 +48,7 @@ export const TopRegionsChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getTopRegions.useQuery(
+  const { data, isFetching } = trpc.statistics.getAllStatistics.useQuery(
     {
       username,
       status,
@@ -69,7 +69,7 @@ export const TopRegionsChart = ({
   const chartData = useMemo(
     () =>
       data !== undefined
-        ? data.chartData
+        ? data.topRegions.chartData
             .sort((a, b) => b[mode] - a[mode])
             .slice(0, 5)
             .reverse()
@@ -105,7 +105,9 @@ export const TopRegionsChart = ({
       </div>
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
-          <StatValue className="text-info/80">{data?.count}</StatValue>
+          <StatValue className="text-info/80">
+            {data?.topRegions.count}
+          </StatValue>
           <StatTitle>Total Regions</StatTitle>
         </Stat>
       </Stats>
