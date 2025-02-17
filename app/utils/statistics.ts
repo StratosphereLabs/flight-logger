@@ -1,13 +1,4 @@
-import type {
-  AircraftType,
-  Airline,
-  Airport,
-  Country,
-  FlightClass,
-  FlightReason,
-  Region,
-  SeatPosition,
-} from '@prisma/client';
+import type { FlightClass, FlightReason, SeatPosition } from '@prisma/client';
 import { isBefore } from 'date-fns';
 
 import { METERS_IN_MILE } from '../constants';
@@ -165,9 +156,24 @@ export const getTopRoutes = (
 
 export const getTopAirlines = (
   flights: Array<{
-    departureAirport: Airport;
-    arrivalAirport: Airport;
-    airline: Airline | null;
+    departureAirport: {
+      lat: number;
+      lon: number;
+    };
+    arrivalAirport: {
+      lat: number;
+      lon: number;
+    };
+    diversionAirport: {
+      lat: number;
+      lon: number;
+    } | null;
+    airline: {
+      id: string;
+      name: string;
+      iata: string | null;
+      icao: string;
+    } | null;
     duration: number;
   }>,
 ): {
@@ -189,11 +195,12 @@ export const getTopAirlines = (
         duration: 0,
       };
     }
+    const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
     const distance = calculateDistance(
       flight.departureAirport.lat,
       flight.departureAirport.lon,
-      flight.arrivalAirport.lat,
-      flight.arrivalAirport.lon,
+      arrivalAirport.lat,
+      arrivalAirport.lon,
     );
     const airlineData = airlineDataMap[airlineKey];
     airlineData.flights++;
@@ -208,9 +215,21 @@ export const getTopAirlines = (
 
 export const getTopAirports = (
   flights: Array<{
-    departureAirport: Airport;
-    arrivalAirport: Airport;
-    diversionAirport: Airport | null;
+    departureAirport: {
+      id: string;
+      iata: string;
+      name: string;
+    };
+    arrivalAirport: {
+      id: string;
+      iata: string;
+      name: string;
+    };
+    diversionAirport: {
+      id: string;
+      iata: string;
+      name: string;
+    } | null;
   }>,
 ): {
   count: number;
@@ -253,13 +272,31 @@ export const getTopAirports = (
 
 export const getTopAircraftTypes = (
   flights: Array<{
-    departureAirport: Airport;
-    arrivalAirport: Airport;
+    departureAirport: {
+      lat: number;
+      lon: number;
+    };
+    arrivalAirport: {
+      lat: number;
+      lon: number;
+    };
+    diversionAirport: {
+      lat: number;
+      lon: number;
+    } | null;
     duration: number;
     airframe: {
-      aircraftType: AircraftType | null;
+      aircraftType: {
+        id: string;
+        icao: string;
+        name: string;
+      } | null;
     } | null;
-    aircraftType: AircraftType | null;
+    aircraftType: {
+      id: string;
+      icao: string;
+      name: string;
+    } | null;
   }>,
 ): {
   count: number;
@@ -280,11 +317,12 @@ export const getTopAircraftTypes = (
         duration: 0,
       };
     }
+    const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
     const distance = calculateDistance(
       flight.departureAirport.lat,
       flight.departureAirport.lon,
-      flight.arrivalAirport.lat,
-      flight.arrivalAirport.lon,
+      arrivalAirport.lat,
+      arrivalAirport.lon,
     );
     const aircraftTypeData = aircraftTypeDataMap[icao];
     aircraftTypeData.flights++;
@@ -293,23 +331,29 @@ export const getTopAircraftTypes = (
   }
   return {
     count: Object.keys(aircraftTypeDataMap).length,
-    chartData: Object.values(aircraftTypeDataMap).map(result => ({
-      ...result,
-      distance: Math.round(result.distance),
-    })),
+    chartData: Object.values(aircraftTypeDataMap),
   };
 };
 
 export const getTopCountries = (
   flights: Array<{
     departureAirport: {
-      country: Country;
+      country: {
+        id: string;
+        name: string;
+      };
     };
     arrivalAirport: {
-      country: Country;
+      country: {
+        id: string;
+        name: string;
+      };
     };
     diversionAirport: {
-      country: Country;
+      country: {
+        id: string;
+        name: string;
+      };
     } | null;
   }>,
 ): {
@@ -355,13 +399,22 @@ export const getTopCountries = (
 export const getTopRegions = (
   flights: Array<{
     departureAirport: {
-      region: Region;
+      region: {
+        id: string;
+        name: string;
+      };
     };
     arrivalAirport: {
-      region: Region;
+      region: {
+        id: string;
+        name: string;
+      };
     };
     diversionAirport: {
-      region: Region;
+      region: {
+        id: string;
+        name: string;
+      };
     } | null;
   }>,
 ): {
