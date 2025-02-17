@@ -261,7 +261,9 @@ export const getTopAirports = (
         arrival: 0,
       };
     }
-    airportDataMap[arrivalAirport.id].all++;
+    if (departureAirportId !== arrivalAirport.id) {
+      airportDataMap[arrivalAirport.id].all++;
+    }
     airportDataMap[arrivalAirport.id].arrival++;
   }
   return {

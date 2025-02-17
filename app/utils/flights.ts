@@ -369,6 +369,23 @@ export const getSearchQueryWhereInput = (
   ],
 });
 
+export const getSelectedAirportWhereInput = (
+  selectedAirportId: string,
+): Record<string, unknown> => ({
+  OR: [
+    {
+      departureAirportId: selectedAirportId,
+    },
+    {
+      arrivalAirportId: selectedAirportId,
+      diversionAirportId: null,
+    },
+    {
+      diversionAirportId: selectedAirportId,
+    },
+  ],
+});
+
 export const getProfileFlightsWhereInput = (
   input: GetUserProfileStatisticsRequest,
   username?: string,
@@ -409,18 +426,7 @@ export const getProfileFlightsWhereInput = (
         ? [getSearchQueryWhereInput(input.searchQuery)]
         : []),
       ...(input.selectedAirportId !== null
-        ? [
-            {
-              OR: [
-                {
-                  departureAirportId: input.selectedAirportId,
-                },
-                {
-                  arrivalAirportId: input.selectedAirportId,
-                },
-              ],
-            },
-          ]
+        ? [getSelectedAirportWhereInput(input.selectedAirportId)]
         : []),
     ],
   };
