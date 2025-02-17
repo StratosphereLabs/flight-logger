@@ -39,25 +39,24 @@ export const FlightLengthRadarChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } =
-    trpc.statistics.getFlightLengthDistribution.useQuery(
-      {
-        username,
-        status,
-        range,
-        year,
-        month,
-        fromDate,
-        toDate,
-        selectedAirportId,
-        searchQuery,
-      },
-      {
-        enabled: userData !== undefined,
-        keepPreviousData: true,
-        onError,
-      },
-    );
+  const { data, isFetching } = trpc.statistics.getAllStatistics.useQuery(
+    {
+      username,
+      status,
+      range,
+      year,
+      month,
+      fromDate,
+      toDate,
+      selectedAirportId,
+      searchQuery,
+    },
+    {
+      enabled: userData !== undefined,
+      keepPreviousData: true,
+      onError,
+    },
+  );
   return (
     <div className="flex h-[205px] min-w-[274px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
@@ -100,7 +99,7 @@ export const FlightLengthRadarChart = ({
           >
             <ResponsiveRadar
               theme={BAR_CHART_THEME}
-              data={data}
+              data={data.flightLengthData}
               keys={[mode]}
               indexBy="flightLength"
               margin={{ left: 55, top: 30, bottom: 25, right: 55 }}

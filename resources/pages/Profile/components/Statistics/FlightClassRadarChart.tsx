@@ -39,7 +39,7 @@ export const FlightClassRadarChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getClassDistribution.useQuery(
+  const { data, isFetching } = trpc.statistics.getAllStatistics.useQuery(
     {
       username,
       status,
@@ -99,7 +99,7 @@ export const FlightClassRadarChart = ({
           >
             <ResponsiveRadar
               theme={BAR_CHART_THEME}
-              data={data}
+              data={data.classData}
               keys={[mode]}
               indexBy="flightClass"
               margin={{ left: 45, top: 30, bottom: 15, right: 45 }}

@@ -49,7 +49,7 @@ export const TopCountriesChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getTopCountries.useQuery(
+  const { data, isFetching } = trpc.statistics.getBasicStatistics.useQuery(
     {
       username,
       status,
@@ -70,7 +70,7 @@ export const TopCountriesChart = ({
   const chartData = useMemo(
     () =>
       data !== undefined
-        ? data.chartData
+        ? data.topCountries.chartData
             .sort((a, b) => b[mode] - a[mode])
             .slice(0, 5)
             .reverse()
@@ -106,7 +106,9 @@ export const TopCountriesChart = ({
       </div>
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
-          <StatValue className="text-accent/80">{data?.count}</StatValue>
+          <StatValue className="text-accent/80">
+            {data?.topCountries.count}
+          </StatValue>
           <StatTitle>Total Countries</StatTitle>
         </Stat>
       </Stats>

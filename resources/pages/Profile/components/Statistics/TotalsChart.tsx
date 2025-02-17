@@ -20,6 +20,7 @@ import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
+import { getLongDurationString } from '../../../../common/utils';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import type { StatisticsChartProps } from './types';
@@ -46,7 +47,7 @@ export const TotalsChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getTotals.useQuery(
+  const { data, isFetching } = trpc.statistics.getBasicStatistics.useQuery(
     {
       username,
       status,
@@ -85,10 +86,17 @@ export const TotalsChart = ({
                 <StatValue className="flex items-center gap-2">
                   <MaterialPlaneIcon className="h-8 opacity-80" />
                   <span className="text-primary/80">
-                    {data.totalFlights.toLocaleString()}
+                    {data.totals.totalFlights.toLocaleString()}
                   </span>
                 </StatValue>
-                <StatDesc>{data.onTimePercentage}% on-time</StatDesc>
+                <StatDesc>
+                  {data.totals.onTimePercentage !== null
+                    ? (
+                        Math.round(10 * data.totals.onTimePercentage) / 10
+                      ).toLocaleString()
+                    : '-.-'}
+                  % on-time
+                </StatDesc>
               </Stat>
               <Stat className="p-2">
                 <StatTitle>Streak</StatTitle>
@@ -116,18 +124,28 @@ export const TotalsChart = ({
                 <StatValue className="flex items-center gap-2">
                   <DistanceIcon className="h-8 w-8 opacity-80" />
                   <span className="text-secondary/80">
-                    {data.totalDistanceMi.toLocaleString()} mi
+                    {Math.round(data.totals.totalDistanceMi).toLocaleString()}{' '}
+                    mi
                   </span>
                 </StatValue>
-                <StatDesc>{data.totalDistanceKm.toLocaleString()} km</StatDesc>
+                <StatDesc>
+                  {Math.round(data.totals.totalDistanceKm).toLocaleString()} km
+                </StatDesc>
               </Stat>
               <Stat className="p-2">
                 <StatTitle>Time Flown</StatTitle>
                 <StatValue className="flex items-center gap-2">
                   <ClockIcon className="h-8 w-8 opacity-80" />
-                  <span className="text-success/80">{data.totalDuration}</span>
+                  <span className="text-success/80">
+                    {getLongDurationString(data.totals.totalDuration)}
+                  </span>
                 </StatValue>
-                <StatDesc>{data.totalDurationDays} days</StatDesc>
+                <StatDesc>
+                  {(
+                    Math.round(100 * data.totals.totalDurationDays) / 100
+                  ).toLocaleString()}{' '}
+                  days
+                </StatDesc>
               </Stat>
             </Stats>
           </div>

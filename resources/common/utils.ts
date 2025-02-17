@@ -30,3 +30,16 @@ export const generateUUID = (): string => {
   }
   return uuidArray.join('');
 };
+
+export const getLongDurationString = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  let durationString = '';
+  if (hours > 0) {
+    durationString += `${hours.toLocaleString()}h `;
+  }
+  if (mins > 0 || durationString === '') {
+    durationString += `${mins.toLocaleString()}m`;
+  }
+  return durationString.trim();
+};

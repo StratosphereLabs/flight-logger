@@ -48,7 +48,7 @@ export const TopAirlinesChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getTopAirlines.useQuery(
+  const { data, isFetching } = trpc.statistics.getBasicStatistics.useQuery(
     {
       username,
       status,
@@ -69,7 +69,7 @@ export const TopAirlinesChart = ({
   const chartData = useMemo(
     () =>
       data !== undefined
-        ? data.chartData
+        ? data.topAirlines.chartData
             .sort((a, b) => b[mode] - a[mode])
             .slice(0, 5)
             .reverse()
@@ -105,7 +105,9 @@ export const TopAirlinesChart = ({
       </div>
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
-          <StatValue className="text-info/80">{data?.count}</StatValue>
+          <StatValue className="text-info/80">
+            {data?.topAirlines.count}
+          </StatValue>
           <StatTitle>Total Airlines</StatTitle>
         </Stat>
       </Stats>

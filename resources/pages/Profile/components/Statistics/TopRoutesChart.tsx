@@ -48,7 +48,7 @@ export const TopRoutesChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } = trpc.statistics.getTopRoutes.useQuery(
+  const { data, isFetching } = trpc.statistics.getAllStatistics.useQuery(
     {
       username,
       status,
@@ -70,7 +70,10 @@ export const TopRoutesChart = ({
   const chartData = useMemo(
     () =>
       data !== undefined
-        ? (cityPairs ? data.cityPairChartData : data.routeChartData)
+        ? (cityPairs
+            ? data.topRoutes.cityPairChartData
+            : data.topRoutes.routeChartData
+          )
             .sort((a, b) => b.flights - a.flights)
             .slice(0, 5)
             .reverse()
@@ -91,7 +94,9 @@ export const TopRoutesChart = ({
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
           <StatValue className="text-warning/80">
-            {cityPairs ? data?.cityPairCount : data?.routeCount}
+            {cityPairs
+              ? data?.topRoutes.cityPairCount
+              : data?.topRoutes.routeCount}
           </StatValue>
           <StatTitle>Total {cityPairs ? 'City Pairs' : 'Routes'}</StatTitle>
         </Stat>

@@ -40,29 +40,28 @@ export const FlightTypePieChart = ({
       'searchQuery',
     ],
   });
-  const { data, isFetching } =
-    trpc.statistics.getFlightTypeDistribution.useQuery(
-      {
-        username,
-        status,
-        range,
-        year,
-        month,
-        fromDate,
-        toDate,
-        selectedAirportId,
-        searchQuery,
-      },
-      {
-        enabled: userData !== undefined,
-        keepPreviousData: true,
-        onError,
-      },
-    );
+  const { data, isFetching } = trpc.statistics.getAllStatistics.useQuery(
+    {
+      username,
+      status,
+      range,
+      year,
+      month,
+      fromDate,
+      toDate,
+      selectedAirportId,
+      searchQuery,
+    },
+    {
+      enabled: userData !== undefined,
+      keepPreviousData: true,
+      onError,
+    },
+  );
   const chartData = useMemo(
     () =>
       data !== undefined
-        ? data.map(flightType => ({
+        ? data.flightTypeData.map(flightType => ({
             ...flightType,
             value: flightType[mode],
           }))
