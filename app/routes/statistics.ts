@@ -39,29 +39,77 @@ export const statisticsRouter = router({
         },
         select: {
           outTime: true,
-          airline: true,
-          aircraftType: true,
+          airline: {
+            select: {
+              id: true,
+              name: true,
+              iata: true,
+              icao: true,
+            },
+          },
+          aircraftType: {
+            select: {
+              id: true,
+              icao: true,
+              name: true,
+            },
+          },
           airframe: {
             select: {
-              aircraftType: true,
+              aircraftType: {
+                select: {
+                  id: true,
+                  icao: true,
+                  name: true,
+                },
+              },
             },
           },
           departureAirport: {
-            include: {
-              country: true,
-              region: true,
+            select: {
+              id: true,
+              iata: true,
+              name: true,
+              lat: true,
+              lon: true,
+              timeZone: true,
+              country: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
           arrivalAirport: {
-            include: {
-              country: true,
-              region: true,
+            select: {
+              id: true,
+              iata: true,
+              name: true,
+              lat: true,
+              lon: true,
+              timeZone: true,
+              country: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
           diversionAirport: {
-            include: {
-              country: true,
-              region: true,
+            select: {
+              id: true,
+              iata: true,
+              name: true,
+              lat: true,
+              lon: true,
+              country: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
           duration: true,
@@ -109,7 +157,12 @@ export const statisticsRouter = router({
               lat: true,
               lon: true,
               timeZone: true,
-              region: true,
+              region: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
           arrivalAirport: {
@@ -119,7 +172,12 @@ export const statisticsRouter = router({
               lat: true,
               lon: true,
               timeZone: true,
-              region: true,
+              region: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
           diversionAirport: {
@@ -128,7 +186,12 @@ export const statisticsRouter = router({
               iata: true,
               lat: true,
               lon: true,
-              region: true,
+              region: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
           duration: true,
@@ -222,9 +285,23 @@ export const statisticsRouter = router({
         },
         select: {
           outTime: true,
-          departureAirport: true,
-          arrivalAirport: true,
-          diversionAirport: true,
+          departureAirport: {
+            select: {
+              iata: true,
+              timeZone: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              iata: true,
+              timeZone: true,
+            },
+          },
+          diversionAirport: {
+            select: {
+              iata: true,
+            },
+          },
         },
       });
       const flights = results.filter(filterCustomDates(input));
@@ -247,9 +324,34 @@ export const statisticsRouter = router({
         },
         select: {
           outTime: true,
-          departureAirport: true,
-          arrivalAirport: true,
-          airline: true,
+          departureAirport: {
+            select: {
+              timeZone: true,
+              lat: true,
+              lon: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              timeZone: true,
+              lat: true,
+              lon: true,
+            },
+          },
+          diversionAirport: {
+            select: {
+              lat: true,
+              lon: true,
+            },
+          },
+          airline: {
+            select: {
+              id: true,
+              name: true,
+              iata: true,
+              icao: true,
+            },
+          },
           duration: true,
         },
       });
@@ -273,9 +375,29 @@ export const statisticsRouter = router({
         },
         select: {
           outTime: true,
-          departureAirport: true,
-          arrivalAirport: true,
-          diversionAirport: true,
+          departureAirport: {
+            select: {
+              id: true,
+              iata: true,
+              name: true,
+              timeZone: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              id: true,
+              iata: true,
+              name: true,
+              timeZone: true,
+            },
+          },
+          diversionAirport: {
+            select: {
+              id: true,
+              iata: true,
+              name: true,
+            },
+          },
         },
       });
       const flights = results.filter(filterCustomDates(input));
@@ -298,14 +420,44 @@ export const statisticsRouter = router({
         },
         select: {
           outTime: true,
-          aircraftType: true,
-          airframe: {
+          aircraftType: {
             select: {
-              aircraftType: true,
+              id: true,
+              icao: true,
+              name: true,
             },
           },
-          arrivalAirport: true,
-          departureAirport: true,
+          airframe: {
+            select: {
+              aircraftType: {
+                select: {
+                  id: true,
+                  icao: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          departureAirport: {
+            select: {
+              lat: true,
+              lon: true,
+              timeZone: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              lat: true,
+              lon: true,
+              timeZone: true,
+            },
+          },
+          diversionAirport: {
+            select: {
+              lat: true,
+              lon: true,
+            },
+          },
           duration: true,
         },
       });
@@ -331,19 +483,34 @@ export const statisticsRouter = router({
           outTime: true,
           departureAirport: {
             select: {
-              country: true,
+              country: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
               timeZone: true,
             },
           },
           arrivalAirport: {
             select: {
-              country: true,
+              country: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
               timeZone: true,
             },
           },
           diversionAirport: {
             select: {
-              country: true,
+              country: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -370,19 +537,34 @@ export const statisticsRouter = router({
           outTime: true,
           departureAirport: {
             select: {
-              region: true,
+              region: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
               timeZone: true,
             },
           },
           arrivalAirport: {
             select: {
-              region: true,
+              region: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
               timeZone: true,
             },
           },
           diversionAirport: {
             select: {
-              region: true,
+              region: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
         },
