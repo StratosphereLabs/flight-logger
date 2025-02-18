@@ -11,13 +11,16 @@ export enum AppTheme {
   NIGHT = 'night',
   NORD = 'nord',
   SUNSET = 'sunset',
+  SYNTHWAVE = 'synthwave',
   WINTER = 'winter',
+  WIREFRAME = 'wireframe',
 }
 
 export const DARK_MODE_THEMES = [
   AppTheme.DARK,
   AppTheme.NIGHT,
   AppTheme.SUNSET,
+  AppTheme.SYNTHWAVE,
 ];
 
 interface ThemeState {
