@@ -7,9 +7,9 @@ import {
   DarkModeOutlineIcon,
   LightModeIcon,
   MusicIcon,
-  SnowflakeIcon,
   SunsetIcon,
   ThemeIcon,
+  WireframeIcon,
 } from './Icons';
 
 export const ThemeButton = (): JSX.Element => {
@@ -53,6 +53,30 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
+          id: AppTheme.WIREFRAME,
+          onClick: () => {
+            setTheme(AppTheme.WIREFRAME);
+          },
+          children: (
+            <>
+              <WireframeIcon className="h-5 w-5" />
+              Wireframe
+            </>
+          ),
+        },
+        {
+          id: AppTheme.SYNTHWAVE,
+          onClick: () => {
+            setTheme(AppTheme.SYNTHWAVE);
+          },
+          children: (
+            <>
+              <SunsetIcon className="h-5 w-5" />
+              Synthwave
+            </>
+          ),
+        },
+        {
           id: AppTheme.LOFI,
           onClick: () => {
             setTheme(AppTheme.LOFI);
@@ -73,30 +97,6 @@ export const ThemeButton = (): JSX.Element => {
             <>
               <DarkModeOutlineIcon className="h-5 w-5" />
               Night
-            </>
-          ),
-        },
-        {
-          id: AppTheme.NORD,
-          onClick: () => {
-            setTheme(AppTheme.NORD);
-          },
-          children: (
-            <>
-              <SnowflakeIcon className="h-5 w-5" />
-              Nord
-            </>
-          ),
-        },
-        {
-          id: AppTheme.SUNSET,
-          onClick: () => {
-            setTheme(AppTheme.SUNSET);
-          },
-          children: (
-            <>
-              <SunsetIcon className="h-5 w-5" />
-              Sunset
             </>
           ),
         },
