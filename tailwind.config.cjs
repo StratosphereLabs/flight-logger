@@ -6,13 +6,13 @@ module.exports = {
   ],
   daisyui: {
     themes: [
-      'cyberpunk',
-      'dark',
       'light',
+      'dark',
+      'wireframe',
+      'synthwave',
       'lofi',
       'night',
-      'synthwave',
-      'wireframe',
+      'cyberpunk',
     ],
   },
   theme: {
