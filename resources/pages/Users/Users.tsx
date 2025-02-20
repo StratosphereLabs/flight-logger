@@ -1,5 +1,5 @@
 import { getCoreRowModel } from '@tanstack/react-table';
-import { useWatch } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
@@ -12,7 +12,6 @@ import {
   Loading,
   Table,
   useDebouncedValue,
-  useFormWithQueryParams,
 } from 'stratosphere-ui';
 
 import { SearchIcon } from '../../common/components';
@@ -27,14 +26,10 @@ export const Users = (): JSX.Element => {
   const isLoggedIn = useProtectedPage();
   const navigate = useNavigate();
   const onError = useTRPCErrorHandler();
-  const methods = useFormWithQueryParams<SearchUsersFormData, ['searchQuery']>({
-    getDefaultValues: ({ searchQuery }) => ({
-      searchQuery: searchQuery ?? '',
-    }),
-    getSearchParams: ([searchQuery]) => ({
-      searchQuery,
-    }),
-    includeKeys: ['searchQuery'],
+  const methods = useForm<SearchUsersFormData, ['searchQuery']>({
+    defaultValues: {
+      searchQuery: '',
+    },
   });
   const query = useWatch<SearchUsersFormData, 'searchQuery'>({
     control: methods.control,
@@ -49,7 +44,7 @@ export const Users = (): JSX.Element => {
   );
   return (
     <div className="mt-16 flex flex-1 flex-col items-center p-2 sm:p-3">
-      <Card className="flex w-full max-w-[1000px] flex-col justify-center bg-base-100">
+      <Card className="flex w-full max-w-[750px] flex-col justify-center bg-base-100">
         <CardBody>
           <CardTitle className="justify-center">User Search</CardTitle>
           <Form className="mt-2" methods={methods}>
@@ -100,15 +95,6 @@ export const Users = (): JSX.Element => {
                       </Link>
                     );
                   },
-                },
-                {
-                  id: 'name',
-                  header: () => 'Name',
-                  cell: ({ row }) => (
-                    <>
-                      {row.original.firstName} {row.original.lastName}
-                    </>
-                  ),
                 },
                 {
                   id: 'numFlights',
