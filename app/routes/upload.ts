@@ -339,20 +339,23 @@ uploadRouter.post(
       });
       console.timeEnd(`airlines query (${airlineIcaos.length})`);
       console.time(`airframes query (${registrations.length})`);
-      const airframes = await prisma.$queryRaw<
-        Array<{
-          registration: string;
-          icao24: string;
-          aircraftTypeId: string | null;
-          typeCode: string | null;
-        }>
-      >`
+      const airframes =
+        registrations.length > 0
+          ? await prisma.$queryRaw<
+              Array<{
+                registration: string;
+                icao24: string;
+                aircraftTypeId: string | null;
+                typeCode: string | null;
+              }>
+            >`
         SELECT "registration", "icao24", "aircraftTypeId", "typeCode" FROM "airframe" WHERE "registration" ILIKE ANY (ARRAY[${Prisma.join(
           registrations.map(reg => reg.split('').join('%')),
         )}])
-      ;`;
+      ;`
+          : [];
       console.timeEnd(`airframes query (${registrations.length})`);
-      const aircraftTypeIcaos = [
+      const airframeAircraftTypeIcaos = [
         ...new Set(
           airframes.flatMap(({ aircraftTypeId, typeCode }) =>
             aircraftTypeId === null && typeCode !== null && typeCode.length > 0
@@ -361,18 +364,30 @@ uploadRouter.post(
           ),
         ),
       ];
-      console.time(`aircraft types query (${aircraftTypeIcaos.length})`);
-      const aircraftTypes = await prisma.aircraftType.findMany({
+      console.time(
+        `airframe aircraft types query (${airframeAircraftTypeIcaos.length})`,
+      );
+      const airframeAircraftTypes = await prisma.aircraftType.findMany({
         where: {
           icao: {
-            in: aircraftTypeIcaos,
+            in: airframeAircraftTypeIcaos,
           },
         },
       });
-      console.timeEnd(`aircraft types query (${aircraftTypeIcaos.length})`);
+      console.timeEnd(
+        `airframe aircraft types query (${airframeAircraftTypeIcaos.length})`,
+      );
+      console.time('aircraft types query (all)');
+      const aircraftTypes = await prisma.aircraftType.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+      console.timeEnd('aircraft types query (all)');
       const airportData = keyBy(airports, 'iata');
       const airlineData = keyBy(airlines, 'icao');
-      const aircraftTypeData = groupBy(aircraftTypes, 'icao');
+      const airframeAircraftTypeData = groupBy(airframeAircraftTypes, 'icao');
       console.time(`flights query (${rows.length})`);
       const flights = await prisma.$transaction(
         rows.flatMap(row => {
@@ -394,11 +409,18 @@ uploadRouter.post(
                   ).test(registration),
                 )
               : undefined;
-          const aircraftTypeId =
+          const airframeAircraftTypeId =
             airframe?.aircraftTypeId ??
             (airframe?.typeCode !== undefined && airframe?.typeCode !== null
-              ? (aircraftTypeData[airframe.typeCode]?.[0].id ?? null)
+              ? (airframeAircraftTypeData[airframe.typeCode]?.[0].id ?? null)
               : null);
+          const aircraftTypeBestMatch = findBestMatch(
+            row['Aircraft Type Name'],
+            aircraftTypes.map(({ name }) => name),
+          );
+          const aircraftTypeId =
+            airframeAircraftTypeId ??
+            aircraftTypes[aircraftTypeBestMatch.bestMatchIndex].id;
           if (
             row['Gate Departure (Scheduled)'] === '' ||
             row['Gate Arrival (Scheduled)'] === ''
