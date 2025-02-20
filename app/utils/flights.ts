@@ -548,12 +548,12 @@ export const transformFlightData = (
     end: runwayArrivalTime,
   });
   const minutesToDeparture = getDurationMinutes({
-    start: departureTime,
-    end: new Date(),
+    start: new Date(),
+    end: departureTime,
   });
   const minutesToTakeoff = getDurationMinutes({
-    start: runwayDepartureTime,
-    end: new Date(),
+    start: new Date(),
+    end: runwayDepartureTime,
   });
   const minutesToArrival = getDurationMinutes({
     start: new Date(),
