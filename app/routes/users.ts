@@ -134,6 +134,9 @@ export const usersRouter = router({
     .use(verifyAuthenticated)
     .input(getUsersSchema)
     .query(async ({ input }) => {
+      if (input.query.length === 0) {
+        return [];
+      }
       const results = await prisma.user.findMany({
         take: 10,
         where: {
