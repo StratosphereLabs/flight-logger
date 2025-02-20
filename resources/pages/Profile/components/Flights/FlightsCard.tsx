@@ -87,26 +87,26 @@ export const FlightsCard = ({
                 ? `Add Flight${!onOwnProfile ? ` for @${username}` : ''}`
                 : 'Flights'}
             </CardTitle>
-            {onOwnProfile ||
-            (data?.isFollowedBy === true && data.isFollowing) ? (
-              <div className="flex flex-1 justify-end gap-3">
-                {isAddingFlight ? (
-                  <Button
-                    className="flex w-[120px] flex-nowrap"
-                    color="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setIsAddingFlight(false);
-                      methods.reset(addFlightFormDefaultValues);
-                      setFlightSearchFormData(null);
-                    }}
-                  >
-                    <CloseIcon className="h-4 w-4" />
-                    Done
-                  </Button>
-                ) : null}
-                {!isAddingFlight ? (
-                  <div className="flex gap-2">
+            <div className="flex flex-1 justify-end gap-3">
+              {isAddingFlight ? (
+                <Button
+                  className="flex w-[120px] flex-nowrap"
+                  color="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setIsAddingFlight(false);
+                    methods.reset(addFlightFormDefaultValues);
+                    setFlightSearchFormData(null);
+                  }}
+                >
+                  <CloseIcon className="h-4 w-4" />
+                  Done
+                </Button>
+              ) : null}
+              {!isAddingFlight ? (
+                <div className="flex gap-2">
+                  {onOwnProfile ||
+                  (data?.isFollowedBy === true && data.isFollowing) ? (
                     <Button
                       className="flex flex-nowrap"
                       color="primary"
@@ -114,41 +114,40 @@ export const FlightsCard = ({
                       onClick={() => {
                         setIsMapFullScreen(false);
                         mapFormMethods.setValue('mapMode', 'routes');
-                        setIsFlightsFullScreen(true);
                         setIsAddingFlight(true);
                       }}
                     >
                       <PlusAirplaneIcon className="h-5 w-5" />
                       Add Flight
                     </Button>
-                    <Button
-                      color="ghost"
-                      onClick={() => {
-                        setSearchParams(oldSearchParams => {
-                          if (isFlightsFullScreen) {
-                            oldSearchParams.delete('isFlightsFullScreen');
-                            return oldSearchParams;
-                          }
-                          return {
-                            ...Object.fromEntries(oldSearchParams),
-                            isFlightsFullScreen: 'true',
-                          };
-                        });
-                        setIsFlightsFullScreen(isFullScreen => !isFullScreen);
-                      }}
-                      size="sm"
-                    >
-                      {isFlightsFullScreen ? (
-                        <CollapseIcon className="h-4 w-4" />
-                      ) : (
-                        <ExpandIcon className="h-4 w-4" />
-                      )}
-                      {isFlightsFullScreen ? 'Collapse' : 'View All'}
-                    </Button>
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
+                  ) : null}
+                  <Button
+                    color="ghost"
+                    onClick={() => {
+                      setSearchParams(oldSearchParams => {
+                        if (isFlightsFullScreen) {
+                          oldSearchParams.delete('isFlightsFullScreen');
+                          return oldSearchParams;
+                        }
+                        return {
+                          ...Object.fromEntries(oldSearchParams),
+                          isFlightsFullScreen: 'true',
+                        };
+                      });
+                      setIsFlightsFullScreen(isFullScreen => !isFullScreen);
+                    }}
+                    size="sm"
+                  >
+                    {isFlightsFullScreen ? (
+                      <CollapseIcon className="h-4 w-4" />
+                    ) : (
+                      <ExpandIcon className="h-4 w-4" />
+                    )}
+                    {isFlightsFullScreen ? 'Collapse' : 'View All'}
+                  </Button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
         {isAddingFlight ? <AddFlightForm methods={methods} /> : null}

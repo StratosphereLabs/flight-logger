@@ -74,7 +74,6 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
   );
   useEffect(() => {
     if (state?.addFlight === true) {
-      setIsFlightsFullScreen(true);
       setIsAddingFlight(true);
     }
   }, [setIsAddingFlight, state?.addFlight]);
