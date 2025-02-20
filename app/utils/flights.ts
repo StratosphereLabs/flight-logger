@@ -565,12 +565,12 @@ export const transformFlightData = (
   });
   const currentDuration = hasDeparted
     ? !hasArrived
-      ? minutesToDeparture
+      ? -minutesToDeparture
       : totalDuration
     : 0;
   const currentFlightDuration = hasTakenOff
     ? !hasLanded
-      ? minutesToTakeoff
+      ? -minutesToTakeoff
       : flightDuration
     : 0;
   const progress = currentDuration / totalDuration;
