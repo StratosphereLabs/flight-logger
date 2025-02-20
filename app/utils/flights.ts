@@ -547,30 +547,38 @@ export const transformFlightData = (
     start: runwayDepartureTime,
     end: runwayArrivalTime,
   });
-  const minutesToDeparture = getDurationMinutes({
-    start: new Date(),
-    end: departureTime,
-  });
-  const minutesToTakeoff = getDurationMinutes({
-    start: new Date(),
-    end: runwayDepartureTime,
-  });
-  const minutesToArrival = getDurationMinutes({
-    start: new Date(),
-    end: arrivalTime,
-  });
-  const minutesToLanding = getDurationMinutes({
-    start: new Date(),
-    end: runwayArrivalTime,
-  });
+  const minutesToDeparture = Math.abs(
+    getDurationMinutes({
+      start: new Date(),
+      end: departureTime,
+    }),
+  );
+  const minutesToTakeoff = Math.abs(
+    getDurationMinutes({
+      start: new Date(),
+      end: runwayDepartureTime,
+    }),
+  );
+  const minutesToArrival = Math.abs(
+    getDurationMinutes({
+      start: new Date(),
+      end: arrivalTime,
+    }),
+  );
+  const minutesToLanding = Math.abs(
+    getDurationMinutes({
+      start: new Date(),
+      end: runwayArrivalTime,
+    }),
+  );
   const currentDuration = hasDeparted
     ? !hasArrived
-      ? -minutesToDeparture
+      ? minutesToDeparture
       : totalDuration
     : 0;
   const currentFlightDuration = hasTakenOff
     ? !hasLanded
-      ? -minutesToTakeoff
+      ? minutesToTakeoff
       : flightDuration
     : 0;
   const progress = currentDuration / totalDuration;
