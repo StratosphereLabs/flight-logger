@@ -22,7 +22,13 @@ import {
 import { toZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
+import {
+  updateFlightRegistrationData,
+  updateFlightTimesData,
+  updateOnTimePerformanceData,
+} from '../commands';
 import { KTS_TO_MPH } from '../commands/constants';
+import type { FlightWithData } from '../commands/types';
 import { SECONDS_IN_HOUR } from '../constants';
 import type { TracklogItem } from '../data/types';
 import {
@@ -44,6 +50,7 @@ import {
   getFlightTimestamps,
 } from './flighttime';
 import { type UserData, fetchGravatarUrl } from './users';
+import { updateFlightWeatherReports } from './weather';
 
 export const flightIncludeObj = {
   user: true,
@@ -179,6 +186,34 @@ const FLIGHT_STATUS_MAP: Record<FlightRadarStatus, string> = {
   LANDED_TAXIING: 'Landed - Taxiing',
   ARRIVED: 'Arrived',
   CANCELED: '',
+};
+
+export const updateFlightData = async (
+  flights: FlightWithData[],
+): Promise<void> => {
+  let updatedTimesFlights: FlightWithData[] | null = null;
+  try {
+    updatedTimesFlights = await updateFlightTimesData(flights);
+  } catch (err) {
+    console.error(err);
+  }
+  try {
+    updatedTimesFlights = await updateFlightRegistrationData(
+      updatedTimesFlights ?? flights,
+    );
+  } catch (err) {
+    console.error(err);
+  }
+  try {
+    await updateOnTimePerformanceData(updatedTimesFlights ?? flights);
+  } catch (err) {
+    console.error(err);
+  }
+  try {
+    await updateFlightWeatherReports(updatedTimesFlights ?? flights);
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const getCenterpoint = (

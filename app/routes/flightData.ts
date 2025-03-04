@@ -5,12 +5,6 @@ import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
-import {
-  updateFlightRegistrationData,
-  updateFlightTimesData,
-  updateOnTimePerformanceData,
-} from '../commands';
-import type { FlightWithData } from '../commands/types';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
 import type { FlightSearchDataResult } from '../data/types';
@@ -22,7 +16,7 @@ import {
   getDurationMinutes,
   getFlightTimestamps,
   getMidpoint,
-  updateFlightWeatherReports,
+  updateFlightData,
 } from '../utils';
 
 export const flightDataRouter = router({
@@ -197,13 +191,7 @@ export const flightDataRouter = router({
           airline: true,
         },
       });
-      let updatedFlights: FlightWithData[] | null = null;
-      updatedFlights = await updateFlightTimesData([newFlight]);
-      updatedFlights = await updateFlightRegistrationData(
-        updatedFlights ?? [newFlight],
-      );
-      await updateOnTimePerformanceData(updatedFlights ?? [newFlight]);
-      await updateFlightWeatherReports(updatedFlights ?? [newFlight]);
+      await updateFlightData([newFlight]);
     }),
 });
 

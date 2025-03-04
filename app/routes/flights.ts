@@ -4,13 +4,7 @@ import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import {
-  updateFlightChangeData,
-  updateFlightRegistrationData,
-  updateFlightTimesData,
-  updateOnTimePerformanceData,
-} from '../commands';
-import type { FlightWithData } from '../commands/types';
+import { updateFlightChangeData } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_YEAR } from '../constants';
 import { prisma, updateTripTimes } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
@@ -47,7 +41,7 @@ import {
   getWeatherReportCloudCoverData,
   parsePaginationRequest,
   transformFlightData,
-  updateFlightWeatherReports,
+  updateFlightData,
 } from '../utils';
 
 export const flightsRouter = router({
@@ -685,10 +679,8 @@ export const flightsRouter = router({
           airline: true,
         },
       });
-      const updatedFlights = await updateFlightRegistrationData([flight]);
+      await updateFlightData([flight]);
       await updateTripTimes(flight.tripId);
-      await updateOnTimePerformanceData(updatedFlights ?? [flight]);
-      await updateFlightWeatherReports(updatedFlights ?? [flight]);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -834,17 +826,8 @@ export const flightsRouter = router({
         ctx.user.id,
       );
       if (flightDataChanged) {
-        let updatedTimesFlights: FlightWithData[] | null = null;
-        updatedTimesFlights = await updateFlightTimesData([updatedFlight]);
-        updatedTimesFlights = await updateFlightRegistrationData(
-          updatedTimesFlights ?? [updatedFlight],
-        );
-        await updateOnTimePerformanceData(
-          updatedTimesFlights ?? [updatedFlight],
-        );
-        await updateFlightWeatherReports(
-          updatedTimesFlights ?? [updatedFlight],
-        );
+        await updateFlightData([updatedFlight]);
+        await updateTripTimes(updatedFlight.tripId);
       }
     }),
   deleteFlight: procedure
