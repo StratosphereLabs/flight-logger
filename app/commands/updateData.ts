@@ -5,12 +5,9 @@ import { scheduleJob } from 'node-schedule';
 
 import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
-import { updateFlightWeatherReports } from '../utils';
+import { updateFlightData } from '../utils';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
-import { updateFlightRegistrationData } from './updateFlightRegistrationData';
-import { updateFlightTimesData } from './updateFlightTimesData';
-import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
 import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (
@@ -25,29 +22,7 @@ const processFlightUpdate = async (
     Object.entries(groupedFlights),
     async ([key, flights]) => {
       console.log(`Updating flight ${key}...`);
-      let updatedFlights: FlightWithData[] | null = null;
-      try {
-        updatedFlights = await updateFlightTimesData(flights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        updatedFlights = await updateFlightRegistrationData(
-          updatedFlights ?? flights,
-        );
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateOnTimePerformanceData(updatedFlights ?? flights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights ?? flights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateFlightData(flights);
     },
     {
       concurrency: UPDATE_CONCURRENCY,

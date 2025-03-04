@@ -1,6 +1,6 @@
 import { prisma } from '../prisma';
 import { seedAircraftTypes } from './seedAircraftTypes';
-import { seedAirframes } from './seedAirframes';
+// import { seedAirframes } from './seedAirframes';
 import { seedAirlines } from './seedAirlines';
 import { seedAirports } from './seedAirports';
 import { seedCountries } from './seedCountries';
@@ -14,6 +14,6 @@ export const seedDatabase = async (): Promise<void> => {
   await seedManufacturers();
   await seedAircraftTypes();
   await seedAirlines();
-  await seedAirframes();
+  // await seedAirframes();
   await prisma.$disconnect();
 };
