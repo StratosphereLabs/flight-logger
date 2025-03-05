@@ -277,25 +277,23 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                 </div>
               </div>
               <div className="flex flex-col items-center justify-center gap-1">
-                {data.flightRadarStatus !== 'CANCELED' ? (
-                  <div className="text-xs italic opacity-75 sm:text-sm">
-                    {data.progress === 0 && data.flightProgress === 0
-                      ? `Departs in ${data.durationToDepartureString}`
-                      : null}
-                    {data.progress > 0 && data.flightProgress === 0
-                      ? `Taking off in ${data.durationToTakeoffString}`
-                      : null}
-                    {data.flightProgress > 0 && data.flightProgress < 1
-                      ? `Landing in ${data.durationToLandingString}`
-                      : null}
-                    {data.flightProgress === 1 && data.progress < 1
-                      ? `Arriving in ${data.durationToArrivalString}`
-                      : null}
-                    {data.progress === 1 && data.flightProgress === 1
-                      ? `Arrived ${data.durationToArrivalString} ago`
-                      : null}
-                  </div>
-                ) : null}
+                <div className="text-xs italic opacity-75 sm:text-sm">
+                  {data.progress === 0 && data.flightProgress === 0
+                    ? `Departs in ${data.durationToDepartureString}`
+                    : null}
+                  {data.progress > 0 && data.flightProgress === 0
+                    ? `Taking off in ${data.durationToTakeoffString}`
+                    : null}
+                  {data.flightProgress > 0 && data.flightProgress < 1
+                    ? `Landing in ${data.durationToLandingString}`
+                    : null}
+                  {data.flightProgress === 1 && data.progress < 1
+                    ? `Arriving in ${data.durationToArrivalString}`
+                    : null}
+                  {data.progress === 1 && data.flightProgress === 1
+                    ? `Arrived ${data.durationToArrivalString} ago`
+                    : null}
+                </div>
                 {data.arrivalBaggage !== null ? (
                   <div
                     className={classNames(

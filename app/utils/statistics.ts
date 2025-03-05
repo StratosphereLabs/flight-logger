@@ -33,7 +33,7 @@ export const getOnTimeStreak = (
             end: flight.inTimeActual,
           })
         : 0;
-      if (arrivalDelay > 15) {
+      if (arrivalDelay >= 15) {
         break;
       }
       onTimeStreak++;

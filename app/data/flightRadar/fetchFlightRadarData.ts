@@ -1,4 +1,4 @@
-import type { Airline, FlightRadarStatus } from '@prisma/client';
+import type { Airline } from '@prisma/client';
 import axios from 'axios';
 import { load } from 'cheerio';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -265,7 +265,7 @@ export const fetchFlightRadarData = async ({
       .find('.btn-playback')
       .text()
       .trim();
-    let flightStatus: FlightRadarStatus | null = null;
+    let flightStatus: FlightRadarData['flightStatus'] | null = null;
     let diversionIata: string | null = null;
     if (onTimeCell.text().includes('Diverted to')) {
       const airport = onTimeCell.find('a').eq(0).text().trim();

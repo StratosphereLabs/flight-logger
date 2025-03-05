@@ -394,7 +394,6 @@ export const flightsRouter = router({
       }>(
         (acc, flight) => {
           const timestamps = getFlightTimestamps({
-            flightRadarStatus: flight.flightRadarStatus,
             departureTimeZone: flight.departureAirport.timeZone,
             arrivalTimeZone: flight.arrivalAirport.timeZone,
             duration: flight.duration,
@@ -541,8 +540,7 @@ export const flightsRouter = router({
       for (const result of flightResults) {
         const flight = transformFlightData(result);
         const flightState =
-          flight.flightStatus === 'SCHEDULED' ||
-          flight.flightStatus === 'CANCELED'
+          flight.flightStatus === 'SCHEDULED'
             ? 'UPCOMING'
             : flight.flightStatus === 'ARRIVED'
               ? 'COMPLETED'
@@ -743,7 +741,6 @@ export const flightsRouter = router({
         inTime,
         inTimeActual: flightDataChanged ? null : undefined,
         duration,
-        flightRadarStatus: flightDataChanged ? null : undefined,
         departureGate: flightDataChanged ? null : undefined,
         departureTerminal: flightDataChanged ? null : undefined,
         arrivalBaggage: flightDataChanged ? null : undefined,

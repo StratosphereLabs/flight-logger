@@ -24,11 +24,14 @@ export const flightDataRouter = router({
     .input(searchFlightDataSchema)
     .query(async ({ input }) => {
       const { airline, flightNumber, outDateISO } = input;
-      const flights = await fetchFlightRadarDataByFlightNumber({
-        airline,
-        flightNumber,
-        isoDate: outDateISO,
-      });
+      const flights =
+        process.env.FLIGHT_TRACKING_DATASOURCE === 'flightradar'
+          ? await fetchFlightRadarDataByFlightNumber({
+              airline,
+              flightNumber,
+              isoDate: outDateISO,
+            })
+          : [];
       const flightData: FlightSearchDataResult[] = flights.map(
         (flight, index) => {
           const duration = getDurationMinutes({

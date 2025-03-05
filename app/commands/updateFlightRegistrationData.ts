@@ -19,97 +19,100 @@ export const updateFlightRegistrationData = async (
     flights[0].departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
-  const flight = await fetchFlightRadarData({
-    airline: flights[0].airline,
-    flightNumber: flights[0].flightNumber,
-    departureAirport: flights[0].departureAirport,
-    arrivalAirport: flights[0].arrivalAirport,
-    isoDate,
-  });
-  if (flight === null) {
-    console.error(
-      `  Unable to fetch registration data for ${getGroupedFlightsKey(
-        flights[0],
-      )}. Please try again later.`,
+  if (process.env.FLIGHT_TRACKING_DATASOURCE === 'flightradar') {
+    const flight = await fetchFlightRadarData({
+      airline: flights[0].airline,
+      flightNumber: flights[0].flightNumber,
+      departureAirport: flights[0].departureAirport,
+      arrivalAirport: flights[0].arrivalAirport,
+      isoDate,
+    });
+    if (flight === null) {
+      console.error(
+        `  Unable to fetch registration data for ${getGroupedFlightsKey(
+          flights[0],
+        )}. Please try again later.`,
+      );
+      return null;
+    }
+    const airframe =
+      flight.registration !== undefined && flight.registration !== null
+        ? await prisma.airframe.findFirst({
+            where: {
+              registration: flight.registration,
+            },
+          })
+        : null;
+    const aircraftType =
+      flight.aircraftTypeCode.length >= 3 &&
+      (airframe?.aircraftTypeId === null ||
+        airframe?.aircraftTypeId === undefined)
+        ? await prisma.aircraftType.findFirst({
+            where: {
+              OR: [
+                {
+                  icao: flight.aircraftTypeCode,
+                },
+                {
+                  iata: flight.aircraftTypeCode,
+                },
+              ],
+            },
+          })
+        : undefined;
+    const diversionAirport =
+      flight.diversionIata !== null
+        ? await prisma.airport.findFirst({
+            where: {
+              iata: flight.diversionIata,
+            },
+          })
+        : null;
+    const updatedData = {
+      airframeId:
+        airframe !== undefined ? (airframe?.icao24 ?? null) : undefined,
+      tailNumber: flight.registration,
+      offTimeActual: flight.offTimeActual,
+      onTimeActual: flight.onTimeActual,
+      aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
+      diversionAirportId: diversionAirport?.id ?? null,
+    };
+    const updatedFlights = await prisma.$transaction(
+      flights.map(({ id }) =>
+        prisma.flight.update({
+          where: {
+            id,
+          },
+          data: updatedData,
+          include: {
+            airline: true,
+            departureAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+            arrivalAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+            diversionAirport: {
+              select: {
+                id: true,
+                iata: true,
+                timeZone: true,
+              },
+            },
+          },
+        }),
+      ),
     );
-    return null;
+    await updateFlightChangeData(flights, updatedData);
+    return updatedFlights;
   }
-  const airframe =
-    flight.registration !== undefined && flight.registration !== null
-      ? await prisma.airframe.findFirst({
-          where: {
-            registration: flight.registration,
-          },
-        })
-      : null;
-  const aircraftType =
-    flight.aircraftTypeCode.length >= 3 &&
-    (airframe?.aircraftTypeId === null ||
-      airframe?.aircraftTypeId === undefined)
-      ? await prisma.aircraftType.findFirst({
-          where: {
-            OR: [
-              {
-                icao: flight.aircraftTypeCode,
-              },
-              {
-                iata: flight.aircraftTypeCode,
-              },
-            ],
-          },
-        })
-      : undefined;
-  const diversionAirport =
-    flight.diversionIata !== null
-      ? await prisma.airport.findFirst({
-          where: {
-            iata: flight.diversionIata,
-          },
-        })
-      : null;
-  const updatedData = {
-    airframeId: airframe !== undefined ? (airframe?.icao24 ?? null) : undefined,
-    tailNumber: flight.registration,
-    offTimeActual: flight.offTimeActual,
-    onTimeActual: flight.onTimeActual,
-    aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
-    flightRadarStatus: flight.flightStatus,
-    diversionAirportId: diversionAirport?.id ?? null,
-  };
-  const updatedFlights = await prisma.$transaction(
-    flights.map(({ id }) =>
-      prisma.flight.update({
-        where: {
-          id,
-        },
-        data: updatedData,
-        include: {
-          airline: true,
-          departureAirport: {
-            select: {
-              id: true,
-              iata: true,
-              timeZone: true,
-            },
-          },
-          arrivalAirport: {
-            select: {
-              id: true,
-              iata: true,
-              timeZone: true,
-            },
-          },
-          diversionAirport: {
-            select: {
-              id: true,
-              iata: true,
-              timeZone: true,
-            },
-          },
-        },
-      }),
-    ),
-  );
-  await updateFlightChangeData(flights, updatedData);
-  return updatedFlights;
+  return null;
 };
