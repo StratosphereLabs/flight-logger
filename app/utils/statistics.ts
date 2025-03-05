@@ -89,7 +89,7 @@ export const getTotals = (
             end: flight.inTimeActual,
           })
         : 0;
-      if (arrivalDelay <= 15) {
+      if (arrivalDelay < 15) {
         onTimeFlights++;
       }
     }
