@@ -7,6 +7,7 @@ import groupBy from 'lodash.groupby';
 
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
+import { fetchFlightStatsDataByFlightNumber } from '../data/flightStats';
 import type { FlightSearchDataResult } from '../data/types';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
@@ -25,13 +26,19 @@ export const flightDataRouter = router({
     .query(async ({ input }) => {
       const { airline, flightNumber, outDateISO } = input;
       const flights =
-        process.env.FLIGHT_TRACKING_DATASOURCE === 'flightradar'
+        process.env.FLIGHT_SEARCH_DATASOURCE === 'flightradar'
           ? await fetchFlightRadarDataByFlightNumber({
               airline,
               flightNumber,
               isoDate: outDateISO,
             })
-          : [];
+          : process.env.FLIGHT_SEARCH_DATASOURCE === 'flightstats'
+            ? await fetchFlightStatsDataByFlightNumber({
+                airline,
+                flightNumber,
+                isoDate: outDateISO,
+              })
+            : [];
       const flightData: FlightSearchDataResult[] = flights.map(
         (flight, index) => {
           const duration = getDurationMinutes({
