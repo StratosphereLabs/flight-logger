@@ -84,6 +84,14 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
           },
         })
       : null;
+  const aircraftType =
+    airframe?.aircraftTypeId === null || airframe?.aircraftTypeId === undefined
+      ? await prisma.aircraftType.findFirst({
+          where: {
+            iata: flight.additionalFlightInfo.equipment.iata,
+          },
+        })
+      : undefined;
   return {
     duration: getDurationMinutes({
       start: outTime,
@@ -104,6 +112,7 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
     arrivalBaggage: flight.arrivalAirport.baggage ?? undefined,
     airframeId: airframe !== undefined ? (airframe?.icao24 ?? null) : undefined,
     tailNumber,
+    aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
     tracklog:
       (flight.positional.flexTrack?.positions
         ?.reverse()
