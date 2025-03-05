@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { add, getTime, isAfter, parseISO } from 'date-fns';
+import { add, getTime, isAfter, parseISO, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DATE_FORMAT_ISO } from '../constants';
@@ -58,16 +58,31 @@ export const getFlightAwareUpdatedData = (flight: FlightAwareDataResult) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getFlightStatsUpdatedData = (flight: FlightStatsFlight) => {
+export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
   const outTime = new Date(flight.schedule.scheduledDepartureUTC);
   const outTimeActual =
     flight.schedule.estimatedActualDepartureUTC !== null
       ? new Date(flight.schedule.estimatedActualDepartureUTC)
       : null;
+  const offTime = add(outTime, { minutes: 10 });
+  const offTimeActual =
+    outTimeActual !== null ? add(outTimeActual, { minutes: 10 }) : null;
   const inTime = new Date(flight.schedule.scheduledArrivalUTC);
   const inTimeActual =
     flight.schedule.estimatedActualArrivalUTC !== null
       ? new Date(flight.schedule.estimatedActualArrivalUTC)
+      : null;
+  const onTime = sub(inTime, { minutes: 10 });
+  const onTimeActual =
+    inTimeActual !== null ? sub(inTimeActual, { minutes: 10 }) : null;
+  const tailNumber = flight.positional.flexTrack?.tailNumber;
+  const airframe =
+    tailNumber !== undefined && tailNumber !== null
+      ? await prisma.airframe.findFirst({
+          where: {
+            registration: tailNumber,
+          },
+        })
       : null;
   return {
     duration: getDurationMinutes({
@@ -76,6 +91,10 @@ export const getFlightStatsUpdatedData = (flight: FlightStatsFlight) => {
     }),
     outTime,
     outTimeActual,
+    offTime,
+    offTimeActual,
+    onTime,
+    onTimeActual,
     inTime,
     inTimeActual,
     departureGate: flight.departureAirport.gate ?? undefined,
@@ -83,6 +102,8 @@ export const getFlightStatsUpdatedData = (flight: FlightStatsFlight) => {
     departureTerminal: flight.departureAirport.terminal ?? undefined,
     arrivalTerminal: flight.arrivalAirport.terminal ?? undefined,
     arrivalBaggage: flight.arrivalAirport.baggage ?? undefined,
+    airframeId: airframe !== undefined ? (airframe?.icao24 ?? null) : undefined,
+    tailNumber,
     tracklog:
       (flight.positional.flexTrack?.positions
         ?.reverse()
@@ -186,7 +207,7 @@ export const updateFlightTimesData = async (
       );
       return null;
     }
-    const updatedData = getFlightStatsUpdatedData(flightStatsResponse);
+    const updatedData = await getFlightStatsUpdatedData(flightStatsResponse);
     const updatedFlights = await prisma.$transaction(
       flights.map(({ id }) =>
         prisma.flight.update({

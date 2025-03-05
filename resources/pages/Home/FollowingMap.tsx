@@ -241,19 +241,17 @@ export const FollowingMap = (): JSX.Element => {
                     estimatedLocation,
                     estimatedHeading,
                     flightState,
-                    flightRadarStatus,
+                    flightStatus,
                     tracklog,
                     waypoints,
                   },
                   index,
                 ) => {
-                  const isCurrentFlight =
-                    flightRadarStatus !== null &&
-                    [
-                      'DEPARTED_TAXIING',
-                      'EN_ROUTE',
-                      'ARRIVED_TAXIING',
-                    ].includes(flightRadarStatus);
+                  const isCurrentFlight = [
+                    'DEPARTED_TAXIING',
+                    'EN_ROUTE',
+                    'ARRIVED_TAXIING',
+                  ].includes(flightStatus);
                   const isFocused = isSelected || isHover || isCurrentFlight;
                   let lastAltitude: number | null = null;
                   return (
@@ -321,7 +319,7 @@ export const FollowingMap = (): JSX.Element => {
                           />
                         );
                       }) ?? null}
-                      {flightRadarStatus !== 'ARRIVED' ? (
+                      {flightStatus !== 'ARRIVED' ? (
                         <PolylineF
                           visible
                           key={index}

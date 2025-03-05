@@ -125,7 +125,7 @@ export interface FlightStatsFlight {
       flightId: number;
       carrierFsCode: string;
       flightNumber: string;
-      tailNumber: string;
+      tailNumber: string | null;
       callsign: string;
       departureAirportFsCode: string;
       arrivalAirportFsCode: string;

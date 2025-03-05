@@ -1,5 +1,3 @@
-import type { FlightRadarStatus } from '@prisma/client';
-
 export interface FlightRadarData {
   departureTime: Date;
   departureAirportIATA: string;
@@ -8,7 +6,14 @@ export interface FlightRadarData {
   onTimeActual: Date | undefined;
   aircraftTypeCode: string;
   registration: string | null | undefined;
-  flightStatus: FlightRadarStatus | null;
+  flightStatus:
+    | 'SCHEDULED'
+    | 'DEPARTED_TAXIING'
+    | 'EN_ROUTE'
+    | 'LANDED_TAXIING'
+    | 'ARRIVED'
+    | 'CANCELED'
+    | null;
   diversionIata: string | null;
 }
 

@@ -195,19 +195,12 @@ export const FlightRow = ({
           >
             <span className="text-sm">{flight.flightStatusText}</span>
             <span className="flex justify-end gap-1 text-xs">
-              {flight.flightRadarStatus === 'CANCELED' ? (
-                'Canceled'
-              ) : (
+              {flight.delayStatus !== 'none' ? (
                 <>
-                  {flight.delayStatus !== 'none' ? (
-                    <>
-                      Delayed{' '}
-                      <span className="text-nowrap">{flight.delay}</span>
-                    </>
-                  ) : (
-                    'On Time'
-                  )}
+                  Delayed <span className="text-nowrap">{flight.delay}</span>
                 </>
+              ) : (
+                'On Time'
               )}
             </span>
           </div>

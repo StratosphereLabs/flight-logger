@@ -132,7 +132,6 @@ model Flight {
   offTimeActual      DateTime?
   onTimeActual       DateTime?
   outTimeActual      DateTime?
-  flightRadarStatus  FlightRadarStatus?
   arrivalBaggage     String?
   arrivalGate        String?
   arrivalTerminal    String?

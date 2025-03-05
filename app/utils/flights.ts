@@ -4,7 +4,6 @@ import type {
   Airline,
   Airport,
   Flight,
-  FlightRadarStatus,
   Region,
   User,
 } from '@prisma/client';
@@ -170,7 +169,12 @@ export interface TransformFlightDataResult
   durationToLandingString: string;
   progress: number;
   flightProgress: number;
-  flightStatus: string;
+  flightStatus:
+    | 'SCHEDULED'
+    | 'DEPARTED_TAXIING'
+    | 'EN_ROUTE'
+    | 'LANDED_TAXIING'
+    | 'ARRIVED';
   flightStatusText: string;
   delay: string | null;
   delayValue: number | null;
@@ -179,7 +183,7 @@ export interface TransformFlightDataResult
   estimatedHeading: number;
 }
 
-const FLIGHT_STATUS_MAP: Record<FlightRadarStatus, string> = {
+const FLIGHT_STATUS_MAP: Record<string, string> = {
   SCHEDULED: 'Scheduled',
   DEPARTED_TAXIING: 'Departed - Taxiing',
   EN_ROUTE: 'En Route',
@@ -545,7 +549,6 @@ export const transformFlightData = (
   flight: FlightData,
 ): TransformFlightDataResult => {
   const timestamps = getFlightTimestamps({
-    flightRadarStatus: flight.flightRadarStatus,
     departureTimeZone: flight.departureAirport.timeZone,
     arrivalTimeZone: flight.arrivalAirport.timeZone,
     duration: flight.duration,
@@ -566,14 +569,10 @@ export const transformFlightData = (
     flight.offTimeActual ?? add(departureTime, { minutes: 10 });
   const runwayArrivalTime =
     flight.onTimeActual ?? sub(arrivalTime, { minutes: 10 });
-  const hasDeparted =
-    flight.flightRadarStatus !== 'CANCELED' && !isFuture(departureTime);
-  const hasTakenOff =
-    flight.flightRadarStatus !== 'CANCELED' && !isFuture(runwayDepartureTime);
-  const hasLanded =
-    flight.flightRadarStatus !== 'CANCELED' && !isFuture(runwayArrivalTime);
-  const hasArrived =
-    flight.flightRadarStatus !== 'CANCELED' && !isFuture(arrivalTime);
+  const hasDeparted = !isFuture(departureTime);
+  const hasTakenOff = !isFuture(runwayDepartureTime);
+  const hasLanded = !isFuture(runwayArrivalTime);
+  const hasArrived = !isFuture(arrivalTime);
   const totalDuration = getDurationMinutes({
     start: departureTime,
     end: arrivalTime,
@@ -618,7 +617,7 @@ export const transformFlightData = (
     : 0;
   const progress = currentDuration / totalDuration;
   const flightProgress = currentFlightDuration / flightDuration;
-  const estimatedStatus =
+  const flightStatus =
     progress === 0
       ? 'SCHEDULED'
       : flightProgress === 0
@@ -628,7 +627,6 @@ export const transformFlightData = (
           : progress < 1
             ? 'LANDED_TAXIING'
             : 'ARRIVED';
-  const flightStatus = flight.flightRadarStatus ?? estimatedStatus;
   const flightStatusText =
     flight.diversionAirport !== null
       ? `Diverted to ${flight.diversionAirport.iata}`
@@ -686,7 +684,7 @@ export const transformFlightData = (
     ...(tracklog ?? []),
     ...(tracklog !== undefined &&
     tracklog.length > 0 &&
-    flight.flightRadarStatus === 'EN_ROUTE'
+    flightStatus === 'EN_ROUTE'
       ? [
           {
             timestamp: getTime(new Date()),
@@ -701,11 +699,9 @@ export const transformFlightData = (
       : []),
   ];
   const delayStatus =
-    flight.flightRadarStatus === 'CANCELED'
-      ? 'canceled'
-      : progress > 0
-        ? timestamps.arrivalDelayStatus
-        : timestamps.departureDelayStatus;
+    progress > 0
+      ? timestamps.arrivalDelayStatus
+      : timestamps.departureDelayStatus;
   const delayValue =
     progress > 0
       ? timestamps.arrivalDelayValue
