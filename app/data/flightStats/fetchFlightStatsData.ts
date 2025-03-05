@@ -91,19 +91,19 @@ export const fetchFlightStatsDataByFlightNumber = async ({
   flightNumber,
   isoDate,
 }: Omit<FetchFlightsByFlightNumberParams, 'customUrl'>): Promise<
-  FlightSearchDataFetchResult[] | null
+  FlightSearchDataFetchResult[]
 > => {
   const flightStatsData = await fetchData({
     airline,
     flightNumber,
     isoDate,
   });
-  if (flightStatsData === null) return null;
+  if (flightStatsData === null) return [];
   const otherFlights = flightStatsData.otherDays.find(({ date1, year }) => {
     const date = format(new Date(`${year}-${date1}`), DATE_FORMAT_ISO);
     return date === isoDate;
   })?.flights;
-  if (otherFlights === undefined) return null;
+  if (otherFlights === undefined) return [];
   const airportIds = [
     ...new Set(
       otherFlights.flatMap(({ departureAirport, arrivalAirport }) => [
