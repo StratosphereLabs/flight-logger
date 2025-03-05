@@ -24,6 +24,7 @@ import groupBy from 'lodash.groupby';
 import {
   updateFlightRegistrationData,
   updateFlightTimesData,
+  updateFlightTrackData,
   updateOnTimePerformanceData,
 } from '../commands';
 import { KTS_TO_MPH } from '../commands/constants';
@@ -205,6 +206,11 @@ export const updateFlightData = async (
     updatedTimesFlights = await updateFlightRegistrationData(
       updatedTimesFlights ?? flights,
     );
+  } catch (err) {
+    console.error(err);
+  }
+  try {
+    await updateFlightTrackData(updatedTimesFlights ?? flights);
   } catch (err) {
     console.error(err);
   }

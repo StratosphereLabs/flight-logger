@@ -4,6 +4,7 @@ import { fromUnixTime } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import type { FlightWithData } from '../commands/types';
+import { getGroupedFlightsKey } from '../commands/utils';
 import { TIMESTAMP_FORMAT_ISO } from '../constants';
 import { prisma } from '../db';
 
@@ -124,8 +125,6 @@ export const updateFlightWeatherReports = async (
   flights: FlightWithData[],
 ): Promise<void> => {
   const {
-    airline,
-    flightNumber,
     departureAirport,
     arrivalAirport,
     diversionAirportId,
@@ -158,7 +157,7 @@ export const updateFlightWeatherReports = async (
     return;
   }
   console.log(
-    `Updating weather data for ${airline?.iata}${flightNumber} ${departureAirport.iata}-${arrivalAirport.iata} at ${outTime.toISOString()}...`,
+    `Updating weather data for ${getGroupedFlightsKey(flights[0])}...`,
   );
   await prisma.$transaction(
     flights.map(({ id }) =>

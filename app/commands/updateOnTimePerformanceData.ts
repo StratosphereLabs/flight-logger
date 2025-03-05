@@ -3,6 +3,7 @@ import { isAfter, isBefore, sub } from 'date-fns';
 import { fetchOnTimePerformanceData } from '../data/flightStats';
 import { prisma } from '../db';
 import type { FlightWithData } from './types';
+import { getGroupedFlightsKey } from './utils';
 
 export const updateOnTimePerformanceData = async (
   flights: FlightWithData[],
@@ -15,7 +16,7 @@ export const updateOnTimePerformanceData = async (
     console.error('Airline and flight number are required.');
     return;
   }
-  const flightDataString = `${flights[0].airline.iata}${flights[0].flightNumber} ${flights[0].departureAirport.iata}-${flights[0].arrivalAirport.iata}`;
+  const flightDataString = getGroupedFlightsKey(flights[0]);
   console.log(`Updating On-Time Performance data for ${flightDataString}...`);
   const twoMonthsAgo = sub(new Date(), { months: 2 });
   const rating = await prisma.onTimePerformanceRating.findFirst({
