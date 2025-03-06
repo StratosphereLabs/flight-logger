@@ -1,16 +1,19 @@
 import { type Prisma } from '@prisma/client';
 import { Promise } from 'bluebird';
 import { load } from 'cheerio';
-import { parse } from 'csv-parse/sync';
+import { type Options, parse } from 'csv-parse/sync';
 
 import { DB_PROMISE_CONCURRENCY } from './constants';
 
-export const csvToJson = <Data>(csv: string, skipError?: boolean): Data[] => {
+export const csvToJson = <Data>(
+  csv: string,
+  options?: Partial<Options>,
+): Data[] => {
   /* eslint-disable-next-line @typescript-eslint/no-unsafe-call */
   return parse(csv, {
     columns: true,
-    skip_empty_lines: true,
-    skip_records_with_error: skipError,
+    skipEmptyLines: true,
+    ...options,
   }) as Data[];
 };
 
@@ -43,6 +46,7 @@ export const seedConcurrently = async <
 >(
   rows: DataType[],
   callback: (row: DataType) => Promise<unknown>,
+  logging: boolean = true,
 ): Promise<number> => {
   let count = 0;
   await Promise.map(
@@ -51,7 +55,7 @@ export const seedConcurrently = async <
       const result = await callback(row);
       if (result !== null) {
         count++;
-        if (count % 1000 === 0) {
+        if (logging && count % 1000 === 0) {
           console.log(`  ${count}`);
         }
       }
