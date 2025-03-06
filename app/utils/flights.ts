@@ -196,31 +196,30 @@ const FLIGHT_STATUS_MAP: Record<string, string> = {
 export const updateFlightData = async (
   flights: FlightWithData[],
 ): Promise<void> => {
-  let updatedTimesFlights: FlightWithData[] | null = null;
+  let updatedTimesFlights = flights;
   try {
-    updatedTimesFlights = await updateFlightTimesData(flights);
+    updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
   } catch (err) {
     console.error(err);
   }
   try {
-    updatedTimesFlights = await updateFlightRegistrationData(
-      updatedTimesFlights ?? flights,
-    );
+    updatedTimesFlights =
+      await updateFlightRegistrationData(updatedTimesFlights);
   } catch (err) {
     console.error(err);
   }
   try {
-    await updateFlightTrackData(updatedTimesFlights ?? flights);
+    await updateFlightTrackData(updatedTimesFlights);
   } catch (err) {
     console.error(err);
   }
   try {
-    await updateOnTimePerformanceData(updatedTimesFlights ?? flights);
+    await updateOnTimePerformanceData(updatedTimesFlights);
   } catch (err) {
     console.error(err);
   }
   try {
-    await updateFlightWeatherReports(updatedTimesFlights ?? flights);
+    await updateFlightWeatherReports(updatedTimesFlights);
   } catch (err) {
     console.error(err);
   }

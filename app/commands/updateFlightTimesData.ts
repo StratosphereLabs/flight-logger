@@ -128,10 +128,10 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
 
 export const updateFlightTimesData = async (
   flights: FlightWithData[],
-): Promise<FlightWithData[] | null> => {
+): Promise<FlightWithData[]> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
     console.error('Airline and flight number are required.');
-    return null;
+    return flights;
   }
   const isoDate = formatInTimeZone(
     flights[0].outTime,
@@ -157,7 +157,7 @@ export const updateFlightTimesData = async (
           flights[0],
         )}. Please try again later.`,
       );
-      return null;
+      return flights;
     }
     const updatedData = getFlightAwareUpdatedData(flightAwareResponse);
     const updatedFlights = await prisma.$transaction(
@@ -215,7 +215,7 @@ export const updateFlightTimesData = async (
           flights[0],
         )}. Please try again later.`,
       );
-      return null;
+      return flights;
     }
     const updatedData = await getFlightStatsUpdatedData(flightStatsResponse);
     const updatedFlights = await prisma.$transaction(
@@ -260,5 +260,5 @@ export const updateFlightTimesData = async (
     );
     return updatedFlights;
   }
-  return null;
+  return flights;
 };

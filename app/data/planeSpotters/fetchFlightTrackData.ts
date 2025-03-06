@@ -64,13 +64,11 @@ interface FlightTrackResult {
 export const fetchFlightTrackData = async (
   flightData: FlightWithData,
 ): Promise<TracklogItem[] | undefined> => {
+  const departureTime = flightData.outTimeActual ?? flightData.outTime;
   if (
     flightData.airframeId === null ||
-    isBefore(new Date(), flightData.outTimeActual ?? flightData.outTime) ||
-    isAfter(
-      sub(new Date(), { days: 1 }),
-      flightData.inTimeActual ?? flightData.inTime,
-    )
+    isBefore(new Date(), departureTime) ||
+    isAfter(sub(new Date(), { hours: 25 }), departureTime)
   )
     return undefined;
   const url = `https://planespotters.live/api/radar/trace/${flightData.airframeId}`;
