@@ -9,39 +9,47 @@ import { csvToJson, seedConcurrently } from './helpers';
 
 interface AirframeResponse {
   icao24: string;
-  registration: string;
-  manufacturericao: string;
-  manufacturername: string;
-  model: string;
-  typecode: string;
-  serialnumber: string;
-  linenumber: string;
-  icaoaircrafttype: string;
-  operator: string;
-  operatorcallsign: string;
-  operatoricao: string;
-  operatoriata: string;
-  owner: string;
-  testreg: string;
-  registered: string;
-  reguntil: string;
-  status: string;
-  built: string;
-  firstflightdate: string;
-  seatconfiguration: string;
-  engines: string;
-  modes: string;
-  adsb: string;
+  timestamp: string;
   acars: string;
-  notes: string;
+  adsb: string;
+  built: string;
   categoryDescription: string;
+  country: string;
+  engines: string;
+  firstFlightDate: string;
+  firstSeen: string;
+  icaoAircraftClass: string;
+  lineNumber: string;
+  manufacturerIcao: string;
+  manufacturerName: string;
+  model: string;
+  modes: string;
+  nextReg: string;
+  notes: string;
+  operator: string;
+  operatorCallsign: string;
+  operatorIata: string;
+  operatorIcao: string;
+  owner: string;
+  prevReg: string;
+  regUntil: string;
+  registered: string;
+  registration: string;
+  selCal: string;
+  serialNumber: string;
+  status: string;
+  typecode: string;
+  vdl: string;
 }
 
 const getDatabaseRows = (csv: string): AirframeResponse[] =>
-  csvToJson<AirframeResponse>(csv, true).filter(
+  csvToJson<AirframeResponse>(csv, {
+    skipRecordsWithError: true,
+    quote: "'",
+  }).filter(
     row =>
       row.registration !== '' &&
-      (row.manufacturericao !== '' || row.manufacturername !== ''),
+      (row.manufacturerIcao !== '' || row.manufacturerName !== ''),
   );
 
 const updateAirframe = async (
@@ -51,9 +59,9 @@ const updateAirframe = async (
     where: {
       code: {
         equals:
-          row.manufacturericao !== ''
-            ? row.manufacturericao
-            : row.manufacturername,
+          row.manufacturerIcao !== ''
+            ? row.manufacturerIcao
+            : row.manufacturerName,
         mode: 'insensitive',
       },
     },
@@ -61,8 +69,8 @@ const updateAirframe = async (
   if (manufacturer === null) return null;
   const airlines = await prisma.airline.findMany({
     where: {
-      iata: row.operatoriata !== '' ? row.operatoriata : undefined,
-      icao: row.operatoricao,
+      iata: row.operatorIata !== '' ? row.operatorIata : undefined,
+      icao: row.operatorIcao,
     },
   });
   const aircraftType =
@@ -89,9 +97,10 @@ const updateAirframe = async (
     },
     model: row.model !== '' ? row.model : null,
     typeCode: row.typecode !== '' ? row.typecode : null,
-    serialNumber: row.serialnumber !== '' ? row.serialnumber : null,
-    lineNumber: row.linenumber !== '' ? row.linenumber : null,
-    icaoAircraftType: row.icaoaircrafttype !== '' ? row.icaoaircrafttype : null,
+    serialNumber: row.serialNumber !== '' ? row.serialNumber : null,
+    lineNumber: row.lineNumber !== '' ? row.lineNumber : null,
+    icaoAircraftType:
+      row.icaoAircraftClass !== '' ? row.icaoAircraftClass : null,
     operator:
       airlines.length > 0
         ? {
@@ -101,11 +110,11 @@ const updateAirframe = async (
           }
         : undefined,
     owner: row.owner !== '' ? row.owner : null,
-    testReg: row.testreg !== '' ? row.testreg : null,
+    testReg: row.prevReg !== '' ? row.prevReg : null,
     registrationDate:
       row.registered !== '' ? new Date(row.registered).toISOString() : null,
     registrationExprDate:
-      row.reguntil !== '' ? new Date(row.reguntil).toISOString() : null,
+      row.regUntil !== '' ? new Date(row.regUntil).toISOString() : null,
     builtDate: row.built !== '' ? new Date(row.built).toISOString() : null,
     aircraftType:
       aircraftType !== null
