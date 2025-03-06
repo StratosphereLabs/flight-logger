@@ -31,10 +31,6 @@ export const getFlightAwareUpdatedData = (flight: FlightAwareDataResult) => {
       : flight.gateArrivalTimes.estimated !== null
         ? createNewDate(flight.gateArrivalTimes.estimated)
         : null;
-  const tracklog =
-    process.env.PLANESPOTTERS_FLIGHT_TRACKS !== 'true'
-      ? (flight.track as Prisma.JsonArray | undefined)
-      : undefined;
   return {
     duration: getDurationMinutes({
       start: outTime,
@@ -49,7 +45,7 @@ export const getFlightAwareUpdatedData = (flight: FlightAwareDataResult) => {
     departureTerminal: flight.origin.terminal ?? undefined,
     arrivalTerminal: flight.destination.terminal ?? undefined,
     arrivalBaggage: undefined,
-    tracklog,
+    tracklog: flight.track as Prisma.JsonArray | undefined,
     waypoints: flight.waypoints as Prisma.JsonArray | undefined,
     flightAwareLink: flight.permaLink ?? undefined,
   };
@@ -90,17 +86,6 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
           },
         })
       : undefined;
-  const tracklog =
-    process.env.PLANESPOTTERS_FLIGHT_TRACKS !== 'true'
-      ? (flight.positional.flexTrack?.positions
-          ?.reverse()
-          .map(({ date, lat, lon, altitudeFt, speedMph }) => ({
-            timestamp: Math.round(getTime(parseISO(date)) / 1000),
-            coord: [lon, lat],
-            alt: altitudeFt / 100,
-            gs: Math.round((10 * speedMph) / KTS_TO_MPH) / 10,
-          })) as Prisma.JsonArray | undefined)
-      : undefined;
   return {
     duration: getDurationMinutes({
       start: outTime,
@@ -122,7 +107,14 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
     airframeId: airframe !== undefined ? (airframe?.icao24 ?? null) : undefined,
     tailNumber,
     aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
-    tracklog,
+    tracklog: flight.positional.flexTrack?.positions
+      ?.reverse()
+      .map(({ date, lat, lon, altitudeFt, speedMph }) => ({
+        timestamp: Math.round(getTime(parseISO(date)) / 1000),
+        coord: [lon, lat],
+        alt: altitudeFt / 100,
+        gs: Math.round((10 * speedMph) / KTS_TO_MPH) / 10,
+      })) as Prisma.JsonArray | undefined,
   };
 };
 
@@ -160,13 +152,21 @@ export const updateFlightTimesData = async (
       return flights;
     }
     const updatedData = getFlightAwareUpdatedData(flightAwareResponse);
+    const airframeId = flights[0].airframeId;
     const updatedFlights = await prisma.$transaction(
       flights.map(({ id }) =>
         prisma.flight.update({
           where: {
             id,
           },
-          data: updatedData,
+          data: {
+            ...updatedData,
+            tracklog:
+              process.env.PLANESPOTTERS_FLIGHT_TRACKS !== 'true' ||
+              airframeId === null
+                ? updatedData.tracklog
+                : undefined,
+          },
           include: {
             airline: true,
             departureAirport: {
@@ -218,13 +218,21 @@ export const updateFlightTimesData = async (
       return flights;
     }
     const updatedData = await getFlightStatsUpdatedData(flightStatsResponse);
+    const airframeId = updatedData.airframeId ?? flights[0].airframeId;
     const updatedFlights = await prisma.$transaction(
       flights.map(({ id }) =>
         prisma.flight.update({
           where: {
             id,
           },
-          data: updatedData,
+          data: {
+            ...updatedData,
+            tracklog:
+              process.env.PLANESPOTTERS_FLIGHT_TRACKS !== 'true' ||
+              airframeId === null
+                ? updatedData.tracklog
+                : undefined,
+          },
           include: {
             airline: true,
             departureAirport: {
