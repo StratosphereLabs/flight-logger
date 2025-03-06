@@ -1,10 +1,15 @@
 import { type Airframe } from '@prisma/client';
 import axios from 'axios';
 import fs, { type ReadStream } from 'fs';
+import readline from 'readline';
 import { findBestMatch } from 'string-similarity';
 
 import { prisma } from '../prisma';
-import { AIRFRAMES_CSV_PATH, AIRFRAMES_CSV_URL } from './constants';
+import {
+  AIRFRAMES_CSV_PATH,
+  AIRFRAMES_CSV_URL,
+  READ_AIRFRAMES_CHUNK_SIZE,
+} from './constants';
 import { csvToJson, seedConcurrently } from './helpers';
 
 interface AirframeResponse {
@@ -55,6 +60,7 @@ const getDatabaseRows = (csv: string): AirframeResponse[] =>
 const updateAirframe = async (
   row: AirframeResponse,
 ): Promise<Airframe | null> => {
+  const airframeString = `${row.icao24} ${row.registration} (${row.typecode !== '' ? row.typecode : 'Unknown'})`;
   const manufacturer = await prisma.manufacturer.findFirst({
     where: {
       code: {
@@ -66,7 +72,10 @@ const updateAirframe = async (
       },
     },
   });
-  if (manufacturer === null) return null;
+  if (manufacturer === null) {
+    console.log(`Unable to find manufacturer for ${airframeString}`);
+    return null;
+  }
   const airlines = await prisma.airline.findMany({
     where: {
       iata: row.operatorIata !== '' ? row.operatorIata : undefined,
@@ -132,6 +141,7 @@ const updateAirframe = async (
     },
   });
   if (airframe === null) {
+    console.log(`Adding new airframe for ${airframeString}`);
     const newAirframe = await prisma.airframe.create({
       data: {
         icao24: row.icao24,
@@ -140,6 +150,7 @@ const updateAirframe = async (
     });
     await prisma.flight.updateMany({
       where: {
+        airframeId: null,
         tailNumber: newAirframe.registration,
       },
       data: {
@@ -148,6 +159,7 @@ const updateAirframe = async (
     });
     return newAirframe;
   }
+  console.log(`Updating airframe for ${airframeString}`);
   return await prisma.airframe.update({
     where: {
       icao24: row.icao24,
@@ -156,9 +168,18 @@ const updateAirframe = async (
   });
 };
 
+const processLines = async (
+  headerRow: string,
+  lines: string[],
+): Promise<void> => {
+  const rows = getDatabaseRows([headerRow, ...lines].join('\n'));
+  await seedConcurrently(rows, updateAirframe, false);
+};
+
 export const seedAirframes = async (): Promise<void> => {
   console.log('Seeding airframes...');
   try {
+    console.log('Fetching airframes data file...');
     const response = await axios.get<ReadStream>(AIRFRAMES_CSV_URL, {
       responseType: 'stream',
     });
@@ -168,11 +189,27 @@ export const seedAirframes = async (): Promise<void> => {
       writer.on('finish', resolve);
       writer.on('error', reject);
     });
-    const data = fs.readFileSync(AIRFRAMES_CSV_PATH).toString();
-    const rows = getDatabaseRows(data);
-    console.log(`Attempting to add ${rows.length} airframes`);
-    const count = await seedConcurrently(rows, updateAirframe);
-    console.log(`  Added ${count} airframes`);
+    const readStream = fs.createReadStream(AIRFRAMES_CSV_PATH);
+    const rl = readline.createInterface({
+      input: readStream,
+      crlfDelay: Infinity,
+    });
+    let linesBuffer: string[] = [];
+    let headerRow;
+    for await (const line of rl) {
+      if (headerRow === undefined) {
+        headerRow = line;
+        continue;
+      }
+      linesBuffer.push(line);
+      if (linesBuffer.length === READ_AIRFRAMES_CHUNK_SIZE) {
+        await processLines(headerRow, linesBuffer);
+        linesBuffer = [];
+      }
+    }
+    if (linesBuffer.length > 0 && headerRow !== undefined) {
+      await processLines(headerRow, linesBuffer);
+    }
   } catch (err) {
     console.error(err);
   }

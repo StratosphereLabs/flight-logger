@@ -2,6 +2,8 @@ export const LOGGING_INTERVAL = 1000;
 export const DB_PROMISE_CONCURRENCY = 10;
 export const WIKI_PROMISE_CONCURRENCY = 2;
 
+export const READ_AIRFRAMES_CHUNK_SIZE = 100;
+
 export const FREIGHTER_AIRCRAFT_REGEX = /F$|Freighter|sharklets/i;
 
 export const IATA_AIRLINE_CODE_REGEX = /[A-Z0-9]{2}/;

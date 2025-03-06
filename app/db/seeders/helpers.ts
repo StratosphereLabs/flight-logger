@@ -46,6 +46,7 @@ export const seedConcurrently = async <
 >(
   rows: DataType[],
   callback: (row: DataType) => Promise<unknown>,
+  logging: boolean = true,
 ): Promise<number> => {
   let count = 0;
   await Promise.map(
@@ -54,7 +55,7 @@ export const seedConcurrently = async <
       const result = await callback(row);
       if (result !== null) {
         count++;
-        if (count % 1000 === 0) {
+        if (logging && count % 1000 === 0) {
           console.log(`  ${count}`);
         }
       }
