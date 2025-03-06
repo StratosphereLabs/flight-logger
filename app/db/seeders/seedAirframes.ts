@@ -174,6 +174,7 @@ const processLines = async (
 ): Promise<void> => {
   const rows = getDatabaseRows([headerRow, ...lines].join('\n'));
   await seedConcurrently(rows, updateAirframe, false);
+  await prisma.$disconnect();
 };
 
 export const seedAirframes = async (): Promise<void> => {
