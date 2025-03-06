@@ -9,10 +9,10 @@ import { getGroupedFlightsKey } from './utils';
 
 export const updateFlightRegistrationData = async (
   flights: FlightWithData[],
-): Promise<FlightWithData[] | null> => {
+): Promise<FlightWithData[]> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
     console.error('Airline and flight number are required.');
-    return null;
+    return flights;
   }
   const isoDate = formatInTimeZone(
     flights[0].outTime,
@@ -33,7 +33,7 @@ export const updateFlightRegistrationData = async (
           flights[0],
         )}. Please try again later.`,
       );
-      return null;
+      return flights;
     }
     const airframe =
       flight.registration !== undefined && flight.registration !== null
@@ -114,5 +114,5 @@ export const updateFlightRegistrationData = async (
     await updateFlightChangeData(flights, updatedData);
     return updatedFlights;
   }
-  return null;
+  return flights;
 };
