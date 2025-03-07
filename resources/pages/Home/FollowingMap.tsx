@@ -308,6 +308,7 @@ export const FollowingMap = (): JSX.Element => {
                               ),
                               strokeWeight: isFocused ? 3 : 2,
                               zIndex: isCurrentFlight ? 20 : 10,
+                              geodesic: true,
                             }}
                             path={[
                               {
