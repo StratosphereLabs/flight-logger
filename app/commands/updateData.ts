@@ -5,9 +5,9 @@ import { scheduleJob } from 'node-schedule';
 
 import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
-import { updateFlightData } from '../utils';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
+import { updateFlightData } from './updateFlightData';
 import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (

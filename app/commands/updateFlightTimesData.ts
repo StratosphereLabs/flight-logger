@@ -133,7 +133,7 @@ export const updateFlightTimesData = async (
   flights: FlightWithData[],
 ): Promise<FlightWithData[]> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
-    console.error('Airline and flight number are required.');
+    console.log('Airline and flight number are required.');
     return flights;
   }
   const isoDate = formatInTimeZone(
@@ -145,7 +145,9 @@ export const updateFlightTimesData = async (
     add(new Date(), { days: 1 }),
     flights[0].outTime,
   );
+  const flightDataString = getGroupedFlightsKey(flights[0]);
   if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightaware') {
+    console.log(`Fetching flight times data for ${flightDataString}...`);
     const flightAwareResponse = await fetchFlightAwareData({
       airline: flights[0].airline,
       arrivalIata: flights[0].arrivalAirport.iata,
@@ -155,11 +157,7 @@ export const updateFlightTimesData = async (
       fetchTrackingData: isWithinOneDay,
     });
     if (flightAwareResponse === null) {
-      console.error(
-        `  Flight times data not found for ${getGroupedFlightsKey(
-          flights[0],
-        )}. Please try again later.`,
-      );
+      console.log(`  Flight times data not found for ${flightDataString}.`);
       return flights;
     }
     const updatedData = getFlightAwareUpdatedData(flightAwareResponse);
@@ -213,6 +211,7 @@ export const updateFlightTimesData = async (
     );
     return updatedFlights;
   } else if (process.env.FLIGHT_TIMES_DATASOURCE === 'flightstats') {
+    console.log(`Fetching flight times data for ${flightDataString}...`);
     const flightStatsResponse = await fetchFlightStatsData({
       airline: flights[0].airline,
       arrivalIata: flights[0].arrivalAirport.iata,
@@ -221,11 +220,7 @@ export const updateFlightTimesData = async (
       isoDate,
     });
     if (flightStatsResponse === null) {
-      console.error(
-        `  Flight times data not found for ${getGroupedFlightsKey(
-          flights[0],
-        )}. Please try again later.`,
-      );
+      console.log(`  Flight times data not found for ${flightDataString}.`);
       return flights;
     }
     const updatedData = await getFlightStatsUpdatedData(flightStatsResponse);

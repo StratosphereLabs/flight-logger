@@ -5,6 +5,7 @@ import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
+import { updateFlightData } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
 import { fetchFlightStatsDataByFlightNumber } from '../data/flightStats';
@@ -13,12 +14,7 @@ import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import { addFlightFromDataSchema, searchFlightDataSchema } from '../schemas';
 import { procedure, router } from '../trpc';
-import {
-  getDurationMinutes,
-  getFlightTimestamps,
-  getMidpoint,
-  updateFlightData,
-} from '../utils';
+import { getDurationMinutes, getFlightTimestamps, getMidpoint } from '../utils';
 
 export const flightDataRouter = router({
   fetchFlightsByFlightNumber: procedure
