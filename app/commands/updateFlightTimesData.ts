@@ -162,7 +162,7 @@ export const updateFlightTimesData = async (
           data: {
             ...updatedData,
             tracklog:
-              process.env.PLANESPOTTERS_FLIGHT_TRACKS !== 'true' ||
+              process.env.FLIGHT_TRACKLOG_DATASOURCE === 'flightaware' ||
               airframeId === null
                 ? updatedData.tracklog
                 : undefined,
@@ -228,7 +228,7 @@ export const updateFlightTimesData = async (
           data: {
             ...updatedData,
             tracklog:
-              process.env.PLANESPOTTERS_FLIGHT_TRACKS !== 'true' ||
+              process.env.FLIGHT_TRACKLOG_DATASOURCE === 'flightstats' ||
               airframeId === null
                 ? updatedData.tracklog
                 : undefined,
