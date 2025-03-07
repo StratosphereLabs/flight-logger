@@ -5,9 +5,11 @@ import { scheduleJob } from 'node-schedule';
 
 import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
-import { updateFlightData } from '../utils';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
+import { updateFlightData } from './updateFlightData';
+import { updateFlightRegistrationData } from './updateFlightRegistrationData';
+import { updateFlightTrackData } from './updateFlightTrackData';
 import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (
@@ -23,6 +25,42 @@ const processFlightUpdate = async (
     async ([key, flights]) => {
       console.log(`Updating flight ${key}...`);
       await updateFlightData(flights);
+    },
+    {
+      concurrency: UPDATE_CONCURRENCY,
+    },
+  );
+  console.log(
+    `  ${flightsToUpdate.length} flight${
+      flightsToUpdate.length > 1 ? 's' : ''
+    } updated successfully.`,
+  );
+};
+
+const processFlightTracklogUpdate = async (
+  flightsToUpdate: FlightWithData[],
+): Promise<void> => {
+  if (flightsToUpdate.length === 0) {
+    console.log('No flights to update.');
+    return;
+  }
+  const groupedFlights = groupBy(flightsToUpdate, getGroupedFlightsKey);
+  await Promise.map(
+    Object.entries(groupedFlights),
+    async ([key, flights]) => {
+      console.log(`Updating flight ${key}...`);
+      let updatedTimesFlights = flights;
+      try {
+        updatedTimesFlights =
+          await updateFlightRegistrationData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightTrackData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
     },
     {
       concurrency: UPDATE_CONCURRENCY,
@@ -259,9 +297,94 @@ const updateFlightsEvery5 = async (): Promise<void> => {
   }
 };
 
+const updateFlightsEveryMinute = async (): Promise<void> => {
+  try {
+    const flightsToUpdate = await prisma.flight.findMany({
+      where: {
+        OR: [
+          {
+            outTimeActual: {
+              gt: sub(new Date(), { minutes: 45 }),
+              lte: new Date(),
+            },
+          },
+          {
+            outTime: {
+              gt: sub(new Date(), { minutes: 45 }),
+              lte: new Date(),
+            },
+          },
+          {
+            inTimeActual: {
+              gt: new Date(),
+              lte: add(new Date(), { minutes: 45 }),
+            },
+          },
+          {
+            inTime: {
+              gt: new Date(),
+              lte: add(new Date(), { minutes: 45 }),
+            },
+          },
+        ],
+        airline: {
+          isNot: null,
+        },
+        flightNumber: {
+          not: null,
+        },
+      },
+      include: {
+        airline: true,
+        departureAirport: {
+          select: {
+            id: true,
+            iata: true,
+            timeZone: true,
+          },
+        },
+        arrivalAirport: {
+          select: {
+            id: true,
+            iata: true,
+            timeZone: true,
+          },
+        },
+        diversionAirport: {
+          select: {
+            id: true,
+            iata: true,
+            timeZone: true,
+          },
+        },
+      },
+    });
+    const filteredFlights = flightsToUpdate.filter(
+      ({ outTime, outTimeActual, inTime, inTimeActual }) => {
+        const departureTime = outTimeActual ?? outTime;
+        const arrivalTime = inTimeActual ?? inTime;
+        return (
+          isAfter(new Date(), departureTime) &&
+          isBefore(new Date(), add(departureTime, { minutes: 45 })) &&
+          isAfter(new Date(), sub(arrivalTime, { minutes: 45 })) &&
+          isBefore(new Date(), arrivalTime)
+        );
+      },
+    );
+    await processFlightTracklogUpdate(filteredFlights);
+    await prisma.$disconnect();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 (() => {
   scheduleJob('0 * * * *', updateFlightsHourly);
   scheduleJob('15,30,45 * * * *', updateFlightsEvery15);
   scheduleJob('5,10,20,25,35,40,50,55 * * * *', updateFlightsEvery5);
+  scheduleJob(
+    '1,2,3,4,6,7,8,9,11,12,13,14,16,17,18,19,21,22,23,24,26,27,28,29,31,32,33,34,36,37,38,39,41,42,43,44,46,47,48,49,51,52,53,54,56,57,58,59 * * * *',
+    updateFlightsEveryMinute,
+  );
   scheduleJob('0 0 1 * *', seedDatabase);
 })();

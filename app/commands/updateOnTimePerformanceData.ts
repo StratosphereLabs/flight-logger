@@ -13,11 +13,10 @@ export const updateOnTimePerformanceData = async (
     flights[0].airline?.iata === undefined ||
     flights[0].flightNumber === null
   ) {
-    console.error('Airline and flight number are required.');
+    console.log('Airline and flight number are required.');
     return;
   }
   const flightDataString = getGroupedFlightsKey(flights[0]);
-  console.log(`Updating On-Time Performance data for ${flightDataString}...`);
   const twoMonthsAgo = sub(new Date(), { months: 2 });
   const rating = await prisma.onTimePerformanceRating.findFirst({
     where: {
@@ -36,10 +35,11 @@ export const updateOnTimePerformanceData = async (
     isAfter(rating.validTo, twoMonthsAgo)
   ) {
     console.log(
-      `  On-Time Performance data already found for ${flightDataString}.`,
+      `On-time performance data already found for ${flightDataString}.`,
     );
     return;
   }
+  console.log(`Fetching on-time performance data for ${flightDataString}...`);
   const onTimePerformanceData = await fetchOnTimePerformanceData({
     airlineIata: flights[0].airline.flightStatsCode ?? flights[0].airline.iata,
     flightNumber: flights[0].flightNumber,
@@ -49,12 +49,11 @@ export const updateOnTimePerformanceData = async (
     onTimePerformanceData === null ||
     flights[0].arrivalAirportId !== onTimePerformanceData.arrivalAirport.icao
   ) {
-    console.error(
-      `  On-Time Performance data not found for ${flightDataString}. Please try again later.`,
+    console.log(
+      `  On-time performance data not found for ${flightDataString}.`,
     );
     return;
   }
-  console.log(`  On-Time Performance data found for ${flightDataString}.`);
   await prisma.onTimePerformanceRating.create({
     data: {
       airline: {

@@ -11,7 +11,7 @@ export const updateFlightRegistrationData = async (
   flights: FlightWithData[],
 ): Promise<FlightWithData[]> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
-    console.error('Airline and flight number are required.');
+    console.log('Airline and flight number are required.');
     return flights;
   }
   const isoDate = formatInTimeZone(
@@ -19,7 +19,9 @@ export const updateFlightRegistrationData = async (
     flights[0].departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
+  const flightDataString = getGroupedFlightsKey(flights[0]);
   if (process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightradar') {
+    console.log(`Fetching flight registration data for ${flightDataString}...`);
     const flight = await fetchFlightRadarData({
       airline: flights[0].airline,
       flightNumber: flights[0].flightNumber,
@@ -28,11 +30,7 @@ export const updateFlightRegistrationData = async (
       isoDate,
     });
     if (flight === null) {
-      console.error(
-        `  Unable to fetch registration data for ${getGroupedFlightsKey(
-          flights[0],
-        )}. Please try again later.`,
-      );
+      console.log(`  Registration data not found for ${flightDataString}.`);
       return flights;
     }
     const airframe =

@@ -4,7 +4,7 @@ import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { updateFlightChangeData } from '../commands';
+import { updateFlightChangeData, updateFlightData } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_YEAR } from '../constants';
 import { prisma, updateTripTimes } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
@@ -41,7 +41,6 @@ import {
   getWeatherReportCloudCoverData,
   parsePaginationRequest,
   transformFlightData,
-  updateFlightData,
 } from '../utils';
 
 export const flightsRouter = router({
