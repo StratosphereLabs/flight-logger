@@ -238,6 +238,7 @@ export const GoogleMap = ({
                 ),
                 strokeWeight: 3,
                 zIndex: 20,
+                geodesic: true,
               }}
               path={[
                 { lat: prevItem.coord[1], lng: prevItem.coord[0] },

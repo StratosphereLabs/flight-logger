@@ -60,7 +60,9 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
       : null;
   const offTime = add(outTime, { minutes: 10 });
   const offTimeActual =
-    outTimeActual !== null ? add(outTimeActual, { minutes: 10 }) : null;
+    process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
+      ? null
+      : undefined;
   const inTime = new Date(flight.schedule.scheduledArrivalUTC);
   const inTimeActual =
     flight.schedule.estimatedActualArrivalUTC !== null
@@ -68,18 +70,27 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
       : null;
   const onTime = sub(inTime, { minutes: 10 });
   const onTimeActual =
-    inTimeActual !== null ? sub(inTimeActual, { minutes: 10 }) : null;
-  const tailNumber = flight.positional.flexTrack?.tailNumber;
+    process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
+      ? null
+      : undefined;
+  const tailNumber =
+    process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
+      ? flight.positional.flexTrack?.tailNumber
+      : undefined;
   const airframe =
-    tailNumber !== undefined && tailNumber !== null
-      ? await prisma.airframe.findFirst({
-          where: {
-            registration: tailNumber,
-          },
-        })
-      : null;
+    process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
+      ? tailNumber !== undefined && tailNumber !== null
+        ? await prisma.airframe.findFirst({
+            where: {
+              registration: tailNumber,
+            },
+          })
+        : null
+      : undefined;
   const aircraftType =
-    airframe?.aircraftTypeId === null || airframe?.aircraftTypeId === undefined
+    process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats' &&
+    (airframe?.aircraftTypeId === null ||
+      airframe?.aircraftTypeId === undefined)
       ? await prisma.aircraftType.findFirst({
           where: {
             iata: flight.additionalFlightInfo.equipment.iata,
