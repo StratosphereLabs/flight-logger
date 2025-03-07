@@ -19,7 +19,7 @@ export const updateFlightRegistrationData = async (
     flights[0].departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
-  if (process.env.FLIGHT_TRACKING_DATASOURCE === 'flightradar') {
+  if (process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightradar') {
     const flight = await fetchFlightRadarData({
       airline: flights[0].airline,
       flightNumber: flights[0].flightNumber,
