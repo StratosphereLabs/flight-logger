@@ -69,7 +69,7 @@ export const FollowingMap = (): JSX.Element => {
   const { data, isLoading } = trpc.flights.getFollowingFlights.useQuery(
     undefined,
     {
-      refetchInterval: 60000,
+      refetchInterval: 10000,
       select: flightResult => {
         const flights = flightResult.flights.map(
           getFollowingFlightData({ hoverAirportId, selectedAirportId }),
