@@ -359,33 +359,33 @@ const updateFlightsEveryMinute = async (): Promise<void> => {
   }
 };
 
-const updateFlightsEvery30Seconds = async (): Promise<void> => {
+const updateFlightsEvery15Seconds = async (): Promise<void> => {
   try {
     const flightsToUpdate = await prisma.flight.findMany({
       where: {
         OR: [
           {
-            outTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
+            offTimeActual: {
+              gt: sub(new Date(), { minutes: 30 }),
               lte: new Date(),
             },
           },
           {
-            outTime: {
-              gt: sub(new Date(), { hours: 1 }),
+            offTime: {
+              gt: sub(new Date(), { minutes: 30 }),
               lte: new Date(),
             },
           },
           {
-            inTimeActual: {
+            onTimeActual: {
               gt: new Date(),
-              lte: add(new Date(), { hours: 1 }),
+              lte: add(new Date(), { minutes: 30 }),
             },
           },
           {
-            inTime: {
+            onTime: {
               gt: new Date(),
-              lte: add(new Date(), { hours: 1 }),
+              lte: add(new Date(), { minutes: 30 }),
             },
           },
         ],
@@ -422,14 +422,14 @@ const updateFlightsEvery30Seconds = async (): Promise<void> => {
       },
     });
     const filteredFlights = flightsToUpdate.filter(
-      ({ outTime, outTimeActual, inTime, inTimeActual }) => {
-        const departureTime = outTimeActual ?? outTime;
-        const arrivalTime = inTimeActual ?? inTime;
+      ({ offTime, offTimeActual, outTime, onTime, onTimeActual, inTime }) => {
+        const takeoffTime = offTimeActual ?? offTime ?? outTime;
+        const landingTime = onTimeActual ?? onTime ?? inTime;
         return (
-          (isAfter(new Date(), departureTime) &&
-            isBefore(new Date(), add(departureTime, { hours: 1 }))) ||
-          (isAfter(new Date(), sub(arrivalTime, { hours: 1 })) &&
-            isBefore(new Date(), arrivalTime))
+          (isAfter(new Date(), takeoffTime) &&
+            isBefore(new Date(), add(takeoffTime, { minutes: 30 }))) ||
+          (isAfter(new Date(), sub(landingTime, { minutes: 30 })) &&
+            isBefore(new Date(), landingTime))
         );
       },
     );
@@ -454,6 +454,6 @@ const updateFlightsEvery30Seconds = async (): Promise<void> => {
     '1,2,3,4,6,7,8,9,11,12,13,14,16,17,18,19,21,22,23,24,26,27,28,29,31,32,33,34,36,37,38,39,41,42,43,44,46,47,48,49,51,52,53,54,56,57,58,59 * * * *',
     updateFlightsEveryMinute,
   );
-  scheduleJob('30 * * * * *', updateFlightsEvery30Seconds);
+  scheduleJob('15,30,45 * * * * *', updateFlightsEvery15Seconds);
   scheduleJob('0 0 1 * *', seedDatabase);
 })();

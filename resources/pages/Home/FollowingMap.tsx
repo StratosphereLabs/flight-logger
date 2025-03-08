@@ -346,7 +346,7 @@ export const FollowingMap = (): JSX.Element => {
                           }
                         />
                       ) : null}
-                      {flightState === 'CURRENT' ? (
+                      {flightStatus === 'EN_ROUTE' ? (
                         <OverlayViewF
                           key={id}
                           position={{
