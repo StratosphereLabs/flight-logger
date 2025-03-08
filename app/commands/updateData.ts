@@ -191,25 +191,25 @@ const updateFlightsEvery5 = async (): Promise<void> => {
         OR: [
           {
             outTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
+              gt: sub(new Date(), { hours: 2 }),
               lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             outTime: {
-              gt: sub(new Date(), { hours: 1 }),
+              gt: sub(new Date(), { hours: 2 }),
               lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             inTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
+              gt: sub(new Date(), { hours: 2 }),
               lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             inTime: {
-              gt: sub(new Date(), { hours: 1 }),
+              gt: sub(new Date(), { hours: 2 }),
               lte: add(new Date(), { hours: 2 }),
             },
           },
@@ -247,11 +247,14 @@ const updateFlightsEvery5 = async (): Promise<void> => {
       },
     });
     const filteredFlights = flightsToUpdate.filter(
-      ({ inTime, inTimeActual }) => {
+      ({ outTime, outTimeActual, inTime, inTimeActual }) => {
+        const departureTime = outTimeActual ?? outTime;
         const arrivalTime = inTimeActual ?? inTime;
         return (
-          isAfter(arrivalTime, sub(new Date(), { minutes: 30 })) &&
-          isBefore(arrivalTime, add(new Date(), { minutes: 90 }))
+          (isAfter(new Date(), sub(departureTime, { hours: 2 })) &&
+            isBefore(new Date(), add(departureTime, { hours: 2 }))) ||
+          (isAfter(new Date(), sub(arrivalTime, { hours: 2 })) &&
+            isBefore(new Date(), add(arrivalTime, { hours: 2 })))
         );
       },
     );
