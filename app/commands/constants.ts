@@ -103,16 +103,16 @@ export const FLIGHT_CHANGE_GETTER_MAP: Partial<
     oldValue: oldFlight.outTimeActual?.toISOString() ?? null,
     newValue: updatedData.outTimeActual?.toISOString() ?? null,
   }),
-  offTimeActual: (oldFlight, updatedData) => ({
-    field: 'OFF_TIME_ACTUAL',
-    oldValue: oldFlight.offTimeActual?.toISOString() ?? null,
-    newValue: updatedData.offTimeActual?.toISOString() ?? null,
-  }),
-  onTimeActual: (oldFlight, updatedData) => ({
-    field: 'ON_TIME_ACTUAL',
-    oldValue: oldFlight.onTimeActual?.toISOString() ?? null,
-    newValue: updatedData.onTimeActual?.toISOString() ?? null,
-  }),
+  // offTimeActual: (oldFlight, updatedData) => ({
+  //   field: 'OFF_TIME_ACTUAL',
+  //   oldValue: oldFlight.offTimeActual?.toISOString() ?? null,
+  //   newValue: updatedData.offTimeActual?.toISOString() ?? null,
+  // }),
+  // onTimeActual: (oldFlight, updatedData) => ({
+  //   field: 'ON_TIME_ACTUAL',
+  //   oldValue: oldFlight.onTimeActual?.toISOString() ?? null,
+  //   newValue: updatedData.onTimeActual?.toISOString() ?? null,
+  // }),
   inTimeActual: (oldFlight, updatedData) => ({
     field: 'IN_TIME_ACTUAL',
     oldValue: oldFlight.inTimeActual?.toISOString() ?? null,

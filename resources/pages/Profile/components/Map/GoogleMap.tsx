@@ -270,11 +270,7 @@ export const GoogleMap = ({
           },
         )}
       />
-      {mapMode === 'routes' &&
-      currentFlight?.flightStatus !== undefined &&
-      ['DEPARTED_TAXIING', 'EN_ROUTE', 'ARRIVED_TAXIING'].includes(
-        currentFlight.flightStatus,
-      ) ? (
+      {mapMode === 'routes' && currentFlight?.flightStatus === 'EN_ROUTE' ? (
         <OverlayViewF
           position={{
             lat: currentFlight.lat,
