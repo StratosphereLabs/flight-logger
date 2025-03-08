@@ -365,8 +365,8 @@ const updateFlightsEveryMinute = async (): Promise<void> => {
         const arrivalTime = inTimeActual ?? inTime;
         return (
           isAfter(new Date(), departureTime) &&
-          isBefore(new Date(), add(departureTime, { minutes: 45 })) &&
-          isAfter(new Date(), sub(arrivalTime, { minutes: 45 })) &&
+          isBefore(new Date(), add(departureTime, { hours: 1 })) &&
+          isAfter(new Date(), sub(arrivalTime, { hours: 1 })) &&
           isBefore(new Date(), arrivalTime)
         );
       },
