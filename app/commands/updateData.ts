@@ -304,26 +304,26 @@ const updateFlightsEveryMinute = async (): Promise<void> => {
         OR: [
           {
             outTimeActual: {
-              gt: sub(new Date(), { minutes: 45 }),
+              gt: sub(new Date(), { hours: 1 }),
               lte: new Date(),
             },
           },
           {
             outTime: {
-              gt: sub(new Date(), { minutes: 45 }),
+              gt: sub(new Date(), { hours: 1 }),
               lte: new Date(),
             },
           },
           {
             inTimeActual: {
               gt: new Date(),
-              lte: add(new Date(), { minutes: 45 }),
+              lte: add(new Date(), { hours: 1 }),
             },
           },
           {
             inTime: {
               gt: new Date(),
-              lte: add(new Date(), { minutes: 45 }),
+              lte: add(new Date(), { hours: 1 }),
             },
           },
         ],
