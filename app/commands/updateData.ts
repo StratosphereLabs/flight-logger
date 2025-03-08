@@ -14,6 +14,7 @@ import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (
   flightsToUpdate: FlightWithData[],
+  updateFn: (flights: FlightWithData[]) => Promise<void>,
 ): Promise<void> => {
   if (flightsToUpdate.length === 0) {
     console.log('No flights to update.');
@@ -24,43 +25,7 @@ const processFlightUpdate = async (
     Object.entries(groupedFlights),
     async ([key, flights]) => {
       console.log(`Updating flight ${key}...`);
-      await updateFlightData(flights);
-    },
-    {
-      concurrency: UPDATE_CONCURRENCY,
-    },
-  );
-  console.log(
-    `  ${flightsToUpdate.length} flight${
-      flightsToUpdate.length > 1 ? 's' : ''
-    } updated successfully.`,
-  );
-};
-
-const processFlightTracklogUpdate = async (
-  flightsToUpdate: FlightWithData[],
-): Promise<void> => {
-  if (flightsToUpdate.length === 0) {
-    console.log('No flights to update.');
-    return;
-  }
-  const groupedFlights = groupBy(flightsToUpdate, getGroupedFlightsKey);
-  await Promise.map(
-    Object.entries(groupedFlights),
-    async ([key, flights]) => {
-      console.log(`Updating flight ${key}...`);
-      let updatedTimesFlights = flights;
-      try {
-        updatedTimesFlights =
-          await updateFlightRegistrationData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightTrackData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateFn(flights);
     },
     {
       concurrency: UPDATE_CONCURRENCY,
@@ -139,7 +104,7 @@ const updateFlightsHourly = async (): Promise<void> => {
         },
       },
     });
-    await processFlightUpdate(flightsToUpdate);
+    await processFlightUpdate(flightsToUpdate, updateFlightData);
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);
@@ -212,7 +177,7 @@ const updateFlightsEvery15 = async (): Promise<void> => {
         },
       },
     });
-    await processFlightUpdate(flightsToUpdate);
+    await processFlightUpdate(flightsToUpdate, updateFlightData);
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);
@@ -290,7 +255,7 @@ const updateFlightsEvery5 = async (): Promise<void> => {
         );
       },
     );
-    await processFlightUpdate(filteredFlights);
+    await processFlightUpdate(filteredFlights, updateFlightData);
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);
@@ -371,7 +336,107 @@ const updateFlightsEveryMinute = async (): Promise<void> => {
         );
       },
     );
-    await processFlightTracklogUpdate(filteredFlights);
+    await processFlightUpdate(filteredFlights, async flights => {
+      let updatedTimesFlights = flights;
+      try {
+        updatedTimesFlights =
+          await updateFlightRegistrationData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightTrackData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+    });
+    await prisma.$disconnect();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const updateFlightsEvery30Seconds = async (): Promise<void> => {
+  try {
+    const flightsToUpdate = await prisma.flight.findMany({
+      where: {
+        OR: [
+          {
+            outTimeActual: {
+              gt: sub(new Date(), { hours: 1 }),
+              lte: new Date(),
+            },
+          },
+          {
+            outTime: {
+              gt: sub(new Date(), { hours: 1 }),
+              lte: new Date(),
+            },
+          },
+          {
+            inTimeActual: {
+              gt: new Date(),
+              lte: add(new Date(), { hours: 1 }),
+            },
+          },
+          {
+            inTime: {
+              gt: new Date(),
+              lte: add(new Date(), { hours: 1 }),
+            },
+          },
+        ],
+        airline: {
+          isNot: null,
+        },
+        flightNumber: {
+          not: null,
+        },
+      },
+      include: {
+        airline: true,
+        departureAirport: {
+          select: {
+            id: true,
+            iata: true,
+            timeZone: true,
+          },
+        },
+        arrivalAirport: {
+          select: {
+            id: true,
+            iata: true,
+            timeZone: true,
+          },
+        },
+        diversionAirport: {
+          select: {
+            id: true,
+            iata: true,
+            timeZone: true,
+          },
+        },
+      },
+    });
+    const filteredFlights = flightsToUpdate.filter(
+      ({ outTime, outTimeActual, inTime, inTimeActual }) => {
+        const departureTime = outTimeActual ?? outTime;
+        const arrivalTime = inTimeActual ?? inTime;
+        return (
+          (isAfter(new Date(), departureTime) &&
+            isBefore(new Date(), add(departureTime, { hours: 1 }))) ||
+          (isAfter(new Date(), sub(arrivalTime, { hours: 1 })) &&
+            isBefore(new Date(), arrivalTime))
+        );
+      },
+    );
+    await processFlightUpdate(filteredFlights, async flights => {
+      try {
+        await updateFlightTrackData(flights);
+      } catch (err) {
+        console.error(err);
+      }
+    });
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);
@@ -386,5 +451,6 @@ const updateFlightsEveryMinute = async (): Promise<void> => {
     '1,2,3,4,6,7,8,9,11,12,13,14,16,17,18,19,21,22,23,24,26,27,28,29,31,32,33,34,36,37,38,39,41,42,43,44,46,47,48,49,51,52,53,54,56,57,58,59 * * * *',
     updateFlightsEveryMinute,
   );
+  scheduleJob('* * * * * sleep 30', updateFlightsEvery30Seconds);
   scheduleJob('0 0 1 * *', seedDatabase);
 })();
