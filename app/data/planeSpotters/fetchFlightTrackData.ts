@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { isAfter, isBefore, sub } from 'date-fns';
+import { add, isAfter, isBefore, sub } from 'date-fns';
 
 import type { FlightWithData } from '../../commands/types';
 import { HEADERS } from '../constants';
@@ -88,9 +88,15 @@ export const fetchFlightTrackData = async (
     (acc, [elapsedTime, ...item]) => {
       const currentTimestamp = data.full.timestamp + elapsedTime;
       const currentDate = new Date(1000 * currentTimestamp);
+      const departureTime =
+        flightData.offTimeActual ??
+        flightData.outTimeActual ??
+        flightData.outTime;
+      const arrivalTime =
+        flightData.onTimeActual ?? flightData.inTimeActual ?? flightData.inTime;
       return (item[7] !== null || item[2] === 'ground') &&
-        isAfter(currentDate, flightData.outTimeActual ?? flightData.outTime) &&
-        isBefore(currentDate, flightData.inTimeActual ?? flightData.inTime)
+        isAfter(currentDate, sub(departureTime, { minutes: 5 })) &&
+        isBefore(currentDate, add(arrivalTime, { minutes: 5 }))
         ? [[currentTimestamp, ...item], ...acc]
         : acc;
     },
@@ -100,9 +106,15 @@ export const fetchFlightTrackData = async (
     (acc, [elapsedTime, ...item]) => {
       const currentTimestamp = data.recent.timestamp + elapsedTime;
       const currentDate = new Date(1000 * currentTimestamp);
+      const departureTime =
+        flightData.offTimeActual ??
+        flightData.outTimeActual ??
+        flightData.outTime;
+      const arrivalTime =
+        flightData.onTimeActual ?? flightData.inTimeActual ?? flightData.inTime;
       return (item[7] !== null || item[2] === 'ground') &&
-        isAfter(currentDate, flightData.outTimeActual ?? flightData.outTime) &&
-        isBefore(currentDate, flightData.inTimeActual ?? flightData.inTime) &&
+        isAfter(currentDate, sub(departureTime, { minutes: 5 })) &&
+        isBefore(currentDate, add(arrivalTime, { minutes: 5 })) &&
         data.recent.timestamp + elapsedTime > lastFullTimestamp
         ? [[currentTimestamp, ...item], ...acc]
         : acc;
