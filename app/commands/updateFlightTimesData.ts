@@ -9,7 +9,7 @@ import { fetchFlightStatsData } from '../data/flightStats';
 import type { FlightStatsFlight } from '../data/flightStats/types';
 import { createNewDate } from '../data/utils';
 import { prisma, updateTripTimes } from '../db';
-import { getDurationMinutes } from '../utils';
+import { getAirframe, getDurationMinutes } from '../utils';
 import { KTS_TO_MPH } from './constants';
 import type { FlightWithData } from './types';
 import { updateFlightChangeData } from './updateFlightChangeData';
@@ -51,8 +51,11 @@ export const getFlightAwareUpdatedData = (flight: FlightAwareDataResult) => {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
+export const getFlightStatsUpdatedData = async (
+  flight: FlightStatsFlight,
+  prevTailNumber: string | null,
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+) => {
   const outTime = new Date(flight.schedule.scheduledDepartureUTC);
   const outTimeActual =
     flight.schedule.estimatedActualDepartureUTC !== null
@@ -80,11 +83,9 @@ export const getFlightStatsUpdatedData = async (flight: FlightStatsFlight) => {
   const airframe =
     process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
       ? tailNumber !== undefined && tailNumber !== null
-        ? await prisma.airframe.findFirst({
-            where: {
-              registration: tailNumber,
-            },
-          })
+        ? tailNumber !== prevTailNumber
+          ? await getAirframe(tailNumber)
+          : undefined
         : null
       : undefined;
   const aircraftType =
@@ -223,7 +224,10 @@ export const updateFlightTimesData = async (
       console.log(`  Flight times data not found for ${flightDataString}.`);
       return flights;
     }
-    const updatedData = await getFlightStatsUpdatedData(flightStatsResponse);
+    const updatedData = await getFlightStatsUpdatedData(
+      flightStatsResponse,
+      flights[0].tailNumber,
+    );
     const airframeId = updatedData.airframeId ?? flights[0].airframeId;
     const updatedFlights = await prisma.$transaction(
       flights.map(({ id }) =>

@@ -29,6 +29,7 @@ import {
   filterCustomDates,
   flightIncludeObj,
   getActiveFlight,
+  getAirframe,
   getCenterpoint,
   getDurationString,
   getFlightTimes,
@@ -603,6 +604,11 @@ export const flightsRouter = router({
           message: 'Airport not found.',
         });
       }
+      const airframe =
+        input.airframe?.type === 'custom'
+          ? await getAirframe(input.airframe.registration)
+          : null;
+      const airframeId = airframe?.icao24 ?? input.airframe?.icao24;
       const { outTime, inTime, duration } = getFlightTimes({
         departureAirport,
         arrivalAirport,
@@ -652,10 +658,10 @@ export const flightsRouter = router({
                 }
               : undefined,
           airframe:
-            input.airframe?.type === 'existing'
+            airframeId !== undefined
               ? {
                   connect: {
-                    icao24: input.airframe.icao24,
+                    icao24: airframeId,
                   },
                 }
               : undefined,
@@ -714,6 +720,12 @@ export const flightsRouter = router({
           message: 'Airport not found.',
         });
       }
+      const airframe =
+        input.airframe?.type === 'custom' &&
+        input.airframe.registration !== flight.tailNumber
+          ? await getAirframe(input.airframe.registration)
+          : null;
+      const airframeId = airframe?.icao24 ?? input.airframe?.icao24;
       const { outTime, inTime, duration } = getFlightTimes({
         departureAirport,
         arrivalAirport,
@@ -788,15 +800,13 @@ export const flightsRouter = router({
           ...updatedData,
           airframe: {
             connect:
-              !flightDataChanged && input.airframe?.type === 'existing'
+              !flightDataChanged && airframeId !== undefined
                 ? {
-                    icao24: input.airframe.icao24,
+                    icao24: airframeId,
                   }
                 : undefined,
             disconnect:
-              flightDataChanged || input.airframe?.type !== 'existing'
-                ? true
-                : undefined,
+              flightDataChanged || airframeId === undefined ? true : undefined,
           },
           tailNumber:
             !flightDataChanged && input.airframe !== null
