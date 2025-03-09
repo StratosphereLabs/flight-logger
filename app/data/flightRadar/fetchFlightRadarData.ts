@@ -24,6 +24,18 @@ export interface FetchFlightRadarDataParams {
   isoDate: string;
 }
 
+export type FlightRadarAircraftData = Partial<{
+  aircraft: string;
+  typeCode: string;
+  icao24: string;
+  airline: string;
+  airlineIata: string;
+  airlineIcao: string;
+  operator: string;
+  operatorIata: string;
+  operatorIcao: string;
+}>;
+
 export const fetchFlightRadarDataByFlightNumber = async ({
   airline,
   flightNumber,
@@ -191,6 +203,46 @@ export const fetchFlightRadarDataByRoute = async ({
       arrivalAirport,
     };
   });
+};
+
+export const fetchAircraftRegistrationData = async (
+  registration: string,
+): Promise<FlightRadarAircraftData> => {
+  const url = `https://www.flightradar24.com/data/aircraft/${registration}`;
+  const response = await axios.get<string>(url, {
+    headers: HEADERS,
+    withCredentials: true,
+  });
+  const $ = load(response.data);
+  const aircraftInfo = $('#cnt-aircraft-info');
+  const data: FlightRadarAircraftData = {};
+  $(aircraftInfo)
+    .find('.row')
+    .each((index, row) => {
+      const labelText = $(row).children('label').text().trim().toUpperCase();
+      const dataText = $(row).children('span').text().trim();
+      if (labelText === 'AIRCRAFT') {
+        data.aircraft = dataText;
+      } else if (labelText === 'TYPE CODE') {
+        data.typeCode = dataText;
+      } else if (labelText === 'MODE S') {
+        data.icao24 = dataText.toLowerCase();
+      } else if (labelText === 'AIRLINE') {
+        data.airline = dataText;
+      } else if (labelText === 'OPERATOR') {
+        data.operator = dataText;
+      } else if (labelText === 'CODE') {
+        const [iata, icao] = dataText.split('/').map(code => code.trim());
+        if (index === 5) {
+          data.airlineIata = iata;
+          data.airlineIcao = icao;
+        } else if (index === 6) {
+          data.operatorIata = iata;
+          data.operatorIcao = icao;
+        }
+      }
+    });
+  return data;
 };
 
 export const fetchFlightRadarData = async ({

@@ -3,6 +3,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { DATE_FORMAT_ISO } from '../constants';
 import { fetchFlightRadarData } from '../data/flightRadar';
 import { prisma } from '../db';
+import { getAirframe } from '../utils';
 import type { FlightWithData } from './types';
 import { updateFlightChangeData } from './updateFlightChangeData';
 import { getGroupedFlightsKey } from './utils';
@@ -35,11 +36,9 @@ export const updateFlightRegistrationData = async (
     }
     const airframe =
       flight.registration !== undefined && flight.registration !== null
-        ? await prisma.airframe.findFirst({
-            where: {
-              registration: flight.registration,
-            },
-          })
+        ? flight.registration !== flights[0].tailNumber
+          ? await getAirframe(flight.registration)
+          : undefined
         : null;
     const aircraftType =
       flight.aircraftTypeCode.length >= 3 &&
