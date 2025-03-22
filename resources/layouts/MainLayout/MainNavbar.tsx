@@ -173,6 +173,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
           </div>
           <div className="hidden flex-1 justify-center lg:flex">
             <Tabs
+              box
               className="tabs-boxed bg-transparent p-0"
               onChange={({ id }) => {
                 navigate(tabsToPathsMap[id]);
