@@ -18,7 +18,7 @@ export const WeatherCard = ({
   className,
   data,
 }: WeatherCardProps): JSX.Element => (
-  <Card className={className} compact>
+  <Card className={className} size="sm">
     <CardBody>
       <div className="flex-col items-center">
         <CardTitle>{data.airportId} Weather</CardTitle>

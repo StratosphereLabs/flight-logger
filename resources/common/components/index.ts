@@ -10,7 +10,6 @@ export * from './FlightChangeValue';
 export * from './FlightTimesDisplay';
 export * from './Icons';
 export * from './OnTimePerformanceChart';
-export * from './SearchButton';
 export * from './ThemeButton';
 export * from './UserFlightsTable';
 export * from './UserInput';

@@ -81,6 +81,7 @@ export const TopAirportsChart = ({
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-lg">Airports</div>
         <Select
+          anchor="bottom end"
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
           getItemText={({ text }) => text}
@@ -99,7 +100,7 @@ export const TopAirportsChart = ({
             },
           ]}
           menuSize="sm"
-          menuClassName="w-[185px] right-0"
+          menuClassName="w-[185px] bg-base-200 z-50"
           name="airportsMode"
         />
       </div>

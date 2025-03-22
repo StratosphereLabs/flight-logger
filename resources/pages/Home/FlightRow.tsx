@@ -109,9 +109,11 @@ export const FlightRow = ({
             </div>
           </div>
           <div className="flex items-center gap-1 overflow-hidden sm:gap-2">
-            <Avatar shapeClassName="w-4 h-4 sm:w-6 sm:h-6 rounded-full">
-              <img alt={flight.user.username} src={flight.user.avatar} />
-            </Avatar>
+            <Avatar
+              alt={flight.user.username}
+              src={flight.user.avatar}
+              shapeClassName="w-4 h-4 sm:w-6 sm:h-6 rounded-full"
+            />
             <Link
               hover
               onClick={() => {
@@ -207,7 +209,7 @@ export const FlightRow = ({
           <div className="flex flex-wrap-reverse justify-end gap-x-4">
             {flight.tailNumber !== null && flight.tailNumber.length > 0 ? (
               <a
-                className="link-hover link pt-[1px] font-mono font-semibold"
+                className="link link-hover pt-[1px] font-mono font-semibold"
                 href={
                   flight.airframe !== null
                     ? `https://www.planespotters.net/hex/${flight.airframe.icao24.toUpperCase()}`

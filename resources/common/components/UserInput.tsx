@@ -38,9 +38,11 @@ export const UserSelect = <Values extends FieldValues>({
       }
       getItemText={({ avatar, username }) => (
         <div className="flex items-center gap-2 overflow-hidden text-sm">
-          <Avatar shapeClassName="w-5 h-5 rounded-full">
-            <img alt={username} src={avatar} />
-          </Avatar>
+          <Avatar
+            alt={username}
+            src={avatar}
+            shapeClassName="w-5 h-5 rounded-full"
+          />
           <span className="flex-1 truncate">{username}</span>
         </div>
       )}

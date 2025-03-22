@@ -80,7 +80,7 @@ export const ActionsCell = ({
       ]}
       collapseAt="xl"
       dropdownMenuProps={{
-        menuClassName: 'rounded-xl w-48 right-0',
+        menuClassName: 'rounded-xl w-48 right-0 bg-base-200 z-50',
       }}
       withTooltips
     />

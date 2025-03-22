@@ -197,7 +197,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                 inputClassName="bg-base-200"
                 isRequired
                 labelText="Airline"
-                menuClassName="w-full"
+                menuClassName="w-full bg-base-200 z-50"
                 name="airline"
               />
               <FormControl
@@ -240,7 +240,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
           <>
             <div className="w-full">
               <Tabs
-                lifted
+                lift
                 onChange={tab => {
                   setIsShowingFormFields(tab.id === 'manual');
                 }}

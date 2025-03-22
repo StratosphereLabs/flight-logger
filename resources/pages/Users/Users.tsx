@@ -70,9 +70,11 @@ export const Users = (): JSX.Element => {
                     const data = row.original;
                     return (
                       <div className="flex flex-1 items-center justify-center">
-                        <Avatar shapeClassName="w-9 h-9 rounded-full">
-                          <img alt={data?.username} src={data?.avatar} />
-                        </Avatar>
+                        <Avatar
+                          alt={data?.username}
+                          src={data?.avatar}
+                          shapeClassName="w-9 h-9 rounded-full"
+                        />
                       </div>
                     );
                   },

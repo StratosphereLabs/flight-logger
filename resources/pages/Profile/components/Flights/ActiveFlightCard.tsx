@@ -88,7 +88,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
             ? CARD_BORDER_COLORS_LOFI[data.delayStatus]
             : CARD_BORDER_COLORS[data.delayStatus],
         )}
-        bordered
+        border
       >
         {onOwnProfile || userData?.id === data.addedByUserId ? (
           <Button

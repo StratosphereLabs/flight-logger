@@ -176,9 +176,11 @@ export const UserSelectModal = ({
               className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
               value="me"
             >
-              <Avatar shapeClassName="w-5 h-5 rounded-full">
-                <img alt={data.username} src={data.avatar} />
-              </Avatar>
+              <Avatar
+                alt={data.username}
+                src={data.avatar}
+                shapeClassName="w-5 h-5 rounded-full"
+              />
               Myself
             </FormRadioGroupOption>
             <FormRadioGroupOption
@@ -199,7 +201,7 @@ export const UserSelectModal = ({
           followingUsersOnly
           formValueMode="id"
           inputClassName="bg-base-200"
-          menuClassName="max-h-[200px] overflow-y-scroll w-[250px] bg-base-200"
+          menuClassName="max-h-[200px] overflow-y-scroll w-[250px] bg-base-200 z-50"
           name="username"
           placeholder="Select..."
         />

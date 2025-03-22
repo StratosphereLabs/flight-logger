@@ -33,7 +33,7 @@ export const ManualAddFormFields = ({
           inputClassName="bg-base-200"
           isRequired
           labelText="Departure Airport"
-          menuClassName="w-full"
+          menuClassName="w-full bg-base-200 z-50"
           name="departureAirport"
         />
         <FormControl
@@ -55,7 +55,7 @@ export const ManualAddFormFields = ({
           inputClassName="bg-base-200"
           isRequired
           labelText="Arrival Airport"
-          menuClassName="w-full"
+          menuClassName="w-full bg-base-200 z-50"
           name="arrivalAirport"
         />
         <FormControl
@@ -76,7 +76,7 @@ export const ManualAddFormFields = ({
         className="w-full sm:max-w-[400px]"
         inputClassName="bg-base-200"
         labelText="Aircraft Type"
-        menuClassName="w-full"
+        menuClassName="w-full bg-base-200 z-50"
         name="aircraftType"
       />
       {isShowingRegField ? (
@@ -85,7 +85,7 @@ export const ManualAddFormFields = ({
           className="w-full sm:max-w-[400px]"
           inputClassName="bg-base-200"
           labelText="Registration"
-          menuClassName="w-full"
+          menuClassName="w-full bg-base-200 z-50"
           name="airframe"
         />
       ) : null}

@@ -159,12 +159,11 @@ export const FlightChangelogTable = ({
                     const user = row.original.changedByUser;
                     return (
                       <div className="flex flex-1 flex-col gap-x-2 truncate text-xs sm:flex-row sm:items-center">
-                        <Avatar shapeClassName="w-4 h-4 lg:w-5 lg:h-5 rounded-full">
-                          <img
-                            alt={user?.username ?? 'FlightLogger'}
-                            src={user?.avatar ?? viteIcon}
-                          />
-                        </Avatar>
+                        <Avatar
+                          alt={user?.username ?? 'FlightLogger'}
+                          src={user?.avatar ?? viteIcon}
+                          shapeClassName="w-4 h-4 lg:w-5 lg:h-5 rounded-full"
+                        />
                         {user !== null ? (
                           <Link
                             hover

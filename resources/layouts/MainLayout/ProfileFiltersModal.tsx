@@ -96,7 +96,7 @@ export const ProfileFiltersModal = ({
                     ]
                   : []),
               ]}
-              menuClassName="w-[175px]"
+              menuClassName="w-[175px] bg-base-200 z-50"
             />
           ) : (
             <div />
@@ -135,7 +135,7 @@ export const ProfileFiltersModal = ({
                 label: 'Custom Range',
               },
             ]}
-            menuClassName="w-[175px] right-0"
+            menuClassName="w-[175px] right-0 bg-base-200 z-50"
           />
         </div>
         <div className="flex flex-col items-end gap-4">
@@ -160,7 +160,7 @@ export const ProfileFiltersModal = ({
                   id: (key + 1).toString(),
                   label: MONTH_NAMES[key],
                 }))}
-                menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap"
+                menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
               />
             ) : null}
             {range === 'customYear' || range === 'customMonth' ? (
@@ -176,7 +176,7 @@ export const ProfileFiltersModal = ({
                   id: `${currentDate.getFullYear() - index + 1}`,
                   label: `${currentDate.getFullYear() - index + 1}`,
                 }))}
-                menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap"
+                menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
               />
             ) : null}
           </div>

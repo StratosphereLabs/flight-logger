@@ -16,6 +16,7 @@ export const ThemeButton = (): JSX.Element => {
   const { setTheme } = useThemeStore();
   return (
     <DropdownMenu
+      anchor="bottom end"
       buttonProps={{
         color: 'ghost',
         shape: 'circle',
@@ -113,7 +114,7 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
       ]}
-      menuClassName="rounded-box right-0 w-48 bg-base-200"
+      menuClassName="rounded-box right-0 w-48 bg-base-200 z-50"
     />
   );
 };

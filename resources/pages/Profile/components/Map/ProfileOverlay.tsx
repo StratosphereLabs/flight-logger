@@ -73,7 +73,7 @@ export const ProfileOverlay = (): JSX.Element => {
     });
   return (
     <>
-      <div className="pointer-events-auto flex w-full flex-col gap-1 rounded-box bg-base-100/50 p-2 backdrop-blur-sm">
+      <div className="bg-base-100/50 pointer-events-auto flex w-full flex-col gap-1 rounded-box p-2 backdrop-blur-sm">
         {isFetching ? (
           <div className="flex w-full justify-center">
             <Loading />
@@ -82,9 +82,11 @@ export const ProfileOverlay = (): JSX.Element => {
         {!isFetching && userData !== undefined ? (
           <>
             <div className="flex flex-row items-center gap-3">
-              <Avatar shapeClassName="h-10 w-10 rounded-full">
-                <img src={userData.avatar} alt="User Avatar" />
-              </Avatar>
+              <Avatar
+                src={userData.avatar}
+                alt="User Avatar"
+                shapeClassName="h-10 w-10 rounded-full"
+              />
               <div className="flex flex-1 flex-col overflow-hidden">
                 <div className="truncate text-base font-medium sm:text-xl">{`${userData.firstName} ${userData.lastName}`}</div>
                 <div className="truncate text-sm opacity-75">{`@${userData.username}`}</div>
@@ -196,9 +198,11 @@ export const ProfileOverlay = (): JSX.Element => {
           <div className="flex flex-col gap-3 pt-3">
             <div className="flex w-full justify-between gap-2">
               <div className="flex items-center gap-2 overflow-hidden">
-                <Avatar shapeClassName="h-12 w-12 rounded-full">
-                  <img src={userData.avatar} alt="User Avatar" />
-                </Avatar>
+                <Avatar
+                  src={userData.avatar}
+                  alt="User Avatar"
+                  shapeClassName="h-12 w-12 rounded-full"
+                />
                 <div className="flex flex-col overflow-hidden">
                   <div className="text-base font-medium">{`${userData.firstName} ${userData.lastName}`}</div>
                   <div className="truncate text-sm opacity-75">{`@${userData.username}`}</div>

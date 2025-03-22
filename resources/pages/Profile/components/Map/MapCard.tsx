@@ -188,6 +188,7 @@ export const MapCard = ({
               <div className="flex flex-col items-end justify-end gap-2 sm:flex-row-reverse">
                 <div className="flex gap-2">
                   <Select
+                    anchor="bottom end"
                     buttonProps={{
                       className: 'btn-sm sm:btn-md',
                       children:
@@ -217,7 +218,7 @@ export const MapCard = ({
                         text: '3D',
                       },
                     ]}
-                    menuClassName="right-0 w-[150px]"
+                    menuClassName="w-[150px] bg-base-200 z-50"
                     name="mapMode"
                   />
                   <Button

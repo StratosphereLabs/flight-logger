@@ -80,7 +80,7 @@ export const FlightLengthRadarChart = ({
             },
           ]}
           menuSize="sm"
-          menuClassName="w-[185px] right-0"
+          menuClassName="w-[185px] bg-base-200 z-50"
           name="flightLengthMode"
         />
       </div>
