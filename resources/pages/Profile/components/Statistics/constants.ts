@@ -15,7 +15,7 @@ export const BAR_CHART_THEME = {
   axis: {
     ticks: {
       text: {
-        fill: 'var(--fallback-bc,oklch(var(--bc)/0.75))',
+        fill: 'oklch(from var(--color-base-content) l c h / 0.75)',
         fontFamily:
           'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
         fontWeight: 600,
@@ -24,7 +24,7 @@ export const BAR_CHART_THEME = {
   },
   grid: {
     line: {
-      stroke: 'var(--fallback-bc,oklch(var(--bc)/0.15))',
+      stroke: 'oklch(from var(--color-base-content) l c h / 0.15)',
       strokeWidth: '2px',
     },
   },

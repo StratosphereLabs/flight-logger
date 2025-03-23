@@ -108,19 +108,19 @@ export const ManualAddFormFields = ({
             name="seatPosition"
           >
             <FormRadioGroupOption
-              className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
               value="WINDOW"
             >
               Window
             </FormRadioGroupOption>
             <FormRadioGroupOption
-              className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
               value="MIDDLE"
             >
               Middle
             </FormRadioGroupOption>
             <FormRadioGroupOption
-              className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
               value="AISLE"
             >
               Aisle
@@ -162,19 +162,19 @@ export const ManualAddFormFields = ({
         name="reason"
       >
         <FormRadioGroupOption
-          className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+          className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
           value="LEISURE"
         >
           Leisure
         </FormRadioGroupOption>
         <FormRadioGroupOption
-          className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+          className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
           value="BUSINESS"
         >
           Business
         </FormRadioGroupOption>
         <FormRadioGroupOption
-          className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+          className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
           value="CREW"
         >
           Crew

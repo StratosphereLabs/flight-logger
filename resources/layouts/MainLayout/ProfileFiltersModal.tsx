@@ -58,7 +58,7 @@ export const ProfileFiltersModal = ({
           },
         },
       ]}
-      className="overflow-visible bg-base-200"
+      className="bg-base-200 overflow-visible"
       onClose={() => {
         setOpen(false);
       }}

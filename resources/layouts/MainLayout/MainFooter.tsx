@@ -1,5 +1,5 @@
 export const MainFooter = (): JSX.Element => (
-  <footer className="footer flex justify-between bg-neutral p-5 text-neutral-content">
+  <footer className="footer bg-base-300 text-base-content flex justify-between p-5">
     <div className="truncate">
       <p>
         <span className="hidden sm:inline-block">Copyright</span> ©{' '}

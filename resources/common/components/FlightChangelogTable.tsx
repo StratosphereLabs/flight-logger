@@ -199,7 +199,7 @@ export const FlightChangelogTable = ({
                             </div>
                             <div
                               className={classNames(
-                                'flex flex-1 gap-1 text-error',
+                                'text-error flex flex-1 gap-1',
                                 [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(
                                   theme,
                                 ) && 'brightness-90',
@@ -214,7 +214,7 @@ export const FlightChangelogTable = ({
                             </div>
                             <div
                               className={classNames(
-                                'flex flex-1 gap-1 font-semibold text-success',
+                                'text-success flex flex-1 gap-1 font-semibold',
                                 [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(
                                   theme,
                                 ) && 'brightness-90',

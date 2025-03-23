@@ -13,7 +13,7 @@ export const RouteTimeline = ({
         PDX
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-error" />
+        <div className="bg-error h-4 w-4 rounded-full" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className="mr-2 text-xs line-through">7:30am</div>
@@ -21,23 +21,23 @@ export const RouteTimeline = ({
           8:11am
         </div>
       </div>
-      <hr className="rounded-none bg-error" />
+      <hr className="bg-error rounded-none" />
     </li>
     <li className="flex-1">
-      <hr className="rounded-none bg-error" />
+      <hr className="bg-error rounded-none" />
       <div className="timeline-middle" />
-      <div className="timeline-end timeline-box whitespace-nowrap border-none bg-transparent text-xs opacity-60">
+      <div className="timeline-end timeline-box border-none bg-transparent text-xs whitespace-nowrap opacity-60">
         5h 30m
       </div>
-      <hr className="rounded-none bg-error" />
+      <hr className="bg-error rounded-none" />
     </li>
     <li>
-      <hr className="rounded-none bg-error" />
+      <hr className="bg-error rounded-none" />
       <div className="timeline-start timeline-box m-0 border-none bg-transparent font-mono">
         HNL
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-error" />
+        <div className="bg-error h-4 w-4 rounded-full" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className="mr-2 text-xs line-through">11:35am</div>
@@ -49,7 +49,7 @@ export const RouteTimeline = ({
     </li>
     <li>
       <hr className="rounded-none bg-transparent" />
-      <div className="timeline-middle whitespace-nowrap text-xs opacity-60">
+      <div className="timeline-middle text-xs whitespace-nowrap opacity-60">
         2h 14m
       </div>
       <hr className="rounded-none bg-transparent" />
@@ -60,30 +60,30 @@ export const RouteTimeline = ({
         HNL
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-base-300" />
+        <div className="bg-base-300 h-4 w-4 rounded-full" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className={classNames('text-xs font-bold', 'text-success')}>
           2:46pm
         </div>
       </div>
-      <hr className="rounded-none bg-base-300" />
+      <hr className="bg-base-300 rounded-none" />
     </li>
     <li className="flex-1">
-      <hr className="rounded-none bg-base-300" />
+      <hr className="bg-base-300 rounded-none" />
       <div className="timeline-middle" />
-      <div className="timeline-end timeline-box whitespace-nowrap border-none bg-transparent text-xs opacity-60">
+      <div className="timeline-end timeline-box border-none bg-transparent text-xs whitespace-nowrap opacity-60">
         50m
       </div>
       <hr className="rounded-none" />
     </li>
     <li>
-      <hr className="rounded-none bg-base-300" />
+      <hr className="bg-base-300 rounded-none" />
       <div className="timeline-start timeline-box m-0 border-none bg-transparent font-mono">
         OGG
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-base-300" />
+        <div className="bg-base-300 h-4 w-4 rounded-full" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className={classNames('text-xs font-bold', 'text-success')}>
@@ -95,7 +95,7 @@ export const RouteTimeline = ({
     <li>
       <hr className="rounded-none bg-transparent" />
       <div className="timeline-middle" />
-      <div className="timeline-middle whitespace-nowrap text-xs opacity-60">
+      <div className="timeline-middle text-xs whitespace-nowrap opacity-60">
         6h 44m
       </div>
       <hr className="rounded-none bg-transparent" />
@@ -106,30 +106,30 @@ export const RouteTimeline = ({
         OGG
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-base-300" />
+        <div className="bg-base-300 h-4 w-4 rounded-full" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className={classNames('text-xs font-bold', 'text-success')}>
           10:20pm
         </div>
       </div>
-      <hr className="rounded-none bg-base-300" />
+      <hr className="bg-base-300 rounded-none" />
     </li>
     <li className="flex-1">
-      <hr className="rounded-none bg-base-300" />
+      <hr className="bg-base-300 rounded-none" />
       <div className="timeline-middle" />
-      <div className="timeline-end timeline-box whitespace-nowrap border-none bg-transparent text-xs opacity-60">
+      <div className="timeline-end timeline-box border-none bg-transparent text-xs whitespace-nowrap opacity-60">
         5h 41m
       </div>
-      <hr className="rounded-none bg-base-300" />
+      <hr className="bg-base-300 rounded-none" />
     </li>
     <li>
-      <hr className="rounded-none bg-base-300" />
+      <hr className="bg-base-300 rounded-none" />
       <div className="timeline-start timeline-box m-0 border-none bg-transparent font-mono">
         PHX
       </div>
       <div className="timeline-middle">
-        <div className="h-4 w-4 rounded-full bg-base-300" />
+        <div className="bg-base-300 h-4 w-4 rounded-full" />
       </div>
       <div className="timeline-end flex flex-col font-mono text-xs opacity-60">
         <div className={classNames('text-xs font-bold', 'text-success')}>

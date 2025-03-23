@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 export enum AppTheme {
   BUSINESS = 'business',
+  CORPORATE = 'corporate',
   CYBERPUNK = 'cyberpunk',
   DARK = 'dark',
   EMERALD = 'emerald',

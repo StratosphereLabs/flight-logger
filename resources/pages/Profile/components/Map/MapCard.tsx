@@ -141,7 +141,7 @@ export const MapCard = ({
       <LoadingCard
         isLoading={data === undefined}
         className={classNames(
-          'transition-size card-bordered relative min-w-[350px] flex-1 bg-base-200 shadow-sm duration-500',
+          'transition-size card-bordered bg-base-200 relative min-w-[350px] flex-1 shadow-xs duration-500',
           isMapFullScreen
             ? 'min-h-[100dvh]'
             : isAddingFlight
@@ -181,7 +181,7 @@ export const MapCard = ({
             )}
             methods={mapFormMethods}
           >
-            <div className="flex min-w-[240px] max-w-[350px] flex-1 flex-col gap-2">
+            <div className="flex max-w-[350px] min-w-[240px] flex-1 flex-col gap-2">
               <ProfileOverlay />
             </div>
             <div className="flex items-start">
@@ -222,7 +222,7 @@ export const MapCard = ({
                     name="mapMode"
                   />
                   <Button
-                    className="btn-sm pointer-events-auto px-3 sm:btn-md"
+                    className="btn-sm sm:btn-md pointer-events-auto px-3"
                     onClick={() => {
                       setIsMapFullScreen(isFullScreen => {
                         const newValue = !isFullScreen;

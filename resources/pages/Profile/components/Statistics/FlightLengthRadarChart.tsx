@@ -58,7 +58,7 @@ export const FlightLengthRadarChart = ({
     },
   );
   return (
-    <div className="flex h-[205px] min-w-[274px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[205px] max-w-[500px] min-w-[274px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">Flight Length</div>
         <Select
@@ -106,9 +106,9 @@ export const FlightLengthRadarChart = ({
               fillOpacity={0.5}
               gridLabelOffset={15}
               dotSize={8}
-              dotColor="oklch(var(--b3))"
+              dotColor="var(--color-base-300)"
               dotBorderWidth={2}
-              colors={['oklch(var(--in))']}
+              colors={['var(--color-info)']}
               motionConfig="wobbly"
               sliceTooltip={tooltipData => (
                 <Tooltip

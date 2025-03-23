@@ -58,7 +58,7 @@ export const ReasonRadarChart = ({
     },
   );
   return (
-    <div className="flex h-[185px] min-w-[229px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[185px] max-w-[500px] min-w-[229px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">Flight Reason</div>
         <Select
@@ -107,9 +107,9 @@ export const ReasonRadarChart = ({
               fillOpacity={0.5}
               gridLabelOffset={15}
               dotSize={8}
-              dotColor="oklch(var(--b3))"
+              dotColor="var(--color-base-300)"
               dotBorderWidth={2}
-              colors={['oklch(var(--er))']}
+              colors={['var(--color-error)']}
               motionConfig="wobbly"
               sliceTooltip={tooltipData => (
                 <Tooltip

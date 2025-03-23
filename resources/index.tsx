@@ -6,7 +6,6 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { AppRouter } from './AppRouter';
 import { AppWrapper } from './AppWrapper';
-import './index.css';
 
 Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_TOKEN as string;
 

@@ -155,7 +155,7 @@ export const FollowingMap = (): JSX.Element => {
   return (
     <div className="flex flex-col items-center">
       <div className="relative w-full">
-        <div className="pointer-events-auto absolute left-2 top-2 z-10 mt-16 flex min-w-[150px] flex-col items-start rounded-box bg-base-100/50 px-3 py-2 backdrop-blur-sm">
+        <div className="rounded-box bg-base-100/50 pointer-events-auto absolute top-2 left-2 z-10 mt-16 flex min-w-[150px] flex-col items-start px-3 py-2 backdrop-blur-xs">
           <span className="text-lg font-semibold">Live Map</span>
           <span className="text-sm opacity-75">
             {data?.groupedFlights.CURRENT?.length ?? '0'} Flight
@@ -396,7 +396,7 @@ export const FollowingMap = (): JSX.Element => {
         </div>
       </div>
       <div className="flex w-full justify-center sm:p-2">
-        <Card className="max-w-[1000px] flex-1 rounded-none bg-base-100 sm:rounded-box">
+        <Card className="bg-base-100 sm:rounded-box max-w-[1000px] flex-1 rounded-none">
           {isLoading ? (
             <div className="flex flex-1 items-center justify-center p-3">
               <Loading />

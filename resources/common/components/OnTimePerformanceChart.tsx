@@ -10,12 +10,12 @@ export interface OnTimePerformanceChartProps {
 }
 
 const BAR_COLORS: Record<string, string> = {
-  onTime: 'var(--fallback-su,oklch(var(--su)/0.75))',
-  late: 'var(--fallback-wa,oklch(var(--wa)/0.75))',
-  veryLate: 'var(--fallback-wa,oklch(var(--er)/0.75))',
-  excessive: 'var(--fallback-er,oklch(var(--er)/0.75))',
-  cancelled: 'var(--fallback-er,oklch(var(--er)/0.75))',
-  diverted: 'var(--fallback-er,oklch(var(--er)/0.75))',
+  onTime: 'oklch(from var(--color-success) l c h / 0.75)',
+  late: 'oklch(from var(--color-warning) l c h / 0.75)',
+  veryLate: 'oklch(from var(--color-error) l c h / 0.75)',
+  excessive: 'oklch(from var(--color-error) l c h / 0.75)',
+  cancelled: 'oklch(from var(--color-error) l c h / 0.75)',
+  diverted: 'oklch(from var(--color-error) l c h / 0.75)',
 };
 
 export const OnTimePerformanceChart = ({

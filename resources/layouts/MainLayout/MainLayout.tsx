@@ -27,7 +27,7 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
     <div className="relative flex h-[100dvh] flex-col justify-between">
       <MainNavbar methods={methods} />
       <div
-        className="flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll bg-base-200"
+        className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
         ref={scrollContainerRef}
       >
         <Outlet />

@@ -135,7 +135,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     <>
       <div
         className={classNames(
-          'absolute left-0 top-0 z-30 flex w-full flex-col bg-gradient-to-b shadow-md backdrop-blur',
+          'absolute top-0 left-0 z-30 flex w-full flex-col bg-linear-to-b shadow-md backdrop-blur-sm',
           isDarkMode
             ? 'from-base-100/75 to-base-100/40'
             : 'from-base-100/90 to-base-100/70',
@@ -165,7 +165,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               }}
               title="Home"
             >
-              <div className="font-title text-xl text-primary transition-all duration-200 sm:text-3xl">
+              <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
                 <span>Flight</span>
                 <span className="text-base-content">Logger</span>
               </div>

@@ -43,7 +43,7 @@ export const FlightRow = ({
   return (
     <div
       className={classNames(
-        'flex flex-col items-center gap-2 rounded-box border-2 p-2 transition-transform',
+        'rounded-box flex flex-col items-center gap-2 border-2 p-2 transition-transform',
         !isActive && 'hover:scale-[1.01]',
         theme === AppTheme.LOFI
           ? CARD_COLORS_LOFI[flight.delayStatus]
@@ -91,7 +91,7 @@ export const FlightRow = ({
             </div>
             <div className="mt-[2px] flex flex-col items-start gap-x-4 text-sm sm:flex-row sm:items-center lg:text-base">
               <Link
-                className="w-[60px] text-nowrap font-mono opacity-90 lg:w-[70px]"
+                className="w-[60px] font-mono text-nowrap opacity-90 lg:w-[70px]"
                 hover
                 href={
                   flight.flightAwareLink !== null
@@ -103,7 +103,7 @@ export const FlightRow = ({
                 <span>{flight.airline?.iata}</span>{' '}
                 <span className="font-semibold">{flight.flightNumber}</span>
               </Link>
-              <div className="w-[95px] text-nowrap text-sm font-semibold opacity-80">
+              <div className="w-[95px] text-sm font-semibold text-nowrap opacity-80">
                 {flight.outDateLocalAbbreviated}
               </div>
             </div>
@@ -125,7 +125,7 @@ export const FlightRow = ({
             </Link>
           </div>
         </div>
-        <div className="flex flex-[6] gap-2">
+        <div className="flex flex-6 gap-2">
           <div className="flex w-0 flex-1 flex-col justify-start">
             <div className="flex flex-col gap-x-3 sm:flex-row sm:items-center">
               <div className="font-mono text-2xl font-bold">
@@ -185,7 +185,7 @@ export const FlightRow = ({
             </div>
           </div>
         </div>
-        <div className="flex h-full min-w-[65px] flex-[2] flex-col items-end justify-between">
+        <div className="flex h-full min-w-[65px] flex-2 flex-col items-end justify-between">
           <div
             className={classNames(
               'flex flex-col flex-nowrap items-end gap-x-1 text-right',

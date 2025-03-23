@@ -52,7 +52,7 @@ export const AirportsCard = (): JSX.Element => {
     { onError },
   );
   return (
-    <Card className="min-h-[550px] bg-base-100 shadow-sm">
+    <Card className="bg-base-100 min-h-[550px] shadow-xs">
       <CardBody>
         <CardTitle className="mb-3 justify-center">Airports</CardTitle>
         <Table
@@ -64,7 +64,7 @@ export const AirportsCard = (): JSX.Element => {
             countryId: 'w-[120px] hidden sm:table-cell',
             type: 'w-[120px] hidden sm:table-cell',
           }}
-          className="table-fixed border-separate bg-base-100"
+          className="bg-base-100 table-fixed border-separate"
           columns={[
             {
               id: 'iata',

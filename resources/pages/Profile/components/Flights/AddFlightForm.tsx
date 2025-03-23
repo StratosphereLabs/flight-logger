@@ -193,7 +193,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               />
               <AirlineInput
                 bordered
-                className="min-w-[250px] max-w-[500px] flex-1"
+                className="max-w-[500px] min-w-[250px] flex-1"
                 inputClassName="bg-base-200"
                 isRequired
                 labelText="Airline"
@@ -212,8 +212,8 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               />
             </div>
             <Button
-              className="w-full md:mt-9 md:w-[120px]"
-              color="neutral"
+              className="w-full md:mt-[30px] md:w-[120px]"
+              color="primary"
               loading={isFetching}
               disabled={!methods.formState.isDirty || shouldShowFlightForm}
               onClick={async () => {
@@ -238,27 +238,27 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
         </div>
         {data !== undefined ? (
           <>
-            <div className="w-full">
-              <Tabs
-                lift
-                onChange={tab => {
-                  setIsShowingFormFields(tab.id === 'manual');
-                }}
-                selectedTabId={isShowingFormFields ? 'manual' : 'results'}
-                size="lg"
-                tabs={[
-                  {
-                    id: 'results',
-                    disabled: shouldShowFlightForm,
-                    children: 'Search Results',
-                  },
-                  {
-                    id: 'manual',
-                    children: 'Manual Add',
-                  },
-                ]}
-              />
-            </div>
+            <Tabs
+              lift
+              onChange={tab => {
+                setIsShowingFormFields(tab.id === 'manual');
+              }}
+              selectedTabId={isShowingFormFields ? 'manual' : 'results'}
+              size="lg"
+              tabs={[
+                {
+                  id: 'results',
+                  disabled: shouldShowFlightForm,
+                  children: 'Search Results',
+                  className: 'flex-1',
+                },
+                {
+                  id: 'manual',
+                  children: 'Manual Add',
+                  className: 'flex-1',
+                },
+              ]}
+            />
             {!isShowingFormFields && data.results.length === 0 ? (
               <div className="text-center opacity-80">No Results</div>
             ) : null}
@@ -273,7 +273,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                   duration: 'w-[55px] sm:w-[80px] hidden sm:table-cell',
                   actions: 'w-[100px] sm:w-[130px] pl-0',
                 }}
-                className="table-xs table-fixed sm:table-sm"
+                className="table-xs sm:table-sm table-fixed"
                 columns={[
                   {
                     id: 'date',
@@ -281,7 +281,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                     cell: ({ getValue, row }) => {
                       const outTimeDate = getValue<string>();
                       return (
-                        <div className="whitespace-nowrap font-mono font-semibold opacity-70">
+                        <div className="font-mono font-semibold whitespace-nowrap opacity-70">
                           <div className="block sm:hidden">
                             {row.original.outTimeDateAbbreviated}
                           </div>
@@ -403,7 +403,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                     cell: ({ getValue, row }) => {
                       const duration = getValue<string>();
                       return (
-                        <div className="whitespace-nowrap font-mono opacity-75">
+                        <div className="font-mono whitespace-nowrap opacity-75">
                           <div className="sm:hidden">
                             {row.original.durationStringAbbreviated}
                           </div>
@@ -425,7 +425,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                       return (
                         <Button
                           className={classNames(
-                            'btn-sm w-full sm:btn-md',
+                            'btn-sm sm:btn-md w-full',
                             isAdded ? 'btn-success' : 'btn-primary',
                           )}
                           disabled={isLoading}

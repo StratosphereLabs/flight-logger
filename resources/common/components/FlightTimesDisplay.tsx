@@ -28,7 +28,7 @@ export const FlightTimesDisplay = ({
   return (
     <div
       className={classNames(
-        'flex flex-wrap items-center gap-x-2 text-nowrap font-bold',
+        'flex flex-wrap items-center gap-x-2 font-bold text-nowrap',
         className,
       )}
       {...props}

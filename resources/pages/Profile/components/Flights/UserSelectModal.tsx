@@ -117,7 +117,7 @@ export const UserSelectModal = ({
                 <span className="font-semibold">{flight.flightNumber}</span>
               </div>
             </div>
-            <div className="w-[145px] text-nowrap text-right text-sm font-semibold opacity-80">
+            <div className="w-[145px] text-right text-sm font-semibold text-nowrap opacity-80">
               {flight.outDateLocal}
             </div>
           </div>
@@ -173,7 +173,7 @@ export const UserSelectModal = ({
           <FormRadioGroup className="w-full" name="userType">
             <FormRadioGroupOption
               activeColor="info"
-              className="mr-[1px] flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
               value="me"
             >
               <Avatar
@@ -185,7 +185,7 @@ export const UserSelectModal = ({
             </FormRadioGroupOption>
             <FormRadioGroupOption
               activeColor="info"
-              className="flex-1 border-2 border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40"
+              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 flex-1 border-2"
               value="other"
             >
               Other User

@@ -73,7 +73,7 @@ export const ProfileOverlay = (): JSX.Element => {
     });
   return (
     <>
-      <div className="bg-base-100/50 pointer-events-auto flex w-full flex-col gap-1 rounded-box p-2 backdrop-blur-sm">
+      <div className="bg-base-100/50 rounded-box pointer-events-auto flex w-full flex-col gap-1 p-2 backdrop-blur-xs">
         {isFetching ? (
           <div className="flex w-full justify-center">
             <Loading />
@@ -148,14 +148,14 @@ export const ProfileOverlay = (): JSX.Element => {
             </div>
             <div className="flex flex-wrap">
               <Button className="gap-1" color="ghost" size="xs">
-                <UserOutlineIcon className="h-3 w-3 text-info" />
+                <UserOutlineIcon className="text-info h-3 w-3" />
                 <span>
                   {userData._count.following}
                   <span className="ml-1 opacity-60">Following</span>
                 </span>
               </Button>
               <Button className="gap-1" color="ghost" size="xs">
-                <UserSolidIcon className="h-3 w-3 text-info" />
+                <UserSolidIcon className="text-info h-3 w-3" />
                 <span>
                   {userData._count.followedBy}
                   <span className="ml-1 opacity-60">

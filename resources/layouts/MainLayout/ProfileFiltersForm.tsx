@@ -52,12 +52,12 @@ export const ProfileFiltersForm = ({
     >
       <FormControl
         bordered
-        className="min-w-[150px] max-w-[450px] flex-1"
+        className="max-w-[450px] min-w-[150px] flex-1"
         elementLeft={<SearchIcon className="h-4 w-4" />}
         inputClassName="bg-base-100 pl-8"
         name="searchQuery"
         placeholder="Search Flights..."
-        size="xs"
+        size="sm"
       />
       <div className="hidden flex-nowrap gap-2 md:flex">
         {range !== 'pastMonth' &&
