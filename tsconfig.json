@@ -24,9 +24,8 @@
     "prisma/generated/zod",
     "resources",
     "vitest",
-    "postcss.config.cjs",
-    "prettier.config.cjs",
-    "tailwind.config.cjs",
+    "postcss.config.mjs",
+    "tailwind.config.js",
     "vite.config.ts"
   ]
 }

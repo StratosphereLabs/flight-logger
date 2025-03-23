@@ -1,4 +1,9 @@
-module.exports = {
+/** @type {import('tailwindcss').Config} */
+import typography from '@tailwindcss/typography';
+import daisyui from 'daisyui';
+import scrollbar from 'tailwind-scrollbar';
+
+export default {
   content: [
     './resources/**/*.{html,ts,tsx}',
     'node_modules/daisyui/dist/**/*.js',
@@ -25,9 +30,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/typography'),
-    require('daisyui'),
-    require('tailwind-scrollbar'),
-  ],
+  plugins: [typography, daisyui, scrollbar],
 };
