@@ -102,6 +102,7 @@ export const ProfileFiltersModal = ({
             <div />
           )}
           <Select
+            anchor="bottom end"
             buttonProps={{
               color: 'neutral',
             }}
@@ -149,6 +150,7 @@ export const ProfileFiltersModal = ({
           <div className="flex gap-2">
             {range === 'customMonth' ? (
               <Select
+                anchor="bottom end"
                 buttonProps={{
                   color: 'neutral',
                 }}
@@ -165,6 +167,7 @@ export const ProfileFiltersModal = ({
             ) : null}
             {range === 'customYear' || range === 'customMonth' ? (
               <Select
+                anchor="bottom end"
                 buttonProps={{
                   color: 'neutral',
                 }}

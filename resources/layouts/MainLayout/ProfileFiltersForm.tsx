@@ -64,6 +64,7 @@ export const ProfileFiltersForm = ({
         range !== 'pastYear' &&
         range !== 'customRange' ? (
           <Select
+            anchor="bottom end"
             buttonProps={{
               size: 'sm',
               color: 'neutral',
@@ -102,6 +103,7 @@ export const ProfileFiltersForm = ({
         ) : null}
         {range === 'customMonth' ? (
           <Select
+            anchor="bottom end"
             buttonProps={{
               size: 'sm',
               color: 'neutral',
@@ -119,6 +121,7 @@ export const ProfileFiltersForm = ({
         ) : null}
         {range === 'customYear' || range === 'customMonth' ? (
           <Select
+            anchor="bottom end"
             buttonProps={{
               size: 'sm',
               color: 'neutral',
@@ -135,6 +138,7 @@ export const ProfileFiltersForm = ({
           />
         ) : null}
         <Select
+          anchor="bottom end"
           buttonProps={{
             size: 'sm',
             color: 'neutral',

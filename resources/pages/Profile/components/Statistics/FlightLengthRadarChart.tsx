@@ -62,6 +62,7 @@ export const FlightLengthRadarChart = ({
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">Flight Length</div>
         <Select
+          anchor="bottom end"
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
           getItemText={({ text }) => text}
