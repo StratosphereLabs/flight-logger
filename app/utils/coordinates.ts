@@ -24,7 +24,7 @@ export const calculateCenterPoint = (
 
     x += Math.cos(latitudeRadians) * Math.cos(longitudeRadians);
     y += Math.cos(latitudeRadians) * Math.sin(longitudeRadians);
-    z += Math.sin(latitudeRadians);
+    z += latitudeRadians;
   }
 
   const totalCoordinates = coordinates.length;
@@ -33,11 +33,9 @@ export const calculateCenterPoint = (
   z /= totalCoordinates;
 
   const centerLongitude = Math.atan2(y, x);
-  const centerSquareRoot = Math.sqrt(x * x + y * y);
-  const centerLatitude = Math.atan2(z, centerSquareRoot);
 
   return {
-    lat: radiansToDegrees(centerLatitude),
+    lat: radiansToDegrees(z),
     lng: radiansToDegrees(centerLongitude),
   };
 };

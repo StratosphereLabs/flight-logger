@@ -135,7 +135,8 @@ export const MapCard = ({
     if (estimatedLocation !== undefined) {
       setCenter(estimatedLocation);
     }
-  }, [estimatedLocation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFlightData?.id]);
   return useMemo(
     () => (
       <LoadingCard
