@@ -174,7 +174,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
           <div className="hidden flex-1 justify-center lg:flex">
             <Tabs
               box
-              className="tabs-boxed bg-transparent p-0"
+              className="tabs-boxed bg-transparent p-0 shadow-none"
               onChange={({ id }) => {
                 navigate(tabsToPathsMap[id]);
               }}
