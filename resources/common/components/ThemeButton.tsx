@@ -2,6 +2,7 @@ import { DropdownMenu } from 'stratosphere-ui';
 
 import { AppTheme, useThemeStore } from '../../stores';
 import {
+  BusinessIcon,
   CyberpunkIcon,
   DarkModeIcon,
   DarkModeOutlineIcon,
@@ -9,13 +10,13 @@ import {
   MusicIcon,
   SunsetIcon,
   ThemeIcon,
-  WireframeIcon,
 } from './Icons';
 
 export const ThemeButton = (): JSX.Element => {
   const { setTheme } = useThemeStore();
   return (
     <DropdownMenu
+      anchor="bottom end"
       buttonProps={{
         color: 'ghost',
         shape: 'circle',
@@ -53,14 +54,14 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
         {
-          id: AppTheme.WIREFRAME,
+          id: AppTheme.CORPORATE,
           onClick: () => {
-            setTheme(AppTheme.WIREFRAME);
+            setTheme(AppTheme.CORPORATE);
           },
           children: (
             <>
-              <WireframeIcon className="h-5 w-5" />
-              Wireframe
+              <BusinessIcon className="h-5 w-5" />
+              Corporate
             </>
           ),
         },
@@ -113,7 +114,7 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
       ]}
-      menuClassName="rounded-box right-0 w-48 bg-base-200"
+      menuClassName="rounded-box right-0 w-48 bg-base-200 z-50"
     />
   );
 };

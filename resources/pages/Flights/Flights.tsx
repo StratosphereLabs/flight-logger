@@ -130,7 +130,7 @@ export const Flights = ({
       data.pages[0].metadata.itemCount > 0 ? (
         <>
           <UserFlightsTable
-            className="shadow-sm"
+            className="shadow-xs"
             data={data.pages.flatMap(({ results }) => results)}
             dateBadgeColor={({ outDateISO }) =>
               outDateISO.split('-')[0] === new Date().getFullYear().toString()

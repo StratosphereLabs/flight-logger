@@ -26,7 +26,7 @@ export const AircraftTypesCard = (): JSX.Element => {
     { onError },
   );
   return (
-    <Card className="min-h-[550px] bg-base-100 shadow-sm">
+    <Card className="bg-base-100 min-h-[550px] shadow-xs">
       <CardBody>
         <CardTitle className="justify-center">Aircraft Types</CardTitle>
         <Table

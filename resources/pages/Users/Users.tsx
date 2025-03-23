@@ -44,7 +44,7 @@ export const Users = (): JSX.Element => {
   );
   return (
     <div className="mt-16 flex flex-1 flex-col items-center p-2 sm:p-3">
-      <Card className="flex w-full max-w-[750px] flex-col justify-center bg-base-100">
+      <Card className="bg-base-100 flex w-full max-w-[750px] flex-col justify-center">
         <CardBody>
           <CardTitle className="justify-center">User Search</CardTitle>
           <Form className="mt-2" methods={methods}>
@@ -70,9 +70,11 @@ export const Users = (): JSX.Element => {
                     const data = row.original;
                     return (
                       <div className="flex flex-1 items-center justify-center">
-                        <Avatar shapeClassName="w-9 h-9 rounded-full">
-                          <img alt={data?.username} src={data?.avatar} />
-                        </Avatar>
+                        <Avatar
+                          alt={data?.username}
+                          src={data?.avatar}
+                          shapeClassName="w-9 h-9 rounded-full"
+                        />
                       </div>
                     );
                   },

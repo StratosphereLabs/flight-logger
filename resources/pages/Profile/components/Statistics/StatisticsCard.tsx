@@ -64,7 +64,7 @@ export const StatisticsCard = ({
   });
   return (
     <Form methods={methods} className="flex flex-1 flex-col">
-      <Card className="flex-1 bg-base-100 shadow-sm" compact>
+      <Card className="bg-base-100 flex-1 shadow-xs" size="sm">
         <CardBody>
           <div className="flex items-start justify-between gap-2">
             <CardTitle>Statistics</CardTitle>

@@ -58,10 +58,11 @@ export const SeatPositionRadarChart = ({
     },
   );
   return (
-    <div className="flex h-[185px] min-w-[209px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[185px] max-w-[500px] min-w-[209px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">Seat Position</div>
         <Select
+          anchor="bottom end"
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
           getItemText={({ text }) => text}
@@ -80,7 +81,7 @@ export const SeatPositionRadarChart = ({
             },
           ]}
           menuSize="sm"
-          menuClassName="w-[185px] right-0"
+          menuClassName="w-[185px] bg-base-200 z-50"
           name="seatPositionMode"
         />
       </div>
@@ -106,9 +107,9 @@ export const SeatPositionRadarChart = ({
               fillOpacity={0.5}
               gridLabelOffset={15}
               dotSize={8}
-              dotColor="oklch(var(--b3))"
+              dotColor="var(--color-base-300)"
               dotBorderWidth={2}
-              colors={['oklch(var(--wa))']}
+              colors={['var(--color-warning)']}
               motionConfig="wobbly"
               sliceTooltip={tooltipData => (
                 <Tooltip

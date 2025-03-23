@@ -118,7 +118,7 @@ export const TotalsChart = ({
                 </StatDesc>
               </Stat>
             </Stats>
-            <Stats className="stats-vertical flex-1 sm:stats-horizontal">
+            <Stats className="stats-vertical sm:stats-horizontal flex-1">
               <Stat className="p-2">
                 <StatTitle>Distance Flown</StatTitle>
                 <StatValue className="flex items-center gap-2">

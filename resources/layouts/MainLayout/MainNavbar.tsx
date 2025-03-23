@@ -135,7 +135,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     <>
       <div
         className={classNames(
-          'absolute left-0 top-0 z-30 flex w-full flex-col bg-gradient-to-b shadow-md backdrop-blur',
+          'absolute top-0 left-0 z-30 flex w-full flex-col bg-linear-to-b shadow-md backdrop-blur-sm',
           isDarkMode
             ? 'from-base-100/75 to-base-100/40'
             : 'from-base-100/90 to-base-100/70',
@@ -152,10 +152,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     <span className="sr-only">Navigation Menu</span>
                   </>
                 ),
+                className: 'lg:hidden',
               }}
-              className="lg:hidden"
               items={tabs}
-              menuClassName="rounded-box w-48 bg-base-200"
+              menuClassName="rounded-box w-48 bg-base-200 z-50"
             />
             <Button
               className="inline-flex px-1 normal-case sm:px-4"
@@ -165,7 +165,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               }}
               title="Home"
             >
-              <div className="font-title text-xl text-primary transition-all duration-200 sm:text-3xl">
+              <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
                 <span>Flight</span>
                 <span className="text-base-content">Logger</span>
               </div>
@@ -173,6 +173,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
           </div>
           <div className="hidden flex-1 justify-center lg:flex">
             <Tabs
+              box
               className="tabs-boxed bg-transparent p-0"
               onChange={({ id }) => {
                 navigate(tabsToPathsMap[id]);
@@ -182,7 +183,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               tabs={tabs}
             />
           </div>
-          <div className="flex-1 justify-end gap-1">
+          <div className="flex flex-1 justify-end gap-1">
             <ThemeButton />
             {isLoggedIn ? (
               <Button
@@ -215,15 +216,17 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               Login
             </Button>
             <DropdownMenu
-              className={classNames(!isLoggedIn && !isFetching && 'hidden')}
               buttonProps={{
                 children: isFetching ? (
                   <Loading />
                 ) : (
-                  <Avatar shapeClassName="w-9 h-9 rounded-full">
-                    <img alt={data?.username} src={data?.avatar} />
-                  </Avatar>
+                  <Avatar
+                    alt={data?.username}
+                    src={data?.avatar}
+                    shapeClassName="w-9 h-9 rounded-full"
+                  />
                 ),
+                className: classNames(!isLoggedIn && !isFetching && 'hidden'),
                 color: 'ghost',
                 disabled: isFetching,
                 shape: 'circle',
@@ -287,7 +290,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   },
                 },
               ]}
-              menuClassName="rounded-box right-0 w-48 bg-base-200"
+              menuClassName="rounded-box right-0 w-48 bg-base-200 z-50"
             />
           </div>
         </div>

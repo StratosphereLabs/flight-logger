@@ -37,7 +37,7 @@ export const TripDisclosure = ({
         children: (
           <div className="flex flex-1 items-center justify-between gap-1 overflow-hidden pr-2">
             <Badge
-              className="badge-sm font-normal md:badge-md md:font-semibold"
+              className="badge-sm md:badge-md font-normal md:font-semibold"
               color={trip.inFuture ? 'accent' : undefined}
             >
               {trip.outDateISO}

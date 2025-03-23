@@ -22,7 +22,7 @@ export const FlightsTable = ({
         airline: 'w-[80px] py-[2px] lg:py-1',
         departureAirport: 'w-[40px] lg:w-[50px]',
       }}
-      className="table-xs w-full min-w-[375px] max-w-[750px] table-fixed border-separate lg:table-sm lg:min-w-[465px]"
+      className="table-xs lg:table-sm w-full max-w-[750px] min-w-[375px] table-fixed border-separate lg:min-w-[465px]"
       columns={[
         {
           id: 'year',

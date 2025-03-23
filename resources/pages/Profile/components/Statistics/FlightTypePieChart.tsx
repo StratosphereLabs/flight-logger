@@ -69,10 +69,11 @@ export const FlightTypePieChart = ({
     [data, mode],
   );
   return (
-    <div className="flex h-[200px] min-w-[284px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[200px] max-w-[500px] min-w-[284px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">Flight Type</div>
         <Select
+          anchor="bottom end"
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
           getItemText={({ text }) => text}
@@ -91,7 +92,7 @@ export const FlightTypePieChart = ({
             },
           ]}
           menuSize="sm"
-          menuClassName="w-[185px] right-0"
+          menuClassName="w-[185px] bg-base-200 z-50"
           name="flightTypeMode"
         />
       </div>
@@ -114,8 +115,8 @@ export const FlightTypePieChart = ({
               arcLabel={d => d.data[mode].toLocaleString()}
               margin={{ top: 25, right: 40, bottom: 25, left: 40 }}
               colors={[
-                'var(--fallback-er,oklch(var(--in)/0.50))',
-                'var(--fallback-er,oklch(var(--a)/0.50))',
+                'oklch(from var(--color-info) l c h / 0.5)',
+                'oklch(from var(--color-accent) l c h / 0.5)',
               ]}
               innerRadius={mode === 'flights' ? 0.5 : 0.2}
               padAngle={0.7}
@@ -123,7 +124,7 @@ export const FlightTypePieChart = ({
               activeOuterRadiusOffset={4}
               arcLinkLabelsSkipAngle={10}
               arcLinkLabelsStraightLength={10}
-              arcLinkLabelsTextColor="var(--fallback-bc,oklch(var(--bc)/0.75))"
+              arcLinkLabelsTextColor="oklch(from var(--color-base-content) l c h / 0.75)"
               arcLinkLabelsThickness={2}
               arcLinkLabelsColor={{ from: 'color' }}
               arcLabelsSkipAngle={10}

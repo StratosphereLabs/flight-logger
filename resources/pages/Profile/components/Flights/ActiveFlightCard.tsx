@@ -77,10 +77,10 @@ export const ActiveFlightCard = (): JSX.Element | null => {
     return null;
   }
   return (
-    <Card className="relative m-0 bg-base-100 p-0">
+    <Card className="bg-base-100 relative m-0 p-0">
       <Card
         className={classNames(
-          'border-2 shadow-sm',
+          'border-2 shadow-xs',
           theme === AppTheme.LOFI
             ? CARD_COLORS_LOFI[data.delayStatus]
             : CARD_COLORS[data.delayStatus],
@@ -88,12 +88,12 @@ export const ActiveFlightCard = (): JSX.Element | null => {
             ? CARD_BORDER_COLORS_LOFI[data.delayStatus]
             : CARD_BORDER_COLORS[data.delayStatus],
         )}
-        bordered
+        border
       >
         {onOwnProfile || userData?.id === data.addedByUserId ? (
           <Button
             aria-label="Remove current flight"
-            className="absolute right-[-4px] top-[-4px] z-20 opacity-25 hover:opacity-75"
+            className="absolute top-[-4px] right-[-4px] z-20 opacity-25 hover:opacity-75"
             color="ghost"
             shape="circle"
             size="sm"
@@ -136,7 +136,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   />
                   <div className="flex flex-col text-sm">
                     <Link
-                      className="text-nowrap font-mono"
+                      className="font-mono text-nowrap"
                       hover
                       href={
                         data.flightAwareLink !== null
@@ -186,17 +186,17 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               <div className="flex h-8 w-full items-center justify-between gap-3 font-mono text-3xl font-bold">
                 <div>{data.departureAirport.iata}</div>
                 <div className="relative h-full flex-1">
-                  <div className="absolute left-0 top-0 flex h-full w-full items-center px-2 opacity-50">
+                  <div className="absolute top-0 left-0 flex h-full w-full items-center px-2 opacity-50">
                     <progress
                       className={classNames(
-                        'progress left-0 top-0 flex-1',
+                        'progress top-0 left-0 flex-1',
                         PROGRESS_BAR_COLORS[data.delayStatus],
                       )}
                       value={100 * data.progress}
                       max="100"
                     />
                   </div>
-                  <div className="absolute left-0 top-0 z-20 h-full w-full px-2">
+                  <div className="absolute top-0 left-0 z-20 h-full w-full px-2">
                     <div
                       className="relative h-full overflow-visible"
                       style={{
@@ -216,9 +216,9 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                       />
                     </div>
                   </div>
-                  <div className="absolute left-0 top-0 z-10 flex h-full w-full items-center justify-between">
-                    <div className="h-4 w-4 rounded-full bg-neutral" />
-                    <div className="h-4 w-4 rounded-full bg-neutral" />
+                  <div className="absolute top-0 left-0 z-10 flex h-full w-full items-center justify-between">
+                    <div className="bg-neutral h-4 w-4 rounded-full" />
+                    <div className="bg-neutral h-4 w-4 rounded-full" />
                   </div>
                 </div>
                 <div>{data.arrivalAirport.iata}</div>

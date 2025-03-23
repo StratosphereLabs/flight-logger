@@ -81,15 +81,16 @@ export const TopRoutesChart = ({
     [cityPairs, data],
   );
   return (
-    <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[250px] max-w-[500px] min-w-[250px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex w-full items-center justify-between">
         <div className="text-lg">{title}</div>
         <FormToggleSwitch
           className="my-[-3px]"
-          labelText="City Pairs"
           name="routesCityPairs"
           size="xs"
-        />
+        >
+          City Pairs
+        </FormToggleSwitch>
       </div>
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
@@ -131,7 +132,7 @@ export const TopRoutesChart = ({
               margin={{
                 left: 65,
               }}
-              colors={['var(--fallback-wa,oklch(var(--wa)/0.75))']}
+              colors={['oklch(from var(--color-warning) l c h / 0.75)']}
               tooltip={tooltipData => (
                 <Tooltip
                   className="translate-y-[-20px]"

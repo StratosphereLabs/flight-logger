@@ -91,7 +91,7 @@ export const UserFlightsTable = ({
                   >
                     {date.split('-')[0]}
                   </Badge>
-                  <div className="hidden flex-1 text-nowrap font-semibold opacity-80 sm:block">
+                  <div className="hidden flex-1 font-semibold text-nowrap opacity-80 sm:block">
                     {row.original.outDateLocalAbbreviated}
                   </div>
                   <div className="flex gap-1 font-mono opacity-90 sm:text-base">
@@ -101,7 +101,7 @@ export const UserFlightsTable = ({
                     </span>
                   </div>
                 </div>
-                <div className="block text-nowrap font-semibold opacity-80 sm:hidden">
+                <div className="block font-semibold text-nowrap opacity-80 sm:hidden">
                   {row.original.outDateLocalAbbreviated}
                 </div>
               </div>

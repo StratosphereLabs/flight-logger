@@ -27,11 +27,11 @@ export const AirlinesCard = (): JSX.Element => {
     { onError },
   );
   return (
-    <Card className="min-h-[625px] bg-base-100 shadow-sm">
+    <Card className="bg-base-100 min-h-[625px] shadow-xs">
       <CardBody>
         <CardTitle className="justify-center">Airlines</CardTitle>
         <Table
-          className="table-fixed border-separate bg-base-100"
+          className="bg-base-100 table-fixed border-separate"
           columns={[
             {
               id: 'logo',

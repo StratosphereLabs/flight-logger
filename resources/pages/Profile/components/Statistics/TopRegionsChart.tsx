@@ -77,10 +77,11 @@ export const TopRegionsChart = ({
     [data, mode],
   );
   return (
-    <div className="flex h-[250px] min-w-[250px] max-w-[500px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[250px] max-w-[500px] min-w-[250px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-lg">Regions</div>
         <Select
+          anchor="bottom end"
           buttonProps={{ color: 'ghost', size: 'xs' }}
           formValueMode="id"
           getItemText={({ text }) => text}
@@ -99,7 +100,7 @@ export const TopRegionsChart = ({
             },
           ]}
           menuSize="sm"
-          menuClassName="w-[185px] right-0"
+          menuClassName="w-[185px] bg-base-200 z-50"
           name="regionsMode"
         />
       </div>
@@ -142,7 +143,7 @@ export const TopRegionsChart = ({
               margin={{
                 left: 65,
               }}
-              colors={['var(--fallback-in,oklch(var(--in)/0.75))']}
+              colors={['oklch(from var(--color-info) l c h / 0.75)']}
               tooltip={tooltipData => (
                 <Tooltip
                   className="translate-y-[-20px]"

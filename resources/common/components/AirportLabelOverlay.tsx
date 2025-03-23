@@ -25,7 +25,7 @@ export const AirportLabelOverlay = ({
   >
     <div
       className={classNames(
-        'rounded-box bg-base-100 bg-opacity-60 px-[5px] font-mono text-sm backdrop-blur-sm transition-opacity',
+        'rounded-box bg-base-100 bg-opacity-60 px-[5px] font-mono text-sm backdrop-blur-xs transition-opacity',
         'font-bold',
         show ? !isFocused && 'opacity-10' : 'opacity-0',
       )}

@@ -131,7 +131,7 @@ export const EditFlightModal = ({
   return (
     <Modal
       actionButtons={[]}
-      className="overflow-x-hidden overflow-y-scroll scrollbar-none"
+      className="scrollbar-none overflow-x-hidden overflow-y-scroll"
       onClose={() => {
         setIsEditDialogOpen(false);
       }}
@@ -150,7 +150,7 @@ export const EditFlightModal = ({
           isRequired
           labelText="Departure Airport"
           inputClassName="bg-base-200"
-          menuClassName="w-full"
+          menuClassName="w-full bg-base-200 z-50"
           name="departureAirport"
           showDirty
         />
@@ -158,7 +158,7 @@ export const EditFlightModal = ({
           isRequired
           labelText="Arrival Airport"
           inputClassName="bg-base-200"
-          menuClassName="w-full"
+          menuClassName="w-full bg-base-200 z-50"
           name="arrivalAirport"
           showDirty
         />
@@ -194,7 +194,7 @@ export const EditFlightModal = ({
           <AirframeInput
             labelText="Registration"
             inputClassName="bg-base-200"
-            menuClassName="w-full"
+            menuClassName="w-full bg-base-200 z-50"
             name="airframe"
             showDirty
           />
@@ -202,7 +202,7 @@ export const EditFlightModal = ({
         <AirlineInput
           labelText="Airline"
           inputClassName="bg-base-200"
-          menuClassName="w-full"
+          menuClassName="w-full bg-base-200 z-50"
           name="airline"
           showDirty
         />
@@ -210,7 +210,7 @@ export const EditFlightModal = ({
           getBadgeText={({ iata, icao, name }) => `${iata}/${icao} - ${name}`}
           labelText="Aircraft Type"
           inputClassName="bg-base-200"
-          menuClassName="w-full"
+          menuClassName="w-full bg-base-200 z-50"
           name="aircraftType"
           showDirty
         />

@@ -14,10 +14,10 @@ export const AuthenticationLayout = (): JSX.Element => {
   const { pathname } = useLocation();
   const { alertMessages } = useAlertMessages();
   return (
-    <div className="hero min-h-[100dvh] bg-base-200">
+    <div className="hero bg-base-200 min-h-[100dvh]">
       <div className="hero-content w-full flex-wrap justify-around">
         <div className="text-center lg:text-left">
-          <div className="font-title inline-flex text-lg text-primary transition-all duration-200 md:text-5xl">
+          <div className="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-5xl">
             <span>Flight</span>{' '}
             <span className="text-base-content">Logger</span>
           </div>
@@ -35,7 +35,7 @@ export const AuthenticationLayout = (): JSX.Element => {
             </Button>
           ) : null}
         </div>
-        <Card className="w-full max-w-md flex-shrink-0 bg-base-100 shadow-lg">
+        <Card className="bg-base-100 w-full max-w-md shrink-0 shadow-lg">
           <CardBody>
             <Outlet />
           </CardBody>
@@ -46,7 +46,7 @@ export const AuthenticationLayout = (): JSX.Element => {
           <AlertMessages maxMessages={4} />
         </div>
       ) : null}
-      <div className="absolute right-0 top-0 p-1">
+      <div className="absolute top-0 right-0 p-1">
         <ThemeButton />
       </div>
     </div>

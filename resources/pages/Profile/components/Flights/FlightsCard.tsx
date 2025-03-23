@@ -65,7 +65,7 @@ export const FlightsCard = ({
   return (
     <Card
       className={classNames(
-        'w-full bg-base-100',
+        'bg-base-100 w-full',
         isFlightsFullScreen || isAddingFlight ? 'flex-1' : 'lg:w-[480px]',
       )}
     >
