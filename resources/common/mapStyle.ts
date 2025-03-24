@@ -8,11 +8,6 @@ export const darkModeStyle = [
     stylers: [{ lightness: -25 }],
   },
   {
-    featureType: 'administrative.locality',
-    elementType: 'all',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
     featureType: 'poi',
     elementType: 'all',
     stylers: [{ visibility: 'off' }],
@@ -49,11 +44,6 @@ export const lightModeStyle = [
     featureType: 'administrative',
     elementType: 'all',
     stylers: [{ lightness: 50 }],
-  },
-  {
-    featureType: 'administrative.locality',
-    elementType: 'all',
-    stylers: [{ visibility: 'off' }],
   },
   {
     featureType: 'poi',
