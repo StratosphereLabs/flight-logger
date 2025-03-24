@@ -123,7 +123,9 @@ export const MapCard = ({
             heading: currentFlightData.estimatedHeading,
             delayStatus: currentFlightData.delayStatus,
             flightStatus: currentFlightData.flightStatus,
-            callsign: `${currentFlightData.airline?.icao}${currentFlightData.flightNumber}`,
+            callsign:
+              currentFlightData.callsign ??
+              `${currentFlightData.airline?.icao}${currentFlightData.flightNumber}`,
             tracklog: currentFlightData.tracklog,
             waypoints: currentFlightData.waypoints,
           }

@@ -10,7 +10,14 @@ import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Loading } from 'stratosphere-ui';
+import {
+  Avatar,
+  Button,
+  Card,
+  Loading,
+  Tooltip,
+  TooltipContent,
+} from 'stratosphere-ui';
 
 import {
   AirportLabelOverlay,
@@ -20,6 +27,7 @@ import {
 } from '../../common/components';
 import { TOOLTIP_COLORS } from '../../common/constants';
 import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
+import { getAltChangeString } from '../../common/utils';
 import { useIsDarkMode } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
@@ -235,6 +243,7 @@ export const FollowingMap = (): JSX.Element => {
                     user,
                     airline,
                     flightNumber,
+                    callsign,
                     departureAirport,
                     arrivalAirport,
                     delayStatus,
@@ -253,6 +262,30 @@ export const FollowingMap = (): JSX.Element => {
                     'ARRIVED_TAXIING',
                   ].includes(flightStatus);
                   const isFocused = isSelected || isHover || isCurrentFlight;
+                  const lastTracklogItem =
+                    tracklog !== undefined && tracklog.length > 2
+                      ? tracklog[tracklog.length - 3]
+                      : null;
+                  const currentTracklogItem =
+                    tracklog !== undefined && tracklog.length > 1
+                      ? tracklog[tracklog.length - 2]
+                      : null;
+                  const lastAlt =
+                    lastTracklogItem !== null
+                      ? Math.round(lastTracklogItem.alt ?? 0)
+                      : null;
+                  const currentAlt =
+                    currentTracklogItem !== null
+                      ? Math.round(currentTracklogItem.alt ?? 0)
+                      : null;
+                  const currentSpeed =
+                    currentTracklogItem !== null
+                      ? Math.round(currentTracklogItem.gs ?? 0)
+                      : null;
+                  const altChangeString =
+                    lastAlt !== null && currentAlt !== null
+                      ? getAltChangeString(lastAlt, currentAlt)
+                      : null;
                   let lastAltitude: number | null = null;
                   return (
                     <>
@@ -360,13 +393,32 @@ export const FollowingMap = (): JSX.Element => {
                           })}
                           zIndex={100}
                         >
-                          <div
-                            className={classNames(
-                              'tooltip tooltip-open font-semibold opacity-80',
-                              TOOLTIP_COLORS[delayStatus],
-                            )}
-                            data-tip={`${airline?.icao}${flightNumber}`}
+                          <Tooltip
+                            className="opacity-75"
+                            color={TOOLTIP_COLORS[delayStatus]}
+                            open
                           >
+                            <TooltipContent className="flex flex-col items-start font-mono">
+                              <span className="flex gap-1 font-semibold">
+                                <Avatar
+                                  alt={user.username}
+                                  src={user.avatar}
+                                  shapeClassName="w-4 h-4 rounded-full"
+                                />
+                                {callsign ?? `${airline?.icao}${flightNumber}`}
+                              </span>
+                              <span className="flex gap-1 text-xs">
+                                <span>
+                                  {currentAlt != null
+                                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt}`
+                                    : null}
+                                </span>
+                                <span>{currentSpeed}</span>
+                                <span className="font-bold">
+                                  {altChangeString}
+                                </span>
+                              </span>
+                            </TooltipContent>
                             <Button
                               size="sm"
                               shape="circle"
@@ -384,7 +436,7 @@ export const FollowingMap = (): JSX.Element => {
                               />
                               <span className="sr-only">{`@${user.username}`}</span>
                             </Button>
-                          </div>
+                          </Tooltip>
                         </OverlayViewF>
                       ) : null}
                     </>
