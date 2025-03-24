@@ -316,7 +316,7 @@ export const GoogleMap = ({
             open
           >
             <TooltipContent className="flex flex-col items-start font-mono">
-              <span className="flex gap-1 font-semibold">
+              <span className="flex gap-1 font-bold">
                 {currentFlight.callsign}
               </span>
               <span className="flex gap-1 text-xs">

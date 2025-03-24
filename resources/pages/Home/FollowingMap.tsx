@@ -399,7 +399,7 @@ export const FollowingMap = (): JSX.Element => {
                             open
                           >
                             <TooltipContent className="flex flex-col items-start font-mono">
-                              <span className="flex gap-1 font-semibold">
+                              <span className="flex gap-1 font-bold">
                                 <Avatar
                                   alt={user.username}
                                   src={user.avatar}
