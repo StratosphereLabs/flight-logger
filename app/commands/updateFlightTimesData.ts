@@ -119,6 +119,7 @@ export const getFlightStatsUpdatedData = async (
     airframeId: airframe !== undefined ? (airframe?.icao24 ?? null) : undefined,
     tailNumber,
     aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
+    callsign: flight.positional.flexTrack?.callsign,
     tracklog: flight.positional.flexTrack?.positions
       ?.reverse()
       .map(({ date, lat, lon, altitudeFt, speedMph }) => ({
