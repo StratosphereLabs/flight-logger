@@ -16,6 +16,7 @@ import {
   useState,
 } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
+import { Tooltip, TooltipContent } from 'stratosphere-ui';
 
 import {
   AirportLabelOverlay,
@@ -23,6 +24,7 @@ import {
 } from '../../../../common/components';
 import { TOOLTIP_COLORS } from '../../../../common/constants';
 import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
+import { getAltChangeString } from '../../../../common/utils';
 import { useIsDarkMode } from '../../../../stores';
 import { getAltitudeColor } from '../../../../utils/colors';
 import { type MapCardFormData } from '../../Profile';
@@ -117,6 +119,28 @@ export const GoogleMap = ({
     [center, isDarkMode],
   );
   const aircraftColor = isDarkMode ? 'text-blue-500' : 'text-[#0000ff]';
+  const lastTracklogItem =
+    currentFlight?.tracklog !== undefined && currentFlight.tracklog.length > 2
+      ? currentFlight.tracklog[currentFlight.tracklog.length - 3]
+      : null;
+  const currentTracklogItem =
+    currentFlight?.tracklog !== undefined && currentFlight.tracklog.length > 1
+      ? currentFlight.tracklog[currentFlight.tracklog.length - 2]
+      : null;
+  const lastAlt =
+    lastTracklogItem !== null ? Math.round(lastTracklogItem.alt ?? 0) : null;
+  const currentAlt =
+    currentTracklogItem !== null
+      ? Math.round(currentTracklogItem.alt ?? 0)
+      : null;
+  const currentSpeed =
+    currentTracklogItem !== null
+      ? Math.round(currentTracklogItem.gs ?? 0)
+      : null;
+  const altChangeString =
+    lastAlt !== null && currentAlt !== null
+      ? getAltChangeString(lastAlt, currentAlt)
+      : null;
   let lastAltitude: number | null = null;
   return isLoaded ? (
     <GoogleMapComponent
@@ -283,21 +307,35 @@ export const GoogleMap = ({
           })}
           zIndex={100}
         >
-          <div
+          <Tooltip
             className={classNames(
-              'tooltip tooltip-open',
-              TOOLTIP_COLORS[currentFlight.delayStatus],
+              'font-mono',
               selectedAirportId === null ? 'opacity-80' : 'opacity-10',
             )}
-            data-tip={currentFlight.callsign}
+            color={TOOLTIP_COLORS[currentFlight.delayStatus]}
+            open
           >
+            <TooltipContent className="flex flex-col items-start font-mono">
+              <span className="flex gap-1 font-semibold">
+                {currentFlight.callsign}
+              </span>
+              <span className="flex gap-1 text-xs">
+                <span>
+                  {currentAlt != null
+                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt}`
+                    : null}
+                </span>
+                <span>{currentSpeed}</span>
+                <span className="font-bold">{altChangeString}</span>
+              </span>
+            </TooltipContent>
             <PlaneSolidIcon
               className={classNames('h-6 w-6', aircraftColor)}
               style={{
                 transform: `rotate(${Math.round(currentFlight.heading - 90)}deg)`,
               }}
             />
-          </div>
+          </Tooltip>
         </OverlayViewF>
       ) : null}
       <HeatmapLayerF
