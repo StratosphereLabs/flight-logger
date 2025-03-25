@@ -398,26 +398,29 @@ export const FollowingMap = (): JSX.Element => {
                             color={TOOLTIP_COLORS[delayStatus]}
                             open
                           >
-                            <TooltipContent className="flex flex-col items-start font-mono">
-                              <span className="flex gap-1 font-bold">
-                                <Avatar
-                                  alt={user.username}
-                                  src={user.avatar}
-                                  shapeClassName="w-4 h-4 rounded-full"
-                                />
-                                {callsign ?? `${airline?.icao}${flightNumber}`}
-                              </span>
-                              <span className="flex gap-1 text-xs">
-                                <span>
-                                  {currentAlt != null
-                                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt}`
-                                    : null}
+                            <TooltipContent className="flex items-center gap-1 font-mono">
+                              <Avatar
+                                alt={user.username}
+                                src={user.avatar}
+                                shapeClassName="w-7 h-7 rounded-full"
+                              />
+                              <div className="flex flex-col">
+                                <span className="flex gap-1 font-bold">
+                                  {callsign ??
+                                    `${airline?.icao}${flightNumber}`}
                                 </span>
-                                <span>{currentSpeed}</span>
-                                <span className="font-bold">
-                                  {altChangeString}
+                                <span className="flex gap-1 text-xs">
+                                  <span>
+                                    {currentAlt != null
+                                      ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
+                                      : null}
+                                  </span>
+                                  <span>{currentSpeed}</span>
+                                  <span className="font-bold">
+                                    {altChangeString}
+                                  </span>
                                 </span>
-                              </span>
+                              </div>
                             </TooltipContent>
                             <Button
                               size="sm"
