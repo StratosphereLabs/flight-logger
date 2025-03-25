@@ -367,24 +367,24 @@ const updateFlightsEvery15Seconds = async (): Promise<void> => {
           {
             offTimeActual: {
               gt: sub(new Date(), { minutes: 30 }),
-              lte: new Date(),
+              lte: add(new Date(), { minutes: 1 }),
             },
           },
           {
             offTime: {
               gt: sub(new Date(), { minutes: 30 }),
-              lte: new Date(),
+              lte: add(new Date(), { minutes: 1 }),
             },
           },
           {
             onTimeActual: {
-              gt: new Date(),
+              gt: sub(new Date(), { minutes: 1 }),
               lte: add(new Date(), { minutes: 30 }),
             },
           },
           {
             onTime: {
-              gt: new Date(),
+              gt: sub(new Date(), { minutes: 1 }),
               lte: add(new Date(), { minutes: 30 }),
             },
           },

@@ -322,7 +322,7 @@ export const GoogleMap = ({
               <span className="flex gap-1 text-xs">
                 <span>
                   {currentAlt != null
-                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt}`
+                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
                     : null}
                 </span>
                 <span>{currentSpeed}</span>
