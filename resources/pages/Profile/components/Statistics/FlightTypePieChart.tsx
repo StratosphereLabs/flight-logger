@@ -74,7 +74,7 @@ export const FlightTypePieChart = ({
         <div className="text-base">Flight Type</div>
         <Select
           anchor="bottom end"
-          buttonProps={{ color: 'ghost', size: 'xs' }}
+          buttonProps={{ color: 'ghost', size: 'sm' }}
           formValueMode="id"
           getItemText={({ text }) => text}
           options={[
@@ -91,7 +91,6 @@ export const FlightTypePieChart = ({
               text: 'Duration (min)',
             },
           ]}
-          menuSize="sm"
           menuClassName="w-[185px] bg-base-200 z-50"
           name="flightTypeMode"
         />

@@ -63,7 +63,7 @@ export const SeatPositionRadarChart = ({
         <div className="text-base">Seat Position</div>
         <Select
           anchor="bottom end"
-          buttonProps={{ color: 'ghost', size: 'xs' }}
+          buttonProps={{ color: 'ghost', size: 'sm' }}
           formValueMode="id"
           getItemText={({ text }) => text}
           options={[
@@ -80,7 +80,6 @@ export const SeatPositionRadarChart = ({
               text: 'Duration (min)',
             },
           ]}
-          menuSize="sm"
           menuClassName="w-[185px] bg-base-200 z-50"
           name="seatPositionMode"
         />

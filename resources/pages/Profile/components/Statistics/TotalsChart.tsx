@@ -76,7 +76,7 @@ export const TotalsChart = ({
         {data !== undefined ? (
           <div
             className={classNames(
-              'flex flex-1 flex-col flex-wrap transition-opacity lg:flex-row',
+              'flex flex-1 flex-col transition-opacity 2xl:flex-row',
               isFetching && 'opacity-50',
             )}
           >

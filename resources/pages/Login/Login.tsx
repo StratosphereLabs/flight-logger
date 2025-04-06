@@ -60,7 +60,7 @@ export const Login = (): JSX.Element => {
             labelText="Password"
             name="password"
           />
-          <label className="label">
+          <div className="flex w-full justify-between">
             <a
               onClick={handleForgotPassword}
               href="#"
@@ -77,7 +77,7 @@ export const Login = (): JSX.Element => {
             >
               Register
             </a>
-          </label>
+          </div>
         </fieldset>
         <div className="mt-6 flex flex-col">
           <Button color="primary" type="submit" loading={isLoading}>

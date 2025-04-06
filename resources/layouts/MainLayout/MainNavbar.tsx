@@ -144,6 +144,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         <div className="navbar">
           <div className="flex sm:flex-1">
             <DropdownMenu
+              anchor="bottom start"
               buttonProps={{
                 color: 'ghost',
                 children: (
@@ -155,7 +156,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 className: 'lg:hidden',
               }}
               items={tabs}
-              menuClassName="rounded-box w-48 bg-base-200 z-50"
+              menuClassName="w-48 bg-base-200 z-50"
             />
             <Button
               className="inline-flex px-1 normal-case sm:px-4"
@@ -216,6 +217,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               Login
             </Button>
             <DropdownMenu
+              anchor="bottom end"
               buttonProps={{
                 children: isFetching ? (
                   <Loading />
@@ -290,7 +292,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   },
                 },
               ]}
-              menuClassName="rounded-box right-0 w-48 bg-base-200 z-50"
+              menuClassName="w-48 bg-base-200 z-50"
             />
           </div>
         </div>

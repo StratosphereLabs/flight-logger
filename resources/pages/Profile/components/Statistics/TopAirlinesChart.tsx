@@ -79,10 +79,10 @@ export const TopAirlinesChart = ({
   return (
     <div className="flex h-[250px] max-w-[500px] min-w-[250px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
-        <div className="text-lg">Airlines</div>
+        <div className="text-base">Airlines</div>
         <Select
           anchor="bottom end"
-          buttonProps={{ color: 'ghost', size: 'xs' }}
+          buttonProps={{ color: 'ghost', size: 'sm' }}
           formValueMode="id"
           getItemText={({ text }) => text}
           options={[
@@ -99,7 +99,6 @@ export const TopAirlinesChart = ({
               text: 'Duration (min)',
             },
           ]}
-          menuSize="sm"
           menuClassName="w-[185px] bg-base-200 z-50"
           name="airlinesMode"
         />
