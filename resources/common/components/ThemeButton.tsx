@@ -114,7 +114,7 @@ export const ThemeButton = (): JSX.Element => {
           ),
         },
       ]}
-      menuClassName="rounded-box right-0 w-48 bg-base-200 z-50"
+      menuClassName="w-48 bg-base-200 z-50"
     />
   );
 };

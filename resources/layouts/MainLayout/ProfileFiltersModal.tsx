@@ -58,7 +58,7 @@ export const ProfileFiltersModal = ({
           },
         },
       ]}
-      className="bg-base-200 overflow-visible"
+      className="bg-base-100 overflow-visible"
       onClose={() => {
         setOpen(false);
       }}
@@ -74,7 +74,7 @@ export const ProfileFiltersModal = ({
               buttonProps={{
                 color: 'neutral',
               }}
-              className="w-[135px]"
+              className="relative w-[135px]"
               formValueMode="id"
               getItemText={({ label }) => label}
               name="status"
@@ -96,17 +96,16 @@ export const ProfileFiltersModal = ({
                     ]
                   : []),
               ]}
-              menuClassName="w-[175px] bg-base-200 z-50"
+              menuClassName="absolute w-[175px] bg-base-200 z-50"
             />
           ) : (
             <div />
           )}
           <Select
-            anchor="bottom end"
             buttonProps={{
               color: 'neutral',
             }}
-            className="w-[160px] text-nowrap"
+            className="relative w-[160px] text-nowrap"
             formValueMode="id"
             getItemText={({ label }) => label}
             name="range"
@@ -136,25 +135,34 @@ export const ProfileFiltersModal = ({
                 label: 'Custom Range',
               },
             ]}
-            menuClassName="w-[175px] right-0 bg-base-200 z-50"
+            menuClassName="absolute w-[175px] right-0 bg-base-200 z-50"
           />
         </div>
         <div className="flex flex-col items-end gap-4">
           {range === 'customRange' ? (
             <div className="flex items-center gap-2">
-              <FormControl name="fromDate" type="date" max={toDate} />
+              <FormControl
+                className="min-w-[125px]"
+                name="fromDate"
+                type="date"
+                max={toDate}
+              />
               to
-              <FormControl name="toDate" type="date" min={fromDate} />
+              <FormControl
+                className="min-w-[125px]"
+                name="toDate"
+                type="date"
+                min={fromDate}
+              />
             </div>
           ) : null}
           <div className="flex gap-2">
             {range === 'customMonth' ? (
               <Select
-                anchor="bottom end"
                 buttonProps={{
                   color: 'neutral',
                 }}
-                className="w-[135px]"
+                className="relative w-[135px]"
                 formValueMode="id"
                 getItemText={({ label }) => label}
                 name="month"
@@ -162,16 +170,15 @@ export const ProfileFiltersModal = ({
                   id: (key + 1).toString(),
                   label: MONTH_NAMES[key],
                 }))}
-                menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
+                menuClassName="absolute w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
               />
             ) : null}
             {range === 'customYear' || range === 'customMonth' ? (
               <Select
-                anchor="bottom end"
                 buttonProps={{
                   color: 'neutral',
                 }}
-                className="w-[95px]"
+                className="relative w-[95px]"
                 formValueMode="id"
                 getItemText={({ label }) => label}
                 name="year"
@@ -179,7 +186,7 @@ export const ProfileFiltersModal = ({
                   id: `${currentDate.getFullYear() - index + 1}`,
                   label: `${currentDate.getFullYear() - index + 1}`,
                 }))}
-                menuClassName="w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
+                menuClassName="absolute w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
               />
             ) : null}
           </div>
