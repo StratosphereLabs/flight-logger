@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import {
@@ -8,18 +7,16 @@ import {
   Form,
   FormControl,
   PasswordInput,
-  // Tooltip,
 } from 'stratosphere-ui';
 
 import { registerSchema } from '../../../app/schemas';
 import { useAuthPage, useTRPCErrorHandler } from '../../common/hooks';
-// import { useAuthStore } from '../../stores';
+import { useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
-import { IPIFY_URL, REDIRECT_URL } from './constants';
 
 export const Register = (): JSX.Element => {
   useAuthPage();
-  // const { setToken } = useAuthStore();
+  const { setToken } = useAuthStore();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -34,16 +31,12 @@ export const Register = (): JSX.Element => {
     resolver: zodResolver(registerSchema),
   });
   const onError = useTRPCErrorHandler();
-  const [isFetchIpDataLoading, setIsFetchIpDataLoading] = useState(false);
-  // const { isLoading } = trpc.auth.register.useMutation({
-  //   onSuccess: ({ token }) => {
-  //     setToken(token);
-  //   },
-  //   onError,
-  // });
-  const { mutate, isLoading: isCreateRegistrationLoading } =
-    trpc.registrations.createRegistration.useMutation({ onError });
-  const isLoading = isFetchIpDataLoading || isCreateRegistrationLoading;
+  const { isLoading, mutate } = trpc.auth.register.useMutation({
+    onSuccess: ({ token }) => {
+      setToken(token);
+    },
+    onError,
+  });
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>
@@ -51,24 +44,7 @@ export const Register = (): JSX.Element => {
       <Form
         methods={methods}
         onFormSubmit={values => {
-          setIsFetchIpDataLoading(true);
-          const redirect = (): void => {
-            setIsFetchIpDataLoading(false);
-            window.open(REDIRECT_URL, '_blank');
-          };
-          fetch(IPIFY_URL)
-            .then(response => response.json())
-            .then((data: { ip: string }) => {
-              mutate(
-                {
-                  ipv4: data.ip,
-                  userAgent: navigator.userAgent,
-                  ...values,
-                },
-                { onSettled: redirect },
-              );
-            })
-            .catch(redirect);
+          mutate(values);
         }}
       >
         <fieldset disabled={isLoading}>
