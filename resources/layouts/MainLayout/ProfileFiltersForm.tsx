@@ -67,7 +67,7 @@ export const ProfileFiltersForm = ({
             anchor="bottom end"
             buttonProps={{
               size: 'sm',
-              color: 'neutral',
+              soft: true,
             }}
             className="w-[130px]"
             formValueMode="id"
@@ -106,7 +106,7 @@ export const ProfileFiltersForm = ({
             anchor="bottom end"
             buttonProps={{
               size: 'sm',
-              color: 'neutral',
+              soft: true,
             }}
             className="w-[130px]"
             formValueMode="id"
@@ -124,7 +124,7 @@ export const ProfileFiltersForm = ({
             anchor="bottom end"
             buttonProps={{
               size: 'sm',
-              color: 'neutral',
+              soft: true,
             }}
             className="w-[85px]"
             formValueMode="id"
@@ -141,7 +141,7 @@ export const ProfileFiltersForm = ({
           anchor="bottom end"
           buttonProps={{
             size: 'sm',
-            color: 'neutral',
+            soft: true,
           }}
           className="w-[155px] text-nowrap"
           formValueMode="id"
@@ -183,6 +183,7 @@ export const ProfileFiltersForm = ({
         }}
         color="success"
         size="sm"
+        soft
       >
         {filterStatusText}
         <FilterIcon className="h-6 w-5" />

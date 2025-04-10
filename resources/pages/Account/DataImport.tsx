@@ -41,7 +41,7 @@ export const DataImport = (): JSX.Element => {
                 labelText="myFlightradar24"
                 name="file"
               />
-              <Button color="primary" type="submit">
+              <Button color="primary" soft type="submit">
                 Upload
               </Button>
             </div>

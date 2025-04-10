@@ -22,7 +22,7 @@ import {
 import {
   AirportLabelOverlay,
   PlaneSolidIcon,
-  PlusIcon,
+  PlusAirplaneIcon,
   RightArrowIcon,
 } from '../../common/components';
 import { TOOLTIP_COLORS } from '../../common/constants';
@@ -513,7 +513,7 @@ export const FollowingMap = (): JSX.Element => {
                 ) : null}
                 <div className="my-3 flex flex-wrap justify-center gap-4">
                   <Button
-                    color="accent"
+                    color="primary"
                     onClick={() => {
                       navigate('/profile', {
                         state: {
@@ -521,14 +521,16 @@ export const FollowingMap = (): JSX.Element => {
                         } as const as ProfilePageNavigationState,
                       });
                     }}
+                    soft
                   >
-                    Add a Flight <PlusIcon className="h-4 w-4" />
+                    <PlusAirplaneIcon className="h-4 w-4" />
+                    Add Flight
                   </Button>
                   <Button
-                    color="info"
                     onClick={() => {
                       navigate('/users');
                     }}
+                    soft
                   >
                     Find Users <RightArrowIcon className="h-4 w-4" />
                   </Button>

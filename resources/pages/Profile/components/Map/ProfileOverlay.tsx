@@ -110,6 +110,7 @@ export const ProfileOverlay = (): JSX.Element => {
                       addFollower({ username });
                     }
                   }}
+                  soft
                   title={
                     !userData.isFollowing ? 'Follow User' : 'Unfollow User'
                   }

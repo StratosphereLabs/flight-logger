@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { Badge, Disclosure } from 'stratosphere-ui';
+import { Badge, Button, Disclosure } from 'stratosphere-ui';
 
 import { type TripsRouterOutput } from '../../../app/routes/trips';
 import { LinkIcon, TrashIcon, UserFlightsTable } from '../../common/components';
@@ -49,8 +49,10 @@ export const TripDisclosure = ({
               </span>
             </div>
             <div className="flex justify-end">
-              <a
-                className="btn btn-circle btn-ghost btn-sm sm:btn-md"
+              <Button
+                as="a"
+                className="btn-sm sm:btn-md"
+                color="ghost"
                 onClick={event => {
                   event.stopPropagation();
                   copyToClipboard(
@@ -58,10 +60,11 @@ export const TripDisclosure = ({
                     'Link copied to clipboard!',
                   );
                 }}
+                shape="circle"
               >
                 <LinkIcon className="h-5 w-5" />
                 <span className="sr-only">Copy Link</span>
-              </a>
+              </Button>
               {onOwnProfile ? (
                 <a
                   className="btn btn-circle btn-ghost btn-sm sm:btn-md"

@@ -30,6 +30,7 @@ export const AuthenticationLayout = (): JSX.Element => {
               onClick={() => {
                 navigate('/auth/register');
               }}
+              soft
             >
               Register <RightArrowIcon className="h-4 w-4" />
             </Button>

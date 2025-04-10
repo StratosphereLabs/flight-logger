@@ -31,10 +31,10 @@ export const DeleteFlightModal = (): JSX.Element => {
         {
           children: 'Cancel',
           color: 'secondary',
-          outline: true,
           onClick: () => {
             setIsDeleteDialogOpen(false);
           },
+          soft: true,
         },
         {
           children: 'Delete',
@@ -43,6 +43,7 @@ export const DeleteFlightModal = (): JSX.Element => {
           onClick: () => {
             activeFlight !== null && mutate({ id: activeFlight.id });
           },
+          soft: true,
         },
       ]}
       onClose={() => {

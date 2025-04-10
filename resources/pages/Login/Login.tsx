@@ -80,7 +80,7 @@ export const Login = (): JSX.Element => {
           </div>
         </fieldset>
         <div className="mt-6 flex flex-col">
-          <Button color="primary" type="submit" loading={isLoading}>
+          <Button color="primary" loading={isLoading} soft type="submit">
             Login
           </Button>
         </div>

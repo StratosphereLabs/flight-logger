@@ -39,6 +39,7 @@ export const ActionsCell = ({
               menuText: editMessage,
               onClick: () => onEdit?.(),
               size: 'xs',
+              soft: true,
             } as const,
           ]
         : []),
@@ -51,6 +52,7 @@ export const ActionsCell = ({
               menuText: deleteMessage,
               onClick: () => onDelete?.(),
               size: 'xs',
+              soft: true,
             } as const,
           ]
         : []),
@@ -61,12 +63,12 @@ export const ActionsCell = ({
     <ButtonArray
       buttonOptions={[
         {
-          color: 'ghost',
           icon: LinkIcon,
           key: 'copy-link',
           menuText: 'Copy Link',
           onClick: () => onCopyLink?.(),
           size: 'xs',
+          soft: true,
         },
         {
           color: 'info',
@@ -75,6 +77,7 @@ export const ActionsCell = ({
           menuText: viewMessage,
           onClick: () => onView?.(),
           size: 'xs',
+          soft: true,
         },
         ...protectedOptions,
       ]}

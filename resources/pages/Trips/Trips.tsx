@@ -99,6 +99,7 @@ export const Trips = (): JSX.Element => {
                     } as const as FlightsPageNavigationState,
                   });
                 }}
+                soft
               >
                 <PlusIcon className="h-6 w-6" />
                 Create Trip

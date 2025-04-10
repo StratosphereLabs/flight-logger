@@ -45,10 +45,10 @@ export const DeleteTripModal = (): JSX.Element => {
         {
           children: 'Cancel',
           color: 'secondary',
-          outline: true,
           onClick: () => {
             setIsDeleteDialogOpen(false);
           },
+          soft: true,
         },
         {
           children: 'Delete',
@@ -57,6 +57,7 @@ export const DeleteTripModal = (): JSX.Element => {
           onClick: () => {
             activeTrip !== null && mutate({ id: activeTrip.id });
           },
+          soft: true,
         },
       ]}
       onClose={() => {

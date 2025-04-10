@@ -48,7 +48,7 @@ export const ProfileFiltersModal = ({
               searchQuery: '',
             });
           },
-          outline: true,
+          soft: true,
         },
         {
           color: 'primary',
@@ -56,6 +56,7 @@ export const ProfileFiltersModal = ({
           onClick: () => {
             setOpen(false);
           },
+          soft: true,
         },
       ]}
       className="bg-base-100 overflow-visible"
@@ -72,7 +73,7 @@ export const ProfileFiltersModal = ({
           range !== 'customRange' ? (
             <Select
               buttonProps={{
-                color: 'neutral',
+                soft: true,
               }}
               className="relative w-[135px]"
               formValueMode="id"
@@ -103,7 +104,7 @@ export const ProfileFiltersModal = ({
           )}
           <Select
             buttonProps={{
-              color: 'neutral',
+              soft: true,
             }}
             className="relative w-[160px] text-nowrap"
             formValueMode="id"
@@ -160,7 +161,7 @@ export const ProfileFiltersModal = ({
             {range === 'customMonth' ? (
               <Select
                 buttonProps={{
-                  color: 'neutral',
+                  soft: true,
                 }}
                 className="relative w-[135px]"
                 formValueMode="id"
@@ -176,7 +177,7 @@ export const ProfileFiltersModal = ({
             {range === 'customYear' || range === 'customMonth' ? (
               <Select
                 buttonProps={{
-                  color: 'neutral',
+                  soft: true,
                 }}
                 className="relative w-[95px]"
                 formValueMode="id"

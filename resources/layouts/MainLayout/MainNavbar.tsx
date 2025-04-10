@@ -99,6 +99,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
       {
         id: 'home',
         children: 'Home',
+        className: 'text-white [--tab-bg:var(--color-primary)]',
         onClick: () => {
           navigate(tabsToPathsMap.home);
         },
@@ -108,6 +109,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             {
               id: 'profile',
               children: 'Profile',
+              className: 'text-white [--tab-bg:var(--color-primary)]',
               onClick: () => {
                 navigate(tabsToPathsMap.profile);
               },
@@ -115,6 +117,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             {
               id: 'users',
               children: 'Users',
+              className: 'text-white [--tab-bg:var(--color-primary)]',
               onClick: () => {
                 navigate(tabsToPathsMap.users);
               },
@@ -124,6 +127,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
       {
         id: 'data',
         children: 'Data',
+        className: 'text-white [--tab-bg:var(--color-primary)]',
         onClick: () => {
           navigate(tabsToPathsMap.data);
         },
@@ -305,10 +309,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
           {
             children: 'Cancel',
             color: 'secondary',
-            outline: true,
             onClick: () => {
               setIsLogoutDialogOpen(false);
             },
+            soft: true,
           },
           {
             children: 'Log out',
@@ -319,6 +323,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               await utils.users.getUser.cancel();
               await utils.users.getUser.invalidate({ username: undefined });
             },
+            soft: true,
           },
         ]}
         onClose={() => {

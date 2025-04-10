@@ -74,7 +74,7 @@ export const UserSelectModal = ({
           onClick: () => {
             setIsUserSelectModalOpen(false);
           },
-          outline: true,
+          soft: true,
         },
         {
           children: !isLoading ? 'Add Flight' : undefined,
@@ -82,6 +82,7 @@ export const UserSelectModal = ({
           color: 'primary',
           loading: isLoading,
           onClick: methods.handleSubmit(onSubmit),
+          soft: true,
         },
       ]}
       className="flex flex-col overflow-y-visible"
@@ -171,11 +172,7 @@ export const UserSelectModal = ({
       >
         {onOwnProfile && data !== undefined ? (
           <FormRadioGroup className="w-full" name="userType">
-            <FormRadioGroupOption
-              activeColor="info"
-              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
-              value="me"
-            >
+            <FormRadioGroupOption className="flex-1" soft value="me">
               <Avatar
                 alt={data.username}
                 src={data.avatar}
@@ -183,11 +180,7 @@ export const UserSelectModal = ({
               />
               Myself
             </FormRadioGroupOption>
-            <FormRadioGroupOption
-              activeColor="info"
-              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 flex-1 border-2"
-              value="other"
-            >
+            <FormRadioGroupOption className="flex-1" soft value="other">
               Other User
             </FormRadioGroupOption>
           </FormRadioGroup>

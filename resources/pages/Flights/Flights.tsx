@@ -169,6 +169,7 @@ export const Flights = ({
                 onClick={() => {
                   setIsAddingFlight(true);
                 }}
+                soft
               >
                 <PlusIcon className="h-6 w-6" />
                 Create Flight
