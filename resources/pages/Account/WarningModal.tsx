@@ -18,16 +18,17 @@ export const WarningModal = ({
         {
           children: 'Cancel',
           color: 'secondary',
-          outline: true,
           onClick: () => {
             setIsWarningDialogOpen(false);
           },
+          soft: true,
         },
         {
           children: isLoading ? 'Uploading...' : 'Continue',
           color: 'primary',
           loading: isLoading,
           onClick: onConfirm,
+          soft: true,
         },
       ]}
       onClose={() => {

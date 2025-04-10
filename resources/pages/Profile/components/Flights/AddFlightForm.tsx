@@ -226,6 +226,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                   setFlightSearchFormData(methods.getValues());
                 }
               }}
+              soft
             >
               {!isFetching ? (
                 <div className="flex w-6 justify-center">
@@ -440,6 +441,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
                               }
                             }
                           }}
+                          soft
                         >
                           {!isLoading ? (
                             <>

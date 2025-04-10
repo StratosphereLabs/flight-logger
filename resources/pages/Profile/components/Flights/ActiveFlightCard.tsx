@@ -366,10 +366,10 @@ export const ActiveFlightCard = (): JSX.Element | null => {
           {
             children: 'Cancel',
             color: 'secondary',
-            outline: true,
             onClick: () => {
               setIsDeleteFlightModalOpen(false);
             },
+            soft: true,
           },
           {
             children: !isDeleteFlightLoading ? 'Delete Flight' : null,
@@ -379,6 +379,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
             onClick: () => {
               mutate({ id: data.id });
             },
+            soft: true,
           },
         ]}
         open={isDeleteFlightModalOpen}

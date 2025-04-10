@@ -101,7 +101,7 @@ export const Register = (): JSX.Element => {
           </label>
         </fieldset>
         <div className="mt-6 flex flex-col">
-          <Button color="primary" type="submit" loading={isLoading}>
+          <Button color="primary" loading={isLoading} soft type="submit">
             Register
           </Button>
         </div>

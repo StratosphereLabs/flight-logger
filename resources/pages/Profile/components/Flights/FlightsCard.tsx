@@ -91,13 +91,13 @@ export const FlightsCard = ({
               {isAddingFlight ? (
                 <Button
                   className="flex w-[120px] flex-nowrap"
-                  color="ghost"
-                  size="sm"
                   onClick={() => {
                     setIsAddingFlight(false);
                     methods.reset(addFlightFormDefaultValues);
                     setFlightSearchFormData(null);
                   }}
+                  size="sm"
+                  soft
                 >
                   <CloseIcon className="h-4 w-4" />
                   Done
@@ -110,19 +110,19 @@ export const FlightsCard = ({
                     <Button
                       className="flex flex-nowrap"
                       color="primary"
-                      size="sm"
                       onClick={() => {
                         setIsMapFullScreen(false);
                         mapFormMethods.setValue('mapMode', 'routes');
                         setIsAddingFlight(true);
                       }}
+                      size="sm"
+                      soft
                     >
                       <PlusAirplaneIcon className="h-5 w-5" />
                       Add Flight
                     </Button>
                   ) : null}
                   <Button
-                    color="ghost"
                     onClick={() => {
                       setSearchParams(oldSearchParams => {
                         if (isFlightsFullScreen) {
@@ -137,6 +137,7 @@ export const FlightsCard = ({
                       setIsFlightsFullScreen(isFullScreen => !isFullScreen);
                     }}
                     size="sm"
+                    soft
                   >
                     {isFlightsFullScreen ? (
                       <CollapseIcon className="h-4 w-4" />

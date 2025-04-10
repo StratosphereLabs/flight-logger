@@ -202,6 +202,7 @@ export const MapCard = ({
                         ) : (
                           <FireIcon className="h-6 w-6" />
                         ),
+                      soft: true,
                     }}
                     className="pointer-events-auto"
                     formValueMode="id"
@@ -243,6 +244,7 @@ export const MapCard = ({
                         return newValue;
                       });
                     }}
+                    soft
                     title={isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
                   >
                     {isMapFullScreen ? (

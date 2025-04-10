@@ -47,7 +47,7 @@ export const ManualAddFormFields = ({
           type="time"
         />
       </div>
-      <RightArrowIcon className="mt-12 hidden h-6 w-6 sm:block" />
+      <RightArrowIcon className="mt-10 hidden h-6 w-6 sm:block" />
       <div className="flex flex-1 flex-col gap-2 sm:items-end">
         <AirportInput
           bordered
@@ -107,22 +107,13 @@ export const ManualAddFormFields = ({
             labelText="Seat Position"
             name="seatPosition"
           >
-            <FormRadioGroupOption
-              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
-              value="WINDOW"
-            >
+            <FormRadioGroupOption className="flex-1" soft value="WINDOW">
               Window
             </FormRadioGroupOption>
-            <FormRadioGroupOption
-              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
-              value="MIDDLE"
-            >
+            <FormRadioGroupOption className="flex-1" soft value="MIDDLE">
               Middle
             </FormRadioGroupOption>
-            <FormRadioGroupOption
-              className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
-              value="AISLE"
-            >
+            <FormRadioGroupOption className="flex-1" soft value="AISLE">
               Aisle
             </FormRadioGroupOption>
           </FormRadioGroup>
@@ -161,22 +152,13 @@ export const ManualAddFormFields = ({
         labelText="Reason"
         name="reason"
       >
-        <FormRadioGroupOption
-          className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
-          value="LEISURE"
-        >
+        <FormRadioGroupOption className="flex-1" soft value="LEISURE">
           Leisure
         </FormRadioGroupOption>
-        <FormRadioGroupOption
-          className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
-          value="BUSINESS"
-        >
+        <FormRadioGroupOption className="flex-1" soft value="BUSINESS">
           Business
         </FormRadioGroupOption>
-        <FormRadioGroupOption
-          className="border-opacity-50 bg-opacity-25 text-base-content hover:border-opacity-80 hover:bg-opacity-40 mr-[1px] flex-1 border-2"
-          value="CREW"
-        >
+        <FormRadioGroupOption className="flex-1" soft value="CREW">
           Crew
         </FormRadioGroupOption>
       </FormRadioGroup>
@@ -185,6 +167,7 @@ export const ManualAddFormFields = ({
       className="m-auto mt-4 w-full max-w-[500px]"
       color="primary"
       loading={isAddFlightLoading}
+      soft
       type="submit"
     >
       {!isAddFlightLoading ? (

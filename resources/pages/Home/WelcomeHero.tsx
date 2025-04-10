@@ -35,6 +35,7 @@ export const WelcomeHero = (): JSX.Element => {
             onClick={() => {
               navigate(isLoggedIn ? '/profile' : '/auth/login');
             }}
+            soft
           >
             Get Started
           </Button>

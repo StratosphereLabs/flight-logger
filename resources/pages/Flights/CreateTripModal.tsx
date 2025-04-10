@@ -78,10 +78,11 @@ export const CreateTripModal = ({
             onClick={() => {
               setIsCreateTripDialogOpen(false);
             }}
+            soft
           >
             Cancel
           </Button>
-          <Button color="primary" loading={isLoading} type="submit">
+          <Button color="primary" loading={isLoading} soft type="submit">
             Create
           </Button>
         </div>

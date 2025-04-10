@@ -69,7 +69,6 @@ export const StatisticsCard = ({
           <div className="flex items-start justify-between gap-2">
             <CardTitle>Statistics</CardTitle>
             <Button
-              color="ghost"
               onClick={() => {
                 setSearchParams(oldSearchParams => {
                   if (isStatsFullScreen) {
@@ -84,6 +83,7 @@ export const StatisticsCard = ({
                 setIsStatsFullScreen(isFullScreen => !isFullScreen);
               }}
               size="sm"
+              soft
             >
               {isStatsFullScreen ? (
                 <CollapseIcon className="h-4 w-4" />

@@ -36,8 +36,8 @@ export const ViewFlightModal = (): JSX.Element | null => {
       actionButtons={[
         {
           children: 'Done',
-          color: 'ghost',
           onClick: onClose,
+          soft: true,
         },
       ]}
       className="w-[95%] max-w-[700px] px-2 sm:px-6"

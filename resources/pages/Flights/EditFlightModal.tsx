@@ -306,6 +306,7 @@ export const EditFlightModal = ({
             onClick={() => {
               setIsEditDialogOpen(false);
             }}
+            soft
           >
             Cancel
           </Button>
@@ -313,6 +314,7 @@ export const EditFlightModal = ({
             color="primary"
             disabled={!methods.formState.isDirty}
             loading={isLoading}
+            soft
             type="submit"
           >
             Save
