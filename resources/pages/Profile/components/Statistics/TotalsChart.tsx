@@ -84,7 +84,7 @@ export const TotalsChart = ({
               <Stat className="p-2">
                 <StatTitle>Flights</StatTitle>
                 <StatValue className="flex items-center gap-2">
-                  <MaterialPlaneIcon className="h-8 opacity-80" />
+                  <MaterialPlaneIcon className="text-primary/90 h-8 opacity-80" />
                   <span className="text-primary/80">
                     {data.totals.totalFlights.toLocaleString()}
                   </span>
@@ -122,7 +122,7 @@ export const TotalsChart = ({
               <Stat className="p-2">
                 <StatTitle>Distance Flown</StatTitle>
                 <StatValue className="flex items-center gap-2">
-                  <DistanceIcon className="h-8 w-8 opacity-80" />
+                  <DistanceIcon className="text-secondary/90 h-8 w-8 opacity-80" />
                   <span className="text-secondary/80">
                     {Math.round(data.totals.totalDistanceMi).toLocaleString()}{' '}
                     mi
@@ -135,7 +135,7 @@ export const TotalsChart = ({
               <Stat className="p-2">
                 <StatTitle>Time Flown</StatTitle>
                 <StatValue className="flex items-center gap-2">
-                  <ClockIcon className="h-8 w-8 opacity-80" />
+                  <ClockIcon className="text-success/90 h-8 w-8 opacity-80" />
                   <span className="text-success/80">
                     {getLongDurationString(data.totals.totalDuration)}
                   </span>
