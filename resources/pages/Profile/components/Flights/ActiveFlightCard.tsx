@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, Card, CardBody, Link, Modal, Progress } from 'stratosphere-ui';
+import { Button, Card, CardBody, Link, Modal } from 'stratosphere-ui';
 
 import {
   FlightChangelogTable,
@@ -38,7 +38,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
   const [isDeleteFlightModalOpen, setIsDeleteFlightModalOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
-  const { data, isLoading } = trpc.flights.getUserActiveFlight.useQuery(
+  const { data } = trpc.flights.getUserActiveFlight.useQuery(
     {
       username,
     },
@@ -70,9 +70,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
       window.removeEventListener('keydown', listener);
     };
   }, []);
-  if (isLoading) {
-    return <Progress />;
-  }
   if (data === null || data === undefined) {
     return null;
   }

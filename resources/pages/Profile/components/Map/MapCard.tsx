@@ -149,7 +149,7 @@ export const MapCard = ({
             ? 'min-h-[100dvh]'
             : isAddingFlight
               ? 'min-h-[50vh]'
-              : 'min-h-[calc(100vh-242px)]',
+              : 'min-h-[calc(100vh-210px)]',
         )}
       >
         {data !== undefined &&
@@ -180,7 +180,7 @@ export const MapCard = ({
           <Form
             className={classNames(
               'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
-              isProfilePage && !isAddingFlight ? 'mt-[110px]' : 'mt-16',
+              isProfilePage && !isAddingFlight ? 'mt-[102px]' : 'mt-16',
             )}
             methods={mapFormMethods}
           >
@@ -230,17 +230,20 @@ export const MapCard = ({
                     onClick={() => {
                       setIsMapFullScreen(isFullScreen => {
                         const newValue = !isFullScreen;
-                        setSearchParams(oldSearchParams => {
-                          if (newValue) {
-                            return {
-                              ...Object.fromEntries(oldSearchParams),
-                              isMapFullScreen: 'true',
-                            };
-                          } else {
-                            oldSearchParams.delete('isMapFullScreen');
-                            return oldSearchParams;
-                          }
-                        });
+                        setSearchParams(
+                          oldSearchParams => {
+                            if (newValue) {
+                              return {
+                                ...Object.fromEntries(oldSearchParams),
+                                isMapFullScreen: 'true',
+                              };
+                            } else {
+                              oldSearchParams.delete('isMapFullScreen');
+                              return oldSearchParams;
+                            }
+                          },
+                          { replace: true },
+                        );
                         return newValue;
                       });
                     }}

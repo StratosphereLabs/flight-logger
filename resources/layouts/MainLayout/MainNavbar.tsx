@@ -1,16 +1,16 @@
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Avatar,
   Button,
   DropdownMenu,
+  Link,
   Loading,
   Modal,
   type TabData,
-  Tabs,
 } from 'stratosphere-ui';
 
 import {
@@ -29,6 +29,8 @@ import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
+import { PATH_NAMES_MAP } from './constants';
+import { useMainLayoutStore } from './mainLayoutStore';
 
 export interface MainNavbarProps {
   methods: UseFormReturn<ProfileFilterFormData>;
@@ -38,6 +40,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
+  const { previousPageName, clearPreviousPageName, setPreviousPageName } =
+    useMainLayoutStore();
   const { isAddingFlight } = useAddFlightStore();
   const isDarkMode = useIsDarkMode();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
@@ -64,6 +68,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
       !pathname.includes('/trips'),
     [pathname],
   );
+  const isFlightPage = useMemo(() => pathname.includes('/flight/'), [pathname]);
   const pathsToTabsMap: Record<string, string> = useMemo(
     () => ({
       '/': 'home',
@@ -135,6 +140,16 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     ],
     [isLoggedIn, navigate, tabsToPathsMap],
   );
+  useEffect(() => {
+    const storedPrev = sessionStorage.getItem('prevPage');
+    if (storedPrev !== null) {
+      const pageName = storedPrev.includes('/user/')
+        ? `${username}'s Profile`
+        : PATH_NAMES_MAP[storedPrev];
+      setPreviousPageName(pageName);
+    }
+    sessionStorage.setItem('prevPage', pathname);
+  }, [pathname, setPreviousPageName, username]);
   return (
     <>
       <div
@@ -177,16 +192,24 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             </Button>
           </div>
           <div className="hidden flex-1 justify-center lg:flex">
-            <Tabs
-              box
-              className="tabs-boxed bg-transparent p-0 shadow-none"
-              onChange={({ id }) => {
-                navigate(tabsToPathsMap[id]);
-              }}
-              selectedTabId={pathsToTabsMap[pathname]}
-              size="lg"
-              tabs={tabs}
-            />
+            <div
+              role="tablist"
+              className="tabs tabs-box tabs-lg bg-transparent p-0 shadow-none"
+            >
+              {tabs.map(({ className, id, ...tab }) => (
+                <button
+                  key={id}
+                  role="tab"
+                  type="button"
+                  className={classNames(
+                    'tab',
+                    pathsToTabsMap[pathname] === id && 'tab-active',
+                    className,
+                  )}
+                  {...tab}
+                />
+              ))}
+            </div>
           </div>
           <div className="flex flex-1 justify-end gap-1">
             <ThemeButton />
@@ -302,6 +325,19 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         </div>
         {isUserPage && !isAddingFlight ? (
           <ProfileFiltersForm methods={methods} />
+        ) : null}
+        {isFlightPage ? (
+          <div className="flex px-4 py-1">
+            <Link
+              hover
+              onClick={() => {
+                clearPreviousPageName();
+                navigate(-1);
+              }}
+            >
+              ← Back to {previousPageName ?? 'Home'}
+            </Link>
+          </div>
         ) : null}
       </div>
       <Modal

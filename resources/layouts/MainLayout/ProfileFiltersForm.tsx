@@ -48,26 +48,26 @@ export const ProfileFiltersForm = ({
   return (
     <Form
       methods={methods}
-      className="sticky top-0 z-10 flex w-full items-center justify-between gap-2 p-2"
+      className="sticky top-0 z-10 flex w-full items-center justify-between gap-2 px-2 py-1"
     >
       <FormControl
         bordered
         className="max-w-[450px] min-w-[150px] flex-1"
         elementLeft={<SearchIcon className="h-4 w-4" />}
-        inputClassName="bg-base-100 pl-8"
+        inputClassName="bg-base-200 pl-8"
         name="searchQuery"
         placeholder="Search Flights..."
         size="sm"
       />
-      <div className="hidden flex-nowrap gap-2 md:flex">
+      <div className="hidden flex-nowrap gap-1 md:flex">
         {range !== 'pastMonth' &&
         range !== 'pastYear' &&
         range !== 'customRange' ? (
           <Select
             anchor="bottom end"
             buttonProps={{
+              color: 'neutral',
               size: 'sm',
-              soft: true,
             }}
             className="w-[130px]"
             formValueMode="id"
@@ -105,8 +105,8 @@ export const ProfileFiltersForm = ({
           <Select
             anchor="bottom end"
             buttonProps={{
+              color: 'neutral',
               size: 'sm',
-              soft: true,
             }}
             className="w-[130px]"
             formValueMode="id"
@@ -123,8 +123,8 @@ export const ProfileFiltersForm = ({
           <Select
             anchor="bottom end"
             buttonProps={{
+              color: 'neutral',
               size: 'sm',
-              soft: true,
             }}
             className="w-[85px]"
             formValueMode="id"
@@ -140,8 +140,8 @@ export const ProfileFiltersForm = ({
         <Select
           anchor="bottom end"
           buttonProps={{
+            color: 'neutral',
             size: 'sm',
-            soft: true,
           }}
           className="w-[155px] text-nowrap"
           formValueMode="id"

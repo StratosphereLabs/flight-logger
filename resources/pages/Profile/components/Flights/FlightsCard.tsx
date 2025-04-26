@@ -124,16 +124,19 @@ export const FlightsCard = ({
                   ) : null}
                   <Button
                     onClick={() => {
-                      setSearchParams(oldSearchParams => {
-                        if (isFlightsFullScreen) {
-                          oldSearchParams.delete('isFlightsFullScreen');
-                          return oldSearchParams;
-                        }
-                        return {
-                          ...Object.fromEntries(oldSearchParams),
-                          isFlightsFullScreen: 'true',
-                        };
-                      });
+                      setSearchParams(
+                        oldSearchParams => {
+                          if (isFlightsFullScreen) {
+                            oldSearchParams.delete('isFlightsFullScreen');
+                            return oldSearchParams;
+                          }
+                          return {
+                            ...Object.fromEntries(oldSearchParams),
+                            isFlightsFullScreen: 'true',
+                          };
+                        },
+                        { replace: true },
+                      );
                       setIsFlightsFullScreen(isFullScreen => !isFullScreen);
                     }}
                     size="sm"

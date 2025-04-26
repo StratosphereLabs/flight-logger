@@ -1,5 +1,6 @@
 export * from './Account';
 export * from './Data';
+export * from './Flight';
 export * from './Flights';
 export * from './ForgotPassword';
 export * from './Home';
