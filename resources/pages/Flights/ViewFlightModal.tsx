@@ -40,7 +40,7 @@ export const ViewFlightModal = (): JSX.Element | null => {
           soft: true,
         },
       ]}
-      className="w-[95%] max-w-[700px] px-2 sm:px-6"
+      className="h-[95vh] w-[95vw] max-w-[700px] px-2 sm:px-6"
       onClose={onClose}
       open={isViewDialogOpen}
       title=""

@@ -4,6 +4,7 @@ import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
   Account,
   Data,
+  Flight,
   ForgotPassword,
   Home,
   Login,
@@ -35,6 +36,7 @@ export const AppRouter = (): JSX.Element => {
             ) : null}
           </Route>
         ))}
+        <Route path="flight/:flightId" element={<Flight />} />
       </Route>
       <Route path="auth" element={<AuthenticationLayout />}>
         <Route path="login" element={<Login />} />

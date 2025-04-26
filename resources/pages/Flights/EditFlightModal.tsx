@@ -131,7 +131,7 @@ export const EditFlightModal = ({
   return (
     <Modal
       actionButtons={[]}
-      className="scrollbar-none overflow-x-hidden overflow-y-scroll"
+      className="scrollbar-none h-[95vh] overflow-x-hidden overflow-y-scroll"
       onClose={() => {
         setIsEditDialogOpen(false);
       }}

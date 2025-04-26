@@ -10,7 +10,6 @@ import {
   Loading,
   Modal,
   type TabData,
-  Tabs,
 } from 'stratosphere-ui';
 
 import {
@@ -177,16 +176,24 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             </Button>
           </div>
           <div className="hidden flex-1 justify-center lg:flex">
-            <Tabs
-              box
-              className="tabs-boxed bg-transparent p-0 shadow-none"
-              onChange={({ id }) => {
-                navigate(tabsToPathsMap[id]);
-              }}
-              selectedTabId={pathsToTabsMap[pathname]}
-              size="lg"
-              tabs={tabs}
-            />
+            <div
+              role="tablist"
+              className="tabs tabs-box tabs-lg bg-transparent p-0 shadow-none"
+            >
+              {tabs.map(({ className, id, ...tab }) => (
+                <button
+                  key={id}
+                  role="tab"
+                  type="button"
+                  className={classNames(
+                    'tab',
+                    pathsToTabsMap[pathname] === id && 'tab-active',
+                    className,
+                  )}
+                  {...tab}
+                />
+              ))}
+            </div>
           </div>
           <div className="flex flex-1 justify-end gap-1">
             <ThemeButton />
