@@ -230,17 +230,20 @@ export const MapCard = ({
                     onClick={() => {
                       setIsMapFullScreen(isFullScreen => {
                         const newValue = !isFullScreen;
-                        setSearchParams(oldSearchParams => {
-                          if (newValue) {
-                            return {
-                              ...Object.fromEntries(oldSearchParams),
-                              isMapFullScreen: 'true',
-                            };
-                          } else {
-                            oldSearchParams.delete('isMapFullScreen');
-                            return oldSearchParams;
-                          }
-                        });
+                        setSearchParams(
+                          oldSearchParams => {
+                            if (newValue) {
+                              return {
+                                ...Object.fromEntries(oldSearchParams),
+                                isMapFullScreen: 'true',
+                              };
+                            } else {
+                              oldSearchParams.delete('isMapFullScreen');
+                              return oldSearchParams;
+                            }
+                          },
+                          { replace: true },
+                        );
                         return newValue;
                       });
                     }}

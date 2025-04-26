@@ -70,16 +70,19 @@ export const StatisticsCard = ({
             <CardTitle>Statistics</CardTitle>
             <Button
               onClick={() => {
-                setSearchParams(oldSearchParams => {
-                  if (isStatsFullScreen) {
-                    oldSearchParams.delete('isStatsFullScreen');
-                    return oldSearchParams;
-                  }
-                  return {
-                    ...Object.fromEntries(oldSearchParams),
-                    isStatsFullScreen: 'true',
-                  };
-                });
+                setSearchParams(
+                  oldSearchParams => {
+                    if (isStatsFullScreen) {
+                      oldSearchParams.delete('isStatsFullScreen');
+                      return oldSearchParams;
+                    }
+                    return {
+                      ...Object.fromEntries(oldSearchParams),
+                      isStatsFullScreen: 'true',
+                    };
+                  },
+                  { replace: true },
+                );
                 setIsStatsFullScreen(isFullScreen => !isFullScreen);
               }}
               size="sm"

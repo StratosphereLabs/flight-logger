@@ -105,6 +105,9 @@ export const useProfileFilterForm =
         'toDate',
         'searchQuery',
       ],
+      navigateOptions: {
+        replace: true,
+      },
       mode: 'onChange',
       resolver: zodResolver(profileFiltersSchema),
     });

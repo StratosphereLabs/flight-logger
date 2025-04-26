@@ -45,21 +45,27 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
       mapMode: mapMode !== 'routes' ? mapMode : '',
     }),
     includeKeys: ['mapMode'],
+    navigateOptions: {
+      replace: true,
+    },
   });
   const setSelectedAirportId = useCallback(
     (newId: string | null): void => {
       setSelectedAirportIdFn(newId);
-      setSearchParams(oldSearchParams => {
-        if (newId === null) {
-          oldSearchParams.delete('selectedAirportId');
-          return oldSearchParams;
-        } else {
-          return {
-            ...Object.fromEntries(oldSearchParams),
-            selectedAirportId: newId,
-          };
-        }
-      });
+      setSearchParams(
+        oldSearchParams => {
+          if (newId === null) {
+            oldSearchParams.delete('selectedAirportId');
+            return oldSearchParams;
+          } else {
+            return {
+              ...Object.fromEntries(oldSearchParams),
+              selectedAirportId: newId,
+            };
+          }
+        },
+        { replace: true },
+      );
     },
     [setSearchParams],
   );
