@@ -1,15 +1,10 @@
 import classNames from 'classnames';
-import { type HTMLProps, useMemo } from 'react';
+import { type HTMLProps } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Link } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import {
-  FlightChangelogTable,
-  FlightTimesDisplay,
-  OnTimePerformanceChart,
-  WeatherInfo,
-} from '../../common/components';
+import { FlightTimesDisplay } from '../../common/components';
 import {
   CARD_BORDER_COLORS,
   CARD_BORDER_COLORS_LOFI,
@@ -18,33 +13,23 @@ import {
   TEXT_COLORS,
 } from '../../common/constants';
 import { AppTheme, useThemeStore } from '../../stores';
+import { type FlightPageNavigationState } from '../Flight';
 
 export interface FlightRowProps extends HTMLProps<HTMLDivElement> {
   flight: FlightsRouterOutput['getFollowingFlights']['flights'][number];
-  onFlightClick: () => void;
-  onFlightClose: () => void;
-  selectedFlightId: string | null;
 }
 
 export const FlightRow = ({
   className,
   flight,
-  onFlightClick,
-  onFlightClose,
-  selectedFlightId,
   ...props
 }: FlightRowProps): JSX.Element => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
-  const isActive = useMemo(
-    () => flight.id === selectedFlightId,
-    [flight.id, selectedFlightId],
-  );
   return (
     <div
       className={classNames(
-        'rounded-box flex flex-col items-center gap-2 border-2 p-2 transition-transform',
-        !isActive && 'hover:scale-[1.01]',
+        'rounded-box flex flex-col items-center gap-2 border-2 p-2 transition-transform hover:scale-[1.01]',
         theme === AppTheme.LOFI
           ? CARD_COLORS_LOFI[flight.delayStatus]
           : CARD_COLORS[flight.delayStatus],
@@ -61,11 +46,11 @@ export const FlightRow = ({
             (event.target as HTMLElement).tagName !== 'A' &&
             (event.target as HTMLElement).parentElement?.tagName !== 'A'
           ) {
-            if (isActive) {
-              onFlightClose();
-            } else {
-              onFlightClick();
-            }
+            navigate(`/flight/${flight.id}`, {
+              state: {
+                previousPageName: 'Home',
+              } as const as FlightPageNavigationState,
+            });
           }
         }}
         {...props}
@@ -227,13 +212,6 @@ export const FlightRow = ({
           </div>
         </div>
       </div>
-      {isActive ? (
-        <>
-          <OnTimePerformanceChart flightId={flight.id} />
-          <WeatherInfo flightId={flight.id} />
-          <FlightChangelogTable flightId={flight.id} />
-        </>
-      ) : null}
     </div>
   );
 };
