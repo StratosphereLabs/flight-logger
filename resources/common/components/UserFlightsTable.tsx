@@ -5,9 +5,11 @@ import {
   getCoreRowModel,
 } from '@tanstack/react-table';
 import classNames from 'classnames';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
+import { type FlightPageNavigationState } from '../../pages';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { AppTheme, useThemeStore } from '../../stores';
 import { CARD_COLORS, CARD_COLORS_LOFI } from '../constants';
@@ -43,12 +45,13 @@ export const UserFlightsTable = ({
   onCopyLink,
   size,
 }: UserFlightsTableProps): JSX.Element => {
+  const navigate = useNavigate();
+  const { username } = useParams();
   const {
     rowSelection,
     setActiveFlight,
     setIsDeleteDialogOpen,
     setIsEditDialogOpen,
-    setIsViewDialogOpen,
     setRowSelection,
   } = useFlightsPageStore();
   const { theme } = useThemeStore();
@@ -238,8 +241,14 @@ export const UserFlightsTable = ({
                 setIsEditDialogOpen(true);
               }}
               onView={() => {
-                setActiveFlight(row.original);
-                setIsViewDialogOpen(true);
+                navigate(`/flight/${row.original.id}`, {
+                  state: {
+                    previousPageName:
+                      username !== undefined
+                        ? `${username}'s Profile`
+                        : 'Profile',
+                  } as const as FlightPageNavigationState,
+                });
               }}
             />
           ),

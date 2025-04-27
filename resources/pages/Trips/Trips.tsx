@@ -9,7 +9,7 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
-import { type FlightsPageNavigationState, ViewFlightModal } from '../Flights';
+import { type FlightsPageNavigationState } from '../Flights';
 import { DeleteTripModal } from './DeleteTripModal';
 import { TripDisclosure } from './TripDisclosure';
 
@@ -109,7 +109,6 @@ export const Trips = (): JSX.Element => {
         </div>
       ) : null}
       <DeleteTripModal />
-      <ViewFlightModal />
     </div>
   );
 };

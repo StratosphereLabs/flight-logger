@@ -1,0 +1,125 @@
+import classNames from 'classnames';
+import { useParams } from 'react-router-dom';
+import { Loading } from 'stratosphere-ui';
+
+import { FlightTimesDisplay, RightArrowIcon } from '../../common/components';
+import { TEXT_COLORS } from '../../common/constants';
+import { AppTheme, useThemeStore } from '../../stores';
+import { trpc } from '../../utils/trpc';
+
+export const FlightInfo = (): JSX.Element => {
+  const { flightId } = useParams();
+  const { theme } = useThemeStore();
+  const { data } = trpc.flights.getFlight.useQuery(
+    { id: flightId ?? '' },
+    { enabled: flightId !== undefined },
+  );
+  if (data === undefined) {
+    return <Loading />;
+  }
+  const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
+  return (
+    <div className="flex flex-1 flex-col items-center gap-4">
+      {typeof data.airline?.logo === 'string' ? (
+        <div className="flex w-[200px] justify-center">
+          <img
+            alt={`${data.airline.name} Logo`}
+            className="max-h-[80px] max-w-[200px]"
+            src={data.airline.logo}
+          />
+        </div>
+      ) : null}
+      <div className="flex w-full flex-col gap-1">
+        <div className="text-center text-lg font-bold opacity-90">
+          {data.airline?.name} {data.flightNumber}
+        </div>
+        <div className="text-center text-sm font-semibold opacity-80">
+          {data.outDateLocal}
+        </div>
+      </div>
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex items-stretch gap-4">
+          <div className="flex flex-1 justify-center">
+            <div className="max-w-[125px] sm:max-w-[250px]">
+              <div className="font-mono text-4xl font-bold">
+                {data.departureAirport.iata}
+              </div>
+              <div className="truncate text-sm sm:text-base">
+                {data.departureMunicipalityText}
+              </div>
+              <FlightTimesDisplay
+                className="font-mono"
+                data={{
+                  delayStatus: data.departureDelayStatus,
+                  actualValue: data.outTimeActualValue,
+                  value: data.outTimeValue,
+                  actualLocal: data.outTimeActualLocal,
+                  local: data.outTimeLocal,
+                  actualDaysAdded: data.outTimeActualDaysAdded,
+                  daysAdded: 0,
+                }}
+              />
+            </div>
+          </div>
+          <div className="flex items-center">
+            <RightArrowIcon className="h-8 w-8 opacity-80" />
+          </div>
+          <div className="flex flex-1 justify-center">
+            <div className="max-w-[125px] sm:max-w-[250px]">
+              <div className="font-mono text-4xl font-bold">
+                {data.arrivalAirport.iata}
+              </div>
+              <div className="truncate text-sm sm:text-base">
+                {data.arrivalMunicipalityText}
+              </div>
+              <FlightTimesDisplay
+                className="font-mono"
+                data={{
+                  delayStatus: data.arrivalDelayStatus,
+                  actualValue: data.inTimeActualValue,
+                  value: data.inTimeValue,
+                  actualLocal: data.inTimeActualLocal,
+                  local: data.inTimeLocal,
+                  actualDaysAdded: data.inTimeActualDaysAdded,
+                  daysAdded: data.inTimeDaysAdded,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-center text-sm italic opacity-80 sm:text-base">
+          {data.durationString} ({data.distance.toLocaleString()} miles)
+        </div>
+        <div
+          className={classNames(
+            'flex justify-center gap-3',
+            data.delayStatus !== 'none' && 'font-semibold',
+            TEXT_COLORS[data.delayStatus],
+            [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+              'brightness-90',
+          )}
+        >
+          <span>{data.flightStatusText}</span>
+          <span>
+            {data.delayStatus === 'canceled'
+              ? 'Canceled'
+              : data.delayStatus !== 'none'
+                ? `Delayed ${data.delay}`
+                : 'On Time'}
+          </span>
+        </div>
+      </div>
+      <div className="flex w-full items-center justify-center gap-8">
+        <div className="max-w-[200px] text-sm sm:text-base">
+          {data.aircraftType?.name}
+        </div>
+        {tailNumber !== null ? (
+          <div className="flex items-center gap-2 font-mono text-lg">
+            {tailNumber}
+            <div className="text-xs opacity-80">{data.airframe?.icao24}</div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+};

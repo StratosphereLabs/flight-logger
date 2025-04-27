@@ -1,14 +1,11 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardBody, Link, Modal } from 'stratosphere-ui';
 
 import {
-  FlightChangelogTable,
   FlightTimesDisplay,
-  OnTimePerformanceChart,
   PlaneSolidIcon,
-  WeatherInfo,
 } from '../../../../common/components';
 import {
   CARD_BORDER_COLORS,
@@ -26,9 +23,11 @@ import {
 } from '../../../../common/hooks';
 import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
+import { type FlightPageNavigationState } from '../../../Flight';
 
 export const ActiveFlightCard = (): JSX.Element | null => {
   const utils = trpc.useUtils();
+  const navigate = useNavigate();
   const { data: userData } = useLoggedInUserQuery();
   const enabled = useProfilePage();
   const { username } = useParams();
@@ -36,7 +35,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
   const handleSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
   const [isDeleteFlightModalOpen, setIsDeleteFlightModalOpen] = useState(false);
-  const [isActive, setIsActive] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
   const { data } = trpc.flights.getUserActiveFlight.useQuery(
     {
@@ -59,17 +57,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
       },
       onError,
     });
-  useEffect(() => {
-    const listener: (this: Window, ev: KeyboardEvent) => void = event => {
-      if (event.key === 'Escape') {
-        setIsActive(false);
-      }
-    };
-    window.addEventListener('keydown', listener);
-    return () => {
-      window.removeEventListener('keydown', listener);
-    };
-  }, []);
   if (data === null || data === undefined) {
     return null;
   }
@@ -105,7 +92,14 @@ export const ActiveFlightCard = (): JSX.Element | null => {
           <div
             className="flex flex-col gap-1 hover:cursor-pointer"
             onClick={() => {
-              setIsActive(active => !active);
+              navigate(`/flight/${data.id}`, {
+                state: {
+                  previousPageName:
+                    username !== undefined
+                      ? `${username}'s Profile`
+                      : 'Profile',
+                } as const as FlightPageNavigationState,
+              });
             }}
           >
             <div className="flex w-full items-center justify-between gap-3">
@@ -349,13 +343,6 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               </div>
             </div>
           </div>
-          {isActive ? (
-            <>
-              <OnTimePerformanceChart flightId={data.id} />
-              <WeatherInfo flightId={data.id} />
-              <FlightChangelogTable flightId={data.id} />
-            </>
-          ) : null}
         </CardBody>
       </Card>
       <Modal

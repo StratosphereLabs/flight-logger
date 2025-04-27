@@ -460,49 +460,13 @@ export const FollowingMap = (): JSX.Element => {
           {!isLoading && data !== undefined ? (
             <div className="flex flex-col gap-2 p-2">
               {data?.groupedFlights.CURRENT?.sort(sortByDepartureTimeAsc).map(
-                flight => (
-                  <FlightRow
-                    key={flight.id}
-                    flight={flight}
-                    onFlightClick={() => {
-                      setSelectedFlightId(flight.id);
-                    }}
-                    onFlightClose={() => {
-                      setSelectedFlightId(null);
-                    }}
-                    selectedFlightId={selectedFlightId}
-                  />
-                ),
+                flight => <FlightRow key={flight.id} flight={flight} />,
               )}
               {data?.groupedFlights.UPCOMING?.sort(sortByDepartureTimeAsc).map(
-                flight => (
-                  <FlightRow
-                    key={flight.id}
-                    flight={flight}
-                    onFlightClick={() => {
-                      setSelectedFlightId(flight.id);
-                    }}
-                    onFlightClose={() => {
-                      setSelectedFlightId(null);
-                    }}
-                    selectedFlightId={selectedFlightId}
-                  />
-                ),
+                flight => <FlightRow key={flight.id} flight={flight} />,
               )}
               {data?.groupedFlights.COMPLETED?.sort(sortByArrivalTimeDesc).map(
-                flight => (
-                  <FlightRow
-                    key={flight.id}
-                    flight={flight}
-                    onFlightClick={() => {
-                      setSelectedFlightId(flight.id);
-                    }}
-                    onFlightClose={() => {
-                      setSelectedFlightId(null);
-                    }}
-                    selectedFlightId={selectedFlightId}
-                  />
-                ),
+                flight => <FlightRow key={flight.id} flight={flight} />,
               )}
               <div className="flex flex-1 flex-col items-center justify-center gap-4">
                 {data.flights.length === 0 ? (

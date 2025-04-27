@@ -8,7 +8,6 @@ interface FlightsPageState {
   isCreateTripDialogOpen: boolean;
   isDeleteDialogOpen: boolean;
   isEditDialogOpen: boolean;
-  isViewDialogOpen: boolean;
   rowSelection: RowSelectionState;
   setActiveFlight: (
     flight: FlightsRouterOutput['getUserFlights']['results'][number] | null,
@@ -16,7 +15,6 @@ interface FlightsPageState {
   setIsCreateTripDialogOpen: (open: boolean) => void;
   setIsDeleteDialogOpen: (open: boolean) => void;
   setIsEditDialogOpen: (open: boolean) => void;
-  setIsViewDialogOpen: (open: boolean) => void;
   setRowSelection: OnChangeFn<RowSelectionState>;
   resetRowSelection: () => void;
 }
@@ -26,7 +24,6 @@ export const useFlightsPageStore = create<FlightsPageState>()((set, get) => ({
   isCreateTripDialogOpen: false,
   isDeleteDialogOpen: false,
   isEditDialogOpen: false,
-  isViewDialogOpen: false,
   rowSelection: {},
   setActiveFlight: activeFlight => {
     set({ activeFlight });
@@ -39,9 +36,6 @@ export const useFlightsPageStore = create<FlightsPageState>()((set, get) => ({
   },
   setIsEditDialogOpen: isEditDialogOpen => {
     set({ isEditDialogOpen });
-  },
-  setIsViewDialogOpen: isViewDialogOpen => {
-    set({ isViewDialogOpen });
   },
   setRowSelection: state => {
     set({

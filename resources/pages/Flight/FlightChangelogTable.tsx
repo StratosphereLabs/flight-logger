@@ -6,16 +6,21 @@ import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
 
-import { CollapseIcon, ExpandIcon, FlightChangeValue, TimeIcon } from '.';
 import viteIcon from '../../../resources/assets/vite.svg';
-import { AppTheme, useThemeStore } from '../../stores';
-import { trpc } from '../../utils/trpc';
+import {
+  CollapseIcon,
+  ExpandIcon,
+  FlightChangeValue,
+  TimeIcon,
+} from '../../common/components';
 import {
   DATE_FORMAT,
   DEFAULT_EXPANDED_PAGE_SIZE,
   DEFAULT_PAGE_SIZE,
   TIME_FORMAT_12H,
-} from '../constants';
+} from '../../common/constants';
+import { AppTheme, useThemeStore } from '../../stores';
+import { trpc } from '../../utils/trpc';
 
 export interface FlightChangelogTableProps {
   className?: string;
@@ -125,8 +130,8 @@ export const FlightChangelogTable = ({
             <Table
               className="table-fixed"
               cellClassNames={{
-                createdAt: 'w-[90px] sm:w-[190px]',
-                changedByUser: 'w-[32px] sm:w-[150px]',
+                createdAt: classNames('w-[90px]'),
+                changedByUser: classNames('w-[32px]'),
               }}
               columns={[
                 {
@@ -170,12 +175,16 @@ export const FlightChangelogTable = ({
                             onClick={() => {
                               navigate(`/user/${user.username}`);
                             }}
-                            className="hidden truncate font-semibold opacity-80 sm:block lg:text-sm"
+                            className={classNames(
+                              'hidden truncate font-semibold opacity-80 lg:text-sm',
+                            )}
                           >
                             {user.username}
                           </Link>
                         ) : (
-                          <div className="hidden sm:block">FlightLogger</div>
+                          <div className={classNames('hidden')}>
+                            FlightLogger
+                          </div>
                         )}
                       </div>
                     );

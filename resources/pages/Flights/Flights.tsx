@@ -20,7 +20,6 @@ import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
-import { ViewFlightModal } from './ViewFlightModal';
 import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';
 import { useFlightsPageStore } from './flightsPageStore';
 
@@ -180,7 +179,6 @@ export const Flights = ({
       ) : null}
       <DeleteFlightModal />
       <EditFlightModal onSuccess={async () => await refetch()} />
-      <ViewFlightModal />
       <CreateTripModal
         onSuccess={tripId => {
           setIsRowSelectEnabled(false);
