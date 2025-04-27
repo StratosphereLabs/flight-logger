@@ -26,7 +26,7 @@ export const OnTimePerformanceChart = ({
   });
   return data?.onTimePerformance !== null &&
     data?.onTimePerformance !== undefined ? (
-    <div className="mt-4 flex h-[200px] w-full min-w-[250px] flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[200px] w-full min-w-[250px] flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">On-Time Performance</div>
         <div className="flex text-xs opacity-80">

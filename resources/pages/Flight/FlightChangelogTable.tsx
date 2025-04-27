@@ -4,18 +4,12 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Button, Link, Loading, Table } from 'stratosphere-ui';
+import { Avatar, Link, Loading, Table } from 'stratosphere-ui';
 
 import viteIcon from '../../../resources/assets/vite.svg';
-import {
-  CollapseIcon,
-  ExpandIcon,
-  FlightChangeValue,
-  TimeIcon,
-} from '../../common/components';
+import { FlightChangeValue, TimeIcon } from '../../common/components';
 import {
   DATE_FORMAT,
-  DEFAULT_EXPANDED_PAGE_SIZE,
   DEFAULT_PAGE_SIZE,
   TIME_FORMAT_12H,
 } from '../../common/constants';
@@ -24,50 +18,31 @@ import { trpc } from '../../utils/trpc';
 
 export interface FlightChangelogTableProps {
   className?: string;
-  containerClassName?: string;
-  expandedContainerClassName?: string;
-  expandedPageSize?: number;
   flightId: string;
   pageSize?: number;
 }
 
 export const FlightChangelogTable = ({
   className,
-  containerClassName,
-  expandedContainerClassName,
-  expandedPageSize,
   flightId,
   pageSize,
 }: FlightChangelogTableProps): JSX.Element | null => {
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false);
   const [keepPreviousData, setKeepPreviousData] = useState(false);
   const { theme } = useThemeStore();
-  const limit = useMemo(
-    () =>
-      isExpanded
-        ? (expandedPageSize ?? DEFAULT_EXPANDED_PAGE_SIZE)
-        : (pageSize ?? DEFAULT_PAGE_SIZE),
-    [expandedPageSize, isExpanded, pageSize],
-  );
-  const {
-    data,
-    fetchNextPage,
-    isFetching,
-    isFetchingNextPage,
-    isLoading,
-    hasNextPage,
-  } = trpc.flights.getFlightChangelog.useInfiniteQuery(
-    {
-      id: flightId,
-      limit,
-    },
-    {
-      getNextPageParam: ({ metadata }) =>
-        metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
-      keepPreviousData,
-    },
-  );
+  const limit = pageSize ?? DEFAULT_PAGE_SIZE;
+  const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
+    trpc.flights.getFlightChangelog.useInfiniteQuery(
+      {
+        id: flightId,
+        limit,
+      },
+      {
+        getNextPageParam: ({ metadata }) =>
+          metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
+        keepPreviousData,
+      },
+    );
   const { ref } = useInView({
     skip: isFetching || hasNextPage !== true,
     delay: 0,
@@ -86,9 +61,6 @@ export const FlightChangelogTable = ({
       setKeepPreviousData(false);
     }
   }, [isFetching]);
-  useEffect(() => {
-    setIsExpanded(false);
-  }, [flightId]);
   return (
     <div
       className={classNames(
@@ -96,37 +68,12 @@ export const FlightChangelogTable = ({
         className,
       )}
     >
-      {isLoading ? <Loading /> : null}
       {data !== undefined && tableData.length > 0 ? (
         <>
           <div className="relative flex w-full justify-center">
             <span className="my-2 w-full font-semibold">Event Log</span>
-            <Button
-              className="absolute right-0"
-              color="ghost"
-              onClick={() => {
-                setKeepPreviousData(true);
-                setIsExpanded(expanded => !expanded);
-              }}
-              size="sm"
-              title="Toggle Expand/Collapse"
-            >
-              {isExpanded ? (
-                <CollapseIcon className="h-4 w-4" />
-              ) : (
-                <ExpandIcon className="h-4 w-4" />
-              )}
-              <span className="sr-only">Toggle Expand/Collapse</span>
-            </Button>
           </div>
-          <div
-            className={classNames(
-              'flex flex-col gap-2 overflow-y-scroll',
-              isExpanded
-                ? (expandedContainerClassName ?? 'max-h-[550px]')
-                : (containerClassName ?? 'max-h-[200px]'),
-            )}
-          >
+          <div className="flex max-h-[550px] flex-col gap-2 overflow-y-scroll">
             <Table
               className="table-fixed"
               cellClassNames={{

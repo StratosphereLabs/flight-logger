@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { useParams } from 'react-router-dom';
 import { Loading } from 'stratosphere-ui';
 
 import { FlightTimesDisplay, RightArrowIcon } from '../../common/components';
@@ -7,37 +6,45 @@ import { TEXT_COLORS } from '../../common/constants';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
-export const FlightInfo = (): JSX.Element => {
-  const { flightId } = useParams();
+export interface FlightInfoProps {
+  flightId: string;
+}
+
+export const FlightInfo = ({
+  flightId,
+}: FlightInfoProps): JSX.Element | null => {
   const { theme } = useThemeStore();
-  const { data } = trpc.flights.getFlight.useQuery(
-    { id: flightId ?? '' },
-    { enabled: flightId !== undefined },
-  );
+  const { data } = trpc.flights.getFlight.useQuery({ id: flightId });
   if (data === undefined) {
-    return <Loading />;
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <Loading />
+      </div>
+    );
   }
   const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
   return (
-    <div className="flex flex-1 flex-col items-center gap-4">
-      {typeof data.airline?.logo === 'string' ? (
-        <div className="flex w-[200px] justify-center">
-          <img
-            alt={`${data.airline.name} Logo`}
-            className="max-h-[80px] max-w-[200px]"
-            src={data.airline.logo}
-          />
-        </div>
-      ) : null}
-      <div className="flex w-full flex-col gap-1">
-        <div className="text-center text-lg font-bold opacity-90">
-          {data.airline?.name} {data.flightNumber}
-        </div>
-        <div className="text-center text-sm font-semibold opacity-80">
-          {data.outDateLocal}
+    <div className="flex flex-col items-center gap-2 md:gap-4">
+      <div className="flex gap-4 md:flex-col">
+        {typeof data.airline?.logo === 'string' ? (
+          <div className="flex w-[120px] items-center md:w-[200px]">
+            <img
+              alt={`${data.airline.name} Logo`}
+              className="max-h-[50px] max-w-[120px] md:max-h-[80px] md:max-w-[200px]"
+              src={data.airline.logo}
+            />
+          </div>
+        ) : null}
+        <div className="flex flex-1 flex-col md:gap-1">
+          <div className="text-base font-bold opacity-90 md:text-center md:text-lg">
+            {data.airline?.name} {data.flightNumber}
+          </div>
+          <div className="text-xs font-semibold opacity-80 md:text-center md:text-sm">
+            {data.outDateLocal}
+          </div>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-1 md:gap-2">
         <div className="flex items-stretch gap-4">
           <div className="flex flex-1 justify-center">
             <div className="max-w-[125px] sm:max-w-[250px]">
@@ -87,7 +94,7 @@ export const FlightInfo = (): JSX.Element => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center text-sm italic opacity-80 sm:text-base">
+        <div className="flex justify-center text-sm italic opacity-80">
           {data.durationString} ({data.distance.toLocaleString()} miles)
         </div>
         <div

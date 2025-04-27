@@ -445,6 +445,12 @@ export const getTrackingData = (
     Array.isArray(flight.tracklog)
       ? (flight.tracklog as TracklogItem[])
       : undefined;
+  const midpoint = getMidpoint(
+    flight.departureAirport.lat,
+    flight.departureAirport.lon,
+    flight.arrivalAirport.lat,
+    flight.arrivalAirport.lon,
+  );
   const waypoints =
     flight.waypoints !== null &&
     typeof flight.waypoints === 'object' &&
@@ -453,6 +459,7 @@ export const getTrackingData = (
       ? (flight.waypoints as Array<[number, number]>)
       : ([
           [flight.departureAirport.lon, flight.departureAirport.lat],
+          [midpoint.lng, midpoint.lat],
           [flight.arrivalAirport.lon, flight.arrivalAirport.lat],
         ] as Array<[number, number]>);
   return { tracklog, waypoints };

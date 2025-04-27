@@ -55,6 +55,10 @@ export const flightsRouter = router({
           id,
         },
         include: flightIncludeObj,
+        omit: {
+          tracklog: false,
+          waypoints: false,
+        },
       });
       if (flight === null) {
         throw new TRPCError({
@@ -62,7 +66,17 @@ export const flightsRouter = router({
           message: 'Flight not found.',
         });
       }
-      return transformFlightData(flight);
+      const flightData = transformFlightData(flight);
+      const flightState =
+        flightData.flightStatus === 'SCHEDULED'
+          ? 'UPCOMING'
+          : flightData.flightStatus === 'ARRIVED'
+            ? 'COMPLETED'
+            : 'CURRENT';
+      return {
+        ...flightData,
+        flightState,
+      };
     }),
   getExtraFlightData: procedure
     .use(verifyAuthenticated)
