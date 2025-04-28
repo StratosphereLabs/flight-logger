@@ -1,3 +1,4 @@
+export * from './useAircraftPhotoQuery';
 export * from './useAuthPage';
 export * from './useCopyToClipboard';
 export * from './useCurrentDate';

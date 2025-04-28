@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Link, Loading } from 'stratosphere-ui';
+import { Avatar, Badge, Link, Loading } from 'stratosphere-ui';
 
 import { FlightTimesDisplay, RightArrowIcon } from '../../common/components';
 import { TEXT_COLORS } from '../../common/constants';
+import { useAircraftPhotoQuery } from '../../common/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
@@ -17,6 +18,9 @@ export const FlightInfo = ({
   const navigate = useNavigate();
   const { theme } = useThemeStore();
   const { data } = trpc.flights.getFlight.useQuery({ id: flightId });
+  const { data: photoData, isFetching } = useAircraftPhotoQuery(
+    data?.airframeId ?? null,
+  );
   if (data === undefined) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -130,16 +134,56 @@ export const FlightInfo = ({
           </span>
         </div>
       </div>
-      <div className="flex w-full items-center justify-center gap-8">
-        <div className="max-w-[200px] text-sm sm:text-base">
-          {data.aircraftType?.name}
-        </div>
-        {tailNumber !== null ? (
-          <div className="flex items-center gap-2 font-mono text-lg">
-            {tailNumber}
-            <div className="text-xs opacity-80">{data.airframe?.icao24}</div>
+      <div className="divider my-0" />
+      <div className="flex w-full justify-between gap-3">
+        <div className="flex flex-1 flex-col gap-1">
+          <div className="text-lg font-semibold">{data.aircraftType?.name}</div>
+          <div className="flex w-full flex-col gap-1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm">ICAO Code</span>
+              <Badge color="info" size="md" className="font-mono">
+                {data.aircraftType?.icao}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm">Tail Number</span>
+              {tailNumber !== null ? (
+                <span className="font-mono text-base opacity-80">
+                  {tailNumber}
+                </span>
+              ) : (
+                <span className="text-sm opacity-80">N/A</span>
+              )}
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm">Hex Code</span>
+              {data.airframe !== null ? (
+                <span className="font-mono text-sm opacity-80">
+                  {data.airframe.icao24}
+                </span>
+              ) : (
+                <span className="text-sm opacity-80">N/A</span>
+              )}
+            </div>
           </div>
-        ) : null}
+        </div>
+        <div className="flex w-40 flex-col justify-center overflow-hidden">
+          {photoData !== undefined ? (
+            <img
+              src={photoData.photos[0].thumbnail.src}
+              alt="Photo unavailable"
+              className="rounded-box h-24 w-40 object-cover shadow-sm"
+            />
+          ) : null}
+          {photoData === undefined ? (
+            <div className="rounded-box bg-base-100 flex h-24 w-40 items-center justify-center">
+              {isFetching ? <Loading /> : 'Photo unavailable'}
+            </div>
+          ) : null}
+          <p className="truncate text-center text-xs opacity-75">
+            {photoData?.photos[0].photographer ?? ''}
+          </p>
+        </div>
       </div>
     </div>
   );
