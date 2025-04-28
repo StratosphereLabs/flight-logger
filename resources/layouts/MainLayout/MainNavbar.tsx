@@ -7,7 +7,6 @@ import {
   Avatar,
   Button,
   DropdownMenu,
-  Link,
   Loading,
   Modal,
   type TabData,
@@ -16,6 +15,7 @@ import {
 import {
   CogIcon,
   HomeIcon,
+  LeftArrowIcon,
   LogoutIcon,
   MenuIcon,
   PlusAirplaneIcon,
@@ -315,15 +315,18 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
           <ProfileFiltersForm methods={methods} />
         ) : null}
         {isFlightPage ? (
-          <div className="flex px-4 py-1">
-            <Link
-              hover
+          <div className="flex p-1">
+            <Button
+              className="text-sm"
+              color="ghost"
+              size="xs"
               onClick={() => {
                 navigate(-1);
               }}
             >
-              ← Back to {previousPageName ?? 'Home'}
-            </Link>
+              <LeftArrowIcon className="h-3 w-3" /> Back to{' '}
+              {previousPageName ?? 'Home'}
+            </Button>
           </div>
         ) : null}
       </div>

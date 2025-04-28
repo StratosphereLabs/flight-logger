@@ -77,8 +77,8 @@ export const FlightChangelogTable = ({
             <Table
               className="table-fixed"
               cellClassNames={{
-                createdAt: classNames('w-[90px]'),
-                changedByUser: classNames('w-[32px]'),
+                createdAt: classNames('w-[110px]'),
+                changedByUser: classNames('w-[35px]'),
               }}
               columns={[
                 {
