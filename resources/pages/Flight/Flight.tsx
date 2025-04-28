@@ -102,10 +102,10 @@ export const Flight = (): JSX.Element | null => {
       }
       if (!bounds.isEmpty()) {
         map.fitBounds(bounds, {
-          top: 175,
-          left: window.innerWidth < 768 ? 25 : 408,
-          right: 25,
-          bottom: window.innerWidth < 768 ? 320 : 25,
+          top: 165,
+          left: window.innerWidth < 768 ? 25 : 420,
+          right: 30,
+          bottom: window.innerWidth < 768 ? 320 : 20,
         });
         fitBoundsCallCountRef.current += 1;
       }
@@ -320,7 +320,7 @@ export const Flight = (): JSX.Element | null => {
           })()}
         </GoogleMap>
       )}
-      <div className="rounded-box bg-base-100/80 absolute bottom-1 left-1 mt-24 flex h-[40%] w-[calc(100%-8px)] backdrop-blur-sm md:top-1 md:h-[calc(100%-104px)] md:w-[390px]">
+      <div className="rounded-box bg-base-100/80 absolute bottom-1 left-1 mt-24 flex h-[300px] w-[calc(100%-8px)] backdrop-blur-sm md:top-1 md:h-[calc(100%-104px)] md:w-[390px]">
         <div
           className={classNames(
             'rounded-box flex flex-1 flex-col gap-4 overflow-y-scroll p-4',
