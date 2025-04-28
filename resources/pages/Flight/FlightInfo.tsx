@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import { Loading } from 'stratosphere-ui';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Link, Loading } from 'stratosphere-ui';
 
 import { FlightTimesDisplay, RightArrowIcon } from '../../common/components';
 import { TEXT_COLORS } from '../../common/constants';
@@ -13,6 +14,7 @@ export interface FlightInfoProps {
 export const FlightInfo = ({
   flightId,
 }: FlightInfoProps): JSX.Element | null => {
+  const navigate = useNavigate();
   const { theme } = useThemeStore();
   const { data } = trpc.flights.getFlight.useQuery({ id: flightId });
   if (data === undefined) {
@@ -24,8 +26,8 @@ export const FlightInfo = ({
   }
   const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
   return (
-    <div className="flex flex-col items-center gap-2 md:gap-4">
-      <div className="flex gap-4 md:flex-col">
+    <div className="flex flex-col items-center gap-3 md:gap-4">
+      <div className="flex gap-2 md:flex-col">
         {typeof data.airline?.logo === 'string' ? (
           <div className="flex w-[120px] items-center md:w-[200px]">
             <img
@@ -44,10 +46,26 @@ export const FlightInfo = ({
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-1 md:gap-2">
+      <div className="flex items-center gap-2 overflow-hidden">
+        <Avatar
+          alt={data.user.username}
+          src={data.user.avatar}
+          shapeClassName="w-6 h-6 rounded-full"
+        />
+        <Link
+          hover
+          onClick={() => {
+            navigate(`/user/${data.user.username}`);
+          }}
+          className="truncate text-base font-semibold opacity-90"
+        >
+          {data.user.username}
+        </Link>
+      </div>
+      <div className="flex w-full flex-col gap-2">
         <div className="flex items-stretch gap-4">
           <div className="flex flex-1 justify-center">
-            <div className="max-w-[125px] sm:max-w-[250px]">
+            <div className="text-center">
               <div className="font-mono text-4xl font-bold">
                 {data.departureAirport.iata}
               </div>
@@ -55,7 +73,7 @@ export const FlightInfo = ({
                 {data.departureMunicipalityText}
               </div>
               <FlightTimesDisplay
-                className="font-mono"
+                className="justify-center font-mono"
                 data={{
                   delayStatus: data.departureDelayStatus,
                   actualValue: data.outTimeActualValue,
@@ -72,7 +90,7 @@ export const FlightInfo = ({
             <RightArrowIcon className="h-8 w-8 opacity-80" />
           </div>
           <div className="flex flex-1 justify-center">
-            <div className="max-w-[125px] sm:max-w-[250px]">
+            <div className="text-center">
               <div className="font-mono text-4xl font-bold">
                 {data.arrivalAirport.iata}
               </div>
@@ -80,7 +98,7 @@ export const FlightInfo = ({
                 {data.arrivalMunicipalityText}
               </div>
               <FlightTimesDisplay
-                className="font-mono"
+                className="justify-center font-mono"
                 data={{
                   delayStatus: data.arrivalDelayStatus,
                   actualValue: data.inTimeActualValue,
