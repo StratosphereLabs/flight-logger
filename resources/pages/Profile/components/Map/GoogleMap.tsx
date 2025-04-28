@@ -2,12 +2,9 @@ import {
   GoogleMap as GoogleMapComponent,
   HeatmapLayerF,
   MarkerF,
-  OverlayView,
-  OverlayViewF,
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
-import classNames from 'classnames';
 import {
   type Dispatch,
   type SetStateAction,
@@ -16,17 +13,10 @@ import {
   useState,
 } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
-import { Tooltip, TooltipContent } from 'stratosphere-ui';
 
-import {
-  AirportLabelOverlay,
-  PlaneSolidIcon,
-} from '../../../../common/components';
-import { TOOLTIP_COLORS } from '../../../../common/constants';
+import { AirportLabelOverlay } from '../../../../common/components';
 import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
-import { getAltChangeString } from '../../../../common/utils';
 import { useIsDarkMode } from '../../../../stores';
-import { getAltitudeColor } from '../../../../utils/colors';
 import { type MapCardFormData } from '../../Profile';
 import { useAddFlightStore } from '../Flights/addFlightStore';
 import { AddFlightOverlays } from './AddFlightOverlays';
@@ -118,30 +108,6 @@ export const GoogleMap = ({
     }),
     [center, isDarkMode],
   );
-  const aircraftColor = isDarkMode ? 'text-blue-500' : 'text-[#0000ff]';
-  const lastTracklogItem =
-    currentFlight?.tracklog !== undefined && currentFlight.tracklog.length > 2
-      ? currentFlight.tracklog[currentFlight.tracklog.length - 3]
-      : null;
-  const currentTracklogItem =
-    currentFlight?.tracklog !== undefined && currentFlight.tracklog.length > 1
-      ? currentFlight.tracklog[currentFlight.tracklog.length - 2]
-      : null;
-  const lastAlt =
-    lastTracklogItem !== null ? Math.round(lastTracklogItem.alt ?? 0) : null;
-  const currentAlt =
-    currentTracklogItem !== null
-      ? Math.round(currentTracklogItem.alt ?? 0)
-      : null;
-  const currentSpeed =
-    currentTracklogItem !== null
-      ? Math.round(currentTracklogItem.gs ?? 0)
-      : null;
-  const altChangeString =
-    lastAlt !== null && currentAlt !== null
-      ? getAltChangeString(lastAlt, currentAlt)
-      : null;
-  let lastAltitude: number | null = null;
   return isLoaded ? (
     <GoogleMapComponent
       mapContainerStyle={{
@@ -244,34 +210,6 @@ export const GoogleMap = ({
             />
           );
         })}
-      {!isAddingFlight &&
-        (currentFlight?.tracklog?.map(({ alt, coord }, index, allItems) => {
-          const prevItem = allItems[index - 1];
-          if (prevItem === undefined) return null;
-          if (alt !== null) {
-            lastAltitude = alt;
-          }
-          return (
-            <PolylineF
-              visible={mapMode === 'routes'}
-              key={index}
-              options={{
-                strokeOpacity: selectedAirportId === null ? 1 : 0.1,
-                strokeColor: getAltitudeColor(
-                  lastAltitude !== null ? lastAltitude / 450 : 0,
-                ),
-                strokeWeight: 3,
-                zIndex: 20,
-                geodesic: true,
-              }}
-              path={[
-                { lat: prevItem.coord[1], lng: prevItem.coord[0] },
-                { lat: coord[1], lng: coord[0] },
-              ]}
-            />
-          );
-        }) ??
-          null)}
       {isAddingFlight ? <AddFlightOverlays map={map} /> : null}
       <PolylineF
         visible={mapMode === 'routes'}
@@ -294,50 +232,6 @@ export const GoogleMap = ({
           },
         )}
       />
-      {mapMode === 'routes' && currentFlight?.flightStatus === 'EN_ROUTE' ? (
-        <OverlayViewF
-          position={{
-            lat: currentFlight.lat,
-            lng: currentFlight.lng,
-          }}
-          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-          getPixelPositionOffset={(width, height) => ({
-            x: -(width / 2),
-            y: -(height / 2),
-          })}
-          zIndex={100}
-        >
-          <Tooltip
-            className={classNames(
-              'font-mono',
-              selectedAirportId === null ? 'opacity-80' : 'opacity-10',
-            )}
-            color={TOOLTIP_COLORS[currentFlight.delayStatus]}
-            open
-          >
-            <TooltipContent className="flex flex-col items-start font-mono">
-              <span className="flex gap-1 font-bold">
-                {currentFlight.callsign}
-              </span>
-              <span className="flex gap-1 text-xs">
-                <span>
-                  {currentAlt != null
-                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
-                    : null}
-                </span>
-                <span>{currentSpeed}</span>
-                <span className="font-bold">{altChangeString}</span>
-              </span>
-            </TooltipContent>
-            <PlaneSolidIcon
-              className={classNames('h-6 w-6', aircraftColor)}
-              style={{
-                transform: `rotate(${Math.round(currentFlight.heading - 90)}deg)`,
-              }}
-            />
-          </Tooltip>
-        </OverlayViewF>
-      ) : null}
       <HeatmapLayerF
         data={heatmapData}
         onLoad={setHeatmap}

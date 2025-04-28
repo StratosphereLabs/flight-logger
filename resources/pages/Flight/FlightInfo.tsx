@@ -63,53 +63,49 @@ export const FlightInfo = ({
         </Link>
       </div>
       <div className="flex w-full flex-col gap-2">
-        <div className="flex items-stretch gap-4">
-          <div className="flex flex-1 justify-center">
-            <div className="text-center">
-              <div className="font-mono text-4xl font-bold">
-                {data.departureAirport.iata}
-              </div>
-              <div className="truncate text-sm sm:text-base">
-                {data.departureMunicipalityText}
-              </div>
-              <FlightTimesDisplay
-                className="justify-center font-mono"
-                data={{
-                  delayStatus: data.departureDelayStatus,
-                  actualValue: data.outTimeActualValue,
-                  value: data.outTimeValue,
-                  actualLocal: data.outTimeActualLocal,
-                  local: data.outTimeLocal,
-                  actualDaysAdded: data.outTimeActualDaysAdded,
-                  daysAdded: 0,
-                }}
-              />
+        <div className="flex items-stretch gap-2">
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="text-center font-mono text-4xl font-bold">
+              {data.departureAirport.iata}
             </div>
+            <div className="truncate text-center text-sm sm:text-base">
+              {data.departureMunicipalityText}
+            </div>
+            <FlightTimesDisplay
+              className="justify-center font-mono"
+              data={{
+                delayStatus: data.departureDelayStatus,
+                actualValue: data.outTimeActualValue,
+                value: data.outTimeValue,
+                actualLocal: data.outTimeActualLocal,
+                local: data.outTimeLocal,
+                actualDaysAdded: data.outTimeActualDaysAdded,
+                daysAdded: 0,
+              }}
+            />
           </div>
           <div className="flex items-center">
             <RightArrowIcon className="h-8 w-8 opacity-80" />
           </div>
-          <div className="flex flex-1 justify-center">
-            <div className="text-center">
-              <div className="font-mono text-4xl font-bold">
-                {data.arrivalAirport.iata}
-              </div>
-              <div className="truncate text-sm sm:text-base">
-                {data.arrivalMunicipalityText}
-              </div>
-              <FlightTimesDisplay
-                className="justify-center font-mono"
-                data={{
-                  delayStatus: data.arrivalDelayStatus,
-                  actualValue: data.inTimeActualValue,
-                  value: data.inTimeValue,
-                  actualLocal: data.inTimeActualLocal,
-                  local: data.inTimeLocal,
-                  actualDaysAdded: data.inTimeActualDaysAdded,
-                  daysAdded: data.inTimeDaysAdded,
-                }}
-              />
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="text-center font-mono text-4xl font-bold">
+              {data.arrivalAirport.iata}
             </div>
+            <div className="truncate text-center text-sm sm:text-base">
+              {data.arrivalMunicipalityText}
+            </div>
+            <FlightTimesDisplay
+              className="justify-center font-mono"
+              data={{
+                delayStatus: data.arrivalDelayStatus,
+                actualValue: data.inTimeActualValue,
+                value: data.inTimeValue,
+                actualLocal: data.inTimeActualLocal,
+                local: data.inTimeLocal,
+                actualDaysAdded: data.inTimeActualDaysAdded,
+                daysAdded: data.inTimeDaysAdded,
+              }}
+            />
           </div>
         </div>
         <div className="flex justify-center text-sm italic opacity-80">
