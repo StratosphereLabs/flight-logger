@@ -337,6 +337,7 @@ export const Flight = (): JSX.Element | null => {
           )}
         >
           <FlightInfo flightId={flightId} />
+          <div className="divider my-2" />
           <OnTimePerformanceChart flightId={flightId} />
           <WeatherInfo flightId={flightId} />
           <FlightChangelogTable flightId={flightId} />
