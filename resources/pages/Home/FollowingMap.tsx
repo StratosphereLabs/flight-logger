@@ -56,20 +56,14 @@ export const FollowingMap = (): JSX.Element => {
   const navigate = useNavigate();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();
-  const options = useMemo(
-    () => ({
-      center,
-      minZoom: 2,
-      fullscreenControl: false,
-      mapTypeControl: false,
-      zoomControl: false,
-      streetViewControl: false,
-      gestureHandling: 'greedy',
+  useEffect(() => {
+    map?.setValues({
       styles: isDarkMode ? darkModeStyle : lightModeStyle,
-      isFractionalZoomEnabled: true,
-    }),
-    [center, isDarkMode],
-  );
+    });
+  }, [isDarkMode, map]);
+  useEffect(() => {
+    map?.setCenter(center);
+  }, [center, map]);
   const aircraftColor = useMemo(
     () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
     [isDarkMode],
@@ -178,7 +172,15 @@ export const FollowingMap = (): JSX.Element => {
                 width: '100%',
               }}
               zoom={3}
-              options={options}
+              options={{
+                minZoom: 2,
+                fullscreenControl: false,
+                mapTypeControl: false,
+                zoomControl: false,
+                streetViewControl: false,
+                gestureHandling: 'greedy',
+                isFractionalZoomEnabled: true,
+              }}
               onClick={() => {
                 setSelectedAirportId(null);
                 setSelectedFlightId(null);
@@ -289,7 +291,8 @@ export const FollowingMap = (): JSX.Element => {
                   let lastAltitude: number | null = null;
                   return (
                     <>
-                      {flightState !== 'UPCOMING' && tracklog === undefined ? (
+                      {flightState !== 'UPCOMING' &&
+                      (tracklog === undefined || tracklog.length === 0) ? (
                         <PolylineF
                           key={index}
                           options={{

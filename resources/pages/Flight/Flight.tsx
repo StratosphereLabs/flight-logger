@@ -58,20 +58,14 @@ export const Flight = (): JSX.Element | null => {
     () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
     [isDarkMode],
   );
-  const options = useMemo(
-    () => ({
-      center,
-      minZoom: 2,
-      fullscreenControl: false,
-      mapTypeControl: false,
-      zoomControl: false,
-      streetViewControl: false,
-      gestureHandling: 'greedy',
+  useEffect(() => {
+    map?.setValues({
       styles: isDarkMode ? darkModeStyle : lightModeStyle,
-      isFractionalZoomEnabled: true,
-    }),
-    [center, isDarkMode],
-  );
+    });
+  }, [isDarkMode, map]);
+  useEffect(() => {
+    map?.setCenter(center);
+  }, [center, map]);
   useEffect(() => {
     if (state !== null) {
       setPreviousPageName(state.previousPageName);
@@ -121,7 +115,15 @@ export const Flight = (): JSX.Element | null => {
             width: '100%',
           }}
           zoom={3}
-          options={options}
+          options={{
+            minZoom: 2,
+            fullscreenControl: false,
+            mapTypeControl: false,
+            zoomControl: false,
+            streetViewControl: false,
+            gestureHandling: 'greedy',
+            isFractionalZoomEnabled: true,
+          }}
           onLoad={map => {
             setMap(map);
           }}
@@ -192,7 +194,7 @@ export const Flight = (): JSX.Element | null => {
             return (
               <>
                 {data.flightState !== 'UPCOMING' &&
-                data.tracklog === undefined ? (
+                (data.tracklog === undefined || data.tracklog.length === 0) ? (
                   <PolylineF
                     options={{
                       geodesic: true,

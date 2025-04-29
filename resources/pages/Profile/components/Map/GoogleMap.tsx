@@ -94,20 +94,14 @@ export const GoogleMap = ({
     }
   }, [data.airports, data.routes, isAddingFlight, map, selectedAirportId]);
   const isDarkMode = useIsDarkMode();
-  const mapOptions = useMemo(
-    () => ({
-      center,
-      minZoom: 2,
-      fullscreenControl: false,
-      mapTypeControl: false,
-      zoomControl: false,
-      streetViewControl: false,
-      gestureHandling: 'greedy',
+  useEffect(() => {
+    map?.setValues({
       styles: isDarkMode ? darkModeStyle : lightModeStyle,
-      isFractionalZoomEnabled: true,
-    }),
-    [center, isDarkMode],
-  );
+    });
+  }, [isDarkMode, map]);
+  useEffect(() => {
+    map?.setCenter(center);
+  }, [center, map]);
   return isLoaded ? (
     <GoogleMapComponent
       mapContainerStyle={{
@@ -115,7 +109,15 @@ export const GoogleMap = ({
         width: '100%',
       }}
       zoom={3}
-      options={mapOptions}
+      options={{
+        minZoom: 2,
+        fullscreenControl: false,
+        mapTypeControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        gestureHandling: 'greedy',
+        isFractionalZoomEnabled: true,
+      }}
       onClick={() => {
         setSelectedAirportId(null);
       }}
