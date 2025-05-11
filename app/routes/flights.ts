@@ -45,41 +45,37 @@ import {
 } from '../utils';
 
 export const flightsRouter = router({
-  getFlight: procedure
-    .use(verifyAuthenticated)
-    .input(getFlightSchema)
-    .query(async ({ input }) => {
-      const { id } = input;
-      const flight = await prisma.flight.findUnique({
-        where: {
-          id,
-        },
-        include: flightIncludeObj,
-        omit: {
-          tracklog: false,
-          waypoints: false,
-        },
+  getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
+    const { id } = input;
+    const flight = await prisma.flight.findUnique({
+      where: {
+        id,
+      },
+      include: flightIncludeObj,
+      omit: {
+        tracklog: false,
+        waypoints: false,
+      },
+    });
+    if (flight === null) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Flight not found.',
       });
-      if (flight === null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Flight not found.',
-        });
-      }
-      const flightData = transformFlightData(flight);
-      const flightState =
-        flightData.flightStatus === 'SCHEDULED'
-          ? 'UPCOMING'
-          : flightData.flightStatus === 'ARRIVED'
-            ? 'COMPLETED'
-            : 'CURRENT';
-      return {
-        ...flightData,
-        flightState,
-      };
-    }),
+    }
+    const flightData = transformFlightData(flight);
+    const flightState =
+      flightData.flightStatus === 'SCHEDULED'
+        ? 'UPCOMING'
+        : flightData.flightStatus === 'ARRIVED'
+          ? 'COMPLETED'
+          : 'CURRENT';
+    return {
+      ...flightData,
+      flightState,
+    };
+  }),
   getExtraFlightData: procedure
-    .use(verifyAuthenticated)
     .input(getExtraFlightDataSchema)
     .query(async ({ input }) => {
       const flight = await prisma.flight.findUnique({
@@ -165,7 +161,6 @@ export const flightsRouter = router({
       };
     }),
   getFlightChangelog: procedure
-    .use(verifyAuthenticated)
     .input(getFlightChangelogSchema)
     .query(async ({ input }) => {
       const { limit, page, skip, take } = parsePaginationRequest(input);
