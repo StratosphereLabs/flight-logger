@@ -697,7 +697,7 @@ export const transformFlightData = (
     departureMunicipalityText,
     arrivalMunicipalityText,
     distance: Math.round(flightDistance),
-    link: `/user/${flight.user.username}/flights/${flight.id}`,
+    link: `/flight/${flight.id}`,
     minutesToDeparture,
     minutesToTakeoff,
     minutesToArrival,
