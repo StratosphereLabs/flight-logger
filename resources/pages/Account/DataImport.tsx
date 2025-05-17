@@ -22,7 +22,7 @@ export const DataImport = (): JSX.Element => {
   const { setIsWarningDialogOpen } = useAccountPageStore();
   return (
     <>
-      <Card className="bg-base-100">
+      <Card className="bg-base-100 w-1/2">
         <CardBody>
           <CardTitle>
             Data Import{' '}

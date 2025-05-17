@@ -2,6 +2,7 @@ import { getToken } from 'firebase/messaging';
 import { type ChangeEvent, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  Button,
   Card,
   CardBody,
   CardTitle,
@@ -18,7 +19,7 @@ import {
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 
-export const Notifications = (): JSX.Element => {
+export const NotificationSettings = (): JSX.Element => {
   const handleSuccess = useSuccessResponseHandler();
   const handleError = useErrorResponseHandler({
     color: 'error',
@@ -41,7 +42,7 @@ export const Notifications = (): JSX.Element => {
     }
   }, [data, methods]);
   return (
-    <Card className="bg-base-100">
+    <Card className="bg-base-100 w-1/2">
       <CardBody>
         <CardTitle>Notifications</CardTitle>
         {isLoading ? (
@@ -89,6 +90,18 @@ export const Notifications = (): JSX.Element => {
             </div>
           </Form>
         )}
+        <div className="flex flex-row justify-end">
+          <Button
+            color="primary"
+            type="submit"
+            className="btn-soft mt-4"
+            onClick={() => {
+              // Handle form submission
+            }}
+          >
+            Save Changes
+          </Button>
+        </div>
       </CardBody>
     </Card>
   );
