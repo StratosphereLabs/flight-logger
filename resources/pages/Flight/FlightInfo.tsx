@@ -181,7 +181,7 @@ export const FlightInfo = ({
             </div>
           ) : null}
           <p className="truncate text-center text-xs opacity-75">
-            {photoData?.photos[0].photographer ?? ''}
+            {photoData?.photos[0]?.photographer ?? ''}
           </p>
         </div>
       </div>
