@@ -168,14 +168,14 @@ export const FlightInfo = ({
           </div>
         </div>
         <div className="flex w-40 flex-col justify-center overflow-hidden">
-          {photoData !== undefined ? (
+          {photoData?.photos[0] !== undefined ? (
             <img
               src={photoData.photos[0].thumbnail.src}
               alt="Photo unavailable"
               className="rounded-box h-24 w-40 object-cover shadow-sm"
             />
           ) : null}
-          {photoData === undefined ? (
+          {photoData?.photos[0] === undefined ? (
             <div className="rounded-box bg-base-100 flex h-24 w-40 items-center justify-center">
               {isFetching ? <Loading /> : 'Photo unavailable'}
             </div>
