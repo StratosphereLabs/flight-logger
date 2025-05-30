@@ -33,7 +33,7 @@ export const FlightInfo = ({
     <div className="flex flex-col items-center gap-3 md:gap-4">
       <div className="flex gap-2 md:flex-col">
         {typeof data.airline?.logo === 'string' ? (
-          <div className="flex w-[120px] items-center md:w-[200px]">
+          <div className="flex w-[120px] items-center justify-center md:w-[200px]">
             <img
               alt={`${data.airline.name} Logo`}
               className="max-h-[50px] max-w-[120px] md:max-h-[80px] md:max-w-[200px]"
@@ -110,6 +110,42 @@ export const FlightInfo = ({
                 daysAdded: data.inTimeDaysAdded,
               }}
             />
+          </div>
+        </div>
+        <div className="flex gap-12">
+          <div
+            className={classNames(
+              'flex flex-1 flex-wrap items-center justify-center gap-x-2',
+              TEXT_COLORS[data.departureDelayStatus],
+              [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                'brightness-90',
+            )}
+          >
+            {data.departureGate !== null ? (
+              <div className="text-base font-semibold">
+                Gate {data.departureGate}
+              </div>
+            ) : null}
+            {data.departureTerminal !== null ? (
+              <div className="text-sm">Terminal {data.departureTerminal}</div>
+            ) : null}
+          </div>
+          <div
+            className={classNames(
+              'flex flex-1 flex-wrap items-center justify-center gap-x-2',
+              TEXT_COLORS[data.arrivalDelayStatus],
+              [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                'brightness-90',
+            )}
+          >
+            {data.arrivalGate !== null ? (
+              <div className="text-base font-semibold">
+                Gate {data.arrivalGate}
+              </div>
+            ) : null}
+            {data.arrivalTerminal !== null ? (
+              <div className="text-sm">Terminal {data.arrivalTerminal}</div>
+            ) : null}
           </div>
         </div>
         <div className="flex justify-center text-sm italic opacity-80">
