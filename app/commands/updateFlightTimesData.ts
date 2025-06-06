@@ -56,25 +56,40 @@ export const getFlightStatsUpdatedData = async (
   prevTailNumber: string | null,
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 ) => {
-  const outTime = new Date(flight.schedule.scheduledDepartureUTC);
+  const outTime =
+    flight.schedule.scheduledDepartureUTC !== null
+      ? new Date(flight.schedule.scheduledDepartureUTC)
+      : undefined;
   const outTimeActual =
     flight.schedule.estimatedActualDepartureUTC !== null
       ? new Date(flight.schedule.estimatedActualDepartureUTC)
       : null;
-  const offTime = add(outTime, { minutes: 10 });
+  const offTime =
+    outTime !== undefined ? add(outTime, { minutes: 10 }) : undefined;
   const offTimeActual =
     process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
       ? null
       : undefined;
-  const inTime = new Date(flight.schedule.scheduledArrivalUTC);
+  const inTime =
+    flight.schedule.scheduledArrivalUTC !== null
+      ? new Date(flight.schedule.scheduledArrivalUTC)
+      : undefined;
   const inTimeActual =
     flight.schedule.estimatedActualArrivalUTC !== null
       ? new Date(flight.schedule.estimatedActualArrivalUTC)
       : null;
-  const onTime = sub(inTime, { minutes: 10 });
+  const onTime =
+    inTime !== undefined ? sub(inTime, { minutes: 10 }) : undefined;
   const onTimeActual =
     process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
       ? null
+      : undefined;
+  const duration =
+    outTime !== undefined && inTime !== undefined
+      ? getDurationMinutes({
+          start: outTime,
+          end: inTime,
+        })
       : undefined;
   const tailNumber =
     process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightstats'
@@ -99,10 +114,7 @@ export const getFlightStatsUpdatedData = async (
         })
       : undefined;
   return {
-    duration: getDurationMinutes({
-      start: outTime,
-      end: inTime,
-    }),
+    duration,
     outTime,
     outTimeActual,
     offTime,
