@@ -53,13 +53,13 @@ export interface FlightStatsNote {
 
 export interface FlightStatsSchedule {
   scheduledDeparture: string;
-  scheduledDepartureUTC: string;
+  scheduledDepartureUTC: string | null;
   estimatedActualDepartureRunway: boolean;
   estimatedActualDepartureTitle: string;
   estimatedActualDeparture: string;
   estimatedActualDepartureUTC: string | null;
   scheduledArrival: string;
-  scheduledArrivalUTC: string;
+  scheduledArrivalUTC: string | null;
   estimatedActualArrivalRunway: boolean;
   estimatedActualArrivalTitle: string;
   estimatedActualArrival: string;
