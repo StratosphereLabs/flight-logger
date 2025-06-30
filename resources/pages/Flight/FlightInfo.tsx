@@ -172,8 +172,10 @@ export const FlightInfo = ({
       </div>
       <div className="divider my-0" />
       <div className="flex w-full justify-between gap-3">
-        <div className="flex flex-1 flex-col gap-1">
-          <div className="text-lg font-semibold">{data.aircraftType?.name}</div>
+        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
+          <div className="truncate font-semibold">
+            {data.aircraftType?.name}
+          </div>
           <div className="flex w-full flex-col gap-1">
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm">ICAO Code</span>

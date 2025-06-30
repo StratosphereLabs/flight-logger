@@ -5,7 +5,11 @@ import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { updateFlightChangeData, updateFlightData } from '../commands';
-import { DATE_FORMAT_SHORT, DATE_FORMAT_YEAR } from '../constants';
+import {
+  DATE_FORMAT_MONTH_DAY,
+  DATE_FORMAT_SHORT,
+  DATE_FORMAT_YEAR,
+} from '../constants';
 import { prisma, updateTripTimes } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';
@@ -16,6 +20,7 @@ import {
   getExtraFlightDataSchema,
   getFlightChangelogSchema,
   getFlightSchema,
+  getOtherFlightsSchema,
   getUserFlightsSchema,
   getUserMapDataSchema,
   getUserProfileFlightsSchema,
@@ -25,6 +30,7 @@ import { procedure, router } from '../trpc';
 import {
   type FlightDataWithTimestamps,
   type TransformFlightDataResult,
+  type UserData,
   fetchGravatarUrl,
   filterCustomDates,
   flightIncludeObj,
@@ -95,20 +101,20 @@ export const flightsRouter = router({
           message: 'Flight not found.',
         });
       }
-      let onTimePerformance: OnTimePerformanceRating | null = null;
-      if (flight.airline !== null && flight.flightNumber !== null) {
-        onTimePerformance = await prisma.onTimePerformanceRating.findFirst({
-          where: {
-            airlineId: flight.airline.id,
-            flightNumber: flight.flightNumber,
-            departureAirportId: flight.departureAirportId,
-            arrivalAirportId: flight.arrivalAirportId,
-          },
-          orderBy: {
-            validTo: 'desc',
-          },
-        });
-      }
+      const onTimePerformance: OnTimePerformanceRating | null =
+        flight.airline !== null && flight.flightNumber !== null
+          ? await prisma.onTimePerformanceRating.findFirst({
+              where: {
+                airlineId: flight.airline.id,
+                flightNumber: flight.flightNumber,
+                departureAirportId: flight.departureAirportId,
+                arrivalAirportId: flight.arrivalAirportId,
+              },
+              orderBy: {
+                validTo: 'desc',
+              },
+            })
+          : null;
       return {
         onTimePerformance:
           onTimePerformance !== null
@@ -159,6 +165,115 @@ export const flightsRouter = router({
           flight.diversionWeather,
         ),
       };
+    }),
+  getOtherFlights: procedure
+    .input(getOtherFlightsSchema)
+    .query(async ({ input }) => {
+      const flight = await prisma.flight.findUnique({
+        where: {
+          id: input.flightId,
+        },
+        select: {
+          user: {
+            select: {
+              id: true,
+              following: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          departureAirportId: true,
+          arrivalAirportId: true,
+          airframeId: true,
+          aircraftTypeId: true,
+          airlineId: true,
+        },
+      });
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      const whereObj = {
+        id: {
+          not: input.flightId,
+        },
+        userId: {
+          in:
+            input.user === 'mine'
+              ? [flight.user.id]
+              : input.user === 'following'
+                ? flight.user.following.map(({ id }) => id)
+                : [],
+        },
+        OR: [
+          {
+            inTimeActual: {
+              lte: new Date(),
+            },
+          },
+          {
+            inTime: {
+              lte: new Date(),
+            },
+          },
+        ],
+        departureAirportId:
+          input.mode === 'route' ? flight.departureAirportId : undefined,
+        arrivalAirportId:
+          input.mode === 'route' ? flight.arrivalAirportId : undefined,
+        airframeId: input.mode === 'airframe' ? flight.airframeId : undefined,
+        aircraftTypeId:
+          input.mode === 'aircraftType' ? flight.aircraftTypeId : undefined,
+        airlineId: input.mode === 'airline' ? flight.airlineId : undefined,
+      };
+      const [results, itemCount] = await prisma.$transaction([
+        prisma.flight.findMany({
+          where: whereObj,
+          include: flightIncludeObj,
+          orderBy: {
+            outTime: 'desc',
+          },
+          skip,
+          take,
+        }),
+        prisma.flight.count({
+          where: whereObj,
+        }),
+      ]);
+      return getPaginatedResponse({
+        itemCount,
+        limit,
+        page,
+        results: results.map(result => {
+          const user: UserData & {
+            avatar: string;
+          } = {
+            ...result.user,
+            avatar: fetchGravatarUrl(result.user.email),
+          };
+          return {
+            ...transformFlightData(result),
+            user,
+            outTimeYear: formatInTimeZone(
+              result.outTime,
+              result.departureAirport.timeZone,
+              DATE_FORMAT_YEAR,
+            ),
+            outTimeDate: formatInTimeZone(
+              result.outTime,
+              result.departureAirport.timeZone,
+              DATE_FORMAT_MONTH_DAY,
+            ),
+            tracklog: null,
+            waypoints: null,
+          };
+        }),
+      });
     }),
   getFlightChangelog: procedure
     .input(getFlightChangelogSchema)
