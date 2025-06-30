@@ -29,6 +29,7 @@ import { DEFAULT_COORDINATES } from '../Home/constants';
 import { FlightChangelogTable } from './FlightChangelogTable';
 import { FlightInfo } from './FlightInfo';
 import { OnTimePerformanceChart } from './OnTimePerformanceChart';
+import { OtherFlights } from './OtherFlights';
 import { WeatherInfo } from './WeatherInfo';
 
 export interface FlightPageNavigationState {
@@ -325,7 +326,7 @@ export const Flight = (): JSX.Element | null => {
       <div className="rounded-box bg-base-100/80 absolute bottom-1 left-1 mt-24 flex h-[300px] w-[calc(100%-8px)] backdrop-blur-sm md:top-1 md:h-[calc(100%-104px)] md:w-[390px]">
         <div
           className={classNames(
-            'rounded-box flex flex-1 flex-col gap-4 overflow-y-scroll p-4',
+            'rounded-box flex flex-1 flex-col gap-4 overflow-y-scroll p-3',
             data !== undefined &&
               (theme === AppTheme.LOFI
                 ? CARD_COLORS_LOFI[data.delayStatus]
@@ -339,6 +340,7 @@ export const Flight = (): JSX.Element | null => {
           )}
         >
           <FlightInfo flightId={flightId} />
+          <OtherFlights flightId={flightId} />
           <div className="divider my-2" />
           <OnTimePerformanceChart flightId={flightId} />
           <WeatherInfo flightId={flightId} />
