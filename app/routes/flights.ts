@@ -19,8 +19,8 @@ import {
   editFlightSchema,
   getExtraFlightDataSchema,
   getFlightChangelogSchema,
+  getFlightHistorySchema,
   getFlightSchema,
-  getOtherFlightsSchema,
   getUserFlightsSchema,
   getUserMapDataSchema,
   getUserProfileFlightsSchema,
@@ -166,9 +166,10 @@ export const flightsRouter = router({
         ),
       };
     }),
-  getOtherFlights: procedure
-    .input(getOtherFlightsSchema)
-    .query(async ({ input }) => {
+  getFlightHistory: procedure
+    .use(verifyAuthenticated)
+    .input(getFlightHistorySchema)
+    .query(async ({ ctx, input }) => {
       const flight = await prisma.flight.findUnique({
         where: {
           id: input.flightId,
@@ -195,6 +196,12 @@ export const flightsRouter = router({
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Flight not found.',
+        });
+      }
+      if (input.user === 'following' && flight.user.id !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Unauthorized.',
         });
       }
       const { limit, page, skip, take } = parsePaginationRequest(input);
