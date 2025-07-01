@@ -185,6 +185,7 @@ export const flightsRouter = router({
               },
             },
           },
+          tailNumber: true,
           departureAirportId: true,
           arrivalAirportId: true,
           airframeId: true,
@@ -205,6 +206,20 @@ export const flightsRouter = router({
         });
       }
       const { limit, page, skip, take } = parsePaginationRequest(input);
+      if (
+        (input.mode === 'airline' && flight.airlineId === null) ||
+        (input.mode === 'aircraftType' && flight.aircraftType === null) ||
+        (input.mode === 'airframe' &&
+          flight.airframeId === null &&
+          flight.tailNumber === null)
+      ) {
+        return getPaginatedResponse({
+          itemCount: 0,
+          limit,
+          page,
+          results: [],
+        });
+      }
       const whereObj = {
         id: {
           not: input.flightId,
@@ -212,10 +227,12 @@ export const flightsRouter = router({
         userId: {
           in:
             input.user === 'mine'
-              ? [flight.user.id]
-              : input.user === 'following'
-                ? flight.user.following.map(({ id }) => id)
-                : [],
+              ? [ctx.user.id]
+              : input.user === 'user'
+                ? [flight.user.id]
+                : input.user === 'following'
+                  ? flight.user.following.map(({ id }) => id)
+                  : [],
         },
         OR: [
           {
@@ -233,14 +250,21 @@ export const flightsRouter = router({
           input.mode === 'route' ? flight.departureAirportId : undefined,
         arrivalAirportId:
           input.mode === 'route' ? flight.arrivalAirportId : undefined,
-        airframeId: input.mode === 'airframe' ? flight.airframeId : undefined,
+        airframeId:
+          input.mode === 'airframe' && flight.airframeId !== null
+            ? flight.airframeId
+            : undefined,
+        tailNumber:
+          input.mode === 'airframe' &&
+          flight.airframeId === null &&
+          flight.tailNumber !== null
+            ? flight.tailNumber
+            : undefined,
         aircraftType:
           input.mode === 'aircraftType'
-            ? flight.aircraftType !== null
-              ? {
-                  icao: flight.aircraftType.icao,
-                }
-              : null
+            ? {
+                icao: flight.aircraftType?.icao,
+              }
             : undefined,
         airlineId: input.mode === 'airline' ? flight.airlineId : undefined,
       };
