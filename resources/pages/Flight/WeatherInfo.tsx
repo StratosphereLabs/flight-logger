@@ -21,7 +21,7 @@ export const WeatherCard = ({
 }: WeatherCardProps): JSX.Element => (
   <div className={classNames('flex flex-col gap-2', className)}>
     <div className="flex items-center justify-between">
-      <CardTitle>{data.airportId} Weather</CardTitle>
+      <CardTitle className="text-base">{data.airportId} Weather</CardTitle>
       <div className="text-xs opacity-75">
         {new Date(data.obsTime).toLocaleString()}
       </div>
@@ -97,7 +97,11 @@ export const WeatherInfo = ({
   const { data } = trpc.flights.getExtraFlightData.useQuery({
     flightId,
   });
-  if (data === undefined) return null;
+  if (
+    data === undefined ||
+    (data.departureWeather === null && data.arrivalWeather === null)
+  )
+    return null;
   return (
     <div className="flex flex-col gap-4">
       {data.departureWeather !== null ? (

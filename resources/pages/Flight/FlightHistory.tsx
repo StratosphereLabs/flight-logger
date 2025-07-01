@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import {
   Button,
@@ -65,6 +65,9 @@ export const FlightHistory = ({
     data !== undefined
       ? data.pages[0].metadata.itemCount - flattenedData.length
       : 0;
+  useEffect(() => {
+    methods.setValue('user', 'mine');
+  }, [flightId, methods]);
   return (
     <div className="flex flex-col gap-4">
       <div className="font-semibold" ref={headerRef}>
