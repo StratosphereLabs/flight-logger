@@ -89,7 +89,7 @@ export const getExtraFlightDataSchema = z.object({
 
 export const getFlightHistorySchema = paginationSchema.extend({
   flightId: z.string().uuid(),
-  user: z.enum(['mine', 'following']),
+  user: z.enum(['user', 'mine', 'following']),
   mode: z.enum(['route', 'airframe', 'aircraftType', 'airline']),
 });
 

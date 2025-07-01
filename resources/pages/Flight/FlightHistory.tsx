@@ -74,15 +74,25 @@ export const FlightHistory = ({
         <Form className="flex flex-col gap-4" methods={methods}>
           <FormRadio
             className="flex gap-4 text-sm"
-            disabled={!onOwnProfile}
             name="user"
             options={[
               {
                 id: 'mine',
                 className: 'flex-1 flex gap-2 justify-center flex-row-reverse',
-                label: `${onOwnProfile ? 'My' : `${flightData?.user.username}'s`} Flights`,
+                label: 'My Flights',
                 value: 'mine',
               },
+              ...(!onOwnProfile
+                ? [
+                    {
+                      id: 'following',
+                      className:
+                        'flex-1 flex gap-2 justify-center flex-row-reverse',
+                      label: `${flightData?.user.username}'s Flights`,
+                      value: 'user',
+                    },
+                  ]
+                : []),
               ...(onOwnProfile
                 ? [
                     {
