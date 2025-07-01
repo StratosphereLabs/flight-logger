@@ -188,7 +188,7 @@ export const flightsRouter = router({
           departureAirportId: true,
           arrivalAirportId: true,
           airframeId: true,
-          aircraftTypeId: true,
+          aircraftType: true,
           airlineId: true,
         },
       });
@@ -234,8 +234,14 @@ export const flightsRouter = router({
         arrivalAirportId:
           input.mode === 'route' ? flight.arrivalAirportId : undefined,
         airframeId: input.mode === 'airframe' ? flight.airframeId : undefined,
-        aircraftTypeId:
-          input.mode === 'aircraftType' ? flight.aircraftTypeId : undefined,
+        aircraftType:
+          input.mode === 'aircraftType'
+            ? flight.aircraftType !== null
+              ? {
+                  icao: flight.aircraftType.icao,
+                }
+              : null
+            : undefined,
         airlineId: input.mode === 'airline' ? flight.airlineId : undefined,
       };
       const [results, itemCount] = await prisma.$transaction([
