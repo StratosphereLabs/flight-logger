@@ -87,7 +87,7 @@ export const getExtraFlightDataSchema = z.object({
   flightId: z.string().uuid(),
 });
 
-export const getOtherFlightsSchema = paginationSchema.extend({
+export const getFlightHistorySchema = paginationSchema.extend({
   flightId: z.string().uuid(),
   user: z.enum(['mine', 'following']),
   mode: z.enum(['route', 'airframe', 'aircraftType', 'airline']),
@@ -137,7 +137,9 @@ export type GetProfileFiltersRequest = z.infer<typeof profileFiltersSchema>;
 
 export type GetUserFlightsRequest = z.infer<typeof getUserFlightsSchema>;
 
-export type GetUserOtherFlightsRequest = z.infer<typeof getOtherFlightsSchema>;
+export type GetUserFlightHistoryRequest = z.infer<
+  typeof getFlightHistorySchema
+>;
 
 export type GetUserProfileFlightsRequest = z.infer<
   typeof getUserProfileFlightsSchema

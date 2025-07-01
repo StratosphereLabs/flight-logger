@@ -16,7 +16,7 @@ import { AppTheme, useThemeStore } from '../../stores';
 import { type FlightPageNavigationState } from '../Flight';
 
 export interface FlightHistoryRowProps extends HTMLProps<HTMLDivElement> {
-  flight: FlightsRouterOutput['getOtherFlights']['results'][number];
+  flight: FlightsRouterOutput['getFlightHistory']['results'][number];
 }
 
 export const FlightHistoryRow = ({
