@@ -50,7 +50,7 @@ export const Flight = (): JSX.Element | null => {
   });
   const { flightId } = useParams();
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const fitBoundsCallCountRef = useRef(0);
+  const isBoundsFit = useRef(false);
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery(
     { id: flightId ?? '' },
@@ -82,11 +82,7 @@ export const Flight = (): JSX.Element | null => {
     }
   }, [setPreviousPageName, state]);
   useEffect(() => {
-    if (
-      fitBoundsCallCountRef.current < 2 &&
-      map !== null &&
-      data !== undefined
-    ) {
+    if (!isBoundsFit.current && map !== null && data !== undefined) {
       const bounds = new window.google.maps.LatLngBounds();
       for (const { lat, lon } of [data.departureAirport, data.arrivalAirport]) {
         bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
@@ -111,7 +107,7 @@ export const Flight = (): JSX.Element | null => {
           right: 30,
           bottom: window.innerWidth < 768 ? 320 : 20,
         });
-        fitBoundsCallCountRef.current += 1;
+        isBoundsFit.current = true;
       }
     }
   }, [data, map]);
