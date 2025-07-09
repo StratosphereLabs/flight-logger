@@ -17,6 +17,7 @@ import {
   CARD_BORDER_COLORS_LOFI,
   CARD_COLORS,
   CARD_COLORS_LOFI,
+  HIDE_SCROLLBAR_CLASSNAME,
   TOOLTIP_COLORS,
 } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
@@ -332,6 +333,7 @@ export const Flight = (): JSX.Element | null => {
         <div
           className={classNames(
             'rounded-box flex flex-1 flex-col gap-6 overflow-y-scroll p-3',
+            HIDE_SCROLLBAR_CLASSNAME,
             data !== undefined &&
               (theme === AppTheme.LOFI
                 ? CARD_COLORS_LOFI[data.delayStatus]

@@ -11,6 +11,7 @@ import { FlightChangeValue, TimeIcon } from '../../common/components';
 import {
   DATE_FORMAT,
   DEFAULT_PAGE_SIZE,
+  HIDE_SCROLLBAR_CLASSNAME,
   TIME_FORMAT_12H,
 } from '../../common/constants';
 import { AppTheme, useThemeStore } from '../../stores';
@@ -73,7 +74,12 @@ export const FlightChangelogTable = ({
           <div className="relative flex w-full justify-center">
             <span className="my-2 w-full font-semibold">Event Log</span>
           </div>
-          <div className="flex max-h-[550px] flex-col gap-2 overflow-y-scroll">
+          <div
+            className={classNames(
+              'flex max-h-[550px] flex-col gap-2 overflow-y-scroll',
+              HIDE_SCROLLBAR_CLASSNAME,
+            )}
+          >
             <Table
               className="table-fixed"
               cellClassNames={{

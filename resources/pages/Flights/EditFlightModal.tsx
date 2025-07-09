@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import classNames from 'classnames';
 import { add, isBefore } from 'date-fns';
 import { useEffect, useMemo, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -19,6 +20,7 @@ import {
   AirlineInput,
   AirportInput,
 } from '../../common/components';
+import { HIDE_SCROLLBAR_CLASSNAME } from '../../common/constants';
 import {
   useSuccessResponseHandler,
   useTRPCErrorHandler,
@@ -131,7 +133,10 @@ export const EditFlightModal = ({
   return (
     <Modal
       actionButtons={[]}
-      className="scrollbar-none h-[95vh] overflow-x-hidden overflow-y-scroll"
+      className={classNames(
+        'h-[95vh] overflow-x-hidden overflow-y-scroll',
+        HIDE_SCROLLBAR_CLASSNAME,
+      )}
       onClose={() => {
         setIsEditDialogOpen(false);
       }}
