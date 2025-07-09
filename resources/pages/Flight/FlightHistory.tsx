@@ -122,9 +122,9 @@ export const FlightHistory = ({
               className="flex-1"
               size="sm"
               soft
-              value="airline"
+              value="airframe"
             >
-              Airline
+              Airframe
             </FormRadioGroupOption>
             <FormRadioGroupOption
               className="flex-1"
@@ -138,9 +138,9 @@ export const FlightHistory = ({
               className="flex-1"
               size="sm"
               soft
-              value="airframe"
+              value="airline"
             >
-              Airframe
+              Airline
             </FormRadioGroupOption>
           </FormRadioGroup>
         </Form>
