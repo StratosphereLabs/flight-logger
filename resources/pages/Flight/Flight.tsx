@@ -67,7 +67,7 @@ export const Flight = (): JSX.Element | null => {
     () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
     [isDarkMode],
   );
-  useWeatherRadarLayer(map);
+  useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
     map?.setValues({
       styles: isDarkMode ? darkModeStyle : lightModeStyle,

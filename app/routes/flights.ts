@@ -44,6 +44,7 @@ import {
   getHeatmap,
   getPaginatedResponse,
   getProfileFlightsWhereInput,
+  getRainviewerTimestamp,
   getRoutes,
   getWeatherReportCloudCoverData,
   parsePaginationRequest,
@@ -76,9 +77,17 @@ export const flightsRouter = router({
         : flightData.flightStatus === 'ARRIVED'
           ? 'COMPLETED'
           : 'CURRENT';
+    const weatherRadarTime =
+      flightState === 'COMPLETED'
+        ? (flightData.onTimeActual ??
+          flightData.inTimeActual ??
+          flightData.inTime)
+        : new Date();
+    const timestamp = getRainviewerTimestamp(weatherRadarTime);
     return {
       ...flightData,
       flightState,
+      timestamp,
     };
   }),
   getExtraFlightData: procedure

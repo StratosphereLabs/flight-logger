@@ -5,6 +5,9 @@ import {
   intervalToDuration,
   isAfter,
   isBefore,
+  setMilliseconds,
+  setMinutes,
+  setSeconds,
   sub,
 } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -86,4 +89,16 @@ export const getDurationString = (
   return `${hours !== undefined && hours > 0 ? `${hours}h ` : ''}${
     minutes ?? 0
   }m`;
+};
+
+export const getRainviewerTimestamp = (date: Date): number | null => {
+  const minutes = date.getMinutes();
+  const roundedMinutes = Math.floor(minutes / 10) * 10;
+  const roundedDate = setMilliseconds(
+    setSeconds(setMinutes(date, roundedMinutes), 0),
+    0,
+  );
+  return isAfter(roundedDate, sub(new Date(), { hours: 60 }))
+    ? Math.floor(roundedDate.getTime() / 1000)
+    : null;
 };
