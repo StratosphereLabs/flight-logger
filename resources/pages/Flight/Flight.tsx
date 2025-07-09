@@ -50,8 +50,9 @@ export const Flight = (): JSX.Element | null => {
     libraries: ['visualization'],
   });
   const { flightId } = useParams();
+  const [isScrolled, setIsScrolled] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const isBoundsFit = useRef(false);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery(
     { id: flightId ?? '' },
@@ -83,7 +84,20 @@ export const Flight = (): JSX.Element | null => {
     }
   }, [setPreviousPageName, state]);
   useEffect(() => {
-    if (!isBoundsFit.current && map !== null && data !== undefined) {
+    const container = scrollContainerRef.current;
+    if (container === null) return;
+    const handleScroll = (): void => {
+      setIsScrolled(prevIsScrolled =>
+        prevIsScrolled ? container.scrollTop > 0 : container.scrollTop >= 100,
+      );
+    };
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  useEffect(() => {
+    if (map !== null && data !== undefined) {
       const bounds = new window.google.maps.LatLngBounds();
       for (const { lat, lon } of [data.departureAirport, data.arrivalAirport]) {
         bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
@@ -106,12 +120,11 @@ export const Flight = (): JSX.Element | null => {
           top: 165,
           left: window.innerWidth < 768 ? 25 : 420,
           right: 30,
-          bottom: window.innerWidth < 768 ? 320 : 20,
+          bottom: window.innerWidth < 768 ? (isScrolled ? 420 : 320) : 20,
         });
-        isBoundsFit.current = true;
       }
     }
-  }, [data, map]);
+  }, [data, isScrolled, map]);
   if (flightId === undefined) return null;
   return (
     <div className="relative flex-1">
@@ -329,28 +342,36 @@ export const Flight = (): JSX.Element | null => {
           })()}
         </GoogleMap>
       )}
-      <div className="rounded-box bg-base-100/80 absolute bottom-1 left-1 mt-24 flex h-[300px] w-[calc(100%-8px)] backdrop-blur-sm md:top-1 md:h-[calc(100%-104px)] md:w-[390px]">
-        <div
-          className={classNames(
-            'rounded-box flex flex-1 flex-col gap-6 overflow-y-scroll p-3',
-            HIDE_SCROLLBAR_CLASSNAME,
-            data !== undefined &&
-              (theme === AppTheme.LOFI
-                ? CARD_COLORS_LOFI[data.delayStatus]
-                : CARD_COLORS[data.delayStatus]),
-            data !== undefined &&
-              `border-2 ${
-                theme === AppTheme.LOFI
-                  ? CARD_BORDER_COLORS_LOFI[data.delayStatus]
-                  : CARD_BORDER_COLORS[data.delayStatus]
-              }`,
-          )}
-        >
-          <FlightInfo flightId={flightId} />
-          <OnTimePerformanceChart flightId={flightId} />
-          {isLoggedIn ? <FlightHistory flightId={flightId} /> : null}
-          <WeatherInfo flightId={flightId} />
-          <FlightChangelogTable flightId={flightId} />
+      <div
+        className={classNames(
+          'pointer-events-none absolute bottom-0 left-1 h-[400px] w-[calc(100%-8px)] overflow-y-scroll md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px]',
+          HIDE_SCROLLBAR_CLASSNAME,
+        )}
+        ref={scrollContainerRef}
+      >
+        <div className="rounded-box bg-base-100/80 mt-24 backdrop-blur-sm md:mt-0 md:h-full">
+          <div
+            className={classNames(
+              'rounded-box pointer-events-auto flex flex-1 flex-col gap-6 overflow-y-scroll p-3 md:h-full',
+              HIDE_SCROLLBAR_CLASSNAME,
+              data !== undefined &&
+                (theme === AppTheme.LOFI
+                  ? CARD_COLORS_LOFI[data.delayStatus]
+                  : CARD_COLORS[data.delayStatus]),
+              data !== undefined &&
+                `border-2 ${
+                  theme === AppTheme.LOFI
+                    ? CARD_BORDER_COLORS_LOFI[data.delayStatus]
+                    : CARD_BORDER_COLORS[data.delayStatus]
+                }`,
+            )}
+          >
+            <FlightInfo flightId={flightId} />
+            <OnTimePerformanceChart flightId={flightId} />
+            {isLoggedIn ? <FlightHistory flightId={flightId} /> : null}
+            <WeatherInfo flightId={flightId} />
+            <FlightChangelogTable flightId={flightId} />
+          </div>
         </div>
       </div>
     </div>
