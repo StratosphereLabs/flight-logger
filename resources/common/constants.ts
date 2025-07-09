@@ -75,3 +75,6 @@ export const PROGRESS_BAR_COLORS: Record<FlightDelayStatus, string> = {
   severe: 'progress-error',
   canceled: 'progress-error',
 };
+
+export const HIDE_SCROLLBAR_CLASSNAME =
+  '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden';
