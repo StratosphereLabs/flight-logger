@@ -26,6 +26,7 @@ import {
   RightArrowIcon,
 } from '../../common/components';
 import { TOOLTIP_COLORS } from '../../common/constants';
+import { useWeatherRadarLayer } from '../../common/hooks';
 import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
 import { getAltChangeString } from '../../common/utils';
 import { useIsDarkMode } from '../../stores';
@@ -56,6 +57,7 @@ export const FollowingMap = (): JSX.Element => {
   const navigate = useNavigate();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();
+  useWeatherRadarLayer(map);
   useEffect(() => {
     map?.setValues({
       styles: isDarkMode ? darkModeStyle : lightModeStyle,
@@ -263,7 +265,6 @@ export const FollowingMap = (): JSX.Element => {
                     'EN_ROUTE',
                     'ARRIVED_TAXIING',
                   ].includes(flightStatus);
-                  const isFocused = isSelected || isHover || isCurrentFlight;
                   const lastTracklogItem =
                     tracklog !== undefined && tracklog.length > 2
                       ? tracklog[tracklog.length - 3]
@@ -301,10 +302,10 @@ export const FollowingMap = (): JSX.Element => {
                               isSelected || isHover
                                 ? 1
                                 : !isItemSelected
-                                  ? 0.75
+                                  ? 1
                                   : 0.1,
                             strokeColor: getAltitudeColor(0.8),
-                            strokeWeight: isFocused ? 3 : 2,
+                            strokeWeight: 3,
                             zIndex: isCurrentFlight ? 20 : 10,
                           }}
                           path={[
@@ -337,12 +338,12 @@ export const FollowingMap = (): JSX.Element => {
                                 isSelected || isHover
                                   ? 1
                                   : !isItemSelected
-                                    ? 0.75
+                                    ? 1
                                     : 0.1,
                               strokeColor: getAltitudeColor(
                                 lastAltitude !== null ? lastAltitude / 450 : 0,
                               ),
-                              strokeWeight: isFocused ? 3 : 2,
+                              strokeWeight: 3,
                               zIndex: isCurrentFlight ? 20 : 10,
                               geodesic: true,
                             }}

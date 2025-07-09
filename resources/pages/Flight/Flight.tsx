@@ -19,6 +19,7 @@ import {
   CARD_COLORS_LOFI,
   TOOLTIP_COLORS,
 } from '../../common/constants';
+import { useWeatherRadarLayer } from '../../common/hooks';
 import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
 import { getAltChangeString } from '../../common/utils';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
@@ -66,6 +67,7 @@ export const Flight = (): JSX.Element | null => {
     () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
     [isDarkMode],
   );
+  useWeatherRadarLayer(map);
   useEffect(() => {
     map?.setValues({
       styles: isDarkMode ? darkModeStyle : lightModeStyle,
@@ -206,7 +208,7 @@ export const Flight = (): JSX.Element | null => {
                   <PolylineF
                     options={{
                       geodesic: true,
-                      strokeOpacity: 0.75,
+                      strokeOpacity: 1,
                       strokeColor: getAltitudeColor(0.8),
                       strokeWeight: 3,
                       zIndex: isCurrentFlight ? 20 : 10,
@@ -237,7 +239,7 @@ export const Flight = (): JSX.Element | null => {
                     <PolylineF
                       key={index}
                       options={{
-                        strokeOpacity: 0.75,
+                        strokeOpacity: 1,
                         strokeColor: getAltitudeColor(
                           lastAltitude !== null ? lastAltitude / 450 : 0,
                         ),
