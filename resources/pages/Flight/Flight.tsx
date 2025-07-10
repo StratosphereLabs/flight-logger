@@ -93,7 +93,7 @@ export const Flight = (): JSX.Element | null => {
     const container = scrollContainerRef.current;
     if (container === null) return;
     const handleScroll = (): void => {
-      const scrollThreshold = Math.floor(window.innerHeight / 2) - 300;
+      const scrollThreshold = Math.floor(window.innerHeight / 2) - 295;
       setIsMapCollapsed(prevIsMapCollapsed =>
         prevIsMapCollapsed
           ? container.scrollTop > 0
@@ -133,7 +133,7 @@ export const Flight = (): JSX.Element | null => {
           bottom:
             window.innerWidth < 768
               ? isMapCollapsed
-                ? Math.floor(window.innerHeight / 2) + 20
+                ? Math.floor(window.innerHeight / 2) + 80 + 20
                 : 320
               : 20,
         });
@@ -359,7 +359,7 @@ export const Flight = (): JSX.Element | null => {
       )}
       <div
         className={classNames(
-          'pointer-events-none absolute bottom-0 left-1 h-1/2 w-[calc(100%-8px)] overflow-y-scroll pb-1 md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px] md:pb-0',
+          'pointer-events-none absolute bottom-0 left-1 h-[calc(50vh+80px)] w-[calc(100%-8px)] overflow-y-scroll pb-1 md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px] md:pb-0',
           HIDE_SCROLLBAR_CLASSNAME,
         )}
         ref={scrollContainerRef}
@@ -479,7 +479,7 @@ export const Flight = (): JSX.Element | null => {
             </div>
           </div>
         ) : null}
-        <div className="rounded-box bg-base-100/80 mt-[calc(50vh-300px)] backdrop-blur-sm md:mt-0 md:h-full">
+        <div className="rounded-box bg-base-100/80 mt-[calc(50vh-295px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
           <div
             className={classNames(
               'rounded-box pointer-events-auto flex flex-1 flex-col gap-6 overflow-y-scroll p-3 md:h-full',
