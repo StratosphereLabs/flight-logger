@@ -120,7 +120,12 @@ export const Flight = (): JSX.Element | null => {
           top: 165,
           left: window.innerWidth < 768 ? 25 : 420,
           right: 30,
-          bottom: window.innerWidth < 768 ? (isScrolled ? 420 : 320) : 20,
+          bottom:
+            window.innerWidth < 768
+              ? isScrolled
+                ? Math.floor(window.innerHeight / 2) + 20
+                : 320
+              : 20,
         });
       }
     }
@@ -344,12 +349,12 @@ export const Flight = (): JSX.Element | null => {
       )}
       <div
         className={classNames(
-          'pointer-events-none absolute bottom-0 left-1 h-[400px] w-[calc(100%-8px)] overflow-y-scroll md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px]',
+          'pointer-events-none absolute bottom-0 left-1 h-1/2 w-[calc(100%-8px)] overflow-y-scroll md:top-1 md:mt-[calc(50vh-300px)] md:h-[calc(100%-104px)] md:w-[390px]',
           HIDE_SCROLLBAR_CLASSNAME,
         )}
         ref={scrollContainerRef}
       >
-        <div className="rounded-box bg-base-100/80 mt-24 backdrop-blur-sm md:mt-0 md:h-full">
+        <div className="rounded-box bg-base-100/80 mt-[calc(50vh-300px)] backdrop-blur-sm md:mt-0 md:h-full">
           <div
             className={classNames(
               'rounded-box pointer-events-auto flex flex-1 flex-col gap-6 overflow-y-scroll p-3 md:h-full',
