@@ -139,7 +139,8 @@ export const Flight = (): JSX.Element | null => {
         });
       }
     }
-  }, [data, isMapCollapsed, map]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.id, isMapCollapsed, map]);
   if (flightId === undefined) return null;
   return (
     <div className="relative flex-1">
