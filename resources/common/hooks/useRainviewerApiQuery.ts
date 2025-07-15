@@ -1,8 +1,6 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import axios, { type AxiosResponse } from 'axios';
 
-import { HEADERS } from '../../../app/data/constants';
-
 interface RadarApiPath {
   time: number;
   path: string;
@@ -27,11 +25,5 @@ export const useRainviewerApiQuery = (): UseQueryResult<
   useQuery(['radarApi'], () =>
     axios.get<RainviewerApiResult>(
       'https://api.rainviewer.com/public/weather-maps.json',
-      {
-        headers: {
-          ...HEADERS,
-          Accept: 'application/json',
-        },
-      },
     ),
   );
