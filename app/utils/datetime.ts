@@ -29,7 +29,7 @@ export const getDaysAdded = ({
   inTime,
   outTimeZone,
   inTimeZone,
-}: DaysAddedOptions): number | null => {
+}: DaysAddedOptions): number => {
   const outDate = formatInTimeZone(outTime, outTimeZone, DATE_FORMAT_ISO);
   const inDate = formatInTimeZone(inTime, inTimeZone, DATE_FORMAT_ISO);
   const { days } = intervalToDuration({

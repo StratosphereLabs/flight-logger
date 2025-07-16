@@ -223,6 +223,70 @@ export const FlightInfo = ({
           </p>
         </div>
       </div>
+      <div className="divider my-0" />
+      <div className="flex w-full flex-col gap-2 text-sm">
+        <div className="text-base font-semibold">Detailed Timetable</div>
+        <div className="flex w-full">
+          <div className="flex-1 italic">Gate Departure</div>
+          <FlightTimesDisplay
+            className="flex-1 justify-around font-mono"
+            data={{
+              delayStatus: data.departureDelayStatus,
+              actualValue: data.outTimeActualValue,
+              value: data.outTimeValue,
+              actualLocal: data.outTimeActualLocal,
+              local: data.outTimeLocal,
+              actualDaysAdded: data.outTimeActualDaysAdded,
+              daysAdded: 0,
+            }}
+          />
+        </div>
+        <div className="flex w-full">
+          <div className="flex-1 italic">Takeoff</div>
+          <FlightTimesDisplay
+            className="flex-1 justify-around font-mono"
+            data={{
+              delayStatus: data.takeoffDelayStatus,
+              actualValue: data.offTimeActualValue,
+              value: data.offTimeValue,
+              actualLocal: data.offTimeActualLocal,
+              local: data.offTimeLocal,
+              actualDaysAdded: data.offTimeActualDaysAdded,
+              daysAdded: data.offTimeDaysAdded,
+            }}
+          />
+        </div>
+        <div className="flex w-full">
+          <div className="flex-1 italic">Landing</div>
+          <FlightTimesDisplay
+            className="flex-1 justify-around font-mono"
+            data={{
+              delayStatus: data.landingDelayStatus,
+              actualValue: data.onTimeActualValue,
+              value: data.onTimeValue,
+              actualLocal: data.onTimeActualLocal,
+              local: data.onTimeLocal,
+              actualDaysAdded: data.onTimeActualDaysAdded,
+              daysAdded: data.onTimeDaysAdded,
+            }}
+          />
+        </div>
+        <div className="flex w-full">
+          <div className="flex-1 italic">Gate Arrival</div>
+          <FlightTimesDisplay
+            className="flex-1 justify-around font-mono"
+            data={{
+              delayStatus: data.arrivalDelayStatus,
+              actualValue: data.inTimeActualValue,
+              value: data.inTimeValue,
+              actualLocal: data.inTimeActualLocal,
+              local: data.inTimeLocal,
+              actualDaysAdded: data.inTimeActualDaysAdded,
+              daysAdded: data.inTimeDaysAdded,
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

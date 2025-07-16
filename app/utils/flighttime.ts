@@ -1,5 +1,5 @@
 import { type Airport } from '@prisma/client';
-import { add, isBefore, isFuture } from 'date-fns';
+import { add, isBefore, isFuture, sub } from 'date-fns';
 import { formatInTimeZone, fromZonedTime } from 'date-fns-tz';
 
 import {
@@ -34,6 +34,10 @@ export interface FlightTimestampsInput {
   duration: number;
   outTime: number | Date;
   outTimeActual?: number | Date;
+  offTime?: number | Date;
+  offTimeActual?: number | Date;
+  onTime?: number | Date;
+  onTimeActual?: number | Date;
   inTime: number | Date;
   inTimeActual?: number | Date;
 }
@@ -58,6 +62,18 @@ export interface FlightTimestampsResult {
   outTimeActualLocal: string | null;
   outTimeActualValue: string | null;
   outTimeActualDaysAdded: number | null;
+  offTimeLocal: string;
+  offTimeValue: string;
+  offTimeDaysAdded: number;
+  offTimeActualLocal: string | null;
+  offTimeActualValue: string | null;
+  offTimeActualDaysAdded: number | null;
+  onTimeLocal: string;
+  onTimeValue: string;
+  onTimeDaysAdded: number;
+  onTimeActualLocal: string | null;
+  onTimeActualValue: string | null;
+  onTimeActualDaysAdded: number | null;
   inTimeLocal: string;
   inTimeValue: string;
   inTimeDaysAdded: number;
@@ -67,6 +83,8 @@ export interface FlightTimestampsResult {
   departureDelay: string | null;
   departureDelayValue: number | null;
   departureDelayStatus: FlightDelayStatus;
+  takeoffDelayStatus: FlightDelayStatus;
+  landingDelayStatus: FlightDelayStatus;
   arrivalDelay: string | null;
   arrivalDelayValue: number | null;
   arrivalDelayStatus: FlightDelayStatus;
@@ -133,15 +151,34 @@ export const getFlightTimes = ({
   };
 };
 
+export const getFlightDelayStatus = (
+  delayValue: number | null,
+): FlightDelayStatus =>
+  delayValue !== null && delayValue >= 60
+    ? 'severe'
+    : delayValue !== null && delayValue >= 15
+      ? 'moderate'
+      : 'none';
+
 export const getFlightTimestamps = ({
   departureTimeZone,
   arrivalTimeZone,
   duration,
   outTime,
   outTimeActual,
+  offTime,
+  offTimeActual,
+  onTime,
+  onTimeActual,
   inTime,
   inTimeActual,
 }: FlightTimestampsInput): FlightTimestampsResult => {
+  const currentOffTime = offTime ?? add(outTime, { minutes: 10 });
+  const currentOffTimeActual =
+    offTimeActual ?? add(outTimeActual ?? outTime, { minutes: 10 });
+  const currentOnTime = onTime ?? sub(inTime, { minutes: 10 });
+  const currentOnTimeActual =
+    onTimeActual ?? sub(inTimeActual ?? inTime, { minutes: 10 });
   const departureDelay =
     outTimeActual !== undefined && isBefore(outTime, outTimeActual)
       ? getDurationMinutes({
@@ -149,6 +186,18 @@ export const getFlightTimestamps = ({
           end: outTimeActual,
         })
       : null;
+  const takeoffDelay = isBefore(currentOffTime, currentOffTimeActual)
+    ? getDurationMinutes({
+        start: currentOffTime,
+        end: currentOffTimeActual,
+      })
+    : null;
+  const landingDelay = isBefore(currentOnTime, currentOnTimeActual)
+    ? getDurationMinutes({
+        start: currentOnTime,
+        end: currentOnTimeActual,
+      })
+    : null;
   const arrivalDelay =
     inTimeActual !== undefined && isBefore(inTime, inTimeActual)
       ? getDurationMinutes({
@@ -156,18 +205,10 @@ export const getFlightTimestamps = ({
           end: inTimeActual,
         })
       : null;
-  const departureDelayStatus =
-    departureDelay !== null && departureDelay >= 60
-      ? 'severe'
-      : departureDelay !== null && departureDelay >= 15
-        ? 'moderate'
-        : 'none';
-  const arrivalDelayStatus =
-    arrivalDelay !== null && arrivalDelay >= 60
-      ? 'severe'
-      : arrivalDelay !== null && arrivalDelay >= 15
-        ? 'moderate'
-        : 'none';
+  const departureDelayStatus = getFlightDelayStatus(departureDelay);
+  const takeoffDelayStatus = getFlightDelayStatus(takeoffDelay);
+  const landingDelayStatus = getFlightDelayStatus(landingDelay);
+  const arrivalDelayStatus = getFlightDelayStatus(arrivalDelay);
   return {
     durationString: getDurationString(duration),
     durationStringAbbreviated: getDurationString(duration, true),
@@ -198,15 +239,78 @@ export const getFlightTimestamps = ({
             inTimeZone: departureTimeZone,
           })
         : null,
+    offTimeLocal: formatInTimeZone(
+      currentOffTime,
+      departureTimeZone,
+      TIME_FORMAT_12H,
+    ),
+    offTimeValue: formatInTimeZone(
+      currentOffTime,
+      departureTimeZone,
+      TIME_FORMAT_24H,
+    ),
+    offTimeDaysAdded: getDaysAdded({
+      outTime,
+      inTime: currentOffTime,
+      outTimeZone: departureTimeZone,
+      inTimeZone: departureTimeZone,
+    }),
+    offTimeActualLocal: formatInTimeZone(
+      currentOffTimeActual,
+      departureTimeZone,
+      TIME_FORMAT_12H,
+    ),
+    offTimeActualValue: formatInTimeZone(
+      currentOffTimeActual,
+      departureTimeZone,
+      TIME_FORMAT_24H,
+    ),
+    offTimeActualDaysAdded: getDaysAdded({
+      outTime,
+      inTime: currentOffTimeActual,
+      outTimeZone: departureTimeZone,
+      inTimeZone: departureTimeZone,
+    }),
+    onTimeLocal: formatInTimeZone(
+      currentOnTime,
+      arrivalTimeZone,
+      TIME_FORMAT_12H,
+    ),
+    onTimeValue: formatInTimeZone(
+      currentOnTime,
+      arrivalTimeZone,
+      TIME_FORMAT_24H,
+    ),
+    onTimeDaysAdded: getDaysAdded({
+      outTime,
+      inTime: currentOnTime,
+      outTimeZone: departureTimeZone,
+      inTimeZone: arrivalTimeZone,
+    }),
+    onTimeActualLocal: formatInTimeZone(
+      currentOnTimeActual,
+      arrivalTimeZone,
+      TIME_FORMAT_12H,
+    ),
+    onTimeActualValue: formatInTimeZone(
+      currentOnTimeActual,
+      arrivalTimeZone,
+      TIME_FORMAT_24H,
+    ),
+    onTimeActualDaysAdded: getDaysAdded({
+      outTime,
+      inTime: currentOnTimeActual,
+      outTimeZone: departureTimeZone,
+      inTimeZone: arrivalTimeZone,
+    }),
     inTimeLocal: formatInTimeZone(inTime, arrivalTimeZone, TIME_FORMAT_12H),
     inTimeValue: formatInTimeZone(inTime, arrivalTimeZone, TIME_FORMAT_24H),
-    inTimeDaysAdded:
-      getDaysAdded({
-        outTime,
-        inTime,
-        outTimeZone: departureTimeZone,
-        inTimeZone: arrivalTimeZone,
-      }) ?? 0,
+    inTimeDaysAdded: getDaysAdded({
+      outTime,
+      inTime,
+      outTimeZone: departureTimeZone,
+      inTimeZone: arrivalTimeZone,
+    }),
     inTimeActualLocal:
       inTimeActual !== undefined
         ? formatInTimeZone(inTimeActual, arrivalTimeZone, TIME_FORMAT_12H)
@@ -228,6 +332,8 @@ export const getFlightTimestamps = ({
       departureDelay !== null ? getDurationString(departureDelay) : null,
     departureDelayValue: departureDelay,
     departureDelayStatus,
+    takeoffDelayStatus,
+    landingDelayStatus,
     arrivalDelay:
       arrivalDelay !== null ? getDurationString(arrivalDelay) : null,
     arrivalDelayValue: arrivalDelay,
