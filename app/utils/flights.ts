@@ -526,6 +526,10 @@ export const transformFlightData = (
     duration: flight.duration,
     outTime: flight.outTime,
     outTimeActual: flight.outTimeActual ?? undefined,
+    offTime: flight.offTime ?? undefined,
+    offTimeActual: flight.offTimeActual ?? undefined,
+    onTime: flight.onTime ?? undefined,
+    onTimeActual: flight.onTimeActual ?? undefined,
     inTime: flight.inTime,
     inTimeActual: flight.inTimeActual ?? undefined,
   });
