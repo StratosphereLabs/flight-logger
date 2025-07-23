@@ -87,7 +87,7 @@ export const getDurationString = (
     }`;
   }
   return `${hours !== undefined && hours > 0 ? `${hours}h ` : ''}${
-    minutes ?? 0
+    minutes !== undefined ? `${minutes < 10 ? '0' : ''}${minutes}` : '00'
   }m`;
 };
 

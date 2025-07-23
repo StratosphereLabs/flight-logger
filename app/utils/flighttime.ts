@@ -1,5 +1,5 @@
 import { type Airport } from '@prisma/client';
-import { add, isBefore, isFuture, sub } from 'date-fns';
+import { add, isAfter, isBefore, isFuture, sub } from 'date-fns';
 import { formatInTimeZone, fromZonedTime } from 'date-fns-tz';
 
 import {
@@ -53,6 +53,14 @@ export interface FlightTimesResult {
 export interface FlightTimestampsResult {
   durationString: string;
   durationStringAbbreviated: string;
+  durationActualString: string;
+  durationDelayStatus: FlightDelayStatus;
+  flightDurationString: string;
+  flightDurationActualString: string;
+  flightDurationDelayStatus: FlightDelayStatus;
+  taxiDurationString: string;
+  taxiDurationActualString: string;
+  taxiDurationDelayStatus: FlightDelayStatus;
   inFuture: boolean;
   outDateISO: string;
   outDateLocal: string;
@@ -160,6 +168,15 @@ export const getFlightDelayStatus = (
       ? 'moderate'
       : 'none';
 
+export const getDurationDelayStatus = (
+  delayValue: number | null,
+): FlightDelayStatus =>
+  delayValue !== null && delayValue >= 30
+    ? 'severe'
+    : delayValue !== null && delayValue >= 15
+      ? 'moderate'
+      : 'none';
+
 export const getFlightTimestamps = ({
   departureTimeZone,
   arrivalTimeZone,
@@ -179,6 +196,30 @@ export const getFlightTimestamps = ({
   const currentOnTime = onTime ?? sub(inTime, { minutes: 10 });
   const currentOnTimeActual =
     onTimeActual ?? sub(inTimeActual ?? inTime, { minutes: 10 });
+  const durationActual =
+    outTimeActual !== undefined &&
+    inTimeActual !== undefined &&
+    isAfter(new Date(), inTimeActual)
+      ? getDurationMinutes({
+          start: outTimeActual,
+          end: inTimeActual,
+        })
+      : null;
+  const flightDuration = getDurationMinutes({
+    start: currentOffTime,
+    end: currentOnTime,
+  });
+  const flightDurationActual = isAfter(new Date(), currentOnTimeActual)
+    ? getDurationMinutes({
+        start: currentOffTimeActual,
+        end: currentOnTimeActual,
+      })
+    : null;
+  const taxiDuration = duration - flightDuration;
+  const taxiDurationActual =
+    durationActual !== null && flightDurationActual !== null
+      ? durationActual - flightDurationActual
+      : null;
   const departureDelay =
     outTimeActual !== undefined && isBefore(outTime, outTimeActual)
       ? getDurationMinutes({
@@ -205,13 +246,37 @@ export const getFlightTimestamps = ({
           end: inTimeActual,
         })
       : null;
+  const durationDelay =
+    durationActual !== null ? durationActual - duration : null;
+  const flightDurationDelay =
+    flightDurationActual !== null
+      ? flightDurationActual - flightDuration
+      : null;
+  const taxiDurationDelay =
+    taxiDurationActual !== null ? taxiDurationActual - taxiDuration : null;
   const departureDelayStatus = getFlightDelayStatus(departureDelay);
   const takeoffDelayStatus = getFlightDelayStatus(takeoffDelay);
   const landingDelayStatus = getFlightDelayStatus(landingDelay);
   const arrivalDelayStatus = getFlightDelayStatus(arrivalDelay);
+  const durationDelayStatus = getDurationDelayStatus(durationDelay);
+  const flightDurationDelayStatus = getDurationDelayStatus(flightDurationDelay);
+  const taxiDurationDelayStatus = getDurationDelayStatus(taxiDurationDelay);
   return {
     durationString: getDurationString(duration),
     durationStringAbbreviated: getDurationString(duration, true),
+    durationActualString:
+      durationActual !== null ? getDurationString(durationActual) : '',
+    durationDelayStatus,
+    flightDurationString: getDurationString(flightDuration),
+    flightDurationActualString:
+      flightDurationActual !== null
+        ? getDurationString(flightDurationActual)
+        : '',
+    flightDurationDelayStatus,
+    taxiDurationString: getDurationString(taxiDuration),
+    taxiDurationActualString:
+      taxiDurationActual !== null ? getDurationString(taxiDurationActual) : '',
+    taxiDurationDelayStatus,
     inFuture: isFuture(outTime),
     outDateISO: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT_ISO),
     outDateLocal: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT),
