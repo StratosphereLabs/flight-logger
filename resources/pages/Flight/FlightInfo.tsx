@@ -172,50 +172,50 @@ export const FlightInfo = ({
         </div>
       </div>
       <div className="divider my-0" />
-      <div className="flex w-full justify-between gap-3">
-        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
+      <div className="flex w-full justify-between gap-4">
+        <div className="flex flex-1 flex-col gap-2 overflow-hidden">
           <div className="truncate font-semibold">
             {data.aircraftType?.name}
           </div>
           <div className="flex w-full flex-col gap-1">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm">ICAO Code</span>
+              <span className="text-sm opacity-80">ICAO Code</span>
               <Badge color="info" size="md" className="font-mono">
                 {data.aircraftType?.icao}
               </Badge>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm">Tail Number</span>
+              <span className="text-sm opacity-80">Tail Number</span>
               {tailNumber !== null ? (
-                <span className="font-mono text-base opacity-80">
+                <span className="font-mono text-base opacity-90">
                   {tailNumber}
                 </span>
               ) : (
-                <span className="text-sm opacity-80">N/A</span>
+                <span className="text-sm opacity-90">N/A</span>
               )}
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm">Hex Code</span>
+              <span className="text-sm opacity-80">Hex Code</span>
               {data.airframe !== null ? (
-                <span className="font-mono text-sm opacity-80">
+                <span className="font-mono text-sm opacity-90">
                   {data.airframe.icao24}
                 </span>
               ) : (
-                <span className="text-sm opacity-80">N/A</span>
+                <span className="text-sm opacity-90">N/A</span>
               )}
             </div>
           </div>
         </div>
-        <div className="flex w-40 flex-col justify-center overflow-hidden">
+        <div className="flex w-42 flex-col justify-center overflow-hidden">
           {photoData?.photos[0] !== undefined ? (
             <img
               src={photoData.photos[0].thumbnail.src}
               alt="Photo unavailable"
-              className="rounded-box h-24 w-40 object-cover shadow-sm"
+              className="rounded-box h-24 w-42 object-cover shadow-sm"
             />
           ) : null}
           {photoData?.photos[0] === undefined ? (
-            <div className="rounded-box bg-base-100 flex h-24 w-40 items-center justify-center">
+            <div className="rounded-box bg-base-100 flex h-24 w-42 items-center justify-center">
               {isFetching ? <Loading /> : 'Photo unavailable'}
             </div>
           ) : null}

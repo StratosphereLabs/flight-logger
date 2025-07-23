@@ -29,7 +29,7 @@ export const FlightDetailedTimetable = ({
         <tbody>
           <tr className="border-b-0">
             <td className="w-[150px] text-sm opacity-80">Gate Departure</td>
-            <td className="text-right text-sm font-semibold opacity-80">
+            <td className="text-right text-sm font-semibold opacity-90">
               {data.outTimeLocal}
             </td>
             <td
@@ -55,7 +55,7 @@ export const FlightDetailedTimetable = ({
           </tr>
           <tr className="border-b-0">
             <td className="w-[150px] text-sm opacity-80">Takeoff</td>
-            <td className="relative text-right text-sm font-semibold opacity-80">
+            <td className="relative text-right text-sm font-semibold opacity-90">
               {data.offTimeLocal}
               {data.offTimeDaysAdded !== 0 ? (
                 <sup className="absolute top-2">{`${data.offTimeDaysAdded > 0 ? '+' : ''}${data.offTimeDaysAdded}`}</sup>
@@ -84,7 +84,7 @@ export const FlightDetailedTimetable = ({
           </tr>
           <tr className="border-b-0">
             <td className="w-[150px] text-sm opacity-80">Landing</td>
-            <td className="relative text-right text-sm font-semibold opacity-80">
+            <td className="relative text-right text-sm font-semibold opacity-90">
               {data.onTimeLocal}
               {data.onTimeDaysAdded !== 0 ? (
                 <sup className="absolute top-2">{`${data.onTimeDaysAdded > 0 ? '+' : ''}${data.onTimeDaysAdded}`}</sup>
@@ -113,7 +113,7 @@ export const FlightDetailedTimetable = ({
           </tr>
           <tr className="border-b-0">
             <td className="w-[150px] text-sm opacity-80">Gate Arrival</td>
-            <td className="relative text-right text-sm font-semibold opacity-80">
+            <td className="relative text-right text-sm font-semibold opacity-90">
               {data.inTimeLocal}
               {data.inTimeDaysAdded !== 0 ? (
                 <sup className="absolute top-2">{`${data.inTimeDaysAdded > 0 ? '+' : ''}${data.inTimeDaysAdded}`}</sup>
@@ -151,7 +151,7 @@ export const FlightDetailedTimetable = ({
         <tbody>
           <tr className="border-b-0">
             <td className="w-[150px] text-sm opacity-80">Flight Time</td>
-            <td className="text-right text-sm font-semibold opacity-80">
+            <td className="text-right text-sm font-semibold opacity-90">
               {data.flightDurationString}
             </td>
             <td
@@ -167,7 +167,7 @@ export const FlightDetailedTimetable = ({
           </tr>
           <tr className="border-b-0">
             <td className="w-[150px] text-sm opacity-80">Taxi Time</td>
-            <td className="text-right text-sm font-semibold opacity-80">
+            <td className="text-right text-sm font-semibold opacity-90">
               {data.taxiDurationString}
             </td>
             <td
@@ -182,8 +182,8 @@ export const FlightDetailedTimetable = ({
             </td>
           </tr>
           <tr>
-            <td className="w-[150px] text-sm opacity-75">Block Time</td>
-            <td className="text-right text-sm font-semibold opacity-80">
+            <td className="w-[150px] text-sm opacity-80">Block Time</td>
+            <td className="text-right text-sm font-semibold opacity-90">
               {data.durationString}
             </td>
             <td
