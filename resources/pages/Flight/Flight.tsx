@@ -99,7 +99,7 @@ export const Flight = (): JSX.Element | null => {
           ? container.scrollTop > 0
           : container.scrollTop >= scrollThreshold,
       );
-      setIsScrolled(container.scrollTop >= scrollThreshold + 150);
+      setIsScrolled(container.scrollTop >= scrollThreshold + 200);
     };
     container.addEventListener('scroll', handleScroll);
     return () => {
@@ -365,13 +365,8 @@ export const Flight = (): JSX.Element | null => {
         )}
         ref={scrollContainerRef}
       >
-        {data?.airline !== undefined && data?.airline !== null ? (
-          <div
-            className={classNames(
-              'bg-base-100 sticky top-0 left-0 z-10 w-full shadow-lg transition-opacity',
-              isScrolled ? 'opacity-100' : 'h-0 opacity-0',
-            )}
-          >
+        {data?.airline !== undefined && data?.airline !== null && isScrolled ? (
+          <div className="bg-base-100 sticky top-0 left-0 z-10 w-full shadow-lg">
             <div
               className={classNames(
                 'flex justify-between gap-2 border-x-2 p-2',
