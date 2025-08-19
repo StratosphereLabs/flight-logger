@@ -28,7 +28,7 @@ export const FlightInfo = ({
     );
   }
   return (
-    <div className="flex flex-col items-center gap-2 md:gap-3">
+    <div className="flex flex-col items-center gap-3 md:gap-4">
       <div className="flex gap-2 md:flex-col">
         {typeof data.airline?.logo === 'string' ? (
           <div className="flex w-[120px] items-center justify-center md:w-[200px]">
@@ -65,87 +65,85 @@ export const FlightInfo = ({
         </Link>
       </div>
       <div className="flex w-full flex-col gap-2">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-stretch gap-2">
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <div className="text-center font-mono text-4xl font-bold">
-                {data.departureAirport.iata}
-              </div>
-              <div className="truncate text-center text-sm sm:text-base">
-                {data.departureMunicipalityText}
-              </div>
-              <FlightTimesDisplay
-                className="justify-center font-mono"
-                data={{
-                  delayStatus: data.departureDelayStatus,
-                  actualValue: data.outTimeActualValue,
-                  value: data.outTimeValue,
-                  actualLocal: data.outTimeActualLocal,
-                  local: data.outTimeLocal,
-                  actualDaysAdded: data.outTimeActualDaysAdded,
-                  daysAdded: 0,
-                }}
-              />
+        <div className="flex items-stretch gap-2">
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="text-center font-mono text-4xl font-bold">
+              {data.departureAirport.iata}
             </div>
-            <div className="flex items-center">
-              <RightArrowIcon className="h-8 w-8 opacity-80" />
+            <div className="truncate text-center text-sm sm:text-base">
+              {data.departureMunicipalityText}
             </div>
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <div className="text-center font-mono text-4xl font-bold">
-                {data.arrivalAirport.iata}
-              </div>
-              <div className="truncate text-center text-sm sm:text-base">
-                {data.arrivalMunicipalityText}
-              </div>
-              <FlightTimesDisplay
-                className="justify-center font-mono"
-                data={{
-                  delayStatus: data.arrivalDelayStatus,
-                  actualValue: data.inTimeActualValue,
-                  value: data.inTimeValue,
-                  actualLocal: data.inTimeActualLocal,
-                  local: data.inTimeLocal,
-                  actualDaysAdded: data.inTimeActualDaysAdded,
-                  daysAdded: data.inTimeDaysAdded,
-                }}
-              />
-            </div>
+            <FlightTimesDisplay
+              className="justify-center font-mono"
+              data={{
+                delayStatus: data.departureDelayStatus,
+                actualValue: data.outTimeActualValue,
+                value: data.outTimeValue,
+                actualLocal: data.outTimeActualLocal,
+                local: data.outTimeLocal,
+                actualDaysAdded: data.outTimeActualDaysAdded,
+                daysAdded: 0,
+              }}
+            />
           </div>
-          <div className="flex gap-12">
-            <div
-              className={classNames(
-                'flex flex-1 flex-wrap items-center justify-center gap-x-2',
-                TEXT_COLORS[data.departureDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
-              )}
-            >
-              {data.departureGate !== null ? (
-                <div className="text-base font-semibold">
-                  Gate {data.departureGate}
-                </div>
-              ) : null}
-              {data.departureTerminal !== null ? (
-                <div className="text-sm">Terminal {data.departureTerminal}</div>
-              ) : null}
+          <div className="flex items-center">
+            <RightArrowIcon className="h-8 w-8 opacity-80" />
+          </div>
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="text-center font-mono text-4xl font-bold">
+              {data.arrivalAirport.iata}
             </div>
-            <div
-              className={classNames(
-                'flex flex-1 flex-wrap items-center justify-center gap-x-2',
-                TEXT_COLORS[data.arrivalDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
-              )}
-            >
-              {data.arrivalGate !== null ? (
-                <div className="text-base font-semibold">
-                  Gate {data.arrivalGate}
-                </div>
-              ) : null}
-              {data.arrivalTerminal !== null ? (
-                <div className="text-sm">Terminal {data.arrivalTerminal}</div>
-              ) : null}
+            <div className="truncate text-center text-sm sm:text-base">
+              {data.arrivalMunicipalityText}
             </div>
+            <FlightTimesDisplay
+              className="justify-center font-mono"
+              data={{
+                delayStatus: data.arrivalDelayStatus,
+                actualValue: data.inTimeActualValue,
+                value: data.inTimeValue,
+                actualLocal: data.inTimeActualLocal,
+                local: data.inTimeLocal,
+                actualDaysAdded: data.inTimeActualDaysAdded,
+                daysAdded: data.inTimeDaysAdded,
+              }}
+            />
+          </div>
+        </div>
+        <div className="flex gap-12">
+          <div
+            className={classNames(
+              'flex flex-1 flex-wrap items-center justify-center gap-x-2',
+              TEXT_COLORS[data.departureDelayStatus],
+              [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                'brightness-90',
+            )}
+          >
+            {data.departureGate !== null ? (
+              <div className="text-base font-semibold">
+                Gate {data.departureGate}
+              </div>
+            ) : null}
+            {data.departureTerminal !== null ? (
+              <div className="text-sm">Terminal {data.departureTerminal}</div>
+            ) : null}
+          </div>
+          <div
+            className={classNames(
+              'flex flex-1 flex-wrap items-center justify-center gap-x-2',
+              TEXT_COLORS[data.arrivalDelayStatus],
+              [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                'brightness-90',
+            )}
+          >
+            {data.arrivalGate !== null ? (
+              <div className="text-base font-semibold">
+                Gate {data.arrivalGate}
+              </div>
+            ) : null}
+            {data.arrivalTerminal !== null ? (
+              <div className="text-sm">Terminal {data.arrivalTerminal}</div>
+            ) : null}
           </div>
         </div>
         <div className="flex justify-center text-sm italic opacity-80">
@@ -153,24 +151,21 @@ export const FlightInfo = ({
         </div>
         <div
           className={classNames(
-            'flex flex-col gap-2',
+            'flex justify-center gap-3',
             data.delayStatus !== 'none' && 'font-semibold',
             TEXT_COLORS[data.delayStatus],
             [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
               'brightness-90',
           )}
         >
-          <div className="flex justify-center gap-3">
-            <span>{data.flightStatusText}</span>
-            <span>
-              {data.delayStatus === 'canceled'
-                ? 'Canceled'
-                : data.delayStatus !== 'none'
-                  ? `Delayed ${data.delay}`
-                  : 'On Time'}
-            </span>
-          </div>
-          <div className="flex justify-center text-sm">
+          <span>
+            {data.delayStatus === 'canceled'
+              ? 'Canceled'
+              : data.delayStatus !== 'none'
+                ? `Delayed ${data.delay}`
+                : 'On Time'}
+          </span>
+          <span>
             {data.flightProgress === 0 && data.progress === 0
               ? `Departs in ${formatDistanceToNowStrict(data.outTimeActual ?? data.outTime)}`
               : null}
@@ -186,7 +181,7 @@ export const FlightInfo = ({
             {data.flightProgress === 1 && data.progress === 1
               ? `Arrived ${formatDistanceToNowStrict(data.inTimeActual ?? data.inTime)} ago`
               : null}
-          </div>
+          </span>
         </div>
       </div>
       <div className="divider my-0" />
