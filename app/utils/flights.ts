@@ -707,9 +707,15 @@ export const transformFlightData = (
     minutesToArrival,
     minutesToLanding,
     durationToDepartureString: getDurationString(minutesToDeparture),
-    durationToDepartureAbbrString: getDurationString(minutesToDeparture, true),
+    durationToDepartureAbbrString: getDurationString(
+      minutesToDeparture,
+      'abbreviated',
+    ),
     durationToArrivalString: getDurationString(minutesToArrival),
-    durationToArrivalAbbrString: getDurationString(minutesToArrival, true),
+    durationToArrivalAbbrString: getDurationString(
+      minutesToArrival,
+      'abbreviated',
+    ),
     durationToTakeoffString: getDurationString(minutesToTakeoff),
     durationToLandingString: getDurationString(minutesToLanding),
     progress,
