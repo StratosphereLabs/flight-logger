@@ -19,7 +19,10 @@ const getUpdate = (
   }
 
   const id = `${iata}_${icao}`;
-  const linkText = tds.eq(2).children('a').eq(0).text().trim();
+  const firstLink = tds.eq(2).children('a').eq(0).text().trim();
+  const linkText = !firstLink.includes('Bombardier CSeries')
+    ? firstLink
+    : tds.eq(2).children('a').eq(1).text().trim();
   const name = linkText !== '' ? linkText : tds.eq(2).text().trim();
 
   const match = name.match(FREIGHTER_AIRCRAFT_REGEX) ?? [];
