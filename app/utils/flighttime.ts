@@ -53,6 +53,7 @@ export interface FlightTimesResult {
 export interface FlightTimestampsResult {
   durationString: string;
   durationStringAbbreviated: string;
+  durationStringLeadingZero: string;
   durationActualString: string;
   durationDelayStatus: FlightDelayStatus;
   flightDurationString: string;
@@ -263,19 +264,24 @@ export const getFlightTimestamps = ({
   const taxiDurationDelayStatus = getDurationDelayStatus(taxiDurationDelay);
   return {
     durationString: getDurationString(duration),
-    durationStringAbbreviated: getDurationString(duration, true),
+    durationStringAbbreviated: getDurationString(duration, 'abbreviated'),
+    durationStringLeadingZero: getDurationString(duration, 'leadingZero'),
     durationActualString:
-      durationActual !== null ? getDurationString(durationActual) : '',
+      durationActual !== null
+        ? getDurationString(durationActual, 'leadingZero')
+        : '',
     durationDelayStatus,
-    flightDurationString: getDurationString(flightDuration),
+    flightDurationString: getDurationString(flightDuration, 'leadingZero'),
     flightDurationActualString:
       flightDurationActual !== null
-        ? getDurationString(flightDurationActual)
+        ? getDurationString(flightDurationActual, 'leadingZero')
         : '',
     flightDurationDelayStatus,
-    taxiDurationString: getDurationString(taxiDuration),
+    taxiDurationString: getDurationString(taxiDuration, 'leadingZero'),
     taxiDurationActualString:
-      taxiDurationActual !== null ? getDurationString(taxiDurationActual) : '',
+      taxiDurationActual !== null
+        ? getDurationString(taxiDurationActual, 'leadingZero')
+        : '',
     taxiDurationDelayStatus,
     inFuture: isFuture(outTime),
     outDateISO: formatInTimeZone(outTime, departureTimeZone, DATE_FORMAT_ISO),

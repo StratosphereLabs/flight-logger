@@ -75,19 +75,24 @@ export const getDurationDays = (interval: Interval): string => {
 
 export const getDurationString = (
   duration: number,
-  abbreviated?: boolean,
+  format?: 'abbreviated' | 'leadingZero' | 'full',
 ): string => {
   const { hours, minutes } = intervalToDuration({
     start: 0,
     end: duration * 60 * 1000,
   });
-  if (abbreviated === true) {
+  if (format === 'abbreviated') {
     return `${hours ?? 0}:${
       minutes !== undefined ? `${minutes < 10 ? '0' : ''}${minutes}` : '00'
     }`;
   }
+  if (format === 'leadingZero') {
+    return `${hours !== undefined && hours > 0 ? `${hours}h ` : ''}${
+      minutes !== undefined ? `${minutes < 10 ? '0' : ''}${minutes}` : '00'
+    }m`;
+  }
   return `${hours !== undefined && hours > 0 ? `${hours}h ` : ''}${
-    minutes !== undefined ? `${minutes < 10 ? '0' : ''}${minutes}` : '00'
+    minutes ?? '0'
   }m`;
 };
 

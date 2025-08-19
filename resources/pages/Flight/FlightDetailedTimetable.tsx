@@ -184,7 +184,7 @@ export const FlightDetailedTimetable = ({
           <tr>
             <td className="w-[150px] text-sm opacity-80">Block Time</td>
             <td className="text-right text-sm font-semibold opacity-90">
-              {data.durationString}
+              {data.durationStringLeadingZero}
             </td>
             <td
               className={classNames(
