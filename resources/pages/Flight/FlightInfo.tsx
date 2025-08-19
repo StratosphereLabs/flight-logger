@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Badge, Link, Loading } from 'stratosphere-ui';
+import { Avatar, Link, Loading } from 'stratosphere-ui';
 
 import { FlightTimesDisplay, RightArrowIcon } from '../../common/components';
 import { TEXT_COLORS } from '../../common/constants';
-import { useAircraftPhotoQuery } from '../../common/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { FlightAircraftDetails } from './FlightAircraftDetails';
 import { FlightDetailedTimetable } from './FlightDetailedTimetable';
 
 export interface FlightInfoProps {
@@ -19,9 +19,6 @@ export const FlightInfo = ({
   const navigate = useNavigate();
   const { theme } = useThemeStore();
   const { data } = trpc.flights.getFlight.useQuery({ id: flightId });
-  const { data: photoData, isFetching } = useAircraftPhotoQuery(
-    data?.airframeId ?? null,
-  );
   if (data === undefined) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -29,7 +26,6 @@ export const FlightInfo = ({
       </div>
     );
   }
-  const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
   return (
     <div className="flex flex-col items-center gap-3 md:gap-4">
       <div className="flex gap-2 md:flex-col">
@@ -154,76 +150,38 @@ export const FlightInfo = ({
         </div>
         <div
           className={classNames(
-            'flex justify-center gap-3',
+            'flex flex-col gap-2',
             data.delayStatus !== 'none' && 'font-semibold',
             TEXT_COLORS[data.delayStatus],
             [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
               'brightness-90',
           )}
         >
-          <span>{data.flightStatusText}</span>
-          <span>
-            {data.delayStatus === 'canceled'
-              ? 'Canceled'
-              : data.delayStatus !== 'none'
-                ? `Delayed ${data.delay}`
-                : 'On Time'}
-          </span>
+          <div className="flex justify-center gap-3">
+            <span>{data.flightStatusText}</span>
+            <span>
+              {data.delayStatus === 'canceled'
+                ? 'Canceled'
+                : data.delayStatus !== 'none'
+                  ? `Delayed ${data.delay}`
+                  : 'On Time'}
+            </span>
+          </div>
+          <div className="flex justify-center text-sm">
+            {data.progress > 0 && data.flightProgress === 0
+              ? `Taking off in ${data.durationToTakeoffString}`
+              : null}
+            {data.flightProgress > 0 && data.flightProgress < 1
+              ? `Landing in ${data.durationToLandingString}`
+              : null}
+            {data.flightProgress === 1 && data.progress < 1
+              ? `Arriving in ${data.durationToArrivalString}`
+              : null}
+          </div>
         </div>
       </div>
       <div className="divider my-0" />
-      <div className="flex w-full justify-between gap-4">
-        <div className="flex flex-1 flex-col gap-2 overflow-hidden">
-          <div className="truncate font-semibold">
-            {data.aircraftType?.name}
-          </div>
-          <div className="flex w-full flex-col gap-1">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-sm opacity-80">ICAO Code</span>
-              <Badge color="info" size="md" className="font-mono">
-                {data.aircraftType?.icao}
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-sm opacity-80">Tail Number</span>
-              {tailNumber !== null ? (
-                <span className="font-mono text-base opacity-90">
-                  {tailNumber}
-                </span>
-              ) : (
-                <span className="text-sm opacity-90">N/A</span>
-              )}
-            </div>
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-sm opacity-80">Hex Code</span>
-              {data.airframe !== null ? (
-                <span className="font-mono text-sm opacity-90">
-                  {data.airframe.icao24}
-                </span>
-              ) : (
-                <span className="text-sm opacity-90">N/A</span>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="flex w-42 flex-col justify-center overflow-hidden">
-          {photoData?.photos[0] !== undefined ? (
-            <img
-              src={photoData.photos[0].thumbnail.src}
-              alt="Photo unavailable"
-              className="rounded-box h-24 w-42 object-cover shadow-sm"
-            />
-          ) : null}
-          {photoData?.photos[0] === undefined ? (
-            <div className="rounded-box bg-base-100 flex h-24 w-42 items-center justify-center">
-              {isFetching ? <Loading /> : 'Photo unavailable'}
-            </div>
-          ) : null}
-          <p className="truncate text-center text-xs opacity-75">
-            {photoData?.photos[0]?.photographer ?? ''}
-          </p>
-        </div>
-      </div>
+      <FlightAircraftDetails data={data} />
       <div className="divider my-0" />
       <FlightDetailedTimetable data={data} />
     </div>
