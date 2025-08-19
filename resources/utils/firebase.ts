@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getMessaging } from 'firebase/messaging';
+import { type Messaging, getMessaging } from 'firebase/messaging';
 
 export const firebaseApp = initializeApp({
   apiKey: import.meta.env.VITE_FCM_API_KEY as string,
@@ -11,4 +11,12 @@ export const firebaseApp = initializeApp({
   measurementId: 'G-H5G99GVXN0',
 });
 
-export const messaging = getMessaging(firebaseApp);
+export let messaging: Messaging | undefined;
+
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  try {
+    messaging = getMessaging(firebaseApp);
+  } catch (e) {
+    console.warn('Firebase messaging not supported in this environment');
+  }
+}
