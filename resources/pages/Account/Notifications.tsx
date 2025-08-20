@@ -64,16 +64,18 @@ export const Notifications = (): JSX.Element => {
                         handleSuccess(
                           `Notifications ${e.target.checked ? 'enabled' : 'disabled'}`,
                         );
-                        getToken(messaging, {
-                          vapidKey: import.meta.env
-                            .VITE_FIREBASE_VAPID_KEY as string,
-                        })
-                          .then(currentToken => {
-                            if (currentToken.length > 0) {
-                              mutateAddFCMToken({ token: currentToken });
-                            }
+                        if (messaging !== undefined) {
+                          getToken(messaging, {
+                            vapidKey: import.meta.env
+                              .VITE_FIREBASE_VAPID_KEY as string,
                           })
-                          .catch(() => {});
+                            .then(currentToken => {
+                              if (currentToken.length > 0) {
+                                mutateAddFCMToken({ token: currentToken });
+                              }
+                            })
+                            .catch(() => {});
+                        }
                       },
                       onError: () => {
                         handleError();
