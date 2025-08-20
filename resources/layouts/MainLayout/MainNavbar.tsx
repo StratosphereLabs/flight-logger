@@ -48,7 +48,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { username } = useParams();
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
   const { data, isFetching } = useLoggedInUserQuery(userData => {
-    if (userData.pushNotifications) {
+    if (userData.pushNotifications && messaging !== undefined) {
       getToken(messaging, {
         vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY as string,
       })

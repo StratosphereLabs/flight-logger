@@ -3,6 +3,7 @@ import { CardTitle } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { trpc } from '../../utils/trpc';
+import { CloudCoverChart } from './CloudCoverChart';
 
 export interface WeatherCardProps {
   className?: string;
@@ -26,51 +27,37 @@ export const WeatherCard = ({
         {new Date(data.obsTime).toLocaleString()}
       </div>
     </div>
-
     <div className="space-y-2 opacity-75">
-      {/* Temperature */}
       <div className="flex items-center justify-between">
         <span className="font-medium">Temperature:</span>
         <span className="text-lg font-semibold text-blue-600">
           {data.temp}°C
         </span>
       </div>
-
-      {/* Dewpoint */}
       <div className="flex items-center justify-between">
         <span className="font-medium">Dewpoint:</span>
         <span className="text-base">{data.dewp}°C</span>
       </div>
-
-      {/* Wind */}
       <div className="flex items-center justify-between">
         <span className="font-medium">Wind:</span>
         <span className="text-base">
           {data.wdir}° at {data.wspd} kts
         </span>
       </div>
-
-      {/* Gusts */}
       {data.wgst > 0 && (
         <div className="flex items-center justify-between">
           <span className="font-medium">Gusts:</span>
           <span className="text-base">{data.wgst} kts</span>
         </div>
       )}
-
-      {/* Visibility */}
       <div className="flex items-center justify-between">
         <span className="font-medium">Visibility:</span>
         <span className="text-base">{data.visib} sm</span>
       </div>
-
-      {/* Altimeter */}
       <div className="flex items-center justify-between">
         <span className="font-medium">Altimeter:</span>
         <span className="text-base">{data.altim} hPa</span>
       </div>
-
-      {/* Clouds */}
       <div className="flex items-center justify-between">
         <span className="font-medium">Clouds:</span>
         <span className="text-right text-base">
@@ -81,8 +68,7 @@ export const WeatherCard = ({
             .join(' ')}
         </span>
       </div>
-
-      {/* METAR */}
+      <CloudCoverChart data={data} />
       <div className="flex items-center justify-between gap-4">
         <span className="font-medium">METAR:</span>
         <span className="text-right font-mono text-xs">{data.rawOb}</span>
