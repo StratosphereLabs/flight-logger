@@ -57,13 +57,13 @@ export interface WeatherReportData extends Omit<WeatherReport, 'clouds'> {
   };
 }
 
-const MAX_CLOUD_COLS = 16;
+const CLOUD_COLS = 16;
 
 const getCloudColumns = (cover: string): number => {
-  if (cover === 'FEW') return Math.round(MAX_CLOUD_COLS * 0.25);
-  if (cover === 'SCT') return Math.round(MAX_CLOUD_COLS * 0.5);
-  if (cover === 'BKN') return Math.round(MAX_CLOUD_COLS * 0.75);
-  if (cover === 'OVC') return MAX_CLOUD_COLS;
+  if (cover === 'FEW') return Math.round(CLOUD_COLS * 0.25);
+  if (cover === 'SCT') return Math.round(CLOUD_COLS * 0.5);
+  if (cover === 'BKN') return Math.round(CLOUD_COLS * 0.75);
+  if (cover === 'OVC') return CLOUD_COLS;
   return 0;
 };
 
@@ -92,13 +92,12 @@ export const getWeatherReportCloudCoverData = (
             ...acc1,
             {
               id: base,
-              data: getRandomIntegers(
-                getCloudColumns(cover),
-                MAX_CLOUD_COLS - 1,
-              ).map(col => ({
-                x: col,
-                y: base / 100,
-              })),
+              data: getRandomIntegers(getCloudColumns(cover), CLOUD_COLS).map(
+                col => ({
+                  x: col,
+                  y: base / 100,
+                }),
+              ),
             },
           ]
         : acc1,
@@ -110,7 +109,7 @@ export const getWeatherReportCloudCoverData = (
         clouds,
         chartData: {
           data,
-          max: MAX_CLOUD_COLS,
+          max: CLOUD_COLS + 1,
         },
       }
     : null;

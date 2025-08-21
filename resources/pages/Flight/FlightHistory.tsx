@@ -79,7 +79,7 @@ export const FlightHistory = ({
       {data !== undefined ? (
         <Form className="flex flex-col gap-4" methods={methods}>
           <FormRadio
-            className="flex gap-4 text-sm"
+            className="flex gap-4 text-sm opacity-80"
             name="user"
             options={[
               {
