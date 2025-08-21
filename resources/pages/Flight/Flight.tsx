@@ -93,7 +93,7 @@ export const Flight = (): JSX.Element | null => {
     const container = scrollContainerRef.current;
     if (container === null) return;
     const handleScroll = (): void => {
-      const scrollThreshold = Math.floor(window.innerHeight / 2) - 295;
+      const scrollThreshold = Math.floor(window.innerHeight / 2) - 305;
       setIsMapCollapsed(prevIsMapCollapsed =>
         prevIsMapCollapsed
           ? container.scrollTop > 0
@@ -475,7 +475,7 @@ export const Flight = (): JSX.Element | null => {
             </div>
           </div>
         ) : null}
-        <div className="rounded-box bg-base-100/80 mt-[calc(50vh-295px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
+        <div className="rounded-box bg-base-100/80 mt-[calc(50vh-305px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
           <div
             className={classNames(
               'rounded-box pointer-events-auto flex flex-1 flex-col gap-3 overflow-y-scroll p-2 md:h-full',

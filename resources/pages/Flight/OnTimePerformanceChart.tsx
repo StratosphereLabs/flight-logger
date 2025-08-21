@@ -30,7 +30,7 @@ export const OnTimePerformanceChart = ({
     data?.onTimePerformance !== undefined ? (
     <div
       className={classNames(
-        'flex min-h-[235px] w-full min-w-[250px] flex-col items-center gap-3 font-semibold',
+        'flex w-full min-w-[250px] flex-col gap-3 font-semibold',
         cardClassNames,
       )}
     >
@@ -42,40 +42,38 @@ export const OnTimePerformanceChart = ({
           <span>Avg Delay {data.onTimePerformance.averageDelay}</span>
         </div>
       </div>
-      <div className="relative h-full w-full">
-        <div
-          className={classNames(
-            'h-full w-full transition-opacity',
-            isFetching && 'opacity-50',
+      <div
+        className={classNames(
+          'h-[175px] w-full transition-opacity',
+          isFetching && 'opacity-50',
+        )}
+      >
+        <ResponsiveBar
+          theme={BAR_CHART_THEME}
+          layout="horizontal"
+          data={data.onTimePerformance.chartData}
+          keys={['flights']}
+          indexBy="label"
+          enableGridY={false}
+          axisBottom={{
+            tickSize: 0,
+          }}
+          axisLeft={{
+            tickSize: 0,
+            tickPadding: 15,
+          }}
+          margin={{
+            left: 120,
+          }}
+          colors={bar => BAR_COLORS[bar.data.id]}
+          tooltip={tooltipData => (
+            <Tooltip
+              className="translate-y-[-20px]"
+              open
+              text={`${tooltipData.data.label}: ${tooltipData.data.flights.toLocaleString()} Flights`}
+            />
           )}
-        >
-          <ResponsiveBar
-            theme={BAR_CHART_THEME}
-            layout="horizontal"
-            data={data.onTimePerformance.chartData}
-            keys={['flights']}
-            indexBy="label"
-            enableGridY={false}
-            axisBottom={{
-              tickSize: 0,
-            }}
-            axisLeft={{
-              tickSize: 0,
-              tickPadding: 15,
-            }}
-            margin={{
-              left: 120,
-            }}
-            colors={bar => BAR_COLORS[bar.data.id]}
-            tooltip={tooltipData => (
-              <Tooltip
-                className="translate-y-[-20px]"
-                open
-                text={`${tooltipData.data.label}: ${tooltipData.data.flights.toLocaleString()} Flights`}
-              />
-            )}
-          />
-        </div>
+        />
       </div>
     </div>
   ) : null;
