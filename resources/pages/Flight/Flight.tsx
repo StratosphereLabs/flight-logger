@@ -478,7 +478,7 @@ export const Flight = (): JSX.Element | null => {
         <div className="rounded-box bg-base-100/80 mt-[calc(50vh-295px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
           <div
             className={classNames(
-              'rounded-box pointer-events-auto flex flex-1 flex-col gap-6 overflow-y-scroll p-3 md:h-full',
+              'rounded-box pointer-events-auto flex flex-1 flex-col gap-3 overflow-y-scroll p-2 md:h-full',
               HIDE_SCROLLBAR_CLASSNAME,
               data !== undefined &&
                 (theme === AppTheme.LOFI

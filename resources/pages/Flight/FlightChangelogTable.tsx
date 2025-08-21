@@ -16,6 +16,7 @@ import {
 } from '../../common/constants';
 import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { useCardClassNames } from './useCardClassNames';
 
 export interface FlightChangelogTableProps {
   className?: string;
@@ -31,6 +32,7 @@ export const FlightChangelogTable = ({
   const navigate = useNavigate();
   const [keepPreviousData, setKeepPreviousData] = useState(false);
   const { theme } = useThemeStore();
+  const cardClassNames = useCardClassNames();
   const limit = pageSize ?? DEFAULT_PAGE_SIZE;
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
     trpc.flights.getFlightChangelog.useInfiniteQuery(
@@ -66,6 +68,7 @@ export const FlightChangelogTable = ({
     <div
       className={classNames(
         'flex w-full flex-col items-center gap-1',
+        cardClassNames,
         className,
       )}
     >
