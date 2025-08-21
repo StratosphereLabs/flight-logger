@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { TEXT_COLORS } from '../../common/constants';
 import { AppTheme, useThemeStore } from '../../stores';
+import { useCardClassNames } from './useCardClassNames';
 
 export interface FlightDetailedTimetableProps {
   data: FlightsRouterOutput['getFlight'];
@@ -12,8 +13,14 @@ export const FlightDetailedTimetable = ({
   data,
 }: FlightDetailedTimetableProps): JSX.Element => {
   const { theme } = useThemeStore();
+  const cardClassNames = useCardClassNames();
   return (
-    <div className="flex w-full flex-col gap-2 text-sm">
+    <div
+      className={classNames(
+        'flex w-full flex-col gap-2 text-sm',
+        cardClassNames,
+      )}
+    >
       <div className="text-base font-semibold">Detailed Timetable</div>
       <table className="table-xs table table-fixed">
         <thead>

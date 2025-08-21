@@ -1,5 +1,14 @@
 import { type SVGProps } from 'react';
 
+export const BarometerIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8c0 2.4-1 4.5-2.7 6c-1.4-1.3-3.3-2-5.3-2s-3.8.7-5.3 2C5 16.5 4 14.4 4 12a8 8 0 0 1 8-8m2 1.89c-.38.01-.74.26-.9.65l-1.29 3.23l-.1.23c-.71.13-1.3.6-1.57 1.26c-.41 1.03.09 2.19 1.12 2.6s2.19-.09 2.6-1.12c.26-.66.14-1.42-.29-1.98l.1-.26l1.29-3.21l.01-.03c.2-.51-.05-1.09-.56-1.3c-.13-.05-.26-.07-.41-.07M10 6a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1M7 9a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m10 0a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1"
+    />
+  </svg>
+);
+
 export const BusinessIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +57,7 @@ export const CloudIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
     width="1.5em"
     height="1.5em"
     viewBox="0 0 24 24"
-    transform={`translate(0, -12)`}
+    transform={`translate(0, -19)`}
     {...props}
   >
     <path
@@ -146,6 +155,15 @@ export const DarkModeOutlineIcon = (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+    />
+  </svg>
+);
+
+export const DewpointIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M10 13V5c0-1.66-1.34-3-3-3S4 3.34 4 5v8c-2.21 1.66-2.66 4.79-1 7s4.79 2.66 7 1s2.66-4.79 1-7a4.7 4.7 0 0 0-1-1M7 4c.55 0 1 .45 1 1v3H6V5c0-.55.45-1 1-1m11 3s-4 4.34-4 7.07c0 5.24 8 5.24 8 0C22 11.34 18 7 18 7"
     />
   </svg>
 );
@@ -674,6 +692,17 @@ export const SunsetIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   </svg>
 );
 
+export const TemperatureIcon = (
+  props: SVGProps<SVGSVGElement>,
+): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M15 13V5a3 3 0 0 0-6 0v8a5 5 0 1 0 6 0m-3-9a1 1 0 0 1 1 1v3h-2V5a1 1 0 0 1 1-1"
+    />
+  </svg>
+);
+
 export const TimeIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -797,6 +826,15 @@ export const ViewIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
       fillRule="evenodd"
       d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z"
       clipRule="evenodd"
+    />
+  </svg>
+);
+
+export const WindsockIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M7 5v8l15-2V7zm3 1.91l3 .4v3.38l-3 .4zm6 .8l3 .4v1.78l-3 .4zM5 10v1h1v1H5v9H3V4c0-.55.45-1 1-1s1 .45 1 1v2h1v1H5z"
     />
   </svg>
 );

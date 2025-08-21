@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useEffect, useMemo, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import {
@@ -13,6 +14,7 @@ import { type GetUserFlightHistoryRequest } from '../../../app/schemas';
 import { useLoggedInUserQuery } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 import { FlightHistoryRow } from './FlightHistoryRow';
+import { useCardClassNames } from './useCardClassNames';
 
 export interface FlightHistoryProps {
   flightId: string;
@@ -37,6 +39,7 @@ export const FlightHistory = ({
     control: methods.control,
     name: ['user', 'mode'],
   });
+  const cardClassNames = useCardClassNames();
   const { data: userData } = useLoggedInUserQuery();
   const { data: flightData } = trpc.flights.getFlight.useQuery({
     id: flightId,
@@ -69,7 +72,7 @@ export const FlightHistory = ({
     methods.setValue('user', 'mine');
   }, [flightId, methods]);
   return (
-    <div className="flex flex-col gap-4">
+    <div className={classNames('flex flex-col gap-4', cardClassNames)}>
       <div className="font-semibold" ref={headerRef}>
         Flight History
       </div>

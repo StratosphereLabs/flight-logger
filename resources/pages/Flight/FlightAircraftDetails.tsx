@@ -1,7 +1,9 @@
+import classNames from 'classnames';
 import { Badge, Loading } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { useAircraftPhotoQuery } from '../../common/hooks';
+import { useCardClassNames } from './useCardClassNames';
 
 export interface FlightAircraftDetailsProps {
   data: FlightsRouterOutput['getFlight'];
@@ -10,12 +12,18 @@ export interface FlightAircraftDetailsProps {
 export const FlightAircraftDetails = ({
   data,
 }: FlightAircraftDetailsProps): JSX.Element => {
+  const cardClassNames = useCardClassNames();
   const { data: photoData, isFetching } = useAircraftPhotoQuery(
     data?.airframeId ?? null,
   );
   const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
   return (
-    <div className="flex w-full justify-between gap-4">
+    <div
+      className={classNames(
+        'flex w-full justify-between gap-4',
+        cardClassNames,
+      )}
+    >
       <div className="flex flex-1 flex-col gap-2 overflow-hidden">
         <div className="truncate font-semibold">{data.aircraftType?.name}</div>
         <div className="flex w-full flex-col gap-1">

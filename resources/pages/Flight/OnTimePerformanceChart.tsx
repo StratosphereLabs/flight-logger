@@ -4,6 +4,7 @@ import { Tooltip } from 'stratosphere-ui';
 
 import { BAR_CHART_THEME } from '../../pages/Profile/components/Statistics/constants';
 import { trpc } from '../../utils/trpc';
+import { useCardClassNames } from './useCardClassNames';
 
 export interface OnTimePerformanceChartProps {
   flightId: string;
@@ -24,10 +25,16 @@ export const OnTimePerformanceChart = ({
   const { data, isFetching } = trpc.flights.getExtraFlightData.useQuery({
     flightId,
   });
+  const cardClassNames = useCardClassNames();
   return data?.onTimePerformance !== null &&
     data?.onTimePerformance !== undefined ? (
-    <div className="flex h-[200px] w-full min-w-[250px] flex-col items-center gap-1 font-semibold">
-      <div className="flex h-9 w-full items-center justify-between">
+    <div
+      className={classNames(
+        'flex min-h-[235px] w-full min-w-[250px] flex-col items-center gap-3 font-semibold',
+        cardClassNames,
+      )}
+    >
+      <div className="flex w-full flex-col gap-1">
         <div className="text-base">On-Time Performance</div>
         <div className="flex text-xs opacity-80">
           <span>{data.onTimePerformance.onTimePercent}% on-time</span>
