@@ -23,7 +23,7 @@ export const BAR_CHART_THEME = {
     },
     legend: {
       text: {
-        fill: 'oklch(from var(--color-base-content) l c h / 0.75)',
+        fill: 'oklch(from var(--color-base-content) l c h / 0.60)',
         fontFamily:
           'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
         fontWeight: 500,
