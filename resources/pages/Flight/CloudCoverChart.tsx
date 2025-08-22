@@ -16,11 +16,11 @@ export const CloudCoverChart = ({
 }: CloudCoverChartProps): JSX.Element => {
   const isDarkMode = useIsDarkMode();
   return (
-    <div className="h-[200px] w-full text-black">
+    <div className="h-[180px] w-full text-black">
       <ResponsiveLine
         theme={BAR_CHART_THEME}
         data={data.chartData.data}
-        margin={{ top: 20, right: 0, bottom: 20, left: 55 }}
+        margin={{ top: 20, right: 0, bottom: 5, left: 55 }}
         xScale={{
           type: 'linear',
           min: 0,

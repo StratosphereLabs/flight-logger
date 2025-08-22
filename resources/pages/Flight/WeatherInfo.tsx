@@ -22,79 +22,85 @@ export interface WeatherCardProps {
   data: NonNullable<
     FlightsRouterOutput['getExtraFlightData']['departureWeather']
   >;
+  timeZone: string;
 }
 
 export interface WeatherInfoProps {
   flightId: string;
 }
 
-export const WeatherCard = ({ data }: WeatherCardProps): JSX.Element => {
+export const WeatherCard = ({
+  data,
+  timeZone,
+}: WeatherCardProps): JSX.Element => {
   const cardClassNames = useCardClassNames();
   return (
-    <div className={classNames('flex flex-col gap-2', cardClassNames)}>
+    <div className={classNames('flex flex-col gap-4', cardClassNames)}>
       <div className="flex items-center justify-between">
         <CardTitle className="text-base">{data.airportId} Weather</CardTitle>
         <div className="text-xs opacity-75">
-          {new Date(data.obsTime).toLocaleString()}
+          {new Date(data.obsTime).toLocaleString(undefined, { timeZone })}
         </div>
       </div>
-      <div className="grid grid-cols-2">
-        <div className="flex flex-col gap-1 border-e-0 px-0 py-2">
+      <div className="grid grid-cols-6">
+        <div className="col-span-2 flex flex-col gap-1 py-1">
           <StatTitle className="text-sm font-medium">Temp</StatTitle>
-          <StatValue className="flex items-center text-2xl">
-            <TemperatureIcon className="text-primary/90 h-8" />
+          <StatValue className="flex items-center text-xl">
+            <TemperatureIcon className="text-primary/90 h-6" />
             <span className="text-primary/80">{data.temp}°C</span>
           </StatValue>
         </div>
-        <div className="flex flex-col gap-1 px-0 py-2">
+        <div className="col-span-2 flex flex-col gap-1 py-1">
           <StatTitle className="text-sm font-medium">Dewpoint</StatTitle>
-          <StatValue className="flex items-center gap-1 text-2xl">
-            <DewpointIcon className="text-secondary/90 h-8" />
+          <StatValue className="flex items-center gap-1 text-xl">
+            <DewpointIcon className="text-secondary/90 h-6" />
             <span className="text-secondary/80">{data.dewp}°C</span>
           </StatValue>
         </div>
-        <div className="flex flex-col gap-1 px-0 py-2">
+        <div className="col-span-2 flex flex-col gap-1 py-1">
           <StatTitle className="text-sm font-medium">Visibility</StatTitle>
-          <StatValue className="justi flex items-center gap-1 text-2xl">
-            <EyeIcon className="text-info/90 h-8" />
-            <span className="text-info/80">{data.visib} sm</span>
+          <StatValue className="flex items-center gap-1 text-xl">
+            <EyeIcon className="text-accent/90 h-6" />
+            <span className="text-accent/80">{data.visib} sm</span>
           </StatValue>
         </div>
-        <div className="flex flex-col gap-1 px-0 py-2">
+        <div className="col-span-3 flex flex-col gap-1 py-1">
           <StatTitle className="text-sm font-medium">Altimeter</StatTitle>
-          <StatValue className="flex items-center gap-1 text-2xl">
-            <BarometerIcon className="text-success/90 h-8" />
+          <StatValue className="flex items-center gap-1 text-xl">
+            <BarometerIcon className="text-success/90 h-6" />
             <span className="text-success/80">{data.altim} hPa</span>
           </StatValue>
         </div>
+        <div className="col-span-3 flex flex-col gap-1 py-1">
+          <StatTitle className="text-sm font-medium">Wind</StatTitle>
+          <StatValue className="flex items-center gap-1 text-xl">
+            <WindsockIcon className="text-info/90 h-6" />
+            <span className="text-info/80">
+              {data.wdir}° @ {data.wspd} kts
+            </span>
+          </StatValue>
+          {data.wgst > 0 && (
+            <StatDesc className="flex items-center">
+              <span className="font-medium">Gusts {data.wgst} kts</span>
+            </StatDesc>
+          )}
+        </div>
       </div>
-      <div className="flex flex-col gap-1 px-0 py-2">
-        <StatTitle className="text-sm font-medium">Wind</StatTitle>
-        <StatValue className="flex items-center gap-1 text-2xl">
-          <WindsockIcon className="text-accent/90 h-8" />
-          <span className="text-accent/80">
-            {data.wdir}° @ {data.wspd} kts
+      <div className="flex flex-col">
+        <div className="flex justify-between gap-3">
+          <span className="text-sm font-medium opacity-60">Clouds</span>
+          <span className="text-right font-mono text-sm">
+            {data.clouds
+              .map(
+                ({ cover, base }) => `${cover} ${base?.toLocaleString() ?? ''}`,
+              )
+              .join(' ')}
           </span>
-        </StatValue>
-        {data.wgst > 0 && (
-          <StatDesc className="flex items-center">
-            <span className="font-medium">Gusts {data.wgst} kts</span>
-          </StatDesc>
-        )}
+        </div>
+        <CloudCoverChart data={data} />
       </div>
-      <div className="flex justify-between gap-2">
-        <span className="text-sm font-medium opacity-75">Clouds</span>
-        <span className="font-mono text-sm">
-          {data.clouds
-            .map(
-              ({ cover, base }) => `${cover} ${base?.toLocaleString() ?? ''}`,
-            )
-            .join(' ')}
-        </span>
-      </div>
-      <CloudCoverChart data={data} />
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium opacity-75">METAR</span>
+        <span className="text-sm font-medium opacity-60">METAR</span>
         <span className="font-mono text-xs">{data.rawOb}</span>
       </div>
     </div>
@@ -104,10 +110,14 @@ export const WeatherCard = ({ data }: WeatherCardProps): JSX.Element => {
 export const WeatherInfo = ({
   flightId,
 }: WeatherInfoProps): JSX.Element | null => {
+  const { data: flightData } = trpc.flights.getFlight.useQuery({
+    id: flightId,
+  });
   const { data } = trpc.flights.getExtraFlightData.useQuery({
     flightId,
   });
   if (
+    flightData === undefined ||
     data === undefined ||
     (data.departureWeather === null && data.arrivalWeather === null)
   )
@@ -115,10 +125,16 @@ export const WeatherInfo = ({
   return (
     <div className="flex flex-col gap-3">
       {data.departureWeather !== null ? (
-        <WeatherCard data={data.departureWeather} />
+        <WeatherCard
+          data={data.departureWeather}
+          timeZone={flightData.departureAirport.timeZone}
+        />
       ) : null}
       {data.arrivalWeather !== null ? (
-        <WeatherCard data={data.arrivalWeather} />
+        <WeatherCard
+          data={data.arrivalWeather}
+          timeZone={flightData.arrivalAirport.timeZone}
+        />
       ) : null}
     </div>
   );
