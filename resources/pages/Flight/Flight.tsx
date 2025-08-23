@@ -494,8 +494,8 @@ export const Flight = (): JSX.Element | null => {
           >
             <FlightInfo flightId={flightId} />
             <OnTimePerformanceChart flightId={flightId} />
-            {isLoggedIn ? <FlightHistory flightId={flightId} /> : null}
             <WeatherInfo flightId={flightId} />
+            {isLoggedIn ? <FlightHistory flightId={flightId} /> : null}
             <FlightChangelogTable flightId={flightId} />
           </div>
         </div>
