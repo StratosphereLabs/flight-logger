@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type MouseEvent, useMemo } from 'react';
 import { ButtonArray, type ButtonOptions } from 'stratosphere-ui';
 
 import { useLoggedInUserQuery } from '../hooks';
@@ -37,7 +37,10 @@ export const ActionsCell = ({
               icon: EditIcon,
               key: 'edit',
               menuText: editMessage,
-              onClick: () => onEdit?.(),
+              onClick: ((e: MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onEdit?.();
+              }) as () => void,
               size: 'xs',
               soft: true,
             } as const,
@@ -50,7 +53,10 @@ export const ActionsCell = ({
               icon: TrashIcon,
               key: 'delete',
               menuText: deleteMessage,
-              onClick: () => onDelete?.(),
+              onClick: ((e: MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onDelete?.();
+              }) as () => void,
               size: 'xs',
               soft: true,
             } as const,
@@ -66,7 +72,10 @@ export const ActionsCell = ({
           icon: LinkIcon,
           key: 'copy-link',
           menuText: 'Copy Link',
-          onClick: () => onCopyLink?.(),
+          onClick: ((e: MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onCopyLink?.();
+          }) as () => void,
           size: 'xs',
           soft: true,
         },
@@ -75,7 +84,10 @@ export const ActionsCell = ({
           icon: ViewIcon,
           key: 'view',
           menuText: viewMessage,
-          onClick: () => onView?.(),
+          onClick: ((e: MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onView?.();
+          }) as () => void,
           size: 'xs',
           soft: true,
         },
@@ -85,6 +97,11 @@ export const ActionsCell = ({
       dropdownMenuProps={{
         anchor: 'bottom end',
         menuClassName: 'rounded-xl w-48 right-0 bg-base-200 z-50',
+        buttonProps: {
+          onClick: e => {
+            e.stopPropagation();
+          },
+        },
       }}
       withTooltips
     />

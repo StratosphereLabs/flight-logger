@@ -82,7 +82,7 @@
     "react-router-dom": "^6.29.0",
     "reflect-metadata": "^0.2.2",
     "resium": "^1.19.0-beta.1",
-    "stratosphere-ui": "^2.2.4",
+    "stratosphere-ui": "^2.2.5",
     "string-similarity": "^4.0.4",
     "tailwindcss": "^4.0.15",
     "vite-node": "^2.1.9",
