@@ -12,7 +12,12 @@ import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { type FlightPageNavigationState } from '../../pages';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { AppTheme, useThemeStore } from '../../stores';
-import { CARD_COLORS, CARD_COLORS_LOFI } from '../constants';
+import {
+  CARD_COLORS,
+  CARD_COLORS_HOVER,
+  CARD_COLORS_LOFI,
+  CARD_COLORS_LOFI_HOVER,
+} from '../constants';
 import { ActionsCell } from './ActionsCell';
 import { FlightTimesDisplay } from './FlightTimesDisplay';
 
@@ -74,6 +79,9 @@ export const UserFlightsTable = ({
                       href={row.original.airline.wiki ?? '#'}
                       target="_blank"
                       rel="noreferrer"
+                      onClick={e => {
+                        e.stopPropagation();
+                      }}
                     >
                       <img
                         alt={`${row.original.airline.name} Logo`}
@@ -213,6 +221,9 @@ export const UserFlightsTable = ({
                       ? `https://www.planespotters.net/hex/${row.original.airframe.icao24.toUpperCase()}`
                       : `https://www.flightaware.com/resources/registration/${row.original.tailNumber}`
                   }
+                  onClick={e => {
+                    e.stopPropagation();
+                  }}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -271,13 +282,19 @@ export const UserFlightsTable = ({
       getCoreRowModel={getCoreRowModel()}
       hideHeader
       highlightWhenSelected
+      onRowClick={row => {
+        if (window.innerWidth < 1280) navigate(`/flight/${row.original.id}`);
+      }}
       onRowSelectionChange={setRowSelection}
       rowClassName={row =>
         classNames(
-          'table-row',
+          'table-row hover:cursor-pointer xl:hover:cursor-auto',
           theme === AppTheme.LOFI
             ? CARD_COLORS_LOFI[row.original.arrivalDelayStatus]
             : CARD_COLORS[row.original.arrivalDelayStatus],
+          theme === AppTheme.LOFI
+            ? CARD_COLORS_LOFI_HOVER[row.original.arrivalDelayStatus]
+            : CARD_COLORS_HOVER[row.original.arrivalDelayStatus],
         )
       }
       size={size}
