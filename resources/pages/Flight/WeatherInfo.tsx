@@ -22,7 +22,7 @@ export interface WeatherCardProps {
   data: NonNullable<
     FlightsRouterOutput['getExtraFlightData']['departureWeather']
   >;
-  timeZone: string;
+  airport: FlightsRouterOutput['getFlight']['departureAirport'];
 }
 
 export interface WeatherInfoProps {
@@ -31,16 +31,21 @@ export interface WeatherInfoProps {
 
 export const WeatherCard = ({
   data,
-  timeZone,
+  airport,
 }: WeatherCardProps): JSX.Element => {
   const cardClassNames = useCardClassNames();
   return (
-    <div className={classNames('flex flex-col gap-4', cardClassNames)}>
-      <div className="flex items-center justify-between">
-        <CardTitle className="text-base">{data.airportId} Weather</CardTitle>
-        <div className="text-xs opacity-75">
-          {new Date(data.obsTime).toLocaleString(undefined, { timeZone })}
+    <div className={classNames('flex flex-col gap-3', cardClassNames)}>
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base">{airport.ident} Weather</CardTitle>
+          <div className="text-xs opacity-75">
+            {new Date(data.obsTime).toLocaleString(undefined, {
+              timeZone: airport.timeZone,
+            })}
+          </div>
         </div>
+        <div className="text-sm opacity-90">{airport.name}</div>
       </div>
       <div className="grid grid-cols-6">
         <div className="col-span-2 flex flex-col gap-1 py-1">
@@ -127,13 +132,13 @@ export const WeatherInfo = ({
       {data.departureWeather !== null ? (
         <WeatherCard
           data={data.departureWeather}
-          timeZone={flightData.departureAirport.timeZone}
+          airport={flightData.departureAirport}
         />
       ) : null}
       {data.arrivalWeather !== null ? (
         <WeatherCard
           data={data.arrivalWeather}
-          timeZone={flightData.arrivalAirport.timeZone}
+          airport={flightData.arrivalAirport}
         />
       ) : null}
     </div>

@@ -150,7 +150,7 @@ export const FlightInfo = ({
           <div className="flex justify-center text-sm italic opacity-80">
             {data.durationString} ({data.distance.toLocaleString()} miles)
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 md:gap-2">
             <div
               className={classNames(
                 'flex justify-center gap-3',
@@ -188,7 +188,7 @@ export const FlightInfo = ({
             {data.arrivalBaggage !== null ? (
               <div
                 className={classNames(
-                  'text-center text-sm font-semibold sm:text-base',
+                  'text-center text-sm font-semibold md:text-base',
                   TEXT_COLORS[data.arrivalDelayStatus],
                   [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
                     'brightness-90',
