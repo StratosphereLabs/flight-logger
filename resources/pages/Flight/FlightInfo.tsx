@@ -116,8 +116,7 @@ export const FlightInfo = ({
               className={classNames(
                 'flex flex-1 flex-wrap items-center justify-center gap-x-2',
                 TEXT_COLORS[data.departureDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.departureGate !== null ? (
@@ -133,8 +132,7 @@ export const FlightInfo = ({
               className={classNames(
                 'flex flex-1 flex-wrap items-center justify-center gap-x-2',
                 TEXT_COLORS[data.arrivalDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.arrivalGate !== null ? (
@@ -156,8 +154,7 @@ export const FlightInfo = ({
                 'flex justify-center gap-3',
                 data.delayStatus !== 'none' && 'font-semibold',
                 TEXT_COLORS[data.delayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               <span>
@@ -190,8 +187,7 @@ export const FlightInfo = ({
                 className={classNames(
                   'text-center text-sm font-semibold md:text-base',
                   TEXT_COLORS[data.arrivalDelayStatus],
-                  [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                    'brightness-90',
+                  [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
                 )}
               >
                 Baggage Claim {data.arrivalBaggage}

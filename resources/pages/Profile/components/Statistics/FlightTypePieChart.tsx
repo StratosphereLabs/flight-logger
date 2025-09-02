@@ -9,6 +9,7 @@ import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
+import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { type StatisticsFiltersData } from './StatisticsCard';
@@ -20,6 +21,7 @@ export const FlightTypePieChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
+  const { theme } = useThemeStore();
   const mode = useWatch<StatisticsFiltersData, 'flightTypeMode'>({
     name: 'flightTypeMode',
   });
@@ -115,7 +117,9 @@ export const FlightTypePieChart = ({
               margin={{ top: 25, right: 40, bottom: 25, left: 40 }}
               colors={[
                 'oklch(from var(--color-info) l c h / 0.5)',
-                'oklch(from var(--color-accent) l c h / 0.5)',
+                theme === AppTheme.ABYSS
+                  ? 'var(--color-accent)'
+                  : 'oklch(from var(--color-accent) l c h / 0.5)',
               ]}
               innerRadius={mode === 'flights' ? 0.5 : 0.2}
               padAngle={0.7}

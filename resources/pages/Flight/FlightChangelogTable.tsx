@@ -165,9 +165,8 @@ export const FlightChangelogTable = ({
                             <div
                               className={classNames(
                                 'text-error flex flex-1 gap-1',
-                                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(
-                                  theme,
-                                ) && 'brightness-90',
+                                [AppTheme.CYBERPUNK].includes(theme) &&
+                                  'brightness-90',
                               )}
                             >
                               {change.oldValue !== null ? '-' : ''}
@@ -180,9 +179,8 @@ export const FlightChangelogTable = ({
                             <div
                               className={classNames(
                                 'text-success flex flex-1 gap-1 font-semibold',
-                                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(
-                                  theme,
-                                ) && 'brightness-90',
+                                [AppTheme.CYBERPUNK].includes(theme) &&
+                                  'brightness-90',
                               )}
                             >
                               {change.newValue !== null ? '+' : ''}

@@ -25,7 +25,13 @@ import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfilePageNavigationState } from '../../pages';
 import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
-import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
+import {
+  AppTheme,
+  getIsLoggedIn,
+  useAuthStore,
+  useIsDarkMode,
+  useThemeStore,
+} from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
@@ -41,6 +47,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { logout } = useAuthStore();
   const { previousPageName } = useMainLayoutStore();
   const { isAddingFlight } = useAddFlightStore();
+  const { theme } = useThemeStore();
   const isDarkMode = useIsDarkMode();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
@@ -102,7 +109,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
       {
         id: 'home',
         children: 'Home',
-        className: 'text-white [--tab-bg:var(--color-primary)]',
+        className: classNames(
+          '[--tab-bg:var(--color-primary)]',
+          theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+        ),
         onClick: () => {
           navigate(tabsToPathsMap.home);
         },
@@ -112,7 +122,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             {
               id: 'profile',
               children: 'Profile',
-              className: 'text-white [--tab-bg:var(--color-primary)]',
+              className: classNames(
+                '[--tab-bg:var(--color-primary)]',
+                theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+              ),
               onClick: () => {
                 navigate(tabsToPathsMap.profile);
               },
@@ -120,7 +133,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             {
               id: 'users',
               children: 'Users',
-              className: 'text-white [--tab-bg:var(--color-primary)]',
+              className: classNames(
+                '[--tab-bg:var(--color-primary)]',
+                theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+              ),
               onClick: () => {
                 navigate(tabsToPathsMap.users);
               },
@@ -130,13 +146,16 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
       {
         id: 'data',
         children: 'Data',
-        className: 'text-white [--tab-bg:var(--color-primary)]',
+        className: classNames(
+          '[--tab-bg:var(--color-primary)]',
+          theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+        ),
         onClick: () => {
           navigate(tabsToPathsMap.data);
         },
       },
     ],
-    [isLoggedIn, navigate, tabsToPathsMap],
+    [isLoggedIn, navigate, tabsToPathsMap, theme],
   );
   return (
     <>

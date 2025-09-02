@@ -7,9 +7,7 @@ import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { FlightTimesDisplay } from '../../common/components';
 import {
   CARD_BORDER_COLORS,
-  CARD_BORDER_COLORS_LOFI,
   CARD_COLORS,
-  CARD_COLORS_LOFI,
   TEXT_COLORS,
 } from '../../common/constants';
 import { AppTheme, useThemeStore } from '../../stores';
@@ -30,12 +28,8 @@ export const FlightRow = ({
     <div
       className={classNames(
         'rounded-box flex flex-col items-center gap-2 border-2 p-2 transition-transform hover:scale-[1.01]',
-        theme === AppTheme.LOFI
-          ? CARD_COLORS_LOFI[flight.delayStatus]
-          : CARD_COLORS[flight.delayStatus],
-        theme === AppTheme.LOFI
-          ? CARD_BORDER_COLORS_LOFI[flight.delayStatus]
-          : CARD_BORDER_COLORS[flight.delayStatus],
+        CARD_COLORS[flight.delayStatus],
+        CARD_BORDER_COLORS[flight.delayStatus],
         className,
       )}
     >
@@ -176,8 +170,7 @@ export const FlightRow = ({
               'flex flex-col flex-nowrap items-end gap-x-1 text-right',
               flight.delayStatus !== 'none' && 'font-semibold',
               TEXT_COLORS[flight.delayStatus],
-              [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                'brightness-90',
+              [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
             )}
           >
             <span className="text-sm">{flight.flightStatusText}</span>

@@ -2,47 +2,36 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 export enum AppTheme {
-  BUSINESS = 'business',
+  ABYSS = 'abyss',
   CORPORATE = 'corporate',
   CYBERPUNK = 'cyberpunk',
-  DARK = 'dark',
   EMERALD = 'emerald',
-  LIGHT = 'light',
-  LOFI = 'lofi',
+  FANTASY = 'fantasy',
+  FOREST = 'forest',
   NIGHT = 'night',
-  NORD = 'nord',
-  SUNSET = 'sunset',
   SYNTHWAVE = 'synthwave',
-  WINTER = 'winter',
-  WIREFRAME = 'wireframe',
 }
 
 export const DARK_MODE_THEMES = [
-  AppTheme.DARK,
   AppTheme.NIGHT,
-  AppTheme.SUNSET,
+  AppTheme.FOREST,
   AppTheme.SYNTHWAVE,
+  AppTheme.ABYSS,
 ];
 
 interface ThemeState {
   theme: AppTheme;
   setTheme: (theme: AppTheme) => void;
-  toggleTheme: () => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
       theme: window.matchMedia?.('(prefers-color-scheme: dark)').matches
-        ? AppTheme.DARK
-        : AppTheme.LIGHT,
+        ? AppTheme.NIGHT
+        : AppTheme.CORPORATE,
       setTheme: (theme: AppTheme) => {
         set({ theme });
-      },
-      toggleTheme: () => {
-        set({
-          theme: get().theme === AppTheme.DARK ? AppTheme.LIGHT : AppTheme.DARK,
-        });
       },
     }),
     {

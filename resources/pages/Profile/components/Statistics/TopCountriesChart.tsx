@@ -18,6 +18,7 @@ import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
+import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { type StatisticsFiltersData } from './StatisticsCard';
@@ -29,6 +30,7 @@ export const TopCountriesChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams();
+  const { theme } = useThemeStore();
   const mode = useWatch<StatisticsFiltersData, 'countriesMode'>({
     name: 'countriesMode',
   });
@@ -106,7 +108,11 @@ export const TopCountriesChart = ({
       </div>
       <Stats className="h-24 w-full">
         <Stat className="flex items-center py-0">
-          <StatValue className="text-accent/80">
+          <StatValue
+            className={classNames(
+              theme === AppTheme.ABYSS ? 'text-accent' : 'text-accent/80',
+            )}
+          >
             {data?.topCountries.count}
           </StatValue>
           <StatTitle>Total Countries</StatTitle>
@@ -168,7 +174,11 @@ export const TopCountriesChart = ({
               margin={{
                 left: 65,
               }}
-              colors={['oklch(from var(--color-accent) l c h / 0.75)']}
+              colors={[
+                theme === AppTheme.ABYSS
+                  ? 'var(--color-accent)'
+                  : 'oklch(from var(--color-accent) l c h / 0.75)',
+              ]}
               tooltip={tooltipData => (
                 <Tooltip
                   className="translate-y-[-20px]"
