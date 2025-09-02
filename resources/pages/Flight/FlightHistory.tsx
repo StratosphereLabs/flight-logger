@@ -77,7 +77,7 @@ export const FlightHistory = ({
         Flight History
       </div>
       {data !== undefined ? (
-        <Form className="flex flex-col gap-4" methods={methods}>
+        <Form className="mx-[-4px] flex flex-col gap-4" methods={methods}>
           <FormRadio
             className="flex gap-4 text-sm opacity-80"
             name="user"
@@ -156,7 +156,7 @@ export const FlightHistory = ({
           <Loading />
         </div>
       ) : (
-        <div className="flex w-full flex-1 flex-col gap-2">
+        <div className="mx-[-4px] flex flex-1 flex-col gap-2">
           {flattenedData.map(flight => (
             <FlightHistoryRow key={flight.id} flight={flight} />
           ))}

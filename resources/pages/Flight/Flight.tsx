@@ -331,8 +331,8 @@ export const Flight = (): JSX.Element | null => {
                                 ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
                                 : null}
                             </span>
-                            <span>{currentSpeed}</span>
                             <span className="font-bold">{altChangeString}</span>
+                            <span>{currentSpeed}</span>
                           </span>
                         </div>
                       </TooltipContent>
