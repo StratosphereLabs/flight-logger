@@ -1,13 +1,14 @@
 @import 'tailwindcss';
 @plugin "daisyui" {
   themes:
-    light --default,
-    dark --prefersdark,
-    corporate,
+    corporate --default,
+    night --prefersdark,
+    emerald,
     synthwave,
-    lofi,
-    night,
-    cyberpunk;
+    fantasy,
+    abyss,
+    cyberpunk,
+    forest;
 }
 
 @config "../tailwind.config.js";

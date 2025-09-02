@@ -14,6 +14,7 @@ import {
   TemperatureIcon,
   WindsockIcon,
 } from '../../common/components';
+import { AppTheme, useThemeStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { CloudCoverChart } from './CloudCoverChart';
 import { useCardClassNames } from './useCardClassNames';
@@ -33,6 +34,7 @@ export const WeatherCard = ({
   data,
   airport,
 }: WeatherCardProps): JSX.Element => {
+  const { theme } = useThemeStore();
   const cardClassNames = useCardClassNames();
   return (
     <div className={classNames('flex flex-col gap-3', cardClassNames)}>
@@ -65,8 +67,19 @@ export const WeatherCard = ({
         <div className="col-span-2 flex flex-col gap-1 py-1">
           <StatTitle className="text-sm font-medium">Visibility</StatTitle>
           <StatValue className="flex items-center gap-1 text-xl">
-            <EyeIcon className="text-accent/90 h-6" />
-            <span className="text-accent/80">{data.visib} sm</span>
+            <EyeIcon
+              className={classNames(
+                'h-6',
+                theme === AppTheme.ABYSS ? 'text-accent' : 'text-accent/90',
+              )}
+            />
+            <span
+              className={classNames(
+                theme === AppTheme.ABYSS ? 'text-accent' : 'text-accent/80',
+              )}
+            >
+              {data.visib} sm
+            </span>
           </StatValue>
         </div>
         <div className="col-span-3 flex flex-col gap-1 py-1">

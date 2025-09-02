@@ -48,32 +48,11 @@ export const CARD_COLORS_HOVER: Record<FlightDelayStatus, string> = {
   canceled: 'hover:bg-error/25 xl:hover:bg-error/15',
 };
 
-export const CARD_COLORS_LOFI: Record<FlightDelayStatus, string> = {
-  none: 'bg-success/25',
-  moderate: 'bg-warning/25',
-  severe: 'bg-error/25',
-  canceled: 'bg-error/25',
-};
-
-export const CARD_COLORS_LOFI_HOVER: Record<FlightDelayStatus, string> = {
-  none: 'hover:bg-success/40 xl:hover:bg-success/25',
-  moderate: 'hover:bg-warning/40 xl:hover:bg-warning/25',
-  severe: 'hover:bg-error/40 xl:hover:bg-error/25',
-  canceled: 'hover:bg-error/40 xl:hover:bg-error/25',
-};
-
 export const CARD_BORDER_COLORS: Record<FlightDelayStatus, string> = {
   none: 'border-success/25',
   moderate: 'border-warning/50',
   severe: 'border-error/50',
   canceled: 'border-error/50',
-};
-
-export const CARD_BORDER_COLORS_LOFI: Record<FlightDelayStatus, string> = {
-  none: 'border-success/75',
-  moderate: 'border-warning/75',
-  severe: 'border-error/75',
-  canceled: 'border-error/75',
 };
 
 export const TOOLTIP_COLORS: Record<FlightDelayStatus, TooltipColor> = {

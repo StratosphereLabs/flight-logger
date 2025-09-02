@@ -19,9 +19,7 @@ import {
 } from '../../common/components';
 import {
   CARD_BORDER_COLORS,
-  CARD_BORDER_COLORS_LOFI,
   CARD_COLORS,
-  CARD_COLORS_LOFI,
   HIDE_SCROLLBAR_CLASSNAME,
   TOOLTIP_COLORS,
 } from '../../common/constants';
@@ -29,13 +27,7 @@ import { useWeatherRadarLayer } from '../../common/hooks';
 import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
 import { getAltChangeString } from '../../common/utils';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
-import {
-  AppTheme,
-  getIsLoggedIn,
-  useAuthStore,
-  useIsDarkMode,
-  useThemeStore,
-} from '../../stores';
+import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { DEFAULT_COORDINATES } from '../Home/constants';
@@ -65,7 +57,6 @@ export const Flight = (): JSX.Element | null => {
     { enabled: flightId !== undefined, refetchInterval: 5000 },
   );
   const { setPreviousPageName } = useMainLayoutStore();
-  const { theme } = useThemeStore();
   const { state } = useLocation() as {
     state: FlightPageNavigationState | null;
   };
@@ -370,12 +361,8 @@ export const Flight = (): JSX.Element | null => {
             <div
               className={classNames(
                 'flex justify-between gap-2 border-x-2 p-2',
-                theme === AppTheme.LOFI
-                  ? CARD_COLORS_LOFI[data.delayStatus]
-                  : CARD_COLORS[data.delayStatus],
-                theme === AppTheme.LOFI
-                  ? CARD_BORDER_COLORS_LOFI[data.delayStatus]
-                  : CARD_BORDER_COLORS[data.delayStatus],
+                CARD_COLORS[data.delayStatus],
+                CARD_BORDER_COLORS[data.delayStatus],
               )}
             >
               <div className="flex h-full w-[150px] flex-col gap-1 overflow-hidden">
@@ -480,16 +467,9 @@ export const Flight = (): JSX.Element | null => {
             className={classNames(
               'rounded-box pointer-events-auto flex flex-1 flex-col gap-3 overflow-y-scroll p-2 md:h-full',
               HIDE_SCROLLBAR_CLASSNAME,
+              data !== undefined && CARD_COLORS[data.delayStatus],
               data !== undefined &&
-                (theme === AppTheme.LOFI
-                  ? CARD_COLORS_LOFI[data.delayStatus]
-                  : CARD_COLORS[data.delayStatus]),
-              data !== undefined &&
-                `border-2 ${
-                  theme === AppTheme.LOFI
-                    ? CARD_BORDER_COLORS_LOFI[data.delayStatus]
-                    : CARD_BORDER_COLORS[data.delayStatus]
-                }`,
+                `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
             )}
           >
             <FlightInfo flightId={flightId} />

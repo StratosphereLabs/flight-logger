@@ -298,6 +298,15 @@ export const ColoredFireIcon = (
   </svg>
 );
 
+export const FantasyIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="m22 5l-.89 1.34c.54.36.89.97.89 1.66v3.5l-1.5.5l-1.54-2.46c-.13-.21-.46-.12-.46.13v3.58c0 .98-.39 1.86-1 2.53V22H15v-5h-.25c-.21 0-.42-.03-.62-.06l-4.68-.78l-.88 1.96l.97 3.88H6.96l-.92-3.7c-.07-.27-.04-.56.07-.8l.89-2a3.32 3.32 0 0 1-1.5-2.69c-.04.15-.06.37-.03.69c.03.44.14 1.09.07 1.81c-.04.72-.36 1.46-.78 1.95c-.44.49-.91.83-1.41 1.09l-.7-.7c.19-.47.38-.89.42-1.28c.06-.37-.01-.67-.12-.94l-.53-1.13c-.21-.51-.47-1.25-.42-2.12c.03-.85.5-1.96 1.39-2.57c.9-.61 1.87-.7 2.66-.53c.5.1 1.01.34 1.45.68c.37-.17.8-.26 1.25-.26h5.75V9c0-2.21 1.79-4 4-4L22 2l-1 3z"
+    ></path>
+  </svg>
+);
+
 export const FilterIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -313,12 +322,21 @@ export const FilterIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   </svg>
 );
 
-export const GemIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" {...props}>
+export const ForestIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
     <path
       fill="currentColor"
-      d="M3.1.7a.5.5 0 0 1 .4-.2h9a.5.5 0 0 1 .4.2l2.976 3.974c.149.185.156.45.01.644L8.4 15.3a.5.5 0 0 1-.8 0L.1 5.3a.5.5 0 0 1 0-.6l3-4zm11.386 3.785l-1.806-2.41l-.776 2.413l2.582-.003zm-3.633.004l.961-2.989H4.186l.963 2.995l5.704-.006zM5.47 5.495L8 13.366l2.532-7.876l-5.062.005zm-1.371-.999l-.78-2.422l-1.818 2.425l2.598-.003zM1.499 5.5l5.113 6.817l-2.192-6.82L1.5 5.5zm7.889 6.817l5.123-6.83l-2.928.002l-2.195 6.828z"
-    />
+      d="M16 12L9 2L2 12h1.86L0 18h7v4h4v-4h7l-3.86-6zm4.14 0H22L15 2l-2.39 3.41L17.92 13h-1.95l3.22 5H24zM13 19h4v3h-4z"
+    ></path>
+  </svg>
+);
+
+export const GemIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M16 9h3l-5 7m-4-7h4l-2 8M5 9h3l2 7m5-12h2l2 3h-3m-5-3h2l1 3h-4M7 4h2L8 7H5m1-5L2 8l10 14L22 8l-4-6z"
+    ></path>
   </svg>
 );
 

@@ -9,9 +9,7 @@ import {
 } from '../../../../common/components';
 import {
   CARD_BORDER_COLORS,
-  CARD_BORDER_COLORS_LOFI,
   CARD_COLORS,
-  CARD_COLORS_LOFI,
   PROGRESS_BAR_COLORS,
   TEXT_COLORS,
 } from '../../../../common/constants';
@@ -65,12 +63,8 @@ export const ActiveFlightCard = (): JSX.Element | null => {
       <Card
         className={classNames(
           'border-2 shadow-xs',
-          theme === AppTheme.LOFI
-            ? CARD_COLORS_LOFI[data.delayStatus]
-            : CARD_COLORS[data.delayStatus],
-          theme === AppTheme.LOFI
-            ? CARD_BORDER_COLORS_LOFI[data.delayStatus]
-            : CARD_BORDER_COLORS[data.delayStatus],
+          CARD_COLORS[data.delayStatus],
+          CARD_BORDER_COLORS[data.delayStatus],
         )}
         border
       >
@@ -109,8 +103,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                     'flex text-xs sm:text-sm',
                     data.delayStatus !== 'none' && 'font-semibold',
                     TEXT_COLORS[data.delayStatus],
-                    [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                      'brightness-90',
+                    [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
                   )}
                 >
                   {data.delayStatus === 'canceled'
@@ -198,7 +191,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                         className={classNames(
                           'absolute right-0 h-9 w-9',
                           TEXT_COLORS[data.delayStatus],
-                          [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
+                          [AppTheme.CYBERPUNK].includes(theme) &&
                             'brightness-90',
                         )}
                         style={{
@@ -251,8 +244,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   className={classNames(
                     'flex flex-1 flex-wrap items-center gap-x-2',
                     TEXT_COLORS[data.departureDelayStatus],
-                    [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                      'brightness-90',
+                    [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
                   )}
                 >
                   {data.departureGate !== null ? (
@@ -290,8 +282,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                     className={classNames(
                       'text-sm font-semibold sm:text-base',
                       TEXT_COLORS[data.arrivalDelayStatus],
-                      [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                        'brightness-90',
+                      [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
                     )}
                   >
                     Baggage Claim {data.arrivalBaggage}
@@ -325,8 +316,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
                   className={classNames(
                     'flex flex-1 flex-wrap items-center justify-end gap-x-2',
                     TEXT_COLORS[data.arrivalDelayStatus],
-                    [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                      'brightness-90',
+                    [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
                   )}
                 >
                   {data.arrivalGate !== null ? (

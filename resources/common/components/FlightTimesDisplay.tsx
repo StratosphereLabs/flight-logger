@@ -52,8 +52,7 @@ export const FlightTimesDisplay = ({
           className={classNames(
             'text-sm',
             TEXT_COLORS[data.delayStatus],
-            [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-              'brightness-90',
+            [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
           )}
         >
           {data.actualLocal}

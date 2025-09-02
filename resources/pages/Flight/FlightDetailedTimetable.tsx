@@ -43,8 +43,7 @@ export const FlightDetailedTimetable = ({
               className={classNames(
                 'relative text-right text-sm font-semibold',
                 TEXT_COLORS[data.departureDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.outTimeActualLocal !== null &&
@@ -72,8 +71,7 @@ export const FlightDetailedTimetable = ({
               className={classNames(
                 'relative text-right text-sm font-semibold',
                 TEXT_COLORS[data.takeoffDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.offTimeActualLocal !== null &&
@@ -101,8 +99,7 @@ export const FlightDetailedTimetable = ({
               className={classNames(
                 'relative text-right text-sm font-semibold',
                 TEXT_COLORS[data.landingDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.onTimeActualLocal !== null &&
@@ -130,8 +127,7 @@ export const FlightDetailedTimetable = ({
               className={classNames(
                 'relative text-right text-sm font-semibold',
                 TEXT_COLORS[data.arrivalDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.inTimeActualLocal !== null &&
@@ -165,8 +161,7 @@ export const FlightDetailedTimetable = ({
               className={classNames(
                 'text-right text-sm font-semibold',
                 TEXT_COLORS[data.flightDurationDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.flightDurationActualString}
@@ -181,8 +176,7 @@ export const FlightDetailedTimetable = ({
               className={classNames(
                 'text-right text-sm font-semibold',
                 TEXT_COLORS[data.taxiDurationDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.taxiDurationActualString}
@@ -197,8 +191,7 @@ export const FlightDetailedTimetable = ({
               className={classNames(
                 'text-right text-sm font-semibold',
                 TEXT_COLORS[data.durationDelayStatus],
-                [AppTheme.LOFI, AppTheme.CYBERPUNK].includes(theme) &&
-                  'brightness-90',
+                [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
               )}
             >
               {data.durationActualString}

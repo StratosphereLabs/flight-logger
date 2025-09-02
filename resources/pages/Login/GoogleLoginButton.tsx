@@ -3,7 +3,7 @@ import { useAlertMessages } from 'stratosphere-ui';
 
 import { GOOGLE_CLIENT_ID } from '../../common/constants';
 import { useGoogleLoginMutation } from '../../common/hooks';
-import { AppTheme, useThemeStore } from '../../stores';
+import { useIsDarkMode } from '../../stores';
 
 export interface GoogleLoginButtonProps {
   width: string;
@@ -13,7 +13,7 @@ export const GoogleLoginButton = ({
   width,
 }: GoogleLoginButtonProps): JSX.Element => {
   const { addAlertMessages } = useAlertMessages();
-  const { theme } = useThemeStore();
+  const isDarkMode = useIsDarkMode();
   const { mutate } = useGoogleLoginMutation();
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
@@ -32,7 +32,7 @@ export const GoogleLoginButton = ({
         useOneTap
         shape="pill"
         width={width}
-        theme={theme === AppTheme.DARK ? 'filled_black' : undefined}
+        theme={isDarkMode ? 'filled_black' : undefined}
       />
     </GoogleOAuthProvider>
   );

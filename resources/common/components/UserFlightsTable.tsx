@@ -11,13 +11,7 @@ import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { type FlightPageNavigationState } from '../../pages';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
-import { AppTheme, useThemeStore } from '../../stores';
-import {
-  CARD_COLORS,
-  CARD_COLORS_HOVER,
-  CARD_COLORS_LOFI,
-  CARD_COLORS_LOFI_HOVER,
-} from '../constants';
+import { CARD_COLORS, CARD_COLORS_HOVER } from '../constants';
 import { ActionsCell } from './ActionsCell';
 import { FlightTimesDisplay } from './FlightTimesDisplay';
 
@@ -59,7 +53,6 @@ export const UserFlightsTable = ({
     setIsEditDialogOpen,
     setRowSelection,
   } = useFlightsPageStore();
-  const { theme } = useThemeStore();
   return (
     <Table
       className={classNames('table-fixed', className)}
@@ -289,12 +282,8 @@ export const UserFlightsTable = ({
       rowClassName={row =>
         classNames(
           'table-row hover:cursor-pointer xl:hover:cursor-auto',
-          theme === AppTheme.LOFI
-            ? CARD_COLORS_LOFI[row.original.arrivalDelayStatus]
-            : CARD_COLORS[row.original.arrivalDelayStatus],
-          theme === AppTheme.LOFI
-            ? CARD_COLORS_LOFI_HOVER[row.original.arrivalDelayStatus]
-            : CARD_COLORS_HOVER[row.original.arrivalDelayStatus],
+          CARD_COLORS[row.original.arrivalDelayStatus],
+          CARD_COLORS_HOVER[row.original.arrivalDelayStatus],
         )
       }
       size={size}

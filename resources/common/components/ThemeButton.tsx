@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error */
 import { DropdownMenu } from 'stratosphere-ui';
 
 import { AppTheme, useThemeStore } from '../../stores';
 import {
-  BusinessIcon,
   CyberpunkIcon,
   DarkModeIcon,
   DarkModeOutlineIcon,
+  FantasyIcon,
+  ForestIcon,
+  GemIcon,
   LightModeIcon,
-  MusicIcon,
   SunsetIcon,
   ThemeIcon,
 } from './Icons';
@@ -30,9 +32,9 @@ export const ThemeButton = (): JSX.Element => {
       }}
       items={[
         {
-          id: AppTheme.LIGHT,
+          id: AppTheme.CORPORATE,
           onClick: () => {
-            setTheme(AppTheme.LIGHT);
+            setTheme(AppTheme.CORPORATE);
           },
           children: (
             <>
@@ -40,11 +42,15 @@ export const ThemeButton = (): JSX.Element => {
               Light
             </>
           ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'corporate',
+          },
         },
         {
-          id: AppTheme.DARK,
+          id: AppTheme.NIGHT,
           onClick: () => {
-            setTheme(AppTheme.DARK);
+            setTheme(AppTheme.NIGHT);
           },
           children: (
             <>
@@ -52,18 +58,26 @@ export const ThemeButton = (): JSX.Element => {
               Dark
             </>
           ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'night',
+          },
         },
         {
-          id: AppTheme.CORPORATE,
+          id: AppTheme.EMERALD,
           onClick: () => {
-            setTheme(AppTheme.CORPORATE);
+            setTheme(AppTheme.EMERALD);
           },
           children: (
             <>
-              <BusinessIcon className="h-5 w-5" />
-              Corporate
+              <GemIcon className="h-5 w-5" />
+              Emerald
             </>
           ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'emerald',
+          },
         },
         {
           id: AppTheme.SYNTHWAVE,
@@ -76,30 +90,42 @@ export const ThemeButton = (): JSX.Element => {
               Synthwave
             </>
           ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'synthwave',
+          },
         },
         {
-          id: AppTheme.LOFI,
+          id: AppTheme.FANTASY,
           onClick: () => {
-            setTheme(AppTheme.LOFI);
+            setTheme(AppTheme.FANTASY);
           },
           children: (
             <>
-              <MusicIcon className="h-5 w-5" />
-              Lofi
+              <FantasyIcon className="h-5 w-5" />
+              Fantasy
             </>
           ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'fantasy',
+          },
         },
         {
-          id: AppTheme.NIGHT,
+          id: AppTheme.FOREST,
           onClick: () => {
-            setTheme(AppTheme.NIGHT);
+            setTheme(AppTheme.FOREST);
           },
           children: (
             <>
-              <DarkModeOutlineIcon className="h-5 w-5" />
-              Night
+              <ForestIcon className="h-5 w-5" />
+              Forest
             </>
           ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'forest',
+          },
         },
         {
           id: AppTheme.CYBERPUNK,
@@ -112,6 +138,26 @@ export const ThemeButton = (): JSX.Element => {
               Cyberpunk
             </>
           ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'cyberpunk',
+          },
+        },
+        {
+          id: AppTheme.ABYSS,
+          onClick: () => {
+            setTheme(AppTheme.ABYSS);
+          },
+          children: (
+            <>
+              <DarkModeOutlineIcon className="h-5 w-5" />
+              Abyss
+            </>
+          ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'abyss',
+          },
         },
       ]}
       menuClassName="w-48 bg-base-200 z-50"
