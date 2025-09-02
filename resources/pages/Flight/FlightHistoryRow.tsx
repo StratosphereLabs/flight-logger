@@ -41,7 +41,7 @@ export const FlightHistoryRow = ({
         )}
       >
         <div
-          className="flex w-full items-center gap-3 text-sm hover:cursor-pointer"
+          className="flex w-full items-center gap-2 text-sm hover:cursor-pointer"
           onClick={event => {
             if (
               (event.target as HTMLElement).tagName !== 'A' &&
@@ -56,7 +56,7 @@ export const FlightHistoryRow = ({
           }}
           {...props}
         >
-          <div className="flex h-full w-[100px] flex-col gap-2 overflow-hidden">
+          <div className="flex h-full w-[102px] flex-col gap-2 overflow-hidden">
             <div className="flex flex-1 flex-col gap-x-4 gap-y-1">
               <div className="flex h-[20px] w-[100px]">
                 {flight.airline?.logo !== null &&
@@ -124,14 +124,14 @@ export const FlightHistoryRow = ({
               </Link>
             </div>
           </div>
-          <div className="flex flex-6 gap-2">
+          <div className="flex flex-6 gap-1">
             <div className="flex w-0 flex-1 flex-col justify-start">
               <div className="flex flex-col gap-x-3">
                 <div className="font-mono text-2xl font-bold">
                   {flight.departureAirport.iata}
                 </div>
                 <span className="flex-1 truncate text-sm">
-                  {flight.departureMunicipalityText}
+                  {flight.departureAirport.municipality}
                 </span>
                 <FlightTimesDisplay
                   data={{
@@ -162,7 +162,7 @@ export const FlightHistoryRow = ({
                   ) : null}
                 </div>
                 <div className="w-full truncate text-sm">
-                  {flight.arrivalMunicipalityText}
+                  {flight.arrivalAirport.municipality}
                 </div>
                 <FlightTimesDisplay
                   data={{
