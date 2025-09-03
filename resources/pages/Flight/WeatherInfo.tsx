@@ -69,13 +69,14 @@ export const WeatherCard = ({
           <StatValue className="flex items-center gap-1 text-xl">
             <EyeIcon
               className={classNames(
-                'h-6',
-                theme === AppTheme.ABYSS ? 'text-accent' : 'text-accent/90',
+                'text-accent/90 h-6',
+                theme === AppTheme.ABYSS && 'brightness-200',
               )}
             />
             <span
               className={classNames(
-                theme === AppTheme.ABYSS ? 'text-accent' : 'text-accent/80',
+                'text-accent/80',
+                theme === AppTheme.ABYSS && 'brightness-200',
               )}
             >
               {data.visib} sm
