@@ -15,11 +15,13 @@ import { type FlightPageNavigationState } from '../Flight';
 
 export interface FlightHistoryRowProps extends HTMLProps<HTMLDivElement> {
   flight: FlightsRouterOutput['getFlightHistory']['results'][number];
+  previousPageName?: string;
 }
 
 export const FlightHistoryRow = ({
   className,
   flight,
+  previousPageName,
   ...props
 }: FlightHistoryRowProps): JSX.Element => {
   const navigate = useNavigate();
@@ -43,7 +45,7 @@ export const FlightHistoryRow = ({
             ) {
               navigate(`/flight/${flight.id}`, {
                 state: {
-                  previousPageName: 'Home',
+                  previousPageName: previousPageName ?? 'Home',
                 } as const as FlightPageNavigationState,
               });
             }

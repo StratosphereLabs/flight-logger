@@ -276,7 +276,13 @@ export const UserFlightsTable = ({
       hideHeader
       highlightWhenSelected
       onRowClick={row => {
-        if (window.innerWidth < 1280) navigate(`/flight/${row.original.id}`);
+        if (window.innerWidth < 1280)
+          navigate(`/flight/${row.original.id}`, {
+            state: {
+              previousPageName:
+                username !== undefined ? `${username}'s Flights` : 'Flights',
+            } as const as FlightPageNavigationState,
+          });
       }}
       onRowSelectionChange={setRowSelection}
       rowClassName={row =>
