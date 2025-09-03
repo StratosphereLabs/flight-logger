@@ -1,10 +1,11 @@
 import type { AircraftType, Airline, Airport } from '@prisma/client';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, Table } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
+import { type FlightPageNavigationState } from '../../../Flight';
 
 export interface FlightsTableProps {
   data: Array<FlightsRouterOutput['getUserFlightsBasic']['results'][number]>;
@@ -15,6 +16,7 @@ export const FlightsTable = ({
   data,
   isLoading,
 }: FlightsTableProps): JSX.Element => {
+  const { username } = useParams();
   const navigate = useNavigate();
   return (
     <div className="flex max-w-fit flex-1 flex-col">
@@ -155,7 +157,12 @@ export const FlightsTable = ({
         getCoreRowModel={getCoreRowModel()}
         isLoading={isLoading}
         onRowClick={row => {
-          navigate(`/flight/${row.original.id}`);
+          navigate(`/flight/${row.original.id}`, {
+            state: {
+              previousPageName:
+                username !== undefined ? `${username}'s Profile` : 'Profile',
+            } as const as FlightPageNavigationState,
+          });
         }}
         rowClassName="hover:opacity-75 transition-opacity hover:cursor-pointer"
       />

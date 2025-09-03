@@ -158,7 +158,11 @@ export const FlightHistory = ({
       ) : (
         <div className="mx-[-4px] flex flex-1 flex-col gap-2">
           {flattenedData.map(flight => (
-            <FlightHistoryRow key={flight.id} flight={flight} />
+            <FlightHistoryRow
+              key={flight.id}
+              flight={flight}
+              previousPageName={`${flightData?.flightNumberString} ${flightData?.outDateISO}`}
+            />
           ))}
         </div>
       )}
