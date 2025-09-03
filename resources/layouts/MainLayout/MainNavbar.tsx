@@ -95,6 +95,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     }),
     [username],
   );
+  const currentTab = pathsToTabsMap[pathname];
   const tabsToPathsMap: Record<string, string> = useMemo(
     () => ({
       home: '/',
@@ -112,6 +113,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         className: classNames(
           '[--tab-bg:var(--color-primary)]',
           theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+          currentTab === 'home' &&
+            (theme === AppTheme.ABYSS
+              ? 'hover:text-base-100'
+              : 'hover:text-white'),
         ),
         onClick: () => {
           navigate(tabsToPathsMap.home);
@@ -125,6 +130,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className: classNames(
                 '[--tab-bg:var(--color-primary)]',
                 theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+                currentTab === 'profile' &&
+                  (theme === AppTheme.ABYSS
+                    ? 'hover:text-base-100'
+                    : 'hover:text-white'),
               ),
               onClick: () => {
                 navigate(tabsToPathsMap.profile);
@@ -136,6 +145,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className: classNames(
                 '[--tab-bg:var(--color-primary)]',
                 theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+                currentTab === 'users' &&
+                  (theme === AppTheme.ABYSS
+                    ? 'hover:text-base-100'
+                    : 'hover:text-white'),
               ),
               onClick: () => {
                 navigate(tabsToPathsMap.users);
@@ -149,13 +162,17 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         className: classNames(
           '[--tab-bg:var(--color-primary)]',
           theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
+          currentTab === 'data' &&
+            (theme === AppTheme.ABYSS
+              ? 'hover:text-base-100'
+              : 'hover:text-white'),
         ),
         onClick: () => {
           navigate(tabsToPathsMap.data);
         },
       },
     ],
-    [isLoggedIn, navigate, tabsToPathsMap, theme],
+    [currentTab, isLoggedIn, navigate, tabsToPathsMap, theme],
   );
   return (
     <>
@@ -210,7 +227,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   type="button"
                   className={classNames(
                     'tab',
-                    pathsToTabsMap[pathname] === id && 'tab-active',
+                    currentTab === id && 'tab-active',
                     className,
                   )}
                   {...tab}

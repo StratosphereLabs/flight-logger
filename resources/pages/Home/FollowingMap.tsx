@@ -106,6 +106,10 @@ export const FollowingMap = (): JSX.Element => {
   useEffect(() => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint]);
+  const flightIds = useMemo(
+    () => data?.flights.map(({ id }) => id).join(',') ?? '',
+    [data?.flights],
+  );
   useEffect(() => {
     if (
       map !== null &&
@@ -143,7 +147,8 @@ export const FollowingMap = (): JSX.Element => {
         });
       }
     }
-  }, [data, map, selectedAirportId, selectedFlightId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flightIds, map, selectedAirportId, selectedFlightId]);
   useEffect(() => {
     const listener: (this: Window, ev: KeyboardEvent) => void = event => {
       if (event.key === 'Escape') {
