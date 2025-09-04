@@ -119,7 +119,9 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               : 'hover:text-white'),
         ),
         onClick: () => {
-          navigate(tabsToPathsMap.home);
+          if (currentTab !== 'home') {
+            navigate(tabsToPathsMap.home);
+          }
         },
       },
       ...(isLoggedIn
@@ -136,7 +138,9 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     : 'hover:text-white'),
               ),
               onClick: () => {
-                navigate(tabsToPathsMap.profile);
+                if (currentTab !== 'profile') {
+                  navigate(tabsToPathsMap.profile);
+                }
               },
             },
             {
@@ -151,7 +155,9 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     : 'hover:text-white'),
               ),
               onClick: () => {
-                navigate(tabsToPathsMap.users);
+                if (currentTab !== 'users') {
+                  navigate(tabsToPathsMap.users);
+                }
               },
             },
           ]
@@ -168,7 +174,9 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               : 'hover:text-white'),
         ),
         onClick: () => {
-          navigate(tabsToPathsMap.data);
+          if (currentTab !== 'data') {
+            navigate(tabsToPathsMap.data);
+          }
         },
       },
     ],
