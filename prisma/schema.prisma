@@ -111,9 +111,9 @@ model Flight {
   callsign           String?
   aircraftTypeId     String?
   tailNumber         String?
-  departureWeatherId Int?
-  arrivalWeatherId   Int?
-  diversionWeatherId Int?
+  departureWeatherId String?
+  arrivalWeatherId   String?
+  diversionWeatherId String?
   class              FlightClass?
   seatNumber         String?
   seatPosition       SeatPosition?
@@ -327,7 +327,7 @@ model Registration {
 }
 
 model WeatherReport {
-  id                Int               @id
+  id                String            @id
   airportId         String
   airport           Airport           @relation(fields: [airportId], references: [id])
   obsTime           DateTime
