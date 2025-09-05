@@ -8,7 +8,7 @@ import type { FlightWithData } from './types';
 const getUpdateObject = (
   data: AviationWeatherReport,
 ): Prisma.WeatherReportCreateInput => ({
-  id: data.metar_id,
+  id: `${data.icaoId}_${data.obsTime}`,
   airport: {
     connect: {
       id: data.icaoId,
@@ -19,11 +19,11 @@ const getUpdateObject = (
   dewp: data.dewp,
   wdir: data.wdir.toString(),
   wspd: data.wspd,
-  wgst: data.wgst ?? 0,
+  wgst: 0,
   visib: data.visib.toString(),
   altim: data.altim,
-  wxString: data.wxString,
-  vertVis: data.vertVis,
+  wxString: null,
+  vertVis: null,
   rawOb: data.rawOb,
   clouds: data.clouds,
 });
@@ -74,7 +74,7 @@ export const updateFlightWeatherReports = async (
               ? {
                   connectOrCreate: {
                     where: {
-                      id: departureWeather.metar_id,
+                      id: `${departureWeather.icaoId}_${departureWeather.obsTime}`,
                     },
                     create: getUpdateObject(departureWeather),
                   },
@@ -85,7 +85,7 @@ export const updateFlightWeatherReports = async (
               ? {
                   connectOrCreate: {
                     where: {
-                      id: arrivalWeather.metar_id,
+                      id: `${arrivalWeather.icaoId}_${arrivalWeather.obsTime}`,
                     },
                     create: getUpdateObject(arrivalWeather),
                   },
@@ -96,7 +96,7 @@ export const updateFlightWeatherReports = async (
               ? {
                   connectOrCreate: {
                     where: {
-                      id: diversionWeather.metar_id,
+                      id: `${diversionWeather.icaoId}_${diversionWeather.obsTime}`,
                     },
                     create: getUpdateObject(diversionWeather),
                   },

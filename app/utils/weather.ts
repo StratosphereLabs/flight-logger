@@ -12,7 +12,6 @@ export interface WeatherReportCloudCoverItem {
 }
 
 export interface AviationWeatherReport {
-  metar_id: number;
   icaoId: string;
   receiptTime: string;
   obsTime: number;
@@ -21,32 +20,22 @@ export interface AviationWeatherReport {
   dewp: number;
   wdir: string | number;
   wspd: number;
-  wgst: number | null;
   visib: string | number;
   altim: number;
   slp: number | null;
   qcField: number;
-  wxString: string | null;
-  presTend: null;
+  presTend: number | null;
   maxT: null;
   minT: null;
-  maxT24: null;
-  minT24: null;
-  precip: null;
-  pcp3hr: null;
-  pcp6hr: null;
-  pcp24hr: null;
-  snow: null;
-  vertVis: number | null;
   metarType: string;
   rawOb: string;
-  mostRecent: number;
   lat: number;
   lon: number;
   elev: number;
-  prior: number;
   name: string;
+  cover: string | null;
   clouds: WeatherReportCloudCoverItem[];
+  fltCat: string;
 }
 
 export interface WeatherReportData extends Omit<WeatherReport, 'clouds'> {
