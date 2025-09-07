@@ -79,20 +79,21 @@ export const ThemeButton = (): JSX.Element => {
             'data-theme': 'emerald',
           },
         },
+
         {
-          id: AppTheme.SYNTHWAVE,
+          id: AppTheme.FOREST,
           onClick: () => {
-            setTheme(AppTheme.SYNTHWAVE);
+            setTheme(AppTheme.FOREST);
           },
           children: (
             <>
-              <SunsetIcon className="h-5 w-5" />
-              Synthwave
+              <ForestIcon className="h-5 w-5" />
+              Forest
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'synthwave',
+            'data-theme': 'forest',
           },
         },
         {
@@ -112,19 +113,19 @@ export const ThemeButton = (): JSX.Element => {
           },
         },
         {
-          id: AppTheme.FOREST,
+          id: AppTheme.SYNTHWAVE,
           onClick: () => {
-            setTheme(AppTheme.FOREST);
+            setTheme(AppTheme.SYNTHWAVE);
           },
           children: (
             <>
-              <ForestIcon className="h-5 w-5" />
-              Forest
+              <SunsetIcon className="h-5 w-5" />
+              Synthwave
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'forest',
+            'data-theme': 'synthwave',
           },
         },
         {

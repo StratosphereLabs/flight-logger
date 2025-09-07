@@ -1,5 +1,5 @@
 import { TRPCError, type inferRouterOutputs } from '@trpc/server';
-import { format } from 'date-fns';
+import { add, format, sub } from 'date-fns';
 
 import { DATE_FORMAT_MONTH } from '../constants';
 import { prisma } from '../db';
@@ -78,8 +78,23 @@ export const usersRouter = router({
     .use(verifyAuthenticated)
     .input(getUsersSchema)
     .query(async ({ ctx, input }) => {
+      const flight =
+        input.withoutFlightId !== undefined
+          ? await prisma.flight.findUnique({
+              where: {
+                id: input.withoutFlightId,
+              },
+              select: {
+                outTime: true,
+                airlineId: true,
+                flightNumber: true,
+                departureAirportId: true,
+                arrivalAirportId: true,
+              },
+            })
+          : null;
       const results = await prisma.user.findMany({
-        take: 5,
+        take: input.max,
         where: {
           OR: [
             {
@@ -117,6 +132,21 @@ export const usersRouter = router({
                   },
                 }
               : undefined,
+          ...(input.withoutFlightId !== undefined &&
+            flight !== null && {
+              flights: {
+                none: {
+                  outTime: {
+                    gt: sub(flight.outTime, { hours: 8 }),
+                    lt: add(flight.outTime, { hours: 8 }),
+                  },
+                  airlineId: flight.airlineId,
+                  flightNumber: flight.flightNumber,
+                  departureAirportId: flight.departureAirportId,
+                  arrivalAirportId: flight.arrivalAirportId,
+                },
+              },
+            }),
         },
         orderBy: {
           flights: {
