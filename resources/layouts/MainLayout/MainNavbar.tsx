@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
+import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -52,7 +53,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
-  const { username } = useParams();
+  const { username, flightId } = useParams();
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
   const { data, isFetching } = useLoggedInUserQuery(userData => {
     if (userData.pushNotifications && messaging !== undefined) {
@@ -392,6 +393,16 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               setIsLogoutDialogOpen(false);
               await utils.users.getUser.cancel();
               await utils.users.getUser.invalidate({ username: undefined });
+              if (flightId !== undefined) {
+                utils.flights.getFlight.setData(
+                  { id: flightId },
+                  previousData => ({
+                    ..._.omit(previousData, 'id'),
+                    id: flightId,
+                    otherTravelers: [],
+                  }),
+                );
+              }
             },
             soft: true,
           },

@@ -133,6 +133,14 @@ export const editFlightSchema = addFlightSchema.extend({
   id: z.string().uuid('Must be a valid UUID'),
 });
 
+export const addTravelersFormSchema = z.object({
+  usernames: z.array(z.string()).min(1, 'Required'),
+});
+
+export const addTravelersSchema = addTravelersFormSchema.extend({
+  flightId: z.string().uuid(),
+});
+
 export type GetProfileFiltersRequest = z.infer<typeof profileFiltersSchema>;
 
 export type GetUserFlightsRequest = z.infer<typeof getUserFlightsSchema>;
@@ -156,3 +164,5 @@ export type GetFlightRequest = z.infer<typeof getFlightSchema>;
 export type AddFlightRequest = z.infer<typeof addFlightSchema>;
 
 export type EditFlightRequest = z.infer<typeof editFlightSchema>;
+
+export type AddTravelersFormData = z.infer<typeof addTravelersFormSchema>;

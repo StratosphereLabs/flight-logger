@@ -1,12 +1,24 @@
 import classNames from 'classnames';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Link, Loading } from 'stratosphere-ui';
+import { Avatar, Button, Link, Loading } from 'stratosphere-ui';
 
-import { FlightTimesDisplay, RightArrowIcon } from '../../common/components';
+import {
+  FlightTimesDisplay,
+  RightArrowIcon,
+  UserPlusIcon,
+} from '../../common/components';
 import { TEXT_COLORS } from '../../common/constants';
-import { AppTheme, useThemeStore } from '../../stores';
+import { useProfileUserQuery } from '../../common/hooks';
+import {
+  AppTheme,
+  getIsLoggedIn,
+  useAuthStore,
+  useThemeStore,
+} from '../../stores';
 import { trpc } from '../../utils/trpc';
+import { AddTravelersModal } from './AddTravelersModal';
 import { FlightAircraftDetails } from './FlightAircraftDetails';
 import { FlightDetailedTimetable } from './FlightDetailedTimetable';
 
@@ -19,6 +31,9 @@ export const FlightInfo = ({
 }: FlightInfoProps): JSX.Element | null => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
+  const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
+  const { data: userData } = useProfileUserQuery();
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery({ id: flightId });
   if (data === undefined) {
     return (
@@ -29,7 +44,7 @@ export const FlightInfo = ({
   }
   return (
     <div className="flex flex-col gap-3">
-      <div className="mb-2 flex flex-col items-center gap-3 p-1">
+      <div className="mb-2 flex flex-col items-center gap-2 p-1">
         <div className="flex gap-2 md:flex-col">
           {typeof data.airline?.logo === 'string' ? (
             <div className="flex w-[120px] items-center justify-center md:w-[200px]">
@@ -49,23 +64,60 @@ export const FlightInfo = ({
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 overflow-hidden">
-          <Avatar
-            alt={data.user.username}
-            src={data.user.avatar}
-            shapeClassName="w-6 h-6 rounded-full"
-          />
-          <Link
-            hover
-            onClick={() => {
-              navigate(`/user/${data.user.username}`);
-            }}
-            className="truncate text-base font-semibold opacity-90"
-          >
-            {data.user.username}
-          </Link>
+        <div className="flex h-8 w-full justify-center gap-3">
+          <div className="flex items-center gap-2 overflow-hidden">
+            <div className="avatar-group rotate-180 transform -space-x-4">
+              {data.otherTravelers.slice(0, 2).map(traveler => (
+                <Avatar
+                  key={traveler.username}
+                  alt={traveler.username}
+                  src={traveler.avatar}
+                  className="rotate-180 transform"
+                  shapeClassName="w-6 rounded-full"
+                />
+              ))}
+              <Avatar
+                alt={data.user.username}
+                src={data.user.avatar}
+                className={classNames(
+                  'rotate-180 transform',
+                  data.otherTravelers.length === 0 && 'border-none',
+                )}
+                shapeClassName="w-6 rounded-full"
+              />
+            </div>
+            <Link
+              hover
+              onClick={() => {
+                navigate(`/user/${data.user.username}`);
+              }}
+              className="flex gap-2 truncate text-base font-semibold opacity-90"
+            >
+              {data.user.username}
+            </Link>
+            {data.otherTravelers.length > 0 ? (
+              <span className="font-semibold">
+                +{data.otherTravelers.length}
+              </span>
+            ) : null}
+          </div>
+          {isLoggedIn && userData?.id === data.userId ? (
+            <Button
+              className="max-w-[150px] truncate"
+              color="ghost"
+              onClick={() => {
+                setIsAddTravelerDialogOpen(true);
+              }}
+              size="sm"
+            >
+              <span className="w-4">
+                <UserPlusIcon className="h-4 w-4" />
+              </span>
+              <span className="truncate">Add Travelers</span>
+            </Button>
+          ) : null}
         </div>
-        <div className="flex w-full flex-col gap-2">
+        <div className="mt-1 flex w-full flex-col gap-2">
           <div className="flex items-stretch gap-2">
             <div className="flex flex-1 flex-col overflow-hidden">
               <div className="text-center font-mono text-4xl font-bold">
@@ -198,6 +250,11 @@ export const FlightInfo = ({
       </div>
       <FlightAircraftDetails data={data} />
       <FlightDetailedTimetable data={data} />
+      <AddTravelersModal
+        flightId={flightId}
+        open={isAddTravelerDialogOpen}
+        setOpen={setIsAddTravelerDialogOpen}
+      />
     </div>
   );
 };

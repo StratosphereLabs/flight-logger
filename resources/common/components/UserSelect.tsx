@@ -18,18 +18,22 @@ export interface UserSelectProps<Values extends FieldValues>
     'getItemText' | 'onDebouncedChange' | 'options'
   > {
   followingUsersOnly?: boolean;
+  max?: number;
+  withoutFlightId?: string;
 }
 
 export const UserSelect = <Values extends FieldValues>({
   followingUsersOnly,
+  max,
+  withoutFlightId,
   ...props
 }: UserSelectProps<Values>): JSX.Element => {
   const isDarkMode = useIsDarkMode();
   const [query, setQuery] = useState('');
   const onError = useTRPCErrorHandler();
   const { data } = trpc.users.getUsers.useQuery(
-    { query, followingUsersOnly },
-    { enabled: query.length > 0, onError },
+    { query, followingUsersOnly, max, withoutFlightId },
+    { onError },
   );
   return (
     <TypeaheadSelect

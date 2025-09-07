@@ -10,11 +10,13 @@ import {
   DATE_FORMAT_SHORT,
   DATE_FORMAT_YEAR,
 } from '../constants';
+import type { TracklogItem } from '../data/types';
 import { prisma, updateTripTimes } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
+  addTravelersSchema,
   deleteFlightSchema,
   editFlightSchema,
   getExtraFlightDataSchema,
@@ -52,7 +54,7 @@ import {
 } from '../utils';
 
 export const flightsRouter = router({
-  getFlight: procedure.input(getFlightSchema).query(async ({ input }) => {
+  getFlight: procedure.input(getFlightSchema).query(async ({ ctx, input }) => {
     const { id } = input;
     const flight = await prisma.flight.findUnique({
       where: {
@@ -70,6 +72,44 @@ export const flightsRouter = router({
         message: 'Flight not found.',
       });
     }
+    const otherTravelers =
+      ctx.user !== null
+        ? await prisma.user.findMany({
+            where: {
+              username: {
+                not: flight.user.username,
+              },
+              OR: [
+                {
+                  username: ctx.user.username,
+                },
+                {
+                  followedBy: {
+                    some: {
+                      username: ctx.user.username,
+                    },
+                  },
+                },
+              ],
+              flights: {
+                some: {
+                  outTime: {
+                    gt: sub(flight.outTime, { hours: 8 }),
+                    lt: add(flight.outTime, { hours: 8 }),
+                  },
+                  airlineId: flight.airlineId,
+                  flightNumber: flight.flightNumber,
+                  departureAirportId: flight.departureAirportId,
+                  arrivalAirportId: flight.arrivalAirportId,
+                },
+              },
+            },
+            select: {
+              email: true,
+              username: true,
+            },
+          })
+        : [];
     const flightData = transformFlightData(flight);
     const flightState =
       flightData.flightStatus === 'SCHEDULED'
@@ -88,6 +128,10 @@ export const flightsRouter = router({
       ...flightData,
       flightState,
       timestamp,
+      otherTravelers: otherTravelers.map(({ username, email }) => ({
+        username,
+        avatar: fetchGravatarUrl(email),
+      })),
     };
   }),
   getExtraFlightData: procedure
@@ -1036,6 +1080,120 @@ export const flightsRouter = router({
         include: flightIncludeObj,
       });
       await updateTripTimes(deletedFlight.tripId);
+    }),
+  addTravelersToFlight: procedure
+    .use(verifyAuthenticated)
+    .input(addTravelersSchema)
+    .mutation(async ({ ctx, input }) => {
+      const flight = await prisma.flight.findUnique({
+        where: {
+          userId: ctx.user.id,
+          id: input.flightId,
+        },
+        omit: {
+          id: true,
+        },
+      });
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      const users = await prisma.user.findMany({
+        where: {
+          username: {
+            in: input.usernames,
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          followedBy: {
+            select: {
+              id: true,
+            },
+          },
+          following: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      for (const { username, followedBy, following } of users) {
+        if (followedBy.find(({ id }) => id === ctx.user.id) === undefined) {
+          throw new TRPCError({
+            code: 'PRECONDITION_FAILED',
+            message: `You are not following ${username}.`,
+          });
+        }
+        if (following.find(({ id }) => id === ctx.user.id) === undefined) {
+          throw new TRPCError({
+            code: 'PRECONDITION_FAILED',
+            message: `You are not being followed by ${username}.`,
+          });
+        }
+      }
+      const otherFlights = await prisma.flight.findMany({
+        where: {
+          outTime: {
+            gt: sub(flight.outTime, { hours: 8 }),
+            lt: add(flight.outTime, { hours: 8 }),
+          },
+          airlineId: flight.airlineId,
+          flightNumber: flight.flightNumber,
+          departureAirportId: flight.departureAirportId,
+          arrivalAirportId: flight.arrivalAirportId,
+        },
+        select: {
+          user: {
+            select: {
+              username: true,
+            },
+          },
+        },
+      });
+      for (const {
+        user: { username },
+      } of otherFlights) {
+        if (input.usernames.includes(username)) {
+          throw new TRPCError({
+            code: 'PRECONDITION_FAILED',
+            message: `User ${username} has already been added to this flight.`,
+          });
+        }
+      }
+      const tracklog =
+        flight.tracklog !== null &&
+        typeof flight.tracklog === 'object' &&
+        Array.isArray(flight.tracklog)
+          ? (flight.tracklog as TracklogItem[])
+          : undefined;
+      const waypoints =
+        flight.waypoints !== null &&
+        typeof flight.waypoints === 'object' &&
+        Array.isArray(flight.waypoints)
+          ? (flight.waypoints as Array<[number, number]>)
+          : undefined;
+      await prisma.$transaction(
+        users.map(({ id }) =>
+          prisma.flight.create({
+            data: {
+              ...flight,
+              addedByUserId: ctx.user.id,
+              userId: id,
+              tracklog,
+              waypoints,
+            },
+          }),
+        ),
+      );
+      return users.map(({ username, email }) => ({
+        username,
+        avatar: fetchGravatarUrl(email),
+      }));
     }),
 });
 

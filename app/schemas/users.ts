@@ -7,6 +7,8 @@ export const getUserSchema = z.object({
 export const getUsersSchema = z.object({
   query: z.string(),
   followingUsersOnly: z.boolean().optional(),
+  max: z.number().int().optional(),
+  withoutFlightId: z.string().uuid().optional(),
 });
 
 export const selectUserSchema = z

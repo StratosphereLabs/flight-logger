@@ -10,4 +10,4 @@ export * from './FlightTimesDisplay';
 export * from './Icons';
 export * from './ThemeButton';
 export * from './UserFlightsTable';
-export * from './UserInput';
+export * from './UserSelect';
