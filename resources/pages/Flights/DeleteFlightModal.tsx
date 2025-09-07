@@ -39,6 +39,7 @@ export const DeleteFlightModal = (): JSX.Element => {
         {
           children: 'Delete',
           color: 'primary',
+          disabled: isLoading,
           loading: isLoading,
           onClick: () => {
             activeFlight !== null && mutate({ id: activeFlight.id });

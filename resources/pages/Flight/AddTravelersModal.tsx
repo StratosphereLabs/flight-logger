@@ -1,6 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import _ from 'lodash';
-import { type Dispatch, type SetStateAction, useCallback } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, Modal } from 'stratosphere-ui';
 
@@ -51,6 +56,8 @@ export const AddTravelersModal = ({
             ? [...previousData.otherTravelers, ...data]
             : data,
       }));
+      void utils.users.invalidate();
+      void utils.statistics.invalidate();
     },
     onError,
   });
@@ -63,6 +70,11 @@ export const AddTravelersModal = ({
     },
     [flightId, mutate],
   );
+  useEffect(() => {
+    methods.reset({
+      usernames: [],
+    });
+  }, [methods, open]);
   return (
     <Modal
       actionButtons={[

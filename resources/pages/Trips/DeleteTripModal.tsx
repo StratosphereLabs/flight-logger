@@ -53,6 +53,7 @@ export const DeleteTripModal = (): JSX.Element => {
         {
           children: 'Delete',
           color: 'primary',
+          disabled: isLoading,
           loading: isLoading,
           onClick: () => {
             activeTrip !== null && mutate({ id: activeTrip.id });

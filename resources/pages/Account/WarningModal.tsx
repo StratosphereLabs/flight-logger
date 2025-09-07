@@ -26,6 +26,7 @@ export const WarningModal = ({
         {
           children: isLoading ? 'Uploading...' : 'Continue',
           color: 'primary',
+          disabled: isLoading,
           loading: isLoading,
           onClick: onConfirm,
           soft: true,

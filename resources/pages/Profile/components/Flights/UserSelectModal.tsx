@@ -80,6 +80,7 @@ export const UserSelectModal = ({
           children: !isLoading ? 'Add Flight' : undefined,
           className: 'w-[125px]',
           color: 'primary',
+          disabled: isLoading,
           loading: isLoading,
           onClick: methods.handleSubmit(onSubmit),
           soft: true,

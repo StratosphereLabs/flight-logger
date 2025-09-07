@@ -137,8 +137,8 @@ export const usersRouter = router({
               flights: {
                 none: {
                   outTime: {
-                    gt: sub(flight.outTime, { hours: 8 }),
-                    lt: add(flight.outTime, { hours: 8 }),
+                    gt: sub(flight.outTime, { hours: 6 }),
+                    lt: add(flight.outTime, { hours: 6 }),
                   },
                   airlineId: flight.airlineId,
                   flightNumber: flight.flightNumber,
