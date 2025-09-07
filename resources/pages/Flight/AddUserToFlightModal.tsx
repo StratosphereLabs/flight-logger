@@ -4,6 +4,7 @@ import {
   type SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -52,12 +53,16 @@ export const AddUserToFlightModal = ({
     resolver: zodResolver(addUserToFlightFormSchema),
   });
   const { data: flight } = trpc.flights.getFlight.useQuery({ id: flightId });
+  const displayName = useMemo(
+    () => flight?.user.firstName ?? flight?.user.username,
+    [flight?.user],
+  );
   const { mutate, isLoading } = trpc.flights.addUserToFlight.useMutation({
     onSettled: () => {
       setOpen(false);
     },
     onSuccess: ({ id }) => {
-      handleSuccess('You have been successfully added to this flight.');
+      handleSuccess('You have successfully joined this flight.');
       navigate(`/flight/${id}`);
       void utils.flights.invalidate();
       void utils.users.invalidate();
@@ -94,8 +99,8 @@ export const AddUserToFlightModal = ({
           soft: true,
         },
         {
-          children: !isLoading && 'Submit',
-          className: 'w-[125px]',
+          children: !isLoading && 'Join',
+          className: 'w-[100px]',
           color: 'primary',
           disabled: isLoading,
           loading: isLoading,
@@ -108,7 +113,7 @@ export const AddUserToFlightModal = ({
         setOpen(false);
       }}
       open={open}
-      title="Join Flight"
+      title={`Join ${displayName !== undefined ? `${displayName}'s ` : ''}Flight`}
     >
       {flight !== undefined ? (
         <div className="flex flex-col gap-2 py-2">
@@ -190,14 +195,14 @@ export const AddUserToFlightModal = ({
             <div className="flex flex-1 flex-col gap-2">
               <FormControl
                 bordered
-                className="w-full"
+                className="w-full text-sm"
                 inputClassName="bg-base-200"
                 labelText="Seat Number"
                 name="seatNumber"
               />
               <FormRadioGroup
                 activeColor="info"
-                className="flex w-full"
+                className="flex w-full text-sm"
                 labelText="Seat Position"
                 name="seatPosition"
               >
@@ -243,7 +248,7 @@ export const AddUserToFlightModal = ({
         </div>
         <FormRadioGroup
           activeColor="info"
-          className="flex w-full"
+          className="flex w-full text-sm"
           labelText="Reason"
           name="reason"
         >

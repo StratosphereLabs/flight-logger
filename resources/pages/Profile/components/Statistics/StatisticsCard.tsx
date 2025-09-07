@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { type Dispatch, type SetStateAction } from 'react';
 import { type Control, useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
@@ -63,7 +64,7 @@ export const StatisticsCard = ({
     },
   });
   return (
-    <Form methods={methods} className="flex flex-1 flex-col">
+    <Form methods={methods} className="flex w-full flex-1 flex-col">
       <Card className="bg-base-100 flex-1 shadow-xs">
         <CardBody className="p-4">
           <div className="flex items-start justify-between gap-2">
@@ -98,9 +99,17 @@ export const StatisticsCard = ({
           </div>
           <TotalsChart
             filtersFormControl={filtersFormControl}
+            isStatsFullScreen={isStatsFullScreen}
             selectedAirportId={selectedAirportId}
           />
-          <div className="flex flex-wrap gap-x-6 gap-y-4">
+          <div
+            className={classNames(
+              'grid grid-cols-1 gap-x-8 gap-y-4',
+              isStatsFullScreen
+                ? 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5'
+                : 'sm:grid-cols-2 2xl:grid-cols-4',
+            )}
+          >
             <TopAirlinesChart
               filtersFormControl={filtersFormControl}
               selectedAirportId={selectedAirportId}
