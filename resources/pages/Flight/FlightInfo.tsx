@@ -6,6 +6,7 @@ import { Avatar, Button, Link, Loading } from 'stratosphere-ui';
 
 import {
   FlightTimesDisplay,
+  PlusAirplaneIcon,
   RightArrowIcon,
   UserPlusIcon,
 } from '../../common/components';
@@ -19,6 +20,7 @@ import {
 } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { AddTravelersModal } from './AddTravelersModal';
+import { AddUserToFlightModal } from './AddUserToFlightModal';
 import { FlightAircraftDetails } from './FlightAircraftDetails';
 import { FlightDetailedTimetable } from './FlightDetailedTimetable';
 
@@ -32,6 +34,7 @@ export const FlightInfo = ({
   const navigate = useNavigate();
   const { theme } = useThemeStore();
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
+  const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const { data: userData } = useProfileUserQuery();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery({ id: flightId });
@@ -114,6 +117,23 @@ export const FlightInfo = ({
                 <UserPlusIcon className="h-4 w-4" />
               </span>
               <span className="truncate">Add Travelers</span>
+            </Button>
+          ) : null}
+          {isLoggedIn && data.canAddFlight ? (
+            <Button
+              className="max-w-[150px] truncate"
+              color="ghost"
+              onClick={() => {
+                setIsAddFlightDialogOpen(true);
+              }}
+              size="sm"
+            >
+              <span className="w-4">
+                <PlusAirplaneIcon className="h-4 w-4" />
+              </span>
+              <span className="truncate">
+                Join {data.user.firstName ?? `@${data.user.username}`}
+              </span>
             </Button>
           ) : null}
         </div>
@@ -254,6 +274,11 @@ export const FlightInfo = ({
         flightId={flightId}
         open={isAddTravelerDialogOpen}
         setOpen={setIsAddTravelerDialogOpen}
+      />
+      <AddUserToFlightModal
+        flightId={flightId}
+        open={isAddFlightDialogOpen}
+        setOpen={setIsAddFlightDialogOpen}
       />
     </div>
   );

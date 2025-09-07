@@ -141,6 +141,19 @@ export const addTravelersSchema = addTravelersFormSchema.extend({
   flightId: z.string().uuid(),
 });
 
+export const addUserToFlightFormSchema = z.object({
+  seatNumber: z.string().trim(),
+  seatPosition: z.enum(['AISLE', 'MIDDLE', 'WINDOW']).nullable(),
+  class: z
+    .enum(['BASIC', 'ECONOMY', 'PREMIUM', 'BUSINESS', 'FIRST'])
+    .nullable(),
+  reason: z.enum(['BUSINESS', 'LEISURE', 'CREW']).nullable(),
+});
+
+export const addUserToFlightSchema = addUserToFlightFormSchema.extend({
+  flightId: z.string().uuid(),
+});
+
 export type GetProfileFiltersRequest = z.infer<typeof profileFiltersSchema>;
 
 export type GetUserFlightsRequest = z.infer<typeof getUserFlightsSchema>;
@@ -166,3 +179,5 @@ export type AddFlightRequest = z.infer<typeof addFlightSchema>;
 export type EditFlightRequest = z.infer<typeof editFlightSchema>;
 
 export type AddTravelersFormData = z.infer<typeof addTravelersFormSchema>;
+
+export type AddUserToFlightFormData = z.infer<typeof addUserToFlightFormSchema>;

@@ -3,6 +3,7 @@ import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
+import _ from 'lodash';
 
 import { updateFlightChangeData, updateFlightData } from '../commands';
 import {
@@ -17,6 +18,7 @@ import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
   addTravelersSchema,
+  addUserToFlightSchema,
   deleteFlightSchema,
   editFlightSchema,
   getExtraFlightDataSchema,
@@ -60,7 +62,18 @@ export const flightsRouter = router({
       where: {
         id,
       },
-      include: flightIncludeObj,
+      include: {
+        ...flightIncludeObj,
+        user: {
+          include: {
+            followedBy: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
       omit: {
         tracklog: false,
         waypoints: false,
@@ -94,8 +107,8 @@ export const flightsRouter = router({
               flights: {
                 some: {
                   outTime: {
-                    gt: sub(flight.outTime, { hours: 8 }),
-                    lt: add(flight.outTime, { hours: 8 }),
+                    gt: sub(flight.outTime, { hours: 6 }),
+                    lt: add(flight.outTime, { hours: 6 }),
                   },
                   airlineId: flight.airlineId,
                   flightNumber: flight.flightNumber,
@@ -124,14 +137,22 @@ export const flightsRouter = router({
           flightData.inTime)
         : new Date();
     const timestamp = getRainviewerTimestamp(weatherRadarTime);
+    const otherTraveler = otherTravelers.find(
+      ({ username }) => username === ctx.user?.username,
+    );
     return {
       ...flightData,
+      user: _.omit(flightData.user, 'followedBy'),
       flightState,
       timestamp,
       otherTravelers: otherTravelers.map(({ username, email }) => ({
         username,
         avatar: fetchGravatarUrl(email),
       })),
+      canAddFlight:
+        ctx.user !== null && otherTraveler === undefined
+          ? flight.user.followedBy.some(({ id }) => id === ctx.user?.id)
+          : false,
     };
   }),
   getExtraFlightData: procedure
@@ -1139,8 +1160,8 @@ export const flightsRouter = router({
       const otherFlights = await prisma.flight.findMany({
         where: {
           outTime: {
-            gt: sub(flight.outTime, { hours: 8 }),
-            lt: add(flight.outTime, { hours: 8 }),
+            gt: sub(flight.outTime, { hours: 6 }),
+            lt: add(flight.outTime, { hours: 6 }),
           },
           airlineId: flight.airlineId,
           flightNumber: flight.flightNumber,
@@ -1182,6 +1203,11 @@ export const flightsRouter = router({
           prisma.flight.create({
             data: {
               ...flight,
+              class: null,
+              seatNumber: null,
+              seatPosition: null,
+              reason: null,
+              comments: null,
               addedByUserId: ctx.user.id,
               userId: id,
               tracklog,
@@ -1194,6 +1220,88 @@ export const flightsRouter = router({
         username,
         avatar: fetchGravatarUrl(email),
       }));
+    }),
+  addUserToFlight: procedure
+    .use(verifyAuthenticated)
+    .input(addUserToFlightSchema)
+    .mutation(async ({ ctx, input }) => {
+      const flight = await prisma.flight.findUnique({
+        where: {
+          userId: {
+            not: ctx.user.id,
+          },
+          user: {
+            followedBy: {
+              some: {
+                id: ctx.user.id,
+              },
+            },
+          },
+          id: input.flightId,
+        },
+        omit: {
+          id: true,
+          tracklog: false,
+          waypoints: false,
+        },
+      });
+      if (flight === null) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Flight not found.',
+        });
+      }
+      const otherFlight = await prisma.flight.findFirst({
+        where: {
+          userId: ctx.user.id,
+          outTime: {
+            gt: sub(flight.outTime, { hours: 6 }),
+            lt: add(flight.outTime, { hours: 6 }),
+          },
+          airlineId: flight.airlineId,
+          flightNumber: flight.flightNumber,
+          departureAirportId: flight.departureAirportId,
+          arrivalAirportId: flight.arrivalAirportId,
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (otherFlight !== null) {
+        throw new TRPCError({
+          code: 'PRECONDITION_FAILED',
+          message: `You have already been added to this flight.`,
+        });
+      }
+      const tracklog =
+        flight.tracklog !== null &&
+        typeof flight.tracklog === 'object' &&
+        Array.isArray(flight.tracklog)
+          ? (flight.tracklog as TracklogItem[])
+          : undefined;
+      const waypoints =
+        flight.waypoints !== null &&
+        typeof flight.waypoints === 'object' &&
+        Array.isArray(flight.waypoints)
+          ? (flight.waypoints as Array<[number, number]>)
+          : undefined;
+      return await prisma.flight.create({
+        data: {
+          ...flight,
+          class: input.class,
+          seatNumber: input.seatNumber,
+          seatPosition: input.seatPosition,
+          reason: input.reason,
+          comments: null,
+          addedByUserId: null,
+          userId: ctx.user.id,
+          tracklog,
+          waypoints,
+        },
+        select: {
+          id: true,
+        },
+      });
     }),
 });
 
