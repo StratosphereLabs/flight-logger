@@ -1113,6 +1113,8 @@ export const flightsRouter = router({
         },
         omit: {
           id: true,
+          tracklog: false,
+          waypoints: false,
         },
       });
       if (flight === null) {
