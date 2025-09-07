@@ -1,14 +1,7 @@
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import {
-  Loading,
-  Stat,
-  StatDesc,
-  StatTitle,
-  StatValue,
-  Stats,
-} from 'stratosphere-ui';
+import { Loading, Stat, StatDesc, StatTitle, StatValue } from 'stratosphere-ui';
 
 import {
   ClockIcon,
@@ -25,10 +18,15 @@ import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import type { StatisticsChartProps } from './types';
 
+export interface TotalsChartProps extends StatisticsChartProps {
+  isStatsFullScreen: boolean;
+}
+
 export const TotalsChart = ({
   filtersFormControl,
+  isStatsFullScreen,
   selectedAirportId,
-}: StatisticsChartProps): JSX.Element => {
+}: TotalsChartProps): JSX.Element => {
   const { username } = useParams();
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
@@ -76,78 +74,74 @@ export const TotalsChart = ({
         {data !== undefined ? (
           <div
             className={classNames(
-              'flex flex-1 flex-col transition-opacity 2xl:flex-row',
+              'grid flex-1 grid-cols-2 transition-opacity',
+              isStatsFullScreen ? 'lg:grid-cols-4' : '2xl:grid-cols-4',
               isFetching && 'opacity-50',
             )}
           >
-            <Stats className="stats-horizontal sm:flex-1">
-              <Stat className="p-2">
-                <StatTitle>Flights</StatTitle>
-                <StatValue className="flex items-center gap-2">
-                  <MaterialPlaneIcon className="text-primary/90 h-8 opacity-80" />
-                  <span className="text-primary/80">
-                    {data.totals.totalFlights.toLocaleString()}
-                  </span>
-                </StatValue>
-                <StatDesc>
-                  {data.totals.onTimePercentage !== null
-                    ? (
-                        Math.round(10 * data.totals.onTimePercentage) / 10
-                      ).toLocaleString()
-                    : '-.-'}
-                  % on-time
-                </StatDesc>
-              </Stat>
-              <Stat className="p-2">
-                <StatTitle>Streak</StatTitle>
-                <StatValue
-                  className={classNames(
-                    'flex items-center gap-2',
-                    data.onTimeStreak < 2
-                      ? 'text-primary/80'
-                      : data.onTimeStreak < 5
-                        ? 'text-warning/80'
-                        : 'text-error/80',
-                  )}
-                >
-                  <ColoredFireIcon className="h-8 w-8" />
-                  {data.onTimeStreak}
-                </StatValue>
-                <StatDesc>
-                  on-time flight{data.onTimeStreak !== 1 ? 's' : ''}
-                </StatDesc>
-              </Stat>
-            </Stats>
-            <Stats className="stats-vertical sm:stats-horizontal flex-1">
-              <Stat className="p-2">
-                <StatTitle>Distance Flown</StatTitle>
-                <StatValue className="flex items-center gap-2">
-                  <DistanceIcon className="text-secondary/90 h-8 w-8 opacity-80" />
-                  <span className="text-secondary/80">
-                    {Math.round(data.totals.totalDistanceMi).toLocaleString()}{' '}
-                    mi
-                  </span>
-                </StatValue>
-                <StatDesc>
-                  {Math.round(data.totals.totalDistanceKm).toLocaleString()} km
-                </StatDesc>
-              </Stat>
-              <Stat className="p-2">
-                <StatTitle>Time Flown</StatTitle>
-                <StatValue className="flex items-center gap-2">
-                  <ClockIcon className="text-success/90 h-8 w-8 opacity-80" />
-                  <span className="text-success/80">
-                    {getLongDurationString(data.totals.totalDuration)}
-                  </span>
-                </StatValue>
-                <StatDesc>
-                  {(
-                    Math.round(100 * data.totals.totalDurationDays) / 100
-                  ).toLocaleString()}{' '}
-                  days
-                </StatDesc>
-              </Stat>
-            </Stats>
+            <Stat className="gap-1 p-2">
+              <StatTitle>Flights</StatTitle>
+              <StatValue className="flex items-center gap-2 text-3xl">
+                <MaterialPlaneIcon className="text-primary/90 h-7 w-7 opacity-80" />
+                <span className="text-primary/80">
+                  {data.totals.totalFlights.toLocaleString()}
+                </span>
+              </StatValue>
+              <StatDesc>
+                {data.totals.onTimePercentage !== null
+                  ? (
+                      Math.round(10 * data.totals.onTimePercentage) / 10
+                    ).toLocaleString()
+                  : '-.-'}
+                % on-time
+              </StatDesc>
+            </Stat>
+            <Stat className="gap-1 p-2">
+              <StatTitle>Streak</StatTitle>
+              <StatValue
+                className={classNames(
+                  'flex items-center gap-2 text-3xl',
+                  data.onTimeStreak < 2
+                    ? 'text-primary/80'
+                    : data.onTimeStreak < 5
+                      ? 'text-warning/80'
+                      : 'text-error/80',
+                )}
+              >
+                <ColoredFireIcon className="h-7 w-7" />
+                {data.onTimeStreak}
+              </StatValue>
+              <StatDesc>
+                on-time flight{data.onTimeStreak !== 1 ? 's' : ''}
+              </StatDesc>
+            </Stat>
+            <Stat className="col-span-2 gap-1 p-2 sm:col-span-1">
+              <StatTitle>Distance Flown</StatTitle>
+              <StatValue className="flex items-center gap-2 text-3xl">
+                <DistanceIcon className="text-secondary/90 h-7 w-7 opacity-80" />
+                <span className="text-secondary/80">
+                  {Math.round(data.totals.totalDistanceMi).toLocaleString()} mi
+                </span>
+              </StatValue>
+              <StatDesc>
+                {Math.round(data.totals.totalDistanceKm).toLocaleString()} km
+              </StatDesc>
+            </Stat>
+            <Stat className="col-span-2 gap-1 p-2 sm:col-span-1">
+              <StatTitle>Time Flown</StatTitle>
+              <StatValue className="flex items-center gap-2 text-3xl">
+                <ClockIcon className="text-success/90 h-7 w-7 opacity-80" />
+                <span className="text-success/80">
+                  {getLongDurationString(data.totals.totalDuration)}
+                </span>
+              </StatValue>
+              <StatDesc>
+                {(
+                  Math.round(100 * data.totals.totalDurationDays) / 100
+                ).toLocaleString()}{' '}
+                days
+              </StatDesc>
+            </Stat>
           </div>
         ) : null}
       </div>

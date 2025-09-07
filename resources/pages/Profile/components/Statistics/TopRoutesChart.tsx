@@ -81,8 +81,8 @@ export const TopRoutesChart = ({
     [cityPairs, data],
   );
   return (
-    <div className="flex h-[250px] max-w-[500px] min-w-[250px] flex-1 flex-col items-center gap-1 font-semibold">
-      <div className="flex w-full items-center justify-between">
+    <div className="flex h-[250px] flex-1 flex-col items-center gap-1 font-semibold">
+      <div className="flex min-h-8 w-full items-center justify-between">
         <div className="text-base">{title}</div>
         <FormToggleSwitch
           className="my-[-3px]"

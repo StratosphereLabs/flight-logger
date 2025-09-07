@@ -77,7 +77,7 @@ export const TopAirlinesChart = ({
     [data, mode],
   );
   return (
-    <div className="flex h-[250px] max-w-[500px] min-w-[250px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[250px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">Airlines</div>
         <Select

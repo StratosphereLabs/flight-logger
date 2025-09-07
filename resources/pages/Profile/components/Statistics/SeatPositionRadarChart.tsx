@@ -58,7 +58,7 @@ export const SeatPositionRadarChart = ({
     },
   );
   return (
-    <div className="flex h-[185px] max-w-[500px] min-w-[209px] flex-1 flex-col items-center gap-1 font-semibold">
+    <div className="flex h-[185px] flex-1 flex-col items-center gap-1 font-semibold">
       <div className="flex h-9 w-full items-center justify-between">
         <div className="text-base">Seat Position</div>
         <Select

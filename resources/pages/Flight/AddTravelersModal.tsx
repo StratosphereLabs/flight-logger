@@ -46,7 +46,7 @@ export const AddTravelersModal = ({
     },
     onSuccess: data => {
       handleSuccess(
-        `Added @${data[0].username}${data.length > 1 ? ` and ${data.length - 1} other${data.length > 2 && 's'} to this flight` : ''}`,
+        `Added @${data[0].username}${data.length > 1 ? ` and ${data.length - 1} other${data.length > 2 ? 's' : ''} to this flight` : ''}.`,
       );
       utils.flights.getFlight.setData({ id: flightId }, previousData => ({
         ..._.omit(previousData, 'id'),
