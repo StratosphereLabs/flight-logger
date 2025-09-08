@@ -17,7 +17,7 @@ export const AirportInput = <Values extends FieldValues>(
 ): JSX.Element => {
   const [query, setQuery] = useState('');
   const onError = useTRPCErrorHandler();
-  const { data } = trpc.airports.searchAirports.useQuery(
+  const { data, isFetching } = trpc.airports.searchAirports.useQuery(
     {
       query,
     },
@@ -38,6 +38,7 @@ export const AirportInput = <Values extends FieldValues>(
           <span className="flex-1 truncate">{name}</span>
         </div>
       )}
+      isLoading={isFetching}
       onDebouncedChange={setQuery}
       options={data}
       {...props}

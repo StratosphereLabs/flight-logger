@@ -124,7 +124,7 @@ export const UserSelectModal = ({
             </div>
           </div>
           <div className="flex flex-1 flex-col">
-            <div className="flex flex-1 items-center justify-between font-mono text-3xl font-semibold">
+            <div className="flex flex-1 items-center justify-between font-mono text-3xl font-bold">
               <div>{flight.departureAirport.iata}</div>
               <RightArrowIcon className="h-6 w-6" />
               <div>{flight.arrivalAirport.iata}</div>

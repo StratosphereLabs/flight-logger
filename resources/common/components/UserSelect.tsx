@@ -23,6 +23,7 @@ export interface UserSelectProps<Values extends FieldValues>
 }
 
 export const UserSelect = <Values extends FieldValues>({
+  defaultShowDropdown,
   followingUsersOnly,
   max,
   withoutFlightId,
@@ -30,13 +31,15 @@ export const UserSelect = <Values extends FieldValues>({
 }: UserSelectProps<Values>): JSX.Element => {
   const isDarkMode = useIsDarkMode();
   const [query, setQuery] = useState('');
+  const [enabled, setEnabled] = useState(defaultShowDropdown ?? false);
   const onError = useTRPCErrorHandler();
-  const { data } = trpc.users.getUsers.useQuery(
+  const { data, isLoading } = trpc.users.getUsers.useQuery(
     { query, followingUsersOnly, max, withoutFlightId },
-    { onError },
+    { enabled, onError },
   );
   return (
     <TypeaheadSelect
+      defaultShowDropdown={defaultShowDropdown}
       getBadgeClassName={() =>
         classNames('badge-lg', !isDarkMode && 'badge-ghost bg-base-100')
       }
@@ -50,7 +53,9 @@ export const UserSelect = <Values extends FieldValues>({
           <span className="flex-1 truncate">{username}</span>
         </div>
       )}
+      isLoading={isLoading}
       onDebouncedChange={setQuery}
+      onShowDropdown={setEnabled}
       options={data}
       {...props}
     />
