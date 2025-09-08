@@ -20,7 +20,7 @@ export const AirframeInput = <Values extends FieldValues>(
 ): JSX.Element => {
   const [query, setQuery] = useState('');
   const onError = useTRPCErrorHandler();
-  const { data } = trpc.airframes.searchAirframes.useQuery(
+  const { data, isFetching } = trpc.airframes.searchAirframes.useQuery(
     {
       query,
     },
@@ -35,6 +35,7 @@ export const AirframeInput = <Values extends FieldValues>(
       getItemText={({ registration, operator }) =>
         `${registration}${operator !== null ? ` (${operator.name})` : ''}`
       }
+      isLoading={isFetching}
       onDebouncedChange={setQuery}
       options={
         data?.length === 0

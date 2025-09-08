@@ -21,7 +21,7 @@ export const AirlineInput = <Values extends FieldValues>({
   const [query, setQuery] = useState('');
   const onError = useTRPCErrorHandler();
   const isDarkMode = useIsDarkMode();
-  const { data } = trpc.airlines.searchAirlines.useQuery(
+  const { data, isFetching } = trpc.airlines.searchAirlines.useQuery(
     {
       query,
     },
@@ -54,6 +54,7 @@ export const AirlineInput = <Values extends FieldValues>({
           <span className="flex-1 truncate">{name}</span>
         </div>
       )}
+      isLoading={isFetching}
       onDebouncedChange={setQuery}
       options={data}
       {...props}

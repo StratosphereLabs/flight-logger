@@ -270,16 +270,20 @@ export const FlightInfo = ({
       </div>
       <FlightAircraftDetails data={data} />
       <FlightDetailedTimetable data={data} />
-      <AddTravelersModal
-        flightId={flightId}
-        open={isAddTravelerDialogOpen}
-        setOpen={setIsAddTravelerDialogOpen}
-      />
-      <AddUserToFlightModal
-        flightId={flightId}
-        open={isAddFlightDialogOpen}
-        setOpen={setIsAddFlightDialogOpen}
-      />
+      {isAddTravelerDialogOpen ? (
+        <AddTravelersModal
+          flightId={flightId}
+          open={isAddTravelerDialogOpen}
+          setOpen={setIsAddTravelerDialogOpen}
+        />
+      ) : null}
+      {isAddFlightDialogOpen ? (
+        <AddUserToFlightModal
+          flightId={flightId}
+          open={isAddFlightDialogOpen}
+          setOpen={setIsAddFlightDialogOpen}
+        />
+      ) : null}
     </div>
   );
 };
