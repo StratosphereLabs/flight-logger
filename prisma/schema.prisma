@@ -99,7 +99,7 @@ model ItineraryFlight {
 
 model Flight {
   id                 String           @id @default(uuid()) @db.Uuid
-  userId             Int
+  userId             Int?
   addedByUserId      Int?
   tripId             String?          @db.Uuid
   departureAirportId String
@@ -148,7 +148,7 @@ model Flight {
   diversionAirport   Airport?         @relation("diversionFlights", fields: [diversionAirportId], references: [id])
   operatorAirline    Airline?         @relation("operatorFlights", fields: [operatorAirlineId], references: [id])
   trip               Trip?            @relation(fields: [tripId], references: [id])
-  user               User             @relation("UserFlights", fields: [userId], references: [id])
+  user               User?            @relation("UserFlights", fields: [userId], references: [id])
   addedByUser        User?            @relation("UserFlightsAdded", fields: [addedByUserId], references: [id])
   departureWeather   WeatherReport?   @relation("departureWeather", fields: [departureWeatherId], references: [id])
   arrivalWeather     WeatherReport?   @relation("arrivalWeather", fields: [arrivalWeatherId], references: [id])
