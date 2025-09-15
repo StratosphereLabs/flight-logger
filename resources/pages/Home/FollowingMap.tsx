@@ -408,11 +408,13 @@ export const FollowingMap = (): JSX.Element => {
                             open
                           >
                             <TooltipContent className="flex items-center gap-1 font-mono">
-                              <Avatar
-                                alt={user.username}
-                                src={user.avatar}
-                                shapeClassName="w-7 h-7 rounded-full"
-                              />
+                              {user !== null ? (
+                                <Avatar
+                                  alt={user.username}
+                                  src={user.avatar}
+                                  shapeClassName="w-7 h-7 rounded-full"
+                                />
+                              ) : null}
                               <div className="flex flex-col">
                                 <span className="flex gap-1 font-bold">
                                   {callsign ??
@@ -438,7 +440,9 @@ export const FollowingMap = (): JSX.Element => {
                               onClick={() => {
                                 setSelectedFlightId(id);
                               }}
-                              title={`@${user.username}`}
+                              title={
+                                user !== null ? `@${user.username}` : undefined
+                              }
                             >
                               <PlaneSolidIcon
                                 className={classNames('h-6 w-6', aircraftColor)}
@@ -446,7 +450,9 @@ export const FollowingMap = (): JSX.Element => {
                                   transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
                                 }}
                               />
-                              <span className="sr-only">{`@${user.username}`}</span>
+                              <span className="sr-only">
+                                {user !== null ? `@${user?.username}` : null}
+                              </span>
                             </Button>
                           </Tooltip>
                         </OverlayViewF>

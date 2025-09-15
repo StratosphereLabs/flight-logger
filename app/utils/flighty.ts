@@ -44,7 +44,7 @@ export const parseFlightyDateTime = (
   dateString: string,
   timeZone: string,
 ): Date | null => {
-  const [date, time] = dateString.split(' ');
+  const [date, time] = dateString.split('T');
   return date !== '' && time !== '' && time !== undefined
     ? fromZonedTime(new Date(`${date} ${time}`), timeZone)
     : null;

@@ -365,9 +365,11 @@ export const ActiveFlightCard = (): JSX.Element | null => {
       >
         <div className="pt-4">
           Are you sure you want to delete{' '}
-          {data?.userId !== userData?.id ? (
+          {data?.user !== null &&
+          data?.user !== undefined &&
+          data.userId !== userData?.id ? (
             <>
-              <strong>{data?.user.username}</strong>&apos;s
+              <strong>{data.user.username}</strong>&apos;s
             </>
           ) : (
             'your'

@@ -89,7 +89,7 @@ export interface AirportData extends Airport {
 }
 
 export interface FlightData extends Flight {
-  user: UserData;
+  user: UserData | null;
   departureAirport: AirportData;
   arrivalAirport: AirportData;
   diversionAirport: {
@@ -134,17 +134,19 @@ export interface TransformFlightDataResult
   extends Omit<FlightData, 'tracklog' | 'user' | 'waypoints'>,
     FlightTimestampsResult,
     FlightTrackingDataResult {
-  user: {
-    avatar: string;
-  } & Omit<
-    User,
-    | 'admin'
-    | 'password'
-    | 'id'
-    | 'pushNotifications'
-    | 'passwordResetToken'
-    | 'passwordResetAt'
-  >;
+  user:
+    | ({
+        avatar: string;
+      } & Omit<
+        User,
+        | 'admin'
+        | 'password'
+        | 'id'
+        | 'pushNotifications'
+        | 'passwordResetToken'
+        | 'passwordResetAt'
+      >)
+    | null;
   distance: number;
   flightNumberString: string;
   departureMunicipalityText: string;
@@ -687,10 +689,13 @@ export const transformFlightData = (
   return {
     ...flight,
     ...timestamps,
-    user: {
-      avatar: fetchGravatarUrl(flight.user.email),
-      ...flight.user,
-    },
+    user:
+      flight.user !== null
+        ? {
+            avatar: fetchGravatarUrl(flight.user.email),
+            ...flight.user,
+          }
+        : null,
     tailNumber: flight.airframe?.registration ?? flight.tailNumber,
     flightNumberString:
       flight.flightNumber !== null

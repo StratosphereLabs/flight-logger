@@ -89,9 +89,12 @@ export const flightsRouter = router({
       ctx.user !== null
         ? await prisma.user.findMany({
             where: {
-              username: {
-                not: flight.user.username,
-              },
+              username:
+                flight.user !== null
+                  ? {
+                      not: flight.user.username,
+                    }
+                  : undefined,
               OR: [
                 {
                   username: ctx.user.username,
@@ -150,7 +153,7 @@ export const flightsRouter = router({
         avatar: fetchGravatarUrl(email),
       })),
       canAddFlight:
-        ctx.user !== null && otherTraveler === undefined
+        ctx.user !== null && otherTraveler === undefined && flight.user !== null
           ? flight.user.followedBy.some(({ id }) => id === ctx.user?.id)
           : false,
     };
@@ -273,7 +276,7 @@ export const flightsRouter = router({
           message: 'Flight not found.',
         });
       }
-      if (input.user === 'following' && flight.user.id !== ctx.user.id) {
+      if (input.user === 'following' && flight.user?.id !== ctx.user.id) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Unauthorized.',
@@ -302,9 +305,9 @@ export const flightsRouter = router({
           in:
             input.user === 'mine'
               ? [ctx.user.id]
-              : input.user === 'user'
+              : input.user === 'user' && flight.user !== null
                 ? [flight.user.id]
-                : input.user === 'following'
+                : input.user === 'following' && flight.user !== null
                   ? flight.user.following.map(({ id }) => id)
                   : [],
         },
@@ -361,12 +364,17 @@ export const flightsRouter = router({
         limit,
         page,
         results: results.map(result => {
-          const user: UserData & {
-            avatar: string;
-          } = {
-            ...result.user,
-            avatar: fetchGravatarUrl(result.user.email),
-          };
+          const user:
+            | (UserData & {
+                avatar: string;
+              })
+            | null =
+            result.user !== null
+              ? {
+                  ...result.user,
+                  avatar: fetchGravatarUrl(result.user.email),
+                }
+              : null;
           return {
             ...transformFlightData(result),
             user,
@@ -1178,13 +1186,11 @@ export const flightsRouter = router({
           },
         },
       });
-      for (const {
-        user: { username },
-      } of otherFlights) {
-        if (input.usernames.includes(username)) {
+      for (const { user } of otherFlights) {
+        if (user !== null && input.usernames.includes(user.username)) {
           throw new TRPCError({
             code: 'PRECONDITION_FAILED',
-            message: `User ${username} has already been added to this flight.`,
+            message: `User ${user.username} has already been added to this flight.`,
           });
         }
       }

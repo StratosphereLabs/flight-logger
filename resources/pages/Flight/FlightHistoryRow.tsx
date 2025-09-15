@@ -103,22 +103,24 @@ export const FlightHistoryRow = ({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1 overflow-hidden">
-              <Avatar
-                alt={flight.user.username}
-                src={flight.user.avatar}
-                shapeClassName="w-4 h-4 rounded-full"
-              />
-              <Link
-                hover
-                onClick={() => {
-                  navigate(`/user/${flight.user.username}`);
-                }}
-                className="truncate text-sm font-semibold opacity-90"
-              >
-                {flight.user.username}
-              </Link>
-            </div>
+            {flight.user !== null ? (
+              <div className="flex items-center gap-1 overflow-hidden">
+                <Avatar
+                  alt={flight.user.username}
+                  src={flight.user.avatar}
+                  shapeClassName="w-4 h-4 rounded-full"
+                />
+                <Link
+                  hover
+                  onClick={() => {
+                    navigate(`/user/${flight.user?.username}`);
+                  }}
+                  className="truncate text-sm font-semibold opacity-90"
+                >
+                  {flight.user.username}
+                </Link>
+              </div>
+            ) : null}
           </div>
           <div className="flex flex-6 gap-1">
             <div className="flex w-0 flex-1 flex-col justify-start">

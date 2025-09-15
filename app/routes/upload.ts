@@ -307,7 +307,7 @@ uploadRouter.post(
     }
     try {
       const rows = parseFlightyFile(file).filter(
-        flight => flight.Canceled === 'FALSE',
+        flight => flight.Canceled.toUpperCase() === 'FALSE',
       );
       const airportIatas = [
         ...new Set(rows.flatMap(row => [row.From, row.To])),
@@ -431,9 +431,9 @@ uploadRouter.post(
             return [];
           }
           const [gateDepartureScheduledDate, gateDepartureScheduledTime] =
-            row['Gate Departure (Scheduled)'].split(' ');
+            row['Gate Departure (Scheduled)'].split('T');
           const [gateArrivalScheduledDate, gateArrivalScheduledTime] =
-            row['Gate Arrival (Scheduled)'].split(' ');
+            row['Gate Arrival (Scheduled)'].split('T');
           const outTime = fromZonedTime(
             new Date(
               `${gateDepartureScheduledDate} ${gateDepartureScheduledTime}`,

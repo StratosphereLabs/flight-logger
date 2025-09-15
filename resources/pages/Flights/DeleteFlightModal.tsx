@@ -55,9 +55,11 @@ export const DeleteFlightModal = (): JSX.Element => {
     >
       <div className="pt-4">
         Are you sure you want to delete{' '}
-        {activeFlight?.userId !== data?.id ? (
+        {activeFlight?.user !== null &&
+        activeFlight?.user !== undefined &&
+        activeFlight.userId !== data?.id ? (
           <>
-            <strong>{activeFlight?.user.username}</strong>&apos;s
+            <strong>{activeFlight.user.username}</strong>&apos;s
           </>
         ) : (
           'your'

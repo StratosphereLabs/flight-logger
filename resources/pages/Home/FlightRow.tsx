@@ -87,22 +87,24 @@ export const FlightRow = ({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1 overflow-hidden sm:gap-2">
-            <Avatar
-              alt={flight.user.username}
-              src={flight.user.avatar}
-              shapeClassName="w-4 h-4 sm:w-6 sm:h-6 rounded-full"
-            />
-            <Link
-              hover
-              onClick={() => {
-                navigate(`/user/${flight.user.username}`);
-              }}
-              className="truncate text-sm font-semibold opacity-90 sm:text-base"
-            >
-              {flight.user.username}
-            </Link>
-          </div>
+          {flight.user !== null ? (
+            <div className="flex items-center gap-1 overflow-hidden sm:gap-2">
+              <Avatar
+                alt={flight.user.username}
+                src={flight.user.avatar}
+                shapeClassName="w-4 h-4 sm:w-6 sm:h-6 rounded-full"
+              />
+              <Link
+                hover
+                onClick={() => {
+                  navigate(`/user/${flight.user?.username}`);
+                }}
+                className="truncate text-sm font-semibold opacity-90 sm:text-base"
+              >
+                {flight.user.username}
+              </Link>
+            </div>
+          ) : null}
         </div>
         <div className="flex flex-6 gap-2">
           <div className="flex w-0 flex-1 flex-col justify-start">
