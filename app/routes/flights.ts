@@ -6,6 +6,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import _ from 'lodash';
 
 import { updateFlightChangeData, updateFlightData } from '../commands';
+import { updateTrackAircraftData } from '../commands/updateTrackAircraftData';
 import {
   DATE_FORMAT_MONTH_DAY,
   DATE_FORMAT_SHORT,
@@ -145,7 +146,8 @@ export const flightsRouter = router({
     );
     return {
       ...flightData,
-      user: _.omit(flightData.user, 'followedBy'),
+      user:
+        flightData.user !== null ? _.omit(flightData.user, 'followedBy') : null,
       flightState,
       timestamp,
       otherTravelers: otherTravelers.map(({ username, email }) => ({
@@ -1007,6 +1009,8 @@ export const flightsRouter = router({
         seatPosition: input.seatPosition,
         reason: input.reason,
       };
+      const shouldUpdateTrackAircraft =
+        airframeId !== undefined && airframeId !== flight.airframeId;
       const updatedFlight = await prisma.flight.update({
         where: {
           id,
@@ -1074,6 +1078,9 @@ export const flightsRouter = router({
         },
         ctx.user.id,
       );
+      if (shouldUpdateTrackAircraft) {
+        await updateTrackAircraftData([updatedFlight]);
+      }
       if (flightDataChanged) {
         await updateFlightData([updatedFlight]);
         await updateTripTimes(updatedFlight.tripId);
