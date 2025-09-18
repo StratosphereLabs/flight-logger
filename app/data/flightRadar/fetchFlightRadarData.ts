@@ -363,7 +363,7 @@ export const fetchFlightRadarData = async ({
   $('tbody .data-row').each((_, row) => {
     const tableCells = $(row).find('td.hidden-xs.hidden-sm');
     const outTimeTimestamp = $(row).attr('data-timestamp');
-    const inTimeTimestamp = tableCells.eq(9).attr('data-timestamp');
+    const inTimeTimestamp = tableCells.eq(8).attr('data-timestamp');
     if (outTimeTimestamp === undefined || inTimeTimestamp === undefined) return;
     const departureAirportText = $(row)
       .find('td.visible-xs.visible-sm .col-xs-8 a.fbold')
