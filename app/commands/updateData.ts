@@ -177,7 +177,9 @@ const updateFlightsEvery15 = async (): Promise<void> => {
         },
       },
     });
-    await processFlightUpdate(flightsToUpdate, updateFlightData);
+    await processFlightUpdate(flightsToUpdate, flights =>
+      updateFlightData(flights, true),
+    );
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);

@@ -15,14 +15,15 @@ export const getAirframe = async (
   console.log(`Fetching aircraft registration data for ${registration}...`);
   const airframeData = await fetchAircraftRegistrationData(registration);
   if (
-    airframeData.aircraft === undefined ||
-    airframeData.icao24 === undefined ||
-    airframeData.typeCode === undefined
+    airframeData.aircraftData.aircraft === undefined ||
+    airframeData.aircraftData.icao24 === undefined ||
+    airframeData.aircraftData.typeCode === undefined
   ) {
     console.log(`  Registration data not found for ${registration}.`);
     return null;
   }
-  const [manufacturerName, model] = airframeData.aircraft.split(' ');
+  const [manufacturerName, model] =
+    airframeData.aircraftData.aircraft.split(' ');
   const manufacturer = await prisma.manufacturer.findFirst({
     where: {
       code: {
@@ -42,19 +43,19 @@ export const getAirframe = async (
   }
   const aircraftType = await prisma.aircraftType.findFirst({
     where: {
-      icao: airframeData.typeCode,
+      icao: airframeData.aircraftData.typeCode,
     },
     select: {
       id: true,
     },
   });
   const operatorAirline =
-    airframeData.operatorIata !== undefined &&
-    airframeData.operatorIcao !== undefined
+    airframeData.aircraftData.operatorIata !== undefined &&
+    airframeData.aircraftData.operatorIcao !== undefined
       ? await prisma.airline.findFirst({
           where: {
-            iata: airframeData.operatorIata,
-            icao: airframeData.operatorIcao,
+            iata: airframeData.aircraftData.operatorIata,
+            icao: airframeData.aircraftData.operatorIcao,
           },
           select: {
             id: true,
@@ -63,7 +64,7 @@ export const getAirframe = async (
       : null;
   return await prisma.airframe.create({
     data: {
-      icao24: airframeData.icao24,
+      icao24: airframeData.aircraftData.icao24,
       registration,
       manufacturer: {
         connect: {
@@ -79,7 +80,7 @@ export const getAirframe = async (
               },
             }
           : undefined,
-      typeCode: airframeData.typeCode,
+      typeCode: airframeData.aircraftData.typeCode,
       operator:
         operatorAirline !== null
           ? {
