@@ -12,13 +12,46 @@ export const getGroupedFlightsKey = ({
   departureAirportId,
   flightNumber,
   outTime,
-}: FlightWithData): string => {
+}: Pick<
+  FlightWithData,
+  | 'airline'
+  | 'arrivalAirportId'
+  | 'departureAirportId'
+  | 'departureAirport'
+  | 'flightNumber'
+  | 'outTime'
+>): string => {
   const date = formatInTimeZone(
     outTime,
     departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
   return `${airline?.icao}${flightNumber} ${date} ${departureAirportId}-${arrivalAirportId}`;
+};
+
+export const trackAircraftFlightIncludeObj = {
+  airline: true,
+  departureAirport: {
+    select: {
+      id: true,
+      iata: true,
+      timeZone: true,
+    },
+  },
+  arrivalAirport: {
+    select: {
+      id: true,
+      iata: true,
+      timeZone: true,
+    },
+  },
+  diversionAirport: {
+    select: {
+      id: true,
+      iata: true,
+      timeZone: true,
+    },
+  },
 };
 
 export const getIsEqual = <

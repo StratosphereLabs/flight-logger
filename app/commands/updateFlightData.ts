@@ -4,9 +4,11 @@ import { updateFlightTimesData } from './updateFlightTimesData';
 import { updateFlightTrackData } from './updateFlightTrackData';
 import { updateFlightWeatherReports } from './updateFlightWeatherReports';
 import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
+import { updateTrackAircraftData } from './updateTrackAircraftData';
 
 export const updateFlightData = async (
   flights: FlightWithData[],
+  shouldUpdateTrackAircraftData?: boolean,
 ): Promise<void> => {
   let updatedTimesFlights = flights;
   try {
@@ -24,6 +26,14 @@ export const updateFlightData = async (
     await updateFlightTrackData(updatedTimesFlights);
   } catch (err) {
     console.error(err);
+  }
+  const flightsWithUserId = flights.filter(({ userId }) => userId !== null);
+  if (shouldUpdateTrackAircraftData === true && flightsWithUserId.length > 0) {
+    try {
+      await updateTrackAircraftData(flightsWithUserId);
+    } catch (err) {
+      console.error(err);
+    }
   }
   try {
     await updateOnTimePerformanceData(updatedTimesFlights);

@@ -1,9 +1,12 @@
 export interface FlightRadarData {
-  departureTime: Date;
+  airlineIata: string | null;
+  flightNumber: number | null;
   departureAirportIATA: string;
   arrivalAirportIATA: string;
+  outTime: Date;
   offTimeActual: Date | undefined;
   onTimeActual: Date | undefined;
+  inTime: Date;
   aircraftTypeCode: string;
   registration: string | null | undefined;
   flightStatus:
