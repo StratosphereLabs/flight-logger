@@ -16,24 +16,27 @@ export const updateFlightData = async (
   } catch (err) {
     console.error(err);
   }
-  try {
-    updatedTimesFlights =
-      await updateFlightRegistrationData(updatedTimesFlights);
-  } catch (err) {
-    console.error(err);
-  }
-  try {
-    await updateFlightTrackData(updatedTimesFlights);
-  } catch (err) {
-    console.error(err);
-  }
-  const flightsWithUserId = flights.filter(({ userId }) => userId !== null);
+  const flightsWithUserId = updatedTimesFlights.filter(
+    ({ userId }) => userId !== null,
+  );
   if (shouldUpdateTrackAircraftData === true && flightsWithUserId.length > 0) {
     try {
       await updateTrackAircraftData(flightsWithUserId);
     } catch (err) {
       console.error(err);
     }
+  } else {
+    try {
+      updatedTimesFlights =
+        await updateFlightRegistrationData(updatedTimesFlights);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  try {
+    await updateFlightTrackData(updatedTimesFlights);
+  } catch (err) {
+    console.error(err);
   }
   try {
     await updateOnTimePerformanceData(updatedTimesFlights);
