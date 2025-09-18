@@ -7,9 +7,12 @@ import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
 import { UPDATE_CONCURRENCY } from './constants';
 import type { FlightWithData } from './types';
-import { updateFlightData } from './updateFlightData';
 import { updateFlightRegistrationData } from './updateFlightRegistrationData';
+import { updateFlightTimesData } from './updateFlightTimesData';
 import { updateFlightTrackData } from './updateFlightTrackData';
+import { updateFlightWeatherReports } from './updateFlightWeatherReports';
+import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
+import { updateTrackAircraftData } from './updateTrackAircraftData';
 import { getGroupedFlightsKey } from './utils';
 
 const processFlightUpdate = async (
@@ -104,7 +107,46 @@ const updateFlightsHourly = async (): Promise<void> => {
         },
       },
     });
-    await processFlightUpdate(flightsToUpdate, updateFlightData);
+    await processFlightUpdate(flightsToUpdate, async flights => {
+      let updatedTimesFlights = flights;
+      try {
+        updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      const flightsWithUserId = updatedTimesFlights.filter(
+        ({ userId }) => userId !== null,
+      );
+      if (flightsWithUserId.length > 0) {
+        try {
+          await updateTrackAircraftData(flightsWithUserId);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        try {
+          updatedTimesFlights =
+            await updateFlightRegistrationData(updatedTimesFlights);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      try {
+        await updateFlightTrackData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateOnTimePerformanceData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightWeatherReports(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+    });
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);
@@ -177,9 +219,30 @@ const updateFlightsEvery15 = async (): Promise<void> => {
         },
       },
     });
-    await processFlightUpdate(flightsToUpdate, flights =>
-      updateFlightData(flights, true),
-    );
+    await processFlightUpdate(flightsToUpdate, async flights => {
+      let updatedTimesFlights = flights;
+      try {
+        updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        updatedTimesFlights =
+          await updateFlightRegistrationData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightTrackData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightWeatherReports(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+    });
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);
@@ -260,7 +323,30 @@ const updateFlightsEvery5 = async (): Promise<void> => {
         );
       },
     );
-    await processFlightUpdate(filteredFlights, updateFlightData);
+    await processFlightUpdate(filteredFlights, async flights => {
+      let updatedTimesFlights = flights;
+      try {
+        updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        updatedTimesFlights =
+          await updateFlightRegistrationData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightTrackData(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightWeatherReports(updatedTimesFlights);
+      } catch (err) {
+        console.error(err);
+      }
+    });
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);
