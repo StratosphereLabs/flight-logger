@@ -5,8 +5,11 @@ import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import _ from 'lodash';
 
-import { updateFlightChangeData, updateFlightData } from '../commands';
-import { updateTrackAircraftData } from '../commands/updateTrackAircraftData';
+import {
+  updateFlightChangeData,
+  updateFlightData,
+  updateTrackAircraftData,
+} from '../commands';
 import {
   DATE_FORMAT_MONTH_DAY,
   DATE_FORMAT_SHORT,
