@@ -88,13 +88,15 @@ export const FlightHistory = ({
                 label: 'My Flights',
                 value: 'mine',
               },
-              ...(!onOwnProfile
+              ...(!onOwnProfile &&
+              flightData?.user !== null &&
+              flightData?.user !== undefined
                 ? [
                     {
                       id: 'following',
                       className:
                         'flex-1 flex gap-2 justify-center flex-row-reverse',
-                      label: `${flightData?.user.username}'s Flights`,
+                      label: `${flightData.user.username}'s Flights`,
                       value: 'user',
                     },
                   ]

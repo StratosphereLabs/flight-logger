@@ -67,76 +67,78 @@ export const FlightInfo = ({
             </div>
           </div>
         </div>
-        <div className="flex h-8 w-full justify-center gap-3">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <div className="avatar-group rotate-180 transform -space-x-4">
-              {data.otherTravelers.slice(0, 2).map(traveler => (
+        {data.user !== null ? (
+          <div className="flex h-8 w-full justify-center gap-3">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="avatar-group rotate-180 transform -space-x-4">
+                {data.otherTravelers.slice(0, 2).map(traveler => (
+                  <Avatar
+                    key={traveler.username}
+                    alt={traveler.username}
+                    src={traveler.avatar}
+                    className="rotate-180 transform"
+                    shapeClassName="w-6 rounded-full"
+                  />
+                ))}
                 <Avatar
-                  key={traveler.username}
-                  alt={traveler.username}
-                  src={traveler.avatar}
-                  className="rotate-180 transform"
+                  alt={data.user.username}
+                  src={data.user.avatar}
+                  className={classNames(
+                    'rotate-180 transform',
+                    data.otherTravelers.length === 0 && 'border-none',
+                  )}
                   shapeClassName="w-6 rounded-full"
                 />
-              ))}
-              <Avatar
-                alt={data.user.username}
-                src={data.user.avatar}
-                className={classNames(
-                  'rotate-180 transform',
-                  data.otherTravelers.length === 0 && 'border-none',
-                )}
-                shapeClassName="w-6 rounded-full"
-              />
+              </div>
+              <Link
+                hover
+                onClick={() => {
+                  navigate(`/user/${data.user?.username}`);
+                }}
+                className="flex gap-2 truncate text-base font-semibold opacity-90"
+              >
+                {data.user.username}
+              </Link>
+              {data.otherTravelers.length > 0 ? (
+                <span className="font-semibold">
+                  +{data.otherTravelers.length}
+                </span>
+              ) : null}
             </div>
-            <Link
-              hover
-              onClick={() => {
-                navigate(`/user/${data.user.username}`);
-              }}
-              className="flex gap-2 truncate text-base font-semibold opacity-90"
-            >
-              {data.user.username}
-            </Link>
-            {data.otherTravelers.length > 0 ? (
-              <span className="font-semibold">
-                +{data.otherTravelers.length}
-              </span>
+            {isLoggedIn && userData?.id === data.userId ? (
+              <Button
+                className="max-w-[150px] truncate"
+                color="ghost"
+                onClick={() => {
+                  setIsAddTravelerDialogOpen(true);
+                }}
+                size="sm"
+              >
+                <span className="w-4">
+                  <UserPlusIcon className="h-4 w-4" />
+                </span>
+                <span className="truncate">Add Travelers</span>
+              </Button>
+            ) : null}
+            {isLoggedIn && data.canAddFlight ? (
+              <Button
+                className="max-w-[150px] truncate"
+                color="ghost"
+                onClick={() => {
+                  setIsAddFlightDialogOpen(true);
+                }}
+                size="sm"
+              >
+                <span className="w-4">
+                  <PlusAirplaneIcon className="h-4 w-4" />
+                </span>
+                <span className="truncate">
+                  Join {data.user.firstName ?? `@${data.user.username}`}
+                </span>
+              </Button>
             ) : null}
           </div>
-          {isLoggedIn && userData?.id === data.userId ? (
-            <Button
-              className="max-w-[150px] truncate"
-              color="ghost"
-              onClick={() => {
-                setIsAddTravelerDialogOpen(true);
-              }}
-              size="sm"
-            >
-              <span className="w-4">
-                <UserPlusIcon className="h-4 w-4" />
-              </span>
-              <span className="truncate">Add Travelers</span>
-            </Button>
-          ) : null}
-          {isLoggedIn && data.canAddFlight ? (
-            <Button
-              className="max-w-[150px] truncate"
-              color="ghost"
-              onClick={() => {
-                setIsAddFlightDialogOpen(true);
-              }}
-              size="sm"
-            >
-              <span className="w-4">
-                <PlusAirplaneIcon className="h-4 w-4" />
-              </span>
-              <span className="truncate">
-                Join {data.user.firstName ?? `@${data.user.username}`}
-              </span>
-            </Button>
-          ) : null}
-        </div>
+        ) : null}
         <div className="mt-1 flex w-full flex-col gap-2">
           <div className="flex items-stretch gap-2">
             <div className="flex flex-1 flex-col overflow-hidden">

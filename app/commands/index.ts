@@ -5,3 +5,4 @@ export * from './updateFlightTimesData';
 export * from './updateFlightTrackData';
 export * from './updateFlightWeatherReports';
 export * from './updateOnTimePerformanceData';
+export * from './updateTrackAircraftData';

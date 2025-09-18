@@ -54,7 +54,7 @@ export const AddUserToFlightModal = ({
   });
   const { data: flight } = trpc.flights.getFlight.useQuery({ id: flightId });
   const displayName = useMemo(
-    () => flight?.user.firstName ?? flight?.user.username,
+    () => flight?.user?.firstName ?? flight?.user?.username,
     [flight?.user],
   );
   const { mutate, isLoading } = trpc.flights.addUserToFlight.useMutation({

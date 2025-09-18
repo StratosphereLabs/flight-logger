@@ -331,7 +331,11 @@ export const Flight = (): JSX.Element | null => {
                         size="sm"
                         shape="circle"
                         color="ghost"
-                        title={`@${data.user.username}`}
+                        title={
+                          data.user !== null
+                            ? `@${data.user.username}`
+                            : undefined
+                        }
                       >
                         <PlaneSolidIcon
                           className={classNames('h-6 w-6', aircraftColor)}
@@ -339,7 +343,9 @@ export const Flight = (): JSX.Element | null => {
                             transform: `rotate(${Math.round(data.estimatedHeading - 90)}deg)`,
                           }}
                         />
-                        <span className="sr-only">{`@${data.user.username}`}</span>
+                        <span className="sr-only">
+                          {data.user !== null ? `@${data.user.username}` : null}
+                        </span>
                       </Button>
                     </Tooltip>
                   </OverlayViewF>
@@ -401,16 +407,18 @@ export const Flight = (): JSX.Element | null => {
                 <div className="text-xs font-semibold opacity-80 md:text-center md:text-sm">
                   {data.outDateLocal}
                 </div>
-                <div className="flex items-center gap-1 overflow-hidden">
-                  <Avatar
-                    alt={data.user.username}
-                    src={data.user.avatar}
-                    shapeClassName="w-4 h-4 rounded-full"
-                  />
-                  <span className="truncate text-sm font-semibold opacity-90">
-                    {data.user.username}
-                  </span>
-                </div>
+                {data.user !== null ? (
+                  <div className="flex items-center gap-1 overflow-hidden">
+                    <Avatar
+                      alt={data.user.username}
+                      src={data.user.avatar}
+                      shapeClassName="w-4 h-4 rounded-full"
+                    />
+                    <span className="truncate text-sm font-semibold opacity-90">
+                      {data.user.username}
+                    </span>
+                  </div>
+                ) : null}
               </div>
               <div className="flex flex-1 items-center gap-2">
                 <div className="flex w-0 flex-1 flex-col items-center">
