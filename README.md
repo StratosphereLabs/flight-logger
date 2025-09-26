@@ -1,1 +1,3 @@
 # flight-logger
+
+Tracks flights.
