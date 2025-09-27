@@ -1,10 +1,7 @@
 import { type WithRequired } from '@tanstack/react-query';
 
 import { prisma } from '../../db';
-import {
-  FLIGHTAWARE_DATA_INCLUDE_KEYS,
-  FLIGHTRADAR_DATA_INCLUDE_KEYS,
-} from '../constants';
+import { FLIGHTAWARE_DATA_INCLUDE_KEYS } from '../constants';
 import {
   type FlightAwareFlightUpdateData,
   getFlightAwareFlightUpdate,
@@ -48,10 +45,7 @@ export const updateFlightData = async (
       console.error(err);
     }
   }
-  if (
-    process.env.DATASOURCE_FLIGHTRADAR === 'true' &&
-    !FLIGHTRADAR_DATA_INCLUDE_KEYS.every(key => flightStatsUpdate?.[key])
-  ) {
+  if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
     try {
       flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
     } catch (err) {

@@ -19,8 +19,16 @@ const processFlightUpdate = async (
     return;
   }
   const groupedFlights = groupBy(flightsToUpdate, getGroupedFlightsKey);
+  let firstIteration = true;
   for (const [key, flights] of Object.entries(groupedFlights)) {
+    if (firstIteration) {
+      console.log('');
+      firstIteration = false;
+    }
     console.log(`============[AUTOMATED FLIGHT UPDATE - ${key}]============`);
+    flights.forEach(flight => {
+      console.log(`${process.env.VITE_APP_URL}/flight/${flight.id}`);
+    });
     await updateFn(flights);
     console.log(
       `====================================================${key
@@ -30,11 +38,6 @@ const processFlightUpdate = async (
     );
     console.log('');
   }
-  console.log(
-    `  ${flightsToUpdate.length} flight${
-      flightsToUpdate.length > 1 ? 's' : ''
-    } updated successfully.`,
-  );
 };
 
 /**
