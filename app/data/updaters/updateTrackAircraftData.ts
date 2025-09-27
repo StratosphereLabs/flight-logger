@@ -11,14 +11,22 @@ import { getGroupedFlightsKey, trackAircraftFlightIncludeObj } from '../utils';
 
 export const updateTrackAircraftData = async (
   flights: FlightWithData[],
-): Promise<FlightWithData[]> => {
+): Promise<void> => {
   if (flights[0].airline === null || flights[0].flightNumber === null) {
     console.log('Airline and flight number are required.');
-    return flights;
+    return;
+  }
+  const outTimeActual = flights[0].outTimeActual ?? flights[0].outTime;
+  const shouldUpdateTrackAircraft =
+    flights.some(({ userId }) => userId !== null) &&
+    isBefore(new Date(), outTimeActual) &&
+    isAfter(new Date(), sub(outTimeActual, { days: 2 }));
+  if (!shouldUpdateTrackAircraft) {
+    return;
   }
   if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
     const flightDataString = getGroupedFlightsKey(flights[0]);
-    console.log(`Fetching flight registration data for ${flightDataString}...`);
+    console.log(`Fetching aircraft flight data for ${flightDataString}...`);
     let registrationData: FlightRadarRegistrationData | null = null;
     if (flights[0].tailNumber !== null) {
       try {
@@ -30,8 +38,10 @@ export const updateTrackAircraftData = async (
       }
     }
     if (registrationData === null) {
-      console.log(`Unable to fetch aircraft data for ${flights[0].tailNumber}`);
-      return flights;
+      console.log(
+        `  Unable to fetch aircraft flight data for ${flightDataString}`,
+      );
+      return;
     }
     const filteredData = registrationData.flights.filter(
       ({ outTime }) =>
@@ -132,7 +142,7 @@ export const updateTrackAircraftData = async (
         diversionAirportId: diversionAirport?.id ?? null,
       };
     });
-    return await prisma.$transaction(
+    await prisma.$transaction(
       newFlightData.map(({ departureAirport, ...flight }) => {
         const key = getGroupedFlightsKey({
           airline: flights[0].airline,
@@ -159,5 +169,4 @@ export const updateTrackAircraftData = async (
       }),
     );
   }
-  return flights;
 };

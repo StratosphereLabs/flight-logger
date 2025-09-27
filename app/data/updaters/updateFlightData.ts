@@ -18,7 +18,7 @@ import {
   getFlightStatsFlightUpdate,
 } from '../flightStats';
 import type { FlightWithData } from '../types';
-import { removeNullish } from '../utils';
+import { getGroupedFlightsKey, removeNullish } from '../utils';
 import { updateFlightChangeData } from './updateFlightChangeData';
 import { updateFlightTrackData } from './updateFlightTrackData';
 
@@ -36,6 +36,8 @@ export const updateFlightData = async (
   ) {
     return flights;
   }
+  const flightDataString = getGroupedFlightsKey(flights[0]);
+  console.log(`Fetching flight data for ${flightDataString}...`);
   let flightStatsUpdate: FlightStatsFlightUpdateData | null = null;
   let flightRadarUpdate: FlightRadarFlightUpdateData | null = null;
   let flightAwareUpdate: FlightAwareFlightUpdateData | null = null;
@@ -76,6 +78,10 @@ export const updateFlightData = async (
     ...removeNullish(flightAwareUpdate ?? {}),
     ...combinedUpdate,
   };
+  if (Object.keys(flightUpdateData).length === 0) {
+    console.log(`  No flight data found for ${flightDataString}.`);
+    return flights;
+  }
   const updatedFlights = await prisma.$transaction(
     flights.map(({ id }) =>
       prisma.flight.update({

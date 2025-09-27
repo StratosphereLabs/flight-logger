@@ -37,6 +37,7 @@ export const fetchData = async ({
 }: SearchFlightsByFlightNumberParams): Promise<FlightStatsFlightData | null> => {
   if (customUrl !== undefined) {
     const url = `https://www.flightstats.com/v2${customUrl}`;
+    console.log(`  Fetching flight data from ${url}`);
     const response = await axios.get<string>(url, {
       headers: HEADERS,
       withCredentials: true,
@@ -48,6 +49,7 @@ export const fetchData = async ({
   const dateParams = new URLSearchParams({ year, month, day }).toString();
   if (airline.flightStatsCode !== null) {
     const url = `https://www.flightstats.com/v2/flight-tracker/${airline.flightStatsCode}/${flightNumber}?${dateParams}`;
+    console.log(`  Fetching flight data from ${url}`);
     const response = await axios.get<string>(url, {
       headers: HEADERS,
       withCredentials: true,
@@ -57,6 +59,7 @@ export const fetchData = async ({
   }
   if (airline.iata !== null) {
     const url = `https://www.flightstats.com/v2/flight-tracker/${airline.iata}/${flightNumber}?${dateParams}`;
+    console.log(`  Fetching flight data from ${url}`);
     const response = await axios.get<string>(url, {
       headers: HEADERS,
       withCredentials: true,
@@ -65,6 +68,7 @@ export const fetchData = async ({
     if (data !== null) return data;
   }
   const url = `https://www.flightstats.com/v2/flight-tracker/${airline.icao}/${flightNumber}?${dateParams}`;
+  console.log(`  Fetching flight data from ${url}`);
   const response = await axios.get<string>(url, {
     headers: HEADERS,
     withCredentials: true,

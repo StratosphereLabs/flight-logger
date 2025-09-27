@@ -7,6 +7,7 @@ import {
   fetchSingleWeatherReport,
 } from '../../utils';
 import type { FlightWithData } from '../types';
+import { getGroupedFlightsKey } from '../utils';
 
 const getUpdateObject = (
   data: AviationWeatherReport,
@@ -47,34 +48,45 @@ export const updateFlightWeatherReports = async (
     outTime,
     outTimeActual,
   } = flights[0];
+  const flightDataString = getGroupedFlightsKey(flights[0]);
   const departureTime = offTimeActual ?? offTime ?? outTimeActual ?? outTime;
   const arrivalTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
   let departureWeather: AviationWeatherReport | null = null;
   let arrivalWeather: AviationWeatherReport | null = null;
   let diversionWeather: AviationWeatherReport | null = null;
+  console.log(`Fetching weather reports for ${flightDataString}...`);
   try {
     departureWeather = await fetchSingleWeatherReport(
       departureAirport.id,
       departureTime,
     );
+  } catch (err) {
+    console.error(err);
+  }
+  try {
     arrivalWeather = await fetchSingleWeatherReport(
       arrivalAirport.id,
       arrivalTime,
     );
-    if (diversionAirportId !== null) {
+  } catch (err) {
+    console.error(err);
+  }
+  if (diversionAirportId !== null) {
+    try {
       diversionWeather = await fetchSingleWeatherReport(
         diversionAirportId,
         arrivalTime,
       );
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
   }
   if (
     departureWeather === null &&
     arrivalWeather === null &&
     diversionWeather === null
   ) {
+    console.log(`  No weather reports found for ${flightDataString}.`);
     return;
   }
   await prisma.$transaction(

@@ -6,7 +6,6 @@ import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getAirframe, getDurationMinutes } from '../../utils';
 import type { FlightWithData } from '../types';
-import { getGroupedFlightsKey } from '../utils';
 import { fetchFlightStatsFlightData } from './fetchFlightData';
 
 export type FlightStatsFlightUpdateData = Awaited<
@@ -17,8 +16,6 @@ export const getFlightStatsFlightUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 ) => {
-  const flightDataString = getGroupedFlightsKey(flight);
-  console.log(`Fetching FlightStats data for ${flightDataString}...`);
   const isoDate = formatInTimeZone(
     flight.outTime,
     flight.departureAirport.timeZone,
@@ -32,7 +29,6 @@ export const getFlightStatsFlightUpdate = async (
     isoDate,
   });
   if (flightStatsResponse === null) {
-    console.log(`  FlightStats data not found for ${flightDataString}.`);
     return null;
   }
   const diversionAirport =

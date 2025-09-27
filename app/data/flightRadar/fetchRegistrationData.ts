@@ -26,6 +26,7 @@ export const fetchFlightRadarRegistrationData = async (
   registration: string,
 ): Promise<FlightRadarRegistrationData> => {
   const url = `https://www.flightradar24.com/data/aircraft/${registration}`;
+  console.log(`  Fetching registration data from ${url}`);
   const response = await axios.get<string>(url, {
     headers: HEADERS,
     withCredentials: true,

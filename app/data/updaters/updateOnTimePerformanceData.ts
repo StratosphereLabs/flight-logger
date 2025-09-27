@@ -16,7 +16,7 @@ export const updateOnTimePerformanceData = async (
     flights[0].airline?.iata === undefined ||
     flights[0].flightNumber === null
   ) {
-    console.log('Airline and flight number are required.');
+    console.log('  Airline and flight number are required.');
     return;
   }
   const flightDataString = getGroupedFlightsKey(flights[0]);
@@ -37,9 +37,6 @@ export const updateOnTimePerformanceData = async (
     isBefore(rating.validFrom, twoMonthsAgo) &&
     isAfter(rating.validTo, twoMonthsAgo)
   ) {
-    console.log(
-      `On-time performance data already found for ${flightDataString}.`,
-    );
     return;
   }
   console.log(`Fetching on-time performance data for ${flightDataString}...`);

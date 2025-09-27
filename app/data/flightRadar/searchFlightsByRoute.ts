@@ -19,6 +19,7 @@ export const searchFlightRadarFlightsByRoute = async ({
   isoDate: string;
 }): Promise<FlightSearchDataFetchResult[] | null> => {
   const url = `https://api.flightradar24.com/common/v1/search.json?query=default&origin=${departureAirportIata}&destination=${arrivalAirportIata}&limit=100`;
+  console.log(`  Fetching flight search data from ${url}`);
   const response = await axios.get<FlightRadarRoutesResponse>(url, {
     headers: HEADERS,
     withCredentials: true,

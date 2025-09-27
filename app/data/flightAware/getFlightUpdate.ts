@@ -7,7 +7,7 @@ import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getDurationMinutes } from '../../utils';
 import type { FlightWithData } from '../types';
-import { createNewDate, getGroupedFlightsKey } from '../utils';
+import { createNewDate } from '../utils';
 import { fetchFlightAwareFlightData } from './fetchFlightData';
 
 export type FlightAwareFlightUpdateData = Awaited<
@@ -18,8 +18,6 @@ export const getFlightAwareFlightUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 ) => {
-  const flightDataString = getGroupedFlightsKey(flight);
-  console.log(`Fetching FlightAware data for ${flightDataString}...`);
   const isoDate = formatInTimeZone(
     flight.outTime,
     flight.departureAirport.timeZone,
@@ -35,7 +33,6 @@ export const getFlightAwareFlightUpdate = async (
     fetchTrackingData: isWithinOneDay,
   });
   if (flightData === null) {
-    console.log(`  FlightAware data not found for ${flightDataString}.`);
     return null;
   }
   const aircraftType =

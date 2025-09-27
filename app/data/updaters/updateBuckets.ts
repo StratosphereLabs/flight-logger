@@ -20,8 +20,15 @@ const processFlightUpdate = async (
   }
   const groupedFlights = groupBy(flightsToUpdate, getGroupedFlightsKey);
   for (const [key, flights] of Object.entries(groupedFlights)) {
-    console.log(`Updating flight ${key}...`);
+    console.log(`============[AUTOMATED FLIGHT UPDATE - ${key}]============`);
     await updateFn(flights);
+    console.log(
+      `====================================================${key
+        .split('')
+        .map(_ => '=')
+        .join('')}`,
+    );
+    console.log('');
   }
   console.log(
     `  ${flightsToUpdate.length} flight${
@@ -87,12 +94,7 @@ export const updateFlightsDaily = async (): Promise<void> => {
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
       const updatedFlights = await updateFlightData(flights);
-      const flightsWithUserId = updatedFlights.filter(
-        ({ userId }) => userId !== null,
-      );
-      if (flightsWithUserId.length > 0) {
-        await updateTrackAircraftData(flightsWithUserId);
-      }
+      await updateTrackAircraftData(updatedFlights);
       await updateOnTimePerformanceData(updatedFlights);
       await updateFlightWeatherReports(updatedFlights);
     });
@@ -159,12 +161,7 @@ export const updateFlightsHourly = async (): Promise<void> => {
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
       const updatedFlights = await updateFlightData(flights);
-      const flightsWithUserId = updatedFlights.filter(
-        ({ userId }) => userId !== null,
-      );
-      if (flightsWithUserId.length > 0) {
-        await updateTrackAircraftData(flightsWithUserId);
-      }
+      await updateTrackAircraftData(updatedFlights);
       await updateFlightWeatherReports(updatedFlights);
     });
     await prisma.$disconnect();
@@ -230,6 +227,12 @@ export const updateFlightsEvery15 = async (): Promise<void> => {
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
       const updatedFlights = await updateFlightData(flights);
+      const hasAirframeChanged =
+        updatedFlights[0].airframeId !== null &&
+        updatedFlights[0].airframeId !== flights[0].airframeId;
+      if (hasAirframeChanged) {
+        await updateTrackAircraftData(updatedFlights);
+      }
       await updateFlightWeatherReports(updatedFlights);
     });
     await prisma.$disconnect();
@@ -319,6 +322,12 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
     );
     await processFlightUpdate(filteredFlights, async flights => {
       const updatedFlights = await updateFlightData(flights);
+      const hasAirframeChanged =
+        updatedFlights[0].airframeId !== null &&
+        updatedFlights[0].airframeId !== flights[0].airframeId;
+      if (hasAirframeChanged) {
+        await updateTrackAircraftData(updatedFlights);
+      }
       await updateFlightWeatherReports(updatedFlights);
     });
     await prisma.$disconnect();
@@ -406,9 +415,7 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
         );
       },
     );
-    await processFlightUpdate(filteredFlights, async flights => {
-      await updateFlightData(flights);
-    });
+    await processFlightUpdate(filteredFlights, updateFlightTrackData);
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);

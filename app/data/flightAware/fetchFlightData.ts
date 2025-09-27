@@ -22,6 +22,7 @@ export const fetchFlightAwareFlightData = async ({
   fetchTrackingData,
 }: FetchFlightAwareFlightDataParams): Promise<FlightAwareDataResult | null> => {
   const url = `https://www.flightaware.com/live/flight/${airline.icao}${flightNumber}`;
+  console.log(`  Fetching flight data from ${url}`);
   const response = await axios.get<string>(url, {
     headers: HEADERS,
     withCredentials: true,
@@ -51,6 +52,7 @@ export const fetchFlightAwareFlightData = async ({
   if (flightData === null) return null;
   if (fetchTrackingData === true && flightData.permaLink !== null) {
     const flightUrl = `https://www.flightaware.com${flightData.permaLink}`;
+    console.log(`  Fetching flight data from ${flightUrl}`);
     const flightResponse = await axios.get<string>(flightUrl, {
       headers: HEADERS,
     });

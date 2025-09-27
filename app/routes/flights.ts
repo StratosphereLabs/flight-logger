@@ -1016,8 +1016,6 @@ export const flightsRouter = router({
         seatPosition: input.seatPosition,
         reason: input.reason,
       };
-      const shouldUpdateTrackAircraft =
-        airframeId !== undefined && airframeId !== flight.airframeId;
       const updatedFlight = await prisma.flight.update({
         where: {
           id,
@@ -1085,12 +1083,14 @@ export const flightsRouter = router({
         },
         ctx.user.id,
       );
-      if (shouldUpdateTrackAircraft) {
-        await updateTrackAircraftData([updatedFlight]);
-      }
       if (flightDataChanged) {
         const updatedFlights = await updateFlightData([updatedFlight]);
-        await updateTrackAircraftData(updatedFlights);
+        const hasAirframeChanged =
+          updatedFlights[0].airframeId !== null &&
+          updatedFlights[0].airframeId !== flight.airframeId;
+        if (hasAirframeChanged) {
+          await updateTrackAircraftData(updatedFlights);
+        }
         await updateOnTimePerformanceData(updatedFlights);
         await updateFlightWeatherReports(updatedFlights);
       }
