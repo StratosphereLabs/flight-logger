@@ -1,8 +1,32 @@
 import type { Flight, FlightUpdateChange } from '@prisma/client';
 
-export const UPDATE_CONCURRENCY = 1;
-
 export const KTS_TO_MPH = 1.15078;
+
+export const FLIGHTRADAR_DATA_INCLUDE_KEYS = [
+  'aircraftTypeId',
+  'airframeId',
+  'tailNumber',
+  'outTime',
+  'offTime',
+  'onTime',
+  'inTime',
+  'duration',
+] as const;
+
+export const FLIGHTAWARE_DATA_INCLUDE_KEYS = [
+  'aircraftTypeId',
+  'outTime',
+  'offTime',
+  'onTime',
+  'inTime',
+  'duration',
+  'outTimeActual',
+  'inTimeActual',
+  'departureGate',
+  'departureTerminal',
+  'arrivalGate',
+  'arrivalTerminal',
+] as const;
 
 export const FLIGHT_CHANGE_GETTER_MAP: Partial<
   Record<

@@ -25,7 +25,7 @@ import { useAddFlightStore } from './addFlightStore';
 
 export interface UserSelectModalProps {
   flight:
-    | FlightDataRouterOutput['fetchFlightsByFlightNumber']['results'][number]
+    | FlightDataRouterOutput['searchFlightsByFlightNumber']['results'][number]
     | null;
   isLoading: boolean;
   onSubmit: SubmitHandler<UserSelectFormData>;

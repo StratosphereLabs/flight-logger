@@ -64,7 +64,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
   const [isShowingRegField, setIsShowingRegField] = useState(false);
   const onError = useTRPCErrorHandler();
   const { data, isFetching } =
-    trpc.flightData.fetchFlightsByFlightNumber.useQuery(
+    trpc.flightData.searchFlightsByFlightNumber.useQuery(
       flightSearchFormData ?? addFlightFormDefaultValues,
       {
         enabled: flightSearchFormData !== null,
@@ -131,7 +131,7 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
   );
   const handleAddFlightFromData = useCallback(
     (
-      newFlight: FlightDataRouterOutput['fetchFlightsByFlightNumber']['results'][number],
+      newFlight: FlightDataRouterOutput['searchFlightsByFlightNumber']['results'][number],
       username?: string,
     ) => {
       if (flightSearchFormData !== null) {

@@ -26,6 +26,7 @@ export interface FlightStatsAirport {
     };
   };
   date: string;
+  baggage: string | null;
 }
 
 export interface FlightStatsCodeshare {
@@ -100,15 +101,13 @@ export interface FlightStatsFlight {
       iata: string;
       name: string;
       title: string;
-    };
+    } | null;
     flightDuration: string;
   };
-  arrivalAirport: FlightStatsAirport & {
-    baggage: string | null;
-  };
+  arrivalAirport: FlightStatsAirport;
   codeshares: FlightStatsCodeshare[];
-  departureAirport: FlightStatsAirport;
-  divertedAirport: null;
+  departureAirport: Omit<FlightStatsAirport, 'baggage'>;
+  divertedAirport: FlightStatsAirport | null;
   flightId: number;
   flightNote: FlightStatsNote;
   flightState: string;
@@ -133,7 +132,7 @@ export interface FlightStatsFlight {
         dateUtc: string;
         dateLocal: string;
       };
-      equipment: string;
+      equipment: string | null;
       delayMinutes: number;
       bearing: number;
       heading: number;

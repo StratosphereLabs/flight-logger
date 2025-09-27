@@ -1,6 +1,6 @@
 import type { Airframe } from '@prisma/client';
 
-import { fetchAircraftRegistrationData } from '../data/flightRadar';
+import { fetchFlightRadarRegistrationData } from '../data/flightRadar';
 import { prisma } from '../db';
 
 export const getAirframe = async (
@@ -11,9 +11,10 @@ export const getAirframe = async (
       registration,
     },
   });
-  if (airframe !== null) return airframe;
+  if (airframe !== null || process.env.DATASOURCE_FLIGHTRADAR !== 'true')
+    return airframe;
   console.log(`Fetching aircraft registration data for ${registration}...`);
-  const airframeData = await fetchAircraftRegistrationData(registration);
+  const airframeData = await fetchFlightRadarRegistrationData(registration);
   if (
     airframeData.aircraftData.aircraft === undefined ||
     airframeData.aircraftData.icao24 === undefined ||

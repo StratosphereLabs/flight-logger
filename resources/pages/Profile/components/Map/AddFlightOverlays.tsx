@@ -19,7 +19,7 @@ export const AddFlightOverlays = ({
   const onError = useTRPCErrorHandler();
   const isDarkMode = useIsDarkMode();
   const { data: flightSearchData } =
-    trpc.flightData.fetchFlightsByFlightNumber.useQuery(
+    trpc.flightData.searchFlightsByFlightNumber.useQuery(
       flightSearchFormData ?? addFlightFormDefaultValues,
       {
         enabled: flightSearchFormData !== null,

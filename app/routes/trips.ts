@@ -1,7 +1,7 @@
 import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import difference from 'lodash.difference';
 
-import { prisma, updateTripTimes, validateUserFlights } from '../db';
+import { prisma, validateUserFlights } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
   createTripSchema,
@@ -186,7 +186,6 @@ export const tripsRouter = router({
           },
         }),
       ]);
-      await updateTripTimes(id);
       const updatedTrip = await prisma.trip.update({
         where: {
           id,
