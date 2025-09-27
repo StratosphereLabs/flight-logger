@@ -1,12 +1,12 @@
 import { isAfter, isBefore, sub } from 'date-fns';
 
+import { prisma } from '../../db';
 import {
   type OnTimePerformanceData,
   fetchOnTimePerformanceData,
-} from '../data/flightStats';
-import { prisma } from '../db';
-import type { FlightWithData } from './types';
-import { getGroupedFlightsKey } from './utils';
+} from '../flightStats';
+import type { FlightWithData } from '../types';
+import { getGroupedFlightsKey } from '../utils';
 
 export const updateOnTimePerformanceData = async (
   flights: FlightWithData[],

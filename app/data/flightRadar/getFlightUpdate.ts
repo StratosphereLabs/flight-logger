@@ -2,11 +2,11 @@ import { type WithRequired } from '@tanstack/react-query';
 import { add, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import type { FlightWithData } from '../../commands/types';
-import { getGroupedFlightsKey } from '../../commands/utils';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getAirframe, getDurationMinutes } from '../../utils';
+import type { FlightWithData } from '../types';
+import { getGroupedFlightsKey } from '../utils';
 import { fetchFlightRadarFlightData } from './fetchFlightData';
 
 export type FlightRadarFlightUpdateData = Awaited<

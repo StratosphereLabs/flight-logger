@@ -6,18 +6,18 @@ import { formatInTimeZone } from 'date-fns-tz';
 import _ from 'lodash';
 
 import {
-  updateFlightChangeData,
-  updateFlightData,
-  updateFlightWeatherReports,
-  updateOnTimePerformanceData,
-  updateTrackAircraftData,
-} from '../commands';
-import {
   DATE_FORMAT_MONTH_DAY,
   DATE_FORMAT_SHORT,
   DATE_FORMAT_YEAR,
 } from '../constants';
 import type { TracklogItem } from '../data/types';
+import {
+  updateFlightChangeData,
+  updateFlightData,
+  updateFlightWeatherReports,
+  updateOnTimePerformanceData,
+  updateTrackAircraftData,
+} from '../data/updaters';
 import { prisma } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';

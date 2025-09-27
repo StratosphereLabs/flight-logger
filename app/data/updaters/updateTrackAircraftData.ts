@@ -1,13 +1,13 @@
 import { isAfter, isBefore, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 
+import { prisma } from '../../db';
 import {
   type FlightRadarRegistrationData,
   fetchFlightRadarRegistrationData,
-} from '../data/flightRadar';
-import { prisma } from '../db';
-import type { FlightWithData } from './types';
-import { getGroupedFlightsKey, trackAircraftFlightIncludeObj } from './utils';
+} from '../flightRadar';
+import type { FlightWithData } from '../types';
+import { getGroupedFlightsKey, trackAircraftFlightIncludeObj } from '../utils';
 
 export const updateTrackAircraftData = async (
   flights: FlightWithData[],

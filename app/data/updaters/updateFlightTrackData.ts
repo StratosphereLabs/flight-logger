@@ -1,9 +1,8 @@
-import { fetchFlightTrackData as fetchAdsbExchangeData } from '../data/adsbExchange';
-import { fetchFlightTrackData as fetchPlaneSpottersData } from '../data/planeSpotters';
-import type { TracklogItem } from '../data/types';
-import { prisma } from '../db';
-import type { FlightWithData } from './types';
-import { getGroupedFlightsKey } from './utils';
+import { prisma } from '../../db';
+import { fetchFlightTrackData as fetchAdsbExchangeData } from '../adsbExchange';
+import { fetchFlightTrackData as fetchPlaneSpottersData } from '../planeSpotters';
+import type { FlightWithData, TracklogItem } from '../types';
+import { getGroupedFlightsKey } from '../utils';
 
 export const updateFlightTrackData = async (
   flights: FlightWithData[],

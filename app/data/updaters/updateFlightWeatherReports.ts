@@ -1,9 +1,12 @@
 import type { Prisma } from '@prisma/client';
 import { fromUnixTime } from 'date-fns';
 
-import { prisma } from '../db';
-import { type AviationWeatherReport, fetchSingleWeatherReport } from '../utils';
-import type { FlightWithData } from './types';
+import { prisma } from '../../db';
+import {
+  type AviationWeatherReport,
+  fetchSingleWeatherReport,
+} from '../../utils';
+import type { FlightWithData } from '../types';
 
 const getUpdateObject = (
   data: AviationWeatherReport,

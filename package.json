@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "concurrently \"vite-node app/server.ts\" \"npm run update-data\"",
+    "start": "concurrently \"vite-node app/server.ts\" \"npm run schedule-data-updates\"",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon --watch app --watch routes --exec \"vite-node app/server.ts\"",
     "dev:client": "vite",
@@ -19,7 +19,8 @@
     "coverage": "vitest --coverage",
     "preview": "vite preview",
     "format": "prettier --config ./.prettierrc -w app resources vite.config.ts",
-    "update-data": "vite-node app/commands/updateData.ts"
+    "schedule-data-updates": "vite-node app/commands/scheduleDataUpdates.ts",
+    "test-data-update": "vite-node app/commands/testDataUpdate.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",

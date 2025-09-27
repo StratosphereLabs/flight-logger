@@ -3,12 +3,11 @@ import { type WithRequired } from '@tanstack/react-query';
 import { add, isAfter } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import type { FlightWithData } from '../../commands/types';
-import { getGroupedFlightsKey } from '../../commands/utils';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getDurationMinutes } from '../../utils';
-import { createNewDate } from '../utils';
+import type { FlightWithData } from '../types';
+import { createNewDate, getGroupedFlightsKey } from '../utils';
 import { fetchFlightAwareFlightData } from './fetchFlightData';
 
 export type FlightAwareFlightUpdateData = Awaited<

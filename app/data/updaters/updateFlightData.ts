@@ -1,26 +1,26 @@
 import { type WithRequired } from '@tanstack/react-query';
 
-import {
-  type FlightAwareFlightUpdateData,
-  getFlightAwareFlightUpdate,
-} from '../data/flightAware';
-import {
-  type FlightRadarFlightUpdateData,
-  getFlightRadarFlightUpdate,
-} from '../data/flightRadar';
-import {
-  type FlightStatsFlightUpdateData,
-  getFlightStatsFlightUpdate,
-} from '../data/flightStats';
-import { prisma } from '../db';
+import { prisma } from '../../db';
 import {
   FLIGHTAWARE_DATA_INCLUDE_KEYS,
   FLIGHTRADAR_DATA_INCLUDE_KEYS,
-} from './constants';
-import type { FlightWithData } from './types';
+} from '../constants';
+import {
+  type FlightAwareFlightUpdateData,
+  getFlightAwareFlightUpdate,
+} from '../flightAware';
+import {
+  type FlightRadarFlightUpdateData,
+  getFlightRadarFlightUpdate,
+} from '../flightRadar';
+import {
+  type FlightStatsFlightUpdateData,
+  getFlightStatsFlightUpdate,
+} from '../flightStats';
+import type { FlightWithData } from '../types';
+import { removeNullish } from '../utils';
 import { updateFlightChangeData } from './updateFlightChangeData';
 import { updateFlightTrackData } from './updateFlightTrackData';
-import { removeNullish } from './utils';
 
 export const updateFlightData = async (
   flights: FlightWithData[],

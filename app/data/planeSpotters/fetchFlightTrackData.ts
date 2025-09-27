@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { add, isAfter, isBefore, sub } from 'date-fns';
 
-import type { FlightWithData } from '../../commands/types';
 import { HEADERS } from '../constants';
-import type { TracklogItem } from '../types';
+import type { FlightWithData, TracklogItem } from '../types';
 
 interface FlightTrackItemData {
   alert: number;
