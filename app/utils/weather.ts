@@ -113,16 +113,10 @@ export const fetchSingleWeatherReport = async (
 ): Promise<AviationWeatherReport | null> => {
   let departureResult: AxiosResponse<AviationWeatherReport[]> | undefined;
   try {
-    console.log(
-      `Fetching weather report for ${airportId} at ${time.toISOString()}...`,
-    );
-    departureResult = await axios.get<AviationWeatherReport[]>(
-      getUrl(airportId, time),
-    );
+    const url = getUrl(airportId, time);
+    console.log(`  Fetching weather report from ${url}`);
+    departureResult = await axios.get<AviationWeatherReport[]>(url);
   } catch (err) {
-    console.log(
-      `  Weather report not found for ${airportId} at ${time.toISOString()}.`,
-    );
     console.error(err);
   }
   return departureResult?.data[0] ?? null;

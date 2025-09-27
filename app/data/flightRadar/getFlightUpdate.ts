@@ -2,11 +2,10 @@ import { type WithRequired } from '@tanstack/react-query';
 import { add, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import type { FlightWithData } from '../../commands/types';
-import { getGroupedFlightsKey } from '../../commands/utils';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getAirframe, getDurationMinutes } from '../../utils';
+import type { FlightWithData } from '../types';
 import { fetchFlightRadarFlightData } from './fetchFlightData';
 
 export type FlightRadarFlightUpdateData = Awaited<
@@ -17,8 +16,6 @@ export const getFlightRadarFlightUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 ) => {
-  const flightDataString = getGroupedFlightsKey(flight);
-  console.log(`Fetching FlightRadar24 data for ${flightDataString}...`);
   const isoDate = formatInTimeZone(
     flight.outTime,
     flight.departureAirport.timeZone,
@@ -32,7 +29,6 @@ export const getFlightRadarFlightUpdate = async (
     isoDate,
   });
   if (flightData === null) {
-    console.log(`  FlightRadar24 data not found for ${flightDataString}.`);
     return null;
   }
   const airframe =

@@ -1,25 +1,26 @@
 import { type WithRequired } from '@tanstack/react-query';
 
-import {
-  type FlightAwareFlightUpdateData,
-  getFlightAwareFlightUpdate,
-} from '../data/flightAware';
-import {
-  type FlightRadarFlightUpdateData,
-  getFlightRadarFlightUpdate,
-} from '../data/flightRadar';
-import {
-  type FlightStatsFlightUpdateData,
-  getFlightStatsFlightUpdate,
-} from '../data/flightStats';
-import { prisma } from '../db';
+import { prisma } from '../../db';
 import {
   FLIGHTAWARE_DATA_INCLUDE_KEYS,
   FLIGHTRADAR_DATA_INCLUDE_KEYS,
-} from './constants';
-import type { FlightWithData } from './types';
+} from '../constants';
+import {
+  type FlightAwareFlightUpdateData,
+  getFlightAwareFlightUpdate,
+} from '../flightAware';
+import {
+  type FlightRadarFlightUpdateData,
+  getFlightRadarFlightUpdate,
+} from '../flightRadar';
+import {
+  type FlightStatsFlightUpdateData,
+  getFlightStatsFlightUpdate,
+} from '../flightStats';
+import type { FlightWithData } from '../types';
+import { getGroupedFlightsKey, removeNullish } from '../utils';
 import { updateFlightChangeData } from './updateFlightChangeData';
-import { removeNullish } from './utils';
+import { updateFlightTrackData } from './updateFlightTrackData';
 
 export const updateFlightData = async (
   flights: FlightWithData[],
@@ -35,6 +36,8 @@ export const updateFlightData = async (
   ) {
     return flights;
   }
+  const flightDataString = getGroupedFlightsKey(flights[0]);
+  console.log(`Fetching flight data for ${flightDataString}...`);
   let flightStatsUpdate: FlightStatsFlightUpdateData | null = null;
   let flightRadarUpdate: FlightRadarFlightUpdateData | null = null;
   let flightAwareUpdate: FlightAwareFlightUpdateData | null = null;
@@ -75,6 +78,10 @@ export const updateFlightData = async (
     ...removeNullish(flightAwareUpdate ?? {}),
     ...combinedUpdate,
   };
+  if (Object.keys(flightUpdateData).length === 0) {
+    console.log(`  No flight data found for ${flightDataString}.`);
+    return flights;
+  }
   const updatedFlights = await prisma.$transaction(
     flights.map(({ id }) =>
       prisma.flight.update({
@@ -110,5 +117,6 @@ export const updateFlightData = async (
     ),
   );
   await updateFlightChangeData(flights, flightUpdateData);
+  await updateFlightTrackData(updatedFlights);
   return updatedFlights;
 };

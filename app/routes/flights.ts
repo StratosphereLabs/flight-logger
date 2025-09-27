@@ -6,19 +6,18 @@ import { formatInTimeZone } from 'date-fns-tz';
 import _ from 'lodash';
 
 import {
-  updateFlightChangeData,
-  updateFlightData,
-  updateFlightTrackData,
-  updateFlightWeatherReports,
-  updateOnTimePerformanceData,
-  updateTrackAircraftData,
-} from '../commands';
-import {
   DATE_FORMAT_MONTH_DAY,
   DATE_FORMAT_SHORT,
   DATE_FORMAT_YEAR,
 } from '../constants';
 import type { TracklogItem } from '../data/types';
+import {
+  updateFlightChangeData,
+  updateFlightData,
+  updateFlightWeatherReports,
+  updateOnTimePerformanceData,
+  updateTrackAircraftData,
+} from '../data/updaters';
 import { prisma } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';
@@ -934,26 +933,9 @@ export const flightsRouter = router({
         },
       });
       const updatedFlights = await updateFlightData([flight]);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateTrackAircraftData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateOnTimePerformanceData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateTrackAircraftData(updatedFlights);
+      await updateOnTimePerformanceData(updatedFlights);
+      await updateFlightWeatherReports(updatedFlights);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -1034,8 +1016,6 @@ export const flightsRouter = router({
         seatPosition: input.seatPosition,
         reason: input.reason,
       };
-      const shouldUpdateTrackAircraft =
-        airframeId !== undefined && airframeId !== flight.airframeId;
       const updatedFlight = await prisma.flight.update({
         where: {
           id,
@@ -1103,26 +1083,16 @@ export const flightsRouter = router({
         },
         ctx.user.id,
       );
-      if (shouldUpdateTrackAircraft) {
-        await updateTrackAircraftData([updatedFlight]);
-      }
       if (flightDataChanged) {
         const updatedFlights = await updateFlightData([updatedFlight]);
-        try {
-          await updateFlightTrackData(updatedFlights);
-        } catch (err) {
-          console.error(err);
+        const hasAirframeChanged =
+          updatedFlights[0].airframeId !== null &&
+          updatedFlights[0].airframeId !== flight.airframeId;
+        if (hasAirframeChanged) {
+          await updateTrackAircraftData(updatedFlights);
         }
-        try {
-          await updateOnTimePerformanceData(updatedFlights);
-        } catch (err) {
-          console.error(err);
-        }
-        try {
-          await updateFlightWeatherReports(updatedFlights);
-        } catch (err) {
-          console.error(err);
-        }
+        await updateOnTimePerformanceData(updatedFlights);
+        await updateFlightWeatherReports(updatedFlights);
       }
     }),
   deleteFlight: procedure

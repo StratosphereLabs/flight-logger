@@ -17,13 +17,16 @@ export type FlightRadarAircraftData = Partial<{
   operatorIcao: string;
 }>;
 
-export const fetchFlightRadarRegistrationData = async (
-  registration: string,
-): Promise<{
+export interface FlightRadarRegistrationData {
   aircraftData: FlightRadarAircraftData;
   flights: FlightRadarFlightData[];
-}> => {
+}
+
+export const fetchFlightRadarRegistrationData = async (
+  registration: string,
+): Promise<FlightRadarRegistrationData> => {
   const url = `https://www.flightradar24.com/data/aircraft/${registration}`;
+  console.log(`  Fetching registration data from ${url}`);
   const response = await axios.get<string>(url, {
     headers: HEADERS,
     withCredentials: true,

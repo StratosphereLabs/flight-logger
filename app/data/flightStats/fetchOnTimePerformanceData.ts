@@ -13,6 +13,12 @@ import type {
   FlightStatsOnTimePerformanceResponse,
 } from './types';
 
+export interface OnTimePerformanceData
+  extends FlightStatsOnTimePerformanceRating {
+  validFrom: string;
+  validTo: string;
+}
+
 const SCRIPT_BEGIN = 'window.__data=';
 
 const processData = (
@@ -56,14 +62,9 @@ export const fetchOnTimePerformanceData = async ({
   airlineIata,
   flightNumber,
   departureIata,
-}: FetchOnTimePerformanceDataParams): Promise<
-  | (FlightStatsOnTimePerformanceRating & {
-      validFrom: string;
-      validTo: string;
-    })
-  | null
-> => {
+}: FetchOnTimePerformanceDataParams): Promise<OnTimePerformanceData | null> => {
   const url = `https://www.flightstats.com/v2/flight-ontime-performance-rating/${airlineIata}/${flightNumber}/${departureIata}`;
+  console.log(`  Fetching on-time performance data from ${url}`);
   const response = await axios.get<string>(url, {
     headers: HEADERS,
     withCredentials: true,

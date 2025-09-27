@@ -1,4 +1,4 @@
-import type { Airline, Airport } from '@prisma/client';
+import type { Airline, Airport, Flight } from '@prisma/client';
 
 import type { FlightTimestampsResult } from '../utils';
 import type { FlightAwareTracklogItem } from './flightAware/types';
@@ -8,6 +8,13 @@ export interface FlightWithDataAirport {
   iata: string;
   timeZone: string;
 }
+
+export type FlightWithData = Flight & {
+  airline: Airline | null;
+  departureAirport: FlightWithDataAirport;
+  arrivalAirport: FlightWithDataAirport;
+  diversionAirport: FlightWithDataAirport | null;
+};
 
 export type TracklogItem = Pick<
   FlightAwareTracklogItem,

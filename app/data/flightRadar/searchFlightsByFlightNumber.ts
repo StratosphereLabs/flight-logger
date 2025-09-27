@@ -21,6 +21,7 @@ export const searchFlightRadarFlightsByFlightNumber = async ({
   const url = `https://www.flightradar24.com/data/flights/${
     airline.iata ?? airline.icao
   }${flightNumber}`;
+  console.log(`  Fetching flight search data from ${url}`);
   const response = await axios.get<string>(url, { headers: HEADERS });
   const $ = load(response.data);
   const airportIatas = new Set<string>();

@@ -5,13 +5,6 @@ import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
-import {
-  updateFlightData,
-  updateFlightTrackData,
-  updateFlightWeatherReports,
-  updateOnTimePerformanceData,
-  updateTrackAircraftData,
-} from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { searchFlightRadarFlightsByFlightNumber } from '../data/flightRadar';
 import { searchFlightStatsFlightsByFlightNumber } from '../data/flightStats';
@@ -19,6 +12,12 @@ import type {
   FlightSearchDataFetchResult,
   FlightSearchDataResult,
 } from '../data/types';
+import {
+  updateFlightData,
+  updateFlightWeatherReports,
+  updateOnTimePerformanceData,
+  updateTrackAircraftData,
+} from '../data/updaters';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import { addFlightFromDataSchema, searchFlightDataSchema } from '../schemas';
@@ -211,26 +210,9 @@ export const flightDataRouter = router({
         },
       });
       const updatedFlights = await updateFlightData([newFlight]);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateTrackAircraftData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateOnTimePerformanceData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateTrackAircraftData(updatedFlights);
+      await updateOnTimePerformanceData(updatedFlights);
+      await updateFlightWeatherReports(updatedFlights);
     }),
 });
 

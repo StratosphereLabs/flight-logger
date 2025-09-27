@@ -21,8 +21,8 @@ import {
 import { toZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
-import { KTS_TO_MPH } from '../commands/constants';
 import { SECONDS_IN_HOUR } from '../constants';
+import { KTS_TO_MPH } from '../data/constants';
 import type { TracklogItem } from '../data/types';
 import {
   type GetProfileFiltersRequest,

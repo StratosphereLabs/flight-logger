@@ -19,6 +19,7 @@ export const searchFlightAwareFlightsByFlightNumber = async ({
   FlightSearchDataFetchResult[] | null
 > => {
   const url = `https://www.flightaware.com/live/flight/${airline.icao}${flightNumber}`;
+  console.log(`  Fetching flight search data from ${url}`);
   const response = await axios.get<string>(url, {
     headers: HEADERS,
     withCredentials: true,

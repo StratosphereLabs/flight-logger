@@ -1,3 +1,4 @@
+export * from './updateBuckets';
 export * from './updateFlightChangeData';
 export * from './updateFlightData';
 export * from './updateFlightTrackData';
