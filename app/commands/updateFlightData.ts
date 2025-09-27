@@ -1,6 +1,4 @@
 import type { FlightWithData } from './types';
-import { updateFlightRegistrationData } from './updateFlightRegistrationData';
-import { updateFlightTimesData } from './updateFlightTimesData';
 import { updateFlightTrackData } from './updateFlightTrackData';
 import { updateFlightWeatherReports } from './updateFlightWeatherReports';
 import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';

@@ -1,7 +1,5 @@
 import type { Flight, FlightUpdateChange } from '@prisma/client';
 
-export const UPDATE_CONCURRENCY = 1;
-
 export const KTS_TO_MPH = 1.15078;
 
 export const FLIGHT_CHANGE_GETTER_MAP: Partial<

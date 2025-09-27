@@ -1,1 +1,1 @@
-export * from './fetchFlightAwareData';
+export * from './getFlightAwareUpdate';

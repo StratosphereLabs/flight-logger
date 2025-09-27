@@ -77,7 +77,7 @@ export interface FlightAwareFlightAirline {
 export interface FlightAwareFlightData {
   origin: FlightAwareAirport;
   destination: FlightAwareAirport;
-  aircraftType: string;
+  aircraftType: string | null;
   aircraftTypeFriendly: string;
   flightId: string;
   takeoffTimes: FlightAwareFlightTimes;
@@ -103,7 +103,7 @@ export interface FlightAwareFlightData {
   globalVisualizer: boolean;
   flightPlan: FlightAwareFlightPlan;
   links: FlightAwareFlightLinks;
-  aircraft: FlightAwareFlightAircraft;
+  aircraft: FlightAwareFlightAircraft | null;
   displayIdent: string;
   encryptedFlightId: string;
   predictedAvailable: boolean;
