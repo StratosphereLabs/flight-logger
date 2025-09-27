@@ -1,4 +1,4 @@
-import type { Airline, Airport } from '@prisma/client';
+import type { Airline, Airport, Prisma } from '@prisma/client';
 
 import type { FlightTimestampsResult } from '../utils';
 import type { FlightAwareTracklogItem } from './flightAware/types';
@@ -52,3 +52,5 @@ export interface FlightSearchDataResult
   outTimeDate: string;
   outTimeDateAbbreviated: string;
 }
+
+export type FlightUpdateInput = Prisma.FlightUpdateArgs['data'];

@@ -8,13 +8,13 @@ import { getGroupedFlightsKey } from '../../commands/utils';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getDurationMinutes } from '../../utils';
+import type { FlightUpdateInput } from '../types';
 import { createNewDate } from '../utils';
 import { fetchFlightAwareData } from './fetchFlightAwareData';
 
 export const getFlightAwareUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-) => {
+): Promise<FlightUpdateInput | null> => {
   const flightDataString = getGroupedFlightsKey(flight);
   console.log(`Fetching FlightAware data for ${flightDataString}...`);
   const isoDate = formatInTimeZone(
@@ -81,9 +81,8 @@ export const getFlightAwareUpdate = async (
     departureTerminal: flightAwareResponse.origin.terminal,
     arrivalGate: flightAwareResponse.destination.gate,
     arrivalTerminal: flightAwareResponse.destination.terminal,
-    tracklog: (flightAwareResponse.track ?? null) as Prisma.JsonArray | null,
-    waypoints: (flightAwareResponse.waypoints ??
-      null) as Prisma.JsonArray | null,
+    tracklog: flightAwareResponse.track as Prisma.JsonArray | undefined,
+    waypoints: flightAwareResponse.waypoints as Prisma.JsonArray | undefined,
     flightAwareLink: flightAwareResponse.permaLink,
   };
 };
