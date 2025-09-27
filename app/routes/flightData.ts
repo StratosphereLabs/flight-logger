@@ -7,7 +7,6 @@ import groupBy from 'lodash.groupby';
 
 import {
   updateFlightData,
-  updateFlightTrackData,
   updateFlightWeatherReports,
   updateOnTimePerformanceData,
   updateTrackAircraftData,
@@ -211,26 +210,9 @@ export const flightDataRouter = router({
         },
       });
       const updatedFlights = await updateFlightData([newFlight]);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateTrackAircraftData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateOnTimePerformanceData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateTrackAircraftData(updatedFlights);
+      await updateOnTimePerformanceData(updatedFlights);
+      await updateFlightWeatherReports(updatedFlights);
     }),
 });
 

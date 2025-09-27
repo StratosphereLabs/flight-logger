@@ -19,6 +19,7 @@ import {
 } from './constants';
 import type { FlightWithData } from './types';
 import { updateFlightChangeData } from './updateFlightChangeData';
+import { updateFlightTrackData } from './updateFlightTrackData';
 import { removeNullish } from './utils';
 
 export const updateFlightData = async (
@@ -110,5 +111,6 @@ export const updateFlightData = async (
     ),
   );
   await updateFlightChangeData(flights, flightUpdateData);
+  await updateFlightTrackData(updatedFlights);
   return updatedFlights;
 };

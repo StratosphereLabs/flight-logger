@@ -1,6 +1,9 @@
 import { isAfter, isBefore, sub } from 'date-fns';
 
-import { fetchOnTimePerformanceData } from '../data/flightStats';
+import {
+  type OnTimePerformanceData,
+  fetchOnTimePerformanceData,
+} from '../data/flightStats';
 import { prisma } from '../db';
 import type { FlightWithData } from './types';
 import { getGroupedFlightsKey } from './utils';
@@ -40,11 +43,17 @@ export const updateOnTimePerformanceData = async (
     return;
   }
   console.log(`Fetching on-time performance data for ${flightDataString}...`);
-  const onTimePerformanceData = await fetchOnTimePerformanceData({
-    airlineIata: flights[0].airline.flightStatsCode ?? flights[0].airline.iata,
-    flightNumber: flights[0].flightNumber,
-    departureIata: flights[0].departureAirport.iata,
-  });
+  let onTimePerformanceData: OnTimePerformanceData | null = null;
+  try {
+    onTimePerformanceData = await fetchOnTimePerformanceData({
+      airlineIata:
+        flights[0].airline.flightStatsCode ?? flights[0].airline.iata,
+      flightNumber: flights[0].flightNumber,
+      departureIata: flights[0].departureAirport.iata,
+    });
+  } catch (err) {
+    console.error(err);
+  }
   if (
     onTimePerformanceData === null ||
     flights[0].arrivalAirportId !== onTimePerformanceData.arrivalAirport.icao

@@ -46,16 +46,26 @@ export const updateFlightWeatherReports = async (
   } = flights[0];
   const departureTime = offTimeActual ?? offTime ?? outTimeActual ?? outTime;
   const arrivalTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
-  const departureWeather: AviationWeatherReport | null =
-    await fetchSingleWeatherReport(departureAirport.id, departureTime);
-  const arrivalWeather: AviationWeatherReport | null =
-    await fetchSingleWeatherReport(arrivalAirport.id, arrivalTime);
+  let departureWeather: AviationWeatherReport | null = null;
+  let arrivalWeather: AviationWeatherReport | null = null;
   let diversionWeather: AviationWeatherReport | null = null;
-  if (diversionAirportId !== null) {
-    diversionWeather = await fetchSingleWeatherReport(
-      diversionAirportId,
+  try {
+    departureWeather = await fetchSingleWeatherReport(
+      departureAirport.id,
+      departureTime,
+    );
+    arrivalWeather = await fetchSingleWeatherReport(
+      arrivalAirport.id,
       arrivalTime,
     );
+    if (diversionAirportId !== null) {
+      diversionWeather = await fetchSingleWeatherReport(
+        diversionAirportId,
+        arrivalTime,
+      );
+    }
+  } catch (err) {
+    console.error(err);
   }
   if (
     departureWeather === null &&

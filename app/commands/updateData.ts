@@ -89,31 +89,14 @@ const updateFlightsDaily = async (): Promise<void> => {
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
       const updatedFlights = await updateFlightData(flights);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
       const flightsWithUserId = updatedFlights.filter(
         ({ userId }) => userId !== null,
       );
       if (flightsWithUserId.length > 0) {
-        try {
-          await updateTrackAircraftData(flightsWithUserId);
-        } catch (err) {
-          console.error(err);
-        }
+        await updateTrackAircraftData(flightsWithUserId);
       }
-      try {
-        await updateOnTimePerformanceData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateOnTimePerformanceData(updatedFlights);
+      await updateFlightWeatherReports(updatedFlights);
     });
     await prisma.$disconnect();
   } catch (err) {
@@ -178,26 +161,13 @@ const updateFlightsHourly = async (): Promise<void> => {
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
       const updatedFlights = await updateFlightData(flights);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
       const flightsWithUserId = updatedFlights.filter(
         ({ userId }) => userId !== null,
       );
       if (flightsWithUserId.length > 0) {
-        try {
-          await updateTrackAircraftData(flightsWithUserId);
-        } catch (err) {
-          console.error(err);
-        }
+        await updateTrackAircraftData(flightsWithUserId);
       }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateFlightWeatherReports(updatedFlights);
     });
     await prisma.$disconnect();
   } catch (err) {
@@ -262,16 +232,7 @@ const updateFlightsEvery15 = async (): Promise<void> => {
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
       const updatedFlights = await updateFlightData(flights);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateFlightWeatherReports(updatedFlights);
     });
     await prisma.$disconnect();
   } catch (err) {
@@ -360,16 +321,7 @@ const updateFlightsEvery5 = async (): Promise<void> => {
     );
     await processFlightUpdate(filteredFlights, async flights => {
       const updatedFlights = await updateFlightData(flights);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateFlightWeatherReports(updatedFlights);
     });
     await prisma.$disconnect();
   } catch (err) {
@@ -457,12 +409,7 @@ const updateFlightsEveryMinute = async (): Promise<void> => {
       },
     );
     await processFlightUpdate(filteredFlights, async flights => {
-      const updatedFlights = await updateFlightData(flights);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateFlightData(flights);
     });
     await prisma.$disconnect();
   } catch (err) {
@@ -559,13 +506,7 @@ const updateFlightsEvery15Seconds = async (): Promise<void> => {
         );
       },
     );
-    await processFlightUpdate(filteredFlights, async flights => {
-      try {
-        await updateFlightTrackData(flights);
-      } catch (err) {
-        console.error(err);
-      }
-    });
+    await processFlightUpdate(filteredFlights, updateFlightTrackData);
     await prisma.$disconnect();
   } catch (err) {
     console.error(err);

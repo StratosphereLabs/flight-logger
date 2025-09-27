@@ -12,13 +12,21 @@ export const updateFlightTrackData = async (
   console.log(`Fetching flight track data for ${flightDataString}...`);
   let tracklog: TracklogItem[] | undefined;
   if (process.env.DATASOURCE_ADSBEXCHANGE === 'true') {
-    tracklog = await fetchAdsbExchangeData(flights[0]);
+    try {
+      tracklog = await fetchAdsbExchangeData(flights[0]);
+    } catch (err) {
+      console.error(err);
+    }
   }
   if (
     process.env.DATASOURCE_PLANESPOTTERS === 'true' &&
     tracklog === undefined
   ) {
-    tracklog = await fetchPlaneSpottersData(flights[0]);
+    try {
+      tracklog = await fetchPlaneSpottersData(flights[0]);
+    } catch (err) {
+      console.error(err);
+    }
   }
   if (tracklog === undefined) {
     console.log(`  Flight track data not found for ${flightDataString}.`);

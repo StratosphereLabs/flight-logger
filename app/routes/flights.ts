@@ -8,7 +8,6 @@ import _ from 'lodash';
 import {
   updateFlightChangeData,
   updateFlightData,
-  updateFlightTrackData,
   updateFlightWeatherReports,
   updateOnTimePerformanceData,
   updateTrackAircraftData,
@@ -934,26 +933,9 @@ export const flightsRouter = router({
         },
       });
       const updatedFlights = await updateFlightData([flight]);
-      try {
-        await updateFlightTrackData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateTrackAircraftData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateOnTimePerformanceData(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedFlights);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateTrackAircraftData(updatedFlights);
+      await updateOnTimePerformanceData(updatedFlights);
+      await updateFlightWeatherReports(updatedFlights);
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -1108,21 +1090,9 @@ export const flightsRouter = router({
       }
       if (flightDataChanged) {
         const updatedFlights = await updateFlightData([updatedFlight]);
-        try {
-          await updateFlightTrackData(updatedFlights);
-        } catch (err) {
-          console.error(err);
-        }
-        try {
-          await updateOnTimePerformanceData(updatedFlights);
-        } catch (err) {
-          console.error(err);
-        }
-        try {
-          await updateFlightWeatherReports(updatedFlights);
-        } catch (err) {
-          console.error(err);
-        }
+        await updateTrackAircraftData(updatedFlights);
+        await updateOnTimePerformanceData(updatedFlights);
+        await updateFlightWeatherReports(updatedFlights);
       }
     }),
   deleteFlight: procedure
