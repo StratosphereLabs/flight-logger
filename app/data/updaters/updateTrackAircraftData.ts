@@ -2,6 +2,7 @@ import { isAfter, isBefore, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 
 import { prisma } from '../../db';
+import { getDurationMinutes } from '../../utils';
 import {
   type FlightRadarRegistrationData,
   fetchFlightRadarRegistrationData,
@@ -136,6 +137,10 @@ export const updateTrackAircraftData = async (
         offTimeActual: flight.offTimeActual,
         onTimeActual: flight.onTimeActual,
         inTime: flight.inTime,
+        duration: getDurationMinutes({
+          start: flight.outTime,
+          end: flight.inTime,
+        }),
         aircraftTypeId: aircraftType?.id ?? null,
         airframeId: flights[0].airframeId,
         tailNumber: flights[0].tailNumber,

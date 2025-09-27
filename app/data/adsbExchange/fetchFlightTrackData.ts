@@ -78,6 +78,8 @@ export const fetchFlightTrackData = async (
     return undefined;
   const fullUrl = `https://globe.adsbexchange.com/data/traces/${flightData.airframeId.slice(4)}/trace_full_${flightData.airframeId}.json`;
   const recentUrl = `https://globe.adsbexchange.com/data/traces/${flightData.airframeId.slice(4)}/trace_recent_${flightData.airframeId}.json`;
+  console.log(`  Fetching full tracklog data from ${fullUrl}`);
+  console.log(`  Fetching recent tracklog data from ${recentUrl}`);
   const [fullResponse, recentResponse] = await Promise.all([
     axios.get<FlightTrackResult>(fullUrl, {
       headers: FULL_HEADERS,
