@@ -7,12 +7,16 @@ import { getGroupedFlightsKey } from '../../commands/utils';
 import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getAirframe, getDurationMinutes } from '../../utils';
-import type { FlightUpdateInput } from '../types';
 import { fetchFlightStatsFlightData } from './fetchFlightData';
+
+export type FlightStatsFlightUpdateData = Awaited<
+  ReturnType<typeof getFlightStatsFlightUpdate>
+>;
 
 export const getFlightStatsFlightUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
-): Promise<FlightUpdateInput | null> => {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+) => {
   const flightDataString = getGroupedFlightsKey(flight);
   console.log(`Fetching FlightStats data for ${flightDataString}...`);
   const isoDate = formatInTimeZone(

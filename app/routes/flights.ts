@@ -8,6 +8,9 @@ import _ from 'lodash';
 import {
   updateFlightChangeData,
   updateFlightData,
+  updateFlightTrackData,
+  updateFlightWeatherReports,
+  updateOnTimePerformanceData,
   updateTrackAircraftData,
 } from '../commands';
 import {
@@ -16,7 +19,7 @@ import {
   DATE_FORMAT_YEAR,
 } from '../constants';
 import type { TracklogItem } from '../data/types';
-import { prisma, updateTripTimes } from '../db';
+import { prisma } from '../db';
 import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';
 import {
@@ -930,8 +933,27 @@ export const flightsRouter = router({
           airline: true,
         },
       });
-      await updateFlightData([flight]);
-      await updateTripTimes(flight.tripId);
+      const updatedFlights = await updateFlightData([flight]);
+      try {
+        await updateFlightTrackData(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateTrackAircraftData(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateOnTimePerformanceData(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightWeatherReports(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
     }),
   editFlight: procedure
     .use(verifyAuthenticated)
@@ -1085,8 +1107,22 @@ export const flightsRouter = router({
         await updateTrackAircraftData([updatedFlight]);
       }
       if (flightDataChanged) {
-        await updateFlightData([updatedFlight]);
-        await updateTripTimes(updatedFlight.tripId);
+        const updatedFlights = await updateFlightData([updatedFlight]);
+        try {
+          await updateFlightTrackData(updatedFlights);
+        } catch (err) {
+          console.error(err);
+        }
+        try {
+          await updateOnTimePerformanceData(updatedFlights);
+        } catch (err) {
+          console.error(err);
+        }
+        try {
+          await updateFlightWeatherReports(updatedFlights);
+        } catch (err) {
+          console.error(err);
+        }
       }
     }),
   deleteFlight: procedure
@@ -1114,11 +1150,10 @@ export const flightsRouter = router({
           message: 'Flight not found.',
         });
       }
-      const deletedFlight = await prisma.flight.delete({
+      await prisma.flight.delete({
         where: deleteFlightWhere,
         include: flightIncludeObj,
       });
-      await updateTripTimes(deletedFlight.tripId);
     }),
   addTravelersToFlight: procedure
     .use(verifyAuthenticated)

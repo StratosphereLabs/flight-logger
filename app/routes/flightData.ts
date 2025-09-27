@@ -5,7 +5,13 @@ import { isFuture } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
-import { updateFlightData } from '../commands';
+import {
+  updateFlightData,
+  updateFlightTrackData,
+  updateFlightWeatherReports,
+  updateOnTimePerformanceData,
+  updateTrackAircraftData,
+} from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
 import { searchFlightRadarFlightsByFlightNumber } from '../data/flightRadar';
 import { searchFlightStatsFlightsByFlightNumber } from '../data/flightStats';
@@ -204,7 +210,27 @@ export const flightDataRouter = router({
           airline: true,
         },
       });
-      await updateFlightData([newFlight]);
+      const updatedFlights = await updateFlightData([newFlight]);
+      try {
+        await updateFlightTrackData(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateTrackAircraftData(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateOnTimePerformanceData(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
+      try {
+        await updateFlightWeatherReports(updatedFlights);
+      } catch (err) {
+        console.error(err);
+      }
     }),
 });
 

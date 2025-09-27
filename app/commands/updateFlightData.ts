@@ -1,63 +1,114 @@
 import { type WithRequired } from '@tanstack/react-query';
 
-import { getFlightAwareFlightUpdate } from '../data/flightAware';
-import { getFlightRadarFlightUpdate } from '../data/flightRadar';
-import { getFlightStatsFlightUpdate } from '../data/flightStats';
-import type { FlightUpdateInput } from '../data/types';
+import {
+  type FlightAwareFlightUpdateData,
+  getFlightAwareFlightUpdate,
+} from '../data/flightAware';
+import {
+  type FlightRadarFlightUpdateData,
+  getFlightRadarFlightUpdate,
+} from '../data/flightRadar';
+import {
+  type FlightStatsFlightUpdateData,
+  getFlightStatsFlightUpdate,
+} from '../data/flightStats';
+import { prisma } from '../db';
+import {
+  FLIGHTAWARE_DATA_INCLUDE_KEYS,
+  FLIGHTRADAR_DATA_INCLUDE_KEYS,
+} from './constants';
 import type { FlightWithData } from './types';
-import { updateFlightWeatherReports } from './updateFlightWeatherReports';
-import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
+import { updateFlightChangeData } from './updateFlightChangeData';
+import { removeNullish } from './utils';
 
 export const updateFlightData = async (
   flights: FlightWithData[],
-): Promise<void> => {
-  const firstFlight = flights[0];
+): Promise<FlightWithData[]> => {
+  const firstFlight = flights[0] as WithRequired<
+    FlightWithData,
+    'flightNumber' | 'airline'
+  >;
   if (
-    firstFlight?.airline === null ||
-    firstFlight?.airline === undefined ||
+    firstFlight.airline === null ||
+    firstFlight.airline === undefined ||
     firstFlight.flightNumber === null
   ) {
-    return;
+    return flights;
   }
-  let flightStatsUpdate: FlightUpdateInput | null = null;
-  let flightRadarUpdate: FlightUpdateInput | null = null;
-  let flightAwareUpdate: FlightUpdateInput | null = null;
+  let flightStatsUpdate: FlightStatsFlightUpdateData | null = null;
+  let flightRadarUpdate: FlightRadarFlightUpdateData | null = null;
+  let flightAwareUpdate: FlightAwareFlightUpdateData | null = null;
   if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
     try {
-      flightStatsUpdate = await getFlightStatsFlightUpdate(
-        firstFlight as WithRequired<FlightWithData, 'flightNumber' | 'airline'>,
-      );
+      flightStatsUpdate = await getFlightStatsFlightUpdate(firstFlight);
     } catch (err) {
       console.error(err);
     }
   }
-  if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
+  if (
+    process.env.DATASOURCE_FLIGHTRADAR === 'true' &&
+    !FLIGHTRADAR_DATA_INCLUDE_KEYS.every(key => flightStatsUpdate?.[key])
+  ) {
     try {
-      flightRadarUpdate = await getFlightRadarFlightUpdate(
-        firstFlight as WithRequired<FlightWithData, 'flightNumber' | 'airline'>,
-      );
+      flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
     } catch (err) {
       console.error(err);
     }
   }
-  if (process.env.DATASOURCE_FLIGHTAWARE === 'true') {
+  const combinedUpdate: Partial<
+    FlightStatsFlightUpdateData & FlightRadarFlightUpdateData
+  > = {
+    ...removeNullish(flightRadarUpdate ?? {}),
+    ...removeNullish(flightStatsUpdate ?? {}),
+  };
+  if (
+    process.env.DATASOURCE_FLIGHTAWARE === 'true' &&
+    !FLIGHTAWARE_DATA_INCLUDE_KEYS.every(key => combinedUpdate[key])
+  ) {
     try {
-      flightAwareUpdate = await getFlightAwareFlightUpdate(
-        firstFlight as WithRequired<FlightWithData, 'flightNumber' | 'airline'>,
-      );
+      flightAwareUpdate = await getFlightAwareFlightUpdate(firstFlight);
     } catch (err) {
       console.error(err);
     }
   }
-  console.log({ flightStatsUpdate, flightRadarUpdate, flightAwareUpdate });
-  try {
-    await updateOnTimePerformanceData(flights);
-  } catch (err) {
-    console.error(err);
-  }
-  try {
-    await updateFlightWeatherReports(flights);
-  } catch (err) {
-    console.error(err);
-  }
+  const flightUpdateData = {
+    ...removeNullish(flightAwareUpdate ?? {}),
+    ...combinedUpdate,
+  };
+  const updatedFlights = await prisma.$transaction(
+    flights.map(({ id }) =>
+      prisma.flight.update({
+        where: {
+          id,
+        },
+        data: flightUpdateData,
+        include: {
+          airline: true,
+          departureAirport: {
+            select: {
+              id: true,
+              iata: true,
+              timeZone: true,
+            },
+          },
+          arrivalAirport: {
+            select: {
+              id: true,
+              iata: true,
+              timeZone: true,
+            },
+          },
+          diversionAirport: {
+            select: {
+              id: true,
+              iata: true,
+              timeZone: true,
+            },
+          },
+        },
+      }),
+    ),
+  );
+  await updateFlightChangeData(flights, flightUpdateData);
+  return updatedFlights;
 };
