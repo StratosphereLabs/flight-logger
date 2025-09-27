@@ -71,6 +71,7 @@ export const fetchFlightTrackData = async (
   )
     return undefined;
   const url = `https://planespotters.live/api/radar/trace/${flightData.airframeId}`;
+  console.log(`  Fetching tracklog data from ${url}`);
   const response = await axios.get<{
     full: FlightTrackResult;
     recent: FlightTrackResult;
