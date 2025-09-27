@@ -11,7 +11,8 @@ export const getAirframe = async (
       registration,
     },
   });
-  if (airframe !== null) return airframe;
+  if (airframe !== null || process.env.DATASOURCE_FLIGHTRADAR !== 'true')
+    return airframe;
   console.log(`Fetching aircraft registration data for ${registration}...`);
   const airframeData = await fetchFlightRadarRegistrationData(registration);
   if (
