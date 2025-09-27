@@ -1,7 +1,7 @@
 import { isAfter, isBefore, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 
-import { fetchAircraftRegistrationData } from '../data/flightRadar';
+import { fetchFlightRadarRegistrationData } from '../data/flightRadar';
 import { prisma } from '../db';
 import type { FlightWithData } from './types';
 import { getGroupedFlightsKey, trackAircraftFlightIncludeObj } from './utils';
@@ -13,12 +13,12 @@ export const updateTrackAircraftData = async (
     console.log('Airline and flight number are required.');
     return flights;
   }
-  const flightDataString = getGroupedFlightsKey(flights[0]);
-  if (process.env.FLIGHT_REGISTRATION_DATASOURCE === 'flightradar') {
+  if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
+    const flightDataString = getGroupedFlightsKey(flights[0]);
     console.log(`Fetching flight registration data for ${flightDataString}...`);
     const registrationData =
       flights[0].tailNumber !== null
-        ? await fetchAircraftRegistrationData(flights[0].tailNumber)
+        ? await fetchFlightRadarRegistrationData(flights[0].tailNumber)
         : null;
     if (registrationData === null) {
       console.log(`Unable to fetch aircraft data for ${flights[0].tailNumber}`);

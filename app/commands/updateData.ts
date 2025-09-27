@@ -1,7 +1,12 @@
+import { type WithRequired } from '@tanstack/react-query';
 import { add, isAfter, isBefore, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 import { scheduleJob } from 'node-schedule';
 
+import { getFlightAwareFlightUpdate } from '../data/flightAware';
+import { getFlightRadarFlightUpdate } from '../data/flightRadar';
+import { getFlightStatsFlightUpdate } from '../data/flightStats';
+import type { FlightUpdateInput } from '../data/types';
 import { prisma } from '../db';
 import { seedDatabase } from '../db/seeders';
 import type { FlightWithData } from './types';
@@ -87,41 +92,55 @@ const updateFlightsDaily = async (): Promise<void> => {
       },
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
-      let updatedTimesFlights = flights;
-      try {
-        updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
+      const firstFlight = flights[0] as WithRequired<
+        FlightWithData,
+        'flightNumber' | 'airline'
+      >;
+      let flightStatsUpdate: FlightUpdateInput | null = null;
+      let flightRadarUpdate: FlightUpdateInput | null = null;
+      let flightAwareUpdate: FlightUpdateInput | null = null;
+      if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
+        try {
+          flightStatsUpdate = await getFlightStatsFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
       }
-      const flightsWithUserId = updatedTimesFlights.filter(
-        ({ userId }) => userId !== null,
-      );
+      if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
+        try {
+          flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (process.env.DATASOURCE_FLIGHTAWARE === 'true') {
+        try {
+          flightAwareUpdate = await getFlightAwareFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      console.log({ flightStatsUpdate, flightRadarUpdate, flightAwareUpdate });
+      const flightsWithUserId = flights.filter(({ userId }) => userId !== null);
       if (flightsWithUserId.length > 0) {
         try {
           await updateTrackAircraftData(flightsWithUserId);
         } catch (err) {
           console.error(err);
         }
-      } else {
-        try {
-          updatedTimesFlights =
-            await updateFlightRegistrationData(updatedTimesFlights);
-        } catch (err) {
-          console.error(err);
-        }
       }
       try {
-        await updateFlightTrackData(updatedTimesFlights);
+        await updateFlightTrackData(flights);
       } catch (err) {
         console.error(err);
       }
       try {
-        await updateOnTimePerformanceData(updatedTimesFlights);
+        await updateOnTimePerformanceData(flights);
       } catch (err) {
         console.error(err);
       }
       try {
-        await updateFlightWeatherReports(updatedTimesFlights);
+        await updateFlightWeatherReports(flights);
       } catch (err) {
         console.error(err);
       }
@@ -188,41 +207,50 @@ const updateFlightsHourly = async (): Promise<void> => {
       },
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
-      let updatedTimesFlights = flights;
-      try {
-        updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
+      const firstFlight = flights[0] as WithRequired<
+        FlightWithData,
+        'flightNumber' | 'airline'
+      >;
+      let flightStatsUpdate: FlightUpdateInput | null = null;
+      let flightRadarUpdate: FlightUpdateInput | null = null;
+      let flightAwareUpdate: FlightUpdateInput | null = null;
+      if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
+        try {
+          flightStatsUpdate = await getFlightStatsFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
       }
-      const flightsWithUserId = updatedTimesFlights.filter(
-        ({ userId }) => userId !== null,
-      );
+      if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
+        try {
+          flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (process.env.DATASOURCE_FLIGHTAWARE === 'true') {
+        try {
+          flightAwareUpdate = await getFlightAwareFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      console.log({ flightStatsUpdate, flightRadarUpdate, flightAwareUpdate });
+      const flightsWithUserId = flights.filter(({ userId }) => userId !== null);
       if (flightsWithUserId.length > 0) {
         try {
           await updateTrackAircraftData(flightsWithUserId);
         } catch (err) {
           console.error(err);
         }
-      } else {
-        try {
-          updatedTimesFlights =
-            await updateFlightRegistrationData(updatedTimesFlights);
-        } catch (err) {
-          console.error(err);
-        }
       }
       try {
-        await updateFlightTrackData(updatedTimesFlights);
+        await updateFlightTrackData(flights);
       } catch (err) {
         console.error(err);
       }
       try {
-        await updateOnTimePerformanceData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedTimesFlights);
+        await updateFlightWeatherReports(flights);
       } catch (err) {
         console.error(err);
       }
@@ -289,25 +317,42 @@ const updateFlightsEvery15 = async (): Promise<void> => {
       },
     });
     await processFlightUpdate(flightsToUpdate, async flights => {
-      let updatedTimesFlights = flights;
+      const firstFlight = flights[0] as WithRequired<
+        FlightWithData,
+        'flightNumber' | 'airline'
+      >;
+      let flightStatsUpdate: FlightUpdateInput | null = null;
+      let flightRadarUpdate: FlightUpdateInput | null = null;
+      let flightAwareUpdate: FlightUpdateInput | null = null;
+      if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
+        try {
+          flightStatsUpdate = await getFlightStatsFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
+        try {
+          flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (process.env.DATASOURCE_FLIGHTAWARE === 'true') {
+        try {
+          flightAwareUpdate = await getFlightAwareFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      console.log({ flightStatsUpdate, flightRadarUpdate, flightAwareUpdate });
       try {
-        updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
+        await updateFlightTrackData(flights);
       } catch (err) {
         console.error(err);
       }
       try {
-        updatedTimesFlights =
-          await updateFlightRegistrationData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightTrackData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedTimesFlights);
+        await updateFlightWeatherReports(flights);
       } catch (err) {
         console.error(err);
       }
@@ -398,25 +443,42 @@ const updateFlightsEvery5 = async (): Promise<void> => {
       },
     );
     await processFlightUpdate(filteredFlights, async flights => {
-      let updatedTimesFlights = flights;
+      const firstFlight = flights[0] as WithRequired<
+        FlightWithData,
+        'flightNumber' | 'airline'
+      >;
+      let flightStatsUpdate: FlightUpdateInput | null = null;
+      let flightRadarUpdate: FlightUpdateInput | null = null;
+      let flightAwareUpdate: FlightUpdateInput | null = null;
+      if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
+        try {
+          flightStatsUpdate = await getFlightStatsFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
+        try {
+          flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (process.env.DATASOURCE_FLIGHTAWARE === 'true') {
+        try {
+          flightAwareUpdate = await getFlightAwareFlightUpdate(firstFlight);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      console.log({ flightStatsUpdate, flightRadarUpdate, flightAwareUpdate });
       try {
-        updatedTimesFlights = await updateFlightTimesData(updatedTimesFlights);
+        await updateFlightTrackData(flights);
       } catch (err) {
         console.error(err);
       }
       try {
-        updatedTimesFlights =
-          await updateFlightRegistrationData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightTrackData(updatedTimesFlights);
-      } catch (err) {
-        console.error(err);
-      }
-      try {
-        await updateFlightWeatherReports(updatedTimesFlights);
+        await updateFlightWeatherReports(flights);
       } catch (err) {
         console.error(err);
       }
@@ -507,15 +569,19 @@ const updateFlightsEveryMinute = async (): Promise<void> => {
       },
     );
     await processFlightUpdate(filteredFlights, async flights => {
-      let updatedTimesFlights = flights;
+      const firstFlight = flights[0] as WithRequired<
+        FlightWithData,
+        'flightNumber' | 'airline'
+      >;
+      let flightRadarUpdate: FlightUpdateInput | null = null;
       try {
-        updatedTimesFlights =
-          await updateFlightRegistrationData(updatedTimesFlights);
+        flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
       } catch (err) {
         console.error(err);
       }
+      console.log({ flightRadarUpdate });
       try {
-        await updateFlightTrackData(updatedTimesFlights);
+        await updateFlightTrackData(flights);
       } catch (err) {
         console.error(err);
       }

@@ -1,3 +1,4 @@
-export * from './fetchFlightStatsData';
+export * from './fetchFlightData';
 export * from './fetchOnTimePerformanceData';
-export * from './getFlightStatsUpdate';
+export * from './getFlightUpdate';
+export * from './searchFlightsByFlightNumber';

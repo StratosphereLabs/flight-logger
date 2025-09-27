@@ -8,9 +8,9 @@ import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getAirframe, getDurationMinutes } from '../../utils';
 import type { FlightUpdateInput } from '../types';
-import { fetchFlightRadarData } from './fetchFlightRadarData';
+import { fetchFlightRadarFlightData } from './fetchFlightData';
 
-export const getFlightRadarUpdate = async (
+export const getFlightRadarFlightUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
 ): Promise<FlightUpdateInput | null> => {
   const flightDataString = getGroupedFlightsKey(flight);
@@ -20,46 +20,45 @@ export const getFlightRadarUpdate = async (
     flight.departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
-  const flightRadarData = await fetchFlightRadarData({
+  const flightData = await fetchFlightRadarFlightData({
     airline: flight.airline,
     flightNumber: flight.flightNumber,
     departureAirport: flight.departureAirport,
     arrivalAirport: flight.arrivalAirport,
     isoDate,
   });
-  if (flightRadarData === null) {
+  if (flightData === null) {
     console.log(`  FlightRadar24 data not found for ${flightDataString}.`);
     return null;
   }
   const airframe =
-    flightRadarData.registration !== undefined &&
-    flightRadarData.registration !== null
-      ? flightRadarData.registration !== flight.tailNumber
-        ? await getAirframe(flightRadarData.registration)
+    flightData.registration !== undefined && flightData.registration !== null
+      ? flightData.registration !== flight.tailNumber
+        ? await getAirframe(flightData.registration)
         : null
       : null;
   const aircraftType =
-    flightRadarData.aircraftTypeCode.length >= 3 &&
+    flightData.aircraftTypeCode.length >= 3 &&
     (airframe?.aircraftTypeId === null ||
       airframe?.aircraftTypeId === undefined)
       ? await prisma.aircraftType.findFirst({
           where: {
             OR: [
               {
-                icao: flightRadarData.aircraftTypeCode,
+                icao: flightData.aircraftTypeCode,
               },
               {
-                iata: flightRadarData.aircraftTypeCode,
+                iata: flightData.aircraftTypeCode,
               },
             ],
           },
         })
       : null;
   const diversionAirport =
-    flightRadarData.diversionIata !== null
+    flightData.diversionIata !== null
       ? await prisma.airport.findFirst({
           where: {
-            iata: flightRadarData.diversionIata,
+            iata: flightData.diversionIata,
           },
         })
       : null;
@@ -67,16 +66,16 @@ export const getFlightRadarUpdate = async (
     diversionAirportId: diversionAirport?.id ?? null,
     aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? null,
     airframeId: airframe?.icao24 ?? null,
-    tailNumber: flightRadarData.registration,
-    outTime: flightRadarData.outTime,
-    offTime: add(flightRadarData.outTime, { minutes: 10 }),
-    onTime: sub(flightRadarData.inTime, { minutes: 10 }),
-    inTime: flightRadarData.inTime,
+    tailNumber: flightData.registration,
+    outTime: flightData.outTime,
+    offTime: add(flightData.outTime, { minutes: 10 }),
+    onTime: sub(flightData.inTime, { minutes: 10 }),
+    inTime: flightData.inTime,
     duration: getDurationMinutes({
-      start: flightRadarData.outTime,
-      end: flightRadarData.inTime,
+      start: flightData.outTime,
+      end: flightData.inTime,
     }),
-    offTimeActual: flightRadarData.offTimeActual,
-    onTimeActual: flightRadarData.onTimeActual,
+    offTimeActual: flightData.offTimeActual,
+    onTimeActual: flightData.onTimeActual,
   };
 };

@@ -8,14 +8,14 @@ interface AddFlightState {
   isAddingFlight: boolean;
   isUserSelectModalOpen: boolean;
   selectedFlight:
-    | FlightDataRouterOutput['fetchFlightsByFlightNumber']['results'][number]
+    | FlightDataRouterOutput['searchFlightsByFlightNumber']['results'][number]
     | null;
   setFlightSearchFormData: (data: FlightSearchFormData | null) => void;
   setIsAddingFlight: (isAddingFlight: boolean) => void;
   setIsUserSelectModalOpen: (isOpen: boolean) => void;
   setSelectedFlight: (
     flight:
-      | FlightDataRouterOutput['fetchFlightsByFlightNumber']['results'][number]
+      | FlightDataRouterOutput['searchFlightsByFlightNumber']['results'][number]
       | null,
   ) => void;
 }

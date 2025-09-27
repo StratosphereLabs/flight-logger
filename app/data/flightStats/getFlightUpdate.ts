@@ -8,9 +8,9 @@ import { DATE_FORMAT_ISO } from '../../constants';
 import { prisma } from '../../db';
 import { getAirframe, getDurationMinutes } from '../../utils';
 import type { FlightUpdateInput } from '../types';
-import { fetchFlightStatsData } from './fetchFlightStatsData';
+import { fetchFlightStatsFlightData } from './fetchFlightData';
 
-export const getFlightStatsUpdate = async (
+export const getFlightStatsFlightUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
 ): Promise<FlightUpdateInput | null> => {
   const flightDataString = getGroupedFlightsKey(flight);
@@ -20,10 +20,10 @@ export const getFlightStatsUpdate = async (
     flight.departureAirport.timeZone,
     DATE_FORMAT_ISO,
   );
-  const flightStatsResponse = await fetchFlightStatsData({
+  const flightStatsResponse = await fetchFlightStatsFlightData({
     airline: flight.airline,
-    arrivalIata: flight.arrivalAirport.iata,
-    departureIata: flight.departureAirport.iata,
+    arrivalAirport: flight.arrivalAirport,
+    departureAirport: flight.departureAirport,
     flightNumber: flight.flightNumber,
     isoDate,
   });

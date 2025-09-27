@@ -1,13 +1,12 @@
 import { type WithRequired } from '@tanstack/react-query';
 
-import { getFlightAwareUpdate } from '../data/flightAware';
-import { getFlightRadarUpdate } from '../data/flightRadar';
-import { getFlightStatsUpdate } from '../data/flightStats';
+import { getFlightAwareFlightUpdate } from '../data/flightAware';
+import { getFlightRadarFlightUpdate } from '../data/flightRadar';
+import { getFlightStatsFlightUpdate } from '../data/flightStats';
 import type { FlightUpdateInput } from '../data/types';
 import type { FlightWithData } from './types';
-
-// import { updateFlightWeatherReports } from './updateFlightWeatherReports';
-// import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
+import { updateFlightWeatherReports } from './updateFlightWeatherReports';
+import { updateOnTimePerformanceData } from './updateOnTimePerformanceData';
 
 export const updateFlightData = async (
   flights: FlightWithData[],
@@ -25,7 +24,7 @@ export const updateFlightData = async (
   let flightAwareUpdate: FlightUpdateInput | null = null;
   if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
     try {
-      flightStatsUpdate = await getFlightStatsUpdate(
+      flightStatsUpdate = await getFlightStatsFlightUpdate(
         firstFlight as WithRequired<FlightWithData, 'flightNumber' | 'airline'>,
       );
     } catch (err) {
@@ -34,7 +33,7 @@ export const updateFlightData = async (
   }
   if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
     try {
-      flightRadarUpdate = await getFlightRadarUpdate(
+      flightRadarUpdate = await getFlightRadarFlightUpdate(
         firstFlight as WithRequired<FlightWithData, 'flightNumber' | 'airline'>,
       );
     } catch (err) {
@@ -43,7 +42,7 @@ export const updateFlightData = async (
   }
   if (process.env.DATASOURCE_FLIGHTAWARE === 'true') {
     try {
-      flightAwareUpdate = await getFlightAwareUpdate(
+      flightAwareUpdate = await getFlightAwareFlightUpdate(
         firstFlight as WithRequired<FlightWithData, 'flightNumber' | 'airline'>,
       );
     } catch (err) {
@@ -51,14 +50,14 @@ export const updateFlightData = async (
     }
   }
   console.log({ flightStatsUpdate, flightRadarUpdate, flightAwareUpdate });
-  // try {
-  //   await updateOnTimePerformanceData(updatedTimesFlights);
-  // } catch (err) {
-  //   console.error(err);
-  // }
-  // try {
-  //   await updateFlightWeatherReports(updatedTimesFlights);
-  // } catch (err) {
-  //   console.error(err);
-  // }
+  try {
+    await updateOnTimePerformanceData(flights);
+  } catch (err) {
+    console.error(err);
+  }
+  try {
+    await updateFlightWeatherReports(flights);
+  } catch (err) {
+    console.error(err);
+  }
 };

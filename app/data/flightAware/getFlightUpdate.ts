@@ -10,9 +10,9 @@ import { prisma } from '../../db';
 import { getDurationMinutes } from '../../utils';
 import type { FlightUpdateInput } from '../types';
 import { createNewDate } from '../utils';
-import { fetchFlightAwareData } from './fetchFlightAwareData';
+import { fetchFlightAwareFlightData } from './fetchFlightData';
 
-export const getFlightAwareUpdate = async (
+export const getFlightAwareFlightUpdate = async (
   flight: WithRequired<FlightWithData, 'airline' | 'flightNumber'>,
 ): Promise<FlightUpdateInput | null> => {
   const flightDataString = getGroupedFlightsKey(flight);
@@ -23,50 +23,48 @@ export const getFlightAwareUpdate = async (
     DATE_FORMAT_ISO,
   );
   const isWithinOneDay = isAfter(add(new Date(), { days: 1 }), flight.outTime);
-  const flightAwareResponse = await fetchFlightAwareData({
+  const flightData = await fetchFlightAwareFlightData({
     airline: flight.airline,
-    arrivalIata: flight.arrivalAirport.iata,
-    departureIata: flight.departureAirport.iata,
+    arrivalAirport: flight.arrivalAirport,
+    departureAirport: flight.departureAirport,
     flightNumber: flight.flightNumber,
     isoDate,
     fetchTrackingData: isWithinOneDay,
   });
-  if (flightAwareResponse === null) {
+  if (flightData === null) {
     console.log(`  FlightAware data not found for ${flightDataString}.`);
     return null;
   }
   const aircraftType =
-    flightAwareResponse.aircraftType !== null
+    flightData.aircraftType !== null
       ? await prisma.aircraftType.findFirst({
           where: {
-            icao: flightAwareResponse.aircraftType,
+            icao: flightData.aircraftType,
           },
           select: {
             id: true,
           },
         })
       : null;
-  const outTime = createNewDate(
-    flightAwareResponse.gateDepartureTimes.scheduled,
-  );
-  const offTime = createNewDate(flightAwareResponse.takeoffTimes.scheduled);
-  const onTime = createNewDate(flightAwareResponse.landingTimes.scheduled);
-  const inTime = createNewDate(flightAwareResponse.gateArrivalTimes.scheduled);
+  const outTime = createNewDate(flightData.gateDepartureTimes.scheduled);
+  const offTime = createNewDate(flightData.takeoffTimes.scheduled);
+  const onTime = createNewDate(flightData.landingTimes.scheduled);
+  const inTime = createNewDate(flightData.gateArrivalTimes.scheduled);
   const duration = getDurationMinutes({
     start: outTime,
     end: inTime,
   });
   const outTimeActual =
-    flightAwareResponse.gateDepartureTimes.actual !== null
-      ? createNewDate(flightAwareResponse.gateDepartureTimes.actual)
-      : flightAwareResponse.gateDepartureTimes.estimated !== null
-        ? createNewDate(flightAwareResponse.gateDepartureTimes.estimated)
+    flightData.gateDepartureTimes.actual !== null
+      ? createNewDate(flightData.gateDepartureTimes.actual)
+      : flightData.gateDepartureTimes.estimated !== null
+        ? createNewDate(flightData.gateDepartureTimes.estimated)
         : null;
   const inTimeActual =
-    flightAwareResponse.gateArrivalTimes.actual !== null
-      ? createNewDate(flightAwareResponse.gateArrivalTimes.actual)
-      : flightAwareResponse.gateArrivalTimes.estimated !== null
-        ? createNewDate(flightAwareResponse.gateArrivalTimes.estimated)
+    flightData.gateArrivalTimes.actual !== null
+      ? createNewDate(flightData.gateArrivalTimes.actual)
+      : flightData.gateArrivalTimes.estimated !== null
+        ? createNewDate(flightData.gateArrivalTimes.estimated)
         : null;
   return {
     aircraftTypeId: aircraftType !== null ? aircraftType.id : null,
@@ -77,12 +75,12 @@ export const getFlightAwareUpdate = async (
     duration,
     outTimeActual,
     inTimeActual,
-    departureGate: flightAwareResponse.origin.gate,
-    departureTerminal: flightAwareResponse.origin.terminal,
-    arrivalGate: flightAwareResponse.destination.gate,
-    arrivalTerminal: flightAwareResponse.destination.terminal,
-    tracklog: flightAwareResponse.track as Prisma.JsonArray | undefined,
-    waypoints: flightAwareResponse.waypoints as Prisma.JsonArray | undefined,
-    flightAwareLink: flightAwareResponse.permaLink,
+    departureGate: flightData.origin.gate,
+    departureTerminal: flightData.origin.terminal,
+    arrivalGate: flightData.destination.gate,
+    arrivalTerminal: flightData.destination.terminal,
+    tracklog: flightData.track as Prisma.JsonArray | undefined,
+    waypoints: flightData.waypoints as Prisma.JsonArray | undefined,
+    flightAwareLink: flightData.permaLink,
   };
 };

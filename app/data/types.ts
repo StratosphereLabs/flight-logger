@@ -14,9 +14,17 @@ export type TracklogItem = Pick<
   'timestamp' | 'coord' | 'alt' | 'gs'
 >;
 
-export interface FetchFlightsByFlightNumberParams {
+export interface SearchFlightsByFlightNumberParams {
   airline: Airline;
   customUrl?: string;
+  flightNumber: number;
+  isoDate: string;
+}
+
+export interface FetchFlightDataParams {
+  airline: Airline;
+  arrivalAirport: FlightWithDataAirport;
+  departureAirport: FlightWithDataAirport;
   flightNumber: number;
   isoDate: string;
 }
@@ -25,13 +33,6 @@ export interface FetchOnTimePerformanceDataParams {
   airlineIata: string;
   flightNumber: number;
   departureIata: string;
-}
-
-export interface FetchFlightDataParams
-  extends Omit<FetchFlightsByFlightNumberParams, 'customUrl'> {
-  arrivalIata: string;
-  departureIata: string;
-  fetchTrackingData?: boolean;
 }
 
 export interface FlightSearchDataFetchResult {

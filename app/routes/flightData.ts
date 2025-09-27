@@ -7,9 +7,12 @@ import groupBy from 'lodash.groupby';
 
 import { updateFlightData } from '../commands';
 import { DATE_FORMAT_SHORT, DATE_FORMAT_WITH_DAY } from '../constants';
-import { fetchFlightRadarDataByFlightNumber } from '../data/flightRadar';
-import { fetchFlightStatsDataByFlightNumber } from '../data/flightStats';
-import type { FlightSearchDataResult } from '../data/types';
+import { searchFlightRadarFlightsByFlightNumber } from '../data/flightRadar';
+import { searchFlightStatsFlightsByFlightNumber } from '../data/flightStats';
+import type {
+  FlightSearchDataFetchResult,
+  FlightSearchDataResult,
+} from '../data/types';
 import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import { addFlightFromDataSchema, searchFlightDataSchema } from '../schemas';
@@ -17,24 +20,28 @@ import { procedure, router } from '../trpc';
 import { getDurationMinutes, getFlightTimestamps, getMidpoint } from '../utils';
 
 export const flightDataRouter = router({
-  fetchFlightsByFlightNumber: procedure
+  searchFlightsByFlightNumber: procedure
     .input(searchFlightDataSchema)
     .query(async ({ input }) => {
       const { airline, flightNumber, outDateISO } = input;
-      const flights =
-        process.env.FLIGHT_SEARCH_DATASOURCE === 'flightradar'
-          ? await fetchFlightRadarDataByFlightNumber({
-              airline,
-              flightNumber,
-              isoDate: outDateISO,
-            })
-          : process.env.FLIGHT_SEARCH_DATASOURCE === 'flightstats'
-            ? await fetchFlightStatsDataByFlightNumber({
-                airline,
-                flightNumber,
-                isoDate: outDateISO,
-              })
-            : [];
+      let flights: FlightSearchDataFetchResult[] = [];
+      if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
+        flights = await searchFlightStatsFlightsByFlightNumber({
+          airline,
+          flightNumber,
+          isoDate: outDateISO,
+        });
+      }
+      if (
+        process.env.DATASOURCE_FLIGHTRADAR === 'true' &&
+        flights.length === 0
+      ) {
+        flights = await searchFlightRadarFlightsByFlightNumber({
+          airline,
+          flightNumber,
+          isoDate: outDateISO,
+        });
+      }
       const flightData: FlightSearchDataResult[] = flights.map(
         (flight, index) => {
           const duration = getDurationMinutes({

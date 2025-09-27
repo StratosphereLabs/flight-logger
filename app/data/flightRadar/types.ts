@@ -1,4 +1,4 @@
-export interface FlightRadarData {
+export interface FlightRadarFlightData {
   airlineIata: string | null;
   flightNumber: number | null;
   departureAirportIATA: string;
