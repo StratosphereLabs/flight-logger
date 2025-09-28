@@ -432,8 +432,8 @@ export const FollowingMap = (): JSX.Element => {
                                 <span className="flex gap-1 text-xs">
                                   {currentTracklogItem?.ground === true ? (
                                     <>
-                                      <span>GND</span>
-                                      <span>{currentSpeed} kts</span>
+                                      <span>GND {currentSpeed}</span>
+                                      <span>kts</span>
                                     </>
                                   ) : (
                                     <>
