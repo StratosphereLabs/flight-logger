@@ -23,6 +23,11 @@ export const darkModeStyle = [
     stylers: [{ visibility: 'off' }],
   },
   {
+    featureType: 'transit.station.airport',
+    elementType: 'all',
+    stylers: [{ visibility: 'on' }],
+  },
+  {
     featureType: 'water',
     elementType: 'geometry',
     stylers: [{ color: '#17263c' }],
@@ -59,5 +64,10 @@ export const lightModeStyle = [
     featureType: 'transit',
     elementType: 'all',
     stylers: [{ visibility: 'off' }],
+  },
+  {
+    featureType: 'transit.station.airport',
+    elementType: 'all',
+    stylers: [{ visibility: 'on' }],
   },
 ];

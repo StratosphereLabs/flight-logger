@@ -344,7 +344,9 @@ export const FollowingMap = (): JSX.Element => {
                                   isSelected || isHover
                                     ? 1
                                     : !isItemSelected
-                                      ? 1
+                                      ? ground === true
+                                        ? 0.7
+                                        : 1
                                       : 0.1,
                                 strokeColor:
                                   ground === true
@@ -428,15 +430,24 @@ export const FollowingMap = (): JSX.Element => {
                                     `${airline?.icao}${flightNumber}`}
                                 </span>
                                 <span className="flex gap-1 text-xs">
-                                  <span>
-                                    {currentAlt != null
-                                      ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
-                                      : null}
-                                  </span>
-                                  <span>{currentSpeed}</span>
-                                  <span className="font-bold">
-                                    {altChangeString}
-                                  </span>
+                                  {currentTracklogItem?.ground === true ? (
+                                    <>
+                                      <span>GND</span>
+                                      <span>{currentSpeed} kts</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span>
+                                        {currentAlt !== null
+                                          ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
+                                          : null}
+                                      </span>
+                                      <span className="font-bold">
+                                        {altChangeString}
+                                      </span>
+                                      <span>{currentSpeed}</span>
+                                    </>
+                                  )}
                                 </span>
                               </div>
                             </TooltipContent>
