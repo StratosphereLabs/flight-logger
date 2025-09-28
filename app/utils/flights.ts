@@ -666,12 +666,13 @@ export const transformFlightData = (
       ? [
           {
             timestamp: getTime(new Date()),
-            alt: tracklog[tracklog.length - 1]?.alt ?? 0,
+            alt: tracklog[tracklog.length - 1]?.alt ?? null,
             coord: [estimatedLocation.lng, estimatedLocation.lat] as [
               number,
               number,
             ],
             gs: estimatedSpeed !== null ? estimatedSpeed / KTS_TO_MPH : null,
+            ground: tracklog[tracklog.length - 1]?.ground,
           },
         ]
       : []),

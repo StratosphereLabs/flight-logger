@@ -257,7 +257,7 @@ export const Flight = (): JSX.Element | null => {
                       <PolylineF
                         key={index}
                         options={{
-                          strokeOpacity: 1,
+                          strokeOpacity: ground === true ? 0.7 : 1,
                           strokeColor:
                             ground === true
                               ? 'white'
@@ -326,13 +326,24 @@ export const Flight = (): JSX.Element | null => {
                               `${data.airline?.icao}${data.flightNumber}`}
                           </span>
                           <span className="flex gap-1 text-xs">
-                            <span>
-                              {currentAlt != null
-                                ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
-                                : null}
-                            </span>
-                            <span className="font-bold">{altChangeString}</span>
-                            <span>{currentSpeed}</span>
+                            {currentTracklogItem?.ground === true ? (
+                              <>
+                                <span>GND</span>
+                                <span>{currentSpeed} kts</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>
+                                  {currentAlt !== null
+                                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
+                                    : null}
+                                </span>
+                                <span className="font-bold">
+                                  {altChangeString}
+                                </span>
+                                <span>{currentSpeed}</span>
+                              </>
+                            )}
                           </span>
                         </div>
                       </TooltipContent>
