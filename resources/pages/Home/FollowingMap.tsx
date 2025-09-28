@@ -268,7 +268,7 @@ export const FollowingMap = (): JSX.Element => {
                   const isCurrentFlight = [
                     'DEPARTED_TAXIING',
                     'EN_ROUTE',
-                    'ARRIVED_TAXIING',
+                    'LANDED_TAXIING',
                   ].includes(flightStatus);
                   const lastTracklogItem =
                     tracklog !== undefined && tracklog.length > 2

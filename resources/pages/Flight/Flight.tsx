@@ -191,7 +191,7 @@ export const Flight = (): JSX.Element | null => {
             const isCurrentFlight = [
               'DEPARTED_TAXIING',
               'EN_ROUTE',
-              'ARRIVED_TAXIING',
+              'LANDED_TAXIING',
             ].includes(data.flightStatus);
             const lastTracklogItem =
               data.tracklog !== undefined && data.tracklog.length > 2
