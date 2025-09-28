@@ -191,7 +191,7 @@ export const Flight = (): JSX.Element | null => {
             const isCurrentFlight = [
               'DEPARTED_TAXIING',
               'EN_ROUTE',
-              'ARRIVED_TAXIING',
+              'LANDED_TAXIING',
             ].includes(data.flightStatus);
             const lastTracklogItem =
               data.tracklog !== undefined && data.tracklog.length > 2
@@ -328,8 +328,8 @@ export const Flight = (): JSX.Element | null => {
                           <span className="flex gap-1 text-xs">
                             {currentTracklogItem?.ground === true ? (
                               <>
-                                <span>GND</span>
-                                <span>{currentSpeed} kts</span>
+                                <span>GND {currentSpeed}</span>
+                                <span>kts</span>
                               </>
                             ) : (
                               <>

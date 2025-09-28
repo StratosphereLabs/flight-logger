@@ -662,7 +662,7 @@ export const transformFlightData = (
     ...(tracklog ?? []),
     ...(tracklog !== undefined &&
     tracklog.length > 0 &&
-    flightStatus === 'EN_ROUTE'
+    ['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(flightStatus)
       ? [
           {
             timestamp: getTime(new Date()),
