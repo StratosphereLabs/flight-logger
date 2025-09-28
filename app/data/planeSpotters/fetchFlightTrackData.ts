@@ -88,12 +88,8 @@ export const fetchFlightTrackData = async (
     (acc, [elapsedTime, ...item]) => {
       const currentTimestamp = data.full.timestamp + elapsedTime;
       const currentDate = new Date(1000 * currentTimestamp);
-      const departureTime =
-        flightData.offTimeActual ??
-        flightData.outTimeActual ??
-        flightData.outTime;
-      const arrivalTime =
-        flightData.onTimeActual ?? flightData.inTimeActual ?? flightData.inTime;
+      const departureTime = flightData.outTimeActual ?? flightData.outTime;
+      const arrivalTime = flightData.inTimeActual ?? flightData.inTime;
       return (item[7] !== null || item[2] === 'ground') &&
         isAfter(currentDate, sub(departureTime, { minutes: 5 })) &&
         isBefore(currentDate, add(arrivalTime, { minutes: 5 }))
@@ -106,12 +102,8 @@ export const fetchFlightTrackData = async (
     (acc, [elapsedTime, ...item]) => {
       const currentTimestamp = data.recent.timestamp + elapsedTime;
       const currentDate = new Date(1000 * currentTimestamp);
-      const departureTime =
-        flightData.offTimeActual ??
-        flightData.outTimeActual ??
-        flightData.outTime;
-      const arrivalTime =
-        flightData.onTimeActual ?? flightData.inTimeActual ?? flightData.inTime;
+      const departureTime = flightData.outTimeActual ?? flightData.outTime;
+      const arrivalTime = flightData.inTimeActual ?? flightData.inTime;
       return (item[7] !== null || item[2] === 'ground') &&
         isAfter(currentDate, sub(departureTime, { minutes: 5 })) &&
         isBefore(currentDate, add(arrivalTime, { minutes: 5 })) &&
@@ -124,14 +116,12 @@ export const fetchFlightTrackData = async (
   const trackData = [...recentTrackData, ...fullTrackData];
   const currentFlightData: TracklogItem[] = [];
   for (const trackItem of trackData) {
-    if (trackItem[3] === 'ground') {
-      continue;
-    }
     currentFlightData.unshift({
       timestamp: Math.round(trackItem[0]),
       coord: [trackItem[2], trackItem[1]],
       alt: typeof trackItem[3] === 'number' ? trackItem[3] / 100 : null,
       gs: trackItem[4],
+      ground: trackItem[3] === 'ground',
     });
   }
   return currentFlightData;
