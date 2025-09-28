@@ -246,34 +246,41 @@ export const Flight = (): JSX.Element | null => {
                     ]}
                   />
                 ) : null}
-                {data.tracklog?.map(({ alt, coord }, index, allItems) => {
-                  const prevItem = allItems[index - 1];
-                  if (prevItem === undefined) return null;
-                  if (alt !== null) {
-                    lastAltitude = alt;
-                  }
-                  return (
-                    <PolylineF
-                      key={index}
-                      options={{
-                        strokeOpacity: 1,
-                        strokeColor: getAltitudeColor(
-                          lastAltitude !== null ? lastAltitude / 450 : 0,
-                        ),
-                        strokeWeight: 3,
-                        zIndex: isCurrentFlight ? 20 : 10,
-                        geodesic: true,
-                      }}
-                      path={[
-                        {
-                          lat: prevItem.coord[1],
-                          lng: prevItem.coord[0],
-                        },
-                        { lat: coord[1], lng: coord[0] },
-                      ]}
-                    />
-                  );
-                }) ?? null}
+                {data.tracklog?.map(
+                  ({ alt, coord, ground }, index, allItems) => {
+                    const prevItem = allItems[index - 1];
+                    if (prevItem === undefined) return null;
+                    if (alt !== null) {
+                      lastAltitude = alt;
+                    }
+                    return (
+                      <PolylineF
+                        key={index}
+                        options={{
+                          strokeOpacity: 1,
+                          strokeColor:
+                            ground === true
+                              ? 'white'
+                              : getAltitudeColor(
+                                  lastAltitude !== null
+                                    ? lastAltitude / 450
+                                    : 0,
+                                ),
+                          strokeWeight: 3,
+                          zIndex: isCurrentFlight ? 20 : 10,
+                          geodesic: true,
+                        }}
+                        path={[
+                          {
+                            lat: prevItem.coord[1],
+                            lng: prevItem.coord[0],
+                          },
+                          { lat: coord[1], lng: coord[0] },
+                        ]}
+                      />
+                    );
+                  },
+                ) ?? null}
                 {data.flightStatus !== 'ARRIVED' ? (
                   <PolylineF
                     visible
@@ -292,7 +299,9 @@ export const Flight = (): JSX.Element | null => {
                     }
                   />
                 ) : null}
-                {data.flightStatus === 'EN_ROUTE' ? (
+                {['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(
+                  data.flightStatus,
+                ) ? (
                   <OverlayViewF
                     position={{
                       lat: data.estimatedLocation.lat,

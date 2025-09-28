@@ -329,39 +329,46 @@ export const FollowingMap = (): JSX.Element => {
                           ]}
                         />
                       ) : null}
-                      {tracklog?.map(({ alt, coord }, index, allItems) => {
-                        const prevItem = allItems[index - 1];
-                        if (prevItem === undefined) return null;
-                        if (alt !== null) {
-                          lastAltitude = alt;
-                        }
-                        return (
-                          <PolylineF
-                            key={index}
-                            options={{
-                              strokeOpacity:
-                                isSelected || isHover
-                                  ? 1
-                                  : !isItemSelected
+                      {tracklog?.map(
+                        ({ alt, coord, ground }, index, allItems) => {
+                          const prevItem = allItems[index - 1];
+                          if (prevItem === undefined) return null;
+                          if (alt !== null) {
+                            lastAltitude = alt;
+                          }
+                          return (
+                            <PolylineF
+                              key={index}
+                              options={{
+                                strokeOpacity:
+                                  isSelected || isHover
                                     ? 1
-                                    : 0.1,
-                              strokeColor: getAltitudeColor(
-                                lastAltitude !== null ? lastAltitude / 450 : 0,
-                              ),
-                              strokeWeight: 3,
-                              zIndex: isCurrentFlight ? 20 : 10,
-                              geodesic: true,
-                            }}
-                            path={[
-                              {
-                                lat: prevItem.coord[1],
-                                lng: prevItem.coord[0],
-                              },
-                              { lat: coord[1], lng: coord[0] },
-                            ]}
-                          />
-                        );
-                      }) ?? null}
+                                    : !isItemSelected
+                                      ? 1
+                                      : 0.1,
+                                strokeColor:
+                                  ground === true
+                                    ? 'white'
+                                    : getAltitudeColor(
+                                        lastAltitude !== null
+                                          ? lastAltitude / 450
+                                          : 0,
+                                      ),
+                                strokeWeight: 3,
+                                zIndex: isCurrentFlight ? 20 : 10,
+                                geodesic: true,
+                              }}
+                              path={[
+                                {
+                                  lat: prevItem.coord[1],
+                                  lng: prevItem.coord[0],
+                                },
+                                { lat: coord[1], lng: coord[0] },
+                              ]}
+                            />
+                          );
+                        },
+                      ) ?? null}
                       {flightStatus !== 'ARRIVED' ? (
                         <PolylineF
                           visible

@@ -19,7 +19,9 @@ export type FlightWithData = Flight & {
 export type TracklogItem = Pick<
   FlightAwareTracklogItem,
   'timestamp' | 'coord' | 'alt' | 'gs'
->;
+> & {
+  ground?: boolean;
+};
 
 export interface SearchFlightsByFlightNumberParams {
   airline: Airline;
