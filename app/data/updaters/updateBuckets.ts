@@ -1,4 +1,4 @@
-import { add, isAfter, isBefore, sub } from 'date-fns';
+import { add, isAfter, isBefore, max, min, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 
 import { prisma } from '../../db';
@@ -362,6 +362,30 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
             },
           },
           {
+            offTimeActual: {
+              gt: sub(new Date(), { hours: 1 }),
+              lte: add(new Date(), { minutes: 5 }),
+            },
+          },
+          {
+            offTime: {
+              gt: sub(new Date(), { hours: 1 }),
+              lte: add(new Date(), { minutes: 5 }),
+            },
+          },
+          {
+            onTimeActual: {
+              gt: sub(new Date(), { minutes: 5 }),
+              lte: add(new Date(), { hours: 1 }),
+            },
+          },
+          {
+            onTime: {
+              gt: sub(new Date(), { minutes: 5 }),
+              lte: add(new Date(), { hours: 1 }),
+            },
+          },
+          {
             inTimeActual: {
               gt: sub(new Date(), { minutes: 5 }),
               lte: add(new Date(), { hours: 1 }),
@@ -407,9 +431,24 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
       },
     });
     const filteredFlights = flightsToUpdate.filter(
-      ({ outTime, outTimeActual, inTime, inTimeActual }) => {
-        const departureTime = outTimeActual ?? outTime;
-        const arrivalTime = inTimeActual ?? inTime;
+      ({
+        outTime,
+        outTimeActual,
+        offTime,
+        offTimeActual,
+        onTime,
+        onTimeActual,
+        inTime,
+        inTimeActual,
+      }) => {
+        const departureTime = min([
+          offTimeActual ?? offTime ?? outTime,
+          outTimeActual ?? outTime,
+        ]);
+        const arrivalTime = max([
+          onTimeActual ?? onTime ?? inTime,
+          inTimeActual ?? inTime,
+        ]);
         return (
           (isAfter(new Date(), sub(departureTime, { minutes: 5 })) &&
             isBefore(new Date(), add(departureTime, { hours: 1 }))) ||
@@ -436,6 +475,18 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
       where: {
         OR: [
           {
+            outTimeActual: {
+              gt: sub(new Date(), { minutes: 30 }),
+              lte: add(new Date(), { minutes: 1 }),
+            },
+          },
+          {
+            outTime: {
+              gt: sub(new Date(), { minutes: 30 }),
+              lte: add(new Date(), { minutes: 1 }),
+            },
+          },
+          {
             offTimeActual: {
               gt: sub(new Date(), { minutes: 30 }),
               lte: add(new Date(), { minutes: 1 }),
@@ -455,6 +506,18 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
           },
           {
             onTime: {
+              gt: sub(new Date(), { minutes: 1 }),
+              lte: add(new Date(), { minutes: 30 }),
+            },
+          },
+          {
+            inTimeActual: {
+              gt: sub(new Date(), { minutes: 1 }),
+              lte: add(new Date(), { minutes: 30 }),
+            },
+          },
+          {
+            inTime: {
               gt: sub(new Date(), { minutes: 1 }),
               lte: add(new Date(), { minutes: 30 }),
             },
@@ -503,14 +566,19 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
         inTime,
         inTimeActual,
       }) => {
-        const takeoffTime =
-          offTimeActual ?? offTime ?? outTimeActual ?? outTime;
-        const landingTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
+        const departureTime = min([
+          offTimeActual ?? offTime ?? outTime,
+          outTimeActual ?? outTime,
+        ]);
+        const arrivalTime = max([
+          onTimeActual ?? onTime ?? inTime,
+          inTimeActual ?? inTime,
+        ]);
         return (
-          (isAfter(new Date(), sub(takeoffTime, { minutes: 1 })) &&
-            isBefore(new Date(), add(takeoffTime, { minutes: 30 }))) ||
-          (isAfter(new Date(), sub(landingTime, { minutes: 30 })) &&
-            isBefore(new Date(), add(landingTime, { minutes: 1 })))
+          (isAfter(new Date(), sub(departureTime, { minutes: 1 })) &&
+            isBefore(new Date(), add(departureTime, { minutes: 30 }))) ||
+          (isAfter(new Date(), sub(arrivalTime, { minutes: 30 })) &&
+            isBefore(new Date(), add(arrivalTime, { minutes: 1 })))
         );
       },
     );
