@@ -10,6 +10,7 @@ export enum AppTheme {
   FOREST = 'forest',
   NIGHT = 'night',
   SYNTHWAVE = 'synthwave',
+  HALLOWEEN = 'halloween',
 }
 
 export const DARK_MODE_THEMES = [
@@ -17,6 +18,7 @@ export const DARK_MODE_THEMES = [
   AppTheme.FOREST,
   AppTheme.SYNTHWAVE,
   AppTheme.ABYSS,
+  AppTheme.HALLOWEEN,
 ];
 
 interface ThemeState {

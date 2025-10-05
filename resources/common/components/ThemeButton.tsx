@@ -7,8 +7,9 @@ import {
   DarkModeIcon,
   DarkModeOutlineIcon,
   FantasyIcon,
-  ForestIcon,
+  // ForestIcon,
   GemIcon,
+  HalloweenIcon,
   LightModeIcon,
   SunsetIcon,
   ThemeIcon,
@@ -80,20 +81,36 @@ export const ThemeButton = (): JSX.Element => {
           },
         },
 
+        // {
+        //   id: AppTheme.FOREST,
+        //   onClick: () => {
+        //     setTheme(AppTheme.FOREST);
+        //   },
+        //   children: (
+        //     <>
+        //       <ForestIcon className="h-5 w-5" />
+        //       Forest
+        //     </>
+        //   ),
+        //   listItemProps: {
+        //     // @ts-ignore
+        //     'data-theme': 'forest',
+        //   },
+        // },
         {
-          id: AppTheme.FOREST,
+          id: AppTheme.HALLOWEEN,
           onClick: () => {
-            setTheme(AppTheme.FOREST);
+            setTheme(AppTheme.HALLOWEEN);
           },
           children: (
             <>
-              <ForestIcon className="h-5 w-5" />
-              Forest
+              <HalloweenIcon className="h-5 w-5" />
+              Halloween
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'forest',
+            'data-theme': 'halloween',
           },
         },
         {

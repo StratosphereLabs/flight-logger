@@ -8,7 +8,8 @@
     fantasy,
     abyss,
     cyberpunk,
-    forest;
+    forest,
+    halloween;
 }
 
 @config "../tailwind.config.js";
