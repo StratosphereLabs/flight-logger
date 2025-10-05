@@ -10,11 +10,10 @@ import {
   Loading,
 } from 'stratosphere-ui';
 
-import { type GetUserFlightHistoryRequest } from '../../../app/schemas';
-import { useLoggedInUserQuery } from '../../common/hooks';
-import { trpc } from '../../utils/trpc';
+import { type GetUserFlightHistoryRequest } from '../../../../app/schemas';
+import { trpc } from '../../../utils/trpc';
+import { useCardClassNames, useLoggedInUserQuery } from '../../hooks';
 import { FlightHistoryRow } from './FlightHistoryRow';
-import { useCardClassNames } from './useCardClassNames';
 
 export interface FlightHistoryProps {
   flightId: string;

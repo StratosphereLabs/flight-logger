@@ -6,17 +6,18 @@ import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Link, Loading, Table } from 'stratosphere-ui';
 
+import { TimeIcon } from '..';
 import viteIcon from '../../../resources/assets/vite.svg';
-import { FlightChangeValue, TimeIcon } from '../../common/components';
+import { AppTheme, useThemeStore } from '../../../stores';
+import { trpc } from '../../../utils/trpc';
 import {
   DATE_FORMAT,
   DEFAULT_PAGE_SIZE,
   HIDE_SCROLLBAR_CLASSNAME,
   TIME_FORMAT_12H,
-} from '../../common/constants';
-import { AppTheme, useThemeStore } from '../../stores';
-import { trpc } from '../../utils/trpc';
-import { useCardClassNames } from './useCardClassNames';
+} from '../../constants';
+import { useCardClassNames } from '../../hooks';
+import { FlightChangeValue } from './FlightChangeValue';
 
 export interface FlightChangelogTableProps {
   className?: string;

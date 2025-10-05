@@ -1,9 +1,9 @@
 import { ResponsiveLine } from '@nivo/line';
 
-import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { CloudIcon } from '../../common/components';
-import { useIsDarkMode } from '../../stores';
-import { BAR_CHART_THEME } from '../Profile/components/Statistics/constants';
+import { CloudIcon } from '..';
+import { type FlightsRouterOutput } from '../../../../app/routes/flights';
+import { useIsDarkMode } from '../../../stores';
+import { BAR_CHART_THEME } from '../../constants';
 
 export interface CloudCoverChartProps {
   data: NonNullable<

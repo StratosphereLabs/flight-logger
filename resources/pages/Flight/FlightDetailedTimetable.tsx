@@ -2,8 +2,8 @@ import classNames from 'classnames';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { TEXT_COLORS } from '../../common/constants';
+import { useCardClassNames } from '../../common/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
-import { useCardClassNames } from './useCardClassNames';
 
 export interface FlightDetailedTimetableProps {
   data: FlightsRouterOutput['getFlight'];

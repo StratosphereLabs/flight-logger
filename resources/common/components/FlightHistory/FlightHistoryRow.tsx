@@ -3,15 +3,11 @@ import { type HTMLProps } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Badge, Link } from 'stratosphere-ui';
 
-import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { FlightTimesDisplay } from '../../common/components';
-import {
-  CARD_BORDER_COLORS,
-  CARD_COLORS,
-  TEXT_COLORS,
-} from '../../common/constants';
-import { AppTheme, useThemeStore } from '../../stores';
-import { type FlightPageNavigationState } from '../Flight';
+import { type FlightsRouterOutput } from '../../../../app/routes/flights';
+import { type FlightPageNavigationState } from '../../../pages';
+import { AppTheme, useThemeStore } from '../../../stores';
+import { CARD_BORDER_COLORS, CARD_COLORS, TEXT_COLORS } from '../../constants';
+import { FlightTimesDisplay } from '../FlightTimesDisplay';
 
 export interface FlightHistoryRowProps extends HTMLProps<HTMLDivElement> {
   flight: FlightsRouterOutput['getFlightHistory']['results'][number];

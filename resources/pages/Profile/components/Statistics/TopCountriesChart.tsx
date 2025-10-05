@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from 'stratosphere-ui';
 
+import { BAR_CHART_THEME } from '../../../../common/constants';
 import {
   useProfileUserQuery,
   useTRPCErrorHandler,
@@ -22,7 +23,6 @@ import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { type StatisticsFiltersData } from './StatisticsCard';
-import { BAR_CHART_THEME } from './constants';
 import type { StatisticsChartProps } from './types';
 
 export const TopCountriesChart = ({

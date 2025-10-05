@@ -2,8 +2,7 @@ import classNames from 'classnames';
 import { Badge, Loading } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { useAircraftPhotoQuery } from '../../common/hooks';
-import { useCardClassNames } from './useCardClassNames';
+import { useAircraftPhotoQuery, useCardClassNames } from '../../common/hooks';
 
 export interface FlightAircraftDetailsProps {
   data: FlightsRouterOutput['getFlight'];

@@ -13,9 +13,13 @@ import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 
 import {
   AirportLabelOverlay,
+  FlightChangelogTable,
+  FlightHistory,
   FlightTimesDisplay,
+  OnTimePerformanceChart,
   PlaneSolidIcon,
   RightArrowIcon,
+  WeatherInfo,
 } from '../../common/components';
 import {
   CARD_BORDER_COLORS,
@@ -31,11 +35,7 @@ import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { DEFAULT_COORDINATES } from '../Home/constants';
-import { FlightChangelogTable } from './FlightChangelogTable';
-import { FlightHistory } from './FlightHistory';
 import { FlightInfo } from './FlightInfo';
-import { OnTimePerformanceChart } from './OnTimePerformanceChart';
-import { WeatherInfo } from './WeatherInfo';
 
 export interface FlightPageNavigationState {
   previousPageName: string;

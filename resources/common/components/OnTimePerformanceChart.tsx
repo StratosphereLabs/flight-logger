@@ -2,9 +2,9 @@ import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
 import { Tooltip } from 'stratosphere-ui';
 
-import { BAR_CHART_THEME } from '../../pages/Profile/components/Statistics/constants';
 import { trpc } from '../../utils/trpc';
-import { useCardClassNames } from './useCardClassNames';
+import { BAR_CHART_THEME } from '../constants';
+import { useCardClassNames } from '../hooks';
 
 export interface OnTimePerformanceChartProps {
   flightId: string;
