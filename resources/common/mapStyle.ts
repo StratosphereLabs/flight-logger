@@ -81,19 +81,11 @@ export const cyberPunkStyle = [
   {
     featureType: 'landscape',
     elementType: 'geometry.fill',
-    stylers: [
-      {
-        color: '#ffeb3b',
-      },
-    ],
+    stylers: [{ color: '#ffeb3b' }],
   },
   {
     featureType: 'water',
     elementType: 'geometry.fill',
-    stylers: [
-      {
-        color: '#2a1c32',
-      },
-    ],
+    stylers: [{ color: '#2a1c32' }],
   },
 ];
