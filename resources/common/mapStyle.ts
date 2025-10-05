@@ -28,6 +28,11 @@ export const darkModeStyle = [
     stylers: [{ visibility: 'on' }],
   },
   {
+    featureType: 'transit.station.airport',
+    elementType: 'geometry.fill',
+    stylers: [{ visibility: 'on' }, { lightness: -50 }],
+  },
+  {
     featureType: 'water',
     elementType: 'geometry',
     stylers: [{ color: '#17263c' }],

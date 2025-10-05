@@ -350,13 +350,15 @@ export const FollowingMap = (): JSX.Element => {
                                       : 0.1,
                                 strokeColor:
                                   ground === true
-                                    ? 'white'
+                                    ? isDarkMode
+                                      ? 'white'
+                                      : 'lightblue'
                                     : getAltitudeColor(
                                         lastAltitude !== null
                                           ? lastAltitude / 450
                                           : 0,
                                       ),
-                                strokeWeight: 3,
+                                strokeWeight: ground === true ? 4 : 3,
                                 zIndex: isCurrentFlight ? 20 : 10,
                                 geodesic: true,
                               }}
@@ -384,7 +386,7 @@ export const FollowingMap = (): JSX.Element => {
                                     ? 0.5
                                     : 1
                                   : 0.1,
-                            strokeColor: isDarkMode ? 'lightblue' : 'white',
+                            strokeColor: isDarkMode ? 'white' : 'lightgrey',
                             strokeWeight: 2,
                             zIndex: isCurrentFlight ? 15 : 5,
                             geodesic: true,
