@@ -76,3 +76,24 @@ export const lightModeStyle = [
     stylers: [{ visibility: 'on' }],
   },
 ];
+
+export const cyberPunkStyle = [
+  {
+    featureType: 'landscape',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        color: '#ffeb3b',
+      },
+    ],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        color: '#2a1c32',
+      },
+    ],
+  },
+];
