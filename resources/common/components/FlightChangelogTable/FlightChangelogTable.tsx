@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Link, Loading, Table } from 'stratosphere-ui';
 
 import { TimeIcon } from '..';
-import viteIcon from '../../../resources/assets/vite.svg';
+import viteIcon from '../../../../resources/assets/vite.svg';
 import { AppTheme, useThemeStore } from '../../../stores';
 import { trpc } from '../../../utils/trpc';
 import {
