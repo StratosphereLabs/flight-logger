@@ -29,9 +29,11 @@ export const AirportLabelOverlay = ({
     >
       <div
         className={classNames(
-          'rounded-box border-primary border-2 px-[5px] font-mono text-sm font-bold backdrop-blur-xs transition-opacity',
+          'rounded-box border-2 px-[5px] font-mono text-sm font-bold backdrop-blur-xs transition-opacity',
           show ? !isFocused && 'opacity-10' : 'opacity-0',
-          isDarkMode ? 'bg-primary/40' : 'bg-primary/65 text-white',
+          isDarkMode
+            ? 'bg-base-100/50 text-base-content border-base-100'
+            : 'bg-primary/50 text-primary-content border-primary',
         )}
       >
         {iata}
