@@ -379,7 +379,8 @@ export const FollowingMap = (): JSX.Element => {
                           );
                         },
                       ) ?? null}
-                      {flightStatus !== 'ARRIVED' ? (
+                      {flightStatus === 'SCHEDULED' ||
+                      flightStatus === 'DEPARTED_TAXIING' ? (
                         <PolylineF
                           visible
                           key={index}

@@ -2,14 +2,14 @@
 @plugin "daisyui" {
   themes:
     corporate --default,
-    night --prefersdark,
+    halloween --prefersdark,
     emerald,
+    night,
     synthwave,
     fantasy,
     abyss,
     cyberpunk,
-    forest,
-    halloween;
+    forest;
 }
 
 @config "../tailwind.config.js";
