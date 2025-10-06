@@ -30,7 +30,7 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
       theme: window.matchMedia?.('(prefers-color-scheme: dark)').matches
-        ? AppTheme.NIGHT
+        ? AppTheme.HALLOWEEN
         : AppTheme.CORPORATE,
       setTheme: (theme: AppTheme) => {
         set({ theme });

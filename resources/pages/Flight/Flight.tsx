@@ -296,7 +296,8 @@ export const Flight = (): JSX.Element | null => {
                     );
                   },
                 ) ?? null}
-                {data.flightStatus !== 'ARRIVED' ? (
+                {data.flightStatus === 'SCHEDULED' ||
+                data.flightStatus === 'DEPARTED_TAXIING' ? (
                   <PolylineF
                     visible
                     options={{
