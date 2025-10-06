@@ -32,7 +32,6 @@ import {
   darkModeStyle,
   lightModeStyle,
 } from '../../common/mapStyle';
-import { getAltChangeString } from '../../common/utils';
 import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
@@ -264,6 +263,8 @@ export const FollowingMap = (): JSX.Element => {
                     delayStatus,
                     estimatedLocation,
                     estimatedHeading,
+                    estimatedAltitude,
+                    altChangeString,
                     flightState,
                     flightStatus,
                     tracklog,
@@ -276,29 +277,13 @@ export const FollowingMap = (): JSX.Element => {
                     'EN_ROUTE',
                     'LANDED_TAXIING',
                   ].includes(flightStatus);
-                  const lastTracklogItem =
-                    tracklog !== undefined && tracklog.length > 2
-                      ? tracklog[tracklog.length - 3]
-                      : null;
                   const currentTracklogItem =
                     tracklog !== undefined && tracklog.length > 1
                       ? tracklog[tracklog.length - 2]
                       : null;
-                  const lastAlt =
-                    lastTracklogItem !== null
-                      ? Math.round(lastTracklogItem.alt ?? 0)
-                      : null;
-                  const currentAlt =
-                    currentTracklogItem !== null
-                      ? Math.round(currentTracklogItem.alt ?? 0)
-                      : null;
                   const currentSpeed =
                     currentTracklogItem !== null
                       ? Math.round(currentTracklogItem.gs ?? 0)
-                      : null;
-                  const altChangeString =
-                    lastAlt !== null && currentAlt !== null
-                      ? getAltChangeString(lastAlt, currentAlt)
                       : null;
                   let lastAltitude: number | null = null;
                   return (
@@ -443,8 +428,8 @@ export const FollowingMap = (): JSX.Element => {
                                   ) : (
                                     <>
                                       <span>
-                                        {currentAlt !== null
-                                          ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
+                                        {estimatedAltitude !== null
+                                          ? `FL${estimatedAltitude < 10 ? '0' : ''}${estimatedAltitude < 100 ? '0' : ''}${estimatedAltitude < 0 ? '0' : estimatedAltitude}`
                                           : null}
                                       </span>
                                       <span className="font-bold">

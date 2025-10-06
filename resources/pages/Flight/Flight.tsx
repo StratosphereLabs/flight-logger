@@ -30,7 +30,6 @@ import {
   darkModeStyle,
   lightModeStyle,
 } from '../../common/mapStyle';
-import { getAltChangeString } from '../../common/utils';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import {
   AppTheme,
@@ -206,29 +205,13 @@ export const Flight = (): JSX.Element | null => {
               'EN_ROUTE',
               'LANDED_TAXIING',
             ].includes(data.flightStatus);
-            const lastTracklogItem =
-              data.tracklog !== undefined && data.tracklog.length > 2
-                ? data.tracklog[data.tracklog.length - 3]
-                : null;
             const currentTracklogItem =
               data.tracklog !== undefined && data.tracklog.length > 1
                 ? data.tracklog[data.tracklog.length - 2]
                 : null;
-            const lastAlt =
-              lastTracklogItem !== null
-                ? Math.round(lastTracklogItem.alt ?? 0)
-                : null;
-            const currentAlt =
-              currentTracklogItem !== null
-                ? Math.round(currentTracklogItem.alt ?? 0)
-                : null;
             const currentSpeed =
               currentTracklogItem !== null
                 ? Math.round(currentTracklogItem.gs ?? 0)
-                : null;
-            const altChangeString =
-              lastAlt !== null && currentAlt !== null
-                ? getAltChangeString(lastAlt, currentAlt)
                 : null;
             let lastAltitude: number | null = null;
             return (
@@ -346,12 +329,12 @@ export const Flight = (): JSX.Element | null => {
                             ) : (
                               <>
                                 <span>
-                                  {currentAlt !== null
-                                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
+                                  {data.estimatedAltitude !== null
+                                    ? `FL${data.estimatedAltitude < 10 ? '0' : ''}${data.estimatedAltitude < 100 ? '0' : ''}${data.estimatedAltitude < 0 ? '0' : data.estimatedAltitude}`
                                     : null}
                                 </span>
                                 <span className="font-bold">
-                                  {altChangeString}
+                                  {data.altChangeString}
                                 </span>
                                 <span>{currentSpeed}</span>
                               </>
