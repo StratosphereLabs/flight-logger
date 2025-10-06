@@ -395,9 +395,9 @@ export const Flight = (): JSX.Element | null => {
                 CARD_BORDER_COLORS[data.delayStatus],
               )}
             >
-              <div className="flex h-full w-[150px] flex-col gap-1 overflow-hidden">
+              <div className="flex h-full w-[150px] flex-col overflow-hidden">
                 <div className="flex flex-1 gap-4">
-                  <div className="flex h-[20px] w-[100px]">
+                  <div className="flex h-[24px] w-[100px]">
                     {data.airline?.logo !== null &&
                     data.airline?.logo !== undefined ? (
                       <a
@@ -432,7 +432,7 @@ export const Flight = (): JSX.Element | null => {
                   {data.outDateLocal}
                 </div>
                 {data.user !== null ? (
-                  <div className="flex items-center gap-1 overflow-hidden">
+                  <div className="mt-1 flex items-center gap-1 overflow-hidden">
                     <Avatar
                       alt={data.user.username}
                       src={data.user.avatar}
