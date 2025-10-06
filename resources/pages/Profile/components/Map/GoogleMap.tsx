@@ -15,8 +15,12 @@ import {
 import { type UseFormReturn, useWatch } from 'react-hook-form';
 
 import { AirportLabelOverlay } from '../../../../common/components';
-import { darkModeStyle, lightModeStyle } from '../../../../common/mapStyle';
-import { useIsDarkMode } from '../../../../stores';
+import {
+  cyberPunkStyle,
+  darkModeStyle,
+  lightModeStyle,
+} from '../../../../common/mapStyle';
+import { AppTheme, useIsDarkMode, useThemeStore } from '../../../../stores';
 import { type MapCardFormData } from '../../Profile';
 import { useAddFlightStore } from '../Flights/addFlightStore';
 import { AddFlightOverlays } from './AddFlightOverlays';
@@ -94,11 +98,17 @@ export const GoogleMap = ({
     }
   }, [data.airports, data.routes, isAddingFlight, map, selectedAirportId]);
   const isDarkMode = useIsDarkMode();
+  const { theme } = useThemeStore();
   useEffect(() => {
     map?.setValues({
-      styles: isDarkMode ? darkModeStyle : lightModeStyle,
+      styles:
+        theme === AppTheme.CYBERPUNK
+          ? cyberPunkStyle
+          : isDarkMode
+            ? darkModeStyle
+            : lightModeStyle,
     });
-  }, [isDarkMode, map]);
+  }, [isDarkMode, map, theme]);
   useEffect(() => {
     map?.setCenter(center);
   }, [center, map]);
@@ -199,8 +209,8 @@ export const GoogleMap = ({
                   isActive || isCompleted
                     ? 'red'
                     : isDarkMode
-                      ? 'lightblue'
-                      : 'white',
+                      ? 'white'
+                      : 'gray',
                 strokeWeight: isActive ? 3 : 2,
                 zIndex: isCompleted ? 10 : 5,
                 geodesic: true,

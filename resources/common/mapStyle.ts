@@ -79,13 +79,13 @@ export const lightModeStyle = [
 
 export const cyberPunkStyle = [
   {
+    featureType: 'administrative',
+    elementType: 'all',
+    stylers: [{ lightness: 50 }],
+  },
+  {
     featureType: 'landscape',
     elementType: 'geometry.fill',
     stylers: [{ color: '#ffeb3b' }],
-  },
-  {
-    featureType: 'water',
-    elementType: 'geometry.fill',
-    stylers: [{ color: '#2a1c32' }],
   },
 ];
