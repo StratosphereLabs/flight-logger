@@ -7,13 +7,14 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import classNames from 'classnames';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 
 import {
   AirportLabelOverlay,
   FlightTimesDisplay,
+  HalloweenIcon,
   PlaneSolidIcon,
   RightArrowIcon,
 } from '../../common/components';
@@ -24,10 +25,20 @@ import {
   TOOLTIP_COLORS,
 } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
-import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
+import {
+  cyberPunkStyle,
+  darkModeStyle,
+  lightModeStyle,
+} from '../../common/mapStyle';
 import { getAltChangeString } from '../../common/utils';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
-import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
+import {
+  AppTheme,
+  getIsLoggedIn,
+  useAuthStore,
+  useIsDarkMode,
+  useThemeStore,
+} from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { DEFAULT_COORDINATES } from '../Home/constants';
@@ -62,16 +73,18 @@ export const Flight = (): JSX.Element | null => {
   };
   const [center] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();
-  const aircraftColor = useMemo(
-    () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
-    [isDarkMode],
-  );
+  const { theme } = useThemeStore();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
     map?.setValues({
-      styles: isDarkMode ? darkModeStyle : lightModeStyle,
+      styles:
+        theme === AppTheme.CYBERPUNK
+          ? cyberPunkStyle
+          : isDarkMode
+            ? darkModeStyle
+            : lightModeStyle,
     });
-  }, [isDarkMode, map]);
+  }, [isDarkMode, map, theme]);
   useEffect(() => {
     map?.setCenter(center);
   }, [center, map]);
@@ -257,10 +270,12 @@ export const Flight = (): JSX.Element | null => {
                       <PolylineF
                         key={index}
                         options={{
-                          strokeOpacity: ground === true ? 0.7 : 1,
+                          strokeOpacity: ground === true ? 0.5 : 1,
                           strokeColor:
                             ground === true
-                              ? 'white'
+                              ? isDarkMode
+                                ? 'white'
+                                : 'darkgray'
                               : getAltitudeColor(
                                   lastAltitude !== null
                                     ? lastAltitude / 450
@@ -286,7 +301,7 @@ export const Flight = (): JSX.Element | null => {
                     visible
                     options={{
                       strokeOpacity: isDarkMode ? 0.5 : 1,
-                      strokeColor: isDarkMode ? 'lightblue' : 'white',
+                      strokeColor: isDarkMode ? 'white' : 'gray',
                       strokeWeight: 2,
                       zIndex: isCurrentFlight ? 15 : 5,
                       geodesic: true,
@@ -314,11 +329,7 @@ export const Flight = (): JSX.Element | null => {
                     })}
                     zIndex={100}
                   >
-                    <Tooltip
-                      className="opacity-75"
-                      color={TOOLTIP_COLORS[data.delayStatus]}
-                      open
-                    >
+                    <Tooltip color={TOOLTIP_COLORS[data.delayStatus]} open>
                       <TooltipContent className="flex items-center gap-1 font-mono">
                         <div className="flex flex-col">
                           <span className="flex gap-1 font-bold">
@@ -357,12 +368,21 @@ export const Flight = (): JSX.Element | null => {
                             : undefined
                         }
                       >
-                        <PlaneSolidIcon
-                          className={classNames('h-6 w-6', aircraftColor)}
-                          style={{
-                            transform: `rotate(${Math.round(data.estimatedHeading - 90)}deg)`,
-                          }}
-                        />
+                        {theme === AppTheme.HALLOWEEN ? (
+                          <HalloweenIcon
+                            className="text-primary h-7 w-7"
+                            style={{
+                              transform: `rotate(${Math.round(data.estimatedHeading)}deg)`,
+                            }}
+                          />
+                        ) : (
+                          <PlaneSolidIcon
+                            className="text-primary h-6 w-6"
+                            style={{
+                              transform: `rotate(${Math.round(data.estimatedHeading - 90)}deg)`,
+                            }}
+                          />
+                        )}
                         <span className="sr-only">
                           {data.user !== null ? `@${data.user.username}` : null}
                         </span>

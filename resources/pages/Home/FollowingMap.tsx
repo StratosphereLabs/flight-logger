@@ -6,7 +6,6 @@ import {
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
-import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,15 +20,20 @@ import {
 
 import {
   AirportLabelOverlay,
+  HalloweenIcon,
   PlaneSolidIcon,
   PlusAirplaneIcon,
   RightArrowIcon,
 } from '../../common/components';
 import { TOOLTIP_COLORS } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
-import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
+import {
+  cyberPunkStyle,
+  darkModeStyle,
+  lightModeStyle,
+} from '../../common/mapStyle';
 import { getAltChangeString } from '../../common/utils';
-import { useIsDarkMode } from '../../stores';
+import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { type ProfilePageNavigationState } from '../Profile';
@@ -57,19 +61,21 @@ export const FollowingMap = (): JSX.Element => {
   const navigate = useNavigate();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();
+  const { theme } = useThemeStore();
   useWeatherRadarLayer(map);
   useEffect(() => {
     map?.setValues({
-      styles: isDarkMode ? darkModeStyle : lightModeStyle,
+      styles:
+        theme === AppTheme.CYBERPUNK
+          ? cyberPunkStyle
+          : isDarkMode
+            ? darkModeStyle
+            : lightModeStyle,
     });
-  }, [isDarkMode, map]);
+  }, [isDarkMode, map, theme]);
   useEffect(() => {
     map?.setCenter(center);
   }, [center, map]);
-  const aircraftColor = useMemo(
-    () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
-    [isDarkMode],
-  );
   const { data, isLoading } = trpc.flights.getFollowingFlights.useQuery(
     undefined,
     {
@@ -345,12 +351,14 @@ export const FollowingMap = (): JSX.Element => {
                                     ? 1
                                     : !isItemSelected
                                       ? ground === true
-                                        ? 0.7
+                                        ? 0.5
                                         : 1
                                       : 0.1,
                                 strokeColor:
                                   ground === true
-                                    ? 'white'
+                                    ? isDarkMode
+                                      ? 'white'
+                                      : 'darkgray'
                                     : getAltitudeColor(
                                         lastAltitude !== null
                                           ? lastAltitude / 450
@@ -380,11 +388,11 @@ export const FollowingMap = (): JSX.Element => {
                               isSelected || isHover
                                 ? 0.75
                                 : !isItemSelected
-                                  ? isDarkMode
+                                  ? isDarkMode && theme !== AppTheme.CYBERPUNK
                                     ? 0.5
                                     : 1
                                   : 0.1,
-                            strokeColor: isDarkMode ? 'lightblue' : 'white',
+                            strokeColor: isDarkMode ? 'white' : 'gray',
                             strokeWeight: 2,
                             zIndex: isCurrentFlight ? 15 : 5,
                             geodesic: true,
@@ -411,11 +419,7 @@ export const FollowingMap = (): JSX.Element => {
                           })}
                           zIndex={100}
                         >
-                          <Tooltip
-                            className="opacity-75"
-                            color={TOOLTIP_COLORS[delayStatus]}
-                            open
-                          >
+                          <Tooltip color={TOOLTIP_COLORS[delayStatus]} open>
                             <TooltipContent className="flex items-center gap-1 font-mono">
                               {user !== null ? (
                                 <Avatar
@@ -462,12 +466,21 @@ export const FollowingMap = (): JSX.Element => {
                                 user !== null ? `@${user.username}` : undefined
                               }
                             >
-                              <PlaneSolidIcon
-                                className={classNames('h-6 w-6', aircraftColor)}
-                                style={{
-                                  transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
-                                }}
-                              />
+                              {theme === AppTheme.HALLOWEEN ? (
+                                <HalloweenIcon
+                                  className="text-primary h-7 w-7"
+                                  style={{
+                                    transform: `rotate(${Math.round(estimatedHeading)}deg)`,
+                                  }}
+                                />
+                              ) : (
+                                <PlaneSolidIcon
+                                  className="text-primary h-6 w-6"
+                                  style={{
+                                    transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
+                                  }}
+                                />
+                              )}
                               <span className="sr-only">
                                 {user !== null ? `@${user?.username}` : null}
                               </span>

@@ -28,6 +28,11 @@ export const darkModeStyle = [
     stylers: [{ visibility: 'on' }],
   },
   {
+    featureType: 'transit.station.airport',
+    elementType: 'geometry.fill',
+    stylers: [{ visibility: 'on' }, { lightness: -50 }],
+  },
+  {
     featureType: 'water',
     elementType: 'geometry',
     stylers: [{ color: '#17263c' }],
@@ -69,5 +74,18 @@ export const lightModeStyle = [
     featureType: 'transit.station.airport',
     elementType: 'all',
     stylers: [{ visibility: 'on' }],
+  },
+];
+
+export const cyberPunkStyle = [
+  {
+    featureType: 'administrative',
+    elementType: 'all',
+    stylers: [{ lightness: 50 }],
+  },
+  {
+    featureType: 'landscape',
+    elementType: 'geometry.fill',
+    stylers: [{ color: '#ffeb3b' }],
   },
 ];
