@@ -33,7 +33,7 @@ export const AirportLabelOverlay = ({
           show ? !isFocused && 'opacity-10' : 'opacity-0',
           isDarkMode
             ? 'bg-base-100/50 text-base-content border-base-100'
-            : 'bg-primary/50 text-primary-content border-primary',
+            : 'bg-primary/70 text-primary-content border-primary',
         )}
       >
         {iata}

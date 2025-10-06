@@ -26,13 +26,7 @@ import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfilePageNavigationState } from '../../pages';
 import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
-import {
-  AppTheme,
-  getIsLoggedIn,
-  useAuthStore,
-  useIsDarkMode,
-  useThemeStore,
-} from '../../stores';
+import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
@@ -48,7 +42,6 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { logout } = useAuthStore();
   const { previousPageName } = useMainLayoutStore();
   const { isAddingFlight } = useAddFlightStore();
-  const { theme } = useThemeStore();
   const isDarkMode = useIsDarkMode();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
@@ -112,12 +105,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         id: 'home',
         children: 'Home',
         className: classNames(
-          '[--tab-bg:var(--color-primary)]',
-          theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
-          currentTab === 'home' &&
-            (theme === AppTheme.ABYSS
-              ? 'hover:text-base-100'
-              : 'hover:text-white'),
+          '[--tab-bg:var(--color-primary)] text-primary-content',
+          currentTab === 'home' && 'hover:text-primary-content',
         ),
         onClick: () => {
           if (currentTab !== 'home') {
@@ -131,12 +120,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               id: 'profile',
               children: 'Profile',
               className: classNames(
-                '[--tab-bg:var(--color-primary)]',
-                theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
-                currentTab === 'profile' &&
-                  (theme === AppTheme.ABYSS
-                    ? 'hover:text-base-100'
-                    : 'hover:text-white'),
+                '[--tab-bg:var(--color-primary)] text-primary-content',
+                currentTab === 'profile' && 'hover:text-primary-content',
               ),
               onClick: () => {
                 if (currentTab !== 'profile') {
@@ -148,12 +133,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               id: 'users',
               children: 'Users',
               className: classNames(
-                '[--tab-bg:var(--color-primary)]',
-                theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
-                currentTab === 'users' &&
-                  (theme === AppTheme.ABYSS
-                    ? 'hover:text-base-100'
-                    : 'hover:text-white'),
+                '[--tab-bg:var(--color-primary)] text-primary-content',
+                currentTab === 'users' && 'hover:text-primary-content',
               ),
               onClick: () => {
                 if (currentTab !== 'users') {
@@ -167,12 +148,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         id: 'data',
         children: 'Data',
         className: classNames(
-          '[--tab-bg:var(--color-primary)]',
-          theme === AppTheme.ABYSS ? 'text-base-100' : 'text-white',
-          currentTab === 'data' &&
-            (theme === AppTheme.ABYSS
-              ? 'hover:text-base-100'
-              : 'hover:text-white'),
+          '[--tab-bg:var(--color-primary)] text-primary-content',
+          currentTab === 'data' && 'hover:text-primary-content',
         ),
         onClick: () => {
           if (currentTab !== 'data') {
@@ -181,7 +158,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         },
       },
     ],
-    [currentTab, isLoggedIn, navigate, tabsToPathsMap, theme],
+    [currentTab, isLoggedIn, navigate, tabsToPathsMap],
   );
   return (
     <>
