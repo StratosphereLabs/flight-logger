@@ -50,8 +50,8 @@ export const FlightRow = ({
         {...props}
       >
         <div className="flex h-full w-[100px] flex-col gap-2 overflow-hidden sm:w-[175px] lg:w-auto">
-          <div className="flex flex-1 flex-col gap-x-4 gap-y-1 lg:flex-row lg:items-center">
-            <div className="flex h-[20px] w-[100px]">
+          <div className="flex flex-1 flex-col gap-x-4 lg:flex-row lg:items-center">
+            <div className="flex h-[24px] w-[100px]">
               {flight.airline?.logo !== null &&
               flight.airline?.logo !== undefined ? (
                 <a

@@ -53,8 +53,8 @@ export const FlightHistoryRow = ({
           {...props}
         >
           <div className="flex h-full w-[102px] flex-col gap-2 overflow-hidden">
-            <div className="flex flex-1 flex-col gap-x-4 gap-y-1">
-              <div className="flex h-[20px] w-[100px]">
+            <div className="flex flex-1 flex-col gap-x-4">
+              <div className="flex h-[24px] w-[100px]">
                 {flight.airline?.logo !== null &&
                 flight.airline?.logo !== undefined ? (
                   <a

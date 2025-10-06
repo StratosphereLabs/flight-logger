@@ -47,18 +47,18 @@ export const FlightInfo = ({
   }
   return (
     <div className="flex flex-col gap-3">
-      <div className="mb-2 flex flex-col items-center gap-2 p-1">
-        <div className="flex gap-2 md:flex-col">
+      <div className="mb-2 flex flex-col items-center gap-1 p-1">
+        <div className="flex gap-x-3 gap-y-1 md:flex-col">
           {typeof data.airline?.logo === 'string' ? (
-            <div className="flex w-[120px] items-center justify-center md:w-[200px]">
+            <div className="flex h-[45px] w-[120px] items-center justify-center md:h-[75px] md:w-[200px]">
               <img
                 alt={`${data.airline.name} Logo`}
-                className="max-h-[50px] max-w-[120px] md:max-h-[80px] md:max-w-[200px]"
+                className="max-h-[45px] max-w-[120px] md:max-h-[75px] md:max-w-[200px]"
                 src={data.airline.logo}
               />
             </div>
           ) : null}
-          <div className="flex flex-1 flex-col md:gap-1">
+          <div className="flex flex-1 flex-col justify-center md:gap-1">
             <div className="text-base font-bold opacity-90 md:text-center md:text-lg">
               {data.airline?.name} {data.flightNumber}
             </div>
