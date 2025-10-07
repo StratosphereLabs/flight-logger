@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useIsDarkMode } from '../../stores';
 
 export interface AirportLabelOverlayProps {
+  distanceMi?: number;
   iata: string;
   isFocused: boolean;
   position: google.maps.LatLngLiteral;
@@ -11,6 +12,7 @@ export interface AirportLabelOverlayProps {
 }
 
 export const AirportLabelOverlay = ({
+  distanceMi,
   iata,
   isFocused,
   position,
@@ -29,7 +31,7 @@ export const AirportLabelOverlay = ({
     >
       <div
         className={classNames(
-          'rounded-box border-2 px-[5px] font-mono text-sm font-bold backdrop-blur-xs transition-opacity',
+          'rounded-box flex items-center gap-2 border-2 px-[5px] font-mono text-sm font-bold backdrop-blur-xs transition-opacity',
           show ? !isFocused && 'opacity-10' : 'opacity-0',
           isDarkMode
             ? 'bg-base-100/50 text-base-content border-base-100'
@@ -37,6 +39,12 @@ export const AirportLabelOverlay = ({
         )}
       >
         {iata}
+        {distanceMi !== undefined ? (
+          <div className="flex gap-1 text-xs opacity-80">
+            {distanceMi.toLocaleString()}
+            <span>mi</span>
+          </div>
+        ) : null}
       </div>
     </OverlayViewF>
   );
