@@ -7,7 +7,7 @@ import {
   useJsApiLoader,
 } from '@react-google-maps/api';
 import classNames from 'classnames';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 
@@ -16,6 +16,7 @@ import {
   FlightChangelogTable,
   FlightHistory,
   FlightTimesDisplay,
+  HalloweenIcon,
   OnTimePerformanceChart,
   PlaneSolidIcon,
   RightArrowIcon,
@@ -28,10 +29,19 @@ import {
   TOOLTIP_COLORS,
 } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
-import { darkModeStyle, lightModeStyle } from '../../common/mapStyle';
-import { getAltChangeString } from '../../common/utils';
+import {
+  cyberPunkStyle,
+  darkModeStyle,
+  lightModeStyle,
+} from '../../common/mapStyle';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
-import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
+import {
+  AppTheme,
+  getIsLoggedIn,
+  useAuthStore,
+  useIsDarkMode,
+  useThemeStore,
+} from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { DEFAULT_COORDINATES } from '../Home/constants';
@@ -62,16 +72,20 @@ export const Flight = (): JSX.Element | null => {
   };
   const [center] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();
-  const aircraftColor = useMemo(
-    () => (isDarkMode ? 'text-blue-500' : 'text-[#0000ff]'),
-    [isDarkMode],
-  );
+  const { theme } = useThemeStore();
+  const isEnRouteFlight =
+    data !== undefined ? data.flightStatus === 'EN_ROUTE' : false;
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
     map?.setValues({
-      styles: isDarkMode ? darkModeStyle : lightModeStyle,
+      styles:
+        theme === AppTheme.CYBERPUNK
+          ? cyberPunkStyle
+          : isDarkMode
+            ? darkModeStyle
+            : lightModeStyle,
     });
-  }, [isDarkMode, map]);
+  }, [isDarkMode, map, theme]);
   useEffect(() => {
     map?.setCenter(center);
   }, [center, map]);
@@ -120,7 +134,7 @@ export const Flight = (): JSX.Element | null => {
         map.fitBounds(bounds, {
           top: 165,
           left: window.innerWidth < 768 ? 25 : 420,
-          right: 30,
+          right: isEnRouteFlight ? 80 : 30,
           bottom:
             window.innerWidth < 768
               ? isMapCollapsed
@@ -156,13 +170,14 @@ export const Flight = (): JSX.Element | null => {
           }}
         >
           {[data.departureAirport, data.arrivalAirport].map(
-            ({ id, lat, lon, iata }) => (
+            ({ id, lat, lon, iata, estimatedDistance }) => (
               <>
                 <AirportLabelOverlay
                   iata={iata}
                   isFocused
                   position={{ lat, lng: lon }}
                   show
+                  distanceMi={isEnRouteFlight ? estimatedDistance : undefined}
                 />
                 <MarkerF
                   key={id}
@@ -193,29 +208,13 @@ export const Flight = (): JSX.Element | null => {
               'EN_ROUTE',
               'LANDED_TAXIING',
             ].includes(data.flightStatus);
-            const lastTracklogItem =
-              data.tracklog !== undefined && data.tracklog.length > 2
-                ? data.tracklog[data.tracklog.length - 3]
-                : null;
             const currentTracklogItem =
               data.tracklog !== undefined && data.tracklog.length > 1
                 ? data.tracklog[data.tracklog.length - 2]
                 : null;
-            const lastAlt =
-              lastTracklogItem !== null
-                ? Math.round(lastTracklogItem.alt ?? 0)
-                : null;
-            const currentAlt =
-              currentTracklogItem !== null
-                ? Math.round(currentTracklogItem.alt ?? 0)
-                : null;
             const currentSpeed =
               currentTracklogItem !== null
                 ? Math.round(currentTracklogItem.gs ?? 0)
-                : null;
-            const altChangeString =
-              lastAlt !== null && currentAlt !== null
-                ? getAltChangeString(lastAlt, currentAlt)
                 : null;
             let lastAltitude: number | null = null;
             return (
@@ -257,10 +256,12 @@ export const Flight = (): JSX.Element | null => {
                       <PolylineF
                         key={index}
                         options={{
-                          strokeOpacity: ground === true ? 0.7 : 1,
+                          strokeOpacity: ground === true ? 0.5 : 1,
                           strokeColor:
                             ground === true
-                              ? 'white'
+                              ? isDarkMode
+                                ? 'white'
+                                : 'darkgray'
                               : getAltitudeColor(
                                   lastAltitude !== null
                                     ? lastAltitude / 450
@@ -281,12 +282,13 @@ export const Flight = (): JSX.Element | null => {
                     );
                   },
                 ) ?? null}
-                {data.flightStatus !== 'ARRIVED' ? (
+                {data.flightStatus === 'SCHEDULED' ||
+                data.flightStatus === 'DEPARTED_TAXIING' ? (
                   <PolylineF
                     visible
                     options={{
                       strokeOpacity: isDarkMode ? 0.5 : 1,
-                      strokeColor: isDarkMode ? 'lightblue' : 'white',
+                      strokeColor: isDarkMode ? 'white' : 'gray',
                       strokeWeight: 2,
                       zIndex: isCurrentFlight ? 15 : 5,
                       geodesic: true,
@@ -314,11 +316,7 @@ export const Flight = (): JSX.Element | null => {
                     })}
                     zIndex={100}
                   >
-                    <Tooltip
-                      className="opacity-75"
-                      color={TOOLTIP_COLORS[data.delayStatus]}
-                      open
-                    >
+                    <Tooltip color={TOOLTIP_COLORS[data.delayStatus]} open>
                       <TooltipContent className="flex items-center gap-1 font-mono">
                         <div className="flex flex-col">
                           <span className="flex gap-1 font-bold">
@@ -334,12 +332,12 @@ export const Flight = (): JSX.Element | null => {
                             ) : (
                               <>
                                 <span>
-                                  {currentAlt !== null
-                                    ? `FL${currentAlt < 10 ? '0' : ''}${currentAlt < 100 ? '0' : ''}${currentAlt < 0 ? '0' : currentAlt}`
+                                  {data.estimatedAltitude !== null
+                                    ? `FL${data.estimatedAltitude < 10 ? '0' : ''}${data.estimatedAltitude < 100 ? '0' : ''}${data.estimatedAltitude < 0 ? '0' : data.estimatedAltitude}`
                                     : null}
                                 </span>
                                 <span className="font-bold">
-                                  {altChangeString}
+                                  {data.altChangeString}
                                 </span>
                                 <span>{currentSpeed}</span>
                               </>
@@ -357,12 +355,21 @@ export const Flight = (): JSX.Element | null => {
                             : undefined
                         }
                       >
-                        <PlaneSolidIcon
-                          className={classNames('h-6 w-6', aircraftColor)}
-                          style={{
-                            transform: `rotate(${Math.round(data.estimatedHeading - 90)}deg)`,
-                          }}
-                        />
+                        {theme === AppTheme.HALLOWEEN ? (
+                          <HalloweenIcon
+                            className="text-primary h-7 w-7"
+                            style={{
+                              transform: `rotate(${Math.round(data.estimatedHeading)}deg)`,
+                            }}
+                          />
+                        ) : (
+                          <PlaneSolidIcon
+                            className="text-primary h-6 w-6"
+                            style={{
+                              transform: `rotate(${Math.round(data.estimatedHeading - 90)}deg)`,
+                            }}
+                          />
+                        )}
                         <span className="sr-only">
                           {data.user !== null ? `@${data.user.username}` : null}
                         </span>
@@ -391,9 +398,9 @@ export const Flight = (): JSX.Element | null => {
                 CARD_BORDER_COLORS[data.delayStatus],
               )}
             >
-              <div className="flex h-full w-[150px] flex-col gap-1 overflow-hidden">
+              <div className="flex h-full w-[150px] flex-col overflow-hidden">
                 <div className="flex flex-1 gap-4">
-                  <div className="flex h-[20px] w-[100px]">
+                  <div className="flex h-[24px] w-[100px]">
                     {data.airline?.logo !== null &&
                     data.airline?.logo !== undefined ? (
                       <a
@@ -428,7 +435,7 @@ export const Flight = (): JSX.Element | null => {
                   {data.outDateLocal}
                 </div>
                 {data.user !== null ? (
-                  <div className="flex items-center gap-1 overflow-hidden">
+                  <div className="mt-1 flex items-center gap-1 overflow-hidden">
                     <Avatar
                       alt={data.user.username}
                       src={data.user.avatar}

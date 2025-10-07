@@ -21,7 +21,7 @@ import {
 import { toZonedTime } from 'date-fns-tz';
 import groupBy from 'lodash.groupby';
 
-import { SECONDS_IN_HOUR } from '../constants';
+import { SECONDS_IN_HOUR, SECONDS_IN_MINUTE } from '../constants';
 import { KTS_TO_MPH } from '../data/constants';
 import type { TracklogItem } from '../data/types';
 import {
@@ -131,7 +131,10 @@ export interface FlightTrackingDataResult {
 }
 
 export interface TransformFlightDataResult
-  extends Omit<FlightData, 'tracklog' | 'user' | 'waypoints'>,
+  extends Omit<
+      FlightData,
+      'tracklog' | 'user' | 'waypoints' | 'departureAirport' | 'arrivalAirport'
+    >,
     FlightTimestampsResult,
     FlightTrackingDataResult {
   user:
@@ -147,6 +150,12 @@ export interface TransformFlightDataResult
         | 'passwordResetAt'
       >)
     | null;
+  departureAirport: AirportData & {
+    estimatedDistance: number;
+  };
+  arrivalAirport: AirportData & {
+    estimatedDistance: number;
+  };
   distance: number;
   flightNumberString: string;
   departureMunicipalityText: string;
@@ -176,6 +185,8 @@ export interface TransformFlightDataResult
   delayStatus: FlightDelayStatus;
   estimatedLocation: Coordinates;
   estimatedHeading: number;
+  estimatedAltitude: number | null;
+  altChangeString: string | null;
 }
 
 const FLIGHT_STATUS_MAP: Record<string, string> = {
@@ -485,15 +496,26 @@ export const getAverageSpeedFromTracklog = (
 export const getEstimatedSpeedFromTracklog = (
   tracklog: TracklogItem[],
 ): number => {
-  const secondLastWaypoint = tracklog[tracklog.length - 2];
-  const lastWaypoint = tracklog[tracklog.length - 1];
-  const averageSpeedFromTracklog = getAverageSpeedFromTracklog(
-    secondLastWaypoint,
-    lastWaypoint,
-  );
-  return lastWaypoint.gs !== null
-    ? (lastWaypoint.gs * KTS_TO_MPH + averageSpeedFromTracklog) / 2
+  const validItems = tracklog.filter(item => item.gs !== null);
+  if (validItems.length < 2) return 0;
+  const [prev, curr] = validItems.slice(-2);
+  const averageSpeedFromTracklog = getAverageSpeedFromTracklog(prev, curr);
+  return curr.gs !== null
+    ? (curr.gs * KTS_TO_MPH + averageSpeedFromTracklog) / 2
     : averageSpeedFromTracklog;
+};
+
+export const getEstimatedVerticalSpeedFromTracklog = (
+  tracklog: TracklogItem[],
+): number => {
+  const validItems = tracklog.filter(item => item.alt !== null);
+  if (validItems.length < 2) return 0;
+  const [prev, curr] = validItems.slice(-2);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const deltaAltHundreds = curr.alt! - prev.alt!;
+  const deltaAltFeet = deltaAltHundreds * 100;
+  const deltaTimeSeconds = curr.timestamp - prev.timestamp;
+  return (deltaAltFeet / deltaTimeSeconds) * SECONDS_IN_MINUTE;
 };
 
 export const getProjectedCoordsFromTracklog = (
@@ -517,6 +539,48 @@ export const getProjectedCoordsFromTracklog = (
       lastWaypoint.coord[0],
     ),
   );
+};
+
+export const getLatestAltitudeItem = (
+  tracklog: TracklogItem[] | undefined,
+): TracklogItem | null => {
+  if (tracklog === undefined || tracklog.length === 0) return null;
+  const latestWithAlt = tracklog
+    .slice()
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .find(item => item.alt != null);
+  return latestWithAlt ?? null;
+};
+
+export const getProjectedAltitudeFromTracklog = (
+  tracklog?: TracklogItem[],
+): number | null => {
+  if (tracklog === undefined) return null;
+  const latestAltitudeItem = getLatestAltitudeItem(tracklog);
+  if (latestAltitudeItem?.alt === null || latestAltitudeItem?.alt === undefined)
+    return null;
+  const estimatedVerticalSpeed =
+    getEstimatedVerticalSpeedFromTracklog(tracklog);
+  const secondsSinceLastWaypoint =
+    getUnixTime(new Date()) - latestAltitudeItem.timestamp;
+  const estimatedAltitudeChange =
+    (secondsSinceLastWaypoint / SECONDS_IN_MINUTE) * estimatedVerticalSpeed;
+  return (
+    Math.round(100 * latestAltitudeItem.alt + estimatedAltitudeChange) / 100
+  );
+};
+
+export const getAltChangeString = (
+  lastAlt: number,
+  currentAlt: number,
+): string => {
+  if (Math.round(lastAlt) === Math.round(currentAlt)) {
+    return '→';
+  }
+  if (lastAlt > currentAlt) {
+    return '↘';
+  }
+  return '↗';
 };
 
 export const transformFlightData = (
@@ -658,6 +722,12 @@ export const transformFlightData = (
           flight.arrivalAirport.lat,
           flight.arrivalAirport.lon,
         );
+  const latestAltitude = getLatestAltitudeItem(tracklog)?.alt ?? null;
+  const estimatedAltitude = getProjectedAltitudeFromTracklog(tracklog);
+  const altChangeString =
+    latestAltitude !== null && estimatedAltitude !== null
+      ? getAltChangeString(latestAltitude, estimatedAltitude)
+      : null;
   const tracklogWithLocation = [
     ...(tracklog ?? []),
     ...(tracklog !== undefined &&
@@ -665,8 +735,8 @@ export const transformFlightData = (
     ['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(flightStatus)
       ? [
           {
-            timestamp: getTime(new Date()),
-            alt: tracklog[tracklog.length - 1]?.alt ?? null,
+            timestamp: Math.floor(getTime(new Date()) / 1000),
+            alt: estimatedAltitude,
             coord: [estimatedLocation.lng, estimatedLocation.lat] as [
               number,
               number,
@@ -677,6 +747,18 @@ export const transformFlightData = (
         ]
       : []),
   ];
+  const estimatedDistanceFromOriginMi = calculateDistance(
+    flight.departureAirport.lat,
+    flight.departureAirport.lon,
+    estimatedLocation.lat,
+    estimatedLocation.lng,
+  );
+  const estimatedDistanceToDestinationMi = calculateDistance(
+    estimatedLocation.lat,
+    estimatedLocation.lng,
+    flight.arrivalAirport.lat,
+    flight.arrivalAirport.lon,
+  );
   const delayStatus =
     progress > 0
       ? timestamps.arrivalDelayStatus
@@ -690,6 +772,14 @@ export const transformFlightData = (
   return {
     ...flight,
     ...timestamps,
+    departureAirport: {
+      ...flight.departureAirport,
+      estimatedDistance: Math.round(estimatedDistanceFromOriginMi),
+    },
+    arrivalAirport: {
+      ...flight.arrivalAirport,
+      estimatedDistance: Math.round(estimatedDistanceToDestinationMi),
+    },
     user:
       flight.user !== null
         ? {
@@ -733,6 +823,9 @@ export const transformFlightData = (
     delayStatus,
     estimatedLocation,
     estimatedHeading,
+    estimatedAltitude:
+      estimatedAltitude !== null ? Math.round(estimatedAltitude) : null,
+    altChangeString,
     tracklog: tracklogWithLocation,
     waypoints,
   };

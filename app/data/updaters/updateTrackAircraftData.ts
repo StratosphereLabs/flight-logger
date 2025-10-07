@@ -21,7 +21,7 @@ export const updateTrackAircraftData = async (
   const shouldUpdateTrackAircraft =
     flights.some(({ userId }) => userId !== null) &&
     isBefore(new Date(), outTimeActual) &&
-    isAfter(new Date(), sub(outTimeActual, { days: 2 }));
+    isAfter(new Date(), sub(outTimeActual, { hours: 36 }));
   if (!shouldUpdateTrackAircraft) {
     return;
   }
@@ -47,8 +47,7 @@ export const updateTrackAircraftData = async (
     const filteredData = registrationData.flights.filter(
       ({ outTime }) =>
         isBefore(outTime, flights[0].outTime) &&
-        isAfter(outTime, sub(flights[0].outTime, { days: 1 })) &&
-        isAfter(outTime, sub(new Date(), { hours: 12 })),
+        isAfter(outTime, sub(flights[0].outTime, { days: 1 })),
     );
     const airportIataCodes = [
       ...new Set(
@@ -87,19 +86,10 @@ export const updateTrackAircraftData = async (
             where: {
               userId: null,
               airframeId: flights[0].airframeId,
-              AND: [
-                {
-                  outTime: {
-                    lt: flights[0].outTime,
-                    gt: sub(flights[0].outTime, { days: 1 }),
-                  },
-                },
-                {
-                  outTime: {
-                    gt: sub(new Date(), { hours: 12 }),
-                  },
-                },
-              ],
+              outTime: {
+                lt: flights[0].outTime,
+                gt: sub(flights[0].outTime, { days: 1 }),
+              },
             },
             select: {
               id: true,
@@ -151,11 +141,8 @@ export const updateTrackAircraftData = async (
       newFlightData.map(({ departureAirport, ...flight }) => {
         const key = getGroupedFlightsKey({
           airline: flights[0].airline,
-          departureAirportId: flight.departureAirportId,
-          arrivalAirportId: flight.arrivalAirportId,
-          flightNumber: flight.flightNumber,
-          outTime: flight.outTime,
           departureAirport,
+          ...flight,
         });
         const existingFlight = groupedExistingFlights[key]?.[0];
         if (existingFlight !== undefined) {
@@ -173,5 +160,35 @@ export const updateTrackAircraftData = async (
         });
       }),
     );
+    console.log(
+      `  Upserted ${newFlightData.length} track aircraft flights for ${flights[0].tailNumber}.`,
+    );
+    const newFlightKeys = new Set(
+      newFlightData.map(flight =>
+        getGroupedFlightsKey({
+          airline: flights[0].airline,
+          ...flight,
+        }),
+      ),
+    );
+    const flightIdsToDelete = existingFlights?.reduce<string[]>(
+      (acc, flight) =>
+        !newFlightKeys.has(getGroupedFlightsKey(flight))
+          ? [...acc, flight.id]
+          : acc,
+      [],
+    );
+    if (flightIdsToDelete !== undefined && flightIdsToDelete.length > 0) {
+      await prisma.flight.deleteMany({
+        where: {
+          id: {
+            in: flightIdsToDelete,
+          },
+        },
+      });
+      console.log(
+        `  Deleted ${flightIdsToDelete.length} outdated track aircraft flights for ${flights[0].tailNumber}.`,
+      );
+    }
   }
 };

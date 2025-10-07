@@ -7,8 +7,9 @@ import {
   DarkModeIcon,
   DarkModeOutlineIcon,
   FantasyIcon,
-  ForestIcon,
+  // ForestIcon,
   GemIcon,
+  HalloweenIcon,
   LightModeIcon,
   SunsetIcon,
   ThemeIcon,
@@ -32,6 +33,7 @@ export const ThemeButton = (): JSX.Element => {
       }}
       items={[
         {
+          className: 'bg-primary text-primary-content',
           id: AppTheme.CORPORATE,
           onClick: () => {
             setTheme(AppTheme.CORPORATE);
@@ -48,22 +50,39 @@ export const ThemeButton = (): JSX.Element => {
           },
         },
         {
-          id: AppTheme.NIGHT,
+          id: AppTheme.HALLOWEEN,
           onClick: () => {
-            setTheme(AppTheme.NIGHT);
+            setTheme(AppTheme.HALLOWEEN);
           },
           children: (
             <>
-              <DarkModeIcon className="h-5 w-5" />
-              Dark
+              <HalloweenIcon className="h-5 w-5" />
+              Halloween
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'night',
+            'data-theme': 'halloween',
           },
         },
+        //  {
+        //     id: AppTheme.NIGHT,
+        //     onClick: () => {
+        //       setTheme(AppTheme.NIGHT);
+        //     },
+        //     children: (
+        //       <>
+        //         <DarkModeIcon className="h-5 w-5" />
+        //         Dark
+        //       </>
+        //     ),
+        //     listItemProps: {
+        //       // @ts-ignore
+        //       'data-theme': 'night',
+        //     },
+        //   },
         {
+          className: 'bg-primary text-primary-content',
           id: AppTheme.EMERALD,
           onClick: () => {
             setTheme(AppTheme.EMERALD);
@@ -80,23 +99,40 @@ export const ThemeButton = (): JSX.Element => {
           },
         },
 
+        // {
+        //   id: AppTheme.FOREST,
+        //   onClick: () => {
+        //     setTheme(AppTheme.FOREST);
+        //   },
+        //   children: (
+        //     <>
+        //       <ForestIcon className="h-5 w-5" />
+        //       Forest
+        //     </>
+        //   ),
+        //   listItemProps: {
+        //     // @ts-ignore
+        //     'data-theme': 'forest',
+        //   },
+        // },
         {
-          id: AppTheme.FOREST,
+          id: AppTheme.NIGHT,
           onClick: () => {
-            setTheme(AppTheme.FOREST);
+            setTheme(AppTheme.NIGHT);
           },
           children: (
             <>
-              <ForestIcon className="h-5 w-5" />
-              Forest
+              <DarkModeIcon className="h-5 w-5" />
+              Night
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'forest',
+            'data-theme': 'night',
           },
         },
         {
+          className: 'bg-primary text-primary-content',
           id: AppTheme.FANTASY,
           onClick: () => {
             setTheme(AppTheme.FANTASY);
@@ -134,10 +170,10 @@ export const ThemeButton = (): JSX.Element => {
             setTheme(AppTheme.CYBERPUNK);
           },
           children: (
-            <>
-              <CyberpunkIcon className="h-5 w-5" />
+            <div className="flex gap-2">
+              <CyberpunkIcon className="text-primary h-5 w-5 brightness-90" />
               Cyberpunk
-            </>
+            </div>
           ),
           listItemProps: {
             // @ts-ignore

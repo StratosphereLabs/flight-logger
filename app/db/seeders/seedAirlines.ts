@@ -7,6 +7,7 @@ import { prisma } from '../prisma';
 import {
   IATA_AIRLINE_CODE_REGEX,
   ICAO_AIRLINE_CODE_REGEX,
+  WHITESPACE_REGEX,
   WIKI_PROMISE_CONCURRENCY,
 } from './constants';
 import {
@@ -22,20 +23,26 @@ export const getAirlineDocument = async (
 ): Promise<Prisma.AirlineUpsertArgs | null> => {
   const url = `https://en.wikipedia.org${href}`;
   try {
+    console.log(`Fetching airline data from ${url}...`);
     const res = await axios.get<string>(url);
     const $ = parseWikipediaData(res.data);
 
     const name = $('#firstHeading').text().split('(airline')[0].trim();
 
     const infoTable = $('.infobox.vcard').find('table').eq(0);
-    const headers = infoTable.find('th a').text();
+    const headers = infoTable.find('th a').text().replace(WHITESPACE_REGEX, '');
     const infoTableCells = infoTable
       .find('td')
-      .map((i, td) => getText($(td)))
+      .map((_, td) => getText($(td)))
       .get();
     const iata = (infoTableCells[0] as string | undefined)?.slice(0, 2) ?? '';
     const icao = (infoTableCells[1] as string | undefined)?.slice(0, 3) ?? '';
     const callsign = (infoTableCells[2] as string | undefined) ?? '';
+
+    // Don't add El Al
+    if (iata === 'LY' && icao === 'ELY') {
+      return null;
+    }
 
     if (
       headers !== 'IATAICAOCallsign' ||

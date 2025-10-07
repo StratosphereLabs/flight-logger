@@ -10,6 +10,7 @@ export enum AppTheme {
   FOREST = 'forest',
   NIGHT = 'night',
   SYNTHWAVE = 'synthwave',
+  HALLOWEEN = 'halloween',
 }
 
 export const DARK_MODE_THEMES = [
@@ -17,6 +18,7 @@ export const DARK_MODE_THEMES = [
   AppTheme.FOREST,
   AppTheme.SYNTHWAVE,
   AppTheme.ABYSS,
+  AppTheme.HALLOWEEN,
 ];
 
 interface ThemeState {
@@ -28,7 +30,7 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
       theme: window.matchMedia?.('(prefers-color-scheme: dark)').matches
-        ? AppTheme.NIGHT
+        ? AppTheme.HALLOWEEN
         : AppTheme.CORPORATE,
       setTheme: (theme: AppTheme) => {
         set({ theme });

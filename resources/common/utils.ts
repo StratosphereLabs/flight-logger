@@ -43,16 +43,3 @@ export const getLongDurationString = (minutes: number): string => {
   }
   return durationString.trim();
 };
-
-export const getAltChangeString = (
-  lastAlt: number,
-  currentAlt: number,
-): string => {
-  if (lastAlt === currentAlt) {
-    return '→';
-  }
-  if (lastAlt > currentAlt) {
-    return '↘';
-  }
-  return '↗';
-};
