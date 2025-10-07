@@ -62,20 +62,39 @@ export const getFlightStatsFlightUpdate = async (
     flightStatsResponse.schedule.scheduledDepartureUTC !== null
       ? new Date(flightStatsResponse.schedule.scheduledDepartureUTC)
       : undefined;
-  const outTimeActual =
+  const estimatedActualDeparture =
     flightStatsResponse.schedule.estimatedActualDepartureUTC !== null
       ? new Date(flightStatsResponse.schedule.estimatedActualDepartureUTC)
       : null;
+  const outTimeActual = !flightStatsResponse.schedule
+    .estimatedActualDepartureRunway
+    ? estimatedActualDeparture
+    : undefined;
   const offTime = outTime !== undefined ? add(outTime, { minutes: 10 }) : null;
+  const offTimeActual = flightStatsResponse.schedule
+    .estimatedActualDepartureRunway
+    ? estimatedActualDeparture
+    : flightStatsResponse.schedule.tookOff !== undefined
+      ? new Date(flightStatsResponse.schedule.tookOff)
+      : null;
   const inTime =
     flightStatsResponse.schedule.scheduledArrivalUTC !== null
       ? new Date(flightStatsResponse.schedule.scheduledArrivalUTC)
       : undefined;
-  const inTimeActual =
+  const estimatedActualArrival =
     flightStatsResponse.schedule.estimatedActualArrivalUTC !== null
       ? new Date(flightStatsResponse.schedule.estimatedActualArrivalUTC)
       : null;
+  const inTimeActual = !flightStatsResponse.schedule
+    .estimatedActualArrivalRunway
+    ? estimatedActualArrival
+    : undefined;
   const onTime = inTime !== undefined ? sub(inTime, { minutes: 10 }) : null;
+  const onTimeActual = flightStatsResponse.schedule.estimatedActualArrivalRunway
+    ? estimatedActualArrival
+    : flightStatsResponse.schedule.landing !== undefined
+      ? new Date(flightStatsResponse.schedule.landing)
+      : null;
   const duration =
     outTime !== undefined && inTime !== undefined
       ? getDurationMinutes({
@@ -95,6 +114,8 @@ export const getFlightStatsFlightUpdate = async (
     inTime,
     duration,
     outTimeActual,
+    offTimeActual,
+    onTimeActual,
     inTimeActual,
     departureGate: flightStatsResponse.departureAirport.gate,
     departureTerminal: flightStatsResponse.departureAirport.terminal,
