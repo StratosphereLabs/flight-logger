@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
   Account,
+  Aircraft,
   Data,
   Flight,
   ForgotPassword,
@@ -37,6 +38,7 @@ export const AppRouter = (): JSX.Element => {
           </Route>
         ))}
         <Route path="flight/:flightId" element={<Flight />} />
+        <Route path="aircraft/:icao24" element={<Aircraft />} />
       </Route>
       <Route path="auth" element={<AuthenticationLayout />}>
         <Route path="login" element={<Login />} />

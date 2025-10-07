@@ -27,6 +27,7 @@ import {
   addUserToFlightSchema,
   deleteFlightSchema,
   editFlightSchema,
+  getAircraftFlightSchema,
   getExtraFlightDataSchema,
   getFlightChangelogSchema,
   getFlightHistorySchema,
@@ -165,6 +166,75 @@ export const flightsRouter = router({
           : false,
     };
   }),
+  getAircraftFlight: procedure
+    .input(getAircraftFlightSchema)
+    .query(async ({ input }) => {
+      const flightResults = await prisma.flight.findMany({
+        where: {
+          airframeId: input.icao24,
+          outTime: {
+            gt: sub(new Date(), { days: 1 }),
+            lt: add(new Date(), { days: 1 }),
+          },
+        },
+        include: flightIncludeObj,
+        omit: {
+          tracklog: false,
+          waypoints: false,
+        },
+      });
+      const activeFlight = getActiveFlight(flightResults);
+      if (activeFlight === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Aircraft flight not found.',
+        });
+      }
+      const flightData = transformFlightData(activeFlight);
+      const flightState =
+        flightData.flightStatus === 'SCHEDULED'
+          ? 'UPCOMING'
+          : flightData.flightStatus === 'ARRIVED'
+            ? 'COMPLETED'
+            : 'CURRENT';
+      const weatherRadarTime =
+        flightState === 'COMPLETED'
+          ? (flightData.onTimeActual ??
+            flightData.inTimeActual ??
+            flightData.inTime)
+          : new Date();
+      const timestamp = getRainviewerTimestamp(weatherRadarTime);
+      const otherFlights: Array<
+        TransformFlightDataResult & {
+          flightState: 'UPCOMING' | 'CURRENT' | 'COMPLETED';
+        }
+      > = [];
+      for (const result of flightResults) {
+        const flight = transformFlightData(result);
+        const flightState =
+          flight.flightStatus === 'SCHEDULED'
+            ? 'UPCOMING'
+            : flight.flightStatus === 'ARRIVED'
+              ? 'COMPLETED'
+              : 'CURRENT';
+        if (result.id !== activeFlight.id) {
+          otherFlights.push({
+            ...flight,
+            flightState,
+          });
+        }
+      }
+      return {
+        ...flightData,
+        user:
+          flightData.user !== null
+            ? _.omit(flightData.user, 'followedBy')
+            : null,
+        flightState,
+        timestamp,
+        otherFlights,
+      };
+    }),
   getExtraFlightData: procedure
     .input(getExtraFlightDataSchema)
     .query(async ({ input }) => {

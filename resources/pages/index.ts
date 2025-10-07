@@ -1,4 +1,5 @@
 export * from './Account';
+export * from './Aircraft';
 export * from './Data';
 export * from './Flight';
 export * from './Flights';
