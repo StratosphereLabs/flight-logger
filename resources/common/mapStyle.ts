@@ -88,4 +88,24 @@ export const cyberPunkStyle = [
     elementType: 'geometry.fill',
     stylers: [{ color: '#ffeb3b' }],
   },
+  {
+    featureType: 'poi',
+    elementType: 'all',
+    stylers: [{ visibility: 'off' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'all',
+    stylers: [{ visibility: 'off' }],
+  },
+  {
+    featureType: 'transit',
+    elementType: 'all',
+    stylers: [{ visibility: 'off' }],
+  },
+  {
+    featureType: 'transit.station.airport',
+    elementType: 'all',
+    stylers: [{ visibility: 'on' }],
+  },
 ];
