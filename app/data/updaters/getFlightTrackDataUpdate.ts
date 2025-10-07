@@ -1,7 +1,9 @@
+import { add, isAfter, sub } from 'date-fns';
+
 import { fetchFlightTrackData as fetchAdsbExchangeData } from '../adsbExchange';
 import { fetchFlightTrackData as fetchPlaneSpottersData } from '../planeSpotters';
 import type { FlightWithData, TracklogItem } from '../types';
-import { getGroupedFlightsKey } from '../utils';
+import { getGroupedFlightsKey, getMinutesToArrival } from '../utils';
 
 export type FlightTrackUpdateData = Awaited<
   ReturnType<typeof getFlightTrackDataUpdate>
@@ -35,9 +37,36 @@ export const getFlightTrackDataUpdate = async (
     console.log(`  Flight track data not found for ${flightDataString}.`);
     return null;
   }
+  const lastItemOnGround = tracklog.find(
+    ({ ground }, index, allItems) =>
+      ground === true && allItems[index + 1]?.ground === false,
+  );
+  const firstItemOnGround = tracklog.find(
+    ({ ground }, index, allItems) =>
+      ground === true && allItems[index - 1]?.ground === false,
+  );
+  const isEnRoute =
+    lastItemOnGround !== undefined && firstItemOnGround === undefined;
+  const minutesToArrival = getMinutesToArrival(flights[0], tracklog);
+  const currentOffTimeActual =
+    flights[0].offTimeActual ??
+    flights[0].offTime ??
+    add(flights[0].outTime, { minutes: 10 });
+  const offTimeActual =
+    lastItemOnGround !== undefined
+      ? new Date(lastItemOnGround.timestamp)
+      : isAfter(new Date(), sub(currentOffTimeActual, { minutes: 1 }))
+        ? add(new Date(), { minutes: 5 })
+        : undefined;
+  const onTimeActual =
+    firstItemOnGround !== undefined
+      ? new Date(firstItemOnGround.timestamp)
+      : isEnRoute
+        ? add(new Date(), { minutes: minutesToArrival })
+        : undefined;
   return {
     tracklog,
-    offTimeActual: undefined,
-    onTimeActual: undefined,
+    offTimeActual,
+    onTimeActual,
   };
 };

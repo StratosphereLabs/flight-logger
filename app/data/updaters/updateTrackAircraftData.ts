@@ -67,6 +67,9 @@ export const updateTrackAircraftData = async (
         id: true,
         iata: true,
         timeZone: true,
+        lat: true,
+        lon: true,
+        elevation: true,
       },
     });
     const aircraftType =

@@ -3,7 +3,12 @@ import { isDate, isEqual } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DATE_FORMAT_ISO } from '../constants';
-import type { FlightWithData } from './types';
+import {
+  calculateDistance,
+  getEstimatedSpeedFromTracklog,
+  getProjectedAltitudeFromTracklog,
+} from '../utils';
+import type { FlightWithData, TracklogItem } from './types';
 
 export const createNewDate = (timestamp: number): Date =>
   new Date(1000 * timestamp);
@@ -78,3 +83,24 @@ export const removeUndefined = <T extends object>(obj: T): Partial<T> =>
   Object.fromEntries(
     Object.entries(obj).filter(([_, value]) => value !== undefined),
   ) as Partial<T>;
+
+export const getMinutesToArrival = (
+  flight: FlightWithData,
+  tracklog: TracklogItem[],
+): number => {
+  const latestItem = tracklog[tracklog.length - 1];
+  const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
+  const distanceToArrival = calculateDistance(
+    latestItem.coord[1],
+    latestItem.coord[0],
+    arrivalAirport.lat,
+    arrivalAirport.lon,
+  );
+  const estimatedSpeed = getEstimatedSpeedFromTracklog(tracklog);
+  const projectedAltitude = getProjectedAltitudeFromTracklog(tracklog);
+  const arrivalElevation = arrivalAirport.elevation ?? 0;
+  return (
+    (distanceToArrival / (estimatedSpeed * 0.98)) * 60 +
+    ((projectedAltitude ?? 0) - arrivalElevation / 100) / 40
+  );
+};
