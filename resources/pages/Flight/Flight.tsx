@@ -73,6 +73,8 @@ export const Flight = (): JSX.Element | null => {
   const [center] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
+  const isEnRouteFlight =
+    data !== undefined ? data.flightStatus === 'EN_ROUTE' : false;
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
     map?.setValues({
@@ -132,7 +134,7 @@ export const Flight = (): JSX.Element | null => {
         map.fitBounds(bounds, {
           top: 165,
           left: window.innerWidth < 768 ? 25 : 420,
-          right: 30,
+          right: isEnRouteFlight ? 80 : 30,
           bottom:
             window.innerWidth < 768
               ? isMapCollapsed
@@ -168,13 +170,14 @@ export const Flight = (): JSX.Element | null => {
           }}
         >
           {[data.departureAirport, data.arrivalAirport].map(
-            ({ id, lat, lon, iata }) => (
+            ({ id, lat, lon, iata, estimatedDistance }) => (
               <>
                 <AirportLabelOverlay
                   iata={iata}
                   isFocused
                   position={{ lat, lng: lon }}
                   show
+                  distanceMi={isEnRouteFlight ? estimatedDistance : undefined}
                 />
                 <MarkerF
                   key={id}

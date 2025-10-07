@@ -131,7 +131,10 @@ export interface FlightTrackingDataResult {
 }
 
 export interface TransformFlightDataResult
-  extends Omit<FlightData, 'tracklog' | 'user' | 'waypoints'>,
+  extends Omit<
+      FlightData,
+      'tracklog' | 'user' | 'waypoints' | 'departureAirport' | 'arrivalAirport'
+    >,
     FlightTimestampsResult,
     FlightTrackingDataResult {
   user:
@@ -147,6 +150,12 @@ export interface TransformFlightDataResult
         | 'passwordResetAt'
       >)
     | null;
+  departureAirport: AirportData & {
+    estimatedDistance: number;
+  };
+  arrivalAirport: AirportData & {
+    estimatedDistance: number;
+  };
   distance: number;
   flightNumberString: string;
   departureMunicipalityText: string;
@@ -565,7 +574,7 @@ export const getAltChangeString = (
   lastAlt: number,
   currentAlt: number,
 ): string => {
-  if (lastAlt === currentAlt) {
+  if (Math.round(lastAlt) === Math.round(currentAlt)) {
     return '→';
   }
   if (lastAlt > currentAlt) {
@@ -726,7 +735,7 @@ export const transformFlightData = (
     ['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(flightStatus)
       ? [
           {
-            timestamp: getTime(new Date()),
+            timestamp: Math.floor(getTime(new Date()) / 1000),
             alt: estimatedAltitude,
             coord: [estimatedLocation.lng, estimatedLocation.lat] as [
               number,
@@ -738,6 +747,18 @@ export const transformFlightData = (
         ]
       : []),
   ];
+  const estimatedDistanceFromOriginMi = calculateDistance(
+    flight.departureAirport.lat,
+    flight.departureAirport.lon,
+    estimatedLocation.lat,
+    estimatedLocation.lng,
+  );
+  const estimatedDistanceToDestinationMi = calculateDistance(
+    estimatedLocation.lat,
+    estimatedLocation.lng,
+    flight.arrivalAirport.lat,
+    flight.arrivalAirport.lon,
+  );
   const delayStatus =
     progress > 0
       ? timestamps.arrivalDelayStatus
@@ -751,6 +772,14 @@ export const transformFlightData = (
   return {
     ...flight,
     ...timestamps,
+    departureAirport: {
+      ...flight.departureAirport,
+      estimatedDistance: Math.round(estimatedDistanceFromOriginMi),
+    },
+    arrivalAirport: {
+      ...flight.arrivalAirport,
+      estimatedDistance: Math.round(estimatedDistanceToDestinationMi),
+    },
     user:
       flight.user !== null
         ? {
