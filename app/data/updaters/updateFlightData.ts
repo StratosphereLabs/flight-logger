@@ -15,7 +15,7 @@ import {
   getFlightStatsFlightUpdate,
 } from '../flightStats';
 import type { FlightWithData } from '../types';
-import { getGroupedFlightsKey, removeNullish } from '../utils';
+import { getGroupedFlightsKey, removeUndefined } from '../utils';
 import { updateFlightChangeData } from './updateFlightChangeData';
 import { updateFlightTrackData } from './updateFlightTrackData';
 
@@ -55,8 +55,8 @@ export const updateFlightData = async (
   const combinedUpdate: Partial<
     FlightStatsFlightUpdateData & FlightRadarFlightUpdateData
   > = {
-    ...removeNullish(flightRadarUpdate ?? {}),
-    ...removeNullish(flightStatsUpdate ?? {}),
+    ...removeUndefined(flightRadarUpdate ?? {}),
+    ...removeUndefined(flightStatsUpdate ?? {}),
   };
   if (
     process.env.DATASOURCE_FLIGHTAWARE === 'true' &&
@@ -69,7 +69,7 @@ export const updateFlightData = async (
     }
   }
   const flightUpdateData = {
-    ...removeNullish(flightAwareUpdate ?? {}),
+    ...removeUndefined(flightAwareUpdate ?? {}),
     ...combinedUpdate,
   };
   if (Object.keys(flightUpdateData).length === 0) {
