@@ -2,6 +2,7 @@ import axios from 'axios';
 import { add, isAfter, isBefore, sub } from 'date-fns';
 
 import { HEADERS } from '../constants';
+import { type FlightStatsFlightUpdateData } from '../flightStats';
 import type { FlightWithData, TracklogItem } from '../types';
 
 interface FlightTrackItemData {
@@ -62,15 +63,17 @@ interface FlightTrackResult {
 
 export const fetchFlightTrackData = async (
   flightData: FlightWithData,
+  flightStatsUpdate?: FlightStatsFlightUpdateData,
 ): Promise<TracklogItem[] | undefined> => {
   const departureTime = flightData.outTimeActual ?? flightData.outTime;
+  const airframeId = flightStatsUpdate?.airframeId ?? flightData.airframeId;
   if (
-    flightData.airframeId === null ||
+    airframeId === null ||
     isBefore(new Date(), departureTime) ||
     isAfter(sub(new Date(), { hours: 25 }), departureTime)
   )
     return undefined;
-  const url = `https://planespotters.live/api/radar/trace/${flightData.airframeId}`;
+  const url = `https://planespotters.live/api/radar/trace/${airframeId}`;
   console.log(`  Fetching tracklog data from ${url}`);
   const response = await axios.get<{
     full: FlightTrackResult;

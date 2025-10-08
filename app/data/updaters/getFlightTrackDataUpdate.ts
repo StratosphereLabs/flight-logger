@@ -1,6 +1,7 @@
 import { add, isAfter, sub } from 'date-fns';
 
 import { fetchFlightTrackData as fetchAdsbExchangeData } from '../adsbExchange';
+import { type FlightStatsFlightUpdateData } from '../flightStats';
 import { fetchFlightTrackData as fetchPlaneSpottersData } from '../planeSpotters';
 import type { FlightWithData, TracklogItem } from '../types';
 import {
@@ -15,6 +16,7 @@ export type FlightTrackUpdateData = Awaited<
 
 export const getFlightTrackDataUpdate = async (
   flights: FlightWithData[],
+  flightStatsUpdate?: FlightStatsFlightUpdateData,
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 ) => {
   const flightDataString = getGroupedFlightsKey(flights[0]);
@@ -22,7 +24,7 @@ export const getFlightTrackDataUpdate = async (
   let tracklog: TracklogItem[] | undefined;
   if (process.env.DATASOURCE_ADSBEXCHANGE === 'true') {
     try {
-      tracklog = await fetchAdsbExchangeData(flights[0]);
+      tracklog = await fetchAdsbExchangeData(flights[0], flightStatsUpdate);
     } catch (err) {
       console.error(err);
     }
@@ -32,7 +34,7 @@ export const getFlightTrackDataUpdate = async (
     tracklog === undefined
   ) {
     try {
-      tracklog = await fetchPlaneSpottersData(flights[0]);
+      tracklog = await fetchPlaneSpottersData(flights[0], flightStatsUpdate);
     } catch (err) {
       console.error(err);
     }
