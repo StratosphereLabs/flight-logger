@@ -101,11 +101,11 @@ export const getMinutesToArrival = (
   const projectedAltitude =
     getProjectedAltitudeFromTracklog(tracklog) ?? arrivalElevation;
   const distanceToDescend = projectedAltitude - arrivalElevation;
-  const tdDistance = distanceToDescend * 0.375;
-  const distanceToTd =
-    distanceToArrival > tdDistance ? distanceToArrival - tdDistance : 0;
   const descentDuration =
     -0.0001833 * distanceToDescend * distanceToDescend +
     0.1383 * distanceToDescend;
-  return (distanceToTd / (estimatedSpeed * 0.975)) * 60 + descentDuration;
+  return (
+    (distanceToArrival / (estimatedSpeed * 0.96)) * 60 +
+    descentDuration * 0.43269230769
+  );
 };
