@@ -49,7 +49,10 @@ export const updateFlightData = async (
       console.error(err);
     }
   }
-  const flightTrackDataUpdate = await getFlightTrackDataUpdate(flights);
+  const flightTrackDataUpdate = await getFlightTrackDataUpdate(
+    flights,
+    flightStatsUpdate,
+  );
   const combinedUpdate: Partial<
     FlightStatsFlightUpdateData & FlightTrackUpdateData
   > = {

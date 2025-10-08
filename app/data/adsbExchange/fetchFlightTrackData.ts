@@ -2,6 +2,7 @@ import axios from 'axios';
 import { add, isAfter, isBefore, sub } from 'date-fns';
 
 import { HEADERS } from '../constants';
+import { type FlightStatsFlightUpdateData } from '../flightStats';
 import type { FlightWithData, TracklogItem } from '../types';
 
 interface FlightTrackItemData {
@@ -68,16 +69,18 @@ const FULL_HEADERS = {
 
 export const fetchFlightTrackData = async (
   flightData: FlightWithData,
+  flightStatsUpdate?: FlightStatsFlightUpdateData,
 ): Promise<TracklogItem[] | undefined> => {
   const departureTime = flightData.outTimeActual ?? flightData.outTime;
+  const airframeId = flightStatsUpdate?.airframeId ?? flightData.airframeId;
   if (
-    flightData.airframeId === null ||
+    airframeId === null ||
     isBefore(new Date(), departureTime) ||
     isAfter(sub(new Date(), { hours: 25 }), departureTime)
   )
     return undefined;
-  const fullUrl = `https://globe.adsbexchange.com/data/traces/${flightData.airframeId.slice(4)}/trace_full_${flightData.airframeId}.json`;
-  const recentUrl = `https://globe.adsbexchange.com/data/traces/${flightData.airframeId.slice(4)}/trace_recent_${flightData.airframeId}.json`;
+  const fullUrl = `https://globe.adsbexchange.com/data/traces/${airframeId.slice(4)}/trace_full_${airframeId}.json`;
+  const recentUrl = `https://globe.adsbexchange.com/data/traces/${airframeId.slice(4)}/trace_recent_${airframeId}.json`;
   console.log(`  Fetching full tracklog data from ${fullUrl}`);
   console.log(`  Fetching recent tracklog data from ${recentUrl}`);
   const [fullResponse, recentResponse] = await Promise.all([
