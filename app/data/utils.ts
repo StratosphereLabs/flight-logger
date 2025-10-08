@@ -90,6 +90,7 @@ export const getMinutesToArrival = (
 ): number => {
   const latestItem = tracklog[tracklog.length - 1];
   const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
+  const arrivalElevation = (arrivalAirport.elevation ?? 0) / 100;
   const distanceToArrival = calculateDistance(
     latestItem.coord[1],
     latestItem.coord[0],
@@ -97,10 +98,14 @@ export const getMinutesToArrival = (
     arrivalAirport.lon,
   );
   const estimatedSpeed = getEstimatedSpeedFromTracklog(tracklog);
-  const projectedAltitude = getProjectedAltitudeFromTracklog(tracklog);
-  const arrivalElevation = arrivalAirport.elevation ?? 0;
+  const projectedAltitude =
+    getProjectedAltitudeFromTracklog(tracklog) ?? arrivalElevation;
+  const distanceToDescend = projectedAltitude - arrivalElevation;
+  const descentDuration =
+    -0.0001833 * distanceToDescend * distanceToDescend +
+    0.1383 * distanceToDescend;
   return (
     (distanceToArrival / (estimatedSpeed * 0.96)) * 60 +
-    ((projectedAltitude ?? 0) - arrivalElevation / 100) / 32
+    descentDuration * 0.43269230769
   );
 };
