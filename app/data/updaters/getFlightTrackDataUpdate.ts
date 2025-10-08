@@ -3,7 +3,11 @@ import { add, isAfter, sub } from 'date-fns';
 import { fetchFlightTrackData as fetchAdsbExchangeData } from '../adsbExchange';
 import { fetchFlightTrackData as fetchPlaneSpottersData } from '../planeSpotters';
 import type { FlightWithData, TracklogItem } from '../types';
-import { getGroupedFlightsKey, getMinutesToArrival } from '../utils';
+import {
+  createNewDate,
+  getGroupedFlightsKey,
+  getMinutesToArrival,
+} from '../utils';
 
 export type FlightTrackUpdateData = Awaited<
   ReturnType<typeof getFlightTrackDataUpdate>
@@ -54,13 +58,13 @@ export const getFlightTrackDataUpdate = async (
     add(flights[0].outTime, { minutes: 10 });
   const offTimeActual =
     lastItemOnGround !== undefined
-      ? new Date(lastItemOnGround.timestamp)
+      ? createNewDate(lastItemOnGround.timestamp)
       : isAfter(new Date(), sub(currentOffTimeActual, { minutes: 1 }))
         ? add(new Date(), { minutes: 5 })
         : undefined;
   const onTimeActual =
     firstItemOnGround !== undefined
-      ? new Date(firstItemOnGround.timestamp)
+      ? createNewDate(firstItemOnGround.timestamp)
       : isEnRoute
         ? add(new Date(), { minutes: minutesToArrival })
         : undefined;
