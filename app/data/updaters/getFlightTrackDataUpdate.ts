@@ -43,11 +43,15 @@ export const getFlightTrackDataUpdate = async (
   }
   const lastItemOnGround = tracklog.find(
     ({ ground }, index, allItems) =>
-      ground === true && allItems[index + 1]?.ground === false,
+      ground === true &&
+      allItems[index + 1]?.ground === false &&
+      allItems[index - 1]?.alt !== null,
   );
   const firstItemOnGround = tracklog.find(
     ({ ground }, index, allItems) =>
-      ground === true && allItems[index - 1]?.ground === false,
+      ground === true &&
+      allItems[index - 1]?.ground === false &&
+      allItems[index - 1]?.alt !== null,
   );
   const isEnRoute =
     lastItemOnGround !== undefined && firstItemOnGround === undefined;
