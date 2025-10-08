@@ -45,7 +45,7 @@ export const getFlightTrackDataUpdate = async (
     ({ ground }, index, allItems) =>
       ground === true &&
       allItems[index + 1]?.ground === false &&
-      allItems[index - 1]?.alt !== null,
+      allItems[index + 1]?.alt !== null,
   );
   const firstItemOnGround = tracklog.find(
     ({ ground }, index, allItems) =>
