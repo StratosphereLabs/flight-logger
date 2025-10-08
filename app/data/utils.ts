@@ -100,7 +100,7 @@ export const getMinutesToArrival = (
   const projectedAltitude = getProjectedAltitudeFromTracklog(tracklog);
   const arrivalElevation = arrivalAirport.elevation ?? 0;
   return (
-    (distanceToArrival / (estimatedSpeed * 0.95)) * 60 +
-    ((projectedAltitude ?? 0) - arrivalElevation / 100) / 30
+    (distanceToArrival / (estimatedSpeed * 0.96)) * 60 +
+    ((projectedAltitude ?? 0) - arrivalElevation / 100) / 32
   );
 };
