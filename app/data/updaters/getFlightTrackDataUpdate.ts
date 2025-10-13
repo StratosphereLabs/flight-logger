@@ -1,5 +1,6 @@
-import { add, isAfter, sub } from 'date-fns';
+import { add, isAfter, isBefore, sub } from 'date-fns';
 
+import { calculateDistance, getDurationMinutes } from '../../utils';
 import { fetchFlightTrackData as fetchAdsbExchangeData } from '../adsbExchange';
 import { type FlightStatsFlightUpdateData } from '../flightStats';
 import { fetchFlightTrackData as fetchPlaneSpottersData } from '../planeSpotters';
@@ -9,6 +10,45 @@ import {
   getGroupedFlightsKey,
   getMinutesToArrival,
 } from '../utils';
+
+export const getProjectedTakeoffTime = (
+  flight: FlightWithData,
+  tracklog: TracklogItem[],
+  outTimeActual: Date,
+): Date => {
+  if (tracklog.length === 0) {
+    return add(outTimeActual, { minutes: 13 });
+  }
+  const latestItem = tracklog[tracklog.length - 1];
+  const latestTimestamp = createNewDate(latestItem.timestamp);
+  const distanceFromDepartureAirport = calculateDistance(
+    latestItem.coord[1],
+    latestItem.coord[0],
+    flight.departureAirport.lat,
+    flight.departureAirport.lon,
+  );
+  if (
+    latestItem.ground === true &&
+    isBefore(new Date(), add(latestTimestamp, { minutes: 30 })) &&
+    distanceFromDepartureAirport <= 5
+  ) {
+    if (
+      flight.offTimeActual === null ||
+      getDurationMinutes({ start: new Date(), end: flight.offTimeActual }) <= 1
+    ) {
+      return add(flight.offTimeActual ?? new Date(), { minutes: 5 });
+    }
+    return flight.offTimeActual;
+  }
+  return add(outTimeActual, { minutes: 13 });
+};
+
+export const getProjectedLandingTime = (
+  flight: FlightWithData,
+  tracklog: TracklogItem[],
+): Date => {
+  return add(new Date(), { minutes: getMinutesToArrival(flight, tracklog) });
+};
 
 export type FlightTrackUpdateData = Awaited<
   ReturnType<typeof getFlightTrackDataUpdate>
@@ -46,37 +86,64 @@ export const getFlightTrackDataUpdate = async (
   const lastItemOnGround = tracklog.find(
     ({ ground }, index, allItems) =>
       ground === true &&
-      allItems[index + 1]?.ground === false &&
-      allItems[index + 1]?.alt !== null,
+      allItems.slice(index, index + 3).length === 3 &&
+      allItems
+        .slice(index, index + 3)
+        .every(({ ground }) => ground === false) &&
+      allItems.slice(index, index + 3).every(({ alt }) => alt !== null),
   );
   const firstItemOnGround = tracklog.find(
-    ({ ground }, index, allItems) =>
-      ground === true &&
-      allItems[index - 1]?.ground === false &&
-      allItems[index - 1]?.alt !== null,
+    ({ timestamp }, index, allItems) =>
+      (lastItemOnGround === undefined ||
+        timestamp > lastItemOnGround.timestamp) &&
+      allItems.slice(index, index + 3).length === 3 &&
+      allItems.slice(index, index + 3).every(({ ground }) => ground === true),
   );
-  const isEnRoute =
-    lastItemOnGround !== undefined && firstItemOnGround === undefined;
-  const minutesToArrival = getMinutesToArrival(flights[0], tracklog);
-  const currentOffTimeActual =
-    flights[0].offTimeActual ??
-    flights[0].offTime ??
-    add(flights[0].outTime, { minutes: 10 });
+  const outTimeActual =
+    flightStatsUpdate?.outTimeActual ??
+    flights[0].outTimeActual ??
+    flightStatsUpdate?.outTime ??
+    flights[0].outTime;
   const offTimeActual =
     lastItemOnGround !== undefined
       ? createNewDate(lastItemOnGround.timestamp)
-      : isAfter(new Date(), sub(currentOffTimeActual, { minutes: 1 }))
-        ? add(new Date(), { minutes: 5 })
-        : undefined;
+      : getProjectedTakeoffTime(flights[0], tracklog, outTimeActual);
+  const inTimeActual =
+    flightStatsUpdate?.inTimeActual ??
+    flights[0].inTimeActual ??
+    flightStatsUpdate?.inTime ??
+    flights[0].inTime;
   const onTimeActual =
     firstItemOnGround !== undefined
       ? createNewDate(firstItemOnGround.timestamp)
-      : isEnRoute
-        ? add(new Date(), { minutes: minutesToArrival })
-        : undefined;
+      : getProjectedLandingTime(flights[0], tracklog);
+  const projectedOutTimeActual = sub(offTimeActual, { minutes: 13 });
+  const projectedInTimeActual = add(onTimeActual, { minutes: 6 });
   return {
     tracklog,
+    outTimeActual:
+      isBefore(offTimeActual, outTimeActual) &&
+      (flights[0].outTimeActual === null ||
+        Math.abs(
+          getDurationMinutes({
+            start: flights[0].outTimeActual,
+            end: projectedOutTimeActual,
+          }),
+        ) >= 3)
+        ? projectedOutTimeActual
+        : undefined,
     offTimeActual,
     onTimeActual,
+    inTimeActual:
+      isAfter(onTimeActual, inTimeActual) &&
+      (flights[0].inTimeActual === null ||
+        Math.abs(
+          getDurationMinutes({
+            start: flights[0].inTimeActual,
+            end: projectedInTimeActual,
+          }),
+        ) >= 3)
+        ? projectedInTimeActual
+        : undefined,
   };
 };
