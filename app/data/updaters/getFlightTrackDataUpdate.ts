@@ -30,7 +30,7 @@ export const getProjectedTakeoffTime = (
   if (
     latestItem.ground === true &&
     isBefore(new Date(), add(latestTimestamp, { minutes: 30 })) &&
-    distanceFromDepartureAirport <= 5
+    distanceFromDepartureAirport < 5
   ) {
     if (
       flight.offTimeActual === null ||
@@ -83,9 +83,17 @@ export const getFlightTrackDataUpdate = async (
     console.log(`  Flight track data not found for ${flightDataString}.`);
     return null;
   }
+  const arrivalAirport =
+    flights[0].diversionAirport ?? flights[0].arrivalAirport;
   const lastItemOnGround = tracklog.find(
-    ({ ground }, index, allItems) =>
+    ({ ground, coord }, index, allItems) =>
       ground === true &&
+      calculateDistance(
+        flights[0].departureAirport.lat,
+        flights[0].departureAirport.lon,
+        coord[1],
+        coord[0],
+      ) < 5 &&
       allItems.slice(index, index + 3).length === 3 &&
       allItems
         .slice(index, index + 3)
@@ -93,15 +101,14 @@ export const getFlightTrackDataUpdate = async (
       allItems.slice(index, index + 3).every(({ alt }) => alt !== null),
   );
   const firstItemOnGround = tracklog.find(
-    ({ ground, timestamp }, index, allItems) =>
-      (lastItemOnGround === undefined ||
-        timestamp > lastItemOnGround.timestamp) &&
+    ({ ground, coord }) =>
       ground === true &&
-      allItems.slice(index - 3, index).length === 3 &&
-      allItems
-        .slice(index - 3, index)
-        .every(({ ground }) => ground === false) &&
-      allItems.slice(index - 3, index).every(({ alt }) => alt !== null),
+      calculateDistance(
+        coord[1],
+        coord[0],
+        arrivalAirport.lat,
+        arrivalAirport.lon,
+      ) < 5,
   );
   const outTimeActual =
     flightStatsUpdate?.outTimeActual ??
