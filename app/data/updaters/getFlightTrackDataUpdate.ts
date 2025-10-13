@@ -93,11 +93,15 @@ export const getFlightTrackDataUpdate = async (
       allItems.slice(index, index + 3).every(({ alt }) => alt !== null),
   );
   const firstItemOnGround = tracklog.find(
-    ({ timestamp }, index, allItems) =>
+    ({ ground, timestamp }, index, allItems) =>
       (lastItemOnGround === undefined ||
         timestamp > lastItemOnGround.timestamp) &&
-      allItems.slice(index, index + 3).length === 3 &&
-      allItems.slice(index, index + 3).every(({ ground }) => ground === true),
+      ground === true &&
+      allItems.slice(index - 3, index).length === 3 &&
+      allItems
+        .slice(index - 3, index)
+        .every(({ ground }) => ground === false) &&
+      allItems.slice(index - 3, index).every(({ alt }) => alt !== null),
   );
   const outTimeActual =
     flightStatsUpdate?.outTimeActual ??
