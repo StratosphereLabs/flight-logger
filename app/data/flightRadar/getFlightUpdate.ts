@@ -33,9 +33,7 @@ export const getFlightRadarFlightUpdate = async (
   }
   const airframe =
     flightData.registration !== undefined && flightData.registration !== null
-      ? flightData.registration !== flight.tailNumber
-        ? await getAirframe(flightData.registration)
-        : null
+      ? await getAirframe(flightData.registration)
       : null;
   const aircraftType =
     flightData.aircraftTypeCode.length >= 3 &&

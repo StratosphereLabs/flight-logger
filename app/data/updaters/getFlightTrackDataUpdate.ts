@@ -46,7 +46,11 @@ export const getProjectedTakeoffTime = (
 export const getProjectedLandingTime = (
   flight: FlightWithData,
   tracklog: TracklogItem[],
+  inTimeActual: Date,
 ): Date => {
+  if (tracklog.length === 0) {
+    return sub(inTimeActual, { minutes: 6 });
+  }
   return add(new Date(), { minutes: getMinutesToArrival(flight, tracklog) });
 };
 
@@ -127,7 +131,7 @@ export const getFlightTrackDataUpdate = async (
   const onTimeActual =
     firstItemOnGround !== undefined
       ? createNewDate(firstItemOnGround.timestamp)
-      : getProjectedLandingTime(flights[0], tracklog);
+      : getProjectedLandingTime(flights[0], tracklog, inTimeActual);
   const projectedOutTimeActual = sub(offTimeActual, { minutes: 13 });
   const projectedInTimeActual = add(onTimeActual, { minutes: 6 });
   return {
