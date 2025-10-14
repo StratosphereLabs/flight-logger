@@ -13,12 +13,9 @@ import { getGroupedFlightsKey, trackAircraftFlightIncludeObj } from '../utils';
 export const updateTrackAircraftData = async (
   flights: FlightWithData[],
 ): Promise<void> => {
-  if (flights[0].airline === null || flights[0].flightNumber === null) {
-    console.log('Airline and flight number are required.');
-    return;
-  }
   const outTimeActual = flights[0].outTimeActual ?? flights[0].outTime;
   const shouldUpdateTrackAircraft =
+    flights[0].airframeId !== null &&
     flights.some(({ userId }) => userId !== null) &&
     isBefore(new Date(), outTimeActual) &&
     isAfter(new Date(), sub(outTimeActual, { hours: 36 }));
@@ -83,28 +80,25 @@ export const updateTrackAircraftData = async (
             },
           })
         : null;
-    const existingFlights =
-      flights[0].airframeId !== null
-        ? await prisma.flight.findMany({
-            where: {
-              userId: null,
-              airframeId: flights[0].airframeId,
-              outTime: {
-                lt: flights[0].outTime,
-                gt: sub(flights[0].outTime, { days: 1 }),
-              },
-            },
-            select: {
-              id: true,
-              departureAirportId: true,
-              arrivalAirportId: true,
-              flightNumber: true,
-              outTime: true,
-              airline: true,
-              departureAirport: true,
-            },
-          })
-        : null;
+    const existingFlights = await prisma.flight.findMany({
+      where: {
+        userId: null,
+        airframeId: flights[0].airframeId,
+        outTime: {
+          lt: flights[0].outTime,
+          gt: sub(flights[0].outTime, { days: 1 }),
+        },
+      },
+      select: {
+        id: true,
+        departureAirportId: true,
+        arrivalAirportId: true,
+        flightNumber: true,
+        outTime: true,
+        airline: true,
+        departureAirport: true,
+      },
+    });
     const groupedAirports = groupBy(airports, 'iata');
     const groupedExistingFlights = groupBy(
       existingFlights,
