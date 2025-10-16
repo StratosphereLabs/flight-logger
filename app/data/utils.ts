@@ -86,7 +86,7 @@ export const removeUndefined = <T extends object>(obj: T): Partial<T> =>
 
 export const getDescentDuration = (distanceToDescend: number): number => {
   if (distanceToDescend <= 0) return 0;
-  return 0.5 * Math.pow(distanceToDescend, 0.68);
+  return 0.3155 * Math.pow(distanceToDescend, 0.7676);
 };
 
 export const getMinutesToArrival = (
@@ -106,13 +106,13 @@ export const getMinutesToArrival = (
   const projectedAltitude =
     getProjectedAltitudeFromTracklog(tracklog) ?? arrivalElevation;
   const distanceToDescend = projectedAltitude - arrivalElevation;
-  // const descentDuration = getDescentDuration(distanceToDescend);
+  const descentDuration = getDescentDuration(distanceToDescend);
+  // return (
+  //   (distanceToArrival / (estimatedSpeed * 0.98)) * 60 +
+  //   distanceToDescend * 0.0315828279
+  // );
   return (
     (distanceToArrival / (estimatedSpeed * 0.98)) * 60 +
-    distanceToDescend * 0.0315828279
+    descentDuration * 0.4002384454
   );
-  // return (
-  //   (distanceToArrival / (estimatedSpeed * 0.96)) * 60 +
-  //   descentDuration * 0.43269230769
-  // );
 };
