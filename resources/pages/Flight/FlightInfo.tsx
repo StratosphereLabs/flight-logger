@@ -48,7 +48,7 @@ export const FlightInfo = ({
   return (
     <div className="flex flex-col gap-3">
       <div className="mb-2 flex flex-col items-center gap-1 p-1">
-        <div className="flex gap-x-3 gap-y-1 md:flex-col">
+        <div className="flex gap-x-3 gap-y-1 md:flex-col md:items-center">
           {typeof data.airline?.logo === 'string' ? (
             <div className="flex h-[45px] w-[120px] items-center justify-center md:h-[75px] md:w-[200px]">
               <img

@@ -106,9 +106,13 @@ export const getMinutesToArrival = (
   const projectedAltitude =
     getProjectedAltitudeFromTracklog(tracklog) ?? arrivalElevation;
   const distanceToDescend = projectedAltitude - arrivalElevation;
-  const descentDuration = getDescentDuration(distanceToDescend);
+  // const descentDuration = getDescentDuration(distanceToDescend);
   return (
-    (distanceToArrival / (estimatedSpeed * 0.96)) * 60 +
-    descentDuration * 0.43269230769
+    (distanceToArrival / (estimatedSpeed * 0.98)) * 60 +
+    distanceToDescend * 0.0315828279
   );
+  // return (
+  //   (distanceToArrival / (estimatedSpeed * 0.96)) * 60 +
+  //   descentDuration * 0.43269230769
+  // );
 };
