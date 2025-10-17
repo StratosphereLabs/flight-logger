@@ -107,12 +107,8 @@ export const getMinutesToArrival = (
     getProjectedAltitudeFromTracklog(tracklog) ?? arrivalElevation;
   const distanceToDescend = projectedAltitude - arrivalElevation;
   const descentDuration = getDescentDuration(distanceToDescend);
-  // return (
-  //   (distanceToArrival / (estimatedSpeed * 0.98)) * 60 +
-  //   distanceToDescend * 0.0315828279
-  // );
-  return (
+  const calculatedDuration =
     (distanceToArrival / (estimatedSpeed * 0.98)) * 60 +
-    descentDuration * 0.4002384454
-  );
+    descentDuration * 0.4002384454;
+  return Math.max(calculatedDuration, descentDuration);
 };

@@ -2,6 +2,10 @@ import { add, isAfter, isBefore, sub } from 'date-fns';
 
 import { calculateDistance, getDurationMinutes } from '../../utils';
 import { fetchFlightTrackData as fetchAdsbExchangeData } from '../adsbExchange';
+import {
+  TAXI_IN_AVERAGE_DURATION,
+  TAXI_OUT_AVERAGE_DURATION,
+} from '../constants';
 import { type FlightStatsFlightUpdateData } from '../flightStats';
 import { fetchFlightTrackData as fetchPlaneSpottersData } from '../planeSpotters';
 import type { FlightWithData, TracklogItem } from '../types';
@@ -17,7 +21,7 @@ export const getProjectedTakeoffTime = (
   outTimeActual: Date,
 ): Date => {
   if (tracklog.length === 0) {
-    return add(outTimeActual, { minutes: 13 });
+    return add(outTimeActual, { minutes: TAXI_OUT_AVERAGE_DURATION });
   }
   const latestItem = tracklog[tracklog.length - 1];
   const latestTimestamp = createNewDate(latestItem.timestamp);
@@ -40,7 +44,7 @@ export const getProjectedTakeoffTime = (
     }
     return flight.offTimeActual;
   }
-  return add(outTimeActual, { minutes: 13 });
+  return add(outTimeActual, { minutes: TAXI_OUT_AVERAGE_DURATION });
 };
 
 export const getProjectedLandingTime = (
@@ -49,7 +53,7 @@ export const getProjectedLandingTime = (
   inTimeActual: Date,
 ): Date => {
   if (tracklog.length === 0) {
-    return sub(inTimeActual, { minutes: 6 });
+    return sub(inTimeActual, { minutes: TAXI_IN_AVERAGE_DURATION });
   }
   return add(new Date(), { minutes: getMinutesToArrival(flight, tracklog) });
 };
@@ -128,12 +132,22 @@ export const getFlightTrackDataUpdate = async (
     flights[0].inTimeActual ??
     flightStatsUpdate?.inTime ??
     flights[0].inTime;
+  const estimatedFlightDuration =
+    getDurationMinutes({ start: outTimeActual, end: inTimeActual }) -
+    TAXI_OUT_AVERAGE_DURATION -
+    TAXI_IN_AVERAGE_DURATION;
   const onTimeActual =
     firstItemOnGround !== undefined
       ? createNewDate(firstItemOnGround.timestamp)
-      : getProjectedLandingTime(flights[0], tracklog, inTimeActual);
-  const projectedOutTimeActual = sub(offTimeActual, { minutes: 13 });
-  const projectedInTimeActual = add(onTimeActual, { minutes: 6 });
+      : isAfter(new Date(), add(offTimeActual, { minutes: 20 }))
+        ? getProjectedLandingTime(flights[0], tracklog, inTimeActual)
+        : add(offTimeActual, { minutes: estimatedFlightDuration });
+  const projectedOutTimeActual = sub(offTimeActual, {
+    minutes: TAXI_OUT_AVERAGE_DURATION,
+  });
+  const projectedInTimeActual = add(onTimeActual, {
+    minutes: TAXI_IN_AVERAGE_DURATION,
+  });
   return {
     tracklog,
     outTimeActual:
