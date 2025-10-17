@@ -38,7 +38,8 @@ export const getProjectedTakeoffTime = (
   ) {
     if (
       flight.offTimeActual === null ||
-      getDurationMinutes({ start: new Date(), end: flight.offTimeActual }) <= 1
+      getDurationMinutes({ start: new Date(), end: flight.offTimeActual }) <=
+        0.5
     ) {
       return add(flight.offTimeActual ?? new Date(), { minutes: 5 });
     }
@@ -136,10 +137,14 @@ export const getFlightTrackDataUpdate = async (
     getDurationMinutes({ start: outTimeActual, end: inTimeActual }) -
     TAXI_OUT_AVERAGE_DURATION -
     TAXI_IN_AVERAGE_DURATION;
+  const shouldUseProjectedArrivalTimes = isAfter(
+    new Date(),
+    add(offTimeActual, { minutes: 20 }),
+  );
   const onTimeActual =
     firstItemOnGround !== undefined
       ? createNewDate(firstItemOnGround.timestamp)
-      : isAfter(new Date(), add(offTimeActual, { minutes: 20 }))
+      : shouldUseProjectedArrivalTimes
         ? getProjectedLandingTime(flights[0], tracklog, inTimeActual)
         : add(offTimeActual, { minutes: estimatedFlightDuration });
   const projectedOutTimeActual = sub(offTimeActual, {
@@ -164,7 +169,8 @@ export const getFlightTrackDataUpdate = async (
     offTimeActual,
     onTimeActual,
     inTimeActual:
-      isAfter(onTimeActual, inTimeActual) &&
+      shouldUseProjectedArrivalTimes &&
+      isAfter(projectedInTimeActual, inTimeActual) &&
       (flights[0].inTimeActual === null ||
         Math.abs(
           getDurationMinutes({
