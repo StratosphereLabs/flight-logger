@@ -153,35 +153,32 @@ export const getFlightTrackDataUpdate = async (
   const projectedInTimeActual = add(onTimeActual, {
     minutes: TAXI_IN_AVERAGE_DURATION,
   });
-  const shouldUpdateOutTime =
-    flights[0].outTimeActual === null ||
-    Math.abs(
-      getDurationMinutes({
-        start: flights[0].outTimeActual,
-        end: projectedOutTimeActual,
-      }),
-    ) >= 3;
-  const shouldUpdateInTime =
-    flights[0].inTimeActual === null ||
-    Math.abs(
-      getDurationMinutes({
-        start: flights[0].inTimeActual,
-        end: projectedInTimeActual,
-      }),
-    ) >= 3;
+  const shouldUpdateOutTimeActual =
+    isBefore(offTimeActual, outTimeActual) &&
+    (flights[0].outTimeActual === null ||
+      Math.abs(
+        getDurationMinutes({
+          start: flights[0].outTimeActual,
+          end: projectedOutTimeActual,
+        }),
+      ) >= 3);
+  const shouldUpdateInTimeActual =
+    isAfter(new Date(), offTimeActual) &&
+    isAfter(projectedInTimeActual, inTimeActual) &&
+    (flights[0].inTimeActual === null ||
+      Math.abs(
+        getDurationMinutes({
+          start: flights[0].inTimeActual,
+          end: projectedInTimeActual,
+        }),
+      ) >= 3);
   return {
     tracklog,
-    outTimeActual:
-      shouldUpdateOutTime && isBefore(offTimeActual, outTimeActual)
-        ? projectedOutTimeActual
-        : undefined,
+    outTimeActual: shouldUpdateOutTimeActual
+      ? projectedOutTimeActual
+      : undefined,
     offTimeActual,
     onTimeActual,
-    inTimeActual:
-      shouldUpdateInTime &&
-      isAfter(new Date(), offTimeActual) &&
-      isAfter(projectedInTimeActual, inTimeActual)
-        ? projectedInTimeActual
-        : undefined,
+    inTimeActual: shouldUpdateInTimeActual ? projectedInTimeActual : undefined,
   };
 };
