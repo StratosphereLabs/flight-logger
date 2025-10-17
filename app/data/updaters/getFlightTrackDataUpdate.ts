@@ -137,14 +137,14 @@ export const getFlightTrackDataUpdate = async (
     getDurationMinutes({ start: outTimeActual, end: inTimeActual }) -
     TAXI_OUT_AVERAGE_DURATION -
     TAXI_IN_AVERAGE_DURATION;
-  const shouldUseProjectedArrivalTimes = isAfter(
+  const shouldUseProjectedLandingTime = isAfter(
     new Date(),
     add(offTimeActual, { minutes: 20 }),
   );
   const onTimeActual =
     firstItemOnGround !== undefined
       ? createNewDate(firstItemOnGround.timestamp)
-      : shouldUseProjectedArrivalTimes
+      : shouldUseProjectedLandingTime
         ? getProjectedLandingTime(flights[0], tracklog, inTimeActual)
         : add(offTimeActual, { minutes: estimatedFlightDuration });
   const projectedOutTimeActual = sub(offTimeActual, {
@@ -153,31 +153,34 @@ export const getFlightTrackDataUpdate = async (
   const projectedInTimeActual = add(onTimeActual, {
     minutes: TAXI_IN_AVERAGE_DURATION,
   });
+  const shouldUpdateOutTime =
+    flights[0].outTimeActual === null ||
+    Math.abs(
+      getDurationMinutes({
+        start: flights[0].outTimeActual,
+        end: projectedOutTimeActual,
+      }),
+    ) >= 3;
+  const shouldUpdateInTime =
+    flights[0].inTimeActual === null ||
+    Math.abs(
+      getDurationMinutes({
+        start: flights[0].inTimeActual,
+        end: projectedInTimeActual,
+      }),
+    ) >= 3;
   return {
     tracklog,
     outTimeActual:
-      isBefore(offTimeActual, outTimeActual) &&
-      (flights[0].outTimeActual === null ||
-        Math.abs(
-          getDurationMinutes({
-            start: flights[0].outTimeActual,
-            end: projectedOutTimeActual,
-          }),
-        ) >= 3)
+      shouldUpdateOutTime && isBefore(offTimeActual, outTimeActual)
         ? projectedOutTimeActual
         : undefined,
     offTimeActual,
     onTimeActual,
     inTimeActual:
-      shouldUseProjectedArrivalTimes &&
-      isAfter(projectedInTimeActual, inTimeActual) &&
-      (flights[0].inTimeActual === null ||
-        Math.abs(
-          getDurationMinutes({
-            start: flights[0].inTimeActual,
-            end: projectedInTimeActual,
-          }),
-        ) >= 3)
+      shouldUpdateInTime &&
+      isAfter(new Date(), offTimeActual) &&
+      isAfter(projectedInTimeActual, inTimeActual)
         ? projectedInTimeActual
         : undefined,
   };
