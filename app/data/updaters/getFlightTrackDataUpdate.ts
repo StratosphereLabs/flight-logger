@@ -103,11 +103,11 @@ export const getFlightTrackDataUpdate = async (
         coord[1],
         coord[0],
       ) < 5 &&
-      allItems.slice(index, index + 3).length === 3 &&
+      allItems.slice(index + 1, index + 4).length === 3 &&
       allItems
-        .slice(index, index + 3)
+        .slice(index + 1, index + 4)
         .every(({ ground }) => ground === false) &&
-      allItems.slice(index, index + 3).every(({ alt }) => alt !== null),
+      allItems.slice(index + 1, index + 4).every(({ alt }) => alt !== null),
   );
   const firstItemOnGround = tracklog.find(
     ({ ground, coord }) =>
