@@ -38,7 +38,8 @@ export const getProjectedTakeoffTime = (
   ) {
     if (
       flight.offTimeActual === null ||
-      getDurationMinutes({ start: new Date(), end: flight.offTimeActual }) <= 1
+      getDurationMinutes({ start: new Date(), end: flight.offTimeActual }) <=
+        0.5
     ) {
       return add(flight.offTimeActual ?? new Date(), { minutes: 5 });
     }
@@ -136,10 +137,14 @@ export const getFlightTrackDataUpdate = async (
     getDurationMinutes({ start: outTimeActual, end: inTimeActual }) -
     TAXI_OUT_AVERAGE_DURATION -
     TAXI_IN_AVERAGE_DURATION;
+  const shouldUseProjectedLandingTime = isAfter(
+    new Date(),
+    add(offTimeActual, { minutes: 20 }),
+  );
   const onTimeActual =
     firstItemOnGround !== undefined
       ? createNewDate(firstItemOnGround.timestamp)
-      : isAfter(new Date(), add(offTimeActual, { minutes: 20 }))
+      : shouldUseProjectedLandingTime
         ? getProjectedLandingTime(flights[0], tracklog, inTimeActual)
         : add(offTimeActual, { minutes: estimatedFlightDuration });
   const projectedOutTimeActual = sub(offTimeActual, {
@@ -148,31 +153,32 @@ export const getFlightTrackDataUpdate = async (
   const projectedInTimeActual = add(onTimeActual, {
     minutes: TAXI_IN_AVERAGE_DURATION,
   });
+  const shouldUpdateOutTimeActual =
+    isBefore(offTimeActual, outTimeActual) &&
+    (flights[0].outTimeActual === null ||
+      Math.abs(
+        getDurationMinutes({
+          start: flights[0].outTimeActual,
+          end: projectedOutTimeActual,
+        }),
+      ) >= 3);
+  const shouldUpdateInTimeActual =
+    isAfter(new Date(), offTimeActual) &&
+    isAfter(projectedInTimeActual, inTimeActual) &&
+    (flights[0].inTimeActual === null ||
+      Math.abs(
+        getDurationMinutes({
+          start: flights[0].inTimeActual,
+          end: projectedInTimeActual,
+        }),
+      ) >= 3);
   return {
     tracklog,
-    outTimeActual:
-      isBefore(offTimeActual, outTimeActual) &&
-      (flights[0].outTimeActual === null ||
-        Math.abs(
-          getDurationMinutes({
-            start: flights[0].outTimeActual,
-            end: projectedOutTimeActual,
-          }),
-        ) >= 3)
-        ? projectedOutTimeActual
-        : undefined,
+    outTimeActual: shouldUpdateOutTimeActual
+      ? projectedOutTimeActual
+      : undefined,
     offTimeActual,
     onTimeActual,
-    inTimeActual:
-      isAfter(onTimeActual, inTimeActual) &&
-      (flights[0].inTimeActual === null ||
-        Math.abs(
-          getDurationMinutes({
-            start: flights[0].inTimeActual,
-            end: projectedInTimeActual,
-          }),
-        ) >= 3)
-        ? projectedInTimeActual
-        : undefined,
+    inTimeActual: shouldUpdateInTimeActual ? projectedInTimeActual : undefined,
   };
 };
