@@ -82,7 +82,13 @@ export const CreateTripModal = ({
           >
             Cancel
           </Button>
-          <Button color="primary" loading={isLoading} soft type="submit">
+          <Button
+            color="primary"
+            disabled={isLoading}
+            loading={isLoading}
+            soft
+            type="submit"
+          >
             Create
           </Button>
         </div>
