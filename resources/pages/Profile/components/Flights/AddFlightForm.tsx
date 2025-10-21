@@ -215,7 +215,9 @@ export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
               className="w-full md:mt-[30px] md:w-[120px]"
               color="primary"
               loading={isFetching}
-              disabled={!methods.formState.isDirty || shouldShowFlightForm}
+              disabled={
+                !methods.formState.isDirty || shouldShowFlightForm || isFetching
+              }
               onClick={async () => {
                 const isValid = await methods.trigger([
                   'outDateISO',
