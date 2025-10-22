@@ -1,6 +1,7 @@
 import { type WithRequired } from '@tanstack/react-query';
 
 import { prisma } from '../../db';
+import { calculateDistance } from '../../utils';
 import {
   FLIGHTAWARE_DATA_INCLUDE_KEYS,
   FLIGHTRADAR_DATA_INCLUDE_KEYS,
@@ -59,10 +60,42 @@ export const updateFlightData = async (
     ...removeUndefined(flightStatsUpdate ?? {}),
     ...removeUndefined(flightTrackDataUpdate ?? {}),
   };
+  const flightDistance = calculateDistance(
+    flights[0].departureAirport.lat,
+    flights[0].departureAirport.lon,
+    flights[0].arrivalAirport.lat,
+    flights[0].arrivalAirport.lon,
+  );
+  const lastTracklogItem =
+    flightTrackDataUpdate !== null && flightTrackDataUpdate.tracklog.length > 0
+      ? flightTrackDataUpdate.tracklog[
+          flightTrackDataUpdate.tracklog.length - 1
+        ]
+      : null;
+  const isTracklogDataInvalid =
+    lastTracklogItem !== null
+      ? calculateDistance(
+          flights[0].departureAirport.lat,
+          flights[0].departureAirport.lon,
+          lastTracklogItem.coord[1],
+          lastTracklogItem.coord[0],
+        ) >
+          flightDistance * 1.5 ||
+        calculateDistance(
+          flights[0].arrivalAirport.lat,
+          flights[0].arrivalAirport.lon,
+          lastTracklogItem.coord[1],
+          lastTracklogItem.coord[0],
+        ) >
+          flightDistance * 1.5
+      : false;
   let flightRadarUpdate: FlightRadarFlightUpdateData | null = null;
   if (
     process.env.DATASOURCE_FLIGHTRADAR === 'true' &&
-    FLIGHTRADAR_DATA_INCLUDE_KEYS.some(key => combinedUpdate[key] === undefined)
+    (isTracklogDataInvalid ||
+      FLIGHTRADAR_DATA_INCLUDE_KEYS.some(
+        key => combinedUpdate[key] === undefined,
+      ))
   ) {
     try {
       flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
@@ -73,8 +106,8 @@ export const updateFlightData = async (
   const combinedUpdateWithFlightRadar: Partial<
     FlightStatsFlightUpdateData & FlightRadarFlightUpdateData
   > = {
-    ...removeUndefined(flightRadarUpdate ?? {}),
     ...combinedUpdate,
+    ...removeUndefined(flightRadarUpdate ?? {}),
   };
   let flightAwareUpdate: FlightAwareFlightUpdateData | null = null;
   if (
@@ -90,8 +123,8 @@ export const updateFlightData = async (
     }
   }
   const flightUpdateData = {
-    ...removeUndefined(flightAwareUpdate ?? {}),
     ...combinedUpdateWithFlightRadar,
+    ...removeUndefined(flightAwareUpdate ?? {}),
   };
   if (Object.keys(flightUpdateData).length === 0) {
     console.log(`  No flight data found for ${flightDataString}.`);

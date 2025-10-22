@@ -32,7 +32,7 @@ export const getProjectedTakeoffTime = (
     flight.departureAirport.lon,
   );
   if (
-    latestItem.ground === true &&
+    (latestItem.ground === true || latestItem.alt === null) &&
     isBefore(new Date(), add(latestTimestamp, { minutes: 30 })) &&
     distanceFromDepartureAirport < 5
   ) {
@@ -106,12 +106,11 @@ export const getFlightTrackDataUpdate = async (
       allItems.slice(index + 1, index + 4).length === 3 &&
       allItems
         .slice(index + 1, index + 4)
-        .every(({ ground }) => ground === false) &&
-      allItems.slice(index + 1, index + 4).every(({ alt }) => alt !== null),
+        .every(({ alt, ground }) => ground === false || alt !== null),
   );
   const firstItemOnGround = tracklog.find(
-    ({ ground, coord }) =>
-      ground === true &&
+    ({ alt, ground, coord }) =>
+      (ground === true || alt === null) &&
       calculateDistance(
         coord[1],
         coord[0],
@@ -147,38 +146,38 @@ export const getFlightTrackDataUpdate = async (
       : shouldUseProjectedLandingTime
         ? getProjectedLandingTime(flights[0], tracklog, inTimeActual)
         : add(offTimeActual, { minutes: estimatedFlightDuration });
-  const projectedOutTimeActual = sub(offTimeActual, {
-    minutes: TAXI_OUT_AVERAGE_DURATION,
-  });
-  const projectedInTimeActual = add(onTimeActual, {
-    minutes: TAXI_IN_AVERAGE_DURATION,
-  });
-  const shouldUpdateOutTimeActual =
-    isBefore(offTimeActual, outTimeActual) &&
-    (flights[0].outTimeActual === null ||
-      Math.abs(
-        getDurationMinutes({
-          start: flights[0].outTimeActual,
-          end: projectedOutTimeActual,
-        }),
-      ) >= 3);
-  const shouldUpdateInTimeActual =
-    isAfter(new Date(), offTimeActual) &&
-    isAfter(projectedInTimeActual, inTimeActual) &&
-    (flights[0].inTimeActual === null ||
-      Math.abs(
-        getDurationMinutes({
-          start: flights[0].inTimeActual,
-          end: projectedInTimeActual,
-        }),
-      ) >= 3);
+  // const projectedOutTimeActual = sub(offTimeActual, {
+  //   minutes: TAXI_OUT_AVERAGE_DURATION,
+  // });
+  // const projectedInTimeActual = add(onTimeActual, {
+  //   minutes: TAXI_IN_AVERAGE_DURATION,
+  // });
+  // const shouldUpdateOutTimeActual =
+  //   isBefore(offTimeActual, outTimeActual) &&
+  //   (flights[0].outTimeActual === null ||
+  //     Math.abs(
+  //       getDurationMinutes({
+  //         start: flights[0].outTimeActual,
+  //         end: projectedOutTimeActual,
+  //       }),
+  //     ) >= 3);
+  // const shouldUpdateInTimeActual =
+  //   isAfter(new Date(), offTimeActual) &&
+  //   isAfter(projectedInTimeActual, inTimeActual) &&
+  //   (flights[0].inTimeActual === null ||
+  //     Math.abs(
+  //       getDurationMinutes({
+  //         start: flights[0].inTimeActual,
+  //         end: projectedInTimeActual,
+  //       }),
+  //     ) >= 3);
   return {
     tracklog,
-    outTimeActual: shouldUpdateOutTimeActual
-      ? projectedOutTimeActual
-      : undefined,
+    // outTimeActual: shouldUpdateOutTimeActual
+    //   ? projectedOutTimeActual
+    //   : undefined,
     offTimeActual,
     onTimeActual,
-    inTimeActual: shouldUpdateInTimeActual ? projectedInTimeActual : undefined,
+    // inTimeActual: shouldUpdateInTimeActual ? projectedInTimeActual : undefined,
   };
 };
