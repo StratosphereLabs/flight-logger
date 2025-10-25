@@ -29,6 +29,37 @@ export const getProjectedTakeoffTime = (
   if (tracklog.length === 0) {
     return add(outTimeActual, { minutes: TAXI_OUT_AVERAGE_DURATION });
   }
+  const lastItemOnGround = tracklog.find(
+    ({ ground, coord }, index, allItems) =>
+      ground === true &&
+      calculateDistance(
+        flight.departureAirport.lat,
+        flight.departureAirport.lon,
+        coord[1],
+        coord[0],
+      ) < 5 &&
+      allItems.slice(index + 1, index + 4).length === 3 &&
+      allItems
+        .slice(index + 1, index + 4)
+        .every(({ alt, ground }) => ground === false || alt !== null),
+  );
+  if (lastItemOnGround !== undefined) {
+    return createNewDate(lastItemOnGround.timestamp);
+  }
+  const firstItemInAir = tracklog.find(
+    ({ ground, alt, coord }) =>
+      ground !== true &&
+      alt !== null &&
+      calculateDistance(
+        flight.departureAirport.lat,
+        flight.departureAirport.lon,
+        coord[1],
+        coord[0],
+      ) < 5,
+  );
+  if (firstItemInAir !== undefined) {
+    return createNewDate(firstItemInAir.timestamp);
+  }
   const latestItem = tracklog[tracklog.length - 1];
   const isLatestItemStale = isAfter(
     new Date(),
@@ -133,20 +164,6 @@ export const getFlightTrackDataUpdate = async (
   }
   const arrivalAirport =
     flights[0].diversionAirport ?? flights[0].arrivalAirport;
-  const lastItemOnGround = tracklog.find(
-    ({ ground, coord }, index, allItems) =>
-      ground === true &&
-      calculateDistance(
-        flights[0].departureAirport.lat,
-        flights[0].departureAirport.lon,
-        coord[1],
-        coord[0],
-      ) < 5 &&
-      allItems.slice(index + 1, index + 4).length === 3 &&
-      allItems
-        .slice(index + 1, index + 4)
-        .every(({ alt, ground }) => ground === false || alt !== null),
-  );
   const firstItemOnGround = tracklog.find(
     ({ alt, ground, coord }) =>
       (ground === true || alt === null) &&
@@ -162,10 +179,11 @@ export const getFlightTrackDataUpdate = async (
     flights[0].outTimeActual ??
     flightStatsUpdate?.outTime ??
     flights[0].outTime;
-  const offTimeActual =
-    lastItemOnGround !== undefined
-      ? createNewDate(lastItemOnGround.timestamp)
-      : getProjectedTakeoffTime(flights[0], tracklog, outTimeActual);
+  const offTimeActual = getProjectedTakeoffTime(
+    flights[0],
+    tracklog,
+    outTimeActual,
+  );
   const inTimeActual =
     flightStatsUpdate?.inTimeActual ??
     flights[0].inTimeActual ??
