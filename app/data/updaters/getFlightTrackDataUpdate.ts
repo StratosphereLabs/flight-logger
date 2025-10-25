@@ -1,6 +1,12 @@
-import { add, isAfter, isBefore, sub } from 'date-fns';
+import { add, isAfter, sub } from 'date-fns';
 
-import { calculateDistance, getDurationMinutes } from '../../utils';
+import { SECONDS_IN_MINUTE } from '../../constants';
+import {
+  calculateDistance,
+  getDurationMinutes,
+  getEstimatedSpeedFromTracklog,
+  getLatestAltitudeItem,
+} from '../../utils';
 import { fetchFlightTrackData as fetchAdsbExchangeData } from '../adsbExchange';
 import {
   TAXI_IN_AVERAGE_DURATION,
@@ -11,8 +17,8 @@ import { fetchFlightTrackData as fetchPlaneSpottersData } from '../planeSpotters
 import type { FlightWithData, TracklogItem } from '../types';
 import {
   createNewDate,
+  getDescentDuration,
   getGroupedFlightsKey,
-  getMinutesToArrival,
 } from '../utils';
 
 export const getProjectedTakeoffTime = (
@@ -24,7 +30,10 @@ export const getProjectedTakeoffTime = (
     return add(outTimeActual, { minutes: TAXI_OUT_AVERAGE_DURATION });
   }
   const latestItem = tracklog[tracklog.length - 1];
-  const latestTimestamp = createNewDate(latestItem.timestamp);
+  const isLatestItemStale = isAfter(
+    new Date(),
+    createNewDate(latestItem.timestamp + 15 * SECONDS_IN_MINUTE),
+  );
   const distanceFromDepartureAirport = calculateDistance(
     latestItem.coord[1],
     latestItem.coord[0],
@@ -32,20 +41,19 @@ export const getProjectedTakeoffTime = (
     flight.departureAirport.lon,
   );
   if (
-    (latestItem.ground === true || latestItem.alt === null) &&
-    isBefore(new Date(), add(latestTimestamp, { minutes: 30 })) &&
-    distanceFromDepartureAirport < 5
+    (latestItem.ground !== true && latestItem.alt !== null) ||
+    isLatestItemStale ||
+    distanceFromDepartureAirport > 5
   ) {
-    if (
-      flight.offTimeActual === null ||
-      getDurationMinutes({ start: new Date(), end: flight.offTimeActual }) <=
-        0.5
-    ) {
-      return add(flight.offTimeActual ?? new Date(), { minutes: 5 });
-    }
-    return flight.offTimeActual;
+    return add(outTimeActual, { minutes: TAXI_OUT_AVERAGE_DURATION });
   }
-  return add(outTimeActual, { minutes: TAXI_OUT_AVERAGE_DURATION });
+  if (
+    flight.offTimeActual === null ||
+    getDurationMinutes({ start: new Date(), end: flight.offTimeActual }) <= 0.5
+  ) {
+    return add(flight.offTimeActual ?? new Date(), { minutes: 5 });
+  }
+  return flight.offTimeActual;
 };
 
 export const getProjectedLandingTime = (
@@ -53,10 +61,41 @@ export const getProjectedLandingTime = (
   tracklog: TracklogItem[],
   inTimeActual: Date,
 ): Date => {
-  if (tracklog.length === 0) {
+  const estimatedSpeed = getEstimatedSpeedFromTracklog(tracklog);
+  if (
+    tracklog.length === 0 ||
+    estimatedSpeed === null ||
+    isAfter(new Date(), inTimeActual)
+  ) {
     return sub(inTimeActual, { minutes: TAXI_IN_AVERAGE_DURATION });
   }
-  return add(new Date(), { minutes: getMinutesToArrival(flight, tracklog) });
+  const latestItem = tracklog[tracklog.length - 1];
+  const isLatestItemStale = isAfter(
+    new Date(),
+    createNewDate(latestItem.timestamp + 15 * SECONDS_IN_MINUTE),
+  );
+  if (isLatestItemStale) {
+    return sub(inTimeActual, { minutes: TAXI_IN_AVERAGE_DURATION });
+  }
+  const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
+  const distanceToArrivalAirport = calculateDistance(
+    latestItem.coord[1],
+    latestItem.coord[0],
+    arrivalAirport.lat,
+    arrivalAirport.lon,
+  );
+  const arrivalElevation = (arrivalAirport.elevation ?? 0) / 100;
+  const currentAltitude =
+    getLatestAltitudeItem(tracklog)?.alt ?? arrivalElevation;
+  const distanceToDescend = currentAltitude - arrivalElevation;
+  const descentDuration = getDescentDuration(distanceToDescend);
+  const calculatedDuration =
+    (distanceToArrivalAirport / (estimatedSpeed * 0.98)) * 60 +
+    descentDuration * 0.4002384454;
+  return createNewDate(
+    latestItem.timestamp +
+      SECONDS_IN_MINUTE * Math.max(calculatedDuration, descentDuration),
+  );
 };
 
 export type FlightTrackUpdateData = Awaited<

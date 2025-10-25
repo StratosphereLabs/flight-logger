@@ -273,36 +273,24 @@ export const updateFlightsEvery15 = async (): Promise<void> => {
 
 /**
  * Bucket #5 - Every 5 minutes
- * 2 hours before departure - 1 hour after departure
- * 2 hours before arrival - 1 hour after arrival
+ * 2 hours before departure - 1 hour after arrival
  */
 export const updateFlightsEvery5 = async (): Promise<void> => {
   try {
     const flightsToUpdate = await prisma.flight.findMany({
       where: {
+        outTime: {
+          lte: add(new Date(), { hours: 2 }),
+        },
         OR: [
-          {
-            outTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
-            },
-          },
-          {
-            outTime: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
-            },
-          },
           {
             inTimeActual: {
               gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             inTime: {
               gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
             },
           },
         ],

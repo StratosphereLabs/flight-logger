@@ -66,26 +66,26 @@ export const updateFlightData = async (
     flights[0].arrivalAirport.lat,
     flights[0].arrivalAirport.lon,
   );
-  const lastTracklogItem =
+  const latestTracklogItem =
     flightTrackDataUpdate !== null && flightTrackDataUpdate.tracklog.length > 0
       ? flightTrackDataUpdate.tracklog[
           flightTrackDataUpdate.tracklog.length - 1
         ]
       : null;
   const isTracklogDataInvalid =
-    lastTracklogItem !== null
+    latestTracklogItem !== null
       ? calculateDistance(
           flights[0].departureAirport.lat,
           flights[0].departureAirport.lon,
-          lastTracklogItem.coord[1],
-          lastTracklogItem.coord[0],
+          latestTracklogItem.coord[1],
+          latestTracklogItem.coord[0],
         ) >
           flightDistance * 1.5 ||
         calculateDistance(
           flights[0].arrivalAirport.lat,
           flights[0].arrivalAirport.lon,
-          lastTracklogItem.coord[1],
-          lastTracklogItem.coord[0],
+          latestTracklogItem.coord[1],
+          latestTracklogItem.coord[0],
         ) >
           flightDistance * 1.5
       : false;
