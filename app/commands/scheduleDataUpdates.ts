@@ -1,7 +1,7 @@
 import { scheduleJob } from 'node-schedule';
 
 import {
-  // updateFlightsDaily,
+  updateFlightsDaily,
   updateFlightsEvery5,
   updateFlightsEvery15,
   updateFlightsEvery15Seconds,
@@ -15,7 +15,7 @@ import { seedDatabase } from '../db/seeders';
   scheduleJob('0 0 1 * *', seedDatabase);
 
   // Update flights at midnight every day EXCEPT on 1st day of each month
-  // scheduleJob('0 0 2-31 * *', updateFlightsDaily);
+  scheduleJob('0 0 2-31 * *', updateFlightsDaily);
 
   // Update flights at top of every hour EXCEPT at midnight
   scheduleJob('0 1-23 * * *', updateFlightsHourly);

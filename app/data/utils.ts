@@ -3,12 +3,7 @@ import { isDate, isEqual } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 import { DATE_FORMAT_ISO } from '../constants';
-import {
-  calculateDistance,
-  getEstimatedSpeedFromTracklog,
-  getProjectedAltitudeFromTracklog,
-} from '../utils';
-import type { FlightWithData, TracklogItem } from './types';
+import type { FlightWithData } from './types';
 
 export const createNewDate = (timestamp: number): Date =>
   new Date(1000 * timestamp);
@@ -87,28 +82,4 @@ export const removeUndefined = <T extends object>(obj: T): Partial<T> =>
 export const getDescentDuration = (distanceToDescend: number): number => {
   if (distanceToDescend <= 0) return 0;
   return 0.3155 * Math.pow(distanceToDescend, 0.7676);
-};
-
-export const getMinutesToArrival = (
-  flight: FlightWithData,
-  tracklog: TracklogItem[],
-): number => {
-  const latestItem = tracklog[tracklog.length - 1];
-  const arrivalAirport = flight.diversionAirport ?? flight.arrivalAirport;
-  const arrivalElevation = (arrivalAirport.elevation ?? 0) / 100;
-  const distanceToArrival = calculateDistance(
-    latestItem.coord[1],
-    latestItem.coord[0],
-    arrivalAirport.lat,
-    arrivalAirport.lon,
-  );
-  const estimatedSpeed = getEstimatedSpeedFromTracklog(tracklog);
-  const projectedAltitude =
-    getProjectedAltitudeFromTracklog(tracklog) ?? arrivalElevation;
-  const distanceToDescend = projectedAltitude - arrivalElevation;
-  const descentDuration = getDescentDuration(distanceToDescend);
-  const calculatedDuration =
-    (distanceToArrival / (estimatedSpeed * 0.98)) * 60 +
-    descentDuration * 0.4002384454;
-  return Math.max(calculatedDuration, descentDuration);
 };
