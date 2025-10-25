@@ -108,8 +108,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         id: 'home',
         children: 'Home',
         className: classNames(
-          '[--tab-bg:var(--color-primary)] text-primary-content',
-          currentTab === 'home' && 'hover:text-primary-content',
+          '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+          currentTab === 'home' && 'lg:hover:text-primary-content',
         ),
         onClick: () => {
           if (currentTab !== 'home') {
@@ -123,8 +123,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               id: 'profile',
               children: 'Profile',
               className: classNames(
-                '[--tab-bg:var(--color-primary)] text-primary-content',
-                currentTab === 'profile' && 'hover:text-primary-content',
+                '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+                currentTab === 'profile' && 'lg:hover:text-primary-content',
               ),
               onClick: () => {
                 if (currentTab !== 'profile') {
@@ -136,8 +136,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               id: 'users',
               children: 'Users',
               className: classNames(
-                '[--tab-bg:var(--color-primary)] text-primary-content',
-                currentTab === 'users' && 'hover:text-primary-content',
+                '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+                currentTab === 'users' && 'lg:hover:text-primary-content',
               ),
               onClick: () => {
                 if (currentTab !== 'users') {
@@ -151,8 +151,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         id: 'data',
         children: 'Data',
         className: classNames(
-          '[--tab-bg:var(--color-primary)] text-primary-content',
-          currentTab === 'data' && 'hover:text-primary-content',
+          '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+          currentTab === 'data' && 'lg:hover:text-primary-content',
         ),
         onClick: () => {
           if (currentTab !== 'data') {

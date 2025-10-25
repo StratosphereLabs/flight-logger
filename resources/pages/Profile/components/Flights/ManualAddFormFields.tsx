@@ -166,6 +166,7 @@ export const ManualAddFormFields = ({
     <Button
       className="m-auto mt-4 w-full max-w-[500px]"
       color="primary"
+      disabled={isAddFlightLoading}
       loading={isAddFlightLoading}
       soft
       type="submit"

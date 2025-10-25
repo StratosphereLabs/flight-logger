@@ -43,8 +43,9 @@ export const getFlightStatsFlightUpdate = async (
         })
       : null;
   const tailNumber =
-    flightStatsResponse.positional.flexTrack?.tailNumber ?? null;
-  const airframe = tailNumber !== null ? await getAirframe(tailNumber) : null;
+    flightStatsResponse.positional.flexTrack?.tailNumber ?? undefined;
+  const airframe =
+    tailNumber !== undefined ? await getAirframe(tailNumber) : null;
   const aircraftType =
     flightStatsResponse.additionalFlightInfo.equipment !== null &&
     (airframe?.aircraftTypeId === null ||
@@ -62,20 +63,37 @@ export const getFlightStatsFlightUpdate = async (
     flightStatsResponse.schedule.scheduledDepartureUTC !== null
       ? new Date(flightStatsResponse.schedule.scheduledDepartureUTC)
       : undefined;
-  const outTimeActual =
+  const estimatedActualDeparture =
     flightStatsResponse.schedule.estimatedActualDepartureUTC !== null
       ? new Date(flightStatsResponse.schedule.estimatedActualDepartureUTC)
       : null;
-  const offTime = outTime !== undefined ? add(outTime, { minutes: 10 }) : null;
+  const outTimeActual = !flightStatsResponse.schedule
+    .estimatedActualDepartureRunway
+    ? estimatedActualDeparture
+    : undefined;
+  const offTime =
+    outTime !== undefined ? add(outTime, { minutes: 10 }) : undefined;
+  const offTimeActual = flightStatsResponse.schedule
+    .estimatedActualDepartureRunway
+    ? estimatedActualDeparture
+    : undefined;
   const inTime =
     flightStatsResponse.schedule.scheduledArrivalUTC !== null
       ? new Date(flightStatsResponse.schedule.scheduledArrivalUTC)
       : undefined;
-  const inTimeActual =
+  const estimatedActualArrival =
     flightStatsResponse.schedule.estimatedActualArrivalUTC !== null
       ? new Date(flightStatsResponse.schedule.estimatedActualArrivalUTC)
       : null;
-  const onTime = inTime !== undefined ? sub(inTime, { minutes: 10 }) : null;
+  const inTimeActual = !flightStatsResponse.schedule
+    .estimatedActualArrivalRunway
+    ? estimatedActualArrival
+    : undefined;
+  const onTime =
+    inTime !== undefined ? sub(inTime, { minutes: 10 }) : undefined;
+  const onTimeActual = flightStatsResponse.schedule.estimatedActualArrivalRunway
+    ? estimatedActualArrival
+    : undefined;
   const duration =
     outTime !== undefined && inTime !== undefined
       ? getDurationMinutes({
@@ -85,8 +103,8 @@ export const getFlightStatsFlightUpdate = async (
       : undefined;
   return {
     diversionAirportId: diversionAirport !== null ? diversionAirport.id : null,
-    aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? null,
-    airframeId: airframe?.icao24 ?? null,
+    aircraftTypeId: airframe?.aircraftTypeId ?? aircraftType?.id ?? undefined,
+    airframeId: airframe?.icao24 ?? undefined,
     tailNumber,
     callsign: flightStatsResponse.positional.flexTrack?.callsign ?? null,
     outTime,
@@ -95,6 +113,8 @@ export const getFlightStatsFlightUpdate = async (
     inTime,
     duration,
     outTimeActual,
+    offTimeActual,
+    onTimeActual,
     inTimeActual,
     departureGate: flightStatsResponse.departureAirport.gate,
     departureTerminal: flightStatsResponse.departureAirport.terminal,

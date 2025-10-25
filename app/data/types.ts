@@ -7,6 +7,9 @@ export interface FlightWithDataAirport {
   id: string;
   iata: string;
   timeZone: string;
+  lat: number;
+  lon: number;
+  elevation: number | null;
 }
 
 export type FlightWithData = Flight & {

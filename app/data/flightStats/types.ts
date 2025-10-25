@@ -71,7 +71,9 @@ export interface FlightStatsSchedule {
     arr: string;
     arrUTC: string;
   };
-  tookOff: string;
+  tookOff?: string;
+  landing?: string;
+  isLanded?: boolean;
 }
 
 export interface FlightStatsStatus {

@@ -77,6 +77,9 @@ export const updateFlightsDaily = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         arrivalAirport: {
@@ -84,6 +87,9 @@ export const updateFlightsDaily = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         diversionAirport: {
@@ -91,6 +97,9 @@ export const updateFlightsDaily = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
       },
@@ -144,6 +153,9 @@ export const updateFlightsHourly = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         arrivalAirport: {
@@ -151,6 +163,9 @@ export const updateFlightsHourly = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         diversionAirport: {
@@ -158,6 +173,9 @@ export const updateFlightsHourly = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
       },
@@ -210,6 +228,9 @@ export const updateFlightsEvery15 = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         arrivalAirport: {
@@ -217,6 +238,9 @@ export const updateFlightsEvery15 = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         diversionAirport: {
@@ -224,6 +248,9 @@ export const updateFlightsEvery15 = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
       },
@@ -246,36 +273,24 @@ export const updateFlightsEvery15 = async (): Promise<void> => {
 
 /**
  * Bucket #5 - Every 5 minutes
- * 2 hours before departure - 1 hour after departure
- * 2 hours before arrival - 1 hour after arrival
+ * 2 hours before departure - 1 hour after arrival
  */
 export const updateFlightsEvery5 = async (): Promise<void> => {
   try {
     const flightsToUpdate = await prisma.flight.findMany({
       where: {
+        outTime: {
+          lte: add(new Date(), { hours: 2 }),
+        },
         OR: [
-          {
-            outTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
-            },
-          },
-          {
-            outTime: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
-            },
-          },
           {
             inTimeActual: {
               gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
             },
           },
           {
             inTime: {
               gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { hours: 2 }),
             },
           },
         ],
@@ -293,6 +308,9 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         arrivalAirport: {
@@ -300,6 +318,9 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         diversionAirport: {
@@ -307,6 +328,9 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
       },
@@ -412,6 +436,9 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         arrivalAirport: {
@@ -419,6 +446,9 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         diversionAirport: {
@@ -426,6 +456,9 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
       },
@@ -537,6 +570,9 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         arrivalAirport: {
@@ -544,6 +580,9 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
         diversionAirport: {
@@ -551,6 +590,9 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
             id: true,
             iata: true,
             timeZone: true,
+            lat: true,
+            lon: true,
+            elevation: true,
           },
         },
       },

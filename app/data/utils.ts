@@ -74,9 +74,12 @@ export const getIsEqual = <
   return isDate(a) && isDate(b) ? isEqual(a, b) : a === b;
 };
 
-export const removeNullish = <T extends object>(obj: T): Partial<T> =>
+export const removeUndefined = <T extends object>(obj: T): Partial<T> =>
   Object.fromEntries(
-    Object.entries(obj).filter(
-      ([_, value]) => value !== null && value !== undefined,
-    ),
+    Object.entries(obj).filter(([_, value]) => value !== undefined),
   ) as Partial<T>;
+
+export const getDescentDuration = (distanceToDescend: number): number => {
+  if (distanceToDescend <= 0) return 0;
+  return 0.3155 * Math.pow(distanceToDescend, 0.7676);
+};

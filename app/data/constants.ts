@@ -10,6 +10,10 @@ export const HEADERS = {
 
 export const KTS_TO_MPH = 1.15078;
 
+export const TAXI_OUT_AVERAGE_DURATION = 13;
+
+export const TAXI_IN_AVERAGE_DURATION = 6;
+
 export const FLIGHTRADAR_DATA_INCLUDE_KEYS = [
   'aircraftTypeId',
   'airframeId',

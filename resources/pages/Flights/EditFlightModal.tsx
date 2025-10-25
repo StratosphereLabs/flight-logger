@@ -317,7 +317,7 @@ export const EditFlightModal = ({
           </Button>
           <Button
             color="primary"
-            disabled={!methods.formState.isDirty}
+            disabled={!methods.formState.isDirty || isLoading}
             loading={isLoading}
             soft
             type="submit"

@@ -1,7 +1,11 @@
 import { type WithRequired } from '@tanstack/react-query';
 
 import { prisma } from '../../db';
-import { FLIGHTAWARE_DATA_INCLUDE_KEYS } from '../constants';
+import { calculateDistance } from '../../utils';
+import {
+  FLIGHTAWARE_DATA_INCLUDE_KEYS,
+  FLIGHTRADAR_DATA_INCLUDE_KEYS,
+} from '../constants';
 import {
   type FlightAwareFlightUpdateData,
   getFlightAwareFlightUpdate,
@@ -15,9 +19,12 @@ import {
   getFlightStatsFlightUpdate,
 } from '../flightStats';
 import type { FlightWithData } from '../types';
-import { getGroupedFlightsKey, removeNullish } from '../utils';
+import { getGroupedFlightsKey, removeUndefined } from '../utils';
+import {
+  type FlightTrackUpdateData,
+  getFlightTrackDataUpdate,
+} from './getFlightTrackDataUpdate';
 import { updateFlightChangeData } from './updateFlightChangeData';
-import { updateFlightTrackData } from './updateFlightTrackData';
 
 export const updateFlightData = async (
   flights: FlightWithData[],
@@ -36,8 +43,6 @@ export const updateFlightData = async (
   const flightDataString = getGroupedFlightsKey(flights[0]);
   console.log(`Fetching flight data for ${flightDataString}...`);
   let flightStatsUpdate: FlightStatsFlightUpdateData | null = null;
-  let flightRadarUpdate: FlightRadarFlightUpdateData | null = null;
-  let flightAwareUpdate: FlightAwareFlightUpdateData | null = null;
   if (process.env.DATASOURCE_FLIGHTSTATS === 'true') {
     try {
       flightStatsUpdate = await getFlightStatsFlightUpdate(firstFlight);
@@ -45,22 +50,71 @@ export const updateFlightData = async (
       console.error(err);
     }
   }
-  if (process.env.DATASOURCE_FLIGHTRADAR === 'true') {
+  const flightTrackDataUpdate = await getFlightTrackDataUpdate(
+    flights,
+    flightStatsUpdate,
+  );
+  const combinedUpdate: Partial<
+    FlightStatsFlightUpdateData & FlightTrackUpdateData
+  > = {
+    ...removeUndefined(flightStatsUpdate ?? {}),
+    ...removeUndefined(flightTrackDataUpdate ?? {}),
+  };
+  const flightDistance = calculateDistance(
+    flights[0].departureAirport.lat,
+    flights[0].departureAirport.lon,
+    flights[0].arrivalAirport.lat,
+    flights[0].arrivalAirport.lon,
+  );
+  const latestTracklogItem =
+    flightTrackDataUpdate !== null && flightTrackDataUpdate.tracklog.length > 0
+      ? flightTrackDataUpdate.tracklog[
+          flightTrackDataUpdate.tracklog.length - 1
+        ]
+      : null;
+  const isTracklogDataInvalid =
+    latestTracklogItem !== null
+      ? calculateDistance(
+          flights[0].departureAirport.lat,
+          flights[0].departureAirport.lon,
+          latestTracklogItem.coord[1],
+          latestTracklogItem.coord[0],
+        ) >
+          flightDistance * 1.5 ||
+        calculateDistance(
+          flights[0].arrivalAirport.lat,
+          flights[0].arrivalAirport.lon,
+          latestTracklogItem.coord[1],
+          latestTracklogItem.coord[0],
+        ) >
+          flightDistance * 1.5
+      : false;
+  let flightRadarUpdate: FlightRadarFlightUpdateData | null = null;
+  if (
+    process.env.DATASOURCE_FLIGHTRADAR === 'true' &&
+    (isTracklogDataInvalid ||
+      FLIGHTRADAR_DATA_INCLUDE_KEYS.some(
+        key => combinedUpdate[key] === undefined,
+      ))
+  ) {
     try {
       flightRadarUpdate = await getFlightRadarFlightUpdate(firstFlight);
     } catch (err) {
       console.error(err);
     }
   }
-  const combinedUpdate: Partial<
+  const combinedUpdateWithFlightRadar: Partial<
     FlightStatsFlightUpdateData & FlightRadarFlightUpdateData
   > = {
-    ...removeNullish(flightRadarUpdate ?? {}),
-    ...removeNullish(flightStatsUpdate ?? {}),
+    ...combinedUpdate,
+    ...removeUndefined(flightRadarUpdate ?? {}),
   };
+  let flightAwareUpdate: FlightAwareFlightUpdateData | null = null;
   if (
     process.env.DATASOURCE_FLIGHTAWARE === 'true' &&
-    !FLIGHTAWARE_DATA_INCLUDE_KEYS.every(key => combinedUpdate[key])
+    FLIGHTAWARE_DATA_INCLUDE_KEYS.some(
+      key => combinedUpdateWithFlightRadar[key] === undefined,
+    )
   ) {
     try {
       flightAwareUpdate = await getFlightAwareFlightUpdate(firstFlight);
@@ -69,8 +123,8 @@ export const updateFlightData = async (
     }
   }
   const flightUpdateData = {
-    ...removeNullish(flightAwareUpdate ?? {}),
-    ...combinedUpdate,
+    ...combinedUpdateWithFlightRadar,
+    ...removeUndefined(flightAwareUpdate ?? {}),
   };
   if (Object.keys(flightUpdateData).length === 0) {
     console.log(`  No flight data found for ${flightDataString}.`);
@@ -90,6 +144,9 @@ export const updateFlightData = async (
               id: true,
               iata: true,
               timeZone: true,
+              lat: true,
+              lon: true,
+              elevation: true,
             },
           },
           arrivalAirport: {
@@ -97,6 +154,9 @@ export const updateFlightData = async (
               id: true,
               iata: true,
               timeZone: true,
+              lat: true,
+              lon: true,
+              elevation: true,
             },
           },
           diversionAirport: {
@@ -104,6 +164,9 @@ export const updateFlightData = async (
               id: true,
               iata: true,
               timeZone: true,
+              lat: true,
+              lon: true,
+              elevation: true,
             },
           },
         },
@@ -111,6 +174,5 @@ export const updateFlightData = async (
     ),
   );
   await updateFlightChangeData(flights, flightUpdateData);
-  await updateFlightTrackData(updatedFlights);
   return updatedFlights;
 };
