@@ -46,19 +46,18 @@ export const getProjectedTakeoffTime = (
   if (lastItemOnGround !== undefined) {
     return createNewDate(lastItemOnGround.timestamp);
   }
-  const firstItemInAir =
-    tracklog.find(
-      ({ ground, alt, coord }) =>
-        ground !== true &&
-        alt !== null &&
-        calculateDistance(
-          flight.departureAirport.lat,
-          flight.departureAirport.lon,
-          coord[1],
-          coord[0],
-        ) < 5,
-    ) ?? null;
-  if (firstItemInAir !== null) {
+  const firstItemInAir = tracklog.find(
+    ({ ground, alt, coord }) =>
+      ground !== true &&
+      alt !== null &&
+      calculateDistance(
+        flight.departureAirport.lat,
+        flight.departureAirport.lon,
+        coord[1],
+        coord[0],
+      ) < 5,
+  );
+  if (firstItemInAir !== undefined) {
     return createNewDate(firstItemInAir.timestamp);
   }
   const latestItem = tracklog[tracklog.length - 1];
