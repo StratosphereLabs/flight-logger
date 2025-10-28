@@ -188,7 +188,9 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               menuClassName="w-48 bg-base-200 z-50"
             />
             <Button
-              className="inline-flex px-1 normal-case sm:px-4"
+              // remove the background on hover
+
+              className="inline-flex border-none bg-transparent px-1 normal-case shadow-none outline-none hover:border-none hover:bg-transparent hover:shadow-none hover:outline-none focus:outline-none active:outline-none sm:px-4"
               color="ghost"
               onClick={() => {
                 navigate('/');
