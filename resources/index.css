@@ -2,9 +2,9 @@
 @plugin "daisyui" {
   themes:
     corporate --default,
-    halloween --prefersdark,
+    halloween,
     emerald,
-    night,
+    night --prefersdark,
     synthwave,
     fantasy,
     abyss,
