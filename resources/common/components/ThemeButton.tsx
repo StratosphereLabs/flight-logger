@@ -7,9 +7,9 @@ import {
   DarkModeIcon,
   DarkModeOutlineIcon,
   FantasyIcon,
-  // ForestIcon,
+  ForestIcon,
   GemIcon,
-  HalloweenIcon,
+  // HalloweenIcon,
   LightModeIcon,
   SunsetIcon,
   ThemeIcon,
@@ -49,38 +49,38 @@ export const ThemeButton = (): JSX.Element => {
             'data-theme': 'corporate',
           },
         },
+        // {
+        //   id: AppTheme.HALLOWEEN,
+        //   onClick: () => {
+        //     setTheme(AppTheme.HALLOWEEN);
+        //   },
+        //   children: (
+        //     <>
+        //       <HalloweenIcon className="h-5 w-5" />
+        //       Halloween
+        //     </>
+        //   ),
+        //   listItemProps: {
+        //     // @ts-ignore
+        //     'data-theme': 'halloween',
+        //   },
+        // },
         {
-          id: AppTheme.HALLOWEEN,
+          id: AppTheme.NIGHT,
           onClick: () => {
-            setTheme(AppTheme.HALLOWEEN);
+            setTheme(AppTheme.NIGHT);
           },
           children: (
             <>
-              <HalloweenIcon className="h-5 w-5" />
-              Halloween
+              <DarkModeIcon className="h-5 w-5" />
+              Night
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'halloween',
+            'data-theme': 'night',
           },
         },
-        //  {
-        //     id: AppTheme.NIGHT,
-        //     onClick: () => {
-        //       setTheme(AppTheme.NIGHT);
-        //     },
-        //     children: (
-        //       <>
-        //         <DarkModeIcon className="h-5 w-5" />
-        //         Dark
-        //       </>
-        //     ),
-        //     listItemProps: {
-        //       // @ts-ignore
-        //       'data-theme': 'night',
-        //     },
-        //   },
         {
           className: 'bg-primary text-primary-content',
           id: AppTheme.EMERALD,
@@ -98,37 +98,20 @@ export const ThemeButton = (): JSX.Element => {
             'data-theme': 'emerald',
           },
         },
-
-        // {
-        //   id: AppTheme.FOREST,
-        //   onClick: () => {
-        //     setTheme(AppTheme.FOREST);
-        //   },
-        //   children: (
-        //     <>
-        //       <ForestIcon className="h-5 w-5" />
-        //       Forest
-        //     </>
-        //   ),
-        //   listItemProps: {
-        //     // @ts-ignore
-        //     'data-theme': 'forest',
-        //   },
-        // },
         {
-          id: AppTheme.NIGHT,
+          id: AppTheme.FOREST,
           onClick: () => {
-            setTheme(AppTheme.NIGHT);
+            setTheme(AppTheme.FOREST);
           },
           children: (
             <>
-              <DarkModeIcon className="h-5 w-5" />
-              Night
+              <ForestIcon className="h-5 w-5" />
+              Forest
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'night',
+            'data-theme': 'forest',
           },
         },
         {
