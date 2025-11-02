@@ -204,9 +204,49 @@ export const flightsRouter = router({
             flightData.inTime)
           : new Date();
       const timestamp = getRainviewerTimestamp(weatherRadarTime);
+      return {
+        ...flightData,
+        user:
+          flightData.user !== null
+            ? _.omit(flightData.user, 'followedBy')
+            : null,
+        outTimeYear: formatInTimeZone(
+          flightData.outTime,
+          flightData.departureAirport.timeZone,
+          DATE_FORMAT_YEAR,
+        ),
+        outTimeDate: formatInTimeZone(
+          flightData.outTime,
+          flightData.departureAirport.timeZone,
+          DATE_FORMAT_MONTH_DAY,
+        ),
+        flightState,
+        timestamp,
+      };
+    }),
+  getAircraftOtherFlights: procedure
+    .input(getAircraftFlightSchema)
+    .query(async ({ input }) => {
+      const flightResults = await prisma.flight.findMany({
+        where: {
+          airframeId: input.icao24,
+          outTime: {
+            gt: sub(new Date(), { days: 1 }),
+            lt: add(new Date(), { days: 1 }),
+          },
+        },
+        include: flightIncludeObj,
+        omit: {
+          tracklog: false,
+          waypoints: false,
+        },
+      });
+      const activeFlight = getActiveFlight(flightResults);
       const otherFlights: Array<
         TransformFlightDataResult & {
           flightState: 'UPCOMING' | 'CURRENT' | 'COMPLETED';
+          outTimeYear: string;
+          outTimeDate: string;
         }
       > = [];
       for (const result of flightResults) {
@@ -217,23 +257,24 @@ export const flightsRouter = router({
             : flight.flightStatus === 'ARRIVED'
               ? 'COMPLETED'
               : 'CURRENT';
-        if (result.id !== activeFlight.id) {
+        if (result.id !== activeFlight?.id) {
           otherFlights.push({
             ...flight,
             flightState,
+            outTimeYear: formatInTimeZone(
+              result.outTime,
+              result.departureAirport.timeZone,
+              DATE_FORMAT_YEAR,
+            ),
+            outTimeDate: formatInTimeZone(
+              result.outTime,
+              result.departureAirport.timeZone,
+              DATE_FORMAT_MONTH_DAY,
+            ),
           });
         }
       }
-      return {
-        ...flightData,
-        user:
-          flightData.user !== null
-            ? _.omit(flightData.user, 'followedBy')
-            : null,
-        flightState,
-        timestamp,
-        otherFlights,
-      };
+      return otherFlights;
     }),
   getExtraFlightData: procedure
     .input(getExtraFlightDataSchema)

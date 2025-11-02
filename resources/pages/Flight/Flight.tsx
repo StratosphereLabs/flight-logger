@@ -507,7 +507,7 @@ export const Flight = (): JSX.Element | null => {
                 `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
             )}
           >
-            <FlightInfo flightId={flightId} />
+            <FlightInfo flightId={flightId} showTrackMyAircraftButton />
             <OnTimePerformanceChart flightId={flightId} />
             <WeatherInfo flightId={flightId} />
             {isLoggedIn ? <FlightHistory flightId={flightId} /> : null}

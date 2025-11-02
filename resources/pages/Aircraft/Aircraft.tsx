@@ -39,7 +39,7 @@ import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { FlightInfo } from '../Flight/FlightInfo';
 import { DEFAULT_COORDINATES } from '../Home/constants';
-import { FlightActivity } from './FlightActivity';
+import { AircraftFlightActivity } from './AircraftFlightActivity';
 
 export interface AircraftPageNavigationState {
   previousPageName: string;
@@ -502,7 +502,7 @@ export const Aircraft = (): JSX.Element | null => {
               )}
             >
               <FlightInfo flightId={data.id} />
-              <FlightActivity />
+              <AircraftFlightActivity airframeId={icao24} />
               <OnTimePerformanceChart flightId={data.id} />
               <WeatherInfo flightId={data.id} />
               <FlightChangelogTable flightId={data.id} />

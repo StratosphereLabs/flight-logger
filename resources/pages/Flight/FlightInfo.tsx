@@ -26,10 +26,12 @@ import { FlightDetailedTimetable } from './FlightDetailedTimetable';
 
 export interface FlightInfoProps {
   flightId: string;
+  showTrackMyAircraftButton?: boolean;
 }
 
 export const FlightInfo = ({
   flightId,
+  showTrackMyAircraftButton,
 }: FlightInfoProps): JSX.Element | null => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
@@ -270,7 +272,10 @@ export const FlightInfo = ({
           </div>
         </div>
       </div>
-      <FlightAircraftDetails data={data} />
+      <FlightAircraftDetails
+        data={data}
+        showTrackMyAircraftButton={showTrackMyAircraftButton}
+      />
       <FlightDetailedTimetable data={data} />
       {isAddTravelerDialogOpen ? (
         <AddTravelersModal
