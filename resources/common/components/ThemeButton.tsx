@@ -65,22 +65,6 @@ export const ThemeButton = (): JSX.Element => {
         //     'data-theme': 'halloween',
         //   },
         // },
-        // {
-        //   id: AppTheme.NIGHT,
-        //   onClick: () => {
-        //     setTheme(AppTheme.NIGHT);
-        //   },
-        //   children: (
-        //     <>
-        //       <DarkModeIcon className="h-5 w-5" />
-        //       Dark
-        //     </>
-        //   ),
-        //   listItemProps: {
-        //     // @ts-ignore
-        //     'data-theme': 'night',
-        //   },
-        // },
         {
           id: AppTheme.NIGHT,
           onClick: () => {
