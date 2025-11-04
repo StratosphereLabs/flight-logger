@@ -18,8 +18,6 @@ export const AircraftFlightActivity = ({
   const { data, isFetching } = trpc.flights.getAircraftOtherFlights.useQuery({
     icao24: airframeId,
   });
-
-  console.log({ data, airframeId });
   return (
     <div
       className={classNames(
