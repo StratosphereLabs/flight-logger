@@ -4,6 +4,7 @@ import { Loading } from 'stratosphere-ui';
 
 import { useCardClassNames } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
+import { sortByArrivalTimeDesc, sortByDepartureTimeAsc } from '../Home/utils';
 import { AircraftFlightHistoryRow } from './AircraftFlightHistoryRow';
 
 export interface AircraftFlightHistoryProps {
@@ -28,7 +29,7 @@ export const AircraftFlightActivity = ({
       <div className="text-base font-semibold" ref={headerRef}>
         Flight Activity
       </div>
-      {data?.length === 0 && !isFetching ? (
+      {data?.count === 0 && !isFetching ? (
         <div className="my-4 text-center">No Flights Found</div>
       ) : null}
       {isFetching ? (
@@ -37,13 +38,33 @@ export const AircraftFlightActivity = ({
         </div>
       ) : (
         <div className="mx-[-4px] flex flex-1 flex-col gap-2">
-          {data?.map(flight => (
-            <AircraftFlightHistoryRow
-              key={flight.id}
-              flight={flight}
-              previousPageName={`Aircraft ${airframeId}`}
-            />
-          ))}
+          {data?.groupedFlights.CURRENT?.sort(sortByDepartureTimeAsc).map(
+            flight => (
+              <AircraftFlightHistoryRow
+                key={flight.id}
+                flight={flight}
+                previousPageName={`Aircraft ${airframeId}`}
+              />
+            ),
+          )}
+          {data?.groupedFlights.UPCOMING?.sort(sortByDepartureTimeAsc).map(
+            flight => (
+              <AircraftFlightHistoryRow
+                key={flight.id}
+                flight={flight}
+                previousPageName={`Aircraft ${airframeId}`}
+              />
+            ),
+          )}
+          {data?.groupedFlights.COMPLETED?.sort(sortByArrivalTimeDesc).map(
+            flight => (
+              <AircraftFlightHistoryRow
+                key={flight.id}
+                flight={flight}
+                previousPageName={`Aircraft ${airframeId}`}
+              />
+            ),
+          )}
         </div>
       )}
     </div>

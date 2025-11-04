@@ -3,7 +3,7 @@ import { TRPCError, type inferRouterOutputs } from '@trpc/server';
 import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, isEqual, sub } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import _ from 'lodash';
+import _, { groupBy } from 'lodash';
 
 import {
   DATE_FORMAT_MONTH_DAY,
@@ -274,7 +274,11 @@ export const flightsRouter = router({
           });
         }
       }
-      return otherFlights;
+      const groupedFlights = groupBy(
+        otherFlights,
+        ({ flightState }) => flightState,
+      );
+      return { groupedFlights, count: otherFlights.length };
     }),
   getExtraFlightData: procedure
     .input(getExtraFlightDataSchema)

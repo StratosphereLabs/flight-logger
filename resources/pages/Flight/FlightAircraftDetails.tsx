@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Loading } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
+import { TrackAircraftIcon } from '../../common/components';
 import { useAircraftPhotoQuery, useCardClassNames } from '../../common/hooks';
 
 export interface FlightAircraftDetailsProps {
@@ -79,13 +80,16 @@ export const FlightAircraftDetails = ({
           </p>
         </div>
       </div>
-      {showTrackMyAircraftButton === true ? (
+      {data !== undefined &&
+      data.flightStatus !== 'ARRIVED' &&
+      showTrackMyAircraftButton === true ? (
         <Button
-          color="primary"
+          color="neutral"
           onClick={() => {
             navigate(`/aircraft/${data.airframeId}`);
           }}
         >
+          <TrackAircraftIcon className="h-6 w-6" />
           Track my Aircraft
         </Button>
       ) : null}

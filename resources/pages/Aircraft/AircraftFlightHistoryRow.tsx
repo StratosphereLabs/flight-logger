@@ -14,7 +14,7 @@ import {
 import { AppTheme, useThemeStore } from '../../stores';
 
 export interface FlightHistoryRowProps extends HTMLProps<HTMLDivElement> {
-  flight: FlightsRouterOutput['getAircraftOtherFlights'][number];
+  flight: FlightsRouterOutput['getAircraftOtherFlights']['groupedFlights'][string][number];
   previousPageName?: string;
 }
 
