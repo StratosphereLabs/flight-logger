@@ -82,6 +82,7 @@ export const FlightAircraftDetails = ({
       </div>
       {data !== undefined &&
       data.flightStatus !== 'ARRIVED' &&
+      data.airframeId !== null &&
       showTrackMyAircraftButton === true ? (
         <Button
           color="neutral"
