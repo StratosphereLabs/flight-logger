@@ -2,9 +2,12 @@ import classNames from 'classnames';
 import { useRef } from 'react';
 import { Loading } from 'stratosphere-ui';
 
-import { useCardClassNames } from '../../common/hooks';
-import { trpc } from '../../utils/trpc';
-import { sortByArrivalTimeDesc, sortByDepartureTimeAsc } from '../Home/utils';
+import {
+  sortByArrivalTimeDesc,
+  sortByDepartureTimeAsc,
+} from '../../../pages/Home/utils';
+import { trpc } from '../../../utils/trpc';
+import { useCardClassNames } from '../../hooks';
 import { AircraftFlightHistoryRow } from './AircraftFlightHistoryRow';
 
 export interface AircraftFlightHistoryProps {

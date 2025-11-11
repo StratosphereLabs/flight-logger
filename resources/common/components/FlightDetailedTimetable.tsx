@@ -1,19 +1,51 @@
 import classNames from 'classnames';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { TEXT_COLORS } from '../../common/constants';
-import { useCardClassNames } from '../../common/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
+import { TEXT_COLORS } from '../constants';
+import { useCardClassNames } from '../hooks';
 
 export interface FlightDetailedTimetableProps {
-  data: FlightsRouterOutput['getFlight'];
+  data?: Pick<
+    FlightsRouterOutput['getFlight'],
+    | 'outTime'
+    | 'outTimeLocal'
+    | 'outTimeActualLocal'
+    | 'outTimeActualDaysAdded'
+    | 'departureDelayStatus'
+    | 'offTimeLocal'
+    | 'offTimeDaysAdded'
+    | 'offTimeActualLocal'
+    | 'offTimeActualDaysAdded'
+    | 'takeoffDelayStatus'
+    | 'onTimeLocal'
+    | 'onTimeDaysAdded'
+    | 'landingDelayStatus'
+    | 'onTimeActualLocal'
+    | 'onTimeActualDaysAdded'
+    | 'inTimeLocal'
+    | 'inTimeDaysAdded'
+    | 'arrivalDelayStatus'
+    | 'inTimeActualLocal'
+    | 'inTimeActualDaysAdded'
+    | 'flightDurationString'
+    | 'flightDurationDelayStatus'
+    | 'flightDurationActualString'
+    | 'taxiDurationString'
+    | 'taxiDurationDelayStatus'
+    | 'taxiDurationActualString'
+    | 'durationStringLeadingZero'
+    | 'durationDelayStatus'
+    | 'durationActualString'
+  >;
 }
 
 export const FlightDetailedTimetable = ({
   data,
-}: FlightDetailedTimetableProps): JSX.Element => {
+}: FlightDetailedTimetableProps): JSX.Element | null => {
   const { theme } = useThemeStore();
   const cardClassNames = useCardClassNames();
+  if (data === undefined) return null;
   return (
     <div
       className={classNames(

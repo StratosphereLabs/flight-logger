@@ -12,8 +12,14 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 
 import {
+  AddTravelersModal,
+  AddUserToFlightModal,
+  AircraftFlightActivity,
   AirportLabelOverlay,
+  FlightAircraftDetails,
   FlightChangelogTable,
+  FlightDetailedTimetable,
+  FlightInfo,
   FlightTimesDisplay,
   HalloweenIcon,
   OnTimePerformanceChart,
@@ -37,9 +43,7 @@ import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
-import { FlightInfo } from '../Flight/FlightInfo';
 import { DEFAULT_COORDINATES } from '../Home/constants';
-import { AircraftFlightActivity } from './AircraftFlightActivity';
 
 export interface AircraftPageNavigationState {
   previousPageName: string;
@@ -64,6 +68,8 @@ export const Aircraft = (): JSX.Element | null => {
     state: AircraftPageNavigationState | null;
   };
   const [center] = useState(DEFAULT_COORDINATES);
+  const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
+  const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
   const isEnRouteFlight =
@@ -490,26 +496,48 @@ export const Aircraft = (): JSX.Element | null => {
             </div>
           </div>
         ) : null}
-        {data !== undefined ? (
-          <div className="rounded-box bg-base-100/80 mt-[calc(50vh-305px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
-            <div
-              className={classNames(
-                'rounded-box pointer-events-auto flex flex-1 flex-col gap-3 overflow-y-scroll p-2 md:h-full',
-                HIDE_SCROLLBAR_CLASSNAME,
-                data !== undefined && CARD_COLORS[data.delayStatus],
-                data !== undefined &&
-                  `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
-              )}
-            >
-              <FlightInfo flightId={data.id} />
-              <AircraftFlightActivity airframeId={icao24} />
-              <OnTimePerformanceChart flightId={data.id} />
-              <WeatherInfo flightId={data.id} />
-              <FlightChangelogTable flightId={data.id} />
-            </div>
+        <div className="rounded-box bg-base-100/80 mt-[calc(50vh-305px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
+          <div
+            className={classNames(
+              'rounded-box pointer-events-auto flex flex-1 flex-col gap-3 overflow-y-scroll p-2 md:h-full',
+              HIDE_SCROLLBAR_CLASSNAME,
+              data !== undefined && CARD_COLORS[data.delayStatus],
+              data !== undefined &&
+                `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
+            )}
+          >
+            <FlightInfo
+              data={data}
+              onAddTravelersClick={() => {
+                setIsAddTravelerDialogOpen(true);
+              }}
+              onJoinFlightClick={() => {
+                setIsAddFlightDialogOpen(true);
+              }}
+            />
+            <FlightAircraftDetails data={data} />
+            <AircraftFlightActivity airframeId={icao24} />
+            <FlightDetailedTimetable data={data} />
+            <OnTimePerformanceChart flightId={data?.id} />
+            <WeatherInfo flightId={data?.id} />
+            <FlightChangelogTable flightId={data?.id} />
           </div>
-        ) : null}
+        </div>
       </div>
+      {isAddTravelerDialogOpen && data !== undefined ? (
+        <AddTravelersModal
+          flightId={data.id}
+          open={isAddTravelerDialogOpen}
+          setOpen={setIsAddTravelerDialogOpen}
+        />
+      ) : null}
+      {isAddFlightDialogOpen && data !== undefined ? (
+        <AddUserToFlightModal
+          flightId={data.id}
+          open={isAddFlightDialogOpen}
+          setOpen={setIsAddFlightDialogOpen}
+        />
+      ) : null}
     </div>
   );
 };

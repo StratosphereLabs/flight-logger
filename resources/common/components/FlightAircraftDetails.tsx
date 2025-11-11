@@ -3,24 +3,37 @@ import { isAfter, isBefore, sub } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Loading } from 'stratosphere-ui';
 
+import { TrackAircraftIcon } from '.';
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { TrackAircraftIcon } from '../../common/components';
-import { useAircraftPhotoQuery, useCardClassNames } from '../../common/hooks';
+import { type AircraftPageNavigationState } from '../../pages';
+import { useAircraftPhotoQuery, useCardClassNames } from '../hooks';
 
 export interface FlightAircraftDetailsProps {
-  data: FlightsRouterOutput['getFlight'];
+  data?: Pick<
+    FlightsRouterOutput['getFlight'],
+    | 'airframeId'
+    | 'airframe'
+    | 'tailNumber'
+    | 'aircraftType'
+    | 'outTime'
+    | 'outDateISO'
+    | 'flightNumberString'
+  >;
   showTrackMyAircraftButton?: boolean;
 }
 
 export const FlightAircraftDetails = ({
   data,
   showTrackMyAircraftButton,
-}: FlightAircraftDetailsProps): JSX.Element => {
+}: FlightAircraftDetailsProps): JSX.Element | null => {
   const cardClassNames = useCardClassNames();
   const navigate = useNavigate();
   const { data: photoData, isFetching } = useAircraftPhotoQuery(
     data?.airframeId ?? null,
   );
+  if (data === undefined) {
+    return null;
+  }
   const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
   return (
     <div
@@ -89,7 +102,11 @@ export const FlightAircraftDetails = ({
         <Button
           color="neutral"
           onClick={() => {
-            navigate(`/aircraft/${data.airframeId}`);
+            navigate(`/aircraft/${data.airframeId}`, {
+              state: {
+                previousPageName: `${data.flightNumberString} ${data.outDateISO}`,
+              } as const as AircraftPageNavigationState,
+            });
           }}
         >
           <TrackAircraftIcon className="h-6 w-6" />

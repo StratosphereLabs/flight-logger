@@ -222,6 +222,8 @@ export const flightsRouter = router({
         ),
         flightState,
         timestamp,
+        otherTravelers: [],
+        canAddFlight: false,
       };
     }),
   getAircraftOtherFlights: procedure

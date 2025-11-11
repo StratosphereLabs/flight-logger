@@ -12,9 +12,14 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 
 import {
+  AddTravelersModal,
+  AddUserToFlightModal,
   AirportLabelOverlay,
+  FlightAircraftDetails,
   FlightChangelogTable,
+  FlightDetailedTimetable,
   FlightHistory,
+  FlightInfo,
   FlightTimesDisplay,
   HalloweenIcon,
   OnTimePerformanceChart,
@@ -45,7 +50,6 @@ import {
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { DEFAULT_COORDINATES } from '../Home/constants';
-import { FlightInfo } from './FlightInfo';
 
 export interface FlightPageNavigationState {
   previousPageName: string;
@@ -71,6 +75,8 @@ export const Flight = (): JSX.Element | null => {
     state: FlightPageNavigationState | null;
   };
   const [center] = useState(DEFAULT_COORDINATES);
+  const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
+  const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
   const isEnRouteFlight =
@@ -507,7 +513,17 @@ export const Flight = (): JSX.Element | null => {
                 `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
             )}
           >
-            <FlightInfo flightId={flightId} showTrackMyAircraftButton />
+            <FlightInfo
+              data={data}
+              onAddTravelersClick={() => {
+                setIsAddTravelerDialogOpen(true);
+              }}
+              onJoinFlightClick={() => {
+                setIsAddFlightDialogOpen(true);
+              }}
+            />
+            <FlightAircraftDetails data={data} showTrackMyAircraftButton />
+            <FlightDetailedTimetable data={data} />
             <OnTimePerformanceChart flightId={flightId} />
             <WeatherInfo flightId={flightId} />
             {isLoggedIn ? <FlightHistory flightId={flightId} /> : null}
@@ -515,6 +531,20 @@ export const Flight = (): JSX.Element | null => {
           </div>
         </div>
       </div>
+      {isAddTravelerDialogOpen && data !== undefined ? (
+        <AddTravelersModal
+          flightId={data.id}
+          open={isAddTravelerDialogOpen}
+          setOpen={setIsAddTravelerDialogOpen}
+        />
+      ) : null}
+      {isAddFlightDialogOpen && data !== undefined ? (
+        <AddUserToFlightModal
+          flightId={data.id}
+          open={isAddFlightDialogOpen}
+          setOpen={setIsAddFlightDialogOpen}
+        />
+      ) : null}
     </div>
   );
 };

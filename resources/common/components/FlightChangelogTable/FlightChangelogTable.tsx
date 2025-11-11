@@ -21,7 +21,7 @@ import { FlightChangeValue } from './FlightChangeValue';
 
 export interface FlightChangelogTableProps {
   className?: string;
-  flightId: string;
+  flightId?: string;
   pageSize?: number;
 }
 
@@ -38,10 +38,11 @@ export const FlightChangelogTable = ({
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
     trpc.flights.getFlightChangelog.useInfiniteQuery(
       {
-        id: flightId,
+        id: flightId ?? '',
         limit,
       },
       {
+        enabled: flightId !== undefined,
         getNextPageParam: ({ metadata }) =>
           metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
         keepPreviousData,

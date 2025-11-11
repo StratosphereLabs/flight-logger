@@ -2,18 +2,28 @@ import { trpc } from '../../../utils/trpc';
 import { WeatherCard } from './WeatherCard';
 
 export interface WeatherInfoProps {
-  flightId: string;
+  flightId?: string;
 }
 
 export const WeatherInfo = ({
   flightId,
 }: WeatherInfoProps): JSX.Element | null => {
-  const { data: flightData } = trpc.flights.getFlight.useQuery({
-    id: flightId,
-  });
-  const { data } = trpc.flights.getExtraFlightData.useQuery({
-    flightId,
-  });
+  const { data: flightData } = trpc.flights.getFlight.useQuery(
+    {
+      id: flightId ?? '',
+    },
+    {
+      enabled: flightId !== undefined,
+    },
+  );
+  const { data } = trpc.flights.getExtraFlightData.useQuery(
+    {
+      flightId: flightId ?? '',
+    },
+    {
+      enabled: flightId !== undefined,
+    },
+  );
   if (
     flightData === undefined ||
     data === undefined ||
