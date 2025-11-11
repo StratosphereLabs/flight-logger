@@ -173,8 +173,8 @@ export const flightsRouter = router({
         where: {
           airframeId: input.icao24,
           outTime: {
-            gt: sub(new Date(), { days: 1 }),
-            lt: add(new Date(), { days: 1 }),
+            gt: sub(new Date(), { days: 2 }),
+            lt: add(new Date(), { days: 2 }),
           },
         },
         include: flightIncludeObj,
@@ -231,8 +231,8 @@ export const flightsRouter = router({
         where: {
           airframeId: input.icao24,
           outTime: {
-            gt: sub(new Date(), { days: 1 }),
-            lt: add(new Date(), { days: 1 }),
+            gt: sub(new Date(), { days: 2 }),
+            lt: add(new Date(), { days: 2 }),
           },
         },
         include: flightIncludeObj,

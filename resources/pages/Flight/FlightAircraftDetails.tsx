@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { isAfter, isBefore, sub } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Loading } from 'stratosphere-ui';
 
@@ -80,9 +81,10 @@ export const FlightAircraftDetails = ({
           </p>
         </div>
       </div>
-      {data !== undefined &&
-      data.flightStatus !== 'ARRIVED' &&
-      data.airframeId !== null &&
+      {data?.airframeId !== null &&
+      data?.airframeId !== undefined &&
+      isAfter(new Date(), sub(data.outTime, { days: 2 })) &&
+      isBefore(new Date(), data.outTime) &&
       showTrackMyAircraftButton === true ? (
         <Button
           color="neutral"
