@@ -2,12 +2,12 @@ import { ResponsiveBar } from '@nivo/bar';
 import classNames from 'classnames';
 import { Tooltip } from 'stratosphere-ui';
 
-import { BAR_CHART_THEME } from '../../pages/Profile/components/Statistics/constants';
 import { trpc } from '../../utils/trpc';
-import { useCardClassNames } from './useCardClassNames';
+import { BAR_CHART_THEME } from '../constants';
+import { useCardClassNames } from '../hooks';
 
 export interface OnTimePerformanceChartProps {
-  flightId: string;
+  flightId?: string;
 }
 
 const BAR_COLORS: Record<string, string> = {
@@ -22,9 +22,14 @@ const BAR_COLORS: Record<string, string> = {
 export const OnTimePerformanceChart = ({
   flightId,
 }: OnTimePerformanceChartProps): JSX.Element | null => {
-  const { data, isFetching } = trpc.flights.getExtraFlightData.useQuery({
-    flightId,
-  });
+  const { data, isFetching } = trpc.flights.getExtraFlightData.useQuery(
+    {
+      flightId: flightId ?? '',
+    },
+    {
+      enabled: flightId !== undefined,
+    },
+  );
   const cardClassNames = useCardClassNames();
   return data?.onTimePerformance !== null &&
     data?.onTimePerformance !== undefined ? (

@@ -67,7 +67,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
       !pathname.includes('/trips'),
     [pathname],
   );
-  const isFlightPage = useMemo(() => pathname.includes('/flight/'), [pathname]);
+  const isFlightPage = useMemo(
+    () => pathname.includes('/flight/') || pathname.includes('/aircraft/'),
+    [pathname],
+  );
   const pathsToTabsMap: Record<string, string> = useMemo(
     () => ({
       '/': 'home',

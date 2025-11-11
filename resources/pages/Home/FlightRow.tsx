@@ -190,11 +190,9 @@ export const FlightRow = ({
             {flight.tailNumber !== null && flight.tailNumber.length > 0 ? (
               <a
                 className="link link-hover pt-[1px] font-mono font-semibold"
-                href={
-                  flight.airframe !== null
-                    ? `https://www.planespotters.net/hex/${flight.airframe.icao24.toUpperCase()}`
-                    : `https://www.flightaware.com/resources/registration/${flight.tailNumber}`
-                }
+                onClick={() => {
+                  navigate(`/aircraft/${flight.airframeId}`);
+                }}
                 target="_blank"
                 rel="noreferrer"
               >

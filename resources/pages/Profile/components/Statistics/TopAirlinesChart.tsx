@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from 'stratosphere-ui';
 
+import { BAR_CHART_THEME } from '../../../../common/constants';
 import {
   useProfileUserQuery,
   useTRPCErrorHandler,
@@ -20,7 +21,7 @@ import {
 import { trpc } from '../../../../utils/trpc';
 import { type ProfileFilterFormData } from '../../hooks';
 import { type StatisticsFiltersData } from './StatisticsCard';
-import { BAR_CHART_THEME, STATS_TOTALS_MODE_UNITS } from './constants';
+import { STATS_TOTALS_MODE_UNITS } from './constants';
 import type { StatisticsChartProps } from './types';
 
 export const TopAirlinesChart = ({

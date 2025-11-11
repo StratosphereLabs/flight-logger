@@ -1,5 +1,6 @@
 export * from './useAircraftPhotoQuery';
 export * from './useAuthPage';
+export * from './useCardClassNames';
 export * from './useCopyToClipboard';
 export * from './useCurrentDate';
 export * from './useErrorResponseHandler';

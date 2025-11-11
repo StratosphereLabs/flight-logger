@@ -18,7 +18,7 @@ export const updateTrackAircraftData = async (
     flights[0].airframeId !== null &&
     flights.some(({ userId }) => userId !== null) &&
     isBefore(new Date(), outTimeActual) &&
-    isAfter(new Date(), sub(outTimeActual, { hours: 36 }));
+    isAfter(new Date(), sub(outTimeActual, { days: 2 }));
   if (!shouldUpdateTrackAircraft) {
     return;
   }

@@ -6,21 +6,22 @@ import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Link, Loading, Table } from 'stratosphere-ui';
 
-import viteIcon from '../../../resources/assets/vite.svg';
-import { FlightChangeValue, TimeIcon } from '../../common/components';
+import { TimeIcon } from '..';
+import viteIcon from '../../../../resources/assets/vite.svg';
+import { AppTheme, useThemeStore } from '../../../stores';
+import { trpc } from '../../../utils/trpc';
 import {
   DATE_FORMAT,
   DEFAULT_PAGE_SIZE,
   HIDE_SCROLLBAR_CLASSNAME,
   TIME_FORMAT_12H,
-} from '../../common/constants';
-import { AppTheme, useThemeStore } from '../../stores';
-import { trpc } from '../../utils/trpc';
-import { useCardClassNames } from './useCardClassNames';
+} from '../../constants';
+import { useCardClassNames } from '../../hooks';
+import { FlightChangeValue } from './FlightChangeValue';
 
 export interface FlightChangelogTableProps {
   className?: string;
-  flightId: string;
+  flightId?: string;
   pageSize?: number;
 }
 
@@ -37,10 +38,11 @@ export const FlightChangelogTable = ({
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
     trpc.flights.getFlightChangelog.useInfiniteQuery(
       {
-        id: flightId,
+        id: flightId ?? '',
         limit,
       },
       {
+        enabled: flightId !== undefined,
         getNextPageParam: ({ metadata }) =>
           metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
         keepPreviousData,

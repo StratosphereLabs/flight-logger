@@ -16,6 +16,15 @@ export const getFlightSchema = z.object({
   id: z.string().uuid(),
 });
 
+export const getAircraftFlightSchema = z.object({
+  icao24: z
+    .string()
+    .regex(/^[0-9a-f]{6}$/i, {
+      message: "Must be a 6-character hex code (no leading '#')",
+    })
+    .transform(s => s.toLowerCase()),
+});
+
 export const profileFiltersSchema = z.object({
   status: z.enum(['completed', 'upcoming', 'all']),
   range: z.enum([

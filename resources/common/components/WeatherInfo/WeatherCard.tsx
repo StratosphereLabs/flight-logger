@@ -7,27 +7,22 @@ import {
   StatValue,
 } from 'stratosphere-ui';
 
-import { type FlightsRouterOutput } from '../../../app/routes/flights';
+import { type FlightsRouterOutput } from '../../../../app/routes/flights';
+import { AppTheme, useThemeStore } from '../../../stores';
+import { useCardClassNames } from '../../hooks';
 import {
   BarometerIcon,
   DewpointIcon,
   TemperatureIcon,
   WindsockIcon,
-} from '../../common/components';
-import { AppTheme, useThemeStore } from '../../stores';
-import { trpc } from '../../utils/trpc';
+} from '../Icons';
 import { CloudCoverChart } from './CloudCoverChart';
-import { useCardClassNames } from './useCardClassNames';
 
 export interface WeatherCardProps {
   data: NonNullable<
     FlightsRouterOutput['getExtraFlightData']['departureWeather']
   >;
   airport: FlightsRouterOutput['getFlight']['departureAirport'];
-}
-
-export interface WeatherInfoProps {
-  flightId: string;
 }
 
 export const WeatherCard = ({
@@ -122,39 +117,6 @@ export const WeatherCard = ({
         <span className="text-sm font-medium opacity-60">METAR</span>
         <span className="font-mono text-xs">{data.rawOb}</span>
       </div>
-    </div>
-  );
-};
-
-export const WeatherInfo = ({
-  flightId,
-}: WeatherInfoProps): JSX.Element | null => {
-  const { data: flightData } = trpc.flights.getFlight.useQuery({
-    id: flightId,
-  });
-  const { data } = trpc.flights.getExtraFlightData.useQuery({
-    flightId,
-  });
-  if (
-    flightData === undefined ||
-    data === undefined ||
-    (data.departureWeather === null && data.arrivalWeather === null)
-  )
-    return null;
-  return (
-    <div className="flex flex-col gap-3">
-      {data.departureWeather !== null ? (
-        <WeatherCard
-          data={data.departureWeather}
-          airport={flightData.departureAirport}
-        />
-      ) : null}
-      {data.arrivalWeather !== null ? (
-        <WeatherCard
-          data={data.arrivalWeather}
-          airport={flightData.arrivalAirport}
-        />
-      ) : null}
     </div>
   );
 };

@@ -14,11 +14,11 @@ import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 import {
   AddTravelersModal,
   AddUserToFlightModal,
+  AircraftFlightActivity,
   AirportLabelOverlay,
   FlightAircraftDetails,
   FlightChangelogTable,
   FlightDetailedTimetable,
-  FlightHistory,
   FlightInfo,
   FlightTimesDisplay,
   HalloweenIcon,
@@ -40,39 +40,32 @@ import {
   lightModeStyle,
 } from '../../common/mapStyle';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
-import {
-  AppTheme,
-  getIsLoggedIn,
-  useAuthStore,
-  useIsDarkMode,
-  useThemeStore,
-} from '../../stores';
+import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { DEFAULT_COORDINATES } from '../Home/constants';
 
-export interface FlightPageNavigationState {
+export interface AircraftPageNavigationState {
   previousPageName: string;
 }
 
-export const Flight = (): JSX.Element | null => {
+export const Aircraft = (): JSX.Element | null => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
     libraries: ['visualization'],
   });
-  const { flightId } = useParams();
+  const { icao24 } = useParams();
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const isLoggedIn = useAuthStore(getIsLoggedIn);
-  const { data } = trpc.flights.getFlight.useQuery(
-    { id: flightId ?? '' },
-    { enabled: flightId !== undefined, refetchInterval: 5000 },
+  const { data } = trpc.flights.getAircraftFlight.useQuery(
+    { icao24: icao24 ?? '' },
+    { enabled: icao24 !== undefined, refetchInterval: 5000 },
   );
   const { setPreviousPageName } = useMainLayoutStore();
   const { state } = useLocation() as {
-    state: FlightPageNavigationState | null;
+    state: AircraftPageNavigationState | null;
   };
   const [center] = useState(DEFAULT_COORDINATES);
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
@@ -152,7 +145,7 @@ export const Flight = (): JSX.Element | null => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.id, isMapCollapsed, map]);
-  if (flightId === undefined) return null;
+  if (icao24 === undefined) return null;
   return (
     <div className="relative flex-1">
       {isLoaded && data !== undefined && (
@@ -522,12 +515,12 @@ export const Flight = (): JSX.Element | null => {
                 setIsAddFlightDialogOpen(true);
               }}
             />
-            <FlightAircraftDetails data={data} showTrackMyAircraftButton />
+            <FlightAircraftDetails data={data} />
+            <AircraftFlightActivity airframeId={icao24} />
             <FlightDetailedTimetable data={data} />
-            <OnTimePerformanceChart flightId={flightId} />
-            <WeatherInfo flightId={flightId} />
-            {isLoggedIn ? <FlightHistory flightId={flightId} /> : null}
-            <FlightChangelogTable flightId={flightId} />
+            <OnTimePerformanceChart flightId={data?.id} />
+            <WeatherInfo flightId={data?.id} />
+            <FlightChangelogTable flightId={data?.id} />
           </div>
         </div>
       </div>
