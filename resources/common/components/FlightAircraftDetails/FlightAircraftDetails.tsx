@@ -64,7 +64,7 @@ export const FlightAircraftDetails = ({
   return (
     <div
       className={classNames(
-        'flex w-full flex-col justify-between gap-2',
+        'flex w-full flex-col justify-between gap-4',
         cardClassNames,
       )}
     >

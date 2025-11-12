@@ -42,7 +42,8 @@ export const updateTrackAircraftData = async (
       return;
     }
     const filteredData = registrationData.flights.filter(
-      ({ outTime }) =>
+      ({ flightStatus, outTime }) =>
+        flightStatus !== 'CANCELED' &&
         isBefore(outTime, flights[0].outTime) &&
         isAfter(outTime, sub(flights[0].outTime, { days: 1 })),
     );
