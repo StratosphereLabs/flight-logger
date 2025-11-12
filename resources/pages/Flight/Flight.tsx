@@ -207,7 +207,7 @@ export const Flight = (): JSX.Element | null => {
                 />
               </>
             ),
-          ) ?? null}
+          )}
           {(() => {
             const isCurrentFlight = [
               'DEPARTED_TAXIING',
