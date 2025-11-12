@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import { type HTMLProps } from 'react';
+import { isAfter, sub } from 'date-fns';
+import { type HTMLProps, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Link } from 'stratosphere-ui';
 
@@ -24,6 +25,10 @@ export const FlightRow = ({
 }: FlightRowProps): JSX.Element => {
   const navigate = useNavigate();
   const { theme } = useThemeStore();
+  const shouldUseAircraftLink = useMemo(
+    () => isAfter(new Date(), sub(flight.outTime, { days: 2 })),
+    [flight.outTime],
+  );
   return (
     <div
       className={classNames(
@@ -190,9 +195,20 @@ export const FlightRow = ({
             {flight.tailNumber !== null && flight.tailNumber.length > 0 ? (
               <a
                 className="link link-hover pt-[1px] font-mono font-semibold"
-                onClick={() => {
-                  navigate(`/aircraft/${flight.airframeId}`);
-                }}
+                onClick={
+                  shouldUseAircraftLink
+                    ? () => {
+                        navigate(`/aircraft/${flight.airframeId}`);
+                      }
+                    : undefined
+                }
+                href={
+                  !shouldUseAircraftLink
+                    ? flight.airframe !== null
+                      ? `https://www.planespotters.net/hex/${flight.airframe.icao24.toUpperCase()}`
+                      : `https://www.flightaware.com/resources/registration/${flight.tailNumber}`
+                    : undefined
+                }
                 target="_blank"
                 rel="noreferrer"
               >
