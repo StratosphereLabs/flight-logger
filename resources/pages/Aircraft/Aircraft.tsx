@@ -8,7 +8,7 @@ import {
 } from '@react-google-maps/api';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 
@@ -83,6 +83,24 @@ export const Aircraft = (): JSX.Element | null => {
   const { theme } = useThemeStore();
   const isEnRouteFlight =
     data !== undefined ? data.flightStatus === 'EN_ROUTE' : false;
+  const allFlights = useMemo(
+    () => [
+      ...(data !== undefined ? [data] : []),
+      ...(flightActivityData?.groupedFlights.UPCOMING ?? []),
+      ...(flightActivityData?.groupedFlights.COMPLETED ?? []),
+    ],
+    [data, flightActivityData?.groupedFlights],
+  );
+  const allAirports = useMemo(() => {
+    const groupedAirports = groupBy(
+      allFlights.flatMap(({ departureAirport, arrivalAirport }) => [
+        departureAirport,
+        arrivalAirport,
+      ]),
+      ({ id }) => id,
+    );
+    return Object.values(groupedAirports).map(([airport]) => airport);
+  }, [allFlights]);
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
     map?.setValues({
@@ -122,10 +140,21 @@ export const Aircraft = (): JSX.Element | null => {
   useEffect(() => {
     if (map !== null && data !== undefined) {
       const bounds = new window.google.maps.LatLngBounds();
-      for (const { lat, lon } of [data.departureAirport, data.arrivalAirport]) {
+      const airportsToFit =
+        !isMapCollapsed && data.flightStatus === 'EN_ROUTE'
+          ? [data.departureAirport, data.arrivalAirport]
+          : allAirports;
+      for (const { lat, lon } of airportsToFit) {
         bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
       }
-      const { tracklog, waypoints } = data;
+      const waypoints =
+        !isMapCollapsed && data.flightStatus === 'EN_ROUTE'
+          ? data.waypoints
+          : allFlights.flatMap(({ waypoints }) => waypoints ?? []);
+      const tracklog =
+        !isMapCollapsed && data.flightStatus === 'EN_ROUTE'
+          ? data.tracklog
+          : allFlights.flatMap(({ tracklog }) => tracklog ?? []);
       if (waypoints !== undefined) {
         for (const [lng, lat] of waypoints) {
           bounds.extend(new window.google.maps.LatLng({ lat, lng }));
@@ -177,248 +206,222 @@ export const Aircraft = (): JSX.Element | null => {
             setMap(map);
           }}
         >
-          {(() => {
-            const upcomingFlights =
-              flightActivityData?.groupedFlights.UPCOMING ?? [];
-            const completedFlights =
-              flightActivityData?.groupedFlights.COMPLETED ?? [];
-            const groupedAirports = groupBy(
-              [data, ...upcomingFlights, ...completedFlights].flatMap(
-                ({ departureAirport, arrivalAirport }) => [
-                  departureAirport,
-                  arrivalAirport,
-                ],
-              ),
-              ({ id }) => id,
-            );
+          {allAirports.map(({ id, lat, lon, iata, estimatedDistance }) => (
+            <>
+              <AirportLabelOverlay
+                iata={iata}
+                isFocused
+                position={{ lat, lng: lon }}
+                show
+                distanceMi={isEnRouteFlight ? estimatedDistance : undefined}
+              />
+              <MarkerF
+                key={id}
+                position={{ lat, lng: lon }}
+                title={id}
+                options={{
+                  icon:
+                    window.google !== undefined
+                      ? {
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          fillColor: 'white',
+                          fillOpacity: 1,
+                          scale: 4,
+                          strokeColor: 'black',
+                          strokeWeight: 2,
+                          strokeOpacity: 1,
+                        }
+                      : null,
+                  zIndex: 30,
+                }}
+              />
+            </>
+          ))}
+          {allFlights.map(flightData => {
+            const isCurrentFlight = [
+              'DEPARTED_TAXIING',
+              'EN_ROUTE',
+              'LANDED_TAXIING',
+            ].includes(flightData.flightStatus);
+            const currentTracklogItem =
+              flightData.tracklog !== undefined &&
+              flightData.tracklog.length > 1
+                ? flightData.tracklog[flightData.tracklog.length - 2]
+                : null;
+            const currentSpeed =
+              currentTracklogItem !== null
+                ? Math.round(currentTracklogItem.gs ?? 0)
+                : null;
+            let lastAltitude: number | null = null;
             return (
-              Object.values(groupedAirports).map(
-                ([{ id, lat, lon, iata, estimatedDistance }]) => (
-                  <>
-                    <AirportLabelOverlay
-                      iata={iata}
-                      isFocused
-                      position={{ lat, lng: lon }}
-                      show
-                      distanceMi={
-                        isEnRouteFlight ? estimatedDistance : undefined
-                      }
-                    />
-                    <MarkerF
-                      key={id}
-                      position={{ lat, lng: lon }}
-                      title={id}
-                      options={{
-                        icon:
-                          window.google !== undefined
-                            ? {
-                                path: window.google.maps.SymbolPath.CIRCLE,
-                                fillColor: 'white',
-                                fillOpacity: 1,
-                                scale: 4,
-                                strokeColor: 'black',
-                                strokeWeight: 2,
-                                strokeOpacity: 1,
-                              }
-                            : null,
-                        zIndex: 30,
-                      }}
-                    />
-                  </>
-                ),
-              ) ?? null
-            );
-          })()}
-          {(() =>
-            [
-              data,
-              ...(flightActivityData?.groupedFlights.UPCOMING ?? []),
-              ...(flightActivityData?.groupedFlights.COMPLETED ?? []),
-            ].map(flightData => {
-              const isCurrentFlight = [
-                'DEPARTED_TAXIING',
-                'EN_ROUTE',
-                'LANDED_TAXIING',
-              ].includes(flightData.flightStatus);
-              const currentTracklogItem =
-                flightData.tracklog !== undefined &&
-                flightData.tracklog.length > 1
-                  ? flightData.tracklog[flightData.tracklog.length - 2]
-                  : null;
-              const currentSpeed =
-                currentTracklogItem !== null
-                  ? Math.round(currentTracklogItem.gs ?? 0)
-                  : null;
-              let lastAltitude: number | null = null;
-              return (
-                <>
-                  {flightData.flightState !== 'UPCOMING' &&
-                  (flightData.tracklog === undefined ||
-                    flightData.tracklog.length === 0) ? (
-                    <PolylineF
-                      options={{
-                        geodesic: true,
-                        strokeOpacity: 1,
-                        strokeColor: getAltitudeColor(0.8),
-                        strokeWeight: 3,
-                        zIndex: isCurrentFlight ? 20 : 10,
-                      }}
-                      path={[
-                        {
-                          lat: flightData.departureAirport.lat,
-                          lng: flightData.departureAirport.lon,
-                        },
-                        {
-                          lat: isCurrentFlight
-                            ? flightData.estimatedLocation.lat
-                            : flightData.arrivalAirport.lat,
-                          lng: isCurrentFlight
-                            ? flightData.estimatedLocation.lng
-                            : flightData.arrivalAirport.lon,
-                        },
-                      ]}
-                    />
-                  ) : null}
-                  {flightData.tracklog?.map(
-                    ({ alt, coord, ground }, index, allItems) => {
-                      const prevItem = allItems[index - 1];
-                      if (prevItem === undefined) return null;
-                      if (alt !== null) {
-                        lastAltitude = alt;
-                      }
-                      return (
-                        <PolylineF
-                          key={index}
-                          options={{
-                            strokeOpacity: ground === true ? 0.5 : 1,
-                            strokeColor:
-                              ground === true
-                                ? isDarkMode
-                                  ? 'white'
-                                  : 'darkgray'
-                                : getAltitudeColor(
-                                    lastAltitude !== null
-                                      ? lastAltitude / 450
-                                      : 0,
-                                  ),
-                            strokeWeight: 3,
-                            zIndex: isCurrentFlight ? 20 : 10,
-                            geodesic: true,
-                          }}
-                          path={[
-                            {
-                              lat: prevItem.coord[1],
-                              lng: prevItem.coord[0],
-                            },
-                            { lat: coord[1], lng: coord[0] },
-                          ]}
-                        />
-                      );
-                    },
-                  ) ?? null}
-                  {flightData.flightStatus === 'SCHEDULED' ||
-                  flightData.flightStatus === 'DEPARTED_TAXIING' ? (
-                    <PolylineF
-                      visible
-                      options={{
-                        strokeOpacity: isDarkMode ? 0.5 : 1,
-                        strokeColor: isDarkMode ? 'white' : 'gray',
-                        strokeWeight: 2,
-                        zIndex: isCurrentFlight ? 15 : 5,
-                        geodesic: true,
-                      }}
-                      path={
-                        flightData.waypoints?.map(([lng, lat]) => ({
-                          lat,
-                          lng,
-                        })) ?? []
-                      }
-                    />
-                  ) : null}
-                  {['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(
-                    flightData.flightStatus,
-                  ) ? (
-                    <OverlayViewF
-                      position={{
-                        lat: flightData.estimatedLocation.lat,
-                        lng: flightData.estimatedLocation.lng,
-                      }}
-                      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                      getPixelPositionOffset={(width, height) => ({
-                        x: -(width / 2),
-                        y: -(height / 2),
-                      })}
-                      zIndex={100}
+              <>
+                {flightData.flightState !== 'UPCOMING' &&
+                (flightData.tracklog === undefined ||
+                  flightData.tracklog.length === 0) ? (
+                  <PolylineF
+                    options={{
+                      geodesic: true,
+                      strokeOpacity: 1,
+                      strokeColor: getAltitudeColor(0.8),
+                      strokeWeight: 3,
+                      zIndex: isCurrentFlight ? 20 : 10,
+                    }}
+                    path={[
+                      {
+                        lat: flightData.departureAirport.lat,
+                        lng: flightData.departureAirport.lon,
+                      },
+                      {
+                        lat: isCurrentFlight
+                          ? flightData.estimatedLocation.lat
+                          : flightData.arrivalAirport.lat,
+                        lng: isCurrentFlight
+                          ? flightData.estimatedLocation.lng
+                          : flightData.arrivalAirport.lon,
+                      },
+                    ]}
+                  />
+                ) : null}
+                {flightData.tracklog?.map(
+                  ({ alt, coord, ground }, index, allItems) => {
+                    const prevItem = allItems[index - 1];
+                    if (prevItem === undefined) return null;
+                    if (alt !== null) {
+                      lastAltitude = alt;
+                    }
+                    return (
+                      <PolylineF
+                        key={index}
+                        options={{
+                          strokeOpacity: ground === true ? 0.5 : 1,
+                          strokeColor:
+                            ground === true
+                              ? isDarkMode
+                                ? 'white'
+                                : 'darkgray'
+                              : getAltitudeColor(
+                                  lastAltitude !== null
+                                    ? lastAltitude / 450
+                                    : 0,
+                                ),
+                          strokeWeight: 3,
+                          zIndex: isCurrentFlight ? 20 : 10,
+                          geodesic: true,
+                        }}
+                        path={[
+                          {
+                            lat: prevItem.coord[1],
+                            lng: prevItem.coord[0],
+                          },
+                          { lat: coord[1], lng: coord[0] },
+                        ]}
+                      />
+                    );
+                  },
+                ) ?? null}
+                {flightData.flightStatus === 'SCHEDULED' ||
+                flightData.flightStatus === 'DEPARTED_TAXIING' ? (
+                  <PolylineF
+                    visible
+                    options={{
+                      strokeOpacity: isDarkMode ? 0.5 : 1,
+                      strokeColor: isDarkMode ? 'white' : 'gray',
+                      strokeWeight: 2,
+                      zIndex: isCurrentFlight ? 15 : 5,
+                      geodesic: true,
+                    }}
+                    path={
+                      flightData.waypoints?.map(([lng, lat]) => ({
+                        lat,
+                        lng,
+                      })) ?? []
+                    }
+                  />
+                ) : null}
+                {['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(
+                  flightData.flightStatus,
+                ) ? (
+                  <OverlayViewF
+                    position={{
+                      lat: flightData.estimatedLocation.lat,
+                      lng: flightData.estimatedLocation.lng,
+                    }}
+                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                    getPixelPositionOffset={(width, height) => ({
+                      x: -(width / 2),
+                      y: -(height / 2),
+                    })}
+                    zIndex={100}
+                  >
+                    <Tooltip
+                      color={TOOLTIP_COLORS[flightData.delayStatus]}
+                      open
                     >
-                      <Tooltip
-                        color={TOOLTIP_COLORS[flightData.delayStatus]}
-                        open
-                      >
-                        <TooltipContent className="flex items-center gap-1 font-mono">
-                          <div className="flex flex-col">
-                            <span className="flex gap-1 font-bold">
-                              {flightData.callsign ??
-                                `${flightData.airline?.icao}${flightData.flightNumber}`}
-                            </span>
-                            <span className="flex gap-1 text-xs">
-                              {currentTracklogItem?.ground === true ? (
-                                <>
-                                  <span>GND {currentSpeed}</span>
-                                  <span>kts</span>
-                                </>
-                              ) : (
-                                <>
-                                  <span>
-                                    {flightData.estimatedAltitude !== null
-                                      ? `FL${flightData.estimatedAltitude < 10 ? '0' : ''}${flightData.estimatedAltitude < 100 ? '0' : ''}${flightData.estimatedAltitude < 0 ? '0' : flightData.estimatedAltitude}`
-                                      : null}
-                                  </span>
-                                  <span className="font-bold">
-                                    {flightData.altChangeString}
-                                  </span>
-                                  <span>{currentSpeed}</span>
-                                </>
-                              )}
-                            </span>
-                          </div>
-                        </TooltipContent>
-                        <Button
-                          size="sm"
-                          shape="circle"
-                          color="ghost"
-                          title={
-                            flightData.user !== null
-                              ? `@${flightData.user.username}`
-                              : undefined
-                          }
-                        >
-                          {theme === AppTheme.HALLOWEEN ? (
-                            <HalloweenIcon
-                              className="text-primary h-7 w-7"
-                              style={{
-                                transform: `rotate(${Math.round(flightData.estimatedHeading)}deg)`,
-                              }}
-                            />
-                          ) : (
-                            <PlaneSolidIcon
-                              className="text-primary h-6 w-6"
-                              style={{
-                                transform: `rotate(${Math.round(flightData.estimatedHeading - 90)}deg)`,
-                              }}
-                            />
-                          )}
-                          <span className="sr-only">
-                            {flightData.user !== null
-                              ? `@${flightData.user.username}`
-                              : null}
+                      <TooltipContent className="flex items-center gap-1 font-mono">
+                        <div className="flex flex-col">
+                          <span className="flex gap-1 font-bold">
+                            {flightData.callsign ??
+                              `${flightData.airline?.icao}${flightData.flightNumber}`}
                           </span>
-                        </Button>
-                      </Tooltip>
-                    </OverlayViewF>
-                  ) : null}
-                </>
-              );
-            }))()}
+                          <span className="flex gap-1 text-xs">
+                            {currentTracklogItem?.ground === true ? (
+                              <>
+                                <span>GND {currentSpeed}</span>
+                                <span>kts</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>
+                                  {flightData.estimatedAltitude !== null
+                                    ? `FL${flightData.estimatedAltitude < 10 ? '0' : ''}${flightData.estimatedAltitude < 100 ? '0' : ''}${flightData.estimatedAltitude < 0 ? '0' : flightData.estimatedAltitude}`
+                                    : null}
+                                </span>
+                                <span className="font-bold">
+                                  {flightData.altChangeString}
+                                </span>
+                                <span>{currentSpeed}</span>
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </TooltipContent>
+                      <Button
+                        size="sm"
+                        shape="circle"
+                        color="ghost"
+                        title={
+                          flightData.user !== null
+                            ? `@${flightData.user.username}`
+                            : undefined
+                        }
+                      >
+                        {theme === AppTheme.HALLOWEEN ? (
+                          <HalloweenIcon
+                            className="text-primary h-7 w-7"
+                            style={{
+                              transform: `rotate(${Math.round(flightData.estimatedHeading)}deg)`,
+                            }}
+                          />
+                        ) : (
+                          <PlaneSolidIcon
+                            className="text-primary h-6 w-6"
+                            style={{
+                              transform: `rotate(${Math.round(flightData.estimatedHeading - 90)}deg)`,
+                            }}
+                          />
+                        )}
+                        <span className="sr-only">
+                          {flightData.user !== null
+                            ? `@${flightData.user.username}`
+                            : null}
+                        </span>
+                      </Button>
+                    </Tooltip>
+                  </OverlayViewF>
+                ) : null}
+              </>
+            );
+          })}
         </GoogleMap>
       )}
       <div
