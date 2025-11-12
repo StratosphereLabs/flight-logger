@@ -14,7 +14,6 @@ import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 import {
   AddTravelersModal,
   AddUserToFlightModal,
-  AircraftFlightActivity,
   AirportLabelOverlay,
   FlightAircraftDetails,
   FlightChangelogTable,
@@ -515,8 +514,7 @@ export const Aircraft = (): JSX.Element | null => {
                 setIsAddFlightDialogOpen(true);
               }}
             />
-            <FlightAircraftDetails data={data} />
-            <AircraftFlightActivity airframeId={icao24} />
+            <FlightAircraftDetails data={data} showFlightActivity />
             <FlightDetailedTimetable data={data} />
             <OnTimePerformanceChart flightId={data?.id} />
             <WeatherInfo flightId={data?.id} />

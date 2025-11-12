@@ -1,12 +1,22 @@
 import classNames from 'classnames';
 import { isAfter, isBefore, sub } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Loading } from 'stratosphere-ui';
 
-import { TrackAircraftIcon } from '.';
-import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { type AircraftPageNavigationState } from '../../pages';
-import { useAircraftPhotoQuery, useCardClassNames } from '../hooks';
+import { TrackAircraftIcon } from '..';
+import { type FlightsRouterOutput } from '../../../../app/routes/flights';
+import { type AircraftPageNavigationState } from '../../../pages';
+import {
+  sortByArrivalTimeDesc,
+  sortByDepartureTimeAsc,
+} from '../../../pages/Home/utils';
+import { trpc } from '../../../utils/trpc';
+import {
+  useAircraftPhotoQuery,
+  useCardClassNames,
+  useLoggedInUserQuery,
+} from '../../hooks';
+import { AircraftFlightHistoryRow } from './AircraftFlightHistoryRow';
 
 export interface FlightAircraftDetailsProps {
   data?: Pick<
@@ -18,22 +28,38 @@ export interface FlightAircraftDetailsProps {
     | 'outTime'
     | 'outDateISO'
     | 'flightNumberString'
+    | 'userId'
+    | 'user'
   >;
   showTrackMyAircraftButton?: boolean;
+  showFlightActivity?: boolean;
 }
 
 export const FlightAircraftDetails = ({
   data,
   showTrackMyAircraftButton,
+  showFlightActivity,
 }: FlightAircraftDetailsProps): JSX.Element | null => {
   const cardClassNames = useCardClassNames();
   const navigate = useNavigate();
+  const { icao24 } = useParams();
+  const { data: userData } = useLoggedInUserQuery();
   const { data: photoData, isFetching } = useAircraftPhotoQuery(
     data?.airframeId ?? null,
   );
+  const { data: flightActivityData, isFetching: isFlightActivityFetching } =
+    trpc.flights.getAircraftOtherFlights.useQuery(
+      {
+        icao24: icao24 ?? '',
+      },
+      {
+        enabled: showFlightActivity === true && icao24 !== undefined,
+      },
+    );
   if (data === undefined) {
     return null;
   }
+  const onOwnProfile = userData !== undefined && userData.id === data.userId;
   const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
   return (
     <div
@@ -95,7 +121,8 @@ export const FlightAircraftDetails = ({
         </div>
       </div>
       {data?.airframeId !== null &&
-      data?.airframeId !== undefined &&
+      data.airframeId !== undefined &&
+      data.user !== null &&
       isAfter(new Date(), sub(data.outTime, { days: 2 })) &&
       isBefore(new Date(), data.outTime) &&
       showTrackMyAircraftButton === true ? (
@@ -110,8 +137,54 @@ export const FlightAircraftDetails = ({
           }}
         >
           <TrackAircraftIcon className="h-6 w-6" />
-          Track my Aircraft
+          Track{' '}
+          {onOwnProfile
+            ? 'my'
+            : `${data.user.firstName ?? data.user.username}'s`}{' '}
+          Aircraft
         </Button>
+      ) : null}
+      {showFlightActivity === true ? (
+        <>
+          {flightActivityData?.count === 0 && !isFetching ? (
+            <div className="my-4 text-center">No Flights Found</div>
+          ) : null}
+          {isFlightActivityFetching ? (
+            <div className="flex justify-center">
+              <Loading />
+            </div>
+          ) : (
+            <div className="mx-[-4px] flex flex-1 flex-col gap-2">
+              {flightActivityData?.groupedFlights.CURRENT?.sort(
+                sortByDepartureTimeAsc,
+              ).map(flight => (
+                <AircraftFlightHistoryRow
+                  key={flight.id}
+                  flight={flight}
+                  previousPageName={`Aircraft ${data.tailNumber}`}
+                />
+              ))}
+              {flightActivityData?.groupedFlights.UPCOMING?.sort(
+                sortByDepartureTimeAsc,
+              ).map(flight => (
+                <AircraftFlightHistoryRow
+                  key={flight.id}
+                  flight={flight}
+                  previousPageName={`Aircraft ${data.tailNumber}`}
+                />
+              ))}
+              {flightActivityData?.groupedFlights.COMPLETED?.sort(
+                sortByArrivalTimeDesc,
+              ).map(flight => (
+                <AircraftFlightHistoryRow
+                  key={flight.id}
+                  flight={flight}
+                  previousPageName={`Aircraft ${data.tailNumber}`}
+                />
+              ))}
+            </div>
+          )}
+        </>
       ) : null}
     </div>
   );

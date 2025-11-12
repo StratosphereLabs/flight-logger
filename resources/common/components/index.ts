@@ -1,7 +1,6 @@
 export * from './ActionsCell';
 export * from './AddTravelersModal';
 export * from './AddUserToFlightModal';
-export * from './AircraftFlightActivity';
 export * from './AircraftTypeInput';
 export * from './AirframeInput';
 export * from './AirlineInput';
