@@ -151,10 +151,10 @@ export interface TransformFlightDataResult
       >)
     | null;
   departureAirport: AirportData & {
-    estimatedDistance: number;
+    estimatedDistance: number | undefined;
   };
   arrivalAirport: AirportData & {
-    estimatedDistance: number;
+    estimatedDistance: number | undefined;
   };
   distance: number;
   flightNumberString: string;
@@ -774,11 +774,17 @@ export const transformFlightData = (
     ...timestamps,
     departureAirport: {
       ...flight.departureAirport,
-      estimatedDistance: Math.round(estimatedDistanceFromOriginMi),
+      estimatedDistance:
+        flightStatus === 'EN_ROUTE'
+          ? Math.round(estimatedDistanceFromOriginMi)
+          : undefined,
     },
     arrivalAirport: {
       ...flight.arrivalAirport,
-      estimatedDistance: Math.round(estimatedDistanceToDestinationMi),
+      estimatedDistance:
+        flightStatus === 'EN_ROUTE'
+          ? Math.round(estimatedDistanceToDestinationMi)
+          : undefined,
     },
     user:
       flight.user !== null
