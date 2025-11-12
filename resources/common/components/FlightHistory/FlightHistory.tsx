@@ -162,7 +162,7 @@ export const FlightHistory = ({
             <FlightHistoryRow
               key={flight.id}
               flight={flight}
-              previousPageName={`${flightData?.flightNumberString} ${flightData?.outDateISO}`}
+              previousPageName={`${flightData?.flightNumberString} (${flightData?.departureAirport.iata}-${flightData?.arrivalAirport.iata})`}
             />
           ))}
         </div>

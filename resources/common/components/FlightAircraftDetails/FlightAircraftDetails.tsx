@@ -25,8 +25,10 @@ export interface FlightAircraftDetailsProps {
     | 'airframe'
     | 'tailNumber'
     | 'aircraftType'
+    | 'departureAirport'
     | 'outTime'
     | 'outDateISO'
+    | 'arrivalAirport'
     | 'flightNumberString'
     | 'userId'
     | 'user'
@@ -131,7 +133,7 @@ export const FlightAircraftDetails = ({
           onClick={() => {
             navigate(`/aircraft/${data.airframeId}`, {
               state: {
-                previousPageName: `${data.flightNumberString} ${data.outDateISO}`,
+                previousPageName: `${data.flightNumberString} (${data.departureAirport.iata}-${data.arrivalAirport.iata})`,
               } as const as AircraftPageNavigationState,
             });
           }}
@@ -161,7 +163,7 @@ export const FlightAircraftDetails = ({
                 <AircraftFlightHistoryRow
                   key={flight.id}
                   flight={flight}
-                  previousPageName={`Aircraft ${data.tailNumber}`}
+                  previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
                 />
               ))}
               {flightActivityData?.groupedFlights.UPCOMING?.sort(
@@ -170,7 +172,7 @@ export const FlightAircraftDetails = ({
                 <AircraftFlightHistoryRow
                   key={flight.id}
                   flight={flight}
-                  previousPageName={`Aircraft ${data.tailNumber}`}
+                  previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
                 />
               ))}
               {flightActivityData?.groupedFlights.COMPLETED?.sort(
@@ -179,7 +181,7 @@ export const FlightAircraftDetails = ({
                 <AircraftFlightHistoryRow
                   key={flight.id}
                   flight={flight}
-                  previousPageName={`Aircraft ${data.tailNumber}`}
+                  previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
                 />
               ))}
             </div>
