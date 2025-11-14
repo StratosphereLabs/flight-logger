@@ -1,4 +1,4 @@
-import { isAfter, isBefore, sub } from 'date-fns';
+import { isAfter, isBefore, isEqual, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 
 import { prisma } from '../../db';
@@ -42,10 +42,15 @@ export const updateTrackAircraftData = async (
       return;
     }
     const filteredData = registrationData.flights.filter(
-      ({ flightStatus, outTime }) =>
-        flightStatus !== 'CANCELED' &&
-        isBefore(outTime, flights[0].outTime) &&
-        isAfter(outTime, sub(flights[0].outTime, { days: 1 })),
+      ({ flightStatus, outTime }) => {
+        const oneDayBeforeDeparture = sub(flights[0].outTime, { days: 1 });
+        return (
+          flightStatus !== 'CANCELED' &&
+          isBefore(outTime, flights[0].outTime) &&
+          (isEqual(outTime, oneDayBeforeDeparture) ||
+            isAfter(outTime, oneDayBeforeDeparture))
+        );
+      },
     );
     const airportIataCodes = [
       ...new Set(
@@ -87,7 +92,7 @@ export const updateTrackAircraftData = async (
         airframeId: flights[0].airframeId,
         outTime: {
           lt: flights[0].outTime,
-          gt: sub(flights[0].outTime, { days: 1 }),
+          gte: sub(flights[0].outTime, { days: 1 }),
         },
       },
       select: {
@@ -105,6 +110,7 @@ export const updateTrackAircraftData = async (
       existingFlights,
       getGroupedFlightsKey,
     );
+    console.log(groupedExistingFlights);
     const newFlightData = filteredData.flatMap(flight => {
       const departureAirport =
         groupedAirports[flight.departureAirportIATA]?.[0];
@@ -135,6 +141,7 @@ export const updateTrackAircraftData = async (
         diversionAirportId: diversionAirport?.id ?? null,
       };
     });
+    console.log({ newFlightData });
     await prisma.$transaction(
       newFlightData.map(({ departureAirport, ...flight }) => {
         const key = getGroupedFlightsKey({
@@ -142,6 +149,7 @@ export const updateTrackAircraftData = async (
           departureAirport,
           ...flight,
         });
+        console.log({ key });
         const existingFlight = groupedExistingFlights[key]?.[0];
         if (existingFlight !== undefined) {
           return prisma.flight.update({
