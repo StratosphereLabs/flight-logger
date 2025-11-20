@@ -88,7 +88,6 @@ export const updateTrackAircraftData = async (
         : null;
     const existingFlights = await prisma.flight.findMany({
       where: {
-        userId: null,
         airframeId: flights[0].airframeId,
         outTime: {
           lt: flights[0].outTime,
