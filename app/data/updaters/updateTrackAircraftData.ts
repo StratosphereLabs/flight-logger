@@ -95,6 +95,7 @@ export const updateTrackAircraftData = async (
         },
       },
       select: {
+        userId: true,
         id: true,
         departureAirportId: true,
         arrivalAirportId: true,
@@ -168,6 +169,14 @@ export const updateTrackAircraftData = async (
     console.log(
       `  Upserted ${newFlightData.length} track aircraft flights for ${flights[0].tailNumber}.`,
     );
+    const duplicateFlightIds = Object.values(groupedExistingFlights).flatMap(
+      flights => {
+        const trackedFlights = flights.filter(({ userId }) => userId === null);
+        return trackedFlights.length > 1
+          ? trackedFlights.slice(1).map(({ id }) => id)
+          : [];
+      },
+    );
     const newFlightKeys = new Set(
       newFlightData.map(flight =>
         getGroupedFlightsKey({
@@ -176,13 +185,16 @@ export const updateTrackAircraftData = async (
         }),
       ),
     );
-    const flightIdsToDelete = existingFlights?.reduce<string[]>(
+    const staleFlightIds = existingFlights?.reduce<string[]>(
       (acc, flight) =>
         !newFlightKeys.has(getGroupedFlightsKey(flight))
           ? [...acc, flight.id]
           : acc,
       [],
     );
+    const flightIdsToDelete = [
+      ...new Set([...duplicateFlightIds, ...staleFlightIds]),
+    ];
     if (flightIdsToDelete !== undefined && flightIdsToDelete.length > 0) {
       await prisma.flight.deleteMany({
         where: {
