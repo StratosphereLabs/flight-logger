@@ -1241,6 +1241,31 @@ export const flightsRouter = router({
         where: deleteFlightWhere,
         include: flightIncludeObj,
       });
+      const trackedAircraftFlights = await prisma.flight.findMany({
+        where: {
+          airframeId: flight.airframeId,
+          outTime: {
+            gte: sub(flight.outTime, { days: 1 }),
+            lte: add(flight.outTime, { days: 1 }),
+          },
+        },
+        select: {
+          id: true,
+          userId: true,
+          outTime: true,
+        },
+      });
+      if (trackedAircraftFlights.every(f => f.userId === null)) {
+        await prisma.flight.deleteMany({
+          where: {
+            id: {
+              in: trackedAircraftFlights
+                .filter(f => isBefore(f.outTime, flight.outTime))
+                .map(f => f.id),
+            },
+          },
+        });
+      }
     }),
   addTravelersToFlight: procedure
     .use(verifyAuthenticated)
