@@ -111,7 +111,6 @@ export const updateTrackAircraftData = async (
       existingFlights,
       getGroupedFlightsKey,
     );
-    console.log(groupedExistingFlights);
     const newFlightData = filteredData.flatMap(flight => {
       const departureAirport =
         groupedAirports[flight.departureAirportIATA]?.[0];
@@ -142,7 +141,6 @@ export const updateTrackAircraftData = async (
         diversionAirportId: diversionAirport?.id ?? null,
       };
     });
-    console.log({ newFlightData });
     await prisma.$transaction(
       newFlightData.map(({ departureAirport, ...flight }) => {
         const key = getGroupedFlightsKey({
@@ -150,7 +148,6 @@ export const updateTrackAircraftData = async (
           departureAirport,
           ...flight,
         });
-        console.log({ key });
         const existingFlight = groupedExistingFlights[key]?.[0];
         if (existingFlight !== undefined) {
           return prisma.flight.update({
