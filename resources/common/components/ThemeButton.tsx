@@ -11,6 +11,7 @@ import {
   GemIcon,
   // HalloweenIcon,
   LightModeIcon,
+  SnowflakeIcon,
   SunsetIcon,
   ThemeIcon,
 } from './Icons';
@@ -47,6 +48,22 @@ export const ThemeButton = (): JSX.Element => {
           listItemProps: {
             // @ts-ignore
             'data-theme': 'corporate',
+          },
+        },
+        {
+          id: AppTheme.CHRISTMAS,
+          onClick: () => {
+            setTheme(AppTheme.CHRISTMAS);
+          },
+          children: (
+            <>
+              <SnowflakeIcon className="h-5 w-5" />
+              Christmas
+            </>
+          ),
+          listItemProps: {
+            // @ts-ignore
+            'data-theme': 'christmas',
           },
         },
         // {

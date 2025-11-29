@@ -20,7 +20,7 @@ import {
 
 import {
   AirportLabelOverlay,
-  HalloweenIcon,
+  ChristmastreeIcon,
   PlaneSolidIcon,
   PlusAirplaneIcon,
   RightArrowIcon,
@@ -452,8 +452,8 @@ export const FollowingMap = (): JSX.Element => {
                                 user !== null ? `@${user.username}` : undefined
                               }
                             >
-                              {theme === AppTheme.HALLOWEEN ? (
-                                <HalloweenIcon
+                              {theme === AppTheme.CHRISTMAS ? (
+                                <ChristmastreeIcon
                                   className="text-primary h-7 w-7"
                                   style={{
                                     transform: `rotate(${Math.round(estimatedHeading)}deg)`,
