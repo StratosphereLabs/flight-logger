@@ -28,6 +28,7 @@ import {
 import { TOOLTIP_COLORS } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
 import {
+  christmasStyle,
   cyberPunkStyle,
   darkModeStyle,
   lightModeStyle,
@@ -67,6 +68,15 @@ export const FollowingMap = (): JSX.Element => {
       styles:
         theme === AppTheme.CYBERPUNK
           ? cyberPunkStyle
+          : isDarkMode
+            ? darkModeStyle
+            : lightModeStyle,
+    });
+
+    map?.setValues({
+      styles:
+        theme === AppTheme.CHRISTMAS
+          ? christmasStyle
           : isDarkMode
             ? darkModeStyle
             : lightModeStyle,
@@ -467,6 +477,21 @@ export const FollowingMap = (): JSX.Element => {
                                   }}
                                 />
                               )}
+                              {/* {theme === AppTheme.HALLOWEEN ? (
+                                <HalloweenIcon
+                                  className="text-primary h-7 w-7"
+                                  style={{
+                                    transform: `rotate(${Math.round(estimatedHeading)}deg)`,
+                                  }}
+                                />
+                              ) : (
+                                <PlaneSolidIcon
+                                  className="text-primary h-6 w-6"
+                                  style={{
+                                    transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
+                                  }}
+                                />
+                              )} */}
                               <span className="sr-only">
                                 {user !== null ? `@${user?.username}` : null}
                               </span>

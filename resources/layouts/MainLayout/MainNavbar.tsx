@@ -15,6 +15,7 @@ import {
 
 import {
   CogIcon,
+  ColoredSnowflakeIcon,
   HomeIcon,
   LeftArrowIcon,
   LogoutIcon,
@@ -26,7 +27,13 @@ import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfilePageNavigationState } from '../../pages';
 import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
-import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
+import {
+  AppTheme,
+  getIsLoggedIn,
+  useAuthStore,
+  useIsDarkMode,
+  useThemeStore,
+} from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
@@ -43,6 +50,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { previousPageName } = useMainLayoutStore();
   const { isAddingFlight } = useAddFlightStore();
   const isDarkMode = useIsDarkMode();
+  const { theme } = useThemeStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
@@ -198,9 +206,28 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               }}
               title="Home"
             >
-              <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
-                <span>Flight</span>
-                <span className="text-base-content">Logger</span>
+              <div className="font-title text-primary flex text-xl transition-all duration-200 sm:text-3xl">
+                <span
+                  className={classNames(
+                    theme === AppTheme.CHRISTMAS
+                      ? 'text-primary'
+                      : 'text-base-content',
+                  )}
+                >
+                  Flight
+                </span>
+                <span
+                  className={classNames(
+                    theme === AppTheme.CHRISTMAS
+                      ? 'text-secondary'
+                      : 'text-base-content',
+                  )}
+                >
+                  Logger
+                </span>
+                {theme === AppTheme.CHRISTMAS ? (
+                  <ColoredSnowflakeIcon className="relative bottom-1 h-6 w-6 rotate-30 transform" />
+                ) : null}
               </div>
             </Button>
           </div>
@@ -216,7 +243,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   type="button"
                   className={classNames(
                     'tab',
-                    currentTab === id && 'tab-active',
+                    currentTab === id && 'tab-active text-white',
                     className,
                   )}
                   {...tab}

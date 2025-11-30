@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { Outlet, useParams } from 'react-router-dom';
+import Snowfall from 'react-snowfall';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
+import { AppTheme, useThemeStore } from '../../stores';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
 import { useMainLayoutStore } from './mainLayoutStore';
@@ -16,6 +18,7 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { username } = useParams();
+  const { theme } = useThemeStore();
   const { setScrollContainerRef } = useMainLayoutStore();
   useEffect(() => {
     setScrollContainerRef(scrollContainerRef);
@@ -25,6 +28,9 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   }, [username]);
   return (
     <div className="relative flex h-[100dvh] flex-col justify-between">
+      {theme === AppTheme.CHRISTMAS ? (
+        <Snowfall style={{ zIndex: 50 }} />
+      ) : null}
       <MainNavbar methods={methods} />
       <div
         className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
