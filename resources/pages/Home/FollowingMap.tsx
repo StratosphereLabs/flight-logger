@@ -28,7 +28,7 @@ import {
 import { TOOLTIP_COLORS } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
 import {
-  christmasStyle,
+  // christmasStyle,
   cyberPunkStyle,
   darkModeStyle,
   lightModeStyle,
@@ -73,14 +73,14 @@ export const FollowingMap = (): JSX.Element => {
             : lightModeStyle,
     });
 
-    map?.setValues({
-      styles:
-        theme === AppTheme.CHRISTMAS
-          ? christmasStyle
-          : isDarkMode
-            ? darkModeStyle
-            : lightModeStyle,
-    });
+    // map?.setValues({
+    //   styles:
+    //     theme === AppTheme.CHRISTMAS
+    //       ? christmasStyle
+    //       : isDarkMode
+    //         ? darkModeStyle
+    //         : lightModeStyle,
+    // });
   }, [isDarkMode, map, theme]);
   useEffect(() => {
     map?.setCenter(center);
