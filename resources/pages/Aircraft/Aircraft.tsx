@@ -419,7 +419,7 @@ export const Aircraft = (): JSX.Element | null => {
                           <PlaneSolidIcon
                             className="text-primary h-6 w-6"
                             style={{
-                              transform: `rotate(${-Math.round(flightData.estimatedHeading - 90)}deg)`,
+                              transform: `rotate(${Math.round(flightData.estimatedHeading - 90)}deg)`,
                             }}
                           />
                         )}
