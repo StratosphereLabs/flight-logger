@@ -70,23 +70,6 @@ export const ChartIcon = (): JSX.Element => (
   </svg>
 );
 
-export const ChristmasTreeIcon = (
-  props: SVGProps<SVGSVGElement>,
-): JSX.Element => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    {...props}
-  >
-    <path
-      fill="currentColor"
-      d="M15 19v1a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-1zM5 18c-.89 0-1.337-1.077-.707-1.707l2.855-2.857l-1.464-.487a1 1 0 0 1-.472-1.565l.08-.091l3.019-3.02l-.758-.379a1 1 0 0 1-.343-1.507l.083-.094l4-4a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-.26 1.601l-.759.379l3.02 3.02a1 1 0 0 1-.279 1.61l-.113.046l-1.465.487l2.856 2.857c.603.602.22 1.614-.593 1.701L19 18z"
-    />
-  </svg>
-);
-
 export const ClockIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -733,6 +716,15 @@ export const SearchIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
       strokeWidth={2}
       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
     />
+  </svg>
+);
+
+export const SleighIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" {...props}>
+    <path
+      fill="currentColor"
+      d="M64 32c-17.7 0-32 14.3-32 32s14.3 32 32 32v160c0 41.8 26.7 77.4 64 90.5V416H56c-13.3 0-24 10.7-24 24s10.7 24 24 24h504c44.2 0 80-35.8 80-80v-8c0-13.3-10.7-24-24-24s-24 10.7-24 24v8c0 17.7-14.3 32-32 32h-80v-64c53 0 96-43 96-96v-96c17.7 0 32-14.3 32-32s-14.3-32-32-32h-32c-17.7 0-32 14.3-32 32v32c0 35.3-28.7 64-64 64h-48.9c-48.5 0-92.8-27.4-114.5-70.8l-25.2-50.5C237.7 59.4 193.4 32 144.9 32zm368 384H176v-64h256z"
+    ></path>
   </svg>
 );
 

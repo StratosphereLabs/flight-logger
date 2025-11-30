@@ -111,7 +111,11 @@ export const cyberPunkStyle = [
 ];
 
 export const christmasStyle = [
-  { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+  {
+    featureType: 'landscape',
+    elementType: 'geometry.fill',
+    stylers: [{ color: '#153205' }],
+  },
   { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
   { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
   {
@@ -147,7 +151,7 @@ export const christmasStyle = [
   {
     featureType: 'water',
     elementType: 'geometry',
-    stylers: [{ color: '#17263c' }],
+    stylers: [{ color: '#3D0101' }],
   },
   {
     featureType: 'water',

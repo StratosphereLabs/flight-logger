@@ -20,15 +20,15 @@ import {
 
 import {
   AirportLabelOverlay,
-  ChristmasTreeIcon,
   PlaneSolidIcon,
   PlusAirplaneIcon,
   RightArrowIcon,
+  SleighIcon,
 } from '../../common/components';
 import { TOOLTIP_COLORS } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
 import {
-  // christmasStyle,
+  christmasStyle,
   cyberPunkStyle,
   darkModeStyle,
   lightModeStyle,
@@ -68,19 +68,12 @@ export const FollowingMap = (): JSX.Element => {
       styles:
         theme === AppTheme.CYBERPUNK
           ? cyberPunkStyle
-          : isDarkMode
-            ? darkModeStyle
-            : lightModeStyle,
+          : theme === AppTheme.CHRISTMAS
+            ? christmasStyle
+            : isDarkMode
+              ? darkModeStyle
+              : lightModeStyle,
     });
-
-    // map?.setValues({
-    //   styles:
-    //     theme === AppTheme.CHRISTMAS
-    //       ? christmasStyle
-    //       : isDarkMode
-    //         ? darkModeStyle
-    //         : lightModeStyle,
-    // });
   }, [isDarkMode, map, theme]);
   useEffect(() => {
     map?.setCenter(center);
@@ -463,10 +456,10 @@ export const FollowingMap = (): JSX.Element => {
                               }
                             >
                               {theme === AppTheme.CHRISTMAS ? (
-                                <ChristmasTreeIcon
-                                  className="text-primary h-7 w-7"
+                                <SleighIcon
+                                  className="text-secondary h-7 w-7 brightness-85"
                                   style={{
-                                    transform: `rotate(${Math.round(estimatedHeading)}deg)`,
+                                    transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
                                   }}
                                 />
                               ) : (
