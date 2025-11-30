@@ -7,7 +7,7 @@ import {
   DarkModeIcon,
   DarkModeOutlineIcon,
   FantasyIcon,
-  ForestIcon,
+  // ForestIcon,
   GemIcon,
   // HalloweenIcon,
   LightModeIcon,
@@ -83,22 +83,6 @@ export const ThemeButton = (): JSX.Element => {
         //   },
         // },
         {
-          id: AppTheme.NIGHT,
-          onClick: () => {
-            setTheme(AppTheme.NIGHT);
-          },
-          children: (
-            <>
-              <DarkModeIcon className="h-5 w-5" />
-              Night
-            </>
-          ),
-          listItemProps: {
-            // @ts-ignore
-            'data-theme': 'night',
-          },
-        },
-        {
           className: 'bg-primary text-primary-content',
           id: AppTheme.EMERALD,
           onClick: () => {
@@ -116,21 +100,37 @@ export const ThemeButton = (): JSX.Element => {
           },
         },
         {
-          id: AppTheme.FOREST,
+          id: AppTheme.NIGHT,
           onClick: () => {
-            setTheme(AppTheme.FOREST);
+            setTheme(AppTheme.NIGHT);
           },
           children: (
             <>
-              <ForestIcon className="h-5 w-5" />
-              Forest
+              <DarkModeIcon className="h-5 w-5" />
+              Night
             </>
           ),
           listItemProps: {
             // @ts-ignore
-            'data-theme': 'forest',
+            'data-theme': 'night',
           },
         },
+        // {
+        //   id: AppTheme.FOREST,
+        //   onClick: () => {
+        //     setTheme(AppTheme.FOREST);
+        //   },
+        //   children: (
+        //     <>
+        //       <ForestIcon className="h-5 w-5" />
+        //       Forest
+        //     </>
+        //   ),
+        //   listItemProps: {
+        //     // @ts-ignore
+        //     'data-theme': 'forest',
+        //   },
+        // },
         {
           className: 'bg-primary text-primary-content',
           id: AppTheme.FANTASY,
