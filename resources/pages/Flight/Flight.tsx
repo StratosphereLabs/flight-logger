@@ -225,6 +225,8 @@ export const Flight = (): JSX.Element | null => {
               currentTracklogItem !== null
                 ? Math.round(currentTracklogItem.gs ?? 0)
                 : null;
+            const shouldFlipIcon =
+              data.estimatedHeading >= 180 || data.estimatedHeading < 0;
             let lastAltitude: number | null = null;
             return (
               <>
@@ -366,9 +368,16 @@ export const Flight = (): JSX.Element | null => {
                       >
                         {theme === AppTheme.CHRISTMAS ? (
                           <SleighIcon
-                            className="text-secondary h-7 w-7 brightness-85"
+                            className={classNames(
+                              'text-secondary h-7 w-7 brightness-80',
+                              shouldFlipIcon && 'scale-x-[-1]',
+                            )}
                             style={{
-                              transform: `rotate(${Math.round(data.estimatedHeading - 90)}deg)`,
+                              transform: `rotate(${Math.round(
+                                (shouldFlipIcon
+                                  ? -data.estimatedHeading
+                                  : data.estimatedHeading) - 90,
+                              )}deg)`,
                             }}
                           />
                         ) : (

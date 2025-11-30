@@ -6,6 +6,7 @@ import {
   PolylineF,
   useJsApiLoader,
 } from '@react-google-maps/api';
+import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -288,6 +289,8 @@ export const FollowingMap = (): JSX.Element => {
                     currentTracklogItem !== null
                       ? Math.round(currentTracklogItem.gs ?? 0)
                       : null;
+                  const shouldFlipIcon =
+                    estimatedHeading >= 180 || estimatedHeading < 0;
                   let lastAltitude: number | null = null;
                   return (
                     <>
@@ -457,9 +460,16 @@ export const FollowingMap = (): JSX.Element => {
                             >
                               {theme === AppTheme.CHRISTMAS ? (
                                 <SleighIcon
-                                  className="text-secondary h-7 w-7 brightness-85"
+                                  className={classNames(
+                                    'text-secondary h-7 w-7 brightness-80',
+                                    shouldFlipIcon && 'scale-x-[-1]',
+                                  )}
                                   style={{
-                                    transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
+                                    transform: `rotate(${Math.round(
+                                      (shouldFlipIcon
+                                        ? -estimatedHeading
+                                        : estimatedHeading) - 90,
+                                    )}deg)`,
                                   }}
                                 />
                               ) : (
