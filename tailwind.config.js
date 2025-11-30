@@ -13,7 +13,7 @@ export default {
         },
       },
       animation: {
-        rise: 'rise 300s ease-out forwards',
+        rise: 'rise 1800s ease-out forwards',
       },
       transitionProperty: {
         height: 'height',

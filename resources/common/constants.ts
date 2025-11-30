@@ -62,6 +62,14 @@ export const TOOLTIP_COLORS: Record<FlightDelayStatus, TooltipColor> = {
   canceled: 'error',
 };
 
+export const CHRISTMAS_THEME_TOOLTIP_COLORS: Record<FlightDelayStatus, string> =
+  {
+    none: '[--tt-bg:var(--color-success-dark)]',
+    moderate: '[--tt-bg:var(--color-warning-dark)]',
+    severe: '[--tt-bg:var(--color-error-dark)]',
+    canceled: '[--tt-bg:var(--color-error-dark)]',
+  };
+
 export const PROGRESS_BAR_COLORS: Record<FlightDelayStatus, string> = {
   none: 'progress-success',
   moderate: 'progress-warning',

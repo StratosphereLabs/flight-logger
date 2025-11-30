@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { Outlet, useParams } from 'react-router-dom';
@@ -21,13 +22,19 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { theme } = useThemeStore();
   const { setScrollContainerRef } = useMainLayoutStore();
   const [showSnowbank, setShowSnowbank] = useState(false);
+  const [showFooterText, setShowFooterText] = useState(false);
   useEffect(() => {
     setShowSnowbank(false);
-    const timeout = setTimeout(() => {
+    setShowFooterText(false);
+    const timeout1 = setTimeout(() => {
       setShowSnowbank(true);
     }, 5000);
+    const timeout2 = setTimeout(() => {
+      setShowFooterText(true);
+    }, 865000);
     return () => {
-      clearTimeout(timeout);
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
     };
   }, [theme]);
   useEffect(() => {
@@ -55,9 +62,39 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
         </div>
       ) : null}
       {theme === AppTheme.CHRISTMAS && showSnowbank ? (
-        <div className="fixed bottom-0 left-0 h-[21px] w-full overflow-hidden">
-          <div className="animate-rise absolute bottom-0 h-[21px] w-full rounded-t-[30%] bg-[#dee4fd]"></div>
+        <div className="pointer-events-none fixed bottom-0 left-0 h-[70px] w-full overflow-hidden">
+          <div className="animate-rise absolute bottom-0 h-[70px] w-full rounded-t-[30%] bg-[#dee4fd]"></div>
         </div>
+      ) : null}
+      {theme === AppTheme.CHRISTMAS ? (
+        <>
+          <footer
+            className={classNames(
+              'footer text-info fixed bottom-0 left-0 flex w-full justify-between overflow-hidden p-5 brightness-75 transition-opacity',
+              showFooterText
+                ? 'pointer-events-auto opacity-100'
+                : 'pointer-events-none opacity-0',
+            )}
+          >
+            <div className="truncate">
+              <p>
+                <span className="hidden sm:inline-block">Copyright</span> ©{' '}
+                {new Date().getFullYear()}{' '}
+                <a
+                  className="link-hover link"
+                  href="https://github.com/StratosphereLabs"
+                >
+                  Stratosphere Labs
+                </a>
+              </p>
+            </div>
+            <div className="flex gap-1 truncate opacity-75">
+              <span className="hidden sm:inline-block">Version</span>{' '}
+              {APP_VERSION}{' '}
+              <span className="opacity-50">{APP_BUILD_NUMBER}</span>
+            </div>
+          </footer>
+        </>
       ) : null}
     </div>
   );
