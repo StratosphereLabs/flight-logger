@@ -30,6 +30,7 @@ import {
 import {
   CARD_BORDER_COLORS,
   CARD_COLORS,
+  CHRISTMAS_THEME_TOOLTIP_COLORS,
   HIDE_SCROLLBAR_CLASSNAME,
   TOOLTIP_COLORS,
 } from '../../common/constants';
@@ -360,7 +361,17 @@ export const Aircraft = (): JSX.Element | null => {
                     zIndex={100}
                   >
                     <Tooltip
-                      color={TOOLTIP_COLORS[flightData.delayStatus]}
+                      className={classNames(
+                        theme === AppTheme.CHRISTMAS &&
+                          CHRISTMAS_THEME_TOOLTIP_COLORS[
+                            flightData.delayStatus
+                          ],
+                      )}
+                      color={
+                        theme === AppTheme.CHRISTMAS
+                          ? undefined
+                          : TOOLTIP_COLORS[flightData.delayStatus]
+                      }
                       open
                     >
                       <TooltipContent className="flex items-center gap-1 font-mono">

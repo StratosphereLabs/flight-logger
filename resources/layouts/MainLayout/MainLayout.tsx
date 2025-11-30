@@ -63,7 +63,7 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
       ) : null}
       {theme === AppTheme.CHRISTMAS && showSnowbank ? (
         <div className="pointer-events-none fixed bottom-0 left-0 h-[70px] w-full overflow-hidden">
-          <div className="animate-rise absolute bottom-0 h-[70px] w-full rounded-t-[25%] bg-[#dee4fd]"></div>
+          <div className="animate-rise absolute bottom-0 h-[70px] w-full rounded-t-[30%] bg-[#dee4fd]"></div>
         </div>
       ) : null}
       {theme === AppTheme.CHRISTMAS ? (

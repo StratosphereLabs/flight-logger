@@ -32,10 +32,13 @@
   --color-info: oklch(72.06% 0.191 231.6);
   --color-info-content: oklch(0% 0 0);
   --color-success: oklch(64.8% 0.15 160);
+  --color-success-dark: oklch(50% 0.15 160);
   --color-success-content: oklch(0% 0 0);
   --color-warning: oklch(84.71% 0.199 83.87);
+  --color-warning-dark: oklch(60% 0.199 83.87);
   --color-warning-content: oklch(0% 0 0);
   --color-error: oklch(63% 0.237 25.331);
+  --color-error-dark: oklch(40% 0.237 25.331);
   --color-error-content: oklch(0% 0 0);
   --radius-selector: 1rem;
   --radius-field: 0.5rem;

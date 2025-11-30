@@ -26,7 +26,10 @@ import {
   RightArrowIcon,
   SleighIcon,
 } from '../../common/components';
-import { TOOLTIP_COLORS } from '../../common/constants';
+import {
+  CHRISTMAS_THEME_TOOLTIP_COLORS,
+  TOOLTIP_COLORS,
+} from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
 import {
   christmasStyle,
@@ -411,7 +414,18 @@ export const FollowingMap = (): JSX.Element => {
                           })}
                           zIndex={100}
                         >
-                          <Tooltip color={TOOLTIP_COLORS[delayStatus]} open>
+                          <Tooltip
+                            className={classNames(
+                              theme === AppTheme.CHRISTMAS &&
+                                CHRISTMAS_THEME_TOOLTIP_COLORS[delayStatus],
+                            )}
+                            color={
+                              theme === AppTheme.CHRISTMAS
+                                ? undefined
+                                : TOOLTIP_COLORS[delayStatus]
+                            }
+                            open
+                          >
                             <TooltipContent className="flex items-center gap-1 font-mono">
                               {user !== null ? (
                                 <Avatar

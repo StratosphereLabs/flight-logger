@@ -146,7 +146,7 @@ export const christmasStyle = [
   {
     featureType: 'transit.station.airport',
     elementType: 'geometry.fill',
-    stylers: [{ visibility: 'on' }, { lightness: -50 }],
+    stylers: [{ visibility: 'on' }, { lightness: -50 }, { color: '#0F2604' }],
   },
   {
     featureType: 'water',
