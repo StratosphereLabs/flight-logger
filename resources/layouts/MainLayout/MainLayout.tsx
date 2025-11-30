@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { Outlet, useParams } from 'react-router-dom';
 import Snowfall from 'react-snowfall';
@@ -20,6 +20,16 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const { username } = useParams();
   const { theme } = useThemeStore();
   const { setScrollContainerRef } = useMainLayoutStore();
+  const [showSnowbank, setShowSnowbank] = useState(false);
+  useEffect(() => {
+    setShowSnowbank(false);
+    const timeout = setTimeout(() => {
+      setShowSnowbank(true);
+    }, 5000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [theme]);
   useEffect(() => {
     setScrollContainerRef(scrollContainerRef);
   }, [setScrollContainerRef]);
@@ -42,6 +52,11 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
       {alertMessages.length > 0 ? (
         <div className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]">
           <AlertMessages maxMessages={4} />
+        </div>
+      ) : null}
+      {theme === AppTheme.CHRISTMAS && showSnowbank ? (
+        <div className="fixed bottom-0 left-0 h-[21px] w-full overflow-hidden">
+          <div className="animate-rise absolute bottom-0 h-[21px] w-full rounded-t-[30%] bg-[#dee4fd]"></div>
         </div>
       ) : null}
     </div>
