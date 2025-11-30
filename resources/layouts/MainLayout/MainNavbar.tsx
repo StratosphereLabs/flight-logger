@@ -221,9 +221,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
                 <span
                   className={classNames(
-                    theme === AppTheme.CHRISTMAS
-                      ? 'text-primary'
-                      : 'text-base-content',
+                    theme === AppTheme.CHRISTMAS && 'text-primary',
                   )}
                 >
                   Flight
