@@ -16,7 +16,6 @@ import {
   AddTravelersModal,
   AddUserToFlightModal,
   AirportLabelOverlay,
-  ChristmasTreeIcon,
   FlightAircraftDetails,
   FlightChangelogTable,
   FlightDetailedTimetable,
@@ -25,6 +24,7 @@ import {
   OnTimePerformanceChart,
   PlaneSolidIcon,
   RightArrowIcon,
+  SleighIcon,
   WeatherInfo,
 } from '../../common/components';
 import {
@@ -35,6 +35,7 @@ import {
 } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
 import {
+  christmasStyle,
   cyberPunkStyle,
   darkModeStyle,
   lightModeStyle,
@@ -107,9 +108,11 @@ export const Aircraft = (): JSX.Element | null => {
       styles:
         theme === AppTheme.CYBERPUNK
           ? cyberPunkStyle
-          : isDarkMode
-            ? darkModeStyle
-            : lightModeStyle,
+          : theme === AppTheme.CHRISTMAS
+            ? christmasStyle
+            : isDarkMode
+              ? darkModeStyle
+              : lightModeStyle,
     });
   }, [isDarkMode, map, theme]);
   useEffect(() => {
@@ -396,10 +399,10 @@ export const Aircraft = (): JSX.Element | null => {
                         }
                       >
                         {theme === AppTheme.CHRISTMAS ? (
-                          <ChristmasTreeIcon
-                            className="text-primary h-7 w-7"
+                          <SleighIcon
+                            className="text-secondary h-7 w-7 brightness-85"
                             style={{
-                              transform: `rotate(${Math.round(flightData.estimatedHeading)}deg)`,
+                              transform: `rotate(${Math.round(flightData.estimatedHeading - 90)}deg)`,
                             }}
                           />
                         ) : (

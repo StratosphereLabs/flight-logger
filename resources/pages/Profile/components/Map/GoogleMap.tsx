@@ -16,6 +16,7 @@ import { type UseFormReturn, useWatch } from 'react-hook-form';
 
 import { AirportLabelOverlay } from '../../../../common/components';
 import {
+  christmasStyle,
   cyberPunkStyle,
   darkModeStyle,
   lightModeStyle,
@@ -104,9 +105,11 @@ export const GoogleMap = ({
       styles:
         theme === AppTheme.CYBERPUNK
           ? cyberPunkStyle
-          : isDarkMode
-            ? darkModeStyle
-            : lightModeStyle,
+          : theme === AppTheme.CHRISTMAS
+            ? christmasStyle
+            : isDarkMode
+              ? darkModeStyle
+              : lightModeStyle,
     });
   }, [isDarkMode, map, theme]);
   useEffect(() => {
