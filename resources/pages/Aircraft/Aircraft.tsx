@@ -16,12 +16,12 @@ import {
   AddTravelersModal,
   AddUserToFlightModal,
   AirportLabelOverlay,
+  ChristmasTreeIcon,
   FlightAircraftDetails,
   FlightChangelogTable,
   FlightDetailedTimetable,
   FlightInfo,
   FlightTimesDisplay,
-  HalloweenIcon,
   OnTimePerformanceChart,
   PlaneSolidIcon,
   RightArrowIcon,
@@ -395,8 +395,8 @@ export const Aircraft = (): JSX.Element | null => {
                             : undefined
                         }
                       >
-                        {theme === AppTheme.HALLOWEEN ? (
-                          <HalloweenIcon
+                        {theme === AppTheme.CHRISTMAS ? (
+                          <ChristmasTreeIcon
                             className="text-primary h-7 w-7"
                             style={{
                               transform: `rotate(${Math.round(flightData.estimatedHeading)}deg)`,
@@ -410,6 +410,21 @@ export const Aircraft = (): JSX.Element | null => {
                             }}
                           />
                         )}
+                        {/* {theme === AppTheme.HALLOWEEN ? (
+                          <HalloweenIcon
+                            className="text-primary h-7 w-7"
+                            style={{
+                              transform: `rotate(${Math.round(flightData.estimatedHeading)}deg)`,
+                            }}
+                          />
+                        ) : (
+                          <PlaneSolidIcon
+                            className="text-primary h-6 w-6"
+                            style={{
+                              transform: `rotate(${Math.round(flightData.estimatedHeading - 90)}deg)`,
+                            }}
+                          />
+                        )} */}
                         <span className="sr-only">
                           {flightData.user !== null
                             ? `@${flightData.user.username}`

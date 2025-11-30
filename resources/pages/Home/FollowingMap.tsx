@@ -20,7 +20,7 @@ import {
 
 import {
   AirportLabelOverlay,
-  HalloweenIcon,
+  ChristmasTreeIcon,
   PlaneSolidIcon,
   PlusAirplaneIcon,
   RightArrowIcon,
@@ -28,6 +28,7 @@ import {
 import { TOOLTIP_COLORS } from '../../common/constants';
 import { useWeatherRadarLayer } from '../../common/hooks';
 import {
+  // christmasStyle,
   cyberPunkStyle,
   darkModeStyle,
   lightModeStyle,
@@ -71,6 +72,15 @@ export const FollowingMap = (): JSX.Element => {
             ? darkModeStyle
             : lightModeStyle,
     });
+
+    // map?.setValues({
+    //   styles:
+    //     theme === AppTheme.CHRISTMAS
+    //       ? christmasStyle
+    //       : isDarkMode
+    //         ? darkModeStyle
+    //         : lightModeStyle,
+    // });
   }, [isDarkMode, map, theme]);
   useEffect(() => {
     map?.setCenter(center);
@@ -452,8 +462,8 @@ export const FollowingMap = (): JSX.Element => {
                                 user !== null ? `@${user.username}` : undefined
                               }
                             >
-                              {theme === AppTheme.HALLOWEEN ? (
-                                <HalloweenIcon
+                              {theme === AppTheme.CHRISTMAS ? (
+                                <ChristmasTreeIcon
                                   className="text-primary h-7 w-7"
                                   style={{
                                     transform: `rotate(${Math.round(estimatedHeading)}deg)`,
@@ -467,6 +477,21 @@ export const FollowingMap = (): JSX.Element => {
                                   }}
                                 />
                               )}
+                              {/* {theme === AppTheme.HALLOWEEN ? (
+                                <HalloweenIcon
+                                  className="text-primary h-7 w-7"
+                                  style={{
+                                    transform: `rotate(${Math.round(estimatedHeading)}deg)`,
+                                  }}
+                                />
+                              ) : (
+                                <PlaneSolidIcon
+                                  className="text-primary h-6 w-6"
+                                  style={{
+                                    transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
+                                  }}
+                                />
+                              )} */}
                               <span className="sr-only">
                                 {user !== null ? `@${user?.username}` : null}
                               </span>

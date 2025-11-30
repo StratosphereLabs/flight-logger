@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 export enum AppTheme {
   ABYSS = 'abyss',
   CORPORATE = 'corporate',
+  CHRISTMAS = 'christmas',
   CYBERPUNK = 'cyberpunk',
   EMERALD = 'emerald',
   FANTASY = 'fantasy',
@@ -19,6 +20,7 @@ export const DARK_MODE_THEMES = [
   AppTheme.SYNTHWAVE,
   AppTheme.ABYSS,
   AppTheme.HALLOWEEN,
+  AppTheme.CHRISTMAS,
 ];
 
 interface ThemeState {
@@ -30,7 +32,7 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
       theme: window.matchMedia?.('(prefers-color-scheme: dark)').matches
-        ? AppTheme.HALLOWEEN
+        ? AppTheme.CHRISTMAS
         : AppTheme.CORPORATE,
       setTheme: (theme: AppTheme) => {
         set({ theme });

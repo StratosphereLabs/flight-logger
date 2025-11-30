@@ -15,6 +15,7 @@ import {
 
 import {
   CogIcon,
+  ColoredSnowflakeIcon,
   HomeIcon,
   LeftArrowIcon,
   LogoutIcon,
@@ -26,7 +27,13 @@ import { useLoggedInUserQuery } from '../../common/hooks';
 import { type ProfilePageNavigationState } from '../../pages';
 import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
-import { getIsLoggedIn, useAuthStore, useIsDarkMode } from '../../stores';
+import {
+  AppTheme,
+  getIsLoggedIn,
+  useAuthStore,
+  useIsDarkMode,
+  useThemeStore,
+} from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
 import { ProfileFiltersForm } from './ProfileFiltersForm';
@@ -43,6 +50,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { previousPageName } = useMainLayoutStore();
   const { isAddingFlight } = useAddFlightStore();
   const isDarkMode = useIsDarkMode();
+  const { theme } = useThemeStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
@@ -109,7 +117,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         children: 'Home',
         className: classNames(
           '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-          currentTab === 'home' && 'lg:hover:text-primary-content',
+          currentTab === 'home' &&
+            (theme === AppTheme.CHRISTMAS
+              ? 'lg:text-white lg:hover:text-white'
+              : 'lg:hover:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'home') {
@@ -124,7 +135,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               children: 'Profile',
               className: classNames(
                 '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-                currentTab === 'profile' && 'lg:hover:text-primary-content',
+                currentTab === 'profile' &&
+                  (theme === AppTheme.CHRISTMAS
+                    ? 'lg:text-white lg:hover:text-white'
+                    : 'lg:hover:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'profile') {
@@ -137,7 +151,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               children: 'Users',
               className: classNames(
                 '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-                currentTab === 'users' && 'lg:hover:text-primary-content',
+                currentTab === 'users' &&
+                  (theme === AppTheme.CHRISTMAS
+                    ? 'lg:text-white lg:hover:text-white'
+                    : 'lg:hover:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'users') {
@@ -152,7 +169,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         children: 'Data',
         className: classNames(
           '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-          currentTab === 'data' && 'lg:hover:text-primary-content',
+          currentTab === 'data' &&
+            (theme === AppTheme.CHRISTMAS
+              ? 'lg:text-white lg:hover:text-white'
+              : 'lg:hover:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'data') {
@@ -161,7 +181,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         },
       },
     ],
-    [currentTab, isLoggedIn, navigate, tabsToPathsMap],
+    [currentTab, isLoggedIn, navigate, tabsToPathsMap, theme],
   );
   return (
     <>
@@ -191,7 +211,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               menuClassName="w-48 bg-base-200 z-50"
             />
             <Button
-              className="inline-flex px-1 normal-case sm:px-4"
+              className="inline-flex gap-0 px-1 normal-case sm:px-4"
               color="ghost"
               onClick={() => {
                 navigate('/');
@@ -200,8 +220,19 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             >
               <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
                 <span>Flight</span>
-                <span className="text-base-content">Logger</span>
+                <span
+                  className={classNames(
+                    theme === AppTheme.CHRISTMAS
+                      ? 'text-secondary'
+                      : 'text-base-content',
+                  )}
+                >
+                  Logger
+                </span>
               </div>
+              {theme === AppTheme.CHRISTMAS ? (
+                <ColoredSnowflakeIcon className="relative bottom-2 h-5 w-5 rotate-30 transform sm:h-6 sm:w-6" />
+              ) : null}
             </Button>
           </div>
           <div className="hidden flex-1 justify-center lg:flex">
