@@ -6,6 +6,15 @@ export default {
   ],
   theme: {
     extend: {
+      keyframes: {
+        rise: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        rise: 'rise 300s ease-out forwards',
+      },
       transitionProperty: {
         height: 'height',
       },
