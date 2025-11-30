@@ -219,13 +219,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               title="Home"
             >
               <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
-                <span
-                  className={classNames(
-                    theme === AppTheme.CHRISTMAS && 'text-primary',
-                  )}
-                >
-                  Flight
-                </span>
+                <span>Flight</span>
                 <span
                   className={classNames(
                     theme === AppTheme.CHRISTMAS
@@ -237,7 +231,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 </span>
               </div>
               {theme === AppTheme.CHRISTMAS ? (
-                <ColoredSnowflakeIcon className="relative bottom-2 h-6 w-6 rotate-30 transform" />
+                <ColoredSnowflakeIcon className="relative bottom-2 h-5 w-5 rotate-30 transform sm:h-6 sm:w-6" />
               ) : null}
             </Button>
           </div>
