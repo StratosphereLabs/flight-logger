@@ -15,7 +15,7 @@ import {
   AddTravelersModal,
   AddUserToFlightModal,
   AirportLabelOverlay,
-  ChristmastreeIcon,
+  ChristmasTreeIcon,
   FlightAircraftDetails,
   FlightChangelogTable,
   FlightDetailedTimetable,
@@ -362,7 +362,7 @@ export const Flight = (): JSX.Element | null => {
                         }
                       >
                         {theme === AppTheme.CHRISTMAS ? (
-                          <ChristmastreeIcon
+                          <ChristmasTreeIcon
                             className="text-primary h-7 w-7"
                             style={{
                               transform: `rotate(${Math.round(data.estimatedHeading)}deg)`,
