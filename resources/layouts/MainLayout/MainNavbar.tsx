@@ -117,7 +117,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         children: 'Home',
         className: classNames(
           '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-          currentTab === 'home' && 'lg:hover:text-primary-content',
+          currentTab === 'home' &&
+            (theme === AppTheme.CHRISTMAS
+              ? 'lg:text-white lg:hover:text-white'
+              : 'lg:hover:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'home') {
@@ -132,7 +135,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               children: 'Profile',
               className: classNames(
                 '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-                currentTab === 'profile' && 'lg:hover:text-primary-content',
+                currentTab === 'profile' &&
+                  (theme === AppTheme.CHRISTMAS
+                    ? 'lg:text-white lg:hover:text-white'
+                    : 'lg:hover:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'profile') {
@@ -145,7 +151,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               children: 'Users',
               className: classNames(
                 '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-                currentTab === 'users' && 'lg:hover:text-primary-content',
+                currentTab === 'users' &&
+                  (theme === AppTheme.CHRISTMAS
+                    ? 'lg:text-white lg:hover:text-white'
+                    : 'lg:hover:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'users') {
@@ -160,7 +169,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         children: 'Data',
         className: classNames(
           '[--tab-bg:var(--color-primary)] lg:text-primary-content',
-          currentTab === 'data' && 'lg:hover:text-primary-content',
+          currentTab === 'data' &&
+            (theme === AppTheme.CHRISTMAS
+              ? 'lg:text-white lg:hover:text-white'
+              : 'lg:hover:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'data') {
@@ -169,7 +181,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         },
       },
     ],
-    [currentTab, isLoggedIn, navigate, tabsToPathsMap],
+    [currentTab, isLoggedIn, navigate, tabsToPathsMap, theme],
   );
   return (
     <>
@@ -199,14 +211,14 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               menuClassName="w-48 bg-base-200 z-50"
             />
             <Button
-              className="inline-flex px-1 normal-case sm:px-4"
+              className="inline-flex gap-0 px-1 normal-case sm:px-4"
               color="ghost"
               onClick={() => {
                 navigate('/');
               }}
               title="Home"
             >
-              <div className="font-title text-primary flex text-xl transition-all duration-200 sm:text-3xl">
+              <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
                 <span
                   className={classNames(
                     theme === AppTheme.CHRISTMAS
@@ -225,10 +237,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 >
                   Logger
                 </span>
-                {theme === AppTheme.CHRISTMAS ? (
-                  <ColoredSnowflakeIcon className="relative bottom-1 h-6 w-6 rotate-30 transform" />
-                ) : null}
               </div>
+              {theme === AppTheme.CHRISTMAS ? (
+                <ColoredSnowflakeIcon className="relative bottom-2 h-6 w-6 rotate-30 transform" />
+              ) : null}
             </Button>
           </div>
           <div className="hidden flex-1 justify-center lg:flex">
@@ -243,7 +255,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   type="button"
                   className={classNames(
                     'tab',
-                    currentTab === id && 'tab-active text-white',
+                    currentTab === id && 'tab-active',
                     className,
                   )}
                   {...tab}
