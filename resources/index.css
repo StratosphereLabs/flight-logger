@@ -4,7 +4,7 @@
     corporate --default,
     halloween,
     emerald,
-    night --prefersdark,
+    night,
     synthwave,
     fantasy,
     abyss,
@@ -15,7 +15,7 @@
 @plugin "daisyui/theme" {
   name: 'christmas';
   default: false;
-  prefersdark: false;
+  prefersdark: true;
   color-scheme: 'dark';
   --color-base-100: oklch(22.5% 0.077 168.94);
   --color-base-200: oklch(15% 0.077 168.94);
