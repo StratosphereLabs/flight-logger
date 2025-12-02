@@ -3,6 +3,7 @@ import { DropdownMenu } from 'stratosphere-ui';
 
 import { AppTheme, useThemeStore } from '../../stores';
 import {
+  ColoredChristmasTreeIcon,
   CyberpunkIcon,
   DarkModeIcon,
   DarkModeOutlineIcon,
@@ -11,7 +12,6 @@ import {
   GemIcon,
   // HalloweenIcon,
   LightModeIcon,
-  SnowflakeIcon,
   SunsetIcon,
   ThemeIcon,
 } from './Icons';
@@ -57,7 +57,7 @@ export const ThemeButton = (): JSX.Element => {
           },
           children: (
             <>
-              <SnowflakeIcon className="h-5 w-5" />
+              <ColoredChristmasTreeIcon className="h-5 w-5" />
               Christmas
             </>
           ),
