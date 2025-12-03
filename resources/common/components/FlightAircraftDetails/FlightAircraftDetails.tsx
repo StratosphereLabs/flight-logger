@@ -19,20 +19,7 @@ import {
 import { AircraftFlightHistoryRow } from './AircraftFlightHistoryRow';
 
 export interface FlightAircraftDetailsProps {
-  data?: Pick<
-    FlightsRouterOutput['getFlight'],
-    | 'airframeId'
-    | 'airframe'
-    | 'tailNumber'
-    | 'aircraftType'
-    | 'departureAirport'
-    | 'outTime'
-    | 'outDateISO'
-    | 'arrivalAirport'
-    | 'flightNumberString'
-    | 'userId'
-    | 'user'
-  >;
+  data?: FlightsRouterOutput['getFlight'];
   showTrackMyAircraftButton?: boolean;
   showFlightActivity?: boolean;
 }
@@ -66,7 +53,7 @@ export const FlightAircraftDetails = ({
   return (
     <div
       className={classNames(
-        'flex w-full flex-col justify-between gap-4',
+        'flex w-full flex-col justify-between gap-2',
         cardClassNames,
       )}
     >
@@ -146,6 +133,7 @@ export const FlightAircraftDetails = ({
           Aircraft
         </Button>
       ) : null}
+      <div className="divider my-0" />
       {showFlightActivity === true ? (
         <>
           {flightActivityData?.count === 0 && !isFetching ? (
@@ -156,16 +144,11 @@ export const FlightAircraftDetails = ({
               <Loading />
             </div>
           ) : (
-            <div className="mx-[-4px] flex flex-1 flex-col gap-2">
-              {flightActivityData?.groupedFlights.CURRENT?.sort(
-                sortByDepartureTimeAsc,
-              ).map(flight => (
-                <AircraftFlightHistoryRow
-                  key={flight.id}
-                  flight={flight}
-                  previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
-                />
-              ))}
+            <div className="mx-[-4px] mt-1 mb-[-4px] flex flex-1 flex-col gap-2">
+              <AircraftFlightHistoryRow
+                flight={data}
+                previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
+              />
               {flightActivityData?.groupedFlights.UPCOMING?.sort(
                 sortByDepartureTimeAsc,
               ).map(flight => (

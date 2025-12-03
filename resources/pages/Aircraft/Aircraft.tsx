@@ -72,6 +72,7 @@ export const Aircraft = (): JSX.Element | null => {
       },
       {
         enabled: icao24 !== undefined,
+        refetchInterval: 60000,
       },
     );
   const { setPreviousPageName } = useMainLayoutStore();

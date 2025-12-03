@@ -1,6 +1,8 @@
+import { Promise } from 'bluebird';
 import { add, isAfter, isBefore, max, min, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 
+import { FLIGHT_DATA_PROMISE_CONCURRENCY } from '../../constants';
 import { prisma } from '../../db';
 import type { FlightWithData } from '../types';
 import { getGroupedFlightsKey } from '../utils';
@@ -20,24 +22,28 @@ const processFlightUpdate = async (
   }
   const groupedFlights = groupBy(flightsToUpdate, getGroupedFlightsKey);
   let firstIteration = true;
-  for (const [key, flights] of Object.entries(groupedFlights)) {
-    if (firstIteration) {
+  await Promise.map(
+    Object.entries(groupedFlights),
+    async ([key, flights]) => {
+      if (firstIteration) {
+        console.log('');
+        firstIteration = false;
+      }
+      console.log(`============[AUTOMATED FLIGHT UPDATE - ${key}]============`);
+      flights.forEach(flight => {
+        console.log(`${process.env.VITE_APP_URL}/flight/${flight.id}`);
+      });
+      await updateFn(flights);
+      console.log(
+        `====================================================${key
+          .split('')
+          .map(_ => '=')
+          .join('')}`,
+      );
       console.log('');
-      firstIteration = false;
-    }
-    console.log(`============[AUTOMATED FLIGHT UPDATE - ${key}]============`);
-    flights.forEach(flight => {
-      console.log(`${process.env.VITE_APP_URL}/flight/${flight.id}`);
-    });
-    await updateFn(flights);
-    console.log(
-      `====================================================${key
-        .split('')
-        .map(_ => '=')
-        .join('')}`,
-    );
-    console.log('');
-  }
+    },
+    { concurrency: FLIGHT_DATA_PROMISE_CONCURRENCY },
+  );
 };
 
 /**
@@ -49,17 +55,17 @@ export const updateFlightsDaily = async (): Promise<void> => {
     const flightsToUpdate = await prisma.flight.findMany({
       where: {
         outTime: {
-          lte: add(new Date(), { days: 7 }),
+          lte: add(new Date(), { days: 3 }),
         },
         OR: [
           {
             inTimeActual: {
-              gt: sub(new Date(), { days: 3 }),
+              gt: sub(new Date(), { days: 1 }),
             },
           },
           {
             inTime: {
-              gt: sub(new Date(), { days: 3 }),
+              gt: sub(new Date(), { days: 1 }),
             },
           },
         ],
