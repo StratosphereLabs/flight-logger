@@ -9,6 +9,7 @@ import {
   DATE_FORMAT_MONTH_DAY,
   DATE_FORMAT_SHORT,
   DATE_FORMAT_YEAR,
+  DB_PROMISE_CONCURRENCY,
 } from '../constants';
 import type { TracklogItem } from '../data/types';
 import {
@@ -19,7 +20,6 @@ import {
   updateTrackAircraftData,
 } from '../data/updaters';
 import { prisma } from '../db';
-import { DB_PROMISE_CONCURRENCY } from '../db/seeders/constants';
 import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
@@ -134,7 +134,7 @@ export const flightsRouter = router({
           })
         : [];
     const flightData = transformFlightData(flight);
-    const flightState =
+    const flightState: 'UPCOMING' | 'COMPLETED' | 'CURRENT' =
       flightData.flightStatus === 'SCHEDULED'
         ? 'UPCOMING'
         : flightData.flightStatus === 'ARRIVED'
@@ -154,6 +154,16 @@ export const flightsRouter = router({
       ...flightData,
       user:
         flightData.user !== null ? _.omit(flightData.user, 'followedBy') : null,
+      outTimeYear: formatInTimeZone(
+        flightData.outTime,
+        flightData.departureAirport.timeZone,
+        DATE_FORMAT_YEAR,
+      ),
+      outTimeDate: formatInTimeZone(
+        flightData.outTime,
+        flightData.departureAirport.timeZone,
+        DATE_FORMAT_MONTH_DAY,
+      ),
       flightState,
       timestamp,
       otherTravelers: otherTravelers.map(({ username, email }) => ({
@@ -191,7 +201,7 @@ export const flightsRouter = router({
         });
       }
       const flightData = transformFlightData(activeFlight);
-      const flightState =
+      const flightState: 'UPCOMING' | 'COMPLETED' | 'CURRENT' =
         flightData.flightStatus === 'SCHEDULED'
           ? 'UPCOMING'
           : flightData.flightStatus === 'ARRIVED'

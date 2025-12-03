@@ -22,6 +22,9 @@ export const TIME_FORMAT_24H = 'HH:mm';
 export const TIMESTAMP_FORMAT_ISO = `${DATE_FORMAT_ISO}'T'${TIME_FORMAT_24H}:ss'Z'`;
 export const ON_TIME_PERFORMANCE_DATE_FORMAT = 'dd-LLL-yyyy';
 
+export const DB_PROMISE_CONCURRENCY = 10;
+export const FLIGHT_DATA_PROMISE_CONCURRENCY = 2;
+
 export const METERS_IN_MILE = 1609.344;
 
 export const SECONDS_IN_MINUTE = 60;

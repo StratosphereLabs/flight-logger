@@ -1,5 +1,4 @@
 export const LOGGING_INTERVAL = 1000;
-export const DB_PROMISE_CONCURRENCY = 10;
 export const WIKI_PROMISE_CONCURRENCY = 2;
 
 export const READ_AIRFRAMES_CHUNK_SIZE = 100;

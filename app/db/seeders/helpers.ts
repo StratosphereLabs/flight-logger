@@ -3,7 +3,7 @@ import { Promise } from 'bluebird';
 import { load } from 'cheerio';
 import { type Options, parse } from 'csv-parse/sync';
 
-import { DB_PROMISE_CONCURRENCY } from './constants';
+import { DB_PROMISE_CONCURRENCY } from '../../constants';
 
 export const csvToJson = <Data>(
   csv: string,
