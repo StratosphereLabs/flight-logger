@@ -16,7 +16,7 @@ import { useCardClassNames, useLoggedInUserQuery } from '../../hooks';
 import { FlightHistoryRow } from './FlightHistoryRow';
 
 export interface FlightHistoryProps {
-  flightId: string;
+  flightId?: string;
 }
 
 export type FlightHistoryFormData = Pick<
@@ -40,15 +40,20 @@ export const FlightHistory = ({
   });
   const cardClassNames = useCardClassNames();
   const { data: userData } = useLoggedInUserQuery();
-  const { data: flightData } = trpc.flights.getFlight.useQuery({
-    id: flightId,
-  });
+  const { data: flightData } = trpc.flights.getFlight.useQuery(
+    {
+      id: flightId ?? '',
+    },
+    {
+      enabled: flightId !== undefined,
+    },
+  );
   const onOwnProfile =
     userData !== undefined && userData.id === flightData?.userId;
   const { data, isFetching, fetchNextPage, isFetchingNextPage } =
     trpc.flights.getFlightHistory.useInfiniteQuery(
       {
-        flightId,
+        flightId: flightId ?? '',
         user,
         mode,
         limit: 5,
@@ -57,6 +62,7 @@ export const FlightHistory = ({
         getNextPageParam: ({ metadata }) =>
           metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
         keepPreviousData: true,
+        enabled: flightId !== undefined,
       },
     );
   const flattenedData = useMemo(

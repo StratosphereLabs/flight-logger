@@ -161,16 +161,13 @@ export const useFlightMapBounds = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.id, isMapCollapsed, map]);
   useEffect(() => {
-    if (
-      data?.flightStatus === 'SCHEDULED' ||
-      data?.flightStatus === 'ARRIVED'
-    ) {
+    if (data?.flightStatus === 'ARRIVED') {
       setIsFlightFocused(false);
+      focusFullRoute();
     } else if (isFlightFocused) {
       focusOnFlight();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, focusOnFlight, isFlightFocused]);
+  }, [data, focusFullRoute, focusOnFlight, isFlightFocused]);
   return {
     focusFullRoute,
     isEnRouteFlight,
