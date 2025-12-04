@@ -178,6 +178,8 @@ export interface TransformFlightDataResult
   delayValue: number | null;
   delayStatus: FlightDelayStatus;
   estimatedLocation: Coordinates;
+  oppositeBoundLocationDeparture: Coordinates | null;
+  oppositeBoundLocationArrival: Coordinates | null;
   estimatedHeading: number;
   estimatedAltitude: number | null;
   altChangeString: string | null;
@@ -722,11 +724,14 @@ export const transformFlightData = (
     latestAltitude !== null && estimatedAltitude !== null
       ? getAltChangeString(latestAltitude, estimatedAltitude)
       : null;
+  const isFlightActive = [
+    'DEPARTED_TAXIING',
+    'EN_ROUTE',
+    'LANDED_TAXIING',
+  ].includes(flightStatus);
   const tracklogWithLocation = [
     ...(tracklog ?? []),
-    ...(tracklog !== undefined &&
-    tracklog.length > 0 &&
-    ['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(flightStatus)
+    ...(tracklog !== undefined && tracklog.length > 0 && isFlightActive
       ? [
           {
             timestamp: Math.floor(getTime(new Date()) / 1000),
@@ -741,6 +746,18 @@ export const transformFlightData = (
         ]
       : []),
   ];
+  const oppositeBoundBearingDeparture = getBearing(
+    flight.departureAirport.lat,
+    flight.departureAirport.lon,
+    estimatedLocation.lat,
+    estimatedLocation.lng,
+  );
+  const oppositeBoundBearingArrival = getBearing(
+    flight.arrivalAirport.lat,
+    flight.arrivalAirport.lon,
+    estimatedLocation.lat,
+    estimatedLocation.lng,
+  );
   const estimatedDistanceFromOriginMi = calculateDistance(
     flight.departureAirport.lat,
     flight.departureAirport.lon,
@@ -753,6 +770,22 @@ export const transformFlightData = (
     flight.arrivalAirport.lat,
     flight.arrivalAirport.lon,
   );
+  const oppositeBoundLocationDeparture = isFlightActive
+    ? getProjectedCoords(
+        estimatedLocation.lat,
+        estimatedLocation.lng,
+        estimatedDistanceFromOriginMi,
+        oppositeBoundBearingDeparture,
+      )
+    : null;
+  const oppositeBoundLocationArrival = isFlightActive
+    ? getProjectedCoords(
+        estimatedLocation.lat,
+        estimatedLocation.lng,
+        estimatedDistanceToDestinationMi,
+        oppositeBoundBearingArrival,
+      )
+    : null;
   const estimatedDistanceToDiversionMi =
     flight.diversionAirport !== null
       ? calculateDistance(
@@ -842,6 +875,8 @@ export const transformFlightData = (
     delayValue,
     delayStatus,
     estimatedLocation,
+    oppositeBoundLocationDeparture,
+    oppositeBoundLocationArrival,
     estimatedHeading,
     estimatedAltitude:
       estimatedAltitude !== null ? Math.round(estimatedAltitude) : null,
