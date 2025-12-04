@@ -15,6 +15,8 @@ import {
   AddTravelersModal,
   AddUserToFlightModal,
   AirportLabelOverlay,
+  CollapseIcon,
+  ExpandIcon,
   FlightAircraftDetails,
   FlightChangelogTable,
   FlightDetailedTimetable,
@@ -24,6 +26,7 @@ import {
   OnTimePerformanceChart,
   PlaneSolidIcon,
   RightArrowIcon,
+  RouteIcon,
   SleighIcon,
   WeatherInfo,
 } from '../../common/components';
@@ -34,7 +37,7 @@ import {
   HIDE_SCROLLBAR_CLASSNAME,
   TOOLTIP_COLORS,
 } from '../../common/constants';
-import { useWeatherRadarLayer } from '../../common/hooks';
+import { useFlightMapBounds, useWeatherRadarLayer } from '../../common/hooks';
 import {
   christmasStyle,
   cyberPunkStyle,
@@ -63,7 +66,6 @@ export const Flight = (): JSX.Element | null => {
     libraries: ['visualization'],
   });
   const { flightId } = useParams();
-  const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -81,8 +83,12 @@ export const Flight = (): JSX.Element | null => {
   const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
-  const isEnRouteFlight =
-    data !== undefined ? data.flightStatus === 'EN_ROUTE' : false;
+  const isCurrentFlight =
+    data !== undefined
+      ? ['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(
+          data.flightStatus,
+        )
+      : false;
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
     map?.setValues({
@@ -104,6 +110,16 @@ export const Flight = (): JSX.Element | null => {
       setPreviousPageName(state.previousPageName);
     }
   }, [setPreviousPageName, state]);
+  const {
+    focusFullRoute,
+    isEnRouteFlight,
+    isFlightFocused,
+    setIsFlightFocused,
+    setIsMapCollapsed,
+  } = useFlightMapBounds({
+    data,
+    map,
+  });
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (container === null) return;
@@ -120,42 +136,8 @@ export const Flight = (): JSX.Element | null => {
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-  useEffect(() => {
-    if (map !== null && data !== undefined) {
-      const bounds = new window.google.maps.LatLngBounds();
-      for (const { lat, lon } of [data.departureAirport, data.arrivalAirport]) {
-        bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
-      }
-      const { tracklog, waypoints } = data;
-      if (waypoints !== undefined) {
-        for (const [lng, lat] of waypoints) {
-          bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-        }
-      }
-      if (tracklog !== undefined) {
-        for (const {
-          coord: [lng, lat],
-        } of tracklog) {
-          bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-        }
-      }
-      if (!bounds.isEmpty()) {
-        map.fitBounds(bounds, {
-          top: 165,
-          left: window.innerWidth < 768 ? 25 : 420,
-          right: isEnRouteFlight ? 80 : 30,
-          bottom:
-            window.innerWidth < 768
-              ? isMapCollapsed
-                ? Math.floor(window.innerHeight / 2) + 80 + 20
-                : 320
-              : 20,
-        });
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.id, isMapCollapsed, map]);
+  }, []);
   if (flightId === undefined) return null;
   return (
     <div className="relative flex-1">
@@ -174,6 +156,9 @@ export const Flight = (): JSX.Element | null => {
             streetViewControl: false,
             gestureHandling: 'greedy',
             isFractionalZoomEnabled: true,
+          }}
+          onDrag={() => {
+            setIsFlightFocused(false);
           }}
           onLoad={map => {
             setMap(map);
@@ -213,11 +198,6 @@ export const Flight = (): JSX.Element | null => {
             ),
           )}
           {(() => {
-            const isCurrentFlight = [
-              'DEPARTED_TAXIING',
-              'EN_ROUTE',
-              'LANDED_TAXIING',
-            ].includes(data.flightStatus);
             const currentTracklogItem =
               data.tracklog !== undefined && data.tracklog.length > 1
                 ? data.tracklog[data.tracklog.length - 2]
@@ -313,9 +293,7 @@ export const Flight = (): JSX.Element | null => {
                     }
                   />
                 ) : null}
-                {['DEPARTED_TAXIING', 'EN_ROUTE', 'LANDED_TAXIING'].includes(
-                  data.flightStatus,
-                ) ? (
+                {isCurrentFlight ? (
                   <OverlayViewF
                     position={{
                       lat: data.estimatedLocation.lat,
@@ -427,6 +405,35 @@ export const Flight = (): JSX.Element | null => {
           })()}
         </GoogleMap>
       )}
+      <div className="absolute top-[100px] right-1 z-20 flex gap-2">
+        <Button
+          className="btn-sm sm:btn-md px-2"
+          onClick={() => {
+            setIsFlightFocused(false);
+            focusFullRoute();
+          }}
+        >
+          <RouteIcon className="h-6 w-6 rotate-90" />
+        </Button>
+        {isCurrentFlight ? (
+          <Button
+            className={classNames(
+              'btn-sm sm:btn-md px-2',
+              isFlightFocused &&
+                'outline-primary text-primary outline outline-2',
+            )}
+            onClick={() => {
+              setIsFlightFocused(isFocused => !isFocused);
+            }}
+          >
+            {isFlightFocused ? (
+              <ExpandIcon className="h-6 w-6" />
+            ) : (
+              <CollapseIcon className="h-6 w-6" />
+            )}
+          </Button>
+        ) : null}
+      </div>
       <div
         className={classNames(
           'pointer-events-none absolute bottom-0 left-1 h-[calc(50vh+80px)] w-[calc(100%-8px)] overflow-y-scroll pb-1 md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px] md:pb-0',
@@ -446,8 +453,7 @@ export const Flight = (): JSX.Element | null => {
               <div className="flex h-full w-[150px] flex-col overflow-hidden">
                 <div className="flex flex-1 gap-4">
                   <div className="flex h-[24px] w-[100px]">
-                    {data.airline?.logo !== null &&
-                    data.airline?.logo !== undefined ? (
+                    {data.airline.logo !== null ? (
                       <a
                         className="flex flex-1 items-center"
                         href={data.airline.wiki ?? '#'}
