@@ -26,149 +26,104 @@ export const useFlightMapBounds = ({
 } => {
   const [isFlightFocused, setIsFlightFocused] = useState(false);
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
-  const isEnRouteFlight =
-    data !== undefined ? data.flightStatus === 'EN_ROUTE' : false;
+  const isEnRouteFlight = data?.flightStatus === 'EN_ROUTE';
+  const extendBounds = useCallback(
+    (bounds: google.maps.LatLngBounds, lat: number, lng: number) => {
+      bounds.extend(new window.google.maps.LatLng({ lat, lng }));
+    },
+    [],
+  );
   const getFullRouteBounds = useCallback(() => {
     const bounds = new window.google.maps.LatLngBounds();
-    if (data !== undefined) {
-      const arrivalAirport = data.diversionAirport ?? data.arrivalAirport;
-      for (const { lat, lon } of [data.departureAirport, arrivalAirport]) {
-        bounds.extend(new window.google.maps.LatLng({ lat, lng: lon }));
+    if (data === undefined) return bounds;
+    const arrivalAirport = data.diversionAirport ?? data.arrivalAirport;
+    extendBounds(bounds, data.departureAirport.lat, data.departureAirport.lon);
+    extendBounds(bounds, arrivalAirport.lat, arrivalAirport.lon);
+    if (data.waypoints !== undefined) {
+      for (const [lng, lat] of data.waypoints) {
+        extendBounds(bounds, lat, lng);
       }
-      const { tracklog, waypoints } = data;
-      if (waypoints !== undefined) {
-        for (const [lng, lat] of waypoints) {
-          bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-        }
-      }
-      if (tracklog !== undefined) {
-        for (const {
-          coord: [lng, lat],
-        } of tracklog) {
-          bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-        }
+    }
+    if (data.tracklog !== undefined) {
+      for (const {
+        coord: [lng, lat],
+      } of data.tracklog) {
+        extendBounds(bounds, lat, lng);
       }
     }
     return bounds;
-  }, [data]);
+  }, [data, extendBounds]);
   const getFlightFocusedBounds = useCallback(() => {
     const bounds = new window.google.maps.LatLngBounds();
-    if (data !== undefined) {
-      if (
-        data.flightStatus === 'SCHEDULED' ||
-        data.flightStatus === 'ARRIVED'
-      ) {
+    if (data === undefined) return bounds;
+    const { flightStatus, estimatedLocation, departureAirport, tracklog } =
+      data;
+    const arrivalAirport = data.diversionAirport ?? data.arrivalAirport;
+    if (flightStatus === 'SCHEDULED' || flightStatus === 'ARRIVED') {
+      return getFullRouteBounds();
+    }
+    if (flightStatus === 'DEPARTED_TAXIING') {
+      extendBounds(bounds, departureAirport.lat, departureAirport.lon);
+      extendBounds(bounds, estimatedLocation.lat, estimatedLocation.lng);
+      if (data.oppositeBoundLocationDeparture !== null) {
+        extendBounds(
+          bounds,
+          data.oppositeBoundLocationDeparture.lat,
+          data.oppositeBoundLocationDeparture.lng,
+        );
+      }
+    }
+    if (flightStatus === 'LANDED_TAXIING') {
+      extendBounds(bounds, arrivalAirport.lat, arrivalAirport.lon);
+      extendBounds(bounds, estimatedLocation.lat, estimatedLocation.lng);
+      if (data.oppositeBoundLocationArrival !== null) {
+        extendBounds(
+          bounds,
+          data.oppositeBoundLocationArrival.lat,
+          data.oppositeBoundLocationArrival.lng,
+        );
+      }
+    }
+    const departureDistance = departureAirport.estimatedDistance;
+    const arrivalDistance = arrivalAirport.estimatedDistance;
+    if (departureDistance !== undefined && arrivalDistance !== undefined) {
+      const totalDistance = departureDistance + arrivalDistance;
+      const percentFromOrigin = departureDistance / totalDistance;
+      const percentFromDestination = arrivalDistance / totalDistance;
+      if (percentFromOrigin >= 0.25 && percentFromDestination >= 0.25) {
         return getFullRouteBounds();
       }
-      if (data.flightStatus === 'DEPARTED_TAXIING') {
-        bounds.extend(
-          new window.google.maps.LatLng({
-            lat: data.departureAirport.lat,
-            lng: data.departureAirport.lon,
-          }),
-        );
-        bounds.extend(
-          new window.google.maps.LatLng({
-            lat: data.estimatedLocation.lat,
-            lng: data.estimatedLocation.lng,
-          }),
-        );
+      if (percentFromOrigin < 0.25) {
+        extendBounds(bounds, departureAirport.lat, departureAirport.lon);
+        if (tracklog !== undefined) {
+          for (const {
+            coord: [lng, lat],
+          } of tracklog) {
+            extendBounds(bounds, lat, lng);
+          }
+        }
         if (data.oppositeBoundLocationDeparture !== null) {
-          bounds.extend(
-            new window.google.maps.LatLng({
-              lat: data.oppositeBoundLocationDeparture.lat,
-              lng: data.oppositeBoundLocationDeparture.lng,
-            }),
+          extendBounds(
+            bounds,
+            data.oppositeBoundLocationDeparture.lat,
+            data.oppositeBoundLocationDeparture.lng,
           );
         }
       }
-      const arrivalAirport = data.diversionAirport ?? data.arrivalAirport;
-      if (data.flightStatus === 'LANDED_TAXIING') {
-        bounds.extend(
-          new window.google.maps.LatLng({
-            lat: arrivalAirport.lat,
-            lng: arrivalAirport.lon,
-          }),
-        );
-        bounds.extend(
-          new window.google.maps.LatLng({
-            lat: data.estimatedLocation.lat,
-            lng: data.estimatedLocation.lng,
-          }),
-        );
+      if (percentFromDestination < 0.25) {
+        extendBounds(bounds, arrivalAirport.lat, arrivalAirport.lon);
+        extendBounds(bounds, estimatedLocation.lat, estimatedLocation.lng);
         if (data.oppositeBoundLocationArrival !== null) {
-          bounds.extend(
-            new window.google.maps.LatLng({
-              lat: data.oppositeBoundLocationArrival.lat,
-              lng: data.oppositeBoundLocationArrival.lng,
-            }),
+          extendBounds(
+            bounds,
+            data.oppositeBoundLocationArrival.lat,
+            data.oppositeBoundLocationArrival.lng,
           );
-        }
-      }
-      if (
-        data.departureAirport.estimatedDistance !== undefined &&
-        arrivalAirport.estimatedDistance !== undefined
-      ) {
-        const totalDistance =
-          data.departureAirport.estimatedDistance +
-          arrivalAirport.estimatedDistance;
-        const percentFromOrigin =
-          data.departureAirport.estimatedDistance / totalDistance;
-        const percentFromDestination =
-          arrivalAirport.estimatedDistance / totalDistance;
-        if (percentFromOrigin >= 0.25 && percentFromDestination >= 0.25) {
-          return getFullRouteBounds();
-        }
-        if (percentFromOrigin < 0.25) {
-          bounds.extend(
-            new window.google.maps.LatLng({
-              lat: data.departureAirport.lat,
-              lng: data.departureAirport.lon,
-            }),
-          );
-          const { tracklog } = data;
-          if (tracklog !== undefined) {
-            for (const {
-              coord: [lng, lat],
-            } of tracklog) {
-              bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-            }
-          }
-          if (data.oppositeBoundLocationDeparture !== null) {
-            bounds.extend(
-              new window.google.maps.LatLng({
-                lat: data.oppositeBoundLocationDeparture.lat,
-                lng: data.oppositeBoundLocationDeparture.lng,
-              }),
-            );
-          }
-        }
-        if (percentFromDestination < 0.25) {
-          bounds.extend(
-            new window.google.maps.LatLng({
-              lat: arrivalAirport.lat,
-              lng: arrivalAirport.lon,
-            }),
-          );
-          bounds.extend(
-            new window.google.maps.LatLng({
-              lat: data.estimatedLocation.lat,
-              lng: data.estimatedLocation.lng,
-            }),
-          );
-          if (data.oppositeBoundLocationArrival !== null) {
-            bounds.extend(
-              new window.google.maps.LatLng({
-                lat: data.oppositeBoundLocationArrival.lat,
-                lng: data.oppositeBoundLocationArrival.lng,
-              }),
-            );
-          }
         }
       }
     }
     return bounds;
-  }, [data, getFullRouteBounds]);
+  }, [data, getFullRouteBounds, extendBounds]);
   const padding = useMemo(
     () => ({
       top: 150,
@@ -177,7 +132,7 @@ export const useFlightMapBounds = ({
       bottom:
         window.innerWidth < 768
           ? isMapCollapsed
-            ? Math.floor(window.innerHeight / 2) + 80 + 20
+            ? Math.floor(window.innerHeight / 2) + 100
             : 354
           : 54,
     }),
