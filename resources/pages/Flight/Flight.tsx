@@ -415,7 +415,7 @@ export const Flight = (): JSX.Element | null => {
         >
           <RouteIcon className="h-6 w-6 rotate-90" />
         </Button>
-        {isCurrentFlight ? (
+        {data !== undefined && data.flightStatus !== 'ARRIVED' ? (
           <Button
             className={classNames(
               'btn-sm sm:btn-md px-2',
