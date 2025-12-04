@@ -166,11 +166,11 @@ export const useFlightMapBounds = ({
       data?.flightStatus === 'ARRIVED'
     ) {
       setIsFlightFocused(false);
+      focusFullRoute();
     } else if (isFlightFocused) {
       focusOnFlight();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, focusOnFlight, isFlightFocused]);
+  }, [data, focusFullRoute, focusOnFlight, isFlightFocused]);
   return {
     focusFullRoute,
     isEnRouteFlight,

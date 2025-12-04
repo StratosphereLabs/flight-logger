@@ -21,6 +21,7 @@ import {
   FlightAircraftDetails,
   FlightChangelogTable,
   FlightDetailedTimetable,
+  FlightHistory,
   FlightInfo,
   FlightTimesDisplay,
   OnTimePerformanceChart,
@@ -45,7 +46,13 @@ import {
   lightModeStyle,
 } from '../../common/mapStyle';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
-import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
+import {
+  AppTheme,
+  getIsLoggedIn,
+  useAuthStore,
+  useIsDarkMode,
+  useThemeStore,
+} from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { DEFAULT_COORDINATES } from '../Home/constants';
@@ -63,6 +70,7 @@ export const Aircraft = (): JSX.Element | null => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
     { icao24: icao24 ?? '' },
     { enabled: icao24 !== undefined, refetchInterval: 5000 },
@@ -604,6 +612,7 @@ export const Aircraft = (): JSX.Element | null => {
             <FlightDetailedTimetable data={data} />
             <OnTimePerformanceChart flightId={data?.id} />
             <WeatherInfo flightId={data?.id} />
+            {isLoggedIn ? <FlightHistory flightId={data?.id} /> : null}
             <FlightChangelogTable flightId={data?.id} />
           </div>
         </div>
