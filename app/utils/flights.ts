@@ -57,16 +57,8 @@ export const flightIncludeObj = {
     },
   },
   diversionAirport: {
-    select: {
-      iata: true,
-      municipality: true,
-      countryId: true,
-      region: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
+    include: {
+      region: true,
     },
   },
   airline: true,
@@ -92,15 +84,7 @@ export interface FlightData extends Flight {
   user: UserData | null;
   departureAirport: AirportData;
   arrivalAirport: AirportData;
-  diversionAirport: {
-    iata: string;
-    municipality: string;
-    countryId: string;
-    region: {
-      id: string;
-      name: string;
-    };
-  } | null;
+  diversionAirport: AirportData | null;
   airline: Airline | null;
   aircraftType: AircraftType | null;
   airframe: AirframeData | null;
@@ -133,7 +117,12 @@ export interface FlightTrackingDataResult {
 export interface TransformFlightDataResult
   extends Omit<
       FlightData,
-      'tracklog' | 'user' | 'waypoints' | 'departureAirport' | 'arrivalAirport'
+      | 'tracklog'
+      | 'user'
+      | 'waypoints'
+      | 'departureAirport'
+      | 'arrivalAirport'
+      | 'diversionAirport'
     >,
     FlightTimestampsResult,
     FlightTrackingDataResult {
@@ -156,6 +145,11 @@ export interface TransformFlightDataResult
   arrivalAirport: AirportData & {
     estimatedDistance: number | undefined;
   };
+  diversionAirport:
+    | (AirportData & {
+        estimatedDistance: number | undefined;
+      })
+    | null;
   distance: number;
   flightNumberString: string;
   departureMunicipalityText: string;
@@ -759,6 +753,15 @@ export const transformFlightData = (
     flight.arrivalAirport.lat,
     flight.arrivalAirport.lon,
   );
+  const estimatedDistanceToDiversionMi =
+    flight.diversionAirport !== null
+      ? calculateDistance(
+          estimatedLocation.lat,
+          estimatedLocation.lng,
+          flight.diversionAirport.lat,
+          flight.diversionAirport.lon,
+        )
+      : null;
   const delayStatus =
     progress > 0
       ? timestamps.arrivalDelayStatus
@@ -786,6 +789,17 @@ export const transformFlightData = (
           ? Math.round(estimatedDistanceToDestinationMi)
           : undefined,
     },
+    diversionAirport:
+      flight.diversionAirport !== null &&
+      estimatedDistanceToDiversionMi !== null
+        ? {
+            ...flight.diversionAirport,
+            estimatedDistance:
+              flightStatus === 'EN_ROUTE'
+                ? Math.round(estimatedDistanceToDiversionMi)
+                : undefined,
+          }
+        : null,
     user:
       flight.user !== null
         ? {

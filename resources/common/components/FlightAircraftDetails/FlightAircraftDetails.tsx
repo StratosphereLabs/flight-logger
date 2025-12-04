@@ -133,9 +133,9 @@ export const FlightAircraftDetails = ({
           Aircraft
         </Button>
       ) : null}
-      <div className="divider my-0" />
       {showFlightActivity === true ? (
         <>
+          <div className="divider my-0" />
           {flightActivityData?.count === 0 && !isFetching ? (
             <div className="my-4 text-center">No Flights Found</div>
           ) : null}

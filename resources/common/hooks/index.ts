@@ -5,6 +5,7 @@ export * from './useCopyToClipboard';
 export * from './useCurrentDate';
 export * from './useErrorResponseHandler';
 export * from './useFlightDiaryUploadMutation';
+export * from './useFlightMapBounds';
 export * from './useGoogleLoginMutation';
 export * from './useLoggedInUserQuery';
 export * from './useProfilePage';
