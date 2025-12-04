@@ -126,15 +126,15 @@ export const useFlightMapBounds = ({
   }, [data, getFullRouteBounds, extendBounds]);
   const padding = useMemo(
     () => ({
-      top: 150,
+      top: 164,
       left: window.innerWidth < 768 ? 75 : 469,
       right: 75,
       bottom:
         window.innerWidth < 768
           ? isMapCollapsed
             ? Math.floor(window.innerHeight / 2) + 100
-            : 354
-          : 54,
+            : 368
+          : 68,
     }),
     [isMapCollapsed],
   );
