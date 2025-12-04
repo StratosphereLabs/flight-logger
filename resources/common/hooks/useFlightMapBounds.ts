@@ -3,6 +3,7 @@ import {
   type SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -66,13 +67,19 @@ export const useFlightMapBounds = ({
             lng: data.departureAirport.lon,
           }),
         );
-        const { tracklog } = data;
-        if (tracklog !== undefined) {
-          for (const {
-            coord: [lng, lat],
-          } of tracklog) {
-            bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-          }
+        bounds.extend(
+          new window.google.maps.LatLng({
+            lat: data.estimatedLocation.lat,
+            lng: data.estimatedLocation.lng,
+          }),
+        );
+        if (data.oppositeBoundLocationDeparture !== null) {
+          bounds.extend(
+            new window.google.maps.LatLng({
+              lat: data.oppositeBoundLocationDeparture.lat,
+              lng: data.oppositeBoundLocationDeparture.lng,
+            }),
+          );
         }
       }
       const arrivalAirport = data.diversionAirport ?? data.arrivalAirport;
@@ -83,13 +90,19 @@ export const useFlightMapBounds = ({
             lng: arrivalAirport.lon,
           }),
         );
-        const { tracklog } = data;
-        if (tracklog !== undefined) {
-          for (const {
-            coord: [lng, lat],
-          } of tracklog) {
-            bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-          }
+        bounds.extend(
+          new window.google.maps.LatLng({
+            lat: data.estimatedLocation.lat,
+            lng: data.estimatedLocation.lng,
+          }),
+        );
+        if (data.oppositeBoundLocationArrival !== null) {
+          bounds.extend(
+            new window.google.maps.LatLng({
+              lat: data.oppositeBoundLocationArrival.lat,
+              lng: data.oppositeBoundLocationArrival.lng,
+            }),
+          );
         }
       }
       if (
@@ -121,6 +134,14 @@ export const useFlightMapBounds = ({
               bounds.extend(new window.google.maps.LatLng({ lat, lng }));
             }
           }
+          if (data.oppositeBoundLocationDeparture !== null) {
+            bounds.extend(
+              new window.google.maps.LatLng({
+                lat: data.oppositeBoundLocationDeparture.lat,
+                lng: data.oppositeBoundLocationDeparture.lng,
+              }),
+            );
+          }
         }
         if (percentFromDestination < 0.25) {
           bounds.extend(
@@ -135,47 +156,49 @@ export const useFlightMapBounds = ({
               lng: data.estimatedLocation.lng,
             }),
           );
+          if (data.oppositeBoundLocationArrival !== null) {
+            bounds.extend(
+              new window.google.maps.LatLng({
+                lat: data.oppositeBoundLocationArrival.lat,
+                lng: data.oppositeBoundLocationArrival.lng,
+              }),
+            );
+          }
         }
       }
     }
     return bounds;
   }, [data, getFullRouteBounds]);
+  const padding = useMemo(
+    () => ({
+      top: 150,
+      left: window.innerWidth < 768 ? 75 : 469,
+      right: 75,
+      bottom:
+        window.innerWidth < 768
+          ? isMapCollapsed
+            ? Math.floor(window.innerHeight / 2) + 80 + 20
+            : 354
+          : 54,
+    }),
+    [isMapCollapsed],
+  );
   const focusFullRoute = useCallback(() => {
     if (map !== null) {
       const bounds = getFullRouteBounds();
       if (!bounds.isEmpty()) {
-        map.fitBounds(bounds, {
-          top: 165,
-          left: window.innerWidth < 768 ? 35 : 430,
-          right: isEnRouteFlight ? 80 : 30,
-          bottom:
-            window.innerWidth < 768
-              ? isMapCollapsed
-                ? Math.floor(window.innerHeight / 2) + 80 + 20
-                : 320
-              : 20,
-        });
+        map.fitBounds(bounds, padding);
       }
     }
-  }, [getFullRouteBounds, isEnRouteFlight, isMapCollapsed, map]);
+  }, [getFullRouteBounds, map, padding]);
   const focusOnFlight = useCallback(() => {
     if (map !== null) {
       const bounds = getFlightFocusedBounds();
       if (!bounds.isEmpty()) {
-        map.fitBounds(bounds, {
-          top: window.innerWidth < 768 && isMapCollapsed ? 165 : 205,
-          left: window.innerWidth < 768 ? 75 : 470,
-          right: isEnRouteFlight ? 80 : 30,
-          bottom:
-            window.innerWidth < 768
-              ? isMapCollapsed
-                ? Math.floor(window.innerHeight / 2) + 80 + 20
-                : 360
-              : 60,
-        });
+        map.fitBounds(bounds, padding);
       }
     }
-  }, [getFlightFocusedBounds, isEnRouteFlight, isMapCollapsed, map]);
+  }, [getFlightFocusedBounds, map, padding]);
   useEffect(() => {
     if (!isFlightFocused) {
       focusFullRoute();
