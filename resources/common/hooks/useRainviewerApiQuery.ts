@@ -22,8 +22,13 @@ export interface RainviewerApiResult {
 export const useRainviewerApiQuery = (): UseQueryResult<
   AxiosResponse<RainviewerApiResult>
 > =>
-  useQuery(['radarApi'], () =>
-    axios.get<RainviewerApiResult>(
-      'https://api.rainviewer.com/public/weather-maps.json',
-    ),
+  useQuery(
+    ['radarApi'],
+    () =>
+      axios.get<RainviewerApiResult>(
+        'https://api.rainviewer.com/public/weather-maps.json',
+      ),
+    {
+      refetchInterval: 600000,
+    },
   );
