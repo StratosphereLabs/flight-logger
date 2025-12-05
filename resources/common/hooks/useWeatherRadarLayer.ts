@@ -34,6 +34,7 @@ export const useWeatherRadarLayer = (
         name: 'Weather Radar',
         opacity: 0.25,
       });
+      map.overlayMapTypes.clear();
       map.overlayMapTypes.push(weatherRadarMapType);
     }
   }, [map, queryResult.data, timestamp]);
