@@ -11,9 +11,9 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Form, LoadingCard, Select } from 'stratosphere-ui';
 
 import {
-  CollapseIcon,
-  ExpandIcon,
   FireIcon,
+  FullscreenExitIcon,
+  FullscreenIcon,
   GlobeIcon,
   MapIcon,
 } from '../../../../common/components';
@@ -179,8 +179,8 @@ export const MapCard = ({
         {!isAddingFlight ? (
           <Form
             className={classNames(
-              'pointer-events-none absolute flex w-full justify-between gap-2 p-2',
-              isProfilePage && !isAddingFlight ? 'mt-[102px]' : 'mt-16',
+              'pointer-events-none absolute flex w-full justify-between gap-1 p-1 sm:gap-2 sm:p-2',
+              isProfilePage && !isAddingFlight ? 'mt-[104px]' : 'mt-16',
             )}
             methods={mapFormMethods}
           >
@@ -189,11 +189,11 @@ export const MapCard = ({
             </div>
             <div className="flex items-start">
               <div className="flex flex-col items-end justify-end gap-2 sm:flex-row-reverse">
-                <div className="flex gap-2">
+                <div className="flex gap-1 sm:gap-2">
                   <Select
                     anchor="bottom end"
                     buttonProps={{
-                      className: 'btn-sm sm:btn-md',
+                      className: 'btn-sm sm:btn-md px-2',
                       children:
                         mapMode === 'routes' ? (
                           <MapIcon className="h-6 w-6" />
@@ -226,7 +226,7 @@ export const MapCard = ({
                     name="mapMode"
                   />
                   <Button
-                    className="btn-sm sm:btn-md pointer-events-auto px-3"
+                    className="btn-sm sm:btn-md pointer-events-auto px-1"
                     onClick={() => {
                       setIsMapFullScreen(isFullScreen => {
                         const newValue = !isFullScreen;
@@ -251,9 +251,9 @@ export const MapCard = ({
                     title={isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
                   >
                     {isMapFullScreen ? (
-                      <CollapseIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                      <FullscreenExitIcon className="h-7 w-7 sm:h-8 sm:w-8" />
                     ) : (
-                      <ExpandIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                      <FullscreenIcon className="h-7 w-7 sm:h-8 sm:w-8" />
                     )}
                     <span className="sr-only">
                       {isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
