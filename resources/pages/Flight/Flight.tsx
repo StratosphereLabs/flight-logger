@@ -16,7 +16,6 @@ import {
   AddUserToFlightModal,
   AirportLabelOverlay,
   CollapseIcon,
-  ExpandIcon,
   FlightAircraftDetails,
   FlightChangelogTable,
   FlightDetailedTimetable,
@@ -78,7 +77,6 @@ export const Flight = (): JSX.Element | null => {
   const { state } = useLocation() as {
     state: FlightPageNavigationState | null;
   };
-  const [center] = useState(DEFAULT_COORDINATES);
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
   const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const isDarkMode = useIsDarkMode();
@@ -102,9 +100,6 @@ export const Flight = (): JSX.Element | null => {
               : lightModeStyle,
     });
   }, [isDarkMode, map, theme]);
-  useEffect(() => {
-    map?.setCenter(center);
-  }, [center, map]);
   useEffect(() => {
     if (state !== null) {
       setPreviousPageName(state.previousPageName);
@@ -149,6 +144,7 @@ export const Flight = (): JSX.Element | null => {
           }}
           zoom={3}
           options={{
+            center: DEFAULT_COORDINATES,
             minZoom: 2,
             fullscreenControl: false,
             mapTypeControl: false,
@@ -405,7 +401,7 @@ export const Flight = (): JSX.Element | null => {
           })()}
         </GoogleMap>
       )}
-      <div className="absolute top-[100px] right-1 z-20 flex gap-2">
+      <div className="absolute top-[100px] right-1 z-20 flex gap-1">
         <Button
           className="btn-sm sm:btn-md px-2"
           onClick={() => {
@@ -418,19 +414,16 @@ export const Flight = (): JSX.Element | null => {
         {data !== undefined && data.flightStatus !== 'ARRIVED' ? (
           <Button
             className={classNames(
-              'btn-sm sm:btn-md px-2',
-              isFlightFocused &&
-                'outline-primary text-primary outline outline-2',
+              'btn-sm sm:btn-md',
+              isFlightFocused
+                ? 'border-primary text-primary box-border border border-2 px-[7px]'
+                : 'px-2',
             )}
             onClick={() => {
               setIsFlightFocused(isFocused => !isFocused);
             }}
           >
-            {isFlightFocused ? (
-              <ExpandIcon className="h-6 w-6" />
-            ) : (
-              <CollapseIcon className="h-6 w-6" />
-            )}
+            <CollapseIcon className="h-6 w-6" />
           </Button>
         ) : null}
       </div>

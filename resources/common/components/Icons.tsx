@@ -458,6 +458,26 @@ export const ForestIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   </svg>
 );
 
+export const FullscreenIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M5 5h5v2H7v3H5zm9 0h5v5h-2V7h-3zm3 9h2v5h-5v-2h3zm-7 3v2H5v-5h2v3z"
+    ></path>
+  </svg>
+);
+
+export const FullscreenExitIcon = (
+  props: SVGProps<SVGSVGElement>,
+): JSX.Element => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+    <path
+      fill="currentColor"
+      d="M14 14h5v2h-3v3h-2zm-9 0h5v5H8v-3H5zm3-9h2v5H5V8h3zm11 3v2h-5V5h2v3z"
+    ></path>
+  </svg>
+);
+
 export const GemIcon = (props: SVGProps<SVGSVGElement>): JSX.Element => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
     <path
