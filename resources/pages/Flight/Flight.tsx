@@ -77,6 +77,7 @@ export const Flight = (): JSX.Element | null => {
   const { state } = useLocation() as {
     state: FlightPageNavigationState | null;
   };
+  const [center] = useState(DEFAULT_COORDINATES);
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
   const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const isDarkMode = useIsDarkMode();
@@ -100,6 +101,9 @@ export const Flight = (): JSX.Element | null => {
               : lightModeStyle,
     });
   }, [isDarkMode, map, theme]);
+  useEffect(() => {
+    map?.setCenter(center);
+  }, [center, map]);
   useEffect(() => {
     if (state !== null) {
       setPreviousPageName(state.previousPageName);
@@ -144,7 +148,6 @@ export const Flight = (): JSX.Element | null => {
           }}
           zoom={3}
           options={{
-            center: DEFAULT_COORDINATES,
             minZoom: 2,
             fullscreenControl: false,
             mapTypeControl: false,
