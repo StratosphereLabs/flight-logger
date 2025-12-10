@@ -143,7 +143,10 @@ export const FlightAircraftDetails = ({
             <div className="flex justify-center">
               <Loading />
             </div>
-          ) : (
+          ) : null}
+          {flightActivityData !== undefined &&
+          flightActivityData.count > 0 &&
+          !isFetching ? (
             <div className="mx-[-4px] mt-1 mb-[-4px] flex flex-1 flex-col gap-2">
               <AircraftFlightHistoryRow
                 flight={data}
@@ -168,7 +171,7 @@ export const FlightAircraftDetails = ({
                 />
               ))}
             </div>
-          )}
+          ) : null}
         </>
       ) : null}
     </div>
