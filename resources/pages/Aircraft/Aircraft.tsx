@@ -4,17 +4,14 @@ import {
   OverlayView,
   OverlayViewF,
   PolylineF,
-  useJsApiLoader,
 } from '@react-google-maps/api';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Avatar, Button, Link, Tooltip, TooltipContent } from 'stratosphere-ui';
 
 import {
-  AddTravelersModal,
-  AddUserToFlightModal,
   AirportLabelOverlay,
   CollapseIcon,
   FlightAircraftDetails,
@@ -37,13 +34,12 @@ import {
   HIDE_SCROLLBAR_CLASSNAME,
   TOOLTIP_COLORS,
 } from '../../common/constants';
-import { useFlightMapBounds, useWeatherRadarLayer } from '../../common/hooks';
 import {
-  christmasStyle,
-  cyberPunkStyle,
-  darkModeStyle,
-  lightModeStyle,
-} from '../../common/mapStyle';
+  useFlightMapBounds,
+  useFlightPageScrollContainers,
+  useGoogleMapInitialization,
+  useWeatherRadarLayer,
+} from '../../common/hooks';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import {
   AppTheme,
@@ -54,21 +50,13 @@ import {
 } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
-import { DEFAULT_COORDINATES } from '../Home/constants';
 
 export interface AircraftPageNavigationState {
   previousPageName: string;
 }
 
 export const Aircraft = (): JSX.Element | null => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
-    libraries: ['visualization'],
-  });
   const { icao24 } = useParams();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
     { icao24: icao24 ?? '' },
@@ -88,9 +76,7 @@ export const Aircraft = (): JSX.Element | null => {
   const { state } = useLocation() as {
     state: AircraftPageNavigationState | null;
   };
-  const [center] = useState(DEFAULT_COORDINATES);
-  const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
-  const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
+  const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
   const allFlights = useMemo(
@@ -111,22 +97,8 @@ export const Aircraft = (): JSX.Element | null => {
     );
     return Object.values(groupedAirports).map(([airport]) => airport);
   }, [allFlights]);
+  const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
-  useEffect(() => {
-    map?.setValues({
-      styles:
-        theme === AppTheme.CYBERPUNK
-          ? cyberPunkStyle
-          : theme === AppTheme.CHRISTMAS
-            ? christmasStyle
-            : isDarkMode
-              ? darkModeStyle
-              : lightModeStyle,
-    });
-  }, [isDarkMode, map, theme]);
-  useEffect(() => {
-    map?.setCenter(center);
-  }, [center, map]);
   useEffect(() => {
     if (state !== null) {
       setPreviousPageName(state.previousPageName);
@@ -137,29 +109,15 @@ export const Aircraft = (): JSX.Element | null => {
     isEnRouteFlight,
     isFlightFocused,
     setIsFlightFocused,
-    setIsMapCollapsed,
   } = useFlightMapBounds({
     data,
     map,
+    isMapCollapsed,
   });
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (container === null) return;
-    const handleScroll = (): void => {
-      const scrollThreshold = Math.floor(window.innerHeight / 2) - 305;
-      setIsMapCollapsed(prevIsMapCollapsed =>
-        prevIsMapCollapsed
-          ? container.scrollTop > 0
-          : container.scrollTop >= scrollThreshold,
-      );
-      setIsScrolled(container.scrollTop >= scrollThreshold + 200);
-    };
-    container.addEventListener('scroll', handleScroll);
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { isScrolled, scrollContainerRef, scrollContainerMobileRef } =
+    useFlightPageScrollContainers({
+      setIsMapCollapsed,
+    });
   if (icao24 === undefined) return null;
   return (
     <div className="relative flex-1">
@@ -470,157 +428,140 @@ export const Aircraft = (): JSX.Element | null => {
           'pointer-events-none absolute bottom-0 left-1 h-[calc(50vh+80px)] w-[calc(100%-8px)] overflow-y-scroll pb-1 md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px] md:pb-0',
           HIDE_SCROLLBAR_CLASSNAME,
         )}
-        ref={scrollContainerRef}
+        ref={scrollContainerMobileRef}
       >
-        {data?.airline !== undefined && data?.airline !== null && isScrolled ? (
-          <div className="bg-base-100 sticky top-0 left-0 z-10 w-full shadow-lg">
-            <div
-              className={classNames(
-                'flex justify-between gap-2 border-x-2 p-2',
-                CARD_COLORS[data.delayStatus],
-                CARD_BORDER_COLORS[data.delayStatus],
-              )}
-            >
-              <div className="flex h-full w-[150px] flex-col overflow-hidden">
-                <div className="flex flex-1 gap-4">
-                  <div className="flex h-[24px] w-[100px]">
-                    {data.airline.logo !== null ? (
-                      <a
-                        className="flex flex-1 items-center"
-                        href={data.airline.wiki ?? '#'}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <img
-                          alt={`${data.airline.name} Logo`}
-                          className="max-h-full max-w-full"
-                          src={data.airline.logo}
-                        />
-                      </a>
-                    ) : null}
-                  </div>
-                  <Link
-                    className="w-[60px] font-mono text-sm text-nowrap opacity-90"
-                    hover
-                    href={
-                      data.flightAwareLink !== null
-                        ? `https://www.flightaware.com${data.flightAwareLink}`
-                        : `https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`
-                    }
-                    target="_blank"
-                  >
-                    <span>{data.airline?.iata}</span>{' '}
-                    <span className="font-semibold">{data.flightNumber}</span>
-                  </Link>
-                </div>
-                <div className="text-xs font-semibold opacity-80 md:text-center md:text-sm">
-                  {data.outDateLocal}
-                </div>
-                {data.user !== null ? (
-                  <div className="mt-1 flex items-center gap-1 overflow-hidden">
-                    <Avatar
-                      alt={data.user.username}
-                      src={data.user.avatar}
-                      shapeClassName="w-4 h-4 rounded-full"
-                    />
-                    <span className="truncate text-sm font-semibold opacity-90">
-                      {data.user.username}
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-              <div className="flex flex-1 items-center gap-2">
-                <div className="flex w-0 flex-1 flex-col items-center">
-                  <div className="font-mono text-xl font-bold">
-                    {data.departureAirport.iata}
-                  </div>
-                  <FlightTimesDisplay
-                    className="justify-center"
-                    data={{
-                      delayStatus: data.departureDelayStatus,
-                      actualValue: data.outTimeActualValue,
-                      value: data.outTimeValue,
-                      actualLocal: data.outTimeActualLocal,
-                      local: data.outTimeLocal,
-                      actualDaysAdded: data.outTimeActualDaysAdded,
-                      daysAdded: 0,
-                    }}
-                  />
-                </div>
-                <RightArrowIcon className="h-4 w-4" />
-                <div className="flex w-0 flex-1 flex-col items-center">
-                  <div className="flex gap-1 font-mono text-xl font-bold">
-                    <span
-                      className={classNames(
-                        data.diversionAirport !== null &&
-                          'line-through opacity-60',
-                      )}
+        <div className="relative">
+          {data?.airline !== undefined &&
+          data?.airline !== null &&
+          isScrolled ? (
+            <div className="bg-base-100 sticky top-0 left-0 z-10 w-full shadow-lg">
+              <div
+                className={classNames(
+                  'flex justify-between gap-2 border-x-2 p-2',
+                  CARD_COLORS[data.delayStatus],
+                  CARD_BORDER_COLORS[data.delayStatus],
+                )}
+              >
+                <div className="flex h-full w-[150px] flex-col overflow-hidden">
+                  <div className="flex flex-1 gap-4">
+                    <div className="flex h-[24px] w-[100px]">
+                      {data.airline.logo !== null ? (
+                        <a
+                          className="flex flex-1 items-center"
+                          href={data.airline.wiki ?? '#'}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <img
+                            alt={`${data.airline.name} Logo`}
+                            className="max-h-full max-w-full"
+                            src={data.airline.logo}
+                          />
+                        </a>
+                      ) : null}
+                    </div>
+                    <Link
+                      className="w-[60px] font-mono text-sm text-nowrap opacity-90"
+                      hover
+                      href={
+                        data.flightAwareLink !== null
+                          ? `https://www.flightaware.com${data.flightAwareLink}`
+                          : `https://www.flightaware.com/live/flight/${data.airline?.icao}${data.flightNumber}`
+                      }
+                      target="_blank"
                     >
-                      {data.arrivalAirport.iata}
-                    </span>
-                    {data.diversionAirport !== null ? (
-                      <span>{data.diversionAirport.iata}</span>
-                    ) : null}
+                      <span>{data.airline?.iata}</span>{' '}
+                      <span className="font-semibold">{data.flightNumber}</span>
+                    </Link>
                   </div>
-                  <FlightTimesDisplay
-                    className="justify-center"
-                    data={{
-                      delayStatus: data.arrivalDelayStatus,
-                      actualValue: data.inTimeActualValue,
-                      value: data.inTimeValue,
-                      actualLocal: data.inTimeActualLocal,
-                      local: data.inTimeLocal,
-                      actualDaysAdded: data.inTimeActualDaysAdded,
-                      daysAdded: data.inTimeDaysAdded,
-                    }}
-                  />
+                  <div className="text-xs font-semibold opacity-80 md:text-center md:text-sm">
+                    {data.outDateLocal}
+                  </div>
+                  {data.user !== null ? (
+                    <div className="mt-1 flex items-center gap-1 overflow-hidden">
+                      <Avatar
+                        alt={data.user.username}
+                        src={data.user.avatar}
+                        shapeClassName="w-4 h-4 rounded-full"
+                      />
+                      <span className="truncate text-sm font-semibold opacity-90">
+                        {data.user.username}
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+                <div className="flex flex-1 items-center gap-2">
+                  <div className="flex w-0 flex-1 flex-col items-center">
+                    <div className="font-mono text-xl font-bold">
+                      {data.departureAirport.iata}
+                    </div>
+                    <FlightTimesDisplay
+                      className="justify-center"
+                      data={{
+                        delayStatus: data.departureDelayStatus,
+                        actualValue: data.outTimeActualValue,
+                        value: data.outTimeValue,
+                        actualLocal: data.outTimeActualLocal,
+                        local: data.outTimeLocal,
+                        actualDaysAdded: data.outTimeActualDaysAdded,
+                        daysAdded: 0,
+                      }}
+                    />
+                  </div>
+                  <RightArrowIcon className="h-4 w-4" />
+                  <div className="flex w-0 flex-1 flex-col items-center">
+                    <div className="flex gap-1 font-mono text-xl font-bold">
+                      <span
+                        className={classNames(
+                          data.diversionAirport !== null &&
+                            'line-through opacity-60',
+                        )}
+                      >
+                        {data.arrivalAirport.iata}
+                      </span>
+                      {data.diversionAirport !== null ? (
+                        <span>{data.diversionAirport.iata}</span>
+                      ) : null}
+                    </div>
+                    <FlightTimesDisplay
+                      className="justify-center"
+                      data={{
+                        delayStatus: data.arrivalDelayStatus,
+                        actualValue: data.inTimeActualValue,
+                        value: data.inTimeValue,
+                        actualLocal: data.inTimeActualLocal,
+                        local: data.inTimeLocal,
+                        actualDaysAdded: data.inTimeActualDaysAdded,
+                        daysAdded: data.inTimeDaysAdded,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ) : null}
-        <div className="rounded-box bg-base-100/80 mt-[calc(50vh-305px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
-          <div
-            className={classNames(
-              'rounded-box pointer-events-auto flex flex-1 flex-col gap-3 overflow-y-scroll p-2 md:h-full',
-              HIDE_SCROLLBAR_CLASSNAME,
-              data !== undefined && CARD_COLORS[data.delayStatus],
-              data !== undefined &&
-                `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
-            )}
-          >
-            <FlightInfo
-              data={data}
-              onAddTravelersClick={() => {
-                setIsAddTravelerDialogOpen(true);
-              }}
-              onJoinFlightClick={() => {
-                setIsAddFlightDialogOpen(true);
-              }}
-            />
-            <FlightAircraftDetails data={data} showFlightActivity />
-            <FlightDetailedTimetable data={data} />
-            <OnTimePerformanceChart flightId={data?.id} />
-            <WeatherInfo flightId={data?.id} />
-            {isLoggedIn ? <FlightHistory flightId={data?.id} /> : null}
-            <FlightChangelogTable flightId={data?.id} />
+          ) : null}
+          <div className="rounded-box bg-base-100/80 mt-[calc(50vh-305px+80px)] backdrop-blur-sm md:mt-0 md:h-full">
+            <div
+              className={classNames(
+                'rounded-box pointer-events-auto flex flex-1 flex-col gap-3 overflow-y-scroll p-2 md:h-full',
+                HIDE_SCROLLBAR_CLASSNAME,
+                data !== undefined && CARD_COLORS[data.delayStatus],
+                data !== undefined &&
+                  `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
+              )}
+              ref={scrollContainerRef}
+            >
+              <FlightInfo data={data} />
+              <FlightAircraftDetails data={data} showFlightActivity />
+              <FlightDetailedTimetable data={data} />
+              <OnTimePerformanceChart flightId={data?.id} />
+              <WeatherInfo flightId={data?.id} />
+              {isLoggedIn ? <FlightHistory flightId={data?.id} /> : null}
+              <FlightChangelogTable flightId={data?.id} />
+            </div>
           </div>
         </div>
       </div>
-      {isAddTravelerDialogOpen && data !== undefined ? (
-        <AddTravelersModal
-          flightId={data.id}
-          open={isAddTravelerDialogOpen}
-          setOpen={setIsAddTravelerDialogOpen}
-        />
-      ) : null}
-      {isAddFlightDialogOpen && data !== undefined ? (
-        <AddUserToFlightModal
-          flightId={data.id}
-          open={isAddFlightDialogOpen}
-          setOpen={setIsAddFlightDialogOpen}
-        />
-      ) : null}
     </div>
   );
 };

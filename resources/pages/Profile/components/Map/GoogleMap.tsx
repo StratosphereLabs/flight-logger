@@ -3,7 +3,6 @@ import {
   HeatmapLayerF,
   MarkerF,
   PolylineF,
-  useJsApiLoader,
 } from '@react-google-maps/api';
 import {
   type Dispatch,
@@ -15,13 +14,8 @@ import {
 import { type UseFormReturn, useWatch } from 'react-hook-form';
 
 import { AirportLabelOverlay } from '../../../../common/components';
-import {
-  christmasStyle,
-  cyberPunkStyle,
-  darkModeStyle,
-  lightModeStyle,
-} from '../../../../common/mapStyle';
-import { AppTheme, useIsDarkMode, useThemeStore } from '../../../../stores';
+import { useGoogleMapInitialization } from '../../../../common/hooks';
+import { useIsDarkMode } from '../../../../stores';
 import { type MapCardFormData } from '../../Profile';
 import { useAddFlightStore } from '../Flights/addFlightStore';
 import { AddFlightOverlays } from './AddFlightOverlays';
@@ -48,11 +42,7 @@ export const GoogleMap = ({
   setSelectedAirportId,
   setHoverAirportId,
 }: GoogleMapProps): JSX.Element | null => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
-    libraries: ['visualization'],
-  });
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const { isLoaded, map, setCenter, setMap } = useGoogleMapInitialization();
   const [mapMode] = useWatch<MapCardFormData, ['mapMode']>({
     control: methods.control,
     name: ['mapMode'],
@@ -99,22 +89,9 @@ export const GoogleMap = ({
     }
   }, [data.airports, data.routes, isAddingFlight, map, selectedAirportId]);
   const isDarkMode = useIsDarkMode();
-  const { theme } = useThemeStore();
   useEffect(() => {
-    map?.setValues({
-      styles:
-        theme === AppTheme.CYBERPUNK
-          ? cyberPunkStyle
-          : theme === AppTheme.CHRISTMAS
-            ? christmasStyle
-            : isDarkMode
-              ? darkModeStyle
-              : lightModeStyle,
-    });
-  }, [isDarkMode, map, theme]);
-  useEffect(() => {
-    map?.setCenter(center);
-  }, [center, map]);
+    setCenter(center);
+  }, [center, setCenter]);
   return isLoaded ? (
     <GoogleMapComponent
       mapContainerStyle={{
