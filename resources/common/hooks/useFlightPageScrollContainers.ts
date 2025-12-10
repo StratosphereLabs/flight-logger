@@ -28,18 +28,13 @@ export const useFlightPageScrollContainers = ({
     if (container === null) return;
     const handleScroll = (): void => {
       const scrollThreshold = Math.floor(window.innerHeight / 2) - 305;
-      setIsMapCollapsed(prevIsMapCollapsed =>
-        prevIsMapCollapsed
-          ? container.scrollTop > 0
-          : container.scrollTop >= scrollThreshold,
-      );
       setIsScrolled(container.scrollTop >= scrollThreshold + 200);
     };
     container.addEventListener('scroll', handleScroll);
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, [setIsMapCollapsed]);
+  }, []);
   useEffect(() => {
     const mobileContainer = scrollContainerMobileRef.current;
     if (mobileContainer === null) return;
