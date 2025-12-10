@@ -163,7 +163,6 @@ export const useFlightMapBounds = ({
   useEffect(() => {
     if (data?.flightStatus === 'ARRIVED') {
       setIsFlightFocused(false);
-      focusFullRoute();
     } else if (isFlightFocused) {
       focusOnFlight();
     }
