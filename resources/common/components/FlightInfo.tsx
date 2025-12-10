@@ -65,8 +65,8 @@ export interface FlightInfoProps {
     | 'inTime'
     | 'arrivalBaggage'
   >;
-  onAddTravelersClick: () => void;
-  onJoinFlightClick: () => void;
+  onAddTravelersClick?: () => void;
+  onJoinFlightClick?: () => void;
 }
 
 export const FlightInfo = ({
@@ -144,7 +144,9 @@ export const FlightInfo = ({
               </span>
             ) : null}
           </div>
-          {isLoggedIn && userData?.id === data.userId ? (
+          {isLoggedIn &&
+          userData?.id === data.userId &&
+          onAddTravelersClick !== undefined ? (
             <Button
               className="max-w-[150px] truncate"
               color="ghost"
@@ -157,7 +159,9 @@ export const FlightInfo = ({
               <span className="truncate">Add Travelers</span>
             </Button>
           ) : null}
-          {isLoggedIn && data.canAddFlight ? (
+          {isLoggedIn &&
+          data.canAddFlight &&
+          onJoinFlightClick !== undefined ? (
             <Button
               className="max-w-[150px] truncate"
               color="ghost"

@@ -136,17 +136,19 @@ export const FlightAircraftDetails = ({
       {showFlightActivity === true ? (
         <>
           <div className="divider my-0" />
-          {flightActivityData?.count === 0 && !isFetching ? (
-            <div className="my-4 text-center">No Flights Found</div>
-          ) : null}
           {isFlightActivityFetching ? (
             <div className="flex justify-center">
               <Loading />
             </div>
           ) : null}
           {flightActivityData !== undefined &&
+          flightActivityData.count === 0 &&
+          !isFlightActivityFetching ? (
+            <div className="my-4 text-center">No Flights Found</div>
+          ) : null}
+          {flightActivityData !== undefined &&
           flightActivityData.count > 0 &&
-          !isFetching ? (
+          !isFlightActivityFetching ? (
             <div className="mx-[-4px] mt-1 mb-[-4px] flex flex-1 flex-col gap-2">
               <AircraftFlightHistoryRow
                 flight={data}

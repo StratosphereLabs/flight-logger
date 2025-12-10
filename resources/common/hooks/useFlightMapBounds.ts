@@ -8,31 +8,28 @@ import {
 } from 'react';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
+import { extendBounds } from '../utils';
 
 export interface UseFlightMapBoundsOptions {
   data: FlightsRouterOutput['getFlight'] | undefined;
   map: google.maps.Map | null;
+  isMapCollapsed: boolean;
+}
+
+export interface UseFlightMapBoundsResult {
+  focusFullRoute: () => void;
+  isEnRouteFlight: boolean;
+  isFlightFocused: boolean;
+  setIsFlightFocused: Dispatch<SetStateAction<boolean>>;
 }
 
 export const useFlightMapBounds = ({
   data,
   map,
-}: UseFlightMapBoundsOptions): {
-  focusFullRoute: () => void;
-  isEnRouteFlight: boolean;
-  isFlightFocused: boolean;
-  setIsFlightFocused: Dispatch<SetStateAction<boolean>>;
-  setIsMapCollapsed: Dispatch<SetStateAction<boolean>>;
-} => {
+  isMapCollapsed,
+}: UseFlightMapBoundsOptions): UseFlightMapBoundsResult => {
   const [isFlightFocused, setIsFlightFocused] = useState(false);
-  const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const isEnRouteFlight = data?.flightStatus === 'EN_ROUTE';
-  const extendBounds = useCallback(
-    (bounds: google.maps.LatLngBounds, lat: number, lng: number) => {
-      bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-    },
-    [],
-  );
   const getFullRouteBounds = useCallback(() => {
     const bounds = new window.google.maps.LatLngBounds();
     if (data === undefined) return bounds;
@@ -52,7 +49,7 @@ export const useFlightMapBounds = ({
       }
     }
     return bounds;
-  }, [data, extendBounds]);
+  }, [data]);
   const getFlightFocusedBounds = useCallback(() => {
     const bounds = new window.google.maps.LatLngBounds();
     if (data === undefined) return bounds;
@@ -123,7 +120,7 @@ export const useFlightMapBounds = ({
       }
     }
     return bounds;
-  }, [data, getFullRouteBounds, extendBounds]);
+  }, [data, getFullRouteBounds]);
   const padding = useMemo(
     () => ({
       top: 164,
@@ -174,6 +171,5 @@ export const useFlightMapBounds = ({
     isEnRouteFlight,
     isFlightFocused,
     setIsFlightFocused,
-    setIsMapCollapsed,
   };
 };
