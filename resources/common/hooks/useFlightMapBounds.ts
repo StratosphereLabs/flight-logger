@@ -202,8 +202,10 @@ export const useFlightMapBounds = ({
       focusFullRoute();
     }
     /* Intentionally omitting setIsFlightFocused and focusFullRoute from dependencies:
-     * setIsFlightFocused is stable from useState, and focusFullRoute is memoized with stable dependencies.
-     * Including them would not affect the effect and could cause unnecessary re-runs. */
+     * setIsFlightFocused is wrapped in a custom useCallback (see lines 37-59), which is stable for our usage.
+     * focusFullRoute depends on getFullRouteBounds, map, and padding, which may change, but for this effect,
+     * we only want to run when flightStatus changes, not when map or padding changes.
+     * Including them could cause unnecessary re-runs without benefit in this context. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.flightStatus]);
   return {
