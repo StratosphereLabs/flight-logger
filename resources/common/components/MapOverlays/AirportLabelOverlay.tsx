@@ -1,7 +1,7 @@
 import { OverlayViewF } from '@react-google-maps/api';
 import classNames from 'classnames';
 
-import { useIsDarkMode } from '../../stores';
+import { useIsDarkMode } from '../../../stores';
 
 export interface AirportLabelOverlayProps {
   distanceMi?: number;
