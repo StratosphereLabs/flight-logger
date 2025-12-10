@@ -39,7 +39,7 @@ export const useFlightPageScrollContainers = ({
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, [setIsMapCollapsed, setIsScrolled]);
+  }, [setIsMapCollapsed]);
   useEffect(() => {
     const mobileContainer = scrollContainerMobileRef.current;
     if (mobileContainer === null) return;
@@ -56,7 +56,7 @@ export const useFlightPageScrollContainers = ({
     return () => {
       mobileContainer.removeEventListener('scroll', handleMobileScroll);
     };
-  }, [setIsMapCollapsed, setIsScrolled]);
+  }, [setIsMapCollapsed]);
   return {
     scrollContainerRef,
     scrollContainerMobileRef,
