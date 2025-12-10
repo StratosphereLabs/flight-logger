@@ -159,14 +159,16 @@ export const useFlightMapBounds = ({
       focusFullRoute();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.id, isFlightFocused, isMapCollapsed, map]);
+  }, [data?.id, isMapCollapsed, map]);
   useEffect(() => {
     if (data?.flightStatus === 'ARRIVED') {
       setIsFlightFocused(false);
+      focusFullRoute();
     } else if (isFlightFocused) {
       focusOnFlight();
     }
-  }, [data, focusFullRoute, focusOnFlight, isFlightFocused]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.flightStatus, focusOnFlight, isFlightFocused]);
   return {
     focusFullRoute,
     isEnRouteFlight,
