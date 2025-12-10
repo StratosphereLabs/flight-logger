@@ -48,7 +48,6 @@ export const Flight = (): JSX.Element | null => {
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
   const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
-
   const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {

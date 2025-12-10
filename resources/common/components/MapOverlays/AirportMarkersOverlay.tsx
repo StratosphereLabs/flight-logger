@@ -1,9 +1,10 @@
 import { MarkerF } from '@react-google-maps/api';
+import { Fragment } from 'react';
 
 import { type FlightsRouterOutput } from '../../../../app/routes/flights';
 import { AirportLabelOverlay } from './AirportLabelOverlay';
 
-interface AirportMarkersProps {
+export interface AirportMarkersOverlayProps {
   airports: Array<
     Pick<
       FlightsRouterOutput['getFlight']['departureAirport'],
@@ -16,10 +17,10 @@ interface AirportMarkersProps {
 export const AirportMarkersOverlay = ({
   airports,
   showDistance,
-}: AirportMarkersProps): JSX.Element => (
+}: AirportMarkersOverlayProps): JSX.Element => (
   <>
     {airports.map(({ id, lat, lon, iata, estimatedDistance }) => (
-      <div key={id}>
+      <Fragment key={id}>
         <AirportLabelOverlay
           iata={iata}
           isFocused
@@ -46,7 +47,7 @@ export const AirportMarkersOverlay = ({
             zIndex: 30,
           }}
         />
-      </div>
+      </Fragment>
     ))}
   </>
 );
