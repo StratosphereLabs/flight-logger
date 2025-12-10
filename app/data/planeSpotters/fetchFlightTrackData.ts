@@ -42,8 +42,8 @@ interface FlightTrackResult {
   trace: Array<
     [
       number,
-      number,
-      number,
+      number | null,
+      number | null,
       number | 'ground',
       number | null,
       number | null,
@@ -119,13 +119,15 @@ export const fetchFlightTrackData = async (
   const trackData = [...recentTrackData, ...fullTrackData];
   const currentFlightData: TracklogItem[] = [];
   for (const trackItem of trackData) {
-    currentFlightData.unshift({
-      timestamp: Math.round(trackItem[0]),
-      coord: [trackItem[2], trackItem[1]],
-      alt: typeof trackItem[3] === 'number' ? trackItem[3] / 100 : null,
-      gs: trackItem[4],
-      ground: trackItem[3] === 'ground',
-    });
+    if (trackItem[2] !== null && trackItem[1] !== null) {
+      currentFlightData.unshift({
+        timestamp: Math.round(trackItem[0]),
+        coord: [trackItem[2], trackItem[1]],
+        alt: typeof trackItem[3] === 'number' ? trackItem[3] / 100 : null,
+        gs: trackItem[4],
+        ground: trackItem[3] === 'ground',
+      });
+    }
   }
   return currentFlightData;
 };
