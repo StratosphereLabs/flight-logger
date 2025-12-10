@@ -58,10 +58,10 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
             oldSearchParams.delete('selectedAirportId');
             return oldSearchParams;
           } else {
-            return {
+            return new URLSearchParams({
               ...Object.fromEntries(oldSearchParams),
               selectedAirportId: newId,
-            };
+            });
           }
         },
         { replace: true },

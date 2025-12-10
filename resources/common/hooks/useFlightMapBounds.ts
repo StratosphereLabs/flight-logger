@@ -36,25 +36,26 @@ export const useFlightMapBounds = ({
   );
   const setIsFlightFocused = useCallback(
     (value: SetStateAction<boolean>) => {
-      setIsFlightFocusedValue(value);
-      setSearchParams(
-        oldSearchParams => {
-          const newValue =
-            typeof value === 'function' ? value(isFlightFocused) : value;
-          if (newValue) {
-            return {
-              ...Object.fromEntries(oldSearchParams),
-              isFlightFocused: 'true',
-            };
-          } else {
-            oldSearchParams.delete('isFlightFocused');
-            return oldSearchParams;
-          }
-        },
-        { replace: true },
-      );
+      setIsFlightFocusedValue(oldValue => {
+        const newValue = typeof value === 'function' ? value(oldValue) : value;
+        setSearchParams(
+          oldSearchParams => {
+            if (newValue) {
+              return new URLSearchParams({
+                ...Object.fromEntries(oldSearchParams),
+                isFlightFocused: 'true',
+              });
+            } else {
+              oldSearchParams.delete('isFlightFocused');
+              return oldSearchParams;
+            }
+          },
+          { replace: true },
+        );
+        return newValue;
+      });
     },
-    [isFlightFocused, setSearchParams],
+    [setSearchParams],
   );
   const isEnRouteFlight = data?.flightStatus === 'EN_ROUTE';
   const getFullRouteBounds = useCallback(() => {
