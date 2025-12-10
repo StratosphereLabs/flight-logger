@@ -180,20 +180,34 @@ export const useFlightMapBounds = ({
     }
   }, [getFlightFocusedBounds, map, padding]);
   useEffect(() => {
+    if (isFlightFocused && data?.flightStatus !== 'ARRIVED') {
+      focusOnFlight();
+    }
+  }, [data?.flightStatus, focusOnFlight, isFlightFocused]);
+  useEffect(() => {
     if (!isFlightFocused) {
       focusFullRoute();
     }
+    /* Intentionally omitting focusFullRoute and isFlightFocused from dependencies:
+     * We do not want to automatically focus on the full route when data is updated or when focus mode is
+     * disabled.
+     * Instead, we only want to focus on the full route when the flight ID changes or when the map is
+     * initialized or collapsed.
+     * Including them would not affect the effect and could cause unnecessary re-runs. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.id, isMapCollapsed, map]);
   useEffect(() => {
     if (data?.flightStatus === 'ARRIVED') {
       setIsFlightFocused(false);
       focusFullRoute();
-    } else if (isFlightFocused) {
-      focusOnFlight();
     }
+    /* Intentionally omitting setIsFlightFocused and focusFullRoute from dependencies:
+     * setIsFlightFocused is wrapped in a custom useCallback (see lines 37-59), which is stable for our usage.
+     * focusFullRoute depends on getFullRouteBounds, map, and padding, which may change, but for this effect,
+     * we only want to run when flightStatus changes, not when map or padding changes.
+     * Including them could cause unnecessary re-runs without benefit in this context. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.flightStatus, focusOnFlight, isFlightFocused]);
+  }, [data?.flightStatus]);
   return {
     focusFullRoute,
     isEnRouteFlight,
