@@ -180,6 +180,11 @@ export const useFlightMapBounds = ({
     }
   }, [getFlightFocusedBounds, map, padding]);
   useEffect(() => {
+    if (isFlightFocused) {
+      focusOnFlight();
+    }
+  }, [focusOnFlight, isFlightFocused]);
+  useEffect(() => {
     if (!isFlightFocused) {
       focusFullRoute();
     }
@@ -189,11 +194,9 @@ export const useFlightMapBounds = ({
     if (data?.flightStatus === 'ARRIVED') {
       setIsFlightFocused(false);
       focusFullRoute();
-    } else if (isFlightFocused) {
-      focusOnFlight();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.flightStatus, focusOnFlight, isFlightFocused]);
+  }, [data?.flightStatus]);
   return {
     focusFullRoute,
     isEnRouteFlight,
