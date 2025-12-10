@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
 import { extendBounds } from '../utils';
@@ -28,7 +29,33 @@ export const useFlightMapBounds = ({
   map,
   isMapCollapsed,
 }: UseFlightMapBoundsOptions): UseFlightMapBoundsResult => {
-  const [isFlightFocused, setIsFlightFocused] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [initialParams] = useState(searchParams);
+  const [isFlightFocused, setIsFlightFocusedValue] = useState(
+    initialParams.get('isFlightFocused') === 'true',
+  );
+  const setIsFlightFocused = useCallback(
+    (value: SetStateAction<boolean>) => {
+      setIsFlightFocusedValue(value);
+      setSearchParams(
+        oldSearchParams => {
+          const newValue =
+            typeof value === 'function' ? value(isFlightFocused) : value;
+          if (newValue) {
+            return {
+              ...Object.fromEntries(oldSearchParams),
+              isFlightFocused: 'true',
+            };
+          } else {
+            oldSearchParams.delete('isFlightFocused');
+            return oldSearchParams;
+          }
+        },
+        { replace: true },
+      );
+    },
+    [isFlightFocused, setSearchParams],
+  );
   const isEnRouteFlight = data?.flightStatus === 'EN_ROUTE';
   const getFullRouteBounds = useCallback(() => {
     const bounds = new window.google.maps.LatLngBounds();
