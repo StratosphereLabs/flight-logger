@@ -60,7 +60,6 @@ export const FollowingMap = (): JSX.Element => {
   const { data, isLoading } = trpc.flights.getFollowingFlights.useQuery(
     undefined,
     {
-      refetchInterval: 5000,
       select: flightResult => {
         const flights = flightResult.flights.map(
           getFollowingFlightData({ hoverAirportId, selectedAirportId }),
@@ -87,6 +86,12 @@ export const FollowingMap = (): JSX.Element => {
           flights,
           groupedFlights,
         };
+      },
+      refetchInterval: data => {
+        if (data === undefined) return false;
+        return data.flights.some(({ flightState }) => flightState === 'CURRENT')
+          ? 5000
+          : 60000;
       },
     },
   );

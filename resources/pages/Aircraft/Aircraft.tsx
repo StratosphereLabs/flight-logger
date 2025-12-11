@@ -38,7 +38,13 @@ export const Aircraft = (): JSX.Element | null => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
     { icao24: icao24 ?? '' },
-    { enabled: icao24 !== undefined, refetchInterval: 5000 },
+    {
+      enabled: icao24 !== undefined,
+      refetchInterval: data => {
+        if (data === undefined) return false;
+        return data.flightState === 'CURRENT' ? 5000 : 60000;
+      },
+    },
   );
   const { data: flightActivityData } =
     trpc.flights.getAircraftOtherFlights.useQuery(

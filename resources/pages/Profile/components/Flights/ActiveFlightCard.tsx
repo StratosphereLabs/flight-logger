@@ -40,7 +40,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
     },
     {
       enabled,
-      refetchInterval: 5000,
+      refetchInterval: 60000,
       onError,
     },
   );

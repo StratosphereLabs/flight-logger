@@ -39,7 +39,13 @@ export const Flight = (): JSX.Element | null => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery(
     { id: flightId ?? '' },
-    { enabled: flightId !== undefined, refetchInterval: 5000 },
+    {
+      enabled: flightId !== undefined,
+      refetchInterval: data => {
+        if (data === undefined) return false;
+        return data.flightState === 'CURRENT' ? 5000 : 60000;
+      },
+    },
   );
   const { setPreviousPageName } = useMainLayoutStore();
   const { state } = useLocation() as {

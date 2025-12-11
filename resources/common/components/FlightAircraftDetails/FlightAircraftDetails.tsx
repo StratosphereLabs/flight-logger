@@ -36,7 +36,7 @@ export const FlightAircraftDetails = ({
   const { data: photoData, isFetching } = useAircraftPhotoQuery(
     data?.airframeId ?? null,
   );
-  const { data: flightActivityData, isFetching: isFlightActivityFetching } =
+  const { data: flightActivityData, isLoading: isFlightActivityLoading } =
     trpc.flights.getAircraftOtherFlights.useQuery(
       {
         icao24: icao24 ?? '',
@@ -136,19 +136,19 @@ export const FlightAircraftDetails = ({
       {showFlightActivity === true ? (
         <>
           <div className="divider my-0" />
-          {isFlightActivityFetching ? (
+          {isFlightActivityLoading ? (
             <div className="flex justify-center">
               <Loading />
             </div>
           ) : null}
           {flightActivityData !== undefined &&
           flightActivityData.count === 0 &&
-          !isFlightActivityFetching ? (
+          !isFlightActivityLoading ? (
             <div className="my-4 text-center">No Flights Found</div>
           ) : null}
           {flightActivityData !== undefined &&
           flightActivityData.count > 0 &&
-          !isFlightActivityFetching ? (
+          !isFlightActivityLoading ? (
             <div className="mx-[-4px] mt-1 mb-[-4px] flex flex-1 flex-col gap-2">
               <AircraftFlightHistoryRow
                 flight={data}
