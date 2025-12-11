@@ -13,48 +13,35 @@ export interface UseFlightPageScrollContainersOptions {
 
 export interface UseFlightPageScrollContainersResult {
   scrollContainerRef: RefObject<HTMLDivElement>;
-  scrollContainerMobileRef: RefObject<HTMLDivElement>;
   isScrolled: boolean;
 }
 
-export const useFlightPageScrollContainers = ({
+export const useFlightPageScrollContainer = ({
   setIsMapCollapsed,
 }: UseFlightPageScrollContainersOptions): UseFlightPageScrollContainersResult => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const scrollContainerMobileRef = useRef<HTMLDivElement | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (container === null) return;
     const handleScroll = (): void => {
       const scrollThreshold = Math.floor(window.innerHeight / 2) - 305;
+      if (window.innerWidth < 768) {
+        setIsMapCollapsed(prevIsMapCollapsed =>
+          prevIsMapCollapsed
+            ? container.scrollTop > 0
+            : container.scrollTop >= scrollThreshold,
+        );
+      }
       setIsScrolled(container.scrollTop >= scrollThreshold + 200);
     };
     container.addEventListener('scroll', handleScroll);
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-  useEffect(() => {
-    const mobileContainer = scrollContainerMobileRef.current;
-    if (mobileContainer === null) return;
-    const handleMobileScroll = (): void => {
-      const scrollThreshold = Math.floor(window.innerHeight / 2) - 305;
-      setIsMapCollapsed(prevIsMapCollapsed =>
-        prevIsMapCollapsed
-          ? mobileContainer.scrollTop > 0
-          : mobileContainer.scrollTop >= scrollThreshold,
-      );
-      setIsScrolled(mobileContainer.scrollTop >= scrollThreshold + 200);
-    };
-    mobileContainer.addEventListener('scroll', handleMobileScroll);
-    return () => {
-      mobileContainer.removeEventListener('scroll', handleMobileScroll);
-    };
   }, [setIsMapCollapsed]);
   return {
     scrollContainerRef,
-    scrollContainerMobileRef,
     isScrolled,
   };
 };

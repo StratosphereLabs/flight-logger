@@ -6,7 +6,7 @@ export * from './useCurrentDate';
 export * from './useErrorResponseHandler';
 export * from './useFlightDiaryUploadMutation';
 export * from './useFlightMapBounds';
-export * from './useFlightPageScrollContainers';
+export * from './useFlightPageScrollContainer';
 export * from './useGoogleLoginMutation';
 export * from './useGoogleMapInitialization';
 export * from './useLoggedInUserQuery';

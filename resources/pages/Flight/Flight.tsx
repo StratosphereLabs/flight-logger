@@ -22,7 +22,7 @@ import {
 } from '../../common/components';
 import {
   useFlightMapBounds,
-  useFlightPageScrollContainers,
+  useFlightPageScrollContainer,
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
@@ -71,10 +71,9 @@ export const Flight = (): JSX.Element | null => {
     map,
     isMapCollapsed,
   });
-  const { isScrolled, scrollContainerRef, scrollContainerMobileRef } =
-    useFlightPageScrollContainers({
-      setIsMapCollapsed,
-    });
+  const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
+    setIsMapCollapsed,
+  });
   if (flightId === undefined) return null;
   return (
     <div className="relative flex-1">
@@ -138,7 +137,6 @@ export const Flight = (): JSX.Element | null => {
         data={data}
         isScrolled={isScrolled}
         scrollContainerRef={scrollContainerRef}
-        scrollContainerMobileRef={scrollContainerMobileRef}
       >
         <FlightInfo
           data={data}
