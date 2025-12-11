@@ -25,6 +25,7 @@ import {
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
+import type { RefetchInterval } from '../../common/types';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
@@ -36,9 +37,11 @@ export interface AircraftPageNavigationState {
 export const Aircraft = (): JSX.Element | null => {
   const { icao24 } = useParams();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
+  const [refetchInterval, setRefetchInterval] =
+    useState<RefetchInterval>(60000);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
     { icao24: icao24 ?? '' },
-    { enabled: icao24 !== undefined, refetchInterval: 5000 },
+    { enabled: icao24 !== undefined, refetchInterval },
   );
   const { data: flightActivityData } =
     trpc.flights.getAircraftOtherFlights.useQuery(
@@ -50,6 +53,11 @@ export const Aircraft = (): JSX.Element | null => {
         refetchInterval: 60000,
       },
     );
+  useEffect(() => {
+    if (data !== undefined) {
+      setRefetchInterval(data.flightState === 'CURRENT' ? 5000 : 60000);
+    }
+  }, [data]);
   const { setPreviousPageName } = useMainLayoutStore();
   const { state } = useLocation() as {
     state: AircraftPageNavigationState | null;

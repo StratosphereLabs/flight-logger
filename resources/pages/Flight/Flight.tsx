@@ -26,6 +26,7 @@ import {
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
+import type { RefetchInterval } from '../../common/types';
 import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
@@ -37,10 +38,17 @@ export interface FlightPageNavigationState {
 export const Flight = (): JSX.Element | null => {
   const { flightId } = useParams();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
+  const [refetchInterval, setRefetchInterval] =
+    useState<RefetchInterval>(60000);
   const { data } = trpc.flights.getFlight.useQuery(
     { id: flightId ?? '' },
-    { enabled: flightId !== undefined, refetchInterval: 5000 },
+    { enabled: flightId !== undefined, refetchInterval },
   );
+  useEffect(() => {
+    if (data !== undefined) {
+      setRefetchInterval(data.flightState === 'CURRENT' ? 5000 : 60000);
+    }
+  }, [data]);
   const { setPreviousPageName } = useMainLayoutStore();
   const { state } = useLocation() as {
     state: FlightPageNavigationState | null;

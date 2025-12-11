@@ -5,10 +5,14 @@ import {
 } from '@trpc/server/rpc';
 import { type typeToFlattenedError } from 'zod';
 
+import { type REFETCH_INTERVALS } from './constants';
+
 export interface ErrorResponse {
   status: number;
   message: string;
 }
+
+export type RefetchInterval = (typeof REFETCH_INTERVALS)[number];
 
 export interface DefaultErrorData {
   [x: string]: unknown;
