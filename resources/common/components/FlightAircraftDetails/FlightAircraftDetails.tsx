@@ -50,6 +50,7 @@ export const FlightAircraftDetails = ({
   }
   const onOwnProfile = userData !== undefined && userData.id === data.userId;
   const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
+  const previousPageName = `${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`;
   return (
     <div
       className={classNames(
@@ -120,7 +121,7 @@ export const FlightAircraftDetails = ({
           onClick={() => {
             navigate(`/aircraft/${data.airframeId}`, {
               state: {
-                previousPageName: `${data.flightNumberString} (${data.departureAirport.iata}-${data.arrivalAirport.iata})`,
+                previousPageName,
               } as const as AircraftPageNavigationState,
             });
           }}
@@ -150,26 +151,34 @@ export const FlightAircraftDetails = ({
           flightActivityData.count > 0 &&
           !isFlightActivityLoading ? (
             <div className="mx-[-4px] mt-1 mb-[-4px] flex flex-1 flex-col gap-2">
-              <AircraftFlightHistoryRow
-                flight={data}
-                previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
-              />
+              {data.flightState !== 'COMPLETED' ? (
+                <AircraftFlightHistoryRow
+                  flight={data}
+                  previousPageName={previousPageName}
+                />
+              ) : null}
               {flightActivityData?.groupedFlights.UPCOMING?.sort(
                 sortByDepartureTimeAsc,
               ).map(flight => (
                 <AircraftFlightHistoryRow
                   key={flight.id}
                   flight={flight}
-                  previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
+                  previousPageName={previousPageName}
                 />
               ))}
+              {data.flightState === 'COMPLETED' ? (
+                <AircraftFlightHistoryRow
+                  flight={data}
+                  previousPageName={previousPageName}
+                />
+              ) : null}
               {flightActivityData?.groupedFlights.COMPLETED?.sort(
                 sortByArrivalTimeDesc,
               ).map(flight => (
                 <AircraftFlightHistoryRow
                   key={flight.id}
                   flight={flight}
-                  previousPageName={`${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`}
+                  previousPageName={previousPageName}
                 />
               ))}
             </div>
