@@ -21,7 +21,7 @@ import {
 } from '../../common/components';
 import {
   useFlightMapBounds,
-  useFlightPageScrollContainers,
+  useFlightPageScrollContainer,
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
@@ -96,10 +96,9 @@ export const Aircraft = (): JSX.Element | null => {
     map,
     isMapCollapsed,
   });
-  const { isScrolled, scrollContainerRef, scrollContainerMobileRef } =
-    useFlightPageScrollContainers({
-      setIsMapCollapsed,
-    });
+  const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
+    setIsMapCollapsed,
+  });
   if (icao24 === undefined) return null;
   return (
     <div className="relative flex-1">
@@ -165,7 +164,6 @@ export const Aircraft = (): JSX.Element | null => {
         data={data}
         isScrolled={isScrolled}
         scrollContainerRef={scrollContainerRef}
-        scrollContainerMobileRef={scrollContainerMobileRef}
       >
         <FlightInfo data={data} />
         <FlightAircraftDetails data={data} showFlightActivity />

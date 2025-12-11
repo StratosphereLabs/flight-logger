@@ -14,7 +14,6 @@ export interface FlightDetailsPanelProps {
   data: FlightsRouterOutput['getFlight'] | undefined;
   isScrolled: boolean;
   scrollContainerRef: React.RefObject<HTMLDivElement>;
-  scrollContainerMobileRef: React.RefObject<HTMLDivElement>;
 }
 
 export const FlightDetailsPanel = ({
@@ -22,14 +21,13 @@ export const FlightDetailsPanel = ({
   data,
   isScrolled,
   scrollContainerRef,
-  scrollContainerMobileRef,
 }: FlightDetailsPanelProps): JSX.Element => (
   <div
     className={classNames(
       'pointer-events-none absolute bottom-0 left-1 h-[calc(50vh+80px)] w-[calc(100%-8px)] overflow-y-scroll pb-1 md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px] md:pb-0',
       HIDE_SCROLLBAR_CLASSNAME,
     )}
-    ref={scrollContainerMobileRef}
+    ref={scrollContainerRef}
   >
     <div className="relative">
       {isScrolled ? <StickyFlightHeader data={data} /> : null}
@@ -42,7 +40,6 @@ export const FlightDetailsPanel = ({
             data !== undefined &&
               `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
           )}
-          ref={scrollContainerRef}
         >
           {children}
         </div>
