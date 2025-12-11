@@ -19,7 +19,7 @@ import {
   updateOnTimePerformanceData,
   updateTrackAircraftData,
 } from '../data/updaters';
-import { prisma } from '../db';
+import { deleteTrackedAircraftFlights, prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
   addFlightSchema,
@@ -1251,30 +1251,12 @@ export const flightsRouter = router({
         where: deleteFlightWhere,
         include: flightIncludeObj,
       });
-      const trackedAircraftFlights = await prisma.flight.findMany({
-        where: {
-          airframeId: flight.airframeId,
-          outTime: {
-            gte: sub(flight.outTime, { days: 1 }),
-            lte: add(flight.outTime, { days: 1 }),
-          },
-        },
-        select: {
-          id: true,
-          userId: true,
-          outTime: true,
-        },
-      });
-      if (trackedAircraftFlights.every(f => f.userId === null)) {
-        await prisma.flight.deleteMany({
-          where: {
-            id: {
-              in: trackedAircraftFlights
-                .filter(f => isBefore(f.outTime, flight.outTime))
-                .map(f => f.id),
-            },
-          },
-        });
+      if (flight.airframeId !== null) {
+        await deleteTrackedAircraftFlights(
+          flight.airframeId,
+          flight.outTime,
+          flight.outTimeActual,
+        );
       }
     }),
   addTravelersToFlight: procedure
