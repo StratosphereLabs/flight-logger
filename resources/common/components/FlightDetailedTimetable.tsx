@@ -104,7 +104,8 @@ export const FlightDetailedTimetable = ({
                 )}
               >
                 {data.outTimeActualLocal !== null &&
-                isBefore(new Date(), data.outTimeActualLocal) &&
+                data.outTimeActual !== null &&
+                isBefore(new Date(), data.outTimeActual) &&
                 data.outTimeActualDaysAdded !== null ? (
                   <>
                     {data.outTimeActualLocal}
