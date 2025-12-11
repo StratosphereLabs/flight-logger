@@ -10,8 +10,6 @@ export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 export const TIME_FORMAT_12H = 'h:mm aaa';
 export const DATE_FORMAT = 'MMM d, yyyy';
 
-export const REFETCH_INTERVALS = [5000, 60000] as const;
-
 export const DEFAULT_PAGE_SIZE = 20;
 
 export const MONTH_NAMES = [

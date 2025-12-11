@@ -33,7 +33,6 @@ import {
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
-import type { RefetchInterval } from '../../common/types';
 import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
@@ -53,8 +52,6 @@ export const FollowingMap = (): JSX.Element => {
     null,
   );
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
-  const [refetchInterval, setRefetchInterval] =
-    useState<RefetchInterval>(60000);
   const isItemSelected = selectedAirportId !== null;
   const navigate = useNavigate();
   const isDarkMode = useIsDarkMode();
@@ -63,7 +60,6 @@ export const FollowingMap = (): JSX.Element => {
   const { data, isLoading } = trpc.flights.getFollowingFlights.useQuery(
     undefined,
     {
-      refetchInterval,
       select: flightResult => {
         const flights = flightResult.flights.map(
           getFollowingFlightData({ hoverAirportId, selectedAirportId }),
@@ -91,17 +87,14 @@ export const FollowingMap = (): JSX.Element => {
           groupedFlights,
         };
       },
+      refetchInterval: data => {
+        if (data === undefined) return false;
+        return data.flights.some(({ flightState }) => flightState === 'CURRENT')
+          ? 5000
+          : 60000;
+      },
     },
   );
-  useEffect(() => {
-    if (data !== undefined) {
-      setRefetchInterval(
-        data.flights.some(({ flightState }) => flightState === 'CURRENT')
-          ? 5000
-          : 60000,
-      );
-    }
-  }, [data]);
   useEffect(() => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
   }, [data?.centerpoint, setCenter]);
