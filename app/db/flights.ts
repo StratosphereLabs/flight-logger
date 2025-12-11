@@ -138,22 +138,22 @@ export const deleteTrackedAircraftFlights = async (
     },
   });
   const userFlightRanges = userFlights.map(userFlight => {
-    const start = userFlight.outTimeActual ?? userFlight.outTime;
-    const end = add(start, { days: 1 });
+    const end = userFlight.outTimeActual ?? userFlight.outTime;
+    const start = sub(end, { days: 1 });
     return { start, end };
   });
   const idsToDelete: string[] = [];
   for (const trackedFlight of trackedAircraftFlights) {
     const trackedStart = trackedFlight.outTimeActual ?? trackedFlight.outTime;
     const trackedEnd = trackedFlight.inTimeActual ?? trackedFlight.inTime;
-    let overlaps = false;
+    let userFlightExists = false;
     for (const { start, end } of userFlightRanges) {
-      if (isAfter(trackedEnd, start) && isBefore(trackedStart, end)) {
-        overlaps = true;
+      if (isAfter(trackedStart, start) && isBefore(trackedEnd, end)) {
+        userFlightExists = true;
         break;
       }
     }
-    if (!overlaps) {
+    if (!userFlightExists) {
       idsToDelete.push(trackedFlight.id);
     }
   }
