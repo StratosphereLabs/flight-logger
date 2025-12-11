@@ -378,10 +378,10 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
         const departureTime = min([takeoffTime, outTimeActual ?? outTime]);
         const arrivalTime = max([landingTime, inTimeActual ?? inTime]);
         return (
-          (isAfter(departureTime, departureBounds.lte) &&
-            isBefore(takeoffTime, departureBounds.gt)) ||
-          (isAfter(landingTime, arrivalBounds.lte) &&
-            isBefore(arrivalTime, arrivalBounds.gt))
+          (isAfter(departureTime, departureBounds.gt) &&
+            isBefore(takeoffTime, departureBounds.lte)) ||
+          (isAfter(landingTime, arrivalBounds.gt) &&
+            isBefore(arrivalTime, arrivalBounds.lte))
         );
       },
     );
@@ -502,10 +502,10 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
         const departureTime = min([takeoffTime, outTimeActual ?? outTime]);
         const arrivalTime = max([landingTime, inTimeActual ?? inTime]);
         return (
-          (isAfter(departureTime, departureBounds.lte) &&
-            isBefore(takeoffTime, departureBounds.gt)) ||
-          (isAfter(landingTime, arrivalBounds.lte) &&
-            isBefore(arrivalTime, arrivalBounds.gt))
+          (isAfter(departureTime, departureBounds.gt) &&
+            isBefore(takeoffTime, departureBounds.lte)) ||
+          (isAfter(landingTime, arrivalBounds.gt) &&
+            isBefore(arrivalTime, arrivalBounds.lte))
         );
       },
     );
@@ -617,10 +617,10 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
         const departureTime = min([takeoffTime, outTimeActual ?? outTime]);
         const arrivalTime = max([landingTime, inTimeActual ?? inTime]);
         return (
-          (isAfter(departureTime, departureBounds.lte) &&
-            isBefore(takeoffTime, departureBounds.gt)) ||
-          (isAfter(landingTime, arrivalBounds.lte) &&
-            isBefore(arrivalTime, arrivalBounds.gt))
+          (isAfter(departureTime, departureBounds.gt) &&
+            isBefore(takeoffTime, departureBounds.lte)) ||
+          (isAfter(landingTime, arrivalBounds.gt) &&
+            isBefore(arrivalTime, arrivalBounds.lte))
         );
       },
     );
