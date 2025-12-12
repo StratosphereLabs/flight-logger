@@ -296,44 +296,88 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
       where: {
         OR: [
           {
-            outTimeActual: {
-              lte: departureBounds.lte,
-            },
+            AND: [
+              {
+                OR: [
+                  {
+                    outTimeActual: {
+                      lte: departureBounds.lte,
+                    },
+                  },
+                  {
+                    outTime: {
+                      lte: departureBounds.lte,
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    offTimeActual: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    offTime: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    outTimeActual: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    outTime: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                ],
+              },
+            ],
           },
           {
-            outTime: {
-              lte: departureBounds.lte,
-            },
-          },
-          {
-            offTimeActual: {
-              gt: departureBounds.gt,
-            },
-          },
-          {
-            offTime: {
-              gt: departureBounds.gt,
-            },
-          },
-          {
-            onTimeActual: {
-              lte: arrivalBounds.lte,
-            },
-          },
-          {
-            onTime: {
-              lte: arrivalBounds.lte,
-            },
-          },
-          {
-            inTimeActual: {
-              gt: arrivalBounds.gt,
-            },
-          },
-          {
-            inTime: {
-              gt: arrivalBounds.gt,
-            },
+            AND: [
+              {
+                OR: [
+                  {
+                    inTimeActual: {
+                      gt: arrivalBounds.gt,
+                    },
+                  },
+                  {
+                    inTime: {
+                      gt: arrivalBounds.gt,
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    onTimeActual: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    onTime: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    inTime: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                ],
+              },
+            ],
           },
         ],
         airline: {
@@ -436,44 +480,88 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
       where: {
         OR: [
           {
-            outTimeActual: {
-              lte: departureBounds.lte,
-            },
+            AND: [
+              {
+                OR: [
+                  {
+                    outTimeActual: {
+                      lte: departureBounds.lte,
+                    },
+                  },
+                  {
+                    outTime: {
+                      lte: departureBounds.lte,
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    offTimeActual: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    offTime: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    outTimeActual: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    outTime: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                ],
+              },
+            ],
           },
           {
-            outTime: {
-              lte: departureBounds.lte,
-            },
-          },
-          {
-            offTimeActual: {
-              gt: departureBounds.gt,
-            },
-          },
-          {
-            offTime: {
-              gt: departureBounds.gt,
-            },
-          },
-          {
-            onTimeActual: {
-              lte: arrivalBounds.lte,
-            },
-          },
-          {
-            onTime: {
-              lte: arrivalBounds.lte,
-            },
-          },
-          {
-            inTimeActual: {
-              gt: arrivalBounds.gt,
-            },
-          },
-          {
-            inTime: {
-              gt: arrivalBounds.gt,
-            },
+            AND: [
+              {
+                OR: [
+                  {
+                    inTimeActual: {
+                      gt: arrivalBounds.gt,
+                    },
+                  },
+                  {
+                    inTime: {
+                      gt: arrivalBounds.gt,
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    onTimeActual: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    onTime: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    inTime: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                ],
+              },
+            ],
           },
         ],
         airline: {
@@ -567,44 +655,88 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
       where: {
         OR: [
           {
-            outTimeActual: {
-              lte: departureBounds.lte,
-            },
+            AND: [
+              {
+                OR: [
+                  {
+                    outTimeActual: {
+                      lte: departureBounds.lte,
+                    },
+                  },
+                  {
+                    outTime: {
+                      lte: departureBounds.lte,
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    offTimeActual: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    offTime: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    outTimeActual: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                  {
+                    outTime: {
+                      gt: departureBounds.gt,
+                    },
+                  },
+                ],
+              },
+            ],
           },
           {
-            outTime: {
-              lte: departureBounds.lte,
-            },
-          },
-          {
-            offTimeActual: {
-              gt: departureBounds.gt,
-            },
-          },
-          {
-            offTime: {
-              gt: departureBounds.gt,
-            },
-          },
-          {
-            onTimeActual: {
-              lte: arrivalBounds.lte,
-            },
-          },
-          {
-            onTime: {
-              lte: arrivalBounds.lte,
-            },
-          },
-          {
-            inTimeActual: {
-              gt: arrivalBounds.gt,
-            },
-          },
-          {
-            inTime: {
-              gt: arrivalBounds.gt,
-            },
+            AND: [
+              {
+                OR: [
+                  {
+                    inTimeActual: {
+                      gt: arrivalBounds.gt,
+                    },
+                  },
+                  {
+                    inTime: {
+                      gt: arrivalBounds.gt,
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    onTimeActual: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    onTime: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    inTimeActual: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                  {
+                    inTime: {
+                      lte: arrivalBounds.lte,
+                    },
+                  },
+                ],
+              },
+            ],
           },
         ],
         airline: {
