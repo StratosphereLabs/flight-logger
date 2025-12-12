@@ -117,7 +117,7 @@ export const FlightAircraftDetails = ({
               </Button>
             </div>
           ) : (
-            <div className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity hover:opacity-100">
+            <div className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity focus-within:opacity-100 hover:opacity-100">
               <Button
                 className="hover:border-transparent hover:bg-transparent hover:shadow-none hover:outline-transparent"
                 color="ghost"
