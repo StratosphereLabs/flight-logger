@@ -19,8 +19,6 @@ import {
 } from '../../hooks';
 import { AircraftFlightHistoryRow } from './AircraftFlightHistoryRow';
 
-// import { AircraftImageModal } from './AircraftImageModal';
-
 export interface FlightAircraftDetailsProps {
   data?: FlightsRouterOutput['getFlight'];
   showTrackMyAircraftButton?: boolean;
@@ -34,8 +32,6 @@ export const FlightAircraftDetails = ({
 }: FlightAircraftDetailsProps): JSX.Element | null => {
   const cardClassNames = useCardClassNames();
   const navigate = useNavigate();
-  // const [isAircraftImageModalOpen, setIsAircraftImageModalOpen] =
-  //   useState(false);
   const [isAircraftImageExpanded, setIsAircraftImageExpanded] = useState(false);
   const { icao24 } = useParams();
   const { data: userData } = useLoggedInUserQuery();
@@ -57,7 +53,6 @@ export const FlightAircraftDetails = ({
   const onOwnProfile = userData !== undefined && userData.id === data.userId;
   const tailNumber = data.airframe?.registration ?? data.tailNumber ?? null;
   const previousPageName = `${data.tailNumber}${data.aircraftType !== null ? ` (${data.aircraftType.icao})` : ''}`;
-  console.log(photoData);
   return (
     <div
       className={classNames(
@@ -118,16 +113,21 @@ export const FlightAircraftDetails = ({
                 size="sm"
               >
                 <CollapseIcon className="h-6 w-6" />
+                <span className="sr-only">Collapse Image</span>
               </Button>
             </div>
           ) : (
-            <div
-              className="absolute top-0 left-0 flex h-24 w-full cursor-pointer items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity hover:opacity-100"
-              onClick={() => {
-                setIsAircraftImageExpanded(true);
-              }}
-            >
-              <ExpandIcon className="h-6 w-6" />
+            <div className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity hover:opacity-100">
+              <Button
+                className="hover:border-transparent hover:bg-transparent hover:shadow-none hover:outline-transparent"
+                color="ghost"
+                onClick={() => {
+                  setIsAircraftImageExpanded(true);
+                }}
+              >
+                <ExpandIcon className="h-6 w-6" />
+                <span className="sr-only">Expand Image</span>
+              </Button>
             </div>
           )}
           {photoData?.photos[0] !== undefined ? (
