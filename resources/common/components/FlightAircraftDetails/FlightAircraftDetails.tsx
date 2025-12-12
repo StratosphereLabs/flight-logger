@@ -119,7 +119,7 @@ export const FlightAircraftDetails = ({
           ) : (
             <div className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity focus-within:opacity-100 hover:opacity-100">
               <Button
-                className="hover:border-transparent hover:bg-transparent hover:shadow-none hover:outline-transparent"
+                className="hover:border-transparent hover:bg-transparent hover:shadow-none hover:outline-transparent focus:border-transparent focus:bg-transparent focus:shadow-none focus:outline-transparent"
                 color="ghost"
                 onClick={() => {
                   setIsAircraftImageExpanded(true);
