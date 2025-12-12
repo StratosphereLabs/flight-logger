@@ -296,28 +296,44 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
       where: {
         OR: [
           {
-            outTimeActual: departureBounds,
+            outTimeActual: {
+              lte: departureBounds.lte,
+            },
           },
           {
-            outTime: departureBounds,
+            outTime: {
+              lte: departureBounds.lte,
+            },
           },
           {
-            offTimeActual: departureBounds,
+            offTimeActual: {
+              gt: departureBounds.gt,
+            },
           },
           {
-            offTime: departureBounds,
+            offTime: {
+              gt: departureBounds.gt,
+            },
           },
           {
-            onTimeActual: arrivalBounds,
+            onTimeActual: {
+              lte: arrivalBounds.lte,
+            },
           },
           {
-            onTime: arrivalBounds,
+            onTime: {
+              lte: arrivalBounds.lte,
+            },
           },
           {
-            inTimeActual: arrivalBounds,
+            inTimeActual: {
+              gt: arrivalBounds.gt,
+            },
           },
           {
-            inTime: arrivalBounds,
+            inTime: {
+              gt: arrivalBounds.gt,
+            },
           },
         ],
         airline: {
@@ -420,28 +436,44 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
       where: {
         OR: [
           {
-            outTimeActual: departureBounds,
+            outTimeActual: {
+              lte: departureBounds.lte,
+            },
           },
           {
-            outTime: departureBounds,
+            outTime: {
+              lte: departureBounds.lte,
+            },
           },
           {
-            offTimeActual: departureBounds,
+            offTimeActual: {
+              gt: departureBounds.gt,
+            },
           },
           {
-            offTime: departureBounds,
+            offTime: {
+              gt: departureBounds.gt,
+            },
           },
           {
-            onTimeActual: arrivalBounds,
+            onTimeActual: {
+              lte: arrivalBounds.lte,
+            },
           },
           {
-            onTime: arrivalBounds,
+            onTime: {
+              lte: arrivalBounds.lte,
+            },
           },
           {
-            inTimeActual: arrivalBounds,
+            inTimeActual: {
+              gt: arrivalBounds.gt,
+            },
           },
           {
-            inTime: arrivalBounds,
+            inTime: {
+              gt: arrivalBounds.gt,
+            },
           },
         ],
         airline: {
@@ -535,28 +567,44 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
       where: {
         OR: [
           {
-            outTimeActual: departureBounds,
+            outTimeActual: {
+              lte: departureBounds.lte,
+            },
           },
           {
-            outTime: departureBounds,
+            outTime: {
+              lte: departureBounds.lte,
+            },
           },
           {
-            offTimeActual: departureBounds,
+            offTimeActual: {
+              gt: departureBounds.gt,
+            },
           },
           {
-            offTime: departureBounds,
+            offTime: {
+              gt: departureBounds.gt,
+            },
           },
           {
-            onTimeActual: arrivalBounds,
+            onTimeActual: {
+              lte: arrivalBounds.lte,
+            },
           },
           {
-            onTime: arrivalBounds,
+            onTime: {
+              lte: arrivalBounds.lte,
+            },
           },
           {
-            inTimeActual: arrivalBounds,
+            inTimeActual: {
+              gt: arrivalBounds.gt,
+            },
           },
           {
-            inTime: arrivalBounds,
+            inTime: {
+              gt: arrivalBounds.gt,
+            },
           },
         ],
         airline: {
