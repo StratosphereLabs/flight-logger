@@ -132,7 +132,11 @@ export const FlightAircraftDetails = ({
           )}
           {photoData?.photos[0] !== undefined ? (
             <img
-              src={photoData.photos[0].thumbnail.src}
+              src={
+                isAircraftImageExpanded
+                  ? photoData.photos[0].thumbnail_large.src
+                  : photoData.photos[0].thumbnail.src
+              }
               alt="Photo unavailable"
               className={classNames(
                 isAircraftImageExpanded
