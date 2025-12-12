@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import { isAfter, isBefore, sub } from 'date-fns';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Loading } from 'stratosphere-ui';
 
-import { TrackAircraftIcon } from '..';
+import { CollapseIcon, ExpandIcon, TrackAircraftIcon } from '..';
 import { type FlightsRouterOutput } from '../../../../app/routes/flights';
 import { type AircraftPageNavigationState } from '../../../pages';
 import {
@@ -31,6 +32,7 @@ export const FlightAircraftDetails = ({
 }: FlightAircraftDetailsProps): JSX.Element | null => {
   const cardClassNames = useCardClassNames();
   const navigate = useNavigate();
+  const [isAircraftImageExpanded, setIsAircraftImageExpanded] = useState(false);
   const { icao24 } = useParams();
   const { data: userData } = useLoggedInUserQuery();
   const { data: photoData, isFetching } = useAircraftPhotoQuery(
@@ -59,7 +61,13 @@ export const FlightAircraftDetails = ({
       )}
     >
       <div className="truncate font-semibold">{data.aircraftType?.name}</div>
-      <div className="flex gap-4">
+      <div
+        className={classNames(
+          isAircraftImageExpanded
+            ? 'flex flex-col-reverse gap-4'
+            : 'flex gap-4',
+        )}
+      >
         <div className="flex w-full flex-1 flex-col justify-between gap-1 py-1">
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm opacity-75">ICAO Code</span>
@@ -88,12 +96,53 @@ export const FlightAircraftDetails = ({
             )}
           </div>
         </div>
-        <div className="relative flex w-41 flex-col justify-center overflow-hidden">
+        <div
+          className={classNames(
+            'relative flex flex-col justify-center overflow-hidden',
+            isAircraftImageExpanded ? 'w-full' : 'w-41',
+          )}
+        >
+          {isAircraftImageExpanded ? (
+            <div className="absolute top-[2px] right-[2px] rounded-full bg-radial from-black/20 to-transparent">
+              <Button
+                color="ghost"
+                onClick={() => {
+                  setIsAircraftImageExpanded(false);
+                }}
+                shape="circle"
+                size="sm"
+              >
+                <CollapseIcon className="h-6 w-6" />
+                <span className="sr-only">Collapse Image</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity focus-within:opacity-100 hover:opacity-100">
+              <Button
+                className="hover:border-transparent hover:bg-transparent hover:shadow-none hover:outline-transparent"
+                color="ghost"
+                onClick={() => {
+                  setIsAircraftImageExpanded(true);
+                }}
+              >
+                <ExpandIcon className="h-6 w-6" />
+                <span className="sr-only">Expand Image</span>
+              </Button>
+            </div>
+          )}
           {photoData?.photos[0] !== undefined ? (
             <img
-              src={photoData.photos[0].thumbnail.src}
+              src={
+                isAircraftImageExpanded
+                  ? photoData.photos[0].thumbnail_large.src
+                  : photoData.photos[0].thumbnail.src
+              }
               alt="Photo unavailable"
-              className="rounded-box h-23 w-41 object-cover shadow-sm"
+              className={classNames(
+                isAircraftImageExpanded
+                  ? 'rounded-box w-full object-cover shadow-sm'
+                  : 'rounded-box h-23 w-41 object-cover shadow-sm',
+              )}
             />
           ) : null}
           {photoData?.photos[0] === undefined ? (
