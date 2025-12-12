@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { isEqual } from 'date-fns';
 import { Avatar, Link } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
@@ -14,6 +15,11 @@ export const StickyFlightHeader = ({
   data,
 }: StickyFlightHeaderProps): JSX.Element | null => {
   if (data?.airline === undefined || data?.airline === null) return null;
+  const isScheduledTimesEqual =
+    data.outTimeActual !== null &&
+    isEqual(data.outTimeActual, data.outTime) &&
+    data.inTimeActual !== null &&
+    isEqual(data.inTimeActual, data.inTime);
   return (
     <div className="bg-base-100 sticky top-0 left-0 z-10 w-full shadow-lg">
       <div
@@ -55,7 +61,7 @@ export const StickyFlightHeader = ({
               <span className="font-semibold">{data.flightNumber}</span>
             </Link>
           </div>
-          <div className="text-xs font-semibold opacity-80 md:text-center md:text-sm">
+          <div className="text-xs font-semibold opacity-80">
             {data.outDateLocal}
           </div>
           {data.user !== null ? (
@@ -72,7 +78,12 @@ export const StickyFlightHeader = ({
           ) : null}
         </div>
         <div className="flex flex-1 items-center gap-2">
-          <div className="flex w-0 flex-1 flex-col items-center">
+          <div
+            className={classNames(
+              'flex h-full flex-1 flex-col items-center',
+              isScheduledTimesEqual && 'justify-center',
+            )}
+          >
             <div className="font-mono text-xl font-bold">
               {data.departureAirport.iata}
             </div>
@@ -90,7 +101,12 @@ export const StickyFlightHeader = ({
             />
           </div>
           <RightArrowIcon className="h-4 w-4" />
-          <div className="flex w-0 flex-1 flex-col items-center">
+          <div
+            className={classNames(
+              'flex h-full flex-1 flex-col items-center',
+              isScheduledTimesEqual && 'justify-center',
+            )}
+          >
             <div className="flex gap-1 font-mono text-xl font-bold">
               <span
                 className={classNames(
