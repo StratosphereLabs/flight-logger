@@ -102,56 +102,56 @@ export const FlightAircraftDetails = ({
             isAircraftImageExpanded ? 'w-full' : 'w-41',
           )}
         >
-          {isAircraftImageExpanded ? (
-            <div className="absolute top-[2px] right-[2px] rounded-full bg-radial from-black/20 to-transparent">
-              <Button
-                color="ghost"
-                onClick={() => {
-                  setIsAircraftImageExpanded(false);
-                }}
-                shape="circle"
-                size="sm"
-              >
-                <CollapseIcon className="h-6 w-6" />
-                <span className="sr-only">Collapse Image</span>
-              </Button>
-            </div>
-          ) : (
-            <Button
-              color="ghost"
-              onClick={() => {
-                setIsAircraftImageExpanded(true);
-              }}
-              className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity focus-within:opacity-100 hover:border-transparent hover:bg-transparent hover:opacity-100 hover:shadow-none hover:outline-transparent focus:border-transparent focus:bg-transparent focus:shadow-none focus:outline-transparent"
-            >
-              <ExpandIcon className="h-6 w-6" />
-              <span className="sr-only">Expand Image</span>
-            </Button>
-          )}
           {photoData?.photos[0] !== undefined ? (
-            <img
-              src={
-                isAircraftImageExpanded
-                  ? photoData.photos[0].thumbnail_large.src
-                  : photoData.photos[0].thumbnail.src
-              }
-              alt="Photo unavailable"
-              className={classNames(
-                isAircraftImageExpanded
-                  ? 'rounded-box w-full object-cover shadow-sm'
-                  : 'rounded-box h-23 w-41 object-cover shadow-sm',
+            <>
+              {isAircraftImageExpanded ? (
+                <div className="absolute top-[2px] right-[2px] rounded-full bg-radial from-black/20 to-transparent">
+                  <Button
+                    color="ghost"
+                    onClick={() => {
+                      setIsAircraftImageExpanded(false);
+                    }}
+                    shape="circle"
+                    size="sm"
+                  >
+                    <CollapseIcon className="h-6 w-6" />
+                    <span className="sr-only">Collapse Image</span>
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  color="ghost"
+                  onClick={() => {
+                    setIsAircraftImageExpanded(true);
+                  }}
+                  className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity focus-within:opacity-100 hover:border-transparent hover:bg-transparent hover:opacity-100 hover:shadow-none hover:outline-transparent focus:border-transparent focus:bg-transparent focus:shadow-none focus:outline-transparent"
+                >
+                  <ExpandIcon className="h-6 w-6" />
+                  <span className="sr-only">Expand Image</span>
+                </Button>
               )}
-            />
+              <img
+                src={
+                  isAircraftImageExpanded
+                    ? photoData.photos[0].thumbnail_large.src
+                    : photoData.photos[0].thumbnail.src
+                }
+                alt="Photo unavailable"
+                className={classNames(
+                  isAircraftImageExpanded
+                    ? 'rounded-box w-full object-cover shadow-sm'
+                    : 'rounded-box h-23 w-41 object-cover shadow-sm',
+                )}
+              />
+              <p className="bg-base-100/60 text-base-content/80 absolute bottom-0 w-full truncate px-1 text-center text-xs">
+                © {photoData.photos[0].photographer}
+              </p>
+            </>
           ) : null}
           {photoData?.photos[0] === undefined ? (
             <div className="rounded-box bg-base-100 flex h-23 w-41 items-center justify-center">
               {isFetching ? <Loading /> : 'Photo unavailable'}
             </div>
-          ) : null}
-          {photoData?.photos[0] !== undefined ? (
-            <p className="bg-base-100/60 text-base-content/80 absolute bottom-0 w-full truncate px-1 text-center text-xs">
-              © {photoData.photos[0].photographer}
-            </p>
           ) : null}
         </div>
       </div>
