@@ -148,9 +148,11 @@ export const FlightAircraftDetails = ({
               {isFetching ? <Loading /> : 'Photo unavailable'}
             </div>
           ) : null}
-          <p className="bg-base-100/60 text-base-content/80 absolute bottom-0 w-full truncate px-1 text-center text-xs">
-            © {photoData?.photos[0]?.photographer ?? ''}
-          </p>
+          {photoData?.photos[0] !== undefined ? (
+            <p className="bg-base-100/60 text-base-content/80 absolute bottom-0 w-full truncate px-1 text-center text-xs">
+              © {photoData.photos[0].photographer}
+            </p>
+          ) : null}
         </div>
       </div>
       {data?.airframeId !== null &&
