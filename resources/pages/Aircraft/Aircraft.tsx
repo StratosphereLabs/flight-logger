@@ -144,21 +144,19 @@ export const Aircraft = (): JSX.Element | null => {
         >
           <RouteIcon className="h-6 w-6 rotate-90" />
         </Button>
-        {data !== undefined && data.flightStatus !== 'ARRIVED' ? (
-          <Button
-            className={classNames(
-              'btn-sm sm:btn-md',
-              isFlightFocused
-                ? 'border-primary text-primary box-border border border-2 px-[7px]'
-                : 'px-2',
-            )}
-            onClick={() => {
-              setIsFlightFocused(isFocused => !isFocused);
-            }}
-          >
-            <CollapseIcon className="h-6 w-6" />
-          </Button>
-        ) : null}
+        <Button
+          className={classNames(
+            'btn-sm sm:btn-md',
+            isFlightFocused
+              ? 'border-primary text-primary box-border border border-2 px-[7px]'
+              : 'px-2',
+          )}
+          onClick={() => {
+            setIsFlightFocused(isFocused => !isFocused);
+          }}
+        >
+          <CollapseIcon className="h-6 w-6" />
+        </Button>
       </div>
       <FlightDetailsPanel
         data={data}
