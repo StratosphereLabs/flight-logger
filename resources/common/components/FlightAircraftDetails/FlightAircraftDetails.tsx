@@ -117,18 +117,16 @@ export const FlightAircraftDetails = ({
               </Button>
             </div>
           ) : (
-            <div className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity focus-within:opacity-100 hover:opacity-100">
-              <Button
-                className="hover:border-transparent hover:bg-transparent hover:shadow-none hover:outline-transparent focus:border-transparent focus:bg-transparent focus:shadow-none focus:outline-transparent"
-                color="ghost"
-                onClick={() => {
-                  setIsAircraftImageExpanded(true);
-                }}
-              >
-                <ExpandIcon className="h-6 w-6" />
-                <span className="sr-only">Expand Image</span>
-              </Button>
-            </div>
+            <Button
+              color="ghost"
+              onClick={() => {
+                setIsAircraftImageExpanded(true);
+              }}
+              className="absolute top-0 left-0 flex h-24 w-full items-center justify-center bg-radial from-black/50 to-transparent opacity-0 transition-opacity focus-within:opacity-100 hover:border-transparent hover:bg-transparent hover:opacity-100 hover:shadow-none hover:outline-transparent focus:border-transparent focus:bg-transparent focus:shadow-none focus:outline-transparent"
+            >
+              <ExpandIcon className="h-6 w-6" />
+              <span className="sr-only">Expand Image</span>
+            </Button>
           )}
           {photoData?.photos[0] !== undefined ? (
             <img
