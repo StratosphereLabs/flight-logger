@@ -8,6 +8,10 @@ import {
   updateFlightsEveryMinute,
   updateFlightsHourly,
 } from '../data/updaters';
+import {
+  cleanupExpiredPendingFlights,
+  syncAllCalendars,
+} from '../data/updaters/calendarSync';
 import { seedDatabase } from '../db/seeders';
 
 (() => {
@@ -16,6 +20,12 @@ import { seedDatabase } from '../db/seeders';
 
   // Update flights at midnight every day EXCEPT on 1st day of each month
   scheduleJob('0 0 2-31 * *', updateFlightsDaily);
+
+  // Sync calendars at 2 AM every day
+  scheduleJob('0 2 * * *', syncAllCalendars);
+
+  // Clean up expired pending flights at 3 AM every day
+  scheduleJob('0 3 * * *', cleanupExpiredPendingFlights);
 
   // Update flights at top of every hour EXCEPT at midnight
   scheduleJob('0 1-23 * * *', updateFlightsHourly);
