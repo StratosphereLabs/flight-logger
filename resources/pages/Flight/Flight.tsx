@@ -1,4 +1,5 @@
 import { GoogleMap } from '@react-google-maps/api';
+import { useStatsigClient } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -35,6 +36,7 @@ export interface FlightPageNavigationState {
 }
 
 export const Flight = (): JSX.Element | null => {
+  const { client } = useStatsigClient();
   const { flightId } = useParams();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery(
@@ -61,6 +63,9 @@ export const Flight = (): JSX.Element | null => {
       setPreviousPageName(state.previousPageName);
     }
   }, [setPreviousPageName, state]);
+  useEffect(() => {
+    client.logEvent('flight_page_viewed', flightId);
+  }, [client, flightId]);
   const {
     focusFullRoute,
     isEnRouteFlight,

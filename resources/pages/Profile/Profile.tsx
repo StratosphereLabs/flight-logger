@@ -1,3 +1,4 @@
+import { useStatsigClient } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { type Control } from 'react-hook-form';
@@ -27,6 +28,7 @@ export interface MapCardFormData {
 }
 
 export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
+  const { client } = useStatsigClient();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();
   const { state } = useLocation() as {
@@ -83,6 +85,9 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
       setIsAddingFlight(true);
     }
   }, [setIsAddingFlight, state?.addFlight]);
+  useEffect(() => {
+    client.logEvent('profile_page_viewed');
+  }, [client]);
   return (
     <div className="flex flex-1 flex-col">
       <MapCard

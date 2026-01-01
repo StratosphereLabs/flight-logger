@@ -1,4 +1,5 @@
 import { useJsApiLoader } from '@react-google-maps/api';
+import { useGateValue } from '@statsig/react-bindings';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
 import { DEFAULT_COORDINATES } from '../../pages/Home/constants';
@@ -23,6 +24,7 @@ export const useGoogleMapInitialization =
       googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
       libraries: ['visualization'],
     });
+    const christmasThemeEnabled = useGateValue('christmas_theme');
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [center, setCenter] = useState(DEFAULT_COORDINATES);
     const isDarkMode = useIsDarkMode();
@@ -32,13 +34,13 @@ export const useGoogleMapInitialization =
         styles:
           theme === AppTheme.CYBERPUNK
             ? cyberPunkStyle
-            : theme === AppTheme.CHRISTMAS
+            : theme === AppTheme.CHRISTMAS && christmasThemeEnabled
               ? christmasStyle
               : isDarkMode
                 ? darkModeStyle
                 : lightModeStyle,
       });
-    }, [isDarkMode, map, theme]);
+    }, [christmasThemeEnabled, isDarkMode, map, theme]);
     useEffect(() => {
       map?.setCenter(center);
     }, [center, map]);
