@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 import { prisma } from '../prisma';
-import { FREIGHTER_AIRCRAFT_REGEX } from './constants';
+import { CHROME_USER_AGENT, FREIGHTER_AIRCRAFT_REGEX } from './constants';
 import { getText, getWikipediaDataTable, seedConcurrently } from './helpers';
 
 const getUpdate = (
@@ -54,6 +54,7 @@ export const seedAircraftTypes = async (): Promise<void> => {
   try {
     const response = await axios.get<string>(
       'https://en.wikipedia.org/wiki/List_of_aircraft_type_designators',
+      { headers: { 'User-Agent': CHROME_USER_AGENT } },
     );
     const rows = getDatabaseRows(response.data);
     const count = await seedConcurrently(rows, row =>
