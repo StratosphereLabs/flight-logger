@@ -5,6 +5,7 @@ import {
   OverlayViewF,
   PolylineF,
 } from '@react-google-maps/api';
+import { useGateValue } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
@@ -20,6 +21,7 @@ import {
 
 import {
   AirportLabelOverlay,
+  HalloweenIcon,
   PlaneSolidIcon,
   PlusAirplaneIcon,
   RightArrowIcon,
@@ -46,6 +48,8 @@ import {
 } from './utils';
 
 export const FollowingMap = (): JSX.Element => {
+  const christmasThemeEnabled = useGateValue('christmas_theme');
+  const halloweenThemeEnabled = useGateValue('halloween_theme');
   const { isLoaded, map, setCenter, setMap } = useGoogleMapInitialization();
   const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
@@ -397,10 +401,12 @@ export const FollowingMap = (): JSX.Element => {
                           <Tooltip
                             className={classNames(
                               theme === AppTheme.CHRISTMAS &&
+                                christmasThemeEnabled &&
                                 CHRISTMAS_THEME_TOOLTIP_COLORS[delayStatus],
                             )}
                             color={
-                              theme === AppTheme.CHRISTMAS
+                              theme === AppTheme.CHRISTMAS &&
+                              christmasThemeEnabled
                                 ? undefined
                                 : TOOLTIP_COLORS[delayStatus]
                             }
@@ -452,7 +458,8 @@ export const FollowingMap = (): JSX.Element => {
                                 user !== null ? `@${user.username}` : undefined
                               }
                             >
-                              {theme === AppTheme.CHRISTMAS ? (
+                              {theme === AppTheme.CHRISTMAS &&
+                              christmasThemeEnabled ? (
                                 <SleighIcon
                                   className={classNames(
                                     'text-secondary h-7 w-7 brightness-80',
@@ -466,15 +473,8 @@ export const FollowingMap = (): JSX.Element => {
                                     )}deg)`,
                                   }}
                                 />
-                              ) : (
-                                <PlaneSolidIcon
-                                  className="text-primary h-6 w-6"
-                                  style={{
-                                    transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
-                                  }}
-                                />
-                              )}
-                              {/* {theme === AppTheme.HALLOWEEN ? (
+                              ) : theme === AppTheme.HALLOWEEN &&
+                                halloweenThemeEnabled ? (
                                 <HalloweenIcon
                                   className="text-primary h-7 w-7"
                                   style={{
@@ -488,7 +488,7 @@ export const FollowingMap = (): JSX.Element => {
                                     transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
                                   }}
                                 />
-                              )} */}
+                              )}
                               <span className="sr-only">
                                 {user !== null ? `@${user?.username}` : null}
                               </span>

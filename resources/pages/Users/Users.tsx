@@ -1,4 +1,6 @@
+import { useStatsigClient } from '@statsig/react-bindings';
 import { getCoreRowModel } from '@tanstack/react-table';
+import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,6 +25,7 @@ export interface SearchUsersFormData {
 }
 
 export const Users = (): JSX.Element => {
+  const { client } = useStatsigClient();
   const isLoggedIn = useProtectedPage();
   const navigate = useNavigate();
   const onError = useTRPCErrorHandler();
@@ -42,6 +45,9 @@ export const Users = (): JSX.Element => {
     },
     { enabled: isLoggedIn, onError },
   );
+  useEffect(() => {
+    client.logEvent('users_page_viewed');
+  }, [client]);
   return (
     <div className="mt-16 flex flex-1 flex-col items-center p-2 sm:p-3">
       <Card className="bg-base-100 flex w-full max-w-[750px] flex-col justify-center">

@@ -1,3 +1,4 @@
+import { useGateValue, useStatsigUser } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
 import _ from 'lodash';
@@ -44,6 +45,8 @@ export interface MainNavbarProps {
 }
 
 export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
+  const { updateUserSync } = useStatsigUser();
+  const christmasThemeEnabled = useGateValue('christmas_theme');
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
@@ -118,7 +121,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         className: classNames(
           '[--tab-bg:var(--color-primary)] lg:text-primary-content',
           currentTab === 'home' &&
-            (theme === AppTheme.CHRISTMAS
+            (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
               ? 'lg:text-white lg:hover:text-white'
               : 'lg:hover:text-primary-content'),
         ),
@@ -136,7 +139,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className: classNames(
                 '[--tab-bg:var(--color-primary)] lg:text-primary-content',
                 currentTab === 'profile' &&
-                  (theme === AppTheme.CHRISTMAS
+                  (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
                     ? 'lg:text-white lg:hover:text-white'
                     : 'lg:hover:text-primary-content'),
               ),
@@ -152,7 +155,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className: classNames(
                 '[--tab-bg:var(--color-primary)] lg:text-primary-content',
                 currentTab === 'users' &&
-                  (theme === AppTheme.CHRISTMAS
+                  (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
                     ? 'lg:text-white lg:hover:text-white'
                     : 'lg:hover:text-primary-content'),
               ),
@@ -170,7 +173,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         className: classNames(
           '[--tab-bg:var(--color-primary)] lg:text-primary-content',
           currentTab === 'data' &&
-            (theme === AppTheme.CHRISTMAS
+            (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
               ? 'lg:text-white lg:hover:text-white'
               : 'lg:hover:text-primary-content'),
         ),
@@ -181,7 +184,14 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         },
       },
     ],
-    [currentTab, isLoggedIn, navigate, tabsToPathsMap, theme],
+    [
+      christmasThemeEnabled,
+      currentTab,
+      isLoggedIn,
+      navigate,
+      tabsToPathsMap,
+      theme,
+    ],
   );
   return (
     <>
@@ -222,7 +232,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 <span>Flight</span>
                 <span
                   className={classNames(
-                    theme === AppTheme.CHRISTMAS
+                    theme === AppTheme.CHRISTMAS && christmasThemeEnabled
                       ? 'text-secondary'
                       : 'text-base-content',
                   )}
@@ -230,7 +240,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                   Logger
                 </span>
               </div>
-              {theme === AppTheme.CHRISTMAS ? (
+              {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
                 <ColoredSnowflakeIcon className="relative bottom-2 h-5 w-5 rotate-30 transform sm:h-6 sm:w-6" />
               ) : null}
             </Button>
@@ -404,6 +414,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               setIsLogoutDialogOpen(false);
               await utils.users.getUser.cancel();
               await utils.users.getUser.invalidate({ username: undefined });
+              updateUserSync({});
               if (flightId !== undefined) {
                 utils.flights.getFlight.setData(
                   { id: flightId },

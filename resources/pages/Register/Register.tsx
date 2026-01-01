@@ -1,4 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useStatsigClient } from '@statsig/react-bindings';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import {
@@ -16,6 +18,7 @@ import { trpc } from '../../utils/trpc';
 
 export const Register = (): JSX.Element => {
   useAuthPage();
+  const { client } = useStatsigClient();
   const { setToken } = useAuthStore();
   const methods = useForm({
     mode: 'onBlur',
@@ -37,6 +40,9 @@ export const Register = (): JSX.Element => {
     },
     onError,
   });
+  useEffect(() => {
+    client.logEvent('register_page_viewed');
+  }, [client]);
   const handleClick = useLinkClickHandler('/auth/login');
   return (
     <>

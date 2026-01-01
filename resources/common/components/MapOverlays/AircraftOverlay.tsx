@@ -1,4 +1,5 @@
 import { OverlayView, OverlayViewF } from '@react-google-maps/api';
+import { useGateValue } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import { useMemo } from 'react';
 import { Button, Tooltip, TooltipContent } from 'stratosphere-ui';
@@ -9,7 +10,7 @@ import {
   CHRISTMAS_THEME_TOOLTIP_COLORS,
   TOOLTIP_COLORS,
 } from '../../constants';
-import { PlaneSolidIcon, SleighIcon } from '../Icons';
+import { HalloweenIcon, PlaneSolidIcon, SleighIcon } from '../Icons';
 
 export interface AircraftOverlayProps {
   data: Pick<
@@ -33,6 +34,8 @@ export const AircraftOverlay = ({
   const { theme } = useThemeStore();
   const shouldFlipIcon =
     data.estimatedHeading >= 180 || data.estimatedHeading < 0;
+  const christmasThemeEnabled = useGateValue('christmas_theme');
+  const halloweenThemeEnabled = useGateValue('halloween_theme');
   const currentTracklogItem = useMemo(
     () =>
       data.tracklog !== undefined && data.tracklog.length > 1
@@ -103,7 +106,7 @@ export const AircraftOverlay = ({
           color="ghost"
           title={data.user !== null ? `@${data.user.username}` : undefined}
         >
-          {theme === AppTheme.CHRISTMAS ? (
+          {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
             <SleighIcon
               className={classNames(
                 'text-secondary h-7 w-7 brightness-80',
@@ -117,6 +120,13 @@ export const AircraftOverlay = ({
                 )}deg)`,
               }}
             />
+          ) : theme === AppTheme.HALLOWEEN && halloweenThemeEnabled ? (
+            <HalloweenIcon
+              className="text-primary h-7 w-7"
+              style={{
+                transform: `rotate(${Math.round(data.estimatedHeading)}deg)`,
+              }}
+            />
           ) : (
             <PlaneSolidIcon
               className="text-primary h-6 w-6"
@@ -125,21 +135,6 @@ export const AircraftOverlay = ({
               }}
             />
           )}
-          {/* {theme === AppTheme.HALLOWEEN ? (
-                <HalloweenIcon
-                  className="text-primary h-7 w-7"
-                  style={{
-                    transform: `rotate(${Math.round(data.estimatedHeading)}deg)`,
-                  }}
-                />
-              ) : (
-                <PlaneSolidIcon
-                  className="text-primary h-6 w-6"
-                  style={{
-                    transform: `rotate(${Math.round(data.estimatedHeading - 90)}deg)`,
-                  }}
-                />
-              )} */}
           <span className="sr-only">
             {data.user !== null ? `@${data.user.username}` : null}
           </span>

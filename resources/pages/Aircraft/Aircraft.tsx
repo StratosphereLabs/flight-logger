@@ -1,4 +1,5 @@
 import { GoogleMap } from '@react-google-maps/api';
+import { useStatsigClient } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
@@ -34,6 +35,7 @@ export interface AircraftPageNavigationState {
 }
 
 export const Aircraft = (): JSX.Element | null => {
+  const { client } = useStatsigClient();
   const { icao24 } = useParams();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
@@ -86,6 +88,9 @@ export const Aircraft = (): JSX.Element | null => {
       setPreviousPageName(state.previousPageName);
     }
   }, [setPreviousPageName, state]);
+  useEffect(() => {
+    client.logEvent('aircraft_page_viewed', icao24);
+  }, [client, icao24]);
   const {
     focusFullRoute,
     isEnRouteFlight,

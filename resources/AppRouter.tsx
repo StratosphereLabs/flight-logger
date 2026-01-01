@@ -1,5 +1,8 @@
+import { useStatsigUser } from '@statsig/react-bindings';
+import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { useLoggedInUserQuery } from './common/hooks';
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
   Account,
@@ -19,6 +22,16 @@ import { useProfileFilterForm } from './pages/Profile/hooks';
 
 export const AppRouter = (): JSX.Element => {
   const methods = useProfileFilterForm();
+  const { data } = useLoggedInUserQuery();
+  const { updateUserSync } = useStatsigUser();
+  useEffect(() => {
+    if (data !== undefined) {
+      updateUserSync({
+        userID: data.id.toString(),
+        email: data.email,
+      });
+    }
+  }, [data, updateUserSync]);
   return (
     <Routes>
       <Route path="/" element={<MainLayout methods={methods} />}>
