@@ -33,6 +33,7 @@ import {
   updateCalendarSourceSchema,
 } from '../schemas/calendars';
 import { procedure, router } from '../trpc';
+import { sendPushNotificationToUser } from '../utils/pushNotifications';
 
 export const calendarsRouter = router({
   // Get user's calendar sources
@@ -697,5 +698,49 @@ export const calendarsRouter = router({
       });
 
       return { success: true };
+    }),
+
+  // Test push notification (for debugging)
+  testPushNotification: procedure
+    .use(verifyAuthenticated)
+    .mutation(async ({ ctx }) => {
+      console.log(
+        `[TestPushNotification] Testing push notification for user ${ctx.user.id}`,
+      );
+
+      // Check user's FCM tokens
+      const fcmTokens = await prisma.fcmToken.findMany({
+        where: { userId: ctx.user.id },
+        select: { id: true, token: true, timestamp: true },
+      });
+
+      console.log(
+        `[TestPushNotification] User has ${fcmTokens.length} FCM tokens`,
+      );
+
+      // Check user's push notification setting
+      const user = await prisma.user.findUnique({
+        where: { id: ctx.user.id },
+        select: { pushNotifications: true },
+      });
+
+      console.log(
+        `[TestPushNotification] User pushNotifications setting: ${user?.pushNotifications}`,
+      );
+
+      const result = await sendPushNotificationToUser(ctx.user.id, {
+        title: 'Test Notification',
+        body: 'This is a test push notification from Flight Logger.',
+        clickUrl: '/account/calendar-sync',
+        data: {
+          type: 'test',
+        },
+      });
+
+      return {
+        ...result,
+        fcmTokenCount: fcmTokens.length,
+        pushNotificationsEnabled: user?.pushNotifications ?? false,
+      };
     }),
 });

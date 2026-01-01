@@ -11,7 +11,10 @@ import {
   filterFutureEvents,
   isFlightEvent,
 } from '../../utils/ical';
-import { sendCalendarSyncNotification } from '../../utils/pushNotifications';
+import {
+  sendCalendarSyncNotification,
+  sendCalendarSyncStartNotification,
+} from '../../utils/pushNotifications';
 import { searchFlightRadarFlightsByFlightNumber } from '../flightRadar';
 import { searchFlightStatsFlightsByFlightNumber } from '../flightStats';
 import {
@@ -150,6 +153,18 @@ export async function syncCalendar(
       `[CalendarSync] Found ${flightEvents.length} future flight events`,
     );
 
+    // Send "starting import" notification for auto-import calendars when flights are detected
+    if (calendar.autoImport && flightEvents.length > 0) {
+      console.log(
+        `[CalendarSync] Sending start notification for ${flightEvents.length} flights`,
+      );
+      await sendCalendarSyncStartNotification(
+        calendar.userId,
+        calendar.name,
+        flightEvents.length,
+      );
+    }
+
     // Process each flight event
     for (const event of flightEvents) {
       try {
@@ -212,16 +227,35 @@ export async function syncCalendar(
       data: { lastSyncAt: new Date() },
     });
 
-    // Create success notification if auto-import added flights
-    if (calendar.autoImport && result.autoImportedFlights > 0) {
-      const flightWord =
-        result.autoImportedFlights === 1 ? 'flight' : 'flights';
-      let description = `Successfully imported ${result.autoImportedFlights} ${flightWord} from "${calendar.name}".`;
+    // Send notifications for auto-import calendars when there's something to report
+    if (
+      calendar.autoImport &&
+      (result.autoImportedFlights > 0 || result.autoImportFailures > 0)
+    ) {
+      // Create in-app notification
+      let description: string;
+      let color: 'SUCCESS' | 'WARNING';
 
-      if (result.autoImportFailures > 0) {
+      if (result.autoImportedFlights > 0 && result.autoImportFailures === 0) {
+        const flightWord =
+          result.autoImportedFlights === 1 ? 'flight' : 'flights';
+        description = `Successfully imported ${result.autoImportedFlights} ${flightWord} from "${calendar.name}".`;
+        color = 'SUCCESS';
+      } else if (
+        result.autoImportedFlights === 0 &&
+        result.autoImportFailures > 0
+      ) {
+        const flightWord =
+          result.autoImportFailures === 1 ? 'flight' : 'flights';
+        description = `${result.autoImportFailures} ${flightWord} from "${calendar.name}" could not be auto-imported and require manual review.`;
+        color = 'WARNING';
+      } else {
+        const importedWord =
+          result.autoImportedFlights === 1 ? 'flight' : 'flights';
         const failureWord =
           result.autoImportFailures === 1 ? 'flight' : 'flights';
-        description += ` ${result.autoImportFailures} ${failureWord} could not be auto-imported and require manual review.`;
+        description = `Imported ${result.autoImportedFlights} ${importedWord} from "${calendar.name}". ${result.autoImportFailures} ${failureWord} require manual review.`;
+        color = 'WARNING';
       }
 
       await prisma.notification.create({
@@ -229,20 +263,27 @@ export async function syncCalendar(
           id: randomUUID(),
           userId: calendar.userId,
           showDefault: true,
-          color: 'SUCCESS',
-          title: 'Flights imported from calendar',
+          color,
+          title:
+            result.autoImportedFlights > 0
+              ? 'Flights imported from calendar'
+              : 'Flights need review',
           description,
           expiration: addDays(new Date(), 7),
         },
       });
 
       // Send real-time push notification
-      await sendCalendarSyncNotification(
+      console.log(
+        `[CalendarSync] Sending push notification to user ${calendar.userId} for calendar "${calendar.name}"`,
+      );
+      const pushResult = await sendCalendarSyncNotification(
         calendar.userId,
         calendar.name,
         result.autoImportedFlights,
         result.autoImportFailures,
       );
+      console.log(`[CalendarSync] Push notification result:`, pushResult);
     }
 
     console.log(`[CalendarSync] Sync complete for ${calendar.name}:`, {
@@ -794,6 +835,8 @@ export async function getPendingFlightsForUser(userId: number): Promise<
  * Sync all calendars for all users (for scheduled job)
  */
 export async function syncAllCalendars(): Promise<void> {
+  console.log('[CalendarSync] Starting scheduled sync for all calendars');
+
   const usersWithCalendars = await prisma.user.findMany({
     where: {
       calendarSources: {
@@ -807,6 +850,10 @@ export async function syncAllCalendars(): Promise<void> {
     },
   });
 
+  console.log(
+    `[CalendarSync] Found ${usersWithCalendars.length} users with enabled calendars`,
+  );
+
   for (const user of usersWithCalendars) {
     try {
       await syncCalendarsForUser(user.id);
@@ -814,4 +861,49 @@ export async function syncAllCalendars(): Promise<void> {
       console.error(`Failed to sync calendars for user ${user.id}:`, error);
     }
   }
+
+  console.log('[CalendarSync] Completed scheduled sync for all calendars');
+}
+
+/**
+ * Sync only auto-import calendars (for more frequent scheduled job)
+ * This runs more frequently to catch flight updates closer to real-time
+ */
+export async function syncAutoImportCalendars(): Promise<void> {
+  console.log(
+    '[CalendarSync] Starting scheduled sync for auto-import calendars',
+  );
+
+  const autoImportCalendars = await prisma.calendarSource.findMany({
+    where: {
+      enabled: true,
+      autoImport: true,
+    },
+    select: {
+      id: true,
+      userId: true,
+      name: true,
+      url: true,
+      autoImport: true,
+    },
+  });
+
+  console.log(
+    `[CalendarSync] Found ${autoImportCalendars.length} auto-import calendars`,
+  );
+
+  for (const calendar of autoImportCalendars) {
+    try {
+      await syncCalendar(calendar);
+    } catch (error) {
+      console.error(
+        `[CalendarSync] Failed to sync auto-import calendar ${calendar.name}:`,
+        error,
+      );
+    }
+  }
+
+  console.log(
+    '[CalendarSync] Completed scheduled sync for auto-import calendars',
+  );
 }

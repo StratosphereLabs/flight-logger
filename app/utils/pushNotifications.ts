@@ -43,20 +43,81 @@ if (admin.apps.length === 0) {
   }
 }
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
+const RATE_LIMIT_MAX_NOTIFICATIONS = 10; // Max 10 notifications per hour per user
+
+// In-memory rate limit store (in production, use Redis)
+// Map<userId, timestamp[]>
+const rateLimitStore = new Map<number, number[]>();
+
+/**
+ * Check if a user is rate limited for push notifications
+ * Returns true if rate limited, false if allowed
+ */
+function isRateLimited(userId: number): boolean {
+  const now = Date.now();
+  const timestamps = rateLimitStore.get(userId) ?? [];
+
+  // Filter to only keep timestamps within the window
+  const recentTimestamps = timestamps.filter(
+    ts => now - ts < RATE_LIMIT_WINDOW_MS,
+  );
+
+  // Update the store with filtered timestamps
+  rateLimitStore.set(userId, recentTimestamps);
+
+  return recentTimestamps.length >= RATE_LIMIT_MAX_NOTIFICATIONS;
+}
+
+/**
+ * Record a notification send for rate limiting
+ */
+function recordNotificationSend(userId: number): void {
+  const timestamps = rateLimitStore.get(userId) ?? [];
+  timestamps.push(Date.now());
+  rateLimitStore.set(userId, timestamps);
+}
+
+/**
+ * Clean up old rate limit entries (call periodically to prevent memory leaks)
+ */
+export function cleanupRateLimitStore(): void {
+  const now = Date.now();
+  for (const [userId, timestamps] of rateLimitStore.entries()) {
+    const recentTimestamps = timestamps.filter(
+      ts => now - ts < RATE_LIMIT_WINDOW_MS,
+    );
+    if (recentTimestamps.length === 0) {
+      rateLimitStore.delete(userId);
+    } else {
+      rateLimitStore.set(userId, recentTimestamps);
+    }
+  }
+}
+
 interface PushNotificationPayload {
   title: string;
   body: string;
+  clickUrl?: string;
   data?: Record<string, string>;
 }
 
 /**
  * Send push notification to a user via Firebase Cloud Messaging
  * Sends to all registered FCM tokens for the user
+ *
+ * Rate limited to prevent notification spam (max 10 per hour per user)
  */
 export async function sendPushNotificationToUser(
   userId: number,
   payload: PushNotificationPayload,
-): Promise<{ success: boolean; sentCount: number; failedCount: number }> {
+): Promise<{
+  success: boolean;
+  sentCount: number;
+  failedCount: number;
+  rateLimited?: boolean;
+}> {
   // Check if Firebase Admin is initialized
   if (admin.apps.length === 0) {
     console.warn(
@@ -65,13 +126,31 @@ export async function sendPushNotificationToUser(
     return { success: false, sentCount: 0, failedCount: 0 };
   }
 
+  // Check rate limit
+  if (isRateLimited(userId)) {
+    console.warn(
+      `[PushNotifications] Rate limited for user ${userId}, skipping notification`,
+    );
+    return { success: false, sentCount: 0, failedCount: 0, rateLimited: true };
+  }
+
   // Check if user has push notifications enabled
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { pushNotifications: true },
   });
 
-  if (user === null || !user.pushNotifications) {
+  if (user === null) {
+    console.warn(
+      `[PushNotifications] User ${userId} not found, skipping notification`,
+    );
+    return { success: false, sentCount: 0, failedCount: 0 };
+  }
+
+  if (!user.pushNotifications) {
+    console.log(
+      `[PushNotifications] User ${userId} has push notifications disabled`,
+    );
     return { success: false, sentCount: 0, failedCount: 0 };
   }
 
@@ -82,12 +161,25 @@ export async function sendPushNotificationToUser(
   });
 
   if (fcmTokens.length === 0) {
+    console.warn(
+      `[PushNotifications] User ${userId} has no registered FCM tokens`,
+    );
     return { success: false, sentCount: 0, failedCount: 0 };
   }
+
+  console.log(
+    `[PushNotifications] Sending notification to user ${userId} with ${fcmTokens.length} token(s)`,
+  );
 
   const tokens = fcmTokens.map(t => t.token);
 
   try {
+    // Build data object with click URL
+    const notificationData: Record<string, string> = {
+      ...payload.data,
+      clickUrl: payload.clickUrl ?? '/',
+    };
+
     // Send multicast message to all user's devices
     const message: admin.messaging.MulticastMessage = {
       tokens,
@@ -95,19 +187,22 @@ export async function sendPushNotificationToUser(
         title: payload.title,
         body: payload.body,
       },
-      data: payload.data,
+      data: notificationData,
       webpush: {
         notification: {
           icon: '/favicon.ico',
           badge: '/favicon.ico',
         },
         fcmOptions: {
-          link: '/',
+          link: payload.clickUrl ?? '/',
         },
       },
     };
 
     const response = await admin.messaging().sendEachForMulticast(message);
+
+    // Record the notification send for rate limiting
+    recordNotificationSend(userId);
 
     // Clean up invalid tokens
     const tokensToRemove: string[] = [];
@@ -160,9 +255,17 @@ export async function sendCalendarSyncNotification(
   calendarName: string,
   importedCount: number,
   failedCount: number,
-): Promise<void> {
+): Promise<{
+  success: boolean;
+  sentCount: number;
+  failedCount: number;
+  rateLimited?: boolean;
+}> {
   if (importedCount === 0 && failedCount === 0) {
-    return; // Nothing to notify about
+    console.log(
+      `[PushNotifications] No flights to notify about for calendar "${calendarName}"`,
+    );
+    return { success: false, sentCount: 0, failedCount: 0 }; // Nothing to notify about
   }
 
   let title: string;
@@ -183,14 +286,56 @@ export async function sendCalendarSyncNotification(
     body = `${importedCount} ${importedWord} imported, ${failedWord} need review from "${calendarName}"`;
   }
 
-  await sendPushNotificationToUser(userId, {
+  console.log(
+    `[PushNotifications] Attempting to send calendar sync notification: "${title}" - "${body}"`,
+  );
+
+  return await sendPushNotificationToUser(userId, {
     title,
     body,
+    clickUrl: '/account/calendar-sync',
     data: {
       type: 'calendar_sync',
       calendarName,
       importedCount: String(importedCount),
       failedCount: String(failedCount),
+    },
+  });
+}
+
+/**
+ * Send notification when flights are detected and import is starting
+ */
+export async function sendCalendarSyncStartNotification(
+  userId: number,
+  calendarName: string,
+  flightCount: number,
+): Promise<{
+  success: boolean;
+  sentCount: number;
+  failedCount: number;
+  rateLimited?: boolean;
+}> {
+  if (flightCount === 0) {
+    return { success: false, sentCount: 0, failedCount: 0 };
+  }
+
+  const flightWord = flightCount === 1 ? 'flight' : 'flights';
+  const title = 'Importing flights';
+  const body = `Found ${flightCount} ${flightWord} in "${calendarName}". Importing now...`;
+
+  console.log(
+    `[PushNotifications] Attempting to send calendar sync start notification: "${title}" - "${body}"`,
+  );
+
+  return await sendPushNotificationToUser(userId, {
+    title,
+    body,
+    clickUrl: '/account/calendar-sync',
+    data: {
+      type: 'calendar_sync_start',
+      calendarName,
+      flightCount: String(flightCount),
     },
   });
 }

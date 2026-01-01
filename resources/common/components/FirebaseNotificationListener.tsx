@@ -7,6 +7,10 @@ import { messaging } from '../../utils/firebase';
 /**
  * Component that listens for Firebase Cloud Messaging notifications
  * and displays them as in-app alerts using the alert messages system.
+ *
+ * For foreground notifications, displays an in-app toast alert.
+ * Background notifications are handled by the service worker and
+ * will navigate to the appropriate page when clicked.
  */
 export const FirebaseNotificationListener = (): null => {
   const { addAlertMessages } = useAlertMessages();
@@ -26,7 +30,11 @@ export const FirebaseNotificationListener = (): null => {
         let color: 'success' | 'warning' | 'error' | 'info' = 'info';
         const data = payload.data;
 
-        if (data?.type === 'calendar_sync') {
+        if (data?.type === 'calendar_sync_start') {
+          // Import starting notification - use info color
+          color = 'info';
+        } else if (data?.type === 'calendar_sync') {
+          // Import complete notification
           const importedCount = parseInt(data.importedCount ?? '0', 10);
           const failedCount = parseInt(data.failedCount ?? '0', 10);
 

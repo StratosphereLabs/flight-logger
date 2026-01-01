@@ -78,6 +78,7 @@ export const CalendarSync = (): JSX.Element => {
     trpc.calendars.deleteCalendarSource.useMutation();
   const testSyncMutation = trpc.calendars.testCalendarSync.useMutation();
   const restoreMutation = trpc.calendars.restorePendingFlight.useMutation();
+  const testPushMutation = trpc.calendars.testPushNotification.useMutation();
 
   // Track if we've already triggered background sync on mount
   const hasTriggeredBackgroundSync = useRef(false);
@@ -237,12 +238,37 @@ export const CalendarSync = (): JSX.Element => {
         <div className="card-body">
           <div className="flex items-center justify-between">
             <h3 className="card-title">Calendar Sync</h3>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => setShowAddForm(!showAddForm)}
-            >
-              {showAddForm ? 'Cancel' : 'Add Calendar'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={async () => {
+                  try {
+                    const result = await testPushMutation.mutateAsync();
+                    console.log('Push notification test result:', result);
+                    alert(
+                      `Push test result:\n` +
+                        `- Success: ${result.success}\n` +
+                        `- Sent: ${result.sentCount}\n` +
+                        `- Failed: ${result.failedCount}\n` +
+                        `- FCM Tokens: ${result.fcmTokenCount}\n` +
+                        `- Push Enabled: ${result.pushNotificationsEnabled}`,
+                    );
+                  } catch (error) {
+                    console.error('Push test failed:', error);
+                    alert('Push test failed. Check console for details.');
+                  }
+                }}
+                disabled={testPushMutation.isLoading}
+              >
+                {testPushMutation.isLoading ? 'Testing...' : 'Test Push'}
+              </button>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => setShowAddForm(!showAddForm)}
+              >
+                {showAddForm ? 'Cancel' : 'Add Calendar'}
+              </button>
+            </div>
           </div>
 
           {showAddForm && (
