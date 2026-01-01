@@ -10,8 +10,7 @@ import {
 } from '../data/updaters';
 import {
   cleanupExpiredPendingFlights,
-  syncAllCalendars,
-  syncAutoImportCalendars,
+  syncCalendars,
 } from '../data/updaters/calendarSync';
 import { seedDatabase } from '../db/seeders';
 import { cleanupRateLimitStore } from '../utils/pushNotifications';
@@ -23,12 +22,8 @@ import { cleanupRateLimitStore } from '../utils/pushNotifications';
   // Update flights at midnight every day EXCEPT on 1st day of each month
   scheduleJob('0 0 2-31 * *', updateFlightsDaily);
 
-  // Sync all calendars at 2 AM every day
-  scheduleJob('0 2 * * *', syncAllCalendars);
-
-  // Sync auto-import calendars every 4 hours (at 6 AM, 10 AM, 2 PM, 6 PM, 10 PM)
-  // This is more frequent than the full sync to catch flight updates sooner
-  scheduleJob('0 6,10,14,18,22 * * *', syncAutoImportCalendars);
+  // Sync all calendars hourly (bottom of every hour)
+  scheduleJob('30 0-23 * * *', syncCalendars);
 
   // Clean up expired pending flights at 3 AM every day
   scheduleJob('0 3 * * *', cleanupExpiredPendingFlights);

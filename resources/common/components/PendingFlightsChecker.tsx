@@ -6,13 +6,23 @@ import { useLoggedInUserQuery } from '../../common/hooks';
 import { PendingFlightsModal } from '../../pages/Account/PendingFlightsModal';
 import { trpc } from '../../utils/trpc';
 
+interface PendingFlightParsedData {
+  airline?: string;
+  flightNumber?: number;
+  departureAirport?: string;
+  arrivalAirport?: string;
+  outTime?: string | Date;
+  inTime?: string | Date;
+  rawSummary: string;
+}
+
 interface PendingFlightData {
   id: string;
   calendarSource: {
     name: string;
     url: string;
   };
-  parsedData: unknown;
+  parsedData: PendingFlightParsedData;
   detectedAt: string;
 }
 
@@ -77,7 +87,13 @@ export const PendingFlightsChecker = (): JSX.Element => {
   const formattedFlights = flightsData.map(f => ({
     id: f.id,
     calendarSource: f.calendarSource,
-    parsedData: f.parsedData,
+    parsedData: {
+      ...f.parsedData,
+      outTime: f.parsedData.outTime
+        ? new Date(f.parsedData.outTime)
+        : undefined,
+      inTime: f.parsedData.inTime ? new Date(f.parsedData.inTime) : undefined,
+    },
     detectedAt: f.detectedAt,
   }));
 

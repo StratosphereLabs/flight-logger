@@ -45,7 +45,7 @@ if (admin.apps.length === 0) {
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
-const RATE_LIMIT_MAX_NOTIFICATIONS = 10; // Max 10 notifications per hour per user
+const RATE_LIMIT_MAX_NOTIFICATIONS = 1; // Max 1 notification per hour per user
 
 // In-memory rate limit store (in production, use Redis)
 // Map<userId, timestamp[]>

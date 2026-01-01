@@ -1,3 +1,4 @@
+import { type Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { addDays, format, subDays } from 'date-fns';
 
@@ -37,16 +38,18 @@ export interface SyncResult {
   skippedAlreadyImported: number;
   skippedRecentlyRejected: number;
   errors: string[];
-  detectedFlights: Array<{
-    summary: string;
-    airline?: string;
-    flightNumber?: number;
-    departure?: string;
-    arrival?: string;
-    date?: string;
-    status: string;
-    pendingFlightId?: string; // ID of the pending flight record (for rejected flights that can be restored)
-  }>;
+  detectedFlights: DetectedFlight[];
+}
+
+interface DetectedFlight {
+  summary: string;
+  airline?: string;
+  flightNumber?: number;
+  departure?: string;
+  arrival?: string;
+  date?: string;
+  status: string;
+  pendingFlightId?: string;
 }
 
 interface CalendarSourceInfo {
@@ -62,7 +65,98 @@ interface DuplicateCheckResult {
   reason: string;
 }
 
+interface ProcessResult {
+  status:
+    | 'created'
+    | 'already_pending'
+    | 'already_imported'
+    | 'recently_rejected'
+    | 'auto_imported'
+    | 'auto_import_failed';
+  pendingFlightId?: string;
+  error?: string;
+}
+
+/**
+ * Type-safe representation of stored event data
+ */
+interface StoredEventData {
+  uid: string;
+  summary: string;
+  start: string;
+  end: string;
+  location: string | null;
+  description: string | null;
+}
+
+/**
+ * Type-safe representation of stored parsed flight data
+ */
+interface StoredParsedData {
+  airline: string | null;
+  flightNumber: number | null;
+  departureAirport: string | null;
+  arrivalAirport: string | null;
+  outTime: string | null;
+  inTime: string | null;
+  rawSummary: string;
+}
+
 const REJECTED_COOLING_PERIOD_DAYS = 30;
+
+/**
+ * Safely serialize event data for storage
+ */
+function serializeEventData(event: ParsedFlightEvent): Prisma.InputJsonValue {
+  return {
+    uid: event.uid,
+    summary: event.summary,
+    start: event.start.toISOString(),
+    end: event.end.toISOString(),
+    location: event.location ?? null,
+    description: event.description ?? null,
+  } satisfies StoredEventData as unknown as Prisma.InputJsonValue;
+}
+
+/**
+ * Safely serialize flight data for storage
+ */
+function serializeFlightData(flightData: FlightData): Prisma.InputJsonValue {
+  return {
+    airline: flightData.airline ?? null,
+    flightNumber: flightData.flightNumber ?? null,
+    departureAirport: flightData.departureAirport ?? null,
+    arrivalAirport: flightData.arrivalAirport ?? null,
+    outTime: flightData.outTime?.toISOString() ?? null,
+    inTime: flightData.inTime?.toISOString() ?? null,
+    rawSummary: flightData.rawSummary,
+  } satisfies StoredParsedData as unknown as Prisma.InputJsonValue;
+}
+
+/**
+ * Create an empty sync result for error cases
+ */
+function createEmptySyncResult(
+  calendarId: string,
+  calendarName: string,
+  errorMessage: string,
+): SyncResult {
+  return {
+    calendarId,
+    calendarName,
+    totalEventsFound: 0,
+    totalFutureEvents: 0,
+    totalFutureFlights: 0,
+    newPendingFlights: 0,
+    autoImportedFlights: 0,
+    autoImportFailures: 0,
+    skippedAlreadyPending: 0,
+    skippedAlreadyImported: 0,
+    skippedRecentlyRejected: 0,
+    errors: [errorMessage],
+    detectedFlights: [],
+  };
+}
 
 /**
  * Sync all enabled calendars for a user
@@ -91,21 +185,13 @@ export async function syncCalendarsForUser(
       results.push(result);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      results.push({
-        calendarId: calendar.id,
-        calendarName: calendar.name,
-        totalEventsFound: 0,
-        totalFutureEvents: 0,
-        totalFutureFlights: 0,
-        newPendingFlights: 0,
-        autoImportedFlights: 0,
-        autoImportFailures: 0,
-        skippedAlreadyPending: 0,
-        skippedAlreadyImported: 0,
-        skippedRecentlyRejected: 0,
-        errors: [`Sync failed: ${message}`],
-        detectedFlights: [],
-      });
+      results.push(
+        createEmptySyncResult(
+          calendar.id,
+          calendar.name,
+          `Sync failed: ${message}`,
+        ),
+      );
     }
   }
 
@@ -171,7 +257,7 @@ export async function syncCalendar(
         const flightData = extractFlightData(event);
         const processResult = await processFlightEvent(calendar, event);
 
-        const flightInfo = {
+        const flightInfo: DetectedFlight = {
           summary: event.summary,
           airline: flightData.airline,
           flightNumber: flightData.flightNumber,
@@ -196,7 +282,7 @@ export async function syncCalendar(
             break;
           case 'auto_import_failed':
             result.autoImportFailures++;
-            result.newPendingFlights++; // Also count as pending since it falls back
+            result.newPendingFlights++;
             if (
               processResult.error !== undefined &&
               processResult.error !== ''
@@ -304,18 +390,6 @@ export async function syncCalendar(
   return result;
 }
 
-interface ProcessResult {
-  status:
-    | 'created'
-    | 'already_pending'
-    | 'already_imported'
-    | 'recently_rejected'
-    | 'auto_imported'
-    | 'auto_import_failed';
-  pendingFlightId?: string; // ID of the rejected pending flight (for restore functionality)
-  error?: string; // Error message for auto-import failures
-}
-
 /**
  * Process a single flight event and create pending flight if not duplicate
  * If autoImport is enabled, directly create the flight instead of pending
@@ -368,8 +442,8 @@ async function processFlightEvent(
     data: {
       calendarSourceId: calendar.id,
       eventUid: event.uid,
-      eventData: JSON.parse(JSON.stringify(event.rawEvent)) as object,
-      parsedData: JSON.parse(JSON.stringify(flightData)) as object,
+      eventData: serializeEventData(event),
+      parsedData: serializeFlightData(flightData),
       expiresAt,
     },
   });
@@ -410,7 +484,7 @@ async function autoImportFlight(
         calendar,
         event,
         flightData,
-        `Airline not found: ${airlineCode}`,
+        `Airline not found: ${airlineCode ?? 'unknown'}`,
       );
     }
 
@@ -568,8 +642,8 @@ async function autoImportFlight(
       data: {
         calendarSourceId: calendar.id,
         eventUid: event.uid,
-        eventData: JSON.parse(JSON.stringify(event.rawEvent)) as object,
-        parsedData: JSON.parse(JSON.stringify(flightData)) as object,
+        eventData: serializeEventData(event),
+        parsedData: serializeFlightData(flightData),
         expiresAt,
         status: 'APPROVED',
       },
@@ -610,8 +684,8 @@ async function createPendingFlightAsFallback(
     data: {
       calendarSourceId: calendar.id,
       eventUid: event.uid,
-      eventData: JSON.parse(JSON.stringify(event.rawEvent)) as object,
-      parsedData: JSON.parse(JSON.stringify(flightData)) as object,
+      eventData: serializeEventData(event),
+      parsedData: serializeFlightData(flightData),
       expiresAt,
     },
   });
@@ -710,7 +784,7 @@ async function checkForExistingFlight(
       if (exactMatch !== null) {
         return {
           isDuplicate: true,
-          reason: `Exact match: ${airline.iata ?? airline.icao}${flightData.flightNumber} on same day`,
+          reason: `Exact match: ${airline.iata ?? airline.icao ?? ''}${flightData.flightNumber ?? ''} on same day`,
         };
       }
     }
@@ -764,7 +838,7 @@ async function checkForExistingFlight(
       if (routeMatch !== null) {
         return {
           isDuplicate: true,
-          reason: `Route match: ${flightData.departureAirport}-${flightData.arrivalAirport} on same day`,
+          reason: `Route match: ${flightData.departureAirport ?? ''}-${flightData.arrivalAirport ?? ''} on same day`,
         };
       }
     }
@@ -832,10 +906,10 @@ export async function getPendingFlightsForUser(userId: number): Promise<
 }
 
 /**
- * Sync all calendars for all users (for scheduled job)
+ * Sync all calendars for all users (unified hourly scheduled job)
  */
-export async function syncAllCalendars(): Promise<void> {
-  console.log('[CalendarSync] Starting scheduled sync for all calendars');
+export async function syncCalendars(): Promise<void> {
+  console.log('[CalendarSync] Starting hourly calendar sync for all users');
 
   const usersWithCalendars = await prisma.user.findMany({
     where: {
@@ -858,52 +932,12 @@ export async function syncAllCalendars(): Promise<void> {
     try {
       await syncCalendarsForUser(user.id);
     } catch (error) {
-      console.error(`Failed to sync calendars for user ${user.id}:`, error);
-    }
-  }
-
-  console.log('[CalendarSync] Completed scheduled sync for all calendars');
-}
-
-/**
- * Sync only auto-import calendars (for more frequent scheduled job)
- * This runs more frequently to catch flight updates closer to real-time
- */
-export async function syncAutoImportCalendars(): Promise<void> {
-  console.log(
-    '[CalendarSync] Starting scheduled sync for auto-import calendars',
-  );
-
-  const autoImportCalendars = await prisma.calendarSource.findMany({
-    where: {
-      enabled: true,
-      autoImport: true,
-    },
-    select: {
-      id: true,
-      userId: true,
-      name: true,
-      url: true,
-      autoImport: true,
-    },
-  });
-
-  console.log(
-    `[CalendarSync] Found ${autoImportCalendars.length} auto-import calendars`,
-  );
-
-  for (const calendar of autoImportCalendars) {
-    try {
-      await syncCalendar(calendar);
-    } catch (error) {
       console.error(
-        `[CalendarSync] Failed to sync auto-import calendar ${calendar.name}:`,
+        `[CalendarSync] Failed to sync calendars for user ${user.id}:`,
         error,
       );
     }
   }
 
-  console.log(
-    '[CalendarSync] Completed scheduled sync for auto-import calendars',
-  );
+  console.log('[CalendarSync] Completed hourly calendar sync for all users');
 }
