@@ -232,7 +232,7 @@ export const FlightInfo = ({
         <div className="flex gap-12">
           <div
             className={classNames(
-              'flex flex-1 flex-col items-center gap-x-2',
+              'flex flex-1 flex-wrap items-center justify-center gap-x-2',
               TEXT_COLORS[data.departureDelayStatus],
               [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
             )}
@@ -248,7 +248,7 @@ export const FlightInfo = ({
           </div>
           <div
             className={classNames(
-              'flex flex-1 flex-col items-center gap-x-2',
+              'flex flex-1 flex-wrap items-center justify-center gap-x-2',
               TEXT_COLORS[data.arrivalDelayStatus],
               [AppTheme.CYBERPUNK].includes(theme) && 'brightness-90',
             )}
