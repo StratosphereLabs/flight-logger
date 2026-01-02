@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
-/* eslint-disable react/no-unescaped-entities */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -102,8 +96,7 @@ export const CalendarSync = (): JSX.Element => {
         testSyncMutation.mutate({ id: calendar.id });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calendars]);
+  }, [calendars, testSyncMutation]);
 
   const {
     register,
@@ -114,47 +107,54 @@ export const CalendarSync = (): JSX.Element => {
     resolver: zodResolver(addCalendarSchema),
   });
 
-  const onAddCalendar = async (data: AddCalendarForm) => {
+  const onAddCalendar = async (data: AddCalendarForm): Promise<void> => {
     try {
       await addCalendarMutation.mutateAsync(data);
       reset();
       setShowAddForm(false);
-      refetch();
+      void refetch();
     } catch (error) {
       console.error('Failed to add calendar:', error);
     }
   };
 
-  const toggleCalendar = async (id: string, enabled: boolean) => {
+  const toggleCalendar = async (
+    id: string,
+    enabled: boolean,
+  ): Promise<void> => {
     try {
       await updateCalendarMutation.mutateAsync({ id, enabled });
-      refetch();
+      void refetch();
     } catch (error) {
       console.error('Failed to update calendar:', error);
     }
   };
 
-  const toggleAutoImport = async (id: string, autoImport: boolean) => {
+  const toggleAutoImport = async (
+    id: string,
+    autoImport: boolean,
+  ): Promise<void> => {
     try {
       await updateCalendarMutation.mutateAsync({ id, autoImport });
-      refetch();
+      void refetch();
     } catch (error) {
       console.error('Failed to update auto-import setting:', error);
     }
   };
 
-  const deleteCalendar = async (id: string) => {
+  const deleteCalendar = async (id: string): Promise<void> => {
+    // eslint-disable-next-line no-alert
     if (!confirm('Are you sure you want to delete this calendar?')) return;
 
     try {
       await deleteCalendarMutation.mutateAsync({ id });
-      refetch();
+      void refetch();
     } catch (error) {
       console.error('Failed to delete calendar:', error);
     }
   };
 
-  const testSync = async (id: string) => {
+  const testSync = async (id: string): Promise<void> => {
     setSyncing(id);
     setSyncResult(null);
     setSyncError(null);
@@ -172,7 +172,7 @@ export const CalendarSync = (): JSX.Element => {
         // Non-auto-import calendar - show detailed results
         setSyncResult(result);
       }
-      refetch();
+      void refetch();
     } catch (error) {
       console.error('Sync failed:', error);
       setSyncError(
@@ -183,12 +183,14 @@ export const CalendarSync = (): JSX.Element => {
     }
   };
 
-  const restoreRejectedFlight = async (pendingFlightId: string) => {
+  const restoreRejectedFlight = async (
+    pendingFlightId: string,
+  ): Promise<void> => {
     setRestoringFlightId(pendingFlightId);
     try {
       await restoreMutation.mutateAsync({ id: pendingFlightId });
       // Update the sync result to show the flight is now pending
-      if (syncResult) {
+      if (syncResult !== null) {
         setSyncResult({
           ...syncResult,
           skippedRecentlyRejected: syncResult.skippedRecentlyRejected - 1,
@@ -207,7 +209,7 @@ export const CalendarSync = (): JSX.Element => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string): JSX.Element => {
     switch (status) {
       case 'created':
         return <span className="badge badge-success badge-sm">New</span>;
@@ -241,22 +243,26 @@ export const CalendarSync = (): JSX.Element => {
             <div className="flex gap-2">
               <button
                 className="btn btn-ghost btn-sm"
-                onClick={async () => {
-                  try {
-                    const result = await testPushMutation.mutateAsync();
-                    console.log('Push notification test result:', result);
-                    alert(
-                      `Push test result:\n` +
-                        `- Success: ${result.success}\n` +
-                        `- Sent: ${result.sentCount}\n` +
-                        `- Failed: ${result.failedCount}\n` +
-                        `- FCM Tokens: ${result.fcmTokenCount}\n` +
-                        `- Push Enabled: ${result.pushNotificationsEnabled}`,
-                    );
-                  } catch (error) {
-                    console.error('Push test failed:', error);
-                    alert('Push test failed. Check console for details.');
-                  }
+                onClick={() => {
+                  void (async () => {
+                    try {
+                      const result = await testPushMutation.mutateAsync();
+                      console.log('Push notification test result:', result);
+                      // eslint-disable-next-line no-alert
+                      alert(
+                        `Push test result:\n` +
+                          `- Success: ${String(result.success)}\n` +
+                          `- Sent: ${result.sentCount}\n` +
+                          `- Failed: ${result.failedCount}\n` +
+                          `- FCM Tokens: ${result.fcmTokenCount}\n` +
+                          `- Push Enabled: ${String(result.pushNotificationsEnabled)}`,
+                      );
+                    } catch (error) {
+                      console.error('Push test failed:', error);
+                      // eslint-disable-next-line no-alert
+                      alert('Push test failed. Check console for details.');
+                    }
+                  })();
                 }}
                 disabled={testPushMutation.isLoading}
               >
@@ -264,7 +270,9 @@ export const CalendarSync = (): JSX.Element => {
               </button>
               <button
                 className="btn btn-primary btn-sm"
-                onClick={() => setShowAddForm(!showAddForm)}
+                onClick={() => {
+                  setShowAddForm(!showAddForm);
+                }}
               >
                 {showAddForm ? 'Cancel' : 'Add Calendar'}
               </button>
@@ -272,7 +280,12 @@ export const CalendarSync = (): JSX.Element => {
           </div>
 
           {showAddForm && (
-            <form onSubmit={handleSubmit(onAddCalendar)} className="space-y-4">
+            <form
+              onSubmit={handleSubmit(data => {
+                void onAddCalendar(data);
+              })}
+              className="space-y-4"
+            >
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Calendar Name</span>
@@ -283,7 +296,7 @@ export const CalendarSync = (): JSX.Element => {
                   {...register('name')}
                   placeholder="e.g., My Flight Calendar"
                 />
-                {errors.name && (
+                {errors.name !== undefined && (
                   <label className="label">
                     <span className="label-text-alt text-error">
                       {errors.name.message}
@@ -302,7 +315,7 @@ export const CalendarSync = (): JSX.Element => {
                   {...register('url')}
                   placeholder="https://calendar.google.com/calendar/ical/.../basic.ics"
                 />
-                {errors.url && (
+                {errors.url !== undefined && (
                   <label className="label">
                     <span className="label-text-alt text-error">
                       {errors.url.message}
@@ -345,7 +358,9 @@ export const CalendarSync = (): JSX.Element => {
                       <div className="flex items-center gap-2">
                         <button
                           className="btn btn-ghost btn-sm"
-                          onClick={() => testSync(calendar.id)}
+                          onClick={() => {
+                            void testSync(calendar.id);
+                          }}
                           disabled={syncing === calendar.id}
                         >
                           {syncing === calendar.id ? (
@@ -359,7 +374,9 @@ export const CalendarSync = (): JSX.Element => {
                         </button>
                         <button
                           className="btn btn-ghost btn-sm text-error"
-                          onClick={() => deleteCalendar(calendar.id)}
+                          onClick={() => {
+                            void deleteCalendar(calendar.id);
+                          }}
                         >
                           Delete
                         </button>
@@ -372,9 +389,9 @@ export const CalendarSync = (): JSX.Element => {
                           type="checkbox"
                           className="toggle toggle-primary toggle-sm"
                           checked={calendar.enabled}
-                          onChange={e =>
-                            toggleCalendar(calendar.id, e.target.checked)
-                          }
+                          onChange={e => {
+                            void toggleCalendar(calendar.id, e.target.checked);
+                          }}
                         />
                         <span>Enabled</span>
                       </label>
@@ -386,9 +403,12 @@ export const CalendarSync = (): JSX.Element => {
                           type="checkbox"
                           className="toggle toggle-secondary toggle-sm"
                           checked={calendar.autoImport}
-                          onChange={e =>
-                            toggleAutoImport(calendar.id, e.target.checked)
-                          }
+                          onChange={e => {
+                            void toggleAutoImport(
+                              calendar.id,
+                              e.target.checked,
+                            );
+                          }}
                         />
                         <span>Auto-import</span>
                         <span className="text-base-content/50 text-xs">
@@ -397,7 +417,7 @@ export const CalendarSync = (): JSX.Element => {
                       </label>
                     </div>
 
-                    {calendar.lastSyncAt && (
+                    {calendar.lastSyncAt !== null && (
                       <p className="text-base-content/50 text-xs">
                         Last synced:{' '}
                         {new Date(calendar.lastSyncAt).toLocaleString()}
@@ -474,7 +494,9 @@ export const CalendarSync = (): JSX.Element => {
           </div>
           <button
             className="btn btn-ghost btn-sm"
-            onClick={() => setSyncError(null)}
+            onClick={() => {
+              setSyncError(null);
+            }}
           >
             Dismiss
           </button>
@@ -503,7 +525,9 @@ export const CalendarSync = (): JSX.Element => {
           </div>
           <button
             className="btn btn-ghost btn-sm"
-            onClick={() => setBackgroundSyncMessage(null)}
+            onClick={() => {
+              setBackgroundSyncMessage(null);
+            }}
           >
             Dismiss
           </button>
@@ -511,7 +535,7 @@ export const CalendarSync = (): JSX.Element => {
       )}
 
       {/* Sync Results */}
-      {syncResult && (
+      {syncResult !== null && (
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <div className="flex items-center justify-between">
@@ -520,7 +544,9 @@ export const CalendarSync = (): JSX.Element => {
               </h3>
               <button
                 className="btn btn-ghost btn-sm"
-                onClick={() => setSyncResult(null)}
+                onClick={() => {
+                  setSyncResult(null);
+                }}
               >
                 Close
               </button>
@@ -629,7 +655,7 @@ export const CalendarSync = (): JSX.Element => {
             )}
 
             {/* Detected Flights Table */}
-            {syncResult.detectedFlights &&
+            {syncResult.detectedFlights !== undefined &&
               syncResult.detectedFlights.length > 0 && (
                 <div>
                   <h4 className="mb-2 font-semibold">Detected Flights</h4>
@@ -664,14 +690,18 @@ export const CalendarSync = (): JSX.Element => {
                             <td>{getStatusBadge(flight.status)}</td>
                             <td>
                               {flight.status === 'recently_rejected' &&
-                                flight.pendingFlightId && (
+                                flight.pendingFlightId !== undefined && (
                                   <button
                                     className="btn btn-ghost btn-xs"
-                                    onClick={() =>
-                                      restoreRejectedFlight(
-                                        flight.pendingFlightId!,
-                                      )
-                                    }
+                                    onClick={() => {
+                                      if (
+                                        flight.pendingFlightId !== undefined
+                                      ) {
+                                        void restoreRejectedFlight(
+                                          flight.pendingFlightId,
+                                        );
+                                      }
+                                    }}
                                     disabled={
                                       restoringFlightId ===
                                       flight.pendingFlightId
@@ -694,8 +724,7 @@ export const CalendarSync = (): JSX.Element => {
                 </div>
               )}
 
-            {(!syncResult.detectedFlights ||
-              syncResult.detectedFlights.length === 0) &&
+            {(syncResult.detectedFlights ?? []).length === 0 &&
               syncResult.totalFutureEvents > 0 && (
                 <div className="alert">
                   <svg
@@ -737,8 +766,8 @@ export const CalendarSync = (): JSX.Element => {
                 <span>
                   No events found in this calendar. Make sure the iCal URL is
                   correct and the calendar is accessible. If using Google
-                  Calendar, use the "Secret address in iCal format" instead of
-                  the public URL.
+                  Calendar, use the &quot;Secret address in iCal format&quot;
+                  instead of the public URL.
                 </span>
               </div>
             )}

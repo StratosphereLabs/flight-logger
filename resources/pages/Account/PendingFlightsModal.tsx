@@ -1,14 +1,7 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Button } from 'stratosphere-ui';
 import { z } from 'zod';
 
 import { trpc } from '../../utils/trpc';
@@ -78,12 +71,7 @@ export const PendingFlightsModal = ({
   const bulkRejectMutation =
     trpc.calendars.bulkRejectPendingFlights.useMutation();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<EditFlightForm>({
+  const { register, handleSubmit, reset } = useForm<EditFlightForm>({
     resolver: zodResolver(editFlightSchema),
   });
 
@@ -92,7 +80,7 @@ export const PendingFlightsModal = ({
     let result = [...pendingFlights];
 
     // Filter by airline
-    if (filterAirline) {
+    if (filterAirline !== '') {
       result = result.filter(
         f =>
           (f.parsedData.airline ?? 'Unknown') === filterAirline ||
@@ -101,7 +89,7 @@ export const PendingFlightsModal = ({
     }
 
     // Filter by calendar
-    if (filterCalendar) {
+    if (filterCalendar !== '') {
       result = result.filter(f => f.calendarSource.name === filterCalendar);
     }
 
@@ -141,7 +129,8 @@ export const PendingFlightsModal = ({
   const uniqueAirlines = useMemo(() => {
     const airlines = new Set<string>();
     pendingFlights.forEach(f => {
-      if (f.parsedData.airline) airlines.add(f.parsedData.airline);
+      if (f.parsedData.airline !== undefined)
+        airlines.add(f.parsedData.airline);
     });
     return Array.from(airlines).sort();
   }, [pendingFlights]);
@@ -153,7 +142,7 @@ export const PendingFlightsModal = ({
   }, [pendingFlights]);
 
   // Selection handlers
-  const handleSelectAll = () => {
+  const handleSelectAll = (): void => {
     if (selectedFlightIds.size === processedFlights.length) {
       setSelectedFlightIds(new Set());
     } else {
@@ -161,7 +150,7 @@ export const PendingFlightsModal = ({
     }
   };
 
-  const handleToggleFlight = (id: string) => {
+  const handleToggleFlight = (id: string): void => {
     const newSelected = new Set(selectedFlightIds);
     if (newSelected.has(id)) {
       newSelected.delete(id);
@@ -172,7 +161,7 @@ export const PendingFlightsModal = ({
   };
 
   // Bulk actions
-  const handleBulkApprove = async () => {
+  const handleBulkApprove = async (): Promise<void> => {
     const idsToProcess =
       selectedFlightIds.size > 0
         ? Array.from(selectedFlightIds)
@@ -185,7 +174,13 @@ export const PendingFlightsModal = ({
         ids: idsToProcess,
       });
 
-      const failures = results.filter((r: any) => !r.success);
+      // Assuming results is an array of objects with a success boolean
+      // If the type is not inferred correctly, we might need to check the TRPC definition
+      // But we can use unknown and type narrowing to be safe
+      const failures = results.filter(
+        (r: { success: boolean; message?: string }) => !r.success,
+      );
+
       if (failures.length > 0) {
         setError(
           `${failures.length} flight(s) failed to add. Check console for details.`,
@@ -210,7 +205,7 @@ export const PendingFlightsModal = ({
     }
   };
 
-  const handleBulkReject = async () => {
+  const handleBulkReject = async (): Promise<void> => {
     const idsToProcess =
       selectedFlightIds.size > 0
         ? Array.from(selectedFlightIds)
@@ -228,15 +223,18 @@ export const PendingFlightsModal = ({
       if (processedFlights.length === idsToProcess.length) {
         onClose();
       }
-    } catch (error) {
-      console.error('Failed to bulk reject flights:', error);
+    } catch (err) {
+      console.error('Failed to bulk reject flights:', err);
     } finally {
       setProcessing(false);
     }
   };
 
   // Individual actions
-  const handleApproveSingle = async (id: string, data: EditFlightForm = {}) => {
+  const handleApproveSingle = async (
+    id: string,
+    data: EditFlightForm = {},
+  ): Promise<void> => {
     setProcessing(true);
     setError(null);
     try {
@@ -247,31 +245,40 @@ export const PendingFlightsModal = ({
       onFlightsUpdated();
       setEditingFlightId(null);
       reset();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to approve flight:', err);
-      const message =
-        (err?.message as string) ||
-        (err?.data?.message as string) ||
-        'Failed to add flight';
+      let message = 'Failed to add flight';
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (
+        typeof err === 'object' &&
+        err !== null &&
+        'data' in err &&
+        typeof (err as { data: { message?: string } }).data?.message ===
+          'string' &&
+        (err as { data: { message: string } }).data.message !== ''
+      ) {
+        message = (err as { data: { message: string } }).data.message;
+      }
       setError(message);
     } finally {
       setProcessing(false);
     }
   };
 
-  const handleRejectSingle = async (id: string) => {
+  const handleRejectSingle = async (id: string): Promise<void> => {
     setProcessing(true);
     try {
       await rejectMutation.mutateAsync({ id });
       onFlightsUpdated();
-    } catch (error) {
-      console.error('Failed to reject flight:', error);
+    } catch (err) {
+      console.error('Failed to reject flight:', err);
     } finally {
       setProcessing(false);
     }
   };
 
-  const openEditForm = (flight: PendingFlight) => {
+  const openEditForm = (flight: PendingFlight): void => {
     setEditingFlightId(flight.id);
     reset({
       airlineId: flight.parsedData.airline,
@@ -302,28 +309,28 @@ export const PendingFlightsModal = ({
               {selectedFlightIds.size} selected
             </span>
             <div className="btn-group">
-              <button
-                className="btn btn-sm btn-ghost"
-                onClick={handleSelectAll}
-              >
+              <Button size="sm" color="ghost" onClick={handleSelectAll}>
                 {selectedFlightIds.size === processedFlights.length
                   ? 'Deselect All'
                   : 'Select All'}
-              </button>
+              </Button>
               {selectedFlightIds.size > 0 && (
-                <button
-                  className="btn btn-sm btn-ghost"
-                  onClick={() => setSelectedFlightIds(new Set())}
+                <Button
+                  size="sm"
+                  color="ghost"
+                  onClick={() => {
+                    setSelectedFlightIds(new Set());
+                  }}
                 >
                   Clear
-                </button>
+                </Button>
               )}
             </div>
           </div>
         </div>
 
         {/* Error Alert */}
-        {error && (
+        {error !== null && error !== '' && (
           <div className="alert alert-error mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -339,12 +346,15 @@ export const PendingFlightsModal = ({
               />
             </svg>
             <span>{error}</span>
-            <button
-              className="btn btn-ghost btn-sm"
-              onClick={() => setError(null)}
+            <Button
+              color="ghost"
+              size="sm"
+              onClick={() => {
+                setError(null);
+              }}
             >
               Dismiss
-            </button>
+            </Button>
           </div>
         )}
 
@@ -357,7 +367,9 @@ export const PendingFlightsModal = ({
             <select
               className="select select-bordered select-sm w-full"
               value={sortField}
-              onChange={e => setSortField(e.target.value as SortField)}
+              onChange={e => {
+                setSortField(e.target.value as SortField);
+              }}
             >
               <option value="date">Date</option>
               <option value="airline">Airline</option>
@@ -373,7 +385,9 @@ export const PendingFlightsModal = ({
             <select
               className="select select-bordered select-sm w-full"
               value={sortOrder}
-              onChange={e => setSortOrder(e.target.value as SortOrder)}
+              onChange={e => {
+                setSortOrder(e.target.value as SortOrder);
+              }}
             >
               <option value="desc">Desc</option>
               <option value="asc">Asc</option>
@@ -387,7 +401,9 @@ export const PendingFlightsModal = ({
             <select
               className="select select-bordered select-sm w-full"
               value={filterAirline}
-              onChange={e => setFilterAirline(e.target.value)}
+              onChange={e => {
+                setFilterAirline(e.target.value);
+              }}
             >
               <option value="">All Airlines</option>
               {uniqueAirlines.map(airline => (
@@ -405,7 +421,9 @@ export const PendingFlightsModal = ({
             <select
               className="select select-bordered select-sm w-full"
               value={filterCalendar}
-              onChange={e => setFilterCalendar(e.target.value)}
+              onChange={e => {
+                setFilterCalendar(e.target.value);
+              }}
             >
               <option value="">All Calendars</option>
               {uniqueCalendars.map(cal => (
@@ -453,7 +471,9 @@ export const PendingFlightsModal = ({
                         type="checkbox"
                         className="checkbox checkbox-sm"
                         checked={isSelected}
-                        onChange={() => handleToggleFlight(flight.id)}
+                        onChange={() => {
+                          handleToggleFlight(flight.id);
+                        }}
                       />
                     </td>
                     <td>
@@ -471,12 +491,12 @@ export const PendingFlightsModal = ({
                     </td>
                     <td>
                       <div className="text-sm">
-                        {flight.parsedData.outTime
+                        {flight.parsedData.outTime !== undefined
                           ? flight.parsedData.outTime.toLocaleDateString()
                           : 'Unknown Date'}
                       </div>
                       <div className="text-xs opacity-50">
-                        {flight.parsedData.outTime
+                        {flight.parsedData.outTime !== undefined
                           ? flight.parsedData.outTime.toLocaleTimeString([], {
                               hour: '2-digit',
                               minute: '2-digit',
@@ -491,27 +511,37 @@ export const PendingFlightsModal = ({
                     </td>
                     <td className="text-right">
                       <div className="flex justify-end gap-1">
-                        <button
-                          className="btn btn-ghost btn-xs"
-                          onClick={() => openEditForm(flight)}
+                        <Button
+                          color="ghost"
+                          size="xs"
+                          onClick={() => {
+                            openEditForm(flight);
+                          }}
                           disabled={processing}
                         >
                           Edit
-                        </button>
-                        <button
-                          className="btn btn-error btn-outline btn-xs"
-                          onClick={() => handleRejectSingle(flight.id)}
+                        </Button>
+                        <Button
+                          color="error"
+                          outline
+                          size="xs"
+                          onClick={() => {
+                            void handleRejectSingle(flight.id);
+                          }}
                           disabled={processing}
                         >
                           Reject
-                        </button>
-                        <button
-                          className="btn btn-primary btn-xs"
-                          onClick={() => handleApproveSingle(flight.id)}
+                        </Button>
+                        <Button
+                          color="primary"
+                          size="xs"
+                          onClick={() => {
+                            void handleApproveSingle(flight.id);
+                          }}
                           disabled={processing}
                         >
                           Approve
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -539,7 +569,9 @@ export const PendingFlightsModal = ({
                         type="checkbox"
                         className="checkbox checkbox-sm"
                         checked={isSelected}
-                        onChange={() => handleToggleFlight(flight.id)}
+                        onChange={() => {
+                          handleToggleFlight(flight.id);
+                        }}
                       />
                       <div>
                         <h4 className="font-bold">
@@ -557,7 +589,7 @@ export const PendingFlightsModal = ({
                         {flight.parsedData.arrivalAirport ?? '???'}
                       </div>
                       <div className="text-xs opacity-70">
-                        {flight.parsedData.outTime
+                        {flight.parsedData.outTime !== undefined
                           ? flight.parsedData.outTime.toLocaleDateString()
                           : 'Unknown'}
                       </div>
@@ -567,21 +599,27 @@ export const PendingFlightsModal = ({
                   <div className="card-actions mt-2 justify-end">
                     <button
                       className="btn btn-ghost btn-xs"
-                      onClick={() => openEditForm(flight)}
+                      onClick={() => {
+                        openEditForm(flight);
+                      }}
                       disabled={processing}
                     >
                       Edit
                     </button>
                     <button
                       className="btn btn-error btn-outline btn-xs"
-                      onClick={() => handleRejectSingle(flight.id)}
+                      onClick={() => {
+                        void handleRejectSingle(flight.id);
+                      }}
                       disabled={processing}
                     >
                       Reject
                     </button>
                     <button
                       className="btn btn-success btn-xs"
-                      onClick={() => handleApproveSingle(flight.id)}
+                      onClick={() => {
+                        void handleApproveSingle(flight.id);
+                      }}
                       disabled={processing}
                     >
                       Approve
@@ -601,54 +639,63 @@ export const PendingFlightsModal = ({
 
         <div className="modal-action bg-base-100 sticky bottom-0 z-10 -mx-6 -mb-6 border-t p-4">
           <div className="flex w-full justify-between gap-2">
-            <button className="btn" onClick={onClose} disabled={processing}>
+            <Button onClick={onClose} disabled={processing}>
               Cancel
-            </button>
+            </Button>
             <div className="flex gap-2">
-              <button
-                className="btn btn-error btn-outline"
-                onClick={handleBulkReject}
+              <Button
+                color="error"
+                outline
+                onClick={() => {
+                  void handleBulkReject();
+                }}
                 disabled={processing || processedFlights.length === 0}
               >
                 Reject{' '}
                 {selectedFlightIds.size > 0
                   ? `Selected (${selectedFlightIds.size})`
                   : 'All'}
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={handleBulkApprove}
+              </Button>
+              <Button
+                color="primary"
+                onClick={() => {
+                  void handleBulkApprove();
+                }}
                 disabled={processing || processedFlights.length === 0}
               >
                 Approve{' '}
                 {selectedFlightIds.size > 0
                   ? `Selected (${selectedFlightIds.size})`
                   : 'All'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Edit Form Modal Overlay */}
-      {editingFlightId && editingFlight && (
+      {editingFlightId !== null && editingFlight !== undefined && (
         <div className="modal modal-open">
           <div className="modal-box relative">
-            <button
-              className="btn btn-sm btn-circle absolute top-2 right-2"
-              onClick={() => setEditingFlightId(null)}
+            <Button
+              size="sm"
+              shape="circle"
+              className="absolute top-2 right-2"
+              onClick={() => {
+                setEditingFlightId(null);
+              }}
             >
               ✕
-            </button>
+            </Button>
             <h3 className="text-lg font-bold">Edit Flight Details</h3>
             <p className="py-4 text-sm">
               Original: {editingFlight.parsedData.rawSummary}
             </p>
 
             <form
-              onSubmit={handleSubmit(data =>
-                handleApproveSingle(editingFlightId, data),
-              )}
+              onSubmit={handleSubmit(data => {
+                void handleApproveSingle(editingFlightId, data);
+              })}
               className="space-y-4"
             >
               <div className="grid grid-cols-2 gap-4">
@@ -701,20 +748,17 @@ export const PendingFlightsModal = ({
               </div>
 
               <div className="modal-action">
-                <button
+                <Button
                   type="button"
-                  className="btn"
-                  onClick={() => setEditingFlightId(null)}
+                  onClick={() => {
+                    setEditingFlightId(null);
+                  }}
                 >
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={processing}
-                >
+                </Button>
+                <Button type="submit" color="primary" disabled={processing}>
                   {processing ? 'Saving...' : 'Save & Approve'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>

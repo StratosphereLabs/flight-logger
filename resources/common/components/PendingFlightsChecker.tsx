@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { useEffect, useState } from 'react';
 
 import { useLoggedInUserQuery } from '../../common/hooks';
@@ -40,7 +38,7 @@ export const PendingFlightsChecker = (): JSX.Element => {
     trpc.calendars.getPendingFlights.useQuery(
       { limit: 50, offset: 0 },
       {
-        enabled: user !== null && user !== undefined,
+        enabled: user != null,
         refetchInterval: 30000, // Check every 30 seconds
       },
     );
@@ -52,8 +50,7 @@ export const PendingFlightsChecker = (): JSX.Element => {
 
   useEffect(() => {
     if (
-      pendingFlights !== null &&
-      pendingFlights !== undefined &&
+      pendingFlights != null &&
       pendingFlights.flights.length > 0 &&
       !modalOpen
     ) {
@@ -69,17 +66,12 @@ export const PendingFlightsChecker = (): JSX.Element => {
     void refetch();
   };
 
-  if (
-    user === null ||
-    user === undefined ||
-    pendingFlights === null ||
-    pendingFlights === undefined
-  ) {
+  if (user == null || pendingFlights == null) {
     return <></>;
   }
 
   const flightsData = pendingFlights.flights;
-  if (!flightsData || flightsData.length === 0) {
+  if (flightsData.length === 0) {
     return <></>;
   }
 
@@ -89,10 +81,12 @@ export const PendingFlightsChecker = (): JSX.Element => {
     calendarSource: f.calendarSource,
     parsedData: {
       ...f.parsedData,
-      outTime: f.parsedData.outTime
-        ? new Date(f.parsedData.outTime)
-        : undefined,
-      inTime: f.parsedData.inTime ? new Date(f.parsedData.inTime) : undefined,
+      outTime:
+        f.parsedData.outTime != null
+          ? new Date(f.parsedData.outTime)
+          : undefined,
+      inTime:
+        f.parsedData.inTime != null ? new Date(f.parsedData.inTime) : undefined,
     },
     detectedAt: f.detectedAt,
   }));
