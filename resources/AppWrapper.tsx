@@ -22,7 +22,14 @@ export const AppWrapper = ({ children }: AppWrapperProps): JSX.Element => {
     },
   );
   return (
-    <StatsigProvider client={client} loadingComponent={<Loading />}>
+    <StatsigProvider
+      client={client}
+      loadingComponent={
+        <div className="flex h-screen w-screen items-center justify-center">
+          <Loading />
+        </div>
+      }
+    >
       <AlertMessagesProvider>
         <TRPCProvider>{children}</TRPCProvider>
       </AlertMessagesProvider>
