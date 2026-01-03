@@ -4,6 +4,7 @@ import { airframesRouter } from './airframes';
 import { airlinesRouter } from './airlines';
 import { airportsRouter } from './airports';
 import { authRouter } from './auth';
+import { calendarsRouter } from './calendars';
 import { countriesRouter } from './countries';
 import { flightDataRouter } from './flightData';
 import { flightsRouter } from './flights';
@@ -24,6 +25,7 @@ export const trpcRouter = router({
   airlines: airlinesRouter,
   airports: airportsRouter,
   auth: authRouter,
+  calendars: calendarsRouter,
   countries: countriesRouter,
   flightData: flightDataRouter,
   flights: flightsRouter,

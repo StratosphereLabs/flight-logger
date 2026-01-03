@@ -150,7 +150,7 @@ export const getResetEmail = ({
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
-                      href="http://localhost:8000"
+                      href="${process.env.VITE_APP_URL ?? 'http://localhost:8000'}"
                       style="
                         box-sizing: border-box;
                         font-family: -apple-system, BlinkMacSystemFont,

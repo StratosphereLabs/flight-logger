@@ -2,6 +2,7 @@ import { type Prisma } from '@prisma/client';
 import axios from 'axios';
 
 import { prisma } from '../prisma';
+import { CHROME_USER_AGENT } from './constants';
 import { csvToJson, seedConcurrently } from './helpers';
 
 /* eslint-disable-next-line @typescript-eslint/no-var-requires */
@@ -77,6 +78,7 @@ export const seedAirports = async (): Promise<void> => {
   try {
     const response = await axios.get<string>(
       'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv',
+      { headers: { 'User-Agent': CHROME_USER_AGENT } },
     );
     const rows = getDatabaseRows(response.data);
     const count = await seedConcurrently(rows, row =>
