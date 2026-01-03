@@ -25,22 +25,9 @@ export interface FlightData {
 }
 
 /**
- * Fetch and parse iCal data from a URL
- */
-export async function fetchCalendar(url: string): Promise<ParsedFlightEvent[]> {
-  try {
-    const data = await ical.fromURL(url);
-    return parseEvents(data);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to fetch calendar from ${url}: ${message}`);
-  }
-}
-
-/**
  * Parse iCal events into flight event objects
  */
-export function parseEvents(data: ical.CalendarResponse): ParsedFlightEvent[] {
+const parseEvents = (data: ical.CalendarResponse): ParsedFlightEvent[] => {
   const events: ParsedFlightEvent[] = [];
 
   for (const key in data) {
@@ -67,13 +54,115 @@ export function parseEvents(data: ical.CalendarResponse): ParsedFlightEvent[] {
   }
 
   return events;
-}
+};
+
+/**
+ * Parse flight information from text (summary or description)
+ */
+const parseSummary = (text: string): Partial<FlightData> => {
+  const result: Partial<FlightData> = {};
+
+  // Remove zero-width characters that Flighty uses
+  const cleanText = text.replace(ZERO_WIDTH_CHARS_REGEX, '');
+
+  // Common patterns:
+  // "✈ BRU→EWR • UA 998" (Flighty)
+  // "AA 1234 JFK-LAX"
+  // "American Airlines 1234 from JFK to LAX"
+  // "DL1234 JFK to LAX"
+  // "Flight 1 of 2 | DL2709 | IAH to ATL"
+
+  // Extract airline code and flight number
+  // Try multiple patterns in order of specificity
+  const airlineFlightPatterns = [
+    /•\s*([A-Z]{2})\s*(\d{1,4})\b/, // Flighty: • UA 998
+    /\|\s*([A-Z]{2})(\d{1,4})\s*\|/, // Delta: | DL2709 |
+    /\b([A-Z]{2,3})\s*(\d{1,4})\b/, // Standard: AA 1234 or AA1234
+    /Flight[:\s]+([A-Z]{2})\s*(\d{1,4})\b/i, // Flight: AS 453
+  ];
+
+  for (const pattern of airlineFlightPatterns) {
+    const match = cleanText.match(pattern);
+    if (match !== null) {
+      result.airline = match[1];
+      result.flightNumber = parseInt(match[2], 10);
+      break;
+    }
+  }
+
+  // Extract airports
+  const airports = parseAirports(cleanText);
+  result.departureAirport = airports.departureAirport;
+  result.arrivalAirport = airports.arrivalAirport;
+
+  return result;
+};
+
+/**
+ * Extract airport codes from text
+ */
+const parseAirports = (
+  text: string,
+): {
+  departureAirport?: string;
+  arrivalAirport?: string;
+} => {
+  // Remove zero-width characters that Flighty uses
+  const cleanText = text.replace(ZERO_WIDTH_CHARS_REGEX, '');
+
+  // Look for patterns like "JFK-LAX", "JFK to LAX", "from JFK to LAX", "JFK→LHR" (Flighty)
+  const patterns = [
+    /([A-Z]{3})\s*→\s*([A-Z]{3})/, // JFK→LHR (Flighty arrow format)
+    /([A-Z]{3})\s*[-–—]\s*([A-Z]{3})/, // JFK-LAX (dash/en dash/em dash)
+    /\bfrom\s+([A-Z]{3})\s+to\s+([A-Z]{3})\b/i, // from JFK to LAX
+    /([A-Z]{3})\s+to\s+([A-Z]{3})\b/, // JFK to LAX
+    /\|\s*([A-Z]{3})\s+to\s+([A-Z]{3})\b/i, // | IAH to ATL (Delta format)
+  ];
+
+  for (const pattern of patterns) {
+    const match = cleanText.match(pattern);
+    if (match !== null) {
+      return {
+        departureAirport: match[1].toUpperCase(),
+        arrivalAirport: match[2].toUpperCase(),
+      };
+    }
+  }
+
+  // Try to find airport codes in parentheses: "Depart: Houston, TX (IAH)" ... "Arrive: Seattle, WA (SEA)"
+  // This handles Alaska Airlines format
+  const departMatch = cleanText.match(/\bDepart[^(]*\(([A-Z]{3})\)/i);
+  const arriveMatch = cleanText.match(/\bArrive[^(]*\(([A-Z]{3})\)/i);
+  if (departMatch !== null && arriveMatch !== null) {
+    return {
+      departureAirport: departMatch[1].toUpperCase(),
+      arrivalAirport: arriveMatch[1].toUpperCase(),
+    };
+  }
+
+  return {};
+};
+
+/**
+ * Fetch and parse iCal data from a URL
+ */
+export const fetchCalendar = async (
+  url: string,
+): Promise<ParsedFlightEvent[]> => {
+  try {
+    const data = await ical.fromURL(url);
+    return parseEvents(data);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to fetch calendar from ${url}: ${message}`);
+  }
+};
 
 /**
  * Extract flight information from an iCal event summary
  * Supports common formats like "AA 1234 JFK-LAX" or "American Airlines 1234 from JFK to LAX"
  */
-export function extractFlightData(event: ParsedFlightEvent): FlightData {
+export const extractFlightData = (event: ParsedFlightEvent): FlightData => {
   const { summary, location, description } = event;
 
   let flightData: FlightData = {
@@ -137,107 +226,12 @@ export function extractFlightData(event: ParsedFlightEvent): FlightData {
   }
 
   return flightData;
-}
-
-/**
- * Parse flight information from text (summary or description)
- */
-function parseSummary(text: string): Partial<FlightData> {
-  const result: Partial<FlightData> = {};
-
-  // Remove zero-width characters that Flighty uses
-  const cleanText = text.replace(ZERO_WIDTH_CHARS_REGEX, '');
-
-  // Common patterns:
-  // "✈ BRU→EWR • UA 998" (Flighty)
-  // "AA 1234 JFK-LAX"
-  // "American Airlines 1234 from JFK to LAX"
-  // "DL1234 JFK to LAX"
-  // "Flight 1 of 2 | DL2709 | IAH to ATL"
-
-  // Extract airline code and flight number
-  // Try multiple patterns in order of specificity
-  const airlineFlightPatterns = [
-    /•\s*([A-Z]{2})\s*(\d{1,4})\b/, // Flighty: • UA 998
-    /\|\s*([A-Z]{2})(\d{1,4})\s*\|/, // Delta: | DL2709 |
-    /\b([A-Z]{2,3})\s*(\d{1,4})\b/, // Standard: AA 1234 or AA1234
-    /Flight[:\s]+([A-Z]{2})\s*(\d{1,4})\b/i, // Flight: AS 453
-  ];
-
-  for (const pattern of airlineFlightPatterns) {
-    const match = cleanText.match(pattern);
-    if (match !== null) {
-      result.airline = match[1];
-      result.flightNumber = parseInt(match[2], 10);
-      break;
-    }
-  }
-
-  // Extract airports
-  const airports = parseAirports(cleanText);
-  result.departureAirport = airports.departureAirport;
-  result.arrivalAirport = airports.arrivalAirport;
-
-  return result;
-}
-
-/**
- * Extract airport codes from text
- */
-function parseAirports(text: string): {
-  departureAirport?: string;
-  arrivalAirport?: string;
-} {
-  // Remove zero-width characters that Flighty uses
-  const cleanText = text.replace(ZERO_WIDTH_CHARS_REGEX, '');
-
-  // Look for patterns like "JFK-LAX", "JFK to LAX", "from JFK to LAX", "JFK→LHR" (Flighty)
-  const patterns = [
-    /([A-Z]{3})\s*→\s*([A-Z]{3})/, // JFK→LHR (Flighty arrow format)
-    /([A-Z]{3})\s*[-–—]\s*([A-Z]{3})/, // JFK-LAX (dash/en dash/em dash)
-    /\bfrom\s+([A-Z]{3})\s+to\s+([A-Z]{3})\b/i, // from JFK to LAX
-    /([A-Z]{3})\s+to\s+([A-Z]{3})\b/, // JFK to LAX
-    /\|\s*([A-Z]{3})\s+to\s+([A-Z]{3})\b/i, // | IAH to ATL (Delta format)
-  ];
-
-  for (const pattern of patterns) {
-    const match = cleanText.match(pattern);
-    if (match !== null) {
-      return {
-        departureAirport: match[1].toUpperCase(),
-        arrivalAirport: match[2].toUpperCase(),
-      };
-    }
-  }
-
-  // Try to find airport codes in parentheses: "Depart: Houston, TX (IAH)" ... "Arrive: Seattle, WA (SEA)"
-  // This handles Alaska Airlines format
-  const departMatch = cleanText.match(/\bDepart[^(]*\(([A-Z]{3})\)/i);
-  const arriveMatch = cleanText.match(/\bArrive[^(]*\(([A-Z]{3})\)/i);
-  if (departMatch !== null && arriveMatch !== null) {
-    return {
-      departureAirport: departMatch[1].toUpperCase(),
-      arrivalAirport: arriveMatch[1].toUpperCase(),
-    };
-  }
-
-  return {};
-}
-
-/**
- * Filter events to only future flights
- */
-export function filterFutureEvents(
-  events: ParsedFlightEvent[],
-): ParsedFlightEvent[] {
-  const now = new Date();
-  return events.filter(event => event.start > now);
-}
+};
 
 /**
  * Check if an event appears to be a flight based on content
  */
-export function isFlightEvent(event: ParsedFlightEvent): boolean {
+export const isFlightEvent = (event: ParsedFlightEvent): boolean => {
   const { summary, location, description } = event;
   const locationStr = location ?? '';
   const descriptionStr = description ?? '';
@@ -281,4 +275,4 @@ export function isFlightEvent(event: ParsedFlightEvent): boolean {
   if (/\b(flight|depart|arrive|boarding)\b/i.test(text)) weakMatches++;
 
   return weakMatches >= 2;
-}
+};

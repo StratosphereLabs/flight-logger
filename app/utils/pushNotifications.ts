@@ -55,7 +55,7 @@ const rateLimitStore = new Map<number, number[]>();
  * Check if a user is rate limited for push notifications
  * Returns true if rate limited, false if allowed
  */
-function isRateLimited(userId: number): boolean {
+const isRateLimited = (userId: number): boolean => {
   const now = Date.now();
   const timestamps = rateLimitStore.get(userId) ?? [];
 
@@ -68,21 +68,21 @@ function isRateLimited(userId: number): boolean {
   rateLimitStore.set(userId, recentTimestamps);
 
   return recentTimestamps.length >= RATE_LIMIT_MAX_NOTIFICATIONS;
-}
+};
 
 /**
  * Record a notification send for rate limiting
  */
-function recordNotificationSend(userId: number): void {
+const recordNotificationSend = (userId: number): void => {
   const timestamps = rateLimitStore.get(userId) ?? [];
   timestamps.push(Date.now());
   rateLimitStore.set(userId, timestamps);
-}
+};
 
 /**
  * Clean up old rate limit entries (call periodically to prevent memory leaks)
  */
-export function cleanupRateLimitStore(): void {
+export const cleanupRateLimitStore = (): void => {
   const now = Date.now();
   for (const [userId, timestamps] of rateLimitStore.entries()) {
     const recentTimestamps = timestamps.filter(
@@ -94,7 +94,7 @@ export function cleanupRateLimitStore(): void {
       rateLimitStore.set(userId, recentTimestamps);
     }
   }
-}
+};
 
 interface PushNotificationPayload {
   title: string;
@@ -109,7 +109,7 @@ interface PushNotificationPayload {
  *
  * Rate limited to prevent notification spam (max 10 per hour per user)
  */
-export async function sendPushNotificationToUser(
+export const sendPushNotificationToUser = async (
   userId: number,
   payload: PushNotificationPayload,
 ): Promise<{
@@ -117,7 +117,7 @@ export async function sendPushNotificationToUser(
   sentCount: number;
   failedCount: number;
   rateLimited?: boolean;
-}> {
+}> => {
   // Check if Firebase Admin is initialized
   if (admin.apps.length === 0) {
     console.warn(
@@ -245,12 +245,12 @@ export async function sendPushNotificationToUser(
     );
     return { success: false, sentCount: 0, failedCount: 0 };
   }
-}
+};
 
 /**
  * Send calendar sync completion notification
  */
-export async function sendCalendarSyncNotification(
+export const sendCalendarSyncNotification = async (
   userId: number,
   calendarName: string,
   importedCount: number,
@@ -260,7 +260,7 @@ export async function sendCalendarSyncNotification(
   sentCount: number;
   failedCount: number;
   rateLimited?: boolean;
-}> {
+}> => {
   if (importedCount === 0 && failedCount === 0) {
     console.log(
       `[PushNotifications] No flights to notify about for calendar "${calendarName}"`,
@@ -301,12 +301,12 @@ export async function sendCalendarSyncNotification(
       failedCount: String(failedCount),
     },
   });
-}
+};
 
 /**
  * Send notification when flights are detected and import is starting
  */
-export async function sendCalendarSyncStartNotification(
+export const sendCalendarSyncStartNotification = async (
   userId: number,
   calendarName: string,
   flightCount: number,
@@ -315,7 +315,7 @@ export async function sendCalendarSyncStartNotification(
   sentCount: number;
   failedCount: number;
   rateLimited?: boolean;
-}> {
+}> => {
   if (flightCount === 0) {
     return { success: false, sentCount: 0, failedCount: 0 };
   }
@@ -338,4 +338,4 @@ export async function sendCalendarSyncStartNotification(
       flightCount: String(flightCount),
     },
   });
-}
+};

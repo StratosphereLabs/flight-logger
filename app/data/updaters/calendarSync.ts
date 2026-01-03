@@ -9,7 +9,6 @@ import {
   type ParsedFlightEvent,
   extractFlightData,
   fetchCalendar,
-  filterFutureEvents,
   isFlightEvent,
 } from '../../utils/ical';
 import {
@@ -134,7 +133,7 @@ const serializeFlightData = (flightData: FlightData): Prisma.InputJsonValue =>
 /**
  * Create an empty sync result for error cases
  */
-export const createEmptySyncResult = (
+const createEmptySyncResult = (
   calendarId: string,
   calendarName: string,
   errorMessage: string,
@@ -155,203 +154,9 @@ export const createEmptySyncResult = (
 });
 
 /**
- * Sync a single calendar
- */
-export const syncCalendar = async (
-  calendar: CalendarSourceInfo,
-): Promise<SyncResult> => {
-  const result: SyncResult = {
-    calendarId: calendar.id,
-    calendarName: calendar.name,
-    totalEventsFound: 0,
-    totalFutureEvents: 0,
-    totalFutureFlights: 0,
-    newPendingFlights: 0,
-    autoImportedFlights: 0,
-    autoImportFailures: 0,
-    skippedAlreadyPending: 0,
-    skippedAlreadyImported: 0,
-    skippedRecentlyRejected: 0,
-    errors: [],
-    detectedFlights: [],
-  };
-
-  try {
-    // Fetch and parse calendar
-    console.log(`[CalendarSync] Fetching calendar: ${calendar.name}`);
-    const events = await fetchCalendar(calendar.url);
-    result.totalEventsFound = events.length;
-    console.log(`[CalendarSync] Found ${events.length} total events`);
-
-    // Filter to future events
-    const futureEvents = filterFutureEvents(events);
-    result.totalFutureEvents = futureEvents.length;
-    console.log(`[CalendarSync] Found ${futureEvents.length} future events`);
-
-    // Filter to flight events
-    const flightEvents = futureEvents.filter(isFlightEvent);
-    result.totalFutureFlights = flightEvents.length;
-    console.log(
-      `[CalendarSync] Found ${flightEvents.length} future flight events`,
-    );
-
-    // Send "starting import" notification for auto-import calendars when flights are detected
-    if (calendar.autoImport && flightEvents.length > 0) {
-      console.log(
-        `[CalendarSync] Sending start notification for ${flightEvents.length} flights`,
-      );
-      await sendCalendarSyncStartNotification(
-        calendar.userId,
-        calendar.name,
-        flightEvents.length,
-      );
-    }
-
-    // Process each flight event
-    for (const event of flightEvents) {
-      try {
-        const flightData = extractFlightData(event);
-        const processResult = await processFlightEvent(calendar, event);
-
-        const flightInfo: DetectedFlight = {
-          summary: event.summary,
-          airline: flightData.airline,
-          flightNumber: flightData.flightNumber,
-          departure: flightData.departureAirport,
-          arrival: flightData.arrivalAirport,
-          date: flightData.outTime?.toISOString().split('T')[0],
-          status: processResult.status,
-          pendingFlightId: processResult.pendingFlightId,
-        };
-
-        result.detectedFlights.push(flightInfo);
-        console.log(
-          `[CalendarSync] Processed flight: ${flightData.airline ?? '??'}${flightData.flightNumber ?? '?'} ${flightData.departureAirport ?? '???'}-${flightData.arrivalAirport ?? '???'} -> ${processResult.status}`,
-        );
-
-        switch (processResult.status) {
-          case 'created':
-            result.newPendingFlights++;
-            break;
-          case 'auto_imported':
-            result.autoImportedFlights++;
-            break;
-          case 'auto_import_failed':
-            result.autoImportFailures++;
-            result.newPendingFlights++;
-            if (
-              processResult.error !== undefined &&
-              processResult.error !== ''
-            ) {
-              result.errors.push(processResult.error);
-            }
-            break;
-          case 'already_pending':
-            result.skippedAlreadyPending++;
-            break;
-          case 'already_imported':
-            result.skippedAlreadyImported++;
-            break;
-          case 'recently_rejected':
-            result.skippedRecentlyRejected++;
-            break;
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        result.errors.push(`Failed to process event ${event.uid}: ${message}`);
-        console.error(`[CalendarSync] Error processing event:`, error);
-      }
-    }
-
-    // Update last sync timestamp
-    await prisma.calendarSource.update({
-      where: { id: calendar.id },
-      data: { lastSyncAt: new Date() },
-    });
-
-    // Send notifications for auto-import calendars when there's something to report
-    if (
-      calendar.autoImport &&
-      (result.autoImportedFlights > 0 || result.autoImportFailures > 0)
-    ) {
-      // Create in-app notification
-      let description: string;
-      let color: 'SUCCESS' | 'WARNING';
-
-      if (result.autoImportedFlights > 0 && result.autoImportFailures === 0) {
-        const flightWord =
-          result.autoImportedFlights === 1 ? 'flight' : 'flights';
-        description = `Successfully imported ${result.autoImportedFlights} ${flightWord} from "${calendar.name}".`;
-        color = 'SUCCESS';
-      } else if (
-        result.autoImportedFlights === 0 &&
-        result.autoImportFailures > 0
-      ) {
-        const flightWord =
-          result.autoImportFailures === 1 ? 'flight' : 'flights';
-        description = `${result.autoImportFailures} ${flightWord} from "${calendar.name}" could not be auto-imported and require manual review.`;
-        color = 'WARNING';
-      } else {
-        const importedWord =
-          result.autoImportedFlights === 1 ? 'flight' : 'flights';
-        const failureWord =
-          result.autoImportFailures === 1 ? 'flight' : 'flights';
-        description = `Imported ${result.autoImportedFlights} ${importedWord} from "${calendar.name}". ${result.autoImportFailures} ${failureWord} require manual review.`;
-        color = 'WARNING';
-      }
-
-      await prisma.notification.create({
-        data: {
-          id: randomUUID(),
-          userId: calendar.userId,
-          showDefault: true,
-          color,
-          title:
-            result.autoImportedFlights > 0
-              ? 'Flights imported from calendar'
-              : 'Flights need review',
-          description,
-          expiration: addDays(new Date(), 7),
-        },
-      });
-
-      // Send real-time push notification
-      console.log(
-        `[CalendarSync] Sending push notification to user ${calendar.userId} for calendar "${calendar.name}"`,
-      );
-      const pushResult = await sendCalendarSyncNotification(
-        calendar.userId,
-        calendar.name,
-        result.autoImportedFlights,
-        result.autoImportFailures,
-      );
-      console.log(`[CalendarSync] Push notification result:`, pushResult);
-    }
-
-    console.log(`[CalendarSync] Sync complete for ${calendar.name}:`, {
-      totalFutureFlights: result.totalFutureFlights,
-      newPendingFlights: result.newPendingFlights,
-      autoImportedFlights: result.autoImportedFlights,
-      autoImportFailures: result.autoImportFailures,
-      skippedAlreadyPending: result.skippedAlreadyPending,
-      skippedAlreadyImported: result.skippedAlreadyImported,
-      skippedRecentlyRejected: result.skippedRecentlyRejected,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    result.errors.push(`Calendar sync failed: ${message}`);
-    console.error(`[CalendarSync] Sync failed for ${calendar.name}:`, error);
-  }
-
-  return result;
-};
-
-/**
  * Sync all enabled calendars for a user
  */
-export const syncCalendarsForUser = async (
-  userId: number,
-): Promise<SyncResult[]> => {
+const syncCalendarsForUser = async (userId: number): Promise<SyncResult[]> => {
   const calendars = await prisma.calendarSource.findMany({
     where: {
       userId,
@@ -390,7 +195,7 @@ export const syncCalendarsForUser = async (
  * Process a single flight event and create pending flight if not duplicate
  * If autoImport is enabled, directly create the flight instead of pending
  */
-export const processFlightEvent = async (
+const processFlightEvent = async (
   calendar: CalendarSourceInfo,
   event: ParsedFlightEvent,
 ): Promise<ProcessResult> => {
@@ -451,7 +256,7 @@ export const processFlightEvent = async (
  * Auto-import a flight directly without creating a pending flight
  * Uses the same API lookup logic as the approve mutation
  */
-export const autoImportFlight = async (
+const autoImportFlight = async (
   calendar: CalendarSourceInfo,
   event: ParsedFlightEvent,
   flightData: FlightData,
@@ -667,7 +472,7 @@ export const autoImportFlight = async (
  * Create a pending flight as fallback when auto-import fails
  * Also creates a notification for the user
  */
-export const createPendingFlightAsFallback = async (
+const createPendingFlightAsFallback = async (
   calendar: CalendarSourceInfo,
   event: ParsedFlightEvent,
   flightData: FlightData,
@@ -711,7 +516,7 @@ export const createPendingFlightAsFallback = async (
  * Check if a flight was recently rejected (within cooling period)
  * Returns the pending flight ID if found, null otherwise
  */
-export const checkRecentlyRejected = async (
+const checkRecentlyRejected = async (
   calendarId: string,
   eventUid: string,
 ): Promise<string | null> => {
@@ -736,7 +541,7 @@ export const checkRecentlyRejected = async (
  * 1. Exact match: airline + flight number + same day
  * 2. Route match: departure + arrival airports + same day
  */
-export const checkForExistingFlight = async (
+const checkForExistingFlight = async (
   userId: number,
   flightData: FlightData,
 ): Promise<DuplicateCheckResult> => {
@@ -841,6 +646,198 @@ export const checkForExistingFlight = async (
   }
 
   return { isDuplicate: false, reason: '' };
+};
+
+/**
+ * Sync a single calendar
+ */
+export const syncCalendar = async (
+  calendar: CalendarSourceInfo,
+): Promise<SyncResult> => {
+  const result: SyncResult = {
+    calendarId: calendar.id,
+    calendarName: calendar.name,
+    totalEventsFound: 0,
+    totalFutureEvents: 0,
+    totalFutureFlights: 0,
+    newPendingFlights: 0,
+    autoImportedFlights: 0,
+    autoImportFailures: 0,
+    skippedAlreadyPending: 0,
+    skippedAlreadyImported: 0,
+    skippedRecentlyRejected: 0,
+    errors: [],
+    detectedFlights: [],
+  };
+
+  try {
+    // Fetch and parse calendar
+    console.log(`[CalendarSync] Fetching calendar: ${calendar.name}`);
+    const events = await fetchCalendar(calendar.url);
+    result.totalEventsFound = events.length;
+    console.log(`[CalendarSync] Found ${events.length} total events`);
+
+    // Filter to future events
+    const futureEvents = events.filter(event => event.start > new Date());
+    result.totalFutureEvents = futureEvents.length;
+    console.log(`[CalendarSync] Found ${futureEvents.length} future events`);
+
+    // Filter to flight events
+    const flightEvents = futureEvents.filter(isFlightEvent);
+    result.totalFutureFlights = flightEvents.length;
+    console.log(
+      `[CalendarSync] Found ${flightEvents.length} future flight events`,
+    );
+
+    // Send "starting import" notification for auto-import calendars when flights are detected
+    if (calendar.autoImport && flightEvents.length > 0) {
+      console.log(
+        `[CalendarSync] Sending start notification for ${flightEvents.length} flights`,
+      );
+      await sendCalendarSyncStartNotification(
+        calendar.userId,
+        calendar.name,
+        flightEvents.length,
+      );
+    }
+
+    // Process each flight event
+    for (const event of flightEvents) {
+      try {
+        const flightData = extractFlightData(event);
+        const processResult = await processFlightEvent(calendar, event);
+
+        const flightInfo: DetectedFlight = {
+          summary: event.summary,
+          airline: flightData.airline,
+          flightNumber: flightData.flightNumber,
+          departure: flightData.departureAirport,
+          arrival: flightData.arrivalAirport,
+          date: flightData.outTime?.toISOString().split('T')[0],
+          status: processResult.status,
+          pendingFlightId: processResult.pendingFlightId,
+        };
+
+        result.detectedFlights.push(flightInfo);
+        console.log(
+          `[CalendarSync] Processed flight: ${flightData.airline ?? '??'}${flightData.flightNumber ?? '?'} ${flightData.departureAirport ?? '???'}-${flightData.arrivalAirport ?? '???'} -> ${processResult.status}`,
+        );
+
+        switch (processResult.status) {
+          case 'created':
+            result.newPendingFlights++;
+            break;
+          case 'auto_imported':
+            result.autoImportedFlights++;
+            break;
+          case 'auto_import_failed':
+            result.autoImportFailures++;
+            result.newPendingFlights++;
+            if (
+              processResult.error !== undefined &&
+              processResult.error !== ''
+            ) {
+              result.errors.push(processResult.error);
+            }
+            break;
+          case 'already_pending':
+            result.skippedAlreadyPending++;
+            break;
+          case 'already_imported':
+            result.skippedAlreadyImported++;
+            break;
+          case 'recently_rejected':
+            result.skippedRecentlyRejected++;
+            break;
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        result.errors.push(`Failed to process event ${event.uid}: ${message}`);
+        console.error(`[CalendarSync] Error processing event:`, error);
+      }
+    }
+
+    // Update last sync timestamp
+    await prisma.calendarSource.update({
+      where: { id: calendar.id },
+      data: { lastSyncAt: new Date() },
+    });
+
+    // Send notifications for auto-import calendars when there's something to report
+    if (
+      calendar.autoImport &&
+      (result.autoImportedFlights > 0 || result.autoImportFailures > 0)
+    ) {
+      // Create in-app notification
+      let description: string;
+      let color: 'SUCCESS' | 'WARNING';
+
+      if (result.autoImportedFlights > 0 && result.autoImportFailures === 0) {
+        const flightWord =
+          result.autoImportedFlights === 1 ? 'flight' : 'flights';
+        description = `Successfully imported ${result.autoImportedFlights} ${flightWord} from "${calendar.name}".`;
+        color = 'SUCCESS';
+      } else if (
+        result.autoImportedFlights === 0 &&
+        result.autoImportFailures > 0
+      ) {
+        const flightWord =
+          result.autoImportFailures === 1 ? 'flight' : 'flights';
+        description = `${result.autoImportFailures} ${flightWord} from "${calendar.name}" could not be auto-imported and require manual review.`;
+        color = 'WARNING';
+      } else {
+        const importedWord =
+          result.autoImportedFlights === 1 ? 'flight' : 'flights';
+        const failureWord =
+          result.autoImportFailures === 1 ? 'flight' : 'flights';
+        description = `Imported ${result.autoImportedFlights} ${importedWord} from "${calendar.name}". ${result.autoImportFailures} ${failureWord} require manual review.`;
+        color = 'WARNING';
+      }
+
+      await prisma.notification.create({
+        data: {
+          id: randomUUID(),
+          userId: calendar.userId,
+          showDefault: true,
+          color,
+          title:
+            result.autoImportedFlights > 0
+              ? 'Flights imported from calendar'
+              : 'Flights need review',
+          description,
+          expiration: addDays(new Date(), 7),
+        },
+      });
+
+      // Send real-time push notification
+      console.log(
+        `[CalendarSync] Sending push notification to user ${calendar.userId} for calendar "${calendar.name}"`,
+      );
+      const pushResult = await sendCalendarSyncNotification(
+        calendar.userId,
+        calendar.name,
+        result.autoImportedFlights,
+        result.autoImportFailures,
+      );
+      console.log(`[CalendarSync] Push notification result:`, pushResult);
+    }
+
+    console.log(`[CalendarSync] Sync complete for ${calendar.name}:`, {
+      totalFutureFlights: result.totalFutureFlights,
+      newPendingFlights: result.newPendingFlights,
+      autoImportedFlights: result.autoImportedFlights,
+      autoImportFailures: result.autoImportFailures,
+      skippedAlreadyPending: result.skippedAlreadyPending,
+      skippedAlreadyImported: result.skippedAlreadyImported,
+      skippedRecentlyRejected: result.skippedRecentlyRejected,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    result.errors.push(`Calendar sync failed: ${message}`);
+    console.error(`[CalendarSync] Sync failed for ${calendar.name}:`, error);
+  }
+
+  return result;
 };
 
 /**
