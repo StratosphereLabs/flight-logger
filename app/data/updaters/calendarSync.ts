@@ -107,22 +107,21 @@ const REJECTED_COOLING_PERIOD_DAYS = 30;
 /**
  * Safely serialize event data for storage
  */
-function serializeEventData(event: ParsedFlightEvent): Prisma.InputJsonValue {
-  return {
+const serializeEventData = (event: ParsedFlightEvent): Prisma.InputJsonValue =>
+  ({
     uid: event.uid,
     summary: event.summary,
     start: event.start.toISOString(),
     end: event.end.toISOString(),
     location: event.location ?? null,
     description: event.description ?? null,
-  } satisfies StoredEventData as unknown as Prisma.InputJsonValue;
-}
+  }) satisfies StoredEventData as unknown as Prisma.InputJsonValue;
 
 /**
  * Safely serialize flight data for storage
  */
-function serializeFlightData(flightData: FlightData): Prisma.InputJsonValue {
-  return {
+const serializeFlightData = (flightData: FlightData): Prisma.InputJsonValue =>
+  ({
     airline: flightData.airline ?? null,
     flightNumber: flightData.flightNumber ?? null,
     departureAirport: flightData.departureAirport ?? null,
@@ -130,80 +129,37 @@ function serializeFlightData(flightData: FlightData): Prisma.InputJsonValue {
     outTime: flightData.outTime?.toISOString() ?? null,
     inTime: flightData.inTime?.toISOString() ?? null,
     rawSummary: flightData.rawSummary,
-  } satisfies StoredParsedData as unknown as Prisma.InputJsonValue;
-}
+  }) satisfies StoredParsedData as unknown as Prisma.InputJsonValue;
 
 /**
  * Create an empty sync result for error cases
  */
-function createEmptySyncResult(
+export const createEmptySyncResult = (
   calendarId: string,
   calendarName: string,
   errorMessage: string,
-): SyncResult {
-  return {
-    calendarId,
-    calendarName,
-    totalEventsFound: 0,
-    totalFutureEvents: 0,
-    totalFutureFlights: 0,
-    newPendingFlights: 0,
-    autoImportedFlights: 0,
-    autoImportFailures: 0,
-    skippedAlreadyPending: 0,
-    skippedAlreadyImported: 0,
-    skippedRecentlyRejected: 0,
-    errors: [errorMessage],
-    detectedFlights: [],
-  };
-}
-
-/**
- * Sync all enabled calendars for a user
- */
-export async function syncCalendarsForUser(
-  userId: number,
-): Promise<SyncResult[]> {
-  const calendars = await prisma.calendarSource.findMany({
-    where: {
-      userId,
-      enabled: true,
-    },
-  });
-
-  const results: SyncResult[] = [];
-
-  for (const calendar of calendars) {
-    try {
-      const result = await syncCalendar({
-        id: calendar.id,
-        userId: calendar.userId,
-        name: calendar.name,
-        url: calendar.url,
-        autoImport: calendar.autoImport,
-      });
-      results.push(result);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      results.push(
-        createEmptySyncResult(
-          calendar.id,
-          calendar.name,
-          `Sync failed: ${message}`,
-        ),
-      );
-    }
-  }
-
-  return results;
-}
+): SyncResult => ({
+  calendarId,
+  calendarName,
+  totalEventsFound: 0,
+  totalFutureEvents: 0,
+  totalFutureFlights: 0,
+  newPendingFlights: 0,
+  autoImportedFlights: 0,
+  autoImportFailures: 0,
+  skippedAlreadyPending: 0,
+  skippedAlreadyImported: 0,
+  skippedRecentlyRejected: 0,
+  errors: [errorMessage],
+  detectedFlights: [],
+});
 
 /**
  * Sync a single calendar
  */
-export async function syncCalendar(
+export const syncCalendar = async (
   calendar: CalendarSourceInfo,
-): Promise<SyncResult> {
+): Promise<SyncResult> => {
   const result: SyncResult = {
     calendarId: calendar.id,
     calendarName: calendar.name,
@@ -388,16 +344,56 @@ export async function syncCalendar(
   }
 
   return result;
-}
+};
+
+/**
+ * Sync all enabled calendars for a user
+ */
+export const syncCalendarsForUser = async (
+  userId: number,
+): Promise<SyncResult[]> => {
+  const calendars = await prisma.calendarSource.findMany({
+    where: {
+      userId,
+      enabled: true,
+    },
+  });
+
+  const results: SyncResult[] = [];
+
+  for (const calendar of calendars) {
+    try {
+      const result = await syncCalendar({
+        id: calendar.id,
+        userId: calendar.userId,
+        name: calendar.name,
+        url: calendar.url,
+        autoImport: calendar.autoImport,
+      });
+      results.push(result);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      results.push(
+        createEmptySyncResult(
+          calendar.id,
+          calendar.name,
+          `Sync failed: ${message}`,
+        ),
+      );
+    }
+  }
+
+  return results;
+};
 
 /**
  * Process a single flight event and create pending flight if not duplicate
  * If autoImport is enabled, directly create the flight instead of pending
  */
-async function processFlightEvent(
+export const processFlightEvent = async (
   calendar: CalendarSourceInfo,
   event: ParsedFlightEvent,
-): Promise<ProcessResult> {
+): Promise<ProcessResult> => {
   // Check for existing pending flight with same event UID (pending or approved)
   const existingPending = await prisma.pendingFlight.findFirst({
     where: {
@@ -449,17 +445,17 @@ async function processFlightEvent(
   });
 
   return { status: 'created' };
-}
+};
 
 /**
  * Auto-import a flight directly without creating a pending flight
  * Uses the same API lookup logic as the approve mutation
  */
-async function autoImportFlight(
+export const autoImportFlight = async (
   calendar: CalendarSourceInfo,
   event: ParsedFlightEvent,
   flightData: FlightData,
-): Promise<ProcessResult> {
+): Promise<ProcessResult> => {
   try {
     const airlineCode = flightData.airline;
     const flightNumber = flightData.flightNumber;
@@ -665,18 +661,18 @@ async function autoImportFlight(
       `Auto-import error: ${message}`,
     );
   }
-}
+};
 
 /**
  * Create a pending flight as fallback when auto-import fails
  * Also creates a notification for the user
  */
-async function createPendingFlightAsFallback(
+export const createPendingFlightAsFallback = async (
   calendar: CalendarSourceInfo,
   event: ParsedFlightEvent,
   flightData: FlightData,
   errorMessage: string,
-): Promise<ProcessResult> {
+): Promise<ProcessResult> => {
   // Create the pending flight for manual review
   const expiresAt = addDays(new Date(), 30);
 
@@ -709,16 +705,16 @@ async function createPendingFlightAsFallback(
     status: 'auto_import_failed',
     error: errorMessage,
   };
-}
+};
 
 /**
  * Check if a flight was recently rejected (within cooling period)
  * Returns the pending flight ID if found, null otherwise
  */
-async function checkRecentlyRejected(
+export const checkRecentlyRejected = async (
   calendarId: string,
   eventUid: string,
-): Promise<string | null> {
+): Promise<string | null> => {
   const cutoffDate = subDays(new Date(), REJECTED_COOLING_PERIOD_DAYS);
 
   const recentlyRejected = await prisma.pendingFlight.findFirst({
@@ -731,7 +727,7 @@ async function checkRecentlyRejected(
   });
 
   return recentlyRejected?.id ?? null;
-}
+};
 
 /**
  * Multi-tier duplicate detection - check if user already has a matching flight
@@ -740,10 +736,10 @@ async function checkRecentlyRejected(
  * 1. Exact match: airline + flight number + same day
  * 2. Route match: departure + arrival airports + same day
  */
-async function checkForExistingFlight(
+export const checkForExistingFlight = async (
   userId: number,
   flightData: FlightData,
-): Promise<DuplicateCheckResult> {
+): Promise<DuplicateCheckResult> => {
   const outTime = flightData.outTime;
 
   if (outTime === undefined) {
@@ -845,12 +841,12 @@ async function checkForExistingFlight(
   }
 
   return { isDuplicate: false, reason: '' };
-}
+};
 
 /**
  * Clean up expired pending flights
  */
-export async function cleanupExpiredPendingFlights(): Promise<number> {
+export const cleanupExpiredPendingFlights = async (): Promise<number> => {
   const expired = await prisma.pendingFlight.updateMany({
     where: {
       expiresAt: { lt: new Date() },
@@ -862,12 +858,14 @@ export async function cleanupExpiredPendingFlights(): Promise<number> {
   });
 
   return expired.count;
-}
+};
 
 /**
  * Get pending flights for a user
  */
-export async function getPendingFlightsForUser(userId: number): Promise<
+export const getPendingFlightsForUser = async (
+  userId: number,
+): Promise<
   Array<{
     id: string;
     calendarSourceId: string;
@@ -883,7 +881,7 @@ export async function getPendingFlightsForUser(userId: number): Promise<
       url: string;
     };
   }>
-> {
+> => {
   return await prisma.pendingFlight.findMany({
     where: {
       calendarSource: {
@@ -903,12 +901,12 @@ export async function getPendingFlightsForUser(userId: number): Promise<
       detectedAt: 'desc',
     },
   });
-}
+};
 
 /**
  * Sync all calendars for all users (unified hourly scheduled job)
  */
-export async function syncCalendars(): Promise<void> {
+export const syncCalendars = async (): Promise<void> => {
   console.log('[CalendarSync] Starting hourly calendar sync for all users');
 
   const usersWithCalendars = await prisma.user.findMany({
@@ -940,4 +938,4 @@ export async function syncCalendars(): Promise<void> {
   }
 
   console.log('[CalendarSync] Completed hourly calendar sync for all users');
-}
+};
