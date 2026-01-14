@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Link, Loading, Table } from 'stratosphere-ui';
 
 import { TimeIcon } from '..';
-import viteIcon from '../../../../resources/assets/vite.svg';
+import iconLogo from '../../../../resources/assets/favicon.ico';
 import { AppTheme, useThemeStore } from '../../../stores';
 import { trpc } from '../../../utils/trpc';
 import {
@@ -124,7 +124,7 @@ export const FlightChangelogTable = ({
                       <div className="flex flex-1 flex-col gap-x-2 truncate text-xs sm:flex-row sm:items-center">
                         <Avatar
                           alt={user?.username ?? 'FlightLogger'}
-                          src={user?.avatar ?? viteIcon}
+                          src={user?.avatar ?? iconLogo}
                           shapeClassName="w-4 h-4 lg:w-5 lg:h-5 rounded-full"
                         />
                         {user !== null ? (

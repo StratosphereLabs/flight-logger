@@ -14,6 +14,7 @@ export * from './FlightHistory';
 export * from './FlightInfo';
 export * from './FlightTimesDisplay';
 export * from './Icons';
+export * from './LogoHorizontal';
 export * from './MapOverlays';
 export * from './OnTimePerformanceChart';
 export * from './StickyFlightHeader';
