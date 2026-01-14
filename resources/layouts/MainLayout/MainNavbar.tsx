@@ -19,6 +19,7 @@ import {
   ColoredSnowflakeIcon,
   HomeIcon,
   LeftArrowIcon,
+  LogoHorizontal,
   LogoutIcon,
   MenuIcon,
   PlusAirplaneIcon,
@@ -228,18 +229,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               }}
               title="Home"
             >
-              <div className="font-title text-primary text-xl transition-all duration-200 sm:text-3xl">
-                <span>Flight</span>
-                <span
-                  className={classNames(
-                    theme === AppTheme.CHRISTMAS && christmasThemeEnabled
-                      ? 'text-secondary'
-                      : 'text-base-content',
-                  )}
-                >
-                  Logger
-                </span>
-              </div>
+              <LogoHorizontal className="text-secondary w-43" />
               {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
                 <ColoredSnowflakeIcon className="relative bottom-2 h-5 w-5 rotate-30 transform sm:h-6 sm:w-6" />
               ) : null}
