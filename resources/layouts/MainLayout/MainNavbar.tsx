@@ -229,7 +229,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               }}
               title="Home"
             >
-              <LogoHorizontal className="text-secondary w-43" />
+              <LogoHorizontal className="text-secondary w-44" />
               {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
                 <ColoredSnowflakeIcon className="relative bottom-2 h-5 w-5 rotate-30 transform sm:h-6 sm:w-6" />
               ) : null}
