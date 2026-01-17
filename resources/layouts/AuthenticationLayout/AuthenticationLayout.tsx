@@ -7,7 +7,11 @@ import {
   useAlertMessages,
 } from 'stratosphere-ui';
 
-import { RightArrowIcon, ThemeButton } from '../../common/components';
+import {
+  LogoHorizontal,
+  RightArrowIcon,
+  ThemeButton,
+} from '../../common/components';
 
 export const AuthenticationLayout = (): JSX.Element => {
   const navigate = useNavigate();
@@ -15,12 +19,9 @@ export const AuthenticationLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   return (
     <div className="hero bg-base-200 min-h-[100dvh]">
-      <div className="hero-content w-full flex-wrap justify-around">
-        <div className="text-center lg:text-left">
-          <div className="font-title text-primary inline-flex text-lg transition-all duration-200 md:text-5xl">
-            <span>Flight</span>{' '}
-            <span className="text-base-content">Logger</span>
-          </div>
+      <div className="hero-content flex w-full flex-col md:flex-row">
+        <div className="flex flex-col items-center md:items-start">
+          <LogoHorizontal className="text-secondary w-60" />
           <p className="py-6">
             Welcome! Please login to access your flights and trips
           </p>

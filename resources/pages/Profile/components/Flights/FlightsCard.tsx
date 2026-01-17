@@ -130,10 +130,10 @@ export const FlightsCard = ({
                             oldSearchParams.delete('isFlightsFullScreen');
                             return oldSearchParams;
                           }
-                          return {
+                          return new URLSearchParams({
                             ...Object.fromEntries(oldSearchParams),
                             isFlightsFullScreen: 'true',
-                          };
+                          });
                         },
                         { replace: true },
                       );

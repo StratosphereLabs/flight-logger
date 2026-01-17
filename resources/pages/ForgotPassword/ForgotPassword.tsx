@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useStatsigClient } from '@statsig/react-bindings';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLinkClickHandler } from 'react-router-dom';
 import { Button, CardTitle, Form, FormControl } from 'stratosphere-ui';
@@ -10,6 +11,7 @@ import { forgotPasswordSchema } from './schema';
 
 export const ForgotPassword = (): JSX.Element => {
   useAuthPage();
+  const { client } = useStatsigClient();
   const [resetLinkSent, setResetLinkSent] = useState(false);
   const methods = useForm({
     mode: 'onBlur',
@@ -24,6 +26,9 @@ export const ForgotPassword = (): JSX.Element => {
   const { isLoading, mutate } = trpc.passwordReset.forgotPassword.useMutation({
     onError,
   });
+  useEffect(() => {
+    client.logEvent('forgot_password_page_viewed');
+  }, [client]);
   if (resetLinkSent) {
     return (
       <>

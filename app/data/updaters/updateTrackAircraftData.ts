@@ -1,4 +1,4 @@
-import { isAfter, isBefore, isEqual, sub } from 'date-fns';
+import { isAfter, isBefore, sub } from 'date-fns';
 import groupBy from 'lodash.groupby';
 
 import { prisma } from '../../db';
@@ -41,17 +41,13 @@ export const updateTrackAircraftData = async (
       );
       return;
     }
+    const oneDayBeforeDeparture = sub(flights[0].outTime, { days: 1 });
     const filteredData = registrationData.flights.filter(
-      ({ airlineIata, flightStatus, outTime }) => {
-        const oneDayBeforeDeparture = sub(flights[0].outTime, { days: 1 });
-        return (
-          airlineIata === flights[0].airline?.iata &&
-          flightStatus !== 'CANCELED' &&
-          isBefore(outTime, flights[0].outTime) &&
-          (isEqual(outTime, oneDayBeforeDeparture) ||
-            isAfter(outTime, oneDayBeforeDeparture))
-        );
-      },
+      ({ airlineIata, flightStatus, outTime, inTime }) =>
+        airlineIata === flights[0].airline?.iata &&
+        flightStatus !== 'CANCELED' &&
+        isBefore(inTime, outTimeActual) &&
+        isAfter(outTime, oneDayBeforeDeparture),
     );
     const airportIataCodes = [
       ...new Set(
@@ -90,10 +86,36 @@ export const updateTrackAircraftData = async (
     const existingFlights = await prisma.flight.findMany({
       where: {
         airframeId: flights[0].airframeId,
-        outTime: {
-          lt: flights[0].outTime,
-          gte: sub(flights[0].outTime, { days: 1 }),
-        },
+        AND: [
+          {
+            OR: [
+              {
+                inTimeActual: {
+                  lte: outTimeActual,
+                },
+              },
+              {
+                inTime: {
+                  lte: outTimeActual,
+                },
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                outTimeActual: {
+                  gte: oneDayBeforeDeparture,
+                },
+              },
+              {
+                outTime: {
+                  gte: oneDayBeforeDeparture,
+                },
+              },
+            ],
+          },
+        ],
       },
       select: {
         userId: true,

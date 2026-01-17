@@ -233,10 +233,10 @@ export const MapCard = ({
                         setSearchParams(
                           oldSearchParams => {
                             if (newValue) {
-                              return {
+                              return new URLSearchParams({
                                 ...Object.fromEntries(oldSearchParams),
                                 isMapFullScreen: 'true',
-                              };
+                              });
                             } else {
                               oldSearchParams.delete('isMapFullScreen');
                               return oldSearchParams;

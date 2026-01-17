@@ -5,7 +5,7 @@ import groupBy from 'lodash.groupby';
 import { FLIGHT_DATA_PROMISE_CONCURRENCY } from '../../constants';
 import { prisma } from '../../db';
 import type { FlightWithData } from '../types';
-import { getGroupedFlightsKey } from '../utils';
+import { getFlightUpdateQueryWhere, getGroupedFlightsKey } from '../utils';
 import { updateFlightData } from './updateFlightData';
 import { updateFlightTrackData } from './updateFlightTrackData';
 import { updateFlightWeatherReports } from './updateFlightWeatherReports';
@@ -279,34 +279,21 @@ export const updateFlightsEvery15 = async (): Promise<void> => {
 
 /**
  * Bucket #5 - Every 5 minutes
- * 2 hours before departure - 1 hour after arrival
+ * 2 hours before departure - 1 hour after takeoff
+ * 2 hours before landing - 1 hour after arrival
  */
 export const updateFlightsEvery5 = async (): Promise<void> => {
+  const departureBounds = {
+    gte: sub(new Date(), { hours: 1 }),
+    lte: add(new Date(), { hours: 2 }),
+  };
+  const arrivalBounds = {
+    gte: sub(new Date(), { hours: 1 }),
+    lte: add(new Date(), { hours: 2 }),
+  };
   try {
     const flightsToUpdate = await prisma.flight.findMany({
-      where: {
-        outTime: {
-          lte: add(new Date(), { hours: 2 }),
-        },
-        OR: [
-          {
-            inTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
-            },
-          },
-          {
-            inTime: {
-              gt: sub(new Date(), { hours: 1 }),
-            },
-          },
-        ],
-        airline: {
-          isNot: null,
-        },
-        flightNumber: {
-          not: null,
-        },
-      },
+      where: getFlightUpdateQueryWhere(departureBounds, arrivalBounds),
       include: {
         airline: true,
         departureAirport: {
@@ -342,14 +329,26 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
       },
     });
     const filteredFlights = flightsToUpdate.filter(
-      ({ outTime, outTimeActual, inTime, inTimeActual }) => {
-        const departureTime = outTimeActual ?? outTime;
-        const arrivalTime = inTimeActual ?? inTime;
+      ({
+        outTime,
+        outTimeActual,
+        offTime,
+        offTimeActual,
+        onTime,
+        onTimeActual,
+        inTime,
+        inTimeActual,
+      }) => {
+        const takeoffTime =
+          offTimeActual ?? offTime ?? outTimeActual ?? outTime;
+        const landingTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
+        const departureTime = min([takeoffTime, outTimeActual ?? outTime]);
+        const arrivalTime = max([landingTime, inTimeActual ?? inTime]);
         return (
-          (isAfter(new Date(), sub(departureTime, { hours: 2 })) &&
-            isBefore(new Date(), add(departureTime, { hours: 1 }))) ||
-          (isAfter(new Date(), sub(arrivalTime, { hours: 2 })) &&
-            isBefore(new Date(), add(arrivalTime, { hours: 1 })))
+          (isBefore(departureTime, departureBounds.lte) &&
+            isAfter(takeoffTime, departureBounds.gte)) ||
+          (isBefore(landingTime, arrivalBounds.lte) &&
+            isAfter(arrivalTime, arrivalBounds.gte))
         );
       },
     );
@@ -371,70 +370,21 @@ export const updateFlightsEvery5 = async (): Promise<void> => {
 
 /**
  * Bucket #6 - Every 1 minute
- * 5 minutes before departure - 1 hour after departure
- * 1 hour before arrival - 5 minutes after arrival
+ * 5 minutes before departure - 30 minutes after takeoff
+ * 1 hour before landing - 5 minutes after arrival
  */
 export const updateFlightsEveryMinute = async (): Promise<void> => {
+  const departureBounds = {
+    gte: sub(new Date(), { minutes: 30 }),
+    lte: add(new Date(), { minutes: 5 }),
+  };
+  const arrivalBounds = {
+    gte: sub(new Date(), { minutes: 5 }),
+    lte: add(new Date(), { hours: 1 }),
+  };
   try {
     const flightsToUpdate = await prisma.flight.findMany({
-      where: {
-        OR: [
-          {
-            outTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { minutes: 5 }),
-            },
-          },
-          {
-            outTime: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { minutes: 5 }),
-            },
-          },
-          {
-            offTimeActual: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { minutes: 5 }),
-            },
-          },
-          {
-            offTime: {
-              gt: sub(new Date(), { hours: 1 }),
-              lte: add(new Date(), { minutes: 5 }),
-            },
-          },
-          {
-            onTimeActual: {
-              gt: sub(new Date(), { minutes: 5 }),
-              lte: add(new Date(), { hours: 1 }),
-            },
-          },
-          {
-            onTime: {
-              gt: sub(new Date(), { minutes: 5 }),
-              lte: add(new Date(), { hours: 1 }),
-            },
-          },
-          {
-            inTimeActual: {
-              gt: sub(new Date(), { minutes: 5 }),
-              lte: add(new Date(), { hours: 1 }),
-            },
-          },
-          {
-            inTime: {
-              gt: sub(new Date(), { minutes: 5 }),
-              lte: add(new Date(), { hours: 1 }),
-            },
-          },
-        ],
-        airline: {
-          isNot: null,
-        },
-        flightNumber: {
-          not: null,
-        },
-      },
+      where: getFlightUpdateQueryWhere(departureBounds, arrivalBounds),
       include: {
         airline: true,
         departureAirport: {
@@ -480,19 +430,16 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
         inTime,
         inTimeActual,
       }) => {
-        const departureTime = min([
-          offTimeActual ?? offTime ?? outTime,
-          outTimeActual ?? outTime,
-        ]);
-        const arrivalTime = max([
-          onTimeActual ?? onTime ?? inTime,
-          inTimeActual ?? inTime,
-        ]);
+        const takeoffTime =
+          offTimeActual ?? offTime ?? outTimeActual ?? outTime;
+        const landingTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
+        const departureTime = min([takeoffTime, outTimeActual ?? outTime]);
+        const arrivalTime = max([landingTime, inTimeActual ?? inTime]);
         return (
-          (isAfter(new Date(), sub(departureTime, { minutes: 5 })) &&
-            isBefore(new Date(), add(departureTime, { hours: 1 }))) ||
-          (isAfter(new Date(), sub(arrivalTime, { hours: 1 })) &&
-            isBefore(new Date(), add(arrivalTime, { minutes: 5 })))
+          (isBefore(departureTime, departureBounds.lte) &&
+            isAfter(takeoffTime, departureBounds.gte)) ||
+          (isBefore(landingTime, arrivalBounds.lte) &&
+            isAfter(arrivalTime, arrivalBounds.gte))
         );
       },
     );
@@ -505,70 +452,21 @@ export const updateFlightsEveryMinute = async (): Promise<void> => {
 
 /**
  * Bucket #7 - Every 15 seconds
- * 1 minute before takeoff - 30 min after takeoff
- * 30 min before landing - 1 minute after landing
+ * 1 minute before departure - 15 minutes after takeoff
+ * 30 minutes before landing - 1 minute after arrival
  */
 export const updateFlightsEvery15Seconds = async (): Promise<void> => {
+  const departureBounds = {
+    gte: sub(new Date(), { minutes: 15 }),
+    lte: add(new Date(), { minutes: 1 }),
+  };
+  const arrivalBounds = {
+    gte: sub(new Date(), { minutes: 1 }),
+    lte: add(new Date(), { minutes: 30 }),
+  };
   try {
     const flightsToUpdate = await prisma.flight.findMany({
-      where: {
-        OR: [
-          {
-            outTimeActual: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 1 }),
-            },
-          },
-          {
-            outTime: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 1 }),
-            },
-          },
-          {
-            offTimeActual: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 1 }),
-            },
-          },
-          {
-            offTime: {
-              gt: sub(new Date(), { minutes: 30 }),
-              lte: add(new Date(), { minutes: 1 }),
-            },
-          },
-          {
-            onTimeActual: {
-              gt: sub(new Date(), { minutes: 1 }),
-              lte: add(new Date(), { minutes: 30 }),
-            },
-          },
-          {
-            onTime: {
-              gt: sub(new Date(), { minutes: 1 }),
-              lte: add(new Date(), { minutes: 30 }),
-            },
-          },
-          {
-            inTimeActual: {
-              gt: sub(new Date(), { minutes: 1 }),
-              lte: add(new Date(), { minutes: 30 }),
-            },
-          },
-          {
-            inTime: {
-              gt: sub(new Date(), { minutes: 1 }),
-              lte: add(new Date(), { minutes: 30 }),
-            },
-          },
-        ],
-        airline: {
-          isNot: null,
-        },
-        flightNumber: {
-          not: null,
-        },
-      },
+      where: getFlightUpdateQueryWhere(departureBounds, arrivalBounds),
       include: {
         airline: true,
         departureAirport: {
@@ -614,19 +512,16 @@ export const updateFlightsEvery15Seconds = async (): Promise<void> => {
         inTime,
         inTimeActual,
       }) => {
-        const departureTime = min([
-          offTimeActual ?? offTime ?? outTime,
-          outTimeActual ?? outTime,
-        ]);
-        const arrivalTime = max([
-          onTimeActual ?? onTime ?? inTime,
-          inTimeActual ?? inTime,
-        ]);
+        const takeoffTime =
+          offTimeActual ?? offTime ?? outTimeActual ?? outTime;
+        const landingTime = onTimeActual ?? onTime ?? inTimeActual ?? inTime;
+        const departureTime = min([takeoffTime, outTimeActual ?? outTime]);
+        const arrivalTime = max([landingTime, inTimeActual ?? inTime]);
         return (
-          (isAfter(new Date(), sub(departureTime, { minutes: 1 })) &&
-            isBefore(new Date(), add(departureTime, { minutes: 30 }))) ||
-          (isAfter(new Date(), sub(arrivalTime, { minutes: 30 })) &&
-            isBefore(new Date(), add(arrivalTime, { minutes: 1 })))
+          (isBefore(departureTime, departureBounds.lte) &&
+            isAfter(takeoffTime, departureBounds.gte)) ||
+          (isBefore(landingTime, arrivalBounds.lte) &&
+            isAfter(arrivalTime, arrivalBounds.gte))
         );
       },
     );

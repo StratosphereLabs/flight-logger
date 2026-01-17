@@ -83,3 +83,106 @@ export const getDescentDuration = (distanceToDescend: number): number => {
   if (distanceToDescend <= 0) return 0;
   return 0.3155 * Math.pow(distanceToDescend, 0.7676);
 };
+
+export interface QueryBounds {
+  gte: Date;
+  lte: Date;
+}
+
+export const getFlightUpdateQueryWhere = (
+  departureBounds: QueryBounds,
+  arrivalBounds: QueryBounds,
+): Prisma.FlightWhereInput => ({
+  OR: [
+    {
+      AND: [
+        {
+          OR: [
+            {
+              outTimeActual: {
+                lte: departureBounds.lte,
+              },
+            },
+            {
+              outTime: {
+                lte: departureBounds.lte,
+              },
+            },
+          ],
+        },
+        {
+          OR: [
+            {
+              offTimeActual: {
+                gte: departureBounds.gte,
+              },
+            },
+            {
+              offTime: {
+                gte: departureBounds.gte,
+              },
+            },
+            {
+              outTimeActual: {
+                gte: departureBounds.gte,
+              },
+            },
+            {
+              outTime: {
+                gte: departureBounds.gte,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      AND: [
+        {
+          OR: [
+            {
+              inTimeActual: {
+                gte: arrivalBounds.gte,
+              },
+            },
+            {
+              inTime: {
+                gte: arrivalBounds.gte,
+              },
+            },
+          ],
+        },
+        {
+          OR: [
+            {
+              onTimeActual: {
+                lte: arrivalBounds.lte,
+              },
+            },
+            {
+              onTime: {
+                lte: arrivalBounds.lte,
+              },
+            },
+            {
+              inTimeActual: {
+                lte: arrivalBounds.lte,
+              },
+            },
+            {
+              inTime: {
+                lte: arrivalBounds.lte,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  airline: {
+    isNot: null,
+  },
+  flightNumber: {
+    not: null,
+  },
+});

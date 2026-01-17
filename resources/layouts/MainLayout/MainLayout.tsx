@@ -1,3 +1,4 @@
+import { useGateValue } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
@@ -20,6 +21,7 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { username } = useParams();
   const { theme } = useThemeStore();
+  const christmasThemeEnabled = useGateValue('christmas_theme');
   const { setScrollContainerRef } = useMainLayoutStore();
   const [showSnowbank, setShowSnowbank] = useState(false);
   const [showFooterText, setShowFooterText] = useState(false);
@@ -45,7 +47,7 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
   }, [username]);
   return (
     <div className="relative flex h-[100dvh] flex-col justify-between">
-      {theme === AppTheme.CHRISTMAS ? (
+      {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
         <Snowfall style={{ zIndex: 50 }} />
       ) : null}
       <MainNavbar methods={methods} />
@@ -61,12 +63,12 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
           <AlertMessages maxMessages={4} />
         </div>
       ) : null}
-      {theme === AppTheme.CHRISTMAS && showSnowbank ? (
+      {theme === AppTheme.CHRISTMAS && christmasThemeEnabled && showSnowbank ? (
         <div className="pointer-events-none fixed bottom-0 left-0 h-[70px] w-full overflow-hidden">
           <div className="animate-rise absolute bottom-0 h-[70px] w-full rounded-t-[30%] bg-[#dee4fd]"></div>
         </div>
       ) : null}
-      {theme === AppTheme.CHRISTMAS ? (
+      {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
         <>
           <footer
             className={classNames(

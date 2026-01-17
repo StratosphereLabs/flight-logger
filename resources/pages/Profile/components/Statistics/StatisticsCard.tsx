@@ -77,10 +77,10 @@ export const StatisticsCard = ({
                       oldSearchParams.delete('isStatsFullScreen');
                       return oldSearchParams;
                     }
-                    return {
+                    return new URLSearchParams({
                       ...Object.fromEntries(oldSearchParams),
                       isStatsFullScreen: 'true',
-                    };
+                    });
                   },
                   { replace: true },
                 );

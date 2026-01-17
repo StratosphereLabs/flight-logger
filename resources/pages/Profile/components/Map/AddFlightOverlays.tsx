@@ -1,7 +1,7 @@
-import { MarkerF, PolylineF } from '@react-google-maps/api';
+import { PolylineF } from '@react-google-maps/api';
 import { useEffect } from 'react';
 
-import { AirportLabelOverlay } from '../../../../common/components';
+import { AirportMarkersOverlay } from '../../../../common/components';
 import { useTRPCErrorHandler } from '../../../../common/hooks';
 import { useIsDarkMode } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
@@ -67,37 +67,9 @@ export const AddFlightOverlays = ({
             ]}
           />
         ))}
-      {isAddingFlight &&
-        flightSearchData?.airports?.map(({ id, lat, lon, iata }) => (
-          <>
-            <AirportLabelOverlay
-              iata={iata}
-              isFocused
-              position={{ lat, lng: lon }}
-              show
-            />
-            <MarkerF
-              key={id}
-              position={{ lat, lng: lon }}
-              title={id}
-              options={{
-                icon:
-                  window.google !== undefined
-                    ? {
-                        path: window.google.maps.SymbolPath.CIRCLE,
-                        fillColor: 'white',
-                        fillOpacity: 1,
-                        scale: 4,
-                        strokeColor: 'black',
-                        strokeWeight: 1.5,
-                        strokeOpacity: 1,
-                      }
-                    : null,
-                zIndex: 30,
-              }}
-            />
-          </>
-        ))}
+      {isAddingFlight && (
+        <AirportMarkersOverlay airports={flightSearchData?.airports ?? []} />
+      )}
     </>
   );
 };

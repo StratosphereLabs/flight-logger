@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNowStrict, isBefore } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading } from 'stratosphere-ui';
 
@@ -46,6 +46,7 @@ export interface FlightInfoProps {
     | 'inTimeLocal'
     | 'inTimeActualDaysAdded'
     | 'inTimeDaysAdded'
+    | 'diversionAirport'
     | 'departureGate'
     | 'departureTerminal'
     | 'arrivalGate'
@@ -65,8 +66,8 @@ export interface FlightInfoProps {
     | 'inTime'
     | 'arrivalBaggage'
   >;
-  onAddTravelersClick: () => void;
-  onJoinFlightClick: () => void;
+  onAddTravelersClick?: () => void;
+  onJoinFlightClick?: () => void;
 }
 
 export const FlightInfo = ({
@@ -144,7 +145,9 @@ export const FlightInfo = ({
               </span>
             ) : null}
           </div>
-          {isLoggedIn && userData?.id === data.userId ? (
+          {isLoggedIn &&
+          userData?.id === data.userId &&
+          onAddTravelersClick !== undefined ? (
             <Button
               className="max-w-[150px] truncate"
               color="ghost"
@@ -157,7 +160,9 @@ export const FlightInfo = ({
               <span className="truncate">Add Travelers</span>
             </Button>
           ) : null}
-          {isLoggedIn && data.canAddFlight ? (
+          {isLoggedIn &&
+          data.canAddFlight &&
+          onJoinFlightClick !== undefined ? (
             <Button
               className="max-w-[150px] truncate"
               color="ghost"
@@ -204,7 +209,11 @@ export const FlightInfo = ({
               {data.arrivalAirport.iata}
             </div>
             <div className="truncate text-center text-sm sm:text-base">
-              {data.arrivalMunicipalityText}
+              {data.arrivalAirport.municipality},{' '}
+              {data.arrivalAirport.countryId === 'US' ||
+              data.arrivalAirport.countryId === 'CA'
+                ? data.arrivalAirport.regionId.split('-')[1]
+                : data.arrivalAirport.countryId}
             </div>
             <FlightTimesDisplay
               className="justify-center font-mono"
@@ -267,11 +276,17 @@ export const FlightInfo = ({
             )}
           >
             <span>
-              {data.delayStatus === 'canceled'
-                ? 'Canceled'
-                : data.delayStatus !== 'none'
-                  ? `Delayed ${data.delay}`
-                  : 'On Time'}
+              {data.diversionAirport !== null
+                ? `${
+                    isBefore(new Date(), data.inTimeActual ?? data.inTime)
+                      ? 'Diverting'
+                      : 'Diverted'
+                  } to ${data.diversionAirport.iata}`
+                : data.delayStatus === 'canceled'
+                  ? 'Canceled'
+                  : data.delayStatus !== 'none'
+                    ? `Delayed ${data.delay}`
+                    : 'On Time'}
             </span>
             <span>
               {data.flightProgress === 0 && data.progress === 0

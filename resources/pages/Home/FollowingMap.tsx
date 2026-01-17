@@ -4,8 +4,8 @@ import {
   OverlayView,
   OverlayViewF,
   PolylineF,
-  useJsApiLoader,
 } from '@react-google-maps/api';
+import { useGateValue } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
@@ -21,6 +21,7 @@ import {
 
 import {
   AirportLabelOverlay,
+  HalloweenIcon,
   PlaneSolidIcon,
   PlusAirplaneIcon,
   RightArrowIcon,
@@ -30,20 +31,16 @@ import {
   CHRISTMAS_THEME_TOOLTIP_COLORS,
   TOOLTIP_COLORS,
 } from '../../common/constants';
-import { useWeatherRadarLayer } from '../../common/hooks';
 import {
-  christmasStyle,
-  cyberPunkStyle,
-  darkModeStyle,
-  lightModeStyle,
-} from '../../common/mapStyle';
+  useGoogleMapInitialization,
+  useWeatherRadarLayer,
+} from '../../common/hooks';
 import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
 import { type ProfilePageNavigationState } from '../Profile';
 import { getAirportsData } from '../Profile/components/Map/utils';
 import { FlightRow } from './FlightRow';
-import { DEFAULT_COORDINATES } from './constants';
 import {
   getFollowingFlightData,
   sortByArrivalTimeDesc,
@@ -51,11 +48,9 @@ import {
 } from './utils';
 
 export const FollowingMap = (): JSX.Element => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_ID as string,
-    libraries: ['visualization'],
-  });
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const christmasThemeEnabled = useGateValue('christmas_theme');
+  const halloweenThemeEnabled = useGateValue('halloween_theme');
+  const { isLoaded, map, setCenter, setMap } = useGoogleMapInitialization();
   const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
   const [selectedAirportId, setSelectedAirportId] = useState<string | null>(
     null,
@@ -63,29 +58,12 @@ export const FollowingMap = (): JSX.Element => {
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
   const isItemSelected = selectedAirportId !== null;
   const navigate = useNavigate();
-  const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
   useWeatherRadarLayer(map);
-  useEffect(() => {
-    map?.setValues({
-      styles:
-        theme === AppTheme.CYBERPUNK
-          ? cyberPunkStyle
-          : theme === AppTheme.CHRISTMAS
-            ? christmasStyle
-            : isDarkMode
-              ? darkModeStyle
-              : lightModeStyle,
-    });
-  }, [isDarkMode, map, theme]);
-  useEffect(() => {
-    map?.setCenter(center);
-  }, [center, map]);
   const { data, isLoading } = trpc.flights.getFollowingFlights.useQuery(
     undefined,
     {
-      refetchInterval: 5000,
       select: flightResult => {
         const flights = flightResult.flights.map(
           getFollowingFlightData({ hoverAirportId, selectedAirportId }),
@@ -113,11 +91,17 @@ export const FollowingMap = (): JSX.Element => {
           groupedFlights,
         };
       },
+      refetchInterval: data => {
+        if (data === undefined) return false;
+        return data.flights.some(({ flightState }) => flightState === 'CURRENT')
+          ? 5000
+          : 60000;
+      },
     },
   );
   useEffect(() => {
     if (data?.centerpoint !== undefined) setCenter(data.centerpoint);
-  }, [data?.centerpoint]);
+  }, [data?.centerpoint, setCenter]);
   const flightIds = useMemo(
     () => data?.flights.map(({ id }) => id).join(',') ?? '',
     [data?.flights],
@@ -417,10 +401,12 @@ export const FollowingMap = (): JSX.Element => {
                           <Tooltip
                             className={classNames(
                               theme === AppTheme.CHRISTMAS &&
+                                christmasThemeEnabled &&
                                 CHRISTMAS_THEME_TOOLTIP_COLORS[delayStatus],
                             )}
                             color={
-                              theme === AppTheme.CHRISTMAS
+                              theme === AppTheme.CHRISTMAS &&
+                              christmasThemeEnabled
                                 ? undefined
                                 : TOOLTIP_COLORS[delayStatus]
                             }
@@ -472,7 +458,8 @@ export const FollowingMap = (): JSX.Element => {
                                 user !== null ? `@${user.username}` : undefined
                               }
                             >
-                              {theme === AppTheme.CHRISTMAS ? (
+                              {theme === AppTheme.CHRISTMAS &&
+                              christmasThemeEnabled ? (
                                 <SleighIcon
                                   className={classNames(
                                     'text-secondary h-7 w-7 brightness-80',
@@ -486,15 +473,8 @@ export const FollowingMap = (): JSX.Element => {
                                     )}deg)`,
                                   }}
                                 />
-                              ) : (
-                                <PlaneSolidIcon
-                                  className="text-primary h-6 w-6"
-                                  style={{
-                                    transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
-                                  }}
-                                />
-                              )}
-                              {/* {theme === AppTheme.HALLOWEEN ? (
+                              ) : theme === AppTheme.HALLOWEEN &&
+                                halloweenThemeEnabled ? (
                                 <HalloweenIcon
                                   className="text-primary h-7 w-7"
                                   style={{
@@ -508,7 +488,7 @@ export const FollowingMap = (): JSX.Element => {
                                     transform: `rotate(${Math.round(estimatedHeading - 90)}deg)`,
                                   }}
                                 />
-                              )} */}
+                              )}
                               <span className="sr-only">
                                 {user !== null ? `@${user?.username}` : null}
                               </span>

@@ -1,5 +1,5 @@
 import { type Airport } from '@prisma/client';
-import { add, isAfter, isBefore, isFuture, sub } from 'date-fns';
+import { add, isBefore, isFuture, sub } from 'date-fns';
 import { formatInTimeZone, fromZonedTime } from 'date-fns-tz';
 
 import {
@@ -198,9 +198,7 @@ export const getFlightTimestamps = ({
   const currentOnTimeActual =
     onTimeActual ?? sub(inTimeActual ?? inTime, { minutes: 10 });
   const durationActual =
-    outTimeActual !== undefined &&
-    inTimeActual !== undefined &&
-    isAfter(new Date(), inTimeActual)
+    outTimeActual !== undefined && inTimeActual !== undefined
       ? getDurationMinutes({
           start: outTimeActual,
           end: inTimeActual,
@@ -210,12 +208,10 @@ export const getFlightTimestamps = ({
     start: currentOffTime,
     end: currentOnTime,
   });
-  const flightDurationActual = isAfter(new Date(), currentOnTimeActual)
-    ? getDurationMinutes({
-        start: currentOffTimeActual,
-        end: currentOnTimeActual,
-      })
-    : null;
+  const flightDurationActual = getDurationMinutes({
+    start: currentOffTimeActual,
+    end: currentOnTimeActual,
+  });
   const taxiDuration = duration - flightDuration;
   const taxiDurationActual =
     durationActual !== null && flightDurationActual !== null

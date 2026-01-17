@@ -42,8 +42,8 @@ interface FlightTrackResult {
   trace: Array<
     [
       number,
-      number,
-      number,
+      number | null,
+      number | null,
       number | 'ground',
       number | null,
       number | null,
@@ -71,12 +71,13 @@ export const fetchFlightTrackData = async (
   flightData: FlightWithData,
   flightStatsUpdate?: FlightStatsFlightUpdateData,
 ): Promise<TracklogItem[] | undefined> => {
-  const departureTime = flightData.outTimeActual ?? flightData.outTime;
   const airframeId = flightStatsUpdate?.airframeId ?? flightData.airframeId;
   if (
     airframeId === null ||
-    isBefore(new Date(), departureTime) ||
-    isAfter(sub(new Date(), { hours: 25 }), departureTime)
+    flightData.outTimeActual === null ||
+    flightData.inTimeActual === null ||
+    isBefore(new Date(), flightData.outTimeActual) ||
+    isAfter(sub(new Date(), { hours: 25 }), flightData.outTimeActual)
   )
     return undefined;
   const fullUrl = `https://globe.adsbexchange.com/data/traces/${airframeId.slice(4)}/trace_full_${airframeId}.json`;
@@ -103,11 +104,11 @@ export const fetchFlightTrackData = async (
     (acc, [elapsedTime, ...item]) => {
       const currentTimestamp = fullData.timestamp + elapsedTime;
       const currentDate = new Date(1000 * currentTimestamp);
-      const departureTime = flightData.outTimeActual ?? flightData.outTime;
-      const arrivalTime = flightData.inTimeActual ?? flightData.inTime;
       return (item[7] !== null || item[2] === 'ground') &&
-        isAfter(currentDate, sub(departureTime, { minutes: 5 })) &&
-        isBefore(currentDate, add(arrivalTime, { minutes: 5 }))
+        flightData.outTimeActual !== null &&
+        flightData.inTimeActual !== null &&
+        isAfter(currentDate, sub(flightData.outTimeActual, { minutes: 5 })) &&
+        isBefore(currentDate, add(flightData.inTimeActual, { minutes: 5 }))
         ? [[currentTimestamp, ...item], ...acc]
         : acc;
     },
@@ -117,11 +118,11 @@ export const fetchFlightTrackData = async (
     (acc, [elapsedTime, ...item]) => {
       const currentTimestamp = recentData.timestamp + elapsedTime;
       const currentDate = new Date(1000 * currentTimestamp);
-      const departureTime = flightData.outTimeActual ?? flightData.outTime;
-      const arrivalTime = flightData.inTimeActual ?? flightData.inTime;
       return (item[7] !== null || item[2] === 'ground') &&
-        isAfter(currentDate, sub(departureTime, { minutes: 5 })) &&
-        isBefore(currentDate, add(arrivalTime, { minutes: 5 })) &&
+        flightData.outTimeActual !== null &&
+        flightData.inTimeActual !== null &&
+        isAfter(currentDate, sub(flightData.outTimeActual, { minutes: 5 })) &&
+        isBefore(currentDate, add(flightData.inTimeActual, { minutes: 5 })) &&
         recentData.timestamp + elapsedTime > lastFullTimestamp
         ? [[currentTimestamp, ...item], ...acc]
         : acc;
@@ -131,13 +132,15 @@ export const fetchFlightTrackData = async (
   const trackData = [...recentTrackData, ...fullTrackData];
   const currentFlightData: TracklogItem[] = [];
   for (const trackItem of trackData) {
-    currentFlightData.unshift({
-      timestamp: Math.round(trackItem[0]),
-      coord: [trackItem[2], trackItem[1]],
-      alt: typeof trackItem[3] === 'number' ? trackItem[3] / 100 : null,
-      gs: trackItem[4],
-      ground: trackItem[3] === 'ground',
-    });
+    if (trackItem[2] !== null && trackItem[1] !== null) {
+      currentFlightData.unshift({
+        timestamp: Math.round(trackItem[0]),
+        coord: [trackItem[2], trackItem[1]],
+        alt: typeof trackItem[3] === 'number' ? trackItem[3] / 100 : null,
+        gs: trackItem[4],
+        ground: trackItem[3] === 'ground',
+      });
+    }
   }
   return currentFlightData;
 };

@@ -6,33 +6,58 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
+import { extendBounds } from '../utils';
 
 export interface UseFlightMapBoundsOptions {
   data: FlightsRouterOutput['getFlight'] | undefined;
   map: google.maps.Map | null;
+  isMapCollapsed: boolean;
+}
+
+export interface UseFlightMapBoundsResult {
+  focusFullRoute: () => void;
+  isEnRouteFlight: boolean;
+  isFlightFocused: boolean;
+  setIsFlightFocused: Dispatch<SetStateAction<boolean>>;
 }
 
 export const useFlightMapBounds = ({
   data,
   map,
-}: UseFlightMapBoundsOptions): {
-  focusFullRoute: () => void;
-  isEnRouteFlight: boolean;
-  isFlightFocused: boolean;
-  setIsFlightFocused: Dispatch<SetStateAction<boolean>>;
-  setIsMapCollapsed: Dispatch<SetStateAction<boolean>>;
-} => {
-  const [isFlightFocused, setIsFlightFocused] = useState(false);
-  const [isMapCollapsed, setIsMapCollapsed] = useState(false);
-  const isEnRouteFlight = data?.flightStatus === 'EN_ROUTE';
-  const extendBounds = useCallback(
-    (bounds: google.maps.LatLngBounds, lat: number, lng: number) => {
-      bounds.extend(new window.google.maps.LatLng({ lat, lng }));
-    },
-    [],
+  isMapCollapsed,
+}: UseFlightMapBoundsOptions): UseFlightMapBoundsResult => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [initialParams] = useState(searchParams);
+  const [isFlightFocused, setIsFlightFocusedValue] = useState(
+    initialParams.get('isFlightFocused') === 'true',
   );
+  const setIsFlightFocused = useCallback(
+    (value: SetStateAction<boolean>) => {
+      setIsFlightFocusedValue(oldValue => {
+        const newValue = typeof value === 'function' ? value(oldValue) : value;
+        setSearchParams(
+          oldSearchParams => {
+            if (newValue) {
+              return new URLSearchParams({
+                ...Object.fromEntries(oldSearchParams),
+                isFlightFocused: 'true',
+              });
+            } else {
+              oldSearchParams.delete('isFlightFocused');
+              return oldSearchParams;
+            }
+          },
+          { replace: true },
+        );
+        return newValue;
+      });
+    },
+    [setSearchParams],
+  );
+  const isEnRouteFlight = data?.flightStatus === 'EN_ROUTE';
   const getFullRouteBounds = useCallback(() => {
     const bounds = new window.google.maps.LatLngBounds();
     if (data === undefined) return bounds;
@@ -52,7 +77,7 @@ export const useFlightMapBounds = ({
       }
     }
     return bounds;
-  }, [data, extendBounds]);
+  }, [data]);
   const getFlightFocusedBounds = useCallback(() => {
     const bounds = new window.google.maps.LatLngBounds();
     if (data === undefined) return bounds;
@@ -123,7 +148,7 @@ export const useFlightMapBounds = ({
       }
     }
     return bounds;
-  }, [data, getFullRouteBounds, extendBounds]);
+  }, [data, getFullRouteBounds]);
   const padding = useMemo(
     () => ({
       top: 164,
@@ -155,24 +180,38 @@ export const useFlightMapBounds = ({
     }
   }, [getFlightFocusedBounds, map, padding]);
   useEffect(() => {
+    if (isFlightFocused && data?.flightStatus !== 'ARRIVED') {
+      focusOnFlight();
+    }
+  }, [data?.flightStatus, focusOnFlight, isFlightFocused]);
+  useEffect(() => {
     if (!isFlightFocused) {
       focusFullRoute();
     }
+    /* Intentionally omitting focusFullRoute and isFlightFocused from dependencies:
+     * We do not want to automatically focus on the full route when data is updated or when focus mode is
+     * disabled.
+     * Instead, we only want to focus on the full route when the flight ID changes or when the map is
+     * initialized or collapsed.
+     * Including them would not affect the effect and could cause unnecessary re-runs. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.id, isMapCollapsed, map]);
   useEffect(() => {
     if (data?.flightStatus === 'ARRIVED') {
       setIsFlightFocused(false);
       focusFullRoute();
-    } else if (isFlightFocused) {
-      focusOnFlight();
     }
-  }, [data, focusFullRoute, focusOnFlight, isFlightFocused]);
+    /* Intentionally omitting setIsFlightFocused and focusFullRoute from dependencies:
+     * setIsFlightFocused is wrapped in a custom useCallback (see lines 37-59), which is stable for our usage.
+     * focusFullRoute depends on getFullRouteBounds, map, and padding, which may change, but for this effect,
+     * we only want to run when flightStatus changes, not when map or padding changes.
+     * Including them could cause unnecessary re-runs without benefit in this context. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.flightStatus]);
   return {
     focusFullRoute,
     isEnRouteFlight,
     isFlightFocused,
     setIsFlightFocused,
-    setIsMapCollapsed,
   };
 };

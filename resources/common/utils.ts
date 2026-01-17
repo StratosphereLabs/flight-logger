@@ -43,3 +43,11 @@ export const getLongDurationString = (minutes: number): string => {
   }
   return durationString.trim();
 };
+
+export const extendBounds = (
+  bounds: google.maps.LatLngBounds,
+  lat: number,
+  lng: number,
+): void => {
+  bounds.extend(new window.google.maps.LatLng({ lat, lng }));
+};
