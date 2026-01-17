@@ -94,7 +94,6 @@
     "tailwindcss": "^4.0.15",
     "vite-node": "^2.1.9",
     "vite-plugin-cesium": "^1.2.23",
-    "vite-plugin-eslint": "^1.8.1",
     "zod": "3.24.2",
     "zod-prisma-types": "^3.2.4",
     "zustand": "^4.5.6"
