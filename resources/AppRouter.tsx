@@ -25,13 +25,37 @@ export const rootRoute = createRootRoute();
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: Home,
+  component: MainLayout,
 });
 
 const authRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'auth',
   component: AuthenticationLayout,
+});
+
+const dataRoute = createRoute({
+  getParentRoute: () => indexRoute,
+  path: 'data',
+  component: Data,
+});
+
+const usersRoute = createRoute({
+  getParentRoute: () => indexRoute,
+  path: 'users',
+  component: Users,
+});
+
+const profileRoute = createRoute({
+  getParentRoute: () => indexRoute,
+  path: 'profile',
+  component: ProfileLayout,
+});
+
+const accountRoute = createRoute({
+  getParentRoute: () => indexRoute,
+  path: 'account',
+  component: Account,
 });
 
 export const AppRouter = (): JSX.Element => {
