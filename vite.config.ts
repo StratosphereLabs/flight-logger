@@ -1,5 +1,6 @@
 /* @ts-expect-error Fix tailwindcss vite plugin import */
 import tailwindcss from '@tailwindcss/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/dist/esm/vite';
 import react from '@vitejs/plugin-react';
 import { execSync } from 'child_process';
 import { type Plugin, defineConfig } from 'vite';
@@ -14,6 +15,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 export default defineConfig({
   plugins: [
     (tailwindcss as () => Plugin)(),
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+    }),
     react(),
     cesium(),
     ...(isProduction ? [] : [eslint()]),
