@@ -1,6 +1,6 @@
 /* @ts-expect-error Fix tailwindcss vite plugin import */
 import tailwindcss from '@tailwindcss/vite';
-import { tanstackRouter } from '@tanstack/router-plugin/dist/esm/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { execSync } from 'child_process';
 import { type Plugin, defineConfig } from 'vite';

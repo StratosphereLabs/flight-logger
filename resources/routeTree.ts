@@ -1,8 +1,4 @@
-import {
-  createRootRoute,
-  createRoute,
-  createRouter,
-} from '@tanstack/react-router';
+import { createRootRoute, createRoute } from '@tanstack/react-router';
 
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
@@ -50,7 +46,7 @@ const profileRoute = createRoute({
 });
 
 const pathlessProfileRoute = createRoute({
-  getParentRoute: () => profileRoute,
+  getParentRoute: () => indexRoute,
   id: 'pathlessProfileLayout',
   component: ProfileLayout,
 });
@@ -97,23 +93,22 @@ export const resetPasswordRoute = createRoute({
   component: ResetPassword,
 });
 
-const routeTree = indexRoute.addChildren([
+export const routeTree = rootRoute.addChildren([
+  indexRoute.addChildren([
+    dataRoute,
+    usersRoute,
+    profileRoute,
+    pathlessProfileRoute.addChildren([accountRoute]),
+    flightRoute,
+    aircraftRoute,
+  ]),
   authRoute.addChildren([
     loginRoute,
     registerRoute,
     forgotPasswordRoute,
     resetPasswordRoute,
   ]),
-  dataRoute,
-  usersRoute,
-  pathlessProfileRoute.addChildren([accountRoute]),
-  flightRoute,
-  aircraftRoute,
 ]);
-
-export const router = createRouter({
-  routeTree,
-});
 
 // export const AppRouter = (): JSX.Element => {
 //   const methods = useProfileFilterForm();

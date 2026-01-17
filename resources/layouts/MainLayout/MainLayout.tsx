@@ -1,25 +1,26 @@
 import { useGateValue } from '@statsig/react-bindings';
+import { Outlet } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
-import { Outlet, useParams } from 'react-router-dom';
 import Snowfall from 'react-snowfall';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
 import { MainFooter } from './MainFooter';
-import { MainNavbar } from './MainNavbar';
+// import { MainNavbar } from './MainNavbar';
 import { useMainLayoutStore } from './mainLayoutStore';
 
 export interface MainLayoutProps {
   methods: UseFormReturn<ProfileFilterFormData>;
 }
 
-export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
+export const MainLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { username } = useParams();
+  // const { username } = useParams();
+  const username = '';
   const { theme } = useThemeStore();
   const christmasThemeEnabled = useGateValue('christmas_theme');
   const { setScrollContainerRef } = useMainLayoutStore();
@@ -50,7 +51,7 @@ export const MainLayout = ({ methods }: MainLayoutProps): JSX.Element => {
       {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
         <Snowfall style={{ zIndex: 50 }} />
       ) : null}
-      <MainNavbar methods={methods} />
+      {/* <MainNavbar methods={methods} /> */}
       <div
         className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
         ref={scrollContainerRef}
