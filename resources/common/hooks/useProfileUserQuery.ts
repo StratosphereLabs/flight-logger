@@ -1,5 +1,5 @@
 import { type TRPCClientErrorLike } from '@trpc/client';
-import { type UseTRPCQueryResult } from '@trpc/react-query/dist/shared';
+import { type UseTRPCQueryResult } from '@trpc/react-query/shared';
 import { useParams } from 'react-router-dom';
 
 import {
