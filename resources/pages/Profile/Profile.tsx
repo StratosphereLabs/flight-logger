@@ -1,7 +1,6 @@
 import { useStatsigClient } from '@statsig/react-bindings';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
-import { type Control } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useFormWithQueryParams } from 'stratosphere-ui';
 
@@ -13,11 +12,6 @@ import {
   StatisticsCard,
 } from './components';
 import { useAddFlightStore } from './components/Flights/addFlightStore';
-import { type ProfileFilterFormData } from './hooks';
-
-export interface ProfileProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
-}
 
 export interface ProfilePageNavigationState {
   addFlight: boolean;
@@ -27,7 +21,7 @@ export interface MapCardFormData {
   mapMode: 'routes' | 'heatmap' | '3d';
 }
 
-export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
+export const Profile = (): JSX.Element => {
   const { client } = useStatsigClient();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();

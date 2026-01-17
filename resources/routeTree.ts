@@ -8,6 +8,7 @@ import {
   Flight,
   ForgotPassword,
   Login,
+  Profile,
   Register,
   ResetPassword,
   Users,
@@ -39,16 +40,22 @@ const usersRoute = createRoute({
   component: Users,
 });
 
-const profileRoute = createRoute({
-  getParentRoute: () => indexRoute,
-  path: 'profile',
-  component: ProfileLayout,
-});
-
 const pathlessProfileRoute = createRoute({
   getParentRoute: () => indexRoute,
   id: 'pathlessProfileLayout',
   component: ProfileLayout,
+});
+
+const userRoute = createRoute({
+  getParentRoute: () => pathlessProfileRoute,
+  path: 'user/$username',
+  component: Profile,
+});
+
+const profileRoute = createRoute({
+  getParentRoute: () => pathlessProfileRoute,
+  path: 'profile',
+  component: Profile,
 });
 
 const accountRoute = createRoute({
@@ -96,6 +103,7 @@ export const resetPasswordRoute = createRoute({
 export const routeTree = rootRoute.addChildren([
   indexRoute.addChildren([
     dataRoute,
+    userRoute,
     usersRoute,
     profileRoute,
     pathlessProfileRoute.addChildren([accountRoute]),
