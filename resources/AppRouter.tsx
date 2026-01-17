@@ -1,5 +1,9 @@
 import { useStatsigUser } from '@statsig/react-bindings';
-import { createRootRoute, createRoute } from '@tanstack/react-router';
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 import { useLoggedInUserQuery } from './common/hooks';
@@ -32,6 +36,43 @@ const authRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'auth',
   component: AuthenticationLayout,
+});
+
+const loginRoute = createRoute({
+  getParentRoute: () => authRoute,
+  path: 'login',
+  component: Login,
+});
+
+const registerRoute = createRoute({
+  getParentRoute: () => authRoute,
+  path: 'register',
+  component: Register,
+});
+
+const forgotPasswordRoute = createRoute({
+  getParentRoute: () => authRoute,
+  path: 'forgot-password',
+  component: ForgotPassword,
+});
+
+export const resetPasswordRoute = createRoute({
+  getParentRoute: () => authRoute,
+  path: 'reset-password/$token',
+  component: ResetPassword,
+});
+
+const authRouteTree = authRoute.addChildren([
+  loginRoute,
+  registerRoute,
+  forgotPasswordRoute,
+  resetPasswordRoute,
+]);
+
+const routeTree = indexRoute.addChildren([authRouteTree]);
+
+const router = createRouter({
+  routeTree,
 });
 
 export const AppRouter = (): JSX.Element => {
