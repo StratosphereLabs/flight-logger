@@ -1,6 +1,6 @@
 import { useStatsigUser } from '@statsig/react-bindings';
+import { createRootRoute, createRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
 
 import { useLoggedInUserQuery } from './common/hooks';
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
@@ -19,6 +19,20 @@ import {
   Users,
 } from './pages';
 import { useProfileFilterForm } from './pages/Profile/hooks';
+
+export const rootRoute = createRootRoute();
+
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: Home,
+});
+
+const authRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'auth',
+  component: AuthenticationLayout,
+});
 
 export const AppRouter = (): JSX.Element => {
   const methods = useProfileFilterForm();
