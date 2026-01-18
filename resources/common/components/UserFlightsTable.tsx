@@ -1,5 +1,5 @@
 import { type AircraftType } from '@prisma/client';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
   type Row,
   type RowSelectionOptions,
@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { type FlightPageNavigationState } from '../../pages';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { CARD_COLORS, CARD_COLORS_HOVER } from '../constants';
 import { ActionsCell } from './ActionsCell';
@@ -45,9 +44,6 @@ export const UserFlightsTable = ({
   size,
 }: UserFlightsTableProps): JSX.Element => {
   const navigate = useNavigate();
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
   const {
     rowSelection,
     setActiveFlight,
@@ -246,16 +242,7 @@ export const UserFlightsTable = ({
                 setActiveFlight(row.original);
                 setIsEditDialogOpen(true);
               }}
-              onView={() => {
-                navigate(`/flight/${row.original.id}`, {
-                  state: {
-                    previousPageName:
-                      username !== undefined
-                        ? `${username}'s Profile`
-                        : 'Profile',
-                  } as const as FlightPageNavigationState,
-                });
-              }}
+              onView={() => navigate({ to: `/flight/${row.original.id}` })}
             />
           ),
           footer: () => null,
@@ -279,12 +266,7 @@ export const UserFlightsTable = ({
       highlightWhenSelected
       onRowClick={row => {
         if (window.innerWidth < 1280)
-          navigate(`/flight/${row.original.id}`, {
-            state: {
-              previousPageName:
-                username !== undefined ? `${username}'s Flights` : 'Flights',
-            } as const as FlightPageNavigationState,
-          });
+          void navigate({ to: `/flight/${row.original.id}` });
       }}
       onRowSelectionChange={setRowSelection}
       rowClassName={row =>

@@ -1,11 +1,10 @@
 import type { AircraftType, Airline, Airport } from '@prisma/client';
-import { useParams } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { Badge, Table } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
-import { type FlightPageNavigationState } from '../../../Flight';
 
 export interface FlightsTableProps {
   data: Array<FlightsRouterOutput['getUserFlightsBasic']['results'][number]>;
@@ -16,9 +15,6 @@ export const FlightsTable = ({
   data,
   isLoading,
 }: FlightsTableProps): JSX.Element => {
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
   const navigate = useNavigate();
   return (
     <div className="flex max-w-fit flex-1 flex-col">
@@ -158,14 +154,7 @@ export const FlightsTable = ({
         enableSorting={false}
         getCoreRowModel={getCoreRowModel()}
         isLoading={isLoading}
-        onRowClick={row => {
-          navigate(`/flight/${row.original.id}`, {
-            state: {
-              previousPageName:
-                username !== undefined ? `${username}'s Profile` : 'Profile',
-            } as const as FlightPageNavigationState,
-          });
-        }}
+        onRowClick={row => navigate({ to: `/flight/${row.original.id}` })}
         rowClassName="hover:opacity-75 transition-opacity hover:cursor-pointer"
       />
     </div>

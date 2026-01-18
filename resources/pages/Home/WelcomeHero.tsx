@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from 'stratosphere-ui';
 
 import { ChartIcon, GlobeIcon, ListIcon } from '../../common/components';
@@ -32,9 +32,9 @@ export const WelcomeHero = (): JSX.Element => {
           <Button
             className="mt-4"
             color="accent"
-            onClick={() => {
-              navigate(isLoggedIn ? '/profile' : '/auth/login');
-            }}
+            onClick={() =>
+              navigate({ to: isLoggedIn ? '/profile' : '/auth/login' })
+            }
             soft
           >
             Get Started

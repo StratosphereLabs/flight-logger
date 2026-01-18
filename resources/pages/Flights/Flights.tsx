@@ -16,11 +16,9 @@ import {
 import { trpc } from '../../utils/trpc';
 import { useAddFlightStore } from '../Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../Profile/hooks';
-import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';
-import { useFlightsPageStore } from './flightsPageStore';
 
 export interface FlightsPageNavigationState {
   createTrip: boolean | undefined;
@@ -47,13 +45,12 @@ export const Flights = ({
   const enabled = useProfilePage();
   const copyToClipboard = useCopyToClipboard();
   // const { state } = useLocation();
-  const navigate = useNavigate();
   const { username } = useParams({
     from: '/pathlessProfileLayout/user/$username',
   });
   const { setIsAddingFlight } = useAddFlightStore();
   const { onOwnProfile } = useLoggedInUserQuery();
-  const { resetRowSelection } = useFlightsPageStore();
+
   // useEffect(() => {
   //   if (state?.createTrip === true) {
   //     setIsRowSelectEnabled(true);
@@ -178,15 +175,6 @@ export const Flights = ({
       ) : null}
       <DeleteFlightModal />
       <EditFlightModal onSuccess={async () => await refetch()} />
-      <CreateTripModal
-        onSuccess={tripId => {
-          setIsRowSelectEnabled(false);
-          resetRowSelection();
-          navigate('/trips', {
-            state: { tripId } as const as TripsPageNavigationState,
-          });
-        }}
-      />
     </div>
   );
 };

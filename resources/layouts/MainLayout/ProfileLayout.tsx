@@ -1,5 +1,5 @@
+import { Outlet, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
 
 import { useProfilePage } from '../../pages/Profile/hooks';
 
@@ -8,9 +8,7 @@ export const ProfileLayout = (): JSX.Element => {
   const { isAuthorized } = useProfilePage();
   useEffect(() => {
     if (!isAuthorized) {
-      setTimeout(() => {
-        navigate('/auth/login');
-      }, 0);
+      setTimeout(() => navigate({ to: '/auth/login' }), 0);
     }
   }, [isAuthorized, navigate]);
   return <Outlet />;
