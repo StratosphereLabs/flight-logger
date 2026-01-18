@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 
@@ -8,9 +8,7 @@ export const useProtectedPage = (): boolean => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!isLoggedIn) {
-      setTimeout(() => {
-        navigate('/auth/login');
-      }, 0);
+      setTimeout(() => navigate({ to: '/auth/login' }), 0);
     }
   }, [isLoggedIn, navigate]);
   return isLoggedIn;

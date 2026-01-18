@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from '@tanstack/react-router';
+import { Outlet, useLocation, useNavigate } from '@tanstack/react-router';
 import {
   AlertMessages,
   Button,
@@ -28,9 +28,7 @@ export const AuthenticationLayout = (): JSX.Element => {
           {pathname === '/auth/login' ? (
             <Button
               color="secondary"
-              onClick={() => {
-                navigate('/auth/register');
-              }}
+              onClick={() => navigate({ to: '/auth/register' })}
               soft
             >
               Register <RightArrowIcon className="h-4 w-4" />
