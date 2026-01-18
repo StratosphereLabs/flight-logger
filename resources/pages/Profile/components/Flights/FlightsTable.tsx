@@ -1,7 +1,7 @@
 import type { AircraftType, Airline, Airport } from '@prisma/client';
+import { useParams } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, Table } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
@@ -16,7 +16,9 @@ export const FlightsTable = ({
   data,
   isLoading,
 }: FlightsTableProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const navigate = useNavigate();
   return (
     <div className="flex max-w-fit flex-1 flex-col">

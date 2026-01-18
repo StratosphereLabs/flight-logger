@@ -1,5 +1,5 @@
+import { useLocation, useParams } from '@tanstack/react-router';
 import { useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 
 import { getIsLoggedIn, useAuthStore } from '../../../stores';
 
@@ -10,7 +10,9 @@ export interface UseProfilePageResult {
 
 export const useProfilePage = (): UseProfilePageResult => {
   const { pathname } = useLocation();
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useMemo(
     () => pathname.includes('/profile') || pathname.includes('/user/'),

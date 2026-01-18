@@ -1,8 +1,8 @@
 import { ResponsiveBar } from '@nivo/bar';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import {
   Loading,
   Select,
@@ -28,7 +28,9 @@ export const TopAircraftTypesChart = ({
   filtersFormControl,
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const mode = useWatch<StatisticsFiltersData, 'aircraftTypesMode'>({
     name: 'aircraftTypesMode',
   });

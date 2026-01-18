@@ -1,7 +1,7 @@
 import { ResponsiveRadar } from '@nivo/radar';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { Loading, Select, Tooltip } from 'stratosphere-ui';
 
 import { BAR_CHART_THEME } from '../../../../common/constants';
@@ -19,7 +19,9 @@ export const SeatPositionRadarChart = ({
   filtersFormControl,
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const mode = useWatch<StatisticsFiltersData, 'seatPositionMode'>({
     name: 'seatPositionMode',
   });

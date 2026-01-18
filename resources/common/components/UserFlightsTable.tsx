@@ -1,11 +1,11 @@
 import { type AircraftType } from '@prisma/client';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   type Row,
   type RowSelectionOptions,
   getCoreRowModel,
 } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
@@ -45,7 +45,9 @@ export const UserFlightsTable = ({
   size,
 }: UserFlightsTableProps): JSX.Element => {
   const navigate = useNavigate();
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const {
     rowSelection,
     setActiveFlight,

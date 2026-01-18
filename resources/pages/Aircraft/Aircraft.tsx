@@ -1,9 +1,9 @@
 import { GoogleMap } from '@react-google-maps/api';
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 
 import {
@@ -26,7 +26,7 @@ import {
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
-import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
+// import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
@@ -36,7 +36,7 @@ export interface AircraftPageNavigationState {
 
 export const Aircraft = (): JSX.Element | null => {
   const { client } = useStatsigClient();
-  const { icao24 } = useParams();
+  const { icao24 } = useParams({ from: '/aircraft/$icao24' });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
     { icao24: icao24 ?? '' },
@@ -58,10 +58,8 @@ export const Aircraft = (): JSX.Element | null => {
         refetchInterval: 60000,
       },
     );
-  const { setPreviousPageName } = useMainLayoutStore();
-  const { state } = useLocation() as {
-    state: AircraftPageNavigationState | null;
-  };
+  // const { setPreviousPageName } = useMainLayoutStore();
+  // const { state } = useLocation();
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const allFlights = useMemo(
     () => [
@@ -83,11 +81,11 @@ export const Aircraft = (): JSX.Element | null => {
   }, [allFlights]);
   const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
-  useEffect(() => {
-    if (state !== null) {
-      setPreviousPageName(state.previousPageName);
-    }
-  }, [setPreviousPageName, state]);
+  // useEffect(() => {
+  //   if (state !== null) {
+  //     setPreviousPageName(state.previousPageName as string);
+  //   }
+  // }, [setPreviousPageName, state]);
   useEffect(() => {
     client.logEvent('aircraft_page_viewed', icao24);
   }, [client, icao24]);

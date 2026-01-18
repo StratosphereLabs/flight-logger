@@ -1,9 +1,9 @@
 import type { AxisTickProps } from '@nivo/axes';
 import { ResponsiveBar } from '@nivo/bar';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import {
   Loading,
   Select,
@@ -29,7 +29,9 @@ export const TopCountriesChart = ({
   filtersFormControl,
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const { theme } = useThemeStore();
   const mode = useWatch<StatisticsFiltersData, 'countriesMode'>({
     name: 'countriesMode',

@@ -1,6 +1,6 @@
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { Loading, Stat, StatDesc, StatTitle, StatValue } from 'stratosphere-ui';
 
 import {
@@ -27,7 +27,9 @@ export const TotalsChart = ({
   isStatsFullScreen,
   selectedAirportId,
 }: TotalsChartProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
   const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<

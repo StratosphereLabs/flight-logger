@@ -1,6 +1,6 @@
+import { useParams } from '@tanstack/react-router';
 import { type TRPCClientErrorLike } from '@trpc/client';
 import { type UseTRPCQueryResult } from '@trpc/react-query/shared';
-import { useParams } from 'react-router-dom';
 
 import {
   type UsersRouter,
@@ -15,7 +15,9 @@ export const useProfileUserQuery = (): UseTRPCQueryResult<
   TRPCClientErrorLike<UsersRouter>
 > => {
   const enabled = useProfilePage();
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const onError = useTRPCErrorHandler();
   return trpc.users.getUser.useQuery(
     {

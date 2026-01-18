@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from '@tanstack/react-router';
 import {
   AlertMessages,
   Button,

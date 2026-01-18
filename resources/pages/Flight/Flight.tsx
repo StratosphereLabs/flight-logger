@@ -1,8 +1,8 @@
 import { GoogleMap } from '@react-google-maps/api';
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 
 import {
@@ -27,7 +27,7 @@ import {
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
-import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
+// import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
@@ -37,7 +37,7 @@ export interface FlightPageNavigationState {
 
 export const Flight = (): JSX.Element | null => {
   const { client } = useStatsigClient();
-  const { flightId } = useParams();
+  const { flightId } = useParams({ from: '/flight/$flightId' });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery(
     { id: flightId ?? '' },
@@ -49,20 +49,18 @@ export const Flight = (): JSX.Element | null => {
       },
     },
   );
-  const { setPreviousPageName } = useMainLayoutStore();
-  const { state } = useLocation() as {
-    state: FlightPageNavigationState | null;
-  };
+  // const { setPreviousPageName } = useMainLayoutStore();
+  // const { state } = useLocation();
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
   const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
-  useEffect(() => {
-    if (state !== null) {
-      setPreviousPageName(state.previousPageName);
-    }
-  }, [setPreviousPageName, state]);
+  // useEffect(() => {
+  //   if (state !== null) {
+  //     setPreviousPageName(state.previousPageName);
+  //   }
+  // }, [setPreviousPageName, state]);
   useEffect(() => {
     client.logEvent('flight_page_viewed', flightId);
   }, [client, flightId]);

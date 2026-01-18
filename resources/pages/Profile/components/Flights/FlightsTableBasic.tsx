@@ -1,6 +1,6 @@
+import { useParams } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 
 import {
   useProfileUserQuery,
@@ -19,7 +19,9 @@ export const FlightsTableBasic = ({
   filtersFormControl,
   selectedAirportId,
 }: CompletedFlightsProps): JSX.Element | null => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
   const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<

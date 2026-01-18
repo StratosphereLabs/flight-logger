@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { type Control, type UseFormReturn, useForm } from 'react-hook-form';
-import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 
 import {
@@ -47,7 +47,9 @@ export const FlightsCard = ({
   setIsFlightsFullScreen,
   setIsMapFullScreen,
 }: FlightCardProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const [, setSearchParams] = useSearchParams();
   const { isAddingFlight, setIsAddingFlight, setFlightSearchFormData } =
     useAddFlightStore();

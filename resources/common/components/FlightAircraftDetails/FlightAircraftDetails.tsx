@@ -1,7 +1,7 @@
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { isAfter, isBefore, sub } from 'date-fns';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Loading } from 'stratosphere-ui';
 
 import { CollapseIcon, ExpandIcon, TrackAircraftIcon } from '..';
@@ -33,7 +33,7 @@ export const FlightAircraftDetails = ({
   const cardClassNames = useCardClassNames();
   const navigate = useNavigate();
   const [isAircraftImageExpanded, setIsAircraftImageExpanded] = useState(false);
-  const { icao24 } = useParams();
+  const { icao24 } = useParams({ from: '/aircraft/$icao24' });
   const { data: userData } = useLoggedInUserQuery();
   const { data: photoData, isFetching } = useAircraftPhotoQuery(
     data?.airframeId ?? null,

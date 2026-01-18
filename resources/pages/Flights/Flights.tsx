@@ -1,8 +1,8 @@
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { type Dispatch, type SetStateAction, useEffect } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 import { type Control, useWatch } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button, Loading, useDebouncedValue } from 'stratosphere-ui';
 
 import { PlusIcon, UserFlightsTable } from '../../common/components';
@@ -16,7 +16,6 @@ import {
 import { trpc } from '../../utils/trpc';
 import { useAddFlightStore } from '../Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../Profile/hooks';
-import { type TripsPageNavigationState } from '../Trips';
 import { CreateTripModal } from './CreateTripModal';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
@@ -47,20 +46,20 @@ export const Flights = ({
 }: FlightsProps): JSX.Element => {
   const enabled = useProfilePage();
   const copyToClipboard = useCopyToClipboard();
-  const { state } = useLocation() as {
-    state: FlightsPageNavigationState | null;
-  };
+  // const { state } = useLocation();
   const navigate = useNavigate();
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const { setIsAddingFlight } = useAddFlightStore();
   const { onOwnProfile } = useLoggedInUserQuery();
   const { resetRowSelection } = useFlightsPageStore();
-  useEffect(() => {
-    if (state?.createTrip === true) {
-      setIsRowSelectEnabled(true);
-      window.history.replaceState({}, document.title);
-    }
-  }, [setIsRowSelectEnabled, state?.createTrip]);
+  // useEffect(() => {
+  //   if (state?.createTrip === true) {
+  //     setIsRowSelectEnabled(true);
+  //     window.history.replaceState({}, document.title);
+  //   }
+  // }, [setIsRowSelectEnabled, state?.createTrip]);
   const onError = useTRPCErrorHandler();
   const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
     ProfileFilterFormData,

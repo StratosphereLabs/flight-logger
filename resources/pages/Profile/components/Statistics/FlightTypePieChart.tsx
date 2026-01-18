@@ -1,8 +1,8 @@
 import { ResponsivePie } from '@nivo/pie';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import { Loading, Select, Tooltip } from 'stratosphere-ui';
 
 import { BAR_CHART_THEME } from '../../../../common/constants';
@@ -21,7 +21,9 @@ export const FlightTypePieChart = ({
   filtersFormControl,
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const { theme } = useThemeStore();
   const mode = useWatch<StatisticsFiltersData, 'flightTypeMode'>({
     name: 'flightTypeMode',

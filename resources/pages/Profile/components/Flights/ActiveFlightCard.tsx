@@ -1,6 +1,6 @@
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardBody, Link, Modal } from 'stratosphere-ui';
 
 import {
@@ -28,7 +28,9 @@ export const ActiveFlightCard = (): JSX.Element | null => {
   const navigate = useNavigate();
   const { data: userData } = useLoggedInUserQuery();
   const enabled = useProfilePage();
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const { theme } = useThemeStore();
   const handleSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();

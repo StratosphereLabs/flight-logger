@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import {
   type Dispatch,
@@ -7,7 +8,6 @@ import {
   useState,
 } from 'react';
 import { type Control, type UseFormReturn, useWatch } from 'react-hook-form';
-import { useParams, useSearchParams } from 'react-router-dom';
 import { Button, Form, LoadingCard, Select } from 'stratosphere-ui';
 
 import {
@@ -71,7 +71,9 @@ export const MapCard = ({
       'searchQuery',
     ],
   });
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const onError = useTRPCErrorHandler();
   const { data: currentFlightData } = trpc.flights.getUserActiveFlight.useQuery(
     {

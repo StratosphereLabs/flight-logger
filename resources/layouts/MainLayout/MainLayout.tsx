@@ -1,5 +1,5 @@
 import { useGateValue } from '@statsig/react-bindings';
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
@@ -19,8 +19,9 @@ export interface MainLayoutProps {
 export const MainLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  // const { username } = useParams();
-  const username = '';
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const { theme } = useThemeStore();
   const christmasThemeEnabled = useGateValue('christmas_theme');
   const { setScrollContainerRef } = useMainLayoutStore();

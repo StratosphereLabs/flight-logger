@@ -1,7 +1,7 @@
 import { useStatsigClient } from '@statsig/react-bindings';
+// import { useLocation } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
 import { useFormWithQueryParams } from 'stratosphere-ui';
 
 import { getIsLoggedIn, useAuthStore } from '../../stores';
@@ -25,9 +25,7 @@ export const Profile = (): JSX.Element => {
   const { client } = useStatsigClient();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { state } = useLocation() as {
-    state: ProfilePageNavigationState | null;
-  };
+  // const { state } = useLocation();
   const [initialParams] = useState(searchParams);
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
   const [selectedAirportId, setSelectedAirportIdFn] = useState<string | null>(
@@ -74,11 +72,11 @@ export const Profile = (): JSX.Element => {
   const [isStatsFullScreen, setIsStatsFullScreen] = useState(
     initialParams.get('isStatsFullScreen') === 'true',
   );
-  useEffect(() => {
-    if (state?.addFlight === true) {
-      setIsAddingFlight(true);
-    }
-  }, [setIsAddingFlight, state?.addFlight]);
+  // useEffect(() => {
+  //   if (state?.addFlight === true) {
+  //     setIsAddingFlight(true);
+  //   }
+  // }, [setIsAddingFlight, state?.addFlight]);
   useEffect(() => {
     client.logEvent('profile_page_viewed');
   }, [client]);

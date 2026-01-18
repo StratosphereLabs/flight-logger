@@ -1,7 +1,7 @@
+import { useParams } from '@tanstack/react-router';
 import { type TRPCClientErrorLike } from '@trpc/client';
 import { type UseTRPCQueryResult } from '@trpc/react-query/shared';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 
 import {
   type UsersRouter,
@@ -20,7 +20,9 @@ export const useLoggedInUserQuery = (
   onOwnProfile: boolean;
 } => {
   const enabled = useAuthStore(getIsLoggedIn);
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const onError = useTRPCErrorHandler();
   const result = trpc.users.getUser.useQuery(
     { username: undefined },

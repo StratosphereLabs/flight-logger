@@ -1,10 +1,10 @@
 import { useGateValue, useStatsigUser } from '@statsig/react-bindings';
+import { useLocation, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Avatar,
   Button,
@@ -58,7 +58,12 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
-  const { username, flightId } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
+  const { flightId } = useParams({
+    from: '/flight/$flightId',
+  });
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
   const { data, isFetching } = useLoggedInUserQuery(userData => {
     if (userData.pushNotifications && messaging !== undefined) {

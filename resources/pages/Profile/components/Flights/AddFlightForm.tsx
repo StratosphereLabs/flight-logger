@@ -1,10 +1,10 @@
 import type { Airport } from '@prisma/client';
+import { useParams } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { add, isAfter, isBefore, sub } from 'date-fns';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import {
   Button,
   CheckIcon,
@@ -40,7 +40,9 @@ export interface AddFlightFormProps {
 
 export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
   const utils = trpc.useUtils();
-  const { username } = useParams();
+  const { username } = useParams({
+    from: '/pathlessProfileLayout/user/$username',
+  });
   const { onOwnProfile } = useLoggedInUserQuery();
   const { scrollContainerRef } = useMainLayoutStore();
   const formRef = useRef<HTMLFormElement>(null);
