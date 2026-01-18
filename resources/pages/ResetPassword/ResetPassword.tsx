@@ -11,7 +11,7 @@ import {
 } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-const route = getRouteApi('/reset-password/$token');
+const route = getRouteApi('/auth/reset-password/$token');
 
 export const ResetPassword = (): JSX.Element => {
   useAuthPage();
@@ -32,7 +32,7 @@ export const ResetPassword = (): JSX.Element => {
   const { isLoading, mutate } = trpc.passwordReset.resetPassword.useMutation({
     onSuccess: () => {
       handleSuccess('Password Reset. Please log in again.');
-      navigate('/auth/login');
+      void navigate({ to: '/auth/login' });
     },
     onError,
   });

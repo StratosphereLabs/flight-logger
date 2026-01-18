@@ -1,6 +1,6 @@
+import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { formatDistanceToNowStrict, isBefore } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Link, Loading } from 'stratosphere-ui';
 
 import {
@@ -133,7 +133,12 @@ export const FlightInfo = ({
             <Link
               hover
               onClick={() => {
-                navigate(`/user/${data.user?.username}`);
+                if (data.user !== null) {
+                  void navigate({
+                    to: '/user/$username',
+                    params: { username: data.user.username },
+                  });
+                }
               }}
               className="flex gap-2 truncate text-base font-semibold opacity-90"
             >

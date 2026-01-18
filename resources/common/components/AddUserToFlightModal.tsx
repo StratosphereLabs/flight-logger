@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import {
   type Dispatch,
   type SetStateAction,
@@ -7,7 +8,6 @@ import {
   useMemo,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import {
   Form,
   FormControl,
@@ -63,7 +63,7 @@ export const AddUserToFlightModal = ({
     },
     onSuccess: ({ id }) => {
       handleSuccess('You have successfully joined this flight.');
-      navigate(`/flight/${id}`);
+      void navigate({ to: '/flight/$flightId', params: { flightId: id } });
       void utils.flights.invalidate();
       void utils.users.invalidate();
       void utils.statistics.invalidate();
