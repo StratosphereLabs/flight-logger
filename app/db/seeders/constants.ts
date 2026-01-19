@@ -13,3 +13,6 @@ export const WHITESPACE_REGEX = /\s+/g;
 export const AIRFRAMES_CSV_URL =
   'https://s3.opensky-network.org/data-samples/metadata/aircraft-database-complete-2025-02.csv';
 export const AIRFRAMES_CSV_PATH = './app/db/seeders/data/aircraftDatabase.csv';
+
+export const CHROME_USER_AGENT =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';

@@ -4,6 +4,8 @@ import { StatsigAutoCapturePlugin } from '@statsig/web-analytics';
 import { type ReactNode } from 'react';
 import { AlertMessagesProvider, Loading } from 'stratosphere-ui';
 
+import { FirebaseNotificationListener } from './common/components/FirebaseNotificationListener';
+import { PendingFlightsChecker } from './common/components/PendingFlightsChecker';
 import { TRPCProvider } from './providers';
 
 export interface AppWrapperProps {
@@ -31,7 +33,11 @@ export const AppWrapper = ({ children }: AppWrapperProps): JSX.Element => {
       }
     >
       <AlertMessagesProvider>
-        <TRPCProvider>{children}</TRPCProvider>
+        <TRPCProvider>
+          {children}
+          <PendingFlightsChecker />
+          <FirebaseNotificationListener />
+        </TRPCProvider>
       </AlertMessagesProvider>
     </StatsigProvider>
   );

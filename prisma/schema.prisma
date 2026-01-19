@@ -34,6 +34,7 @@ model User {
   followedBy         User[]           @relation("UserFollows")
   following          User[]           @relation("UserFollows")
   fcmTokens          FcmToken[]
+  calendarSources    CalendarSource[]
 
   @@index([username])
   @@map("user")
@@ -438,6 +439,45 @@ enum FlightChangeField {
 
 enum NotificationAction {
   DISMISS
+}
+
+model CalendarSource {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      Int
+  url         String    @unique
+  name        String
+  enabled     Boolean   @default(true)
+  autoImport  Boolean   @default(false)
+  lastSyncAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pendingFlights PendingFlight[]
+
+  @@map("calendar_source")
+}
+
+model PendingFlight {
+  id                 String         @id @default(uuid()) @db.Uuid
+  calendarSourceId   String         @db.Uuid
+  eventUid           String
+  eventData          Json
+  parsedData         Json
+  detectedAt         DateTime       @default(now())
+  status             PendingFlightStatus @default(PENDING)
+  expiresAt          DateTime
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime?      @updatedAt
+  calendarSource     CalendarSource @relation(fields: [calendarSourceId], references: [id], onDelete: Cascade)
+
+  @@map("pending_flight")
+}
+
+enum PendingFlightStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
 }
 
 enum NotificationColor {

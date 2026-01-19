@@ -1,6 +1,7 @@
 import { useStatsigClient } from '@statsig/react-bindings';
 import { useEffect } from 'react';
 
+import { CalendarSync } from './CalendarSync';
 import { DataImport } from './DataImport';
 import { Notifications } from './Notifications';
 
@@ -19,6 +20,7 @@ export const Account = (): JSX.Element => {
         <h2>My Account</h2>
       </article>
       <Notifications />
+      <CalendarSync />
       <DataImport />
     </div>
   );

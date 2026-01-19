@@ -5,6 +5,7 @@ import { load } from 'cheerio';
 
 import { prisma } from '../prisma';
 import {
+  CHROME_USER_AGENT,
   IATA_AIRLINE_CODE_REGEX,
   ICAO_AIRLINE_CODE_REGEX,
   WHITESPACE_REGEX,
@@ -24,7 +25,9 @@ export const getAirlineDocument = async (
   const url = `https://en.wikipedia.org${href}`;
   try {
     console.log(`Fetching airline data from ${url}...`);
-    const res = await axios.get<string>(url);
+    const res = await axios.get<string>(url, {
+      headers: { 'User-Agent': CHROME_USER_AGENT },
+    });
     const $ = parseWikipediaData(res.data);
 
     const name = $('#firstHeading').text().split('(airline')[0].trim();
@@ -121,6 +124,7 @@ export const seedAirlines = async (): Promise<void> => {
   try {
     const response = await axios.get<string>(
       'https://en.wikipedia.org/wiki/List_of_airline_codes',
+      { headers: { 'User-Agent': CHROME_USER_AGENT } },
     );
     const rows = await getDatabaseRows(response.data);
     const count = await seedConcurrently(rows, row =>
