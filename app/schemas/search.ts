@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// import { addFlightSchema } from './flights';
 import { paginationSchema } from './pagination';
 
 export const searchSchema = paginationSchema.extend({

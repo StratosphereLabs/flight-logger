@@ -58,10 +58,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const { flightId } = useParams({
-    from: '/flight/$flightId',
+    from: '/pathlessMainLayout/flight/$flightId',
   });
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
   const { data, isFetching } = useLoggedInUserQuery(userData => {
@@ -371,7 +371,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className="text-sm"
               color="ghost"
               size="xs"
-              onClick={() => navigate({ to: '.' })}
+              onClick={() => navigate({ to: '..' })}
             >
               <LeftArrowIcon className="h-3 w-3" /> Back to{' '}
               {previousPageName ?? 'Home'}

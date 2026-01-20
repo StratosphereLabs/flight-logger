@@ -28,7 +28,7 @@ export const TotalsChart = ({
   selectedAirportId,
 }: TotalsChartProps): JSX.Element => {
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();

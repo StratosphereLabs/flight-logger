@@ -20,7 +20,7 @@ export const ReasonRadarChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const mode = useWatch<StatisticsFiltersData, 'flightReasonMode'>({
     name: 'flightReasonMode',

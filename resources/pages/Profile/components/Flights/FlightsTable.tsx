@@ -157,7 +157,7 @@ export const FlightsTable = ({
         onRowClick={row =>
           navigate({
             to: '/flight/$flightId',
-            params: { flightId: row.id },
+            params: { flightId: row.original.id },
           })
         }
         rowClassName="hover:opacity-75 transition-opacity hover:cursor-pointer"

@@ -11,7 +11,7 @@ export interface UseProfilePageResult {
 export const useProfilePage = (): UseProfilePageResult => {
   const { pathname } = useLocation();
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useMemo(

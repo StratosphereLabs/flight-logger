@@ -46,17 +46,11 @@ export const Flights = ({
   const copyToClipboard = useCopyToClipboard();
   // const { state } = useLocation();
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const { setIsAddingFlight } = useAddFlightStore();
   const { onOwnProfile } = useLoggedInUserQuery();
 
-  // useEffect(() => {
-  //   if (state?.createTrip === true) {
-  //     setIsRowSelectEnabled(true);
-  //     window.history.replaceState({}, document.title);
-  //   }
-  // }, [setIsRowSelectEnabled, state?.createTrip]);
   const onError = useTRPCErrorHandler();
   const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
     ProfileFilterFormData,

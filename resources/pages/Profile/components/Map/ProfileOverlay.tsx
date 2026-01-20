@@ -23,7 +23,7 @@ export const ProfileOverlay = (): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
   const onSuccess = useSuccessResponseHandler();

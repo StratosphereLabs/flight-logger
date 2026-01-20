@@ -20,7 +20,7 @@ export const FlightClassRadarChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const mode = useWatch<StatisticsFiltersData, 'flightClassMode'>({
     name: 'flightClassMode',

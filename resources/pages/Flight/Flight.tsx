@@ -37,7 +37,9 @@ export interface FlightPageNavigationState {
 
 export const Flight = (): JSX.Element | null => {
   const { client } = useStatsigClient();
-  const { flightId } = useParams({ from: '/flight/$flightId' });
+  const { flightId } = useParams({
+    from: '/pathlessMainLayout/flight/$flightId',
+  });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery(
     { id: flightId ?? '' },
@@ -73,7 +75,7 @@ export const Flight = (): JSX.Element | null => {
     data,
     map,
     isMapCollapsed,
-    from: '/flight/$flightId',
+    from: '/pathlessMainLayout/flight/$flightId',
   });
   const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
     setIsMapCollapsed,

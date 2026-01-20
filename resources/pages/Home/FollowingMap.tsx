@@ -538,7 +538,7 @@ export const FollowingMap = (): JSX.Element => {
                   <Button
                     color="primary"
                     onClick={() =>
-                      navigate({ to: '/profile', params: { addFlight: true } })
+                      navigate({ to: '/profile', search: { addFlight: true } })
                     }
                     soft
                   >
