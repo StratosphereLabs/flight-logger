@@ -86,7 +86,12 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         <CardBody className="gap-0 px-[0.5rem] py-[0.5rem] sm:px-[1rem] sm:pt-[0.75rem]">
           <div
             className="flex flex-col gap-1 hover:cursor-pointer"
-            onClick={() => navigate({ to: `/flight/${data.id}` })}
+            onClick={() =>
+              navigate({
+                to: `/flight/${data.id}`,
+                params: { flightId: data.id },
+              })
+            }
           >
             <div className="flex w-full items-center justify-between gap-3">
               <div className="flex flex-1 flex-col">

@@ -44,7 +44,10 @@ export const FlightRow = ({
             (event.target as HTMLElement).tagName !== 'A' &&
             (event.target as HTMLElement).parentElement?.tagName !== 'A'
           ) {
-            void navigate({ to: `/flight/${flight.id}` });
+            void navigate({
+              to: `/flight/${flight.id}`,
+              params: { flightId: flight.id },
+            });
           }
         }}
         {...props}

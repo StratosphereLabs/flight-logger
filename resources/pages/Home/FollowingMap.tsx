@@ -537,7 +537,9 @@ export const FollowingMap = (): JSX.Element => {
                 <div className="my-3 flex flex-wrap justify-center gap-4">
                   <Button
                     color="primary"
-                    onClick={() => navigate({ to: '/profile' })}
+                    onClick={() =>
+                      navigate({ to: '/profile', params: { addFlight: true } })
+                    }
                     soft
                   >
                     <PlusAirplaneIcon className="h-4 w-4" />

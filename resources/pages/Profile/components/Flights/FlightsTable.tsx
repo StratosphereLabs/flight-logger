@@ -154,7 +154,12 @@ export const FlightsTable = ({
         enableSorting={false}
         getCoreRowModel={getCoreRowModel()}
         isLoading={isLoading}
-        onRowClick={row => navigate({ to: `/flight/${row.original.id}` })}
+        onRowClick={row =>
+          navigate({
+            to: `/flight/${row.original.id}`,
+            params: { flightId: row.id },
+          })
+        }
         rowClassName="hover:opacity-75 transition-opacity hover:cursor-pointer"
       />
     </div>

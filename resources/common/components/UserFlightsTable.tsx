@@ -242,7 +242,12 @@ export const UserFlightsTable = ({
                 setActiveFlight(row.original);
                 setIsEditDialogOpen(true);
               }}
-              onView={() => navigate({ to: `/flight/${row.original.id}` })}
+              onView={() =>
+                navigate({
+                  to: `/flight/${row.original.id}`,
+                  params: { flightId: row.id },
+                })
+              }
             />
           ),
           footer: () => null,
@@ -266,7 +271,10 @@ export const UserFlightsTable = ({
       highlightWhenSelected
       onRowClick={row => {
         if (window.innerWidth < 1280)
-          void navigate({ to: `/flight/${row.original.id}` });
+          void navigate({
+            to: `/flight/${row.original.id}`,
+            params: { flightId: row.id },
+          });
       }}
       onRowSelectionChange={setRowSelection}
       rowClassName={row =>
