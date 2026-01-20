@@ -67,7 +67,6 @@ export const getUserFlightsSchema = getUserSchema
   .extend(paginationSchema.shape)
   .extend(profileFiltersSchema.shape)
   .extend({
-    withTrip: z.boolean().optional(),
     selectedAirportId: z.string().nullable(),
   });
 

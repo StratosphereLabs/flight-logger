@@ -21,7 +21,6 @@ import { EditFlightModal } from './EditFlightModal';
 import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';
 
 export interface FlightsPageNavigationState {
-  createTrip: boolean | undefined;
   defaultOpen?: 'upcoming' | 'completed';
 }
 
@@ -79,7 +78,6 @@ export const Flights = ({
   } = trpc.flights.getUserFlights.useInfiniteQuery(
     {
       username,
-      withTrip: !isRowSelectEnabled,
       selectedAirportId,
       status,
       range,

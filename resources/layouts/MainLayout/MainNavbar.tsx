@@ -78,9 +78,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     }
   });
   const isUserPage = useMemo(
-    () =>
-      (pathname.includes('/profile') || pathname.includes('/user/')) &&
-      !pathname.includes('/trips'),
+    () => pathname.includes('/profile') || pathname.includes('/user/'),
     [pathname],
   );
   const isFlightPage = useMemo(
@@ -94,12 +92,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         ? {
             [`/user/${username}`]: 'users',
             [`/user/${username}/flights`]: 'users',
-            [`/user/${username}/trips`]: 'users',
           }
         : {
             '/profile': 'profile',
             '/flights': 'profile',
-            '/trips': 'profile',
             '/add-flight': 'profile',
           }),
       '/users': 'users',

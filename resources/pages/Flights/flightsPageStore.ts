@@ -5,14 +5,12 @@ import { type FlightsRouterOutput } from '../../../app/routes/flights';
 
 interface FlightsPageState {
   activeFlight: FlightsRouterOutput['getUserFlights']['results'][number] | null;
-  isCreateTripDialogOpen: boolean;
   isDeleteDialogOpen: boolean;
   isEditDialogOpen: boolean;
   rowSelection: RowSelectionState;
   setActiveFlight: (
     flight: FlightsRouterOutput['getUserFlights']['results'][number] | null,
   ) => void;
-  setIsCreateTripDialogOpen: (open: boolean) => void;
   setIsDeleteDialogOpen: (open: boolean) => void;
   setIsEditDialogOpen: (open: boolean) => void;
   setRowSelection: OnChangeFn<RowSelectionState>;
@@ -21,15 +19,11 @@ interface FlightsPageState {
 
 export const useFlightsPageStore = create<FlightsPageState>()((set, get) => ({
   activeFlight: null,
-  isCreateTripDialogOpen: false,
   isDeleteDialogOpen: false,
   isEditDialogOpen: false,
   rowSelection: {},
   setActiveFlight: activeFlight => {
     set({ activeFlight });
-  },
-  setIsCreateTripDialogOpen: isCreateTripDialogOpen => {
-    set({ isCreateTripDialogOpen });
   },
   setIsDeleteDialogOpen: isDeleteDialogOpen => {
     set({ isDeleteDialogOpen });

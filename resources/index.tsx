@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom/client';
 
 import { AppWrapper } from './AppWrapper';
 import { type AppRouter, appRouter } from './appRouter';
+import { StatsigInitializationProvider } from './providers';
 
 Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_TOKEN as string;
 
@@ -19,7 +20,9 @@ declare module '@tanstack/react-router' {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AppWrapper>
-      <RouterProvider router={appRouter} />
+      <StatsigInitializationProvider>
+        <RouterProvider router={appRouter} />
+      </StatsigInitializationProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </AppWrapper>
   </React.StrictMode>,

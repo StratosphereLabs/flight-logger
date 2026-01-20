@@ -22,9 +22,7 @@ export const AuthenticationLayout = (): JSX.Element => {
       <div className="hero-content flex w-full flex-col md:flex-row">
         <div className="flex flex-col items-center md:items-start">
           <LogoHorizontal className="text-secondary w-60" />
-          <p className="py-6">
-            Welcome! Please login to access your flights and trips
-          </p>
+          <p className="py-6">Welcome! Please login to access your flights</p>
           {pathname === '/auth/login' ? (
             <Button
               color="secondary"

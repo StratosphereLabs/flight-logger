@@ -7,12 +7,10 @@ import { authRouter } from './auth';
 import { countriesRouter } from './countries';
 import { flightDataRouter } from './flightData';
 import { flightsRouter } from './flights';
-import { itinerariesRouter } from './itineraries';
 import { passwordResetRouter } from './passwordReset';
 import { regionsRouter } from './regions';
 import { registrationsRouter } from './registrations';
 import { statisticsRouter } from './statistics';
-import { tripsRouter } from './trips';
 import { usersRouter } from './users';
 
 export * from './googleAuth';
@@ -27,12 +25,10 @@ export const trpcRouter = router({
   countries: countriesRouter,
   flightData: flightDataRouter,
   flights: flightsRouter,
-  itineraries: itinerariesRouter,
   passwordReset: passwordResetRouter,
   registrations: registrationsRouter,
   regions: regionsRouter,
   statistics: statisticsRouter,
-  trips: tripsRouter,
   users: usersRouter,
 });
 
