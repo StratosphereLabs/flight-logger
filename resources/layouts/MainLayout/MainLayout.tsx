@@ -9,7 +9,7 @@ import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
 import { MainFooter } from './MainFooter';
-// import { MainNavbar } from './MainNavbar';
+import { MainNavbar } from './MainNavbar';
 import { useMainLayoutStore } from './mainLayoutStore';
 
 export interface MainLayoutProps {
@@ -52,7 +52,7 @@ export const MainLayout = (): JSX.Element => {
       {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
         <Snowfall style={{ zIndex: 50 }} />
       ) : null}
-      {/* <MainNavbar methods={methods} /> */}
+      <MainNavbar methods={methods} />
       <div
         className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
         ref={scrollContainerRef}
