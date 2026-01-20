@@ -20,7 +20,7 @@ export const SeatPositionRadarChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams({
-    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
+    from: '/pathlessProfileLayout/user/$username',
   });
   const mode = useWatch<StatisticsFiltersData, 'seatPositionMode'>({
     name: 'seatPositionMode',

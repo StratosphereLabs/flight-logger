@@ -20,16 +20,10 @@ import {
 } from './pages';
 import { flightPageSearchSchema, profilePageSearchSchema } from './schemas';
 
-export const rootRoute = createRootRoute();
-
-const pathlessIndexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  id: 'pathlessMainLayout',
-  component: MainLayout,
-});
+export const rootRoute = createRootRoute({ component: MainLayout });
 
 const indexRoute = createRoute({
-  getParentRoute: () => pathlessIndexRoute,
+  getParentRoute: () => rootRoute,
   path: '/',
   component: Home,
 });
@@ -41,19 +35,19 @@ const authRoute = createRoute({
 });
 
 const dataRoute = createRoute({
-  getParentRoute: () => pathlessIndexRoute,
+  getParentRoute: () => rootRoute,
   path: 'data',
   component: Data,
 });
 
 const usersRoute = createRoute({
-  getParentRoute: () => pathlessIndexRoute,
+  getParentRoute: () => rootRoute,
   path: 'users',
   component: Users,
 });
 
 const pathlessProfileRoute = createRoute({
-  getParentRoute: () => pathlessIndexRoute,
+  getParentRoute: () => rootRoute,
   id: 'pathlessProfileLayout',
   component: ProfileLayout,
 });
@@ -79,14 +73,14 @@ const accountRoute = createRoute({
 });
 
 const flightRoute = createRoute({
-  getParentRoute: () => pathlessIndexRoute,
+  getParentRoute: () => rootRoute,
   path: 'flight/$flightId',
   component: Flight,
   validateSearch: flightPageSearchSchema,
 });
 
 const aircraftRoute = createRoute({
-  getParentRoute: () => pathlessIndexRoute,
+  getParentRoute: () => rootRoute,
   path: 'aircraft/$icao24',
   component: Aircraft,
   validateSearch: flightPageSearchSchema,
@@ -117,13 +111,12 @@ export const resetPasswordRoute = createRoute({
 });
 
 const routeTree = rootRoute.addChildren([
-  indexRoute.addChildren([
-    dataRoute,
-    usersRoute,
-    pathlessProfileRoute.addChildren([accountRoute, profileRoute, userRoute]),
-    flightRoute,
-    aircraftRoute,
-  ]),
+  indexRoute,
+  dataRoute,
+  usersRoute,
+  pathlessProfileRoute.addChildren([accountRoute, profileRoute, userRoute]),
+  flightRoute,
+  aircraftRoute,
   authRoute.addChildren([
     loginRoute,
     registerRoute,

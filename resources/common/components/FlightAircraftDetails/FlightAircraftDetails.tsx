@@ -33,7 +33,7 @@ export const FlightAircraftDetails = ({
   const navigate = useNavigate();
   const [isAircraftImageExpanded, setIsAircraftImageExpanded] = useState(false);
   const { icao24 } = useParams({
-    from: '/pathlessMainLayout/aircraft/$icao24',
+    from: '/aircraft/$icao24',
   });
   const { data: userData } = useLoggedInUserQuery();
   const { data: photoData, isFetching } = useAircraftPhotoQuery(

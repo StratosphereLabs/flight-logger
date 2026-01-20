@@ -22,7 +22,7 @@ export const FlightTypePieChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams({
-    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
+    from: '/pathlessProfileLayout/user/$username',
   });
   const { theme } = useThemeStore();
   const mode = useWatch<StatisticsFiltersData, 'flightTypeMode'>({

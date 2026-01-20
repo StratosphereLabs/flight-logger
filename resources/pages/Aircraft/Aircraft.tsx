@@ -37,7 +37,7 @@ export interface AircraftPageNavigationState {
 export const Aircraft = (): JSX.Element | null => {
   const { client } = useStatsigClient();
   const { icao24 } = useParams({
-    from: '/pathlessMainLayout/aircraft/$icao24',
+    from: '/aircraft/$icao24',
   });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
@@ -100,7 +100,7 @@ export const Aircraft = (): JSX.Element | null => {
     data,
     map,
     isMapCollapsed,
-    from: '/pathlessMainLayout/aircraft/$icao24',
+    from: '/aircraft/$icao24',
   });
   const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
     setIsMapCollapsed,

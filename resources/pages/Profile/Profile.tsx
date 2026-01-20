@@ -30,8 +30,8 @@ export const Profile = (): JSX.Element => {
   const { pathname } = useLocation();
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
   const navigateFrom = pathname.includes('/profile')
-    ? '/pathlessMainLayout/pathlessProfileLayout/profile'
-    : '/pathlessMainLayout/pathlessProfileLayout/user/$username';
+    ? '/pathlessProfileLayout/profile'
+    : '/pathlessProfileLayout/user/$username';
   const methods = useFormWithSearchParams<MapCardFormData, ['mapMode']>({
     from: navigateFrom,
     defaultValues: {
