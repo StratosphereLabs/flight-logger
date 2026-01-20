@@ -98,6 +98,7 @@ export const Aircraft = (): JSX.Element | null => {
     data,
     map,
     isMapCollapsed,
+    from: '/aircraft/$icao24',
   });
   const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
     setIsMapCollapsed,

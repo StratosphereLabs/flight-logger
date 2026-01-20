@@ -1,9 +1,9 @@
 import { useStatsigClient } from '@statsig/react-bindings';
-// import { useLocation } from '@tanstack/react-router';
+import { useLocation } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
-import { useFormWithQueryParams } from 'stratosphere-ui';
+import { useEffect } from 'react';
 
+import { useStateWithSearchParam } from '../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,
@@ -24,13 +24,8 @@ export interface MapCardFormData {
 export const Profile = (): JSX.Element => {
   const { client } = useStatsigClient();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
-  const [searchParams, setSearchParams] = useSearchParams();
-  // const { state } = useLocation();
-  const [initialParams] = useState(searchParams);
+  const { pathname } = useLocation();
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
-  const [selectedAirportId, setSelectedAirportIdFn] = useState<string | null>(
-    initialParams.get('selectedAirportId') ?? null,
-  );
   const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
     getDefaultValues: ({ mapMode }) => ({
       mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
@@ -43,34 +38,26 @@ export const Profile = (): JSX.Element => {
       replace: true,
     },
   });
-  const setSelectedAirportId = useCallback(
-    (newId: string | null): void => {
-      setSelectedAirportIdFn(newId);
-      setSearchParams(
-        oldSearchParams => {
-          if (newId === null) {
-            oldSearchParams.delete('selectedAirportId');
-            return oldSearchParams;
-          } else {
-            return new URLSearchParams({
-              ...Object.fromEntries(oldSearchParams),
-              selectedAirportId: newId,
-            });
-          }
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams],
+  const navigateFrom = pathname.includes('/profile')
+    ? '/pathlessProfileLayout/profile'
+    : '/pathlessProfileLayout/user/$username';
+  const [selectedAirportId, setSelectedAirportId] = useStateWithSearchParam<
+    string | null
+  >(null, 'selectedAirportId', navigateFrom);
+  const [isFlightsFullScreen, setIsFlightsFullScreen] = useStateWithSearchParam(
+    false,
+    'isFlightsFullScreen',
+    navigateFrom,
   );
-  const [isFlightsFullScreen, setIsFlightsFullScreen] = useState(
-    initialParams.get('isFlightsFullScreen') === 'true',
+  const [isMapFullScreen, setIsMapFullScreen] = useStateWithSearchParam(
+    false,
+    'isMapFullScreen',
+    navigateFrom,
   );
-  const [isMapFullScreen, setIsMapFullScreen] = useState(
-    initialParams.get('isMapFullScreen') === 'true',
-  );
-  const [isStatsFullScreen, setIsStatsFullScreen] = useState(
-    initialParams.get('isStatsFullScreen') === 'true',
+  const [isStatsFullScreen, setIsStatsFullScreen] = useStateWithSearchParam(
+    false,
+    'isStatsFullScreen',
+    navigateFrom,
   );
   // useEffect(() => {
   //   if (state?.addFlight === true) {

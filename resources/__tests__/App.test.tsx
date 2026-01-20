@@ -1,12 +1,8 @@
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { RouterProvider } from '@tanstack/react-router';
 import { describe, expect, it, vi } from 'vitest';
 
+import { appRouter } from '../appRouter';
 import { render } from '../common/test-utils';
-import { routeTree } from '../routeTree';
-
-const router = createRouter({
-  routeTree,
-});
 
 vi.mock('@nivo/bar', () => ({
   ResponsiveBar: () => <div data-testid="mock-bar-chart" />,
@@ -26,12 +22,12 @@ vi.mock('@nivo/radar', () => ({
 
 describe.skip('<App />', () => {
   it('renders login page', () => {
-    const { container } = render(<RouterProvider router={router} />);
+    const { container } = render(<RouterProvider router={appRouter} />);
     expect(container).toMatchSnapshot();
   });
 
   it('renders profile page', () => {
-    const { container } = render(<RouterProvider router={router} />);
+    const { container } = render(<RouterProvider router={appRouter} />);
     expect(container).toMatchSnapshot();
   });
 });

@@ -39,7 +39,7 @@ export const FlightHistoryRow = ({
               (event.target as HTMLElement).parentElement?.tagName !== 'A'
             ) {
               void navigate({
-                to: `/flight/${flight.id}`,
+                to: '/flight/$flightId',
                 params: { flightId: flight.id },
               });
             }

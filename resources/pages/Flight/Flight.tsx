@@ -73,6 +73,7 @@ export const Flight = (): JSX.Element | null => {
     data,
     map,
     isMapCollapsed,
+    from: '/flight/$flightId',
   });
   const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
     setIsMapCollapsed,

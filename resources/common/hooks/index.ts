@@ -14,6 +14,7 @@ export * from './useProfilePage';
 export * from './useProfileUserQuery';
 export * from './useProtectedPage';
 export * from './useRainviewerApiQuery';
+export * from './useStateWithSearchParam';
 export * from './useSuccessResponseHandler';
 export * from './useTRPCErrorHandler';
 export * from './useWeatherRadarLayer';
