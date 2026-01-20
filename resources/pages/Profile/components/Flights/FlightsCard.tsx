@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { type Control, type UseFormReturn, useForm } from 'react-hook-form';
@@ -50,7 +50,7 @@ export const FlightsCard = ({
   const { username } = useParams({
     from: '/pathlessProfileLayout/user/$username',
   });
-  const [, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight, setIsAddingFlight, setFlightSearchFormData } =
     useAddFlightStore();
   const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
@@ -126,19 +126,16 @@ export const FlightsCard = ({
                   ) : null}
                   <Button
                     onClick={() => {
-                      setSearchParams(
-                        oldSearchParams => {
-                          if (isFlightsFullScreen) {
-                            oldSearchParams.delete('isFlightsFullScreen');
-                            return oldSearchParams;
-                          }
-                          return new URLSearchParams({
-                            ...Object.fromEntries(oldSearchParams),
-                            isFlightsFullScreen: 'true',
-                          });
-                        },
-                        { replace: true },
-                      );
+                      void navigate({
+                        search: prev => ({
+                          ...prev,
+                          isFlightsFullScreen:
+                            prev.isFlightsFullScreen === true
+                              ? undefined
+                              : true,
+                        }),
+                        replace: true,
+                      });
                       setIsFlightsFullScreen(isFullScreen => !isFullScreen);
                     }}
                     size="sm"

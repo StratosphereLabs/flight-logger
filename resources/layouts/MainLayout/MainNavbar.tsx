@@ -1,5 +1,5 @@
 import { useGateValue, useStatsigUser } from '@statsig/react-bindings';
-import { useLocation, useParams } from '@tanstack/react-router';
+import { useLocation, useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
 import _ from 'lodash';
@@ -26,7 +26,6 @@ import {
   ThemeButton,
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
-import { type ProfilePageNavigationState } from '../../pages';
 import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
 import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import {
@@ -56,7 +55,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams({
     from: '/pathlessProfileLayout/user/$username',
@@ -133,7 +132,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         ),
         onClick: () => {
           if (currentTab !== 'home') {
-            navigate(tabsToPathsMap.home);
+            void navigate({ to: tabsToPathsMap.home });
           }
         },
       },
@@ -151,7 +150,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               ),
               onClick: () => {
                 if (currentTab !== 'profile') {
-                  navigate(tabsToPathsMap.profile);
+                  void navigate({ to: tabsToPathsMap.profile });
                 }
               },
             },
@@ -167,7 +166,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               ),
               onClick: () => {
                 if (currentTab !== 'users') {
-                  navigate(tabsToPathsMap.users);
+                  void navigate({ to: tabsToPathsMap.users });
                 }
               },
             },
@@ -185,7 +184,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         ),
         onClick: () => {
           if (currentTab !== 'data') {
-            navigate(tabsToPathsMap.data);
+            void navigate({ to: tabsToPathsMap.data });
           }
         },
       },
@@ -230,7 +229,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className="inline-flex gap-0 px-1 normal-case sm:px-4"
               color="ghost"
               onClick={() => {
-                navigate('/');
+                void navigate({ to: '/' });
               }}
               title="Home"
             >
@@ -267,14 +266,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 className="hidden gap-1 sm:inline-flex"
                 color="ghost"
                 onClick={() => {
-                  navigate(
-                    pathname === '/profile' ? `/profile${search}` : '/profile',
-                    {
-                      state: {
-                        addFlight: true,
-                      } as const as ProfilePageNavigationState,
-                    },
-                  );
+                  void navigate({
+                    to: '/profile',
+                    search: prev => ({ ...prev, addFlight: true }),
+                  });
                 }}
                 shape="circle"
                 title="Add Flight"
@@ -287,7 +282,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className={classNames(isLoggedIn && 'hidden')}
               color="neutral"
               onClick={() => {
-                navigate('/auth/login');
+                void navigate({ to: '/auth/login' });
               }}
             >
               Login
@@ -321,7 +316,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     </>
                   ),
                   onClick: () => {
-                    navigate('/profile');
+                    void navigate({ to: '/profile' });
                   },
                 },
                 {
@@ -333,13 +328,8 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                       Add Flight
                     </>
                   ),
-                  onClick: () => {
-                    navigate('/profile', {
-                      state: {
-                        addFlight: true,
-                      } as const as ProfilePageNavigationState,
-                    });
-                  },
+                  onClick: () =>
+                    navigate({ to: '/profile', search: { addFlight: true } }),
                 },
                 {
                   id: 'settings',
@@ -351,7 +341,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     </>
                   ),
                   onClick: () => {
-                    navigate('/account');
+                    void navigate({ to: '/account' });
                   },
                 },
                 {
@@ -381,9 +371,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className="text-sm"
               color="ghost"
               size="xs"
-              onClick={() => {
-                navigate(-1);
-              }}
+              onClick={() => navigate({ to: '.' })}
             >
               <LeftArrowIcon className="h-3 w-3" /> Back to{' '}
               {previousPageName ?? 'Home'}

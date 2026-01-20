@@ -1,7 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { type Dispatch, type SetStateAction } from 'react';
 import { type Control, useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
 import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
 
 import { CollapseIcon, ExpandIcon } from '../../../../common/components';
@@ -47,7 +47,7 @@ export const StatisticsCard = ({
   selectedAirportId,
   setIsStatsFullScreen,
 }: StatisticsProps): JSX.Element => {
-  const [, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: '/profile' });
   const methods = useForm<StatisticsFiltersData>({
     defaultValues: {
       airlinesMode: 'flights',
@@ -71,19 +71,14 @@ export const StatisticsCard = ({
             <CardTitle>Statistics</CardTitle>
             <Button
               onClick={() => {
-                setSearchParams(
-                  oldSearchParams => {
-                    if (isStatsFullScreen) {
-                      oldSearchParams.delete('isStatsFullScreen');
-                      return oldSearchParams;
-                    }
-                    return new URLSearchParams({
-                      ...Object.fromEntries(oldSearchParams),
-                      isStatsFullScreen: 'true',
-                    });
-                  },
-                  { replace: true },
-                );
+                void navigate({
+                  search: prev => ({
+                    ...prev,
+                    isStatsFullScreen:
+                      prev.isStatsFullScreen === true ? undefined : true,
+                  }),
+                  replace: true,
+                });
                 setIsStatsFullScreen(isFullScreen => !isFullScreen);
               }}
               size="sm"

@@ -1,5 +1,6 @@
 import { createRootRoute, createRoute } from '@tanstack/react-router';
 
+import { profileSearchSchema } from '../app/schemas';
 import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
 import {
   Account,
@@ -56,6 +57,7 @@ const profileRoute = createRoute({
   getParentRoute: () => pathlessProfileRoute,
   path: 'profile',
   component: Profile,
+  validateSearch: profileSearchSchema,
 });
 
 const accountRoute = createRoute({

@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import {
   type Dispatch,
@@ -48,7 +48,7 @@ export const MapCard = ({
 }: MapCardProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useProfilePage();
-  const [, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight } = useAddFlightStore();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
@@ -230,24 +230,15 @@ export const MapCard = ({
                   <Button
                     className="btn-sm sm:btn-md pointer-events-auto px-1"
                     onClick={() => {
-                      setIsMapFullScreen(isFullScreen => {
-                        const newValue = !isFullScreen;
-                        setSearchParams(
-                          oldSearchParams => {
-                            if (newValue) {
-                              return new URLSearchParams({
-                                ...Object.fromEntries(oldSearchParams),
-                                isMapFullScreen: 'true',
-                              });
-                            } else {
-                              oldSearchParams.delete('isMapFullScreen');
-                              return oldSearchParams;
-                            }
-                          },
-                          { replace: true },
-                        );
-                        return newValue;
+                      void navigate({
+                        search: prev => ({
+                          ...prev,
+                          isMapFullScreen:
+                            prev.isMapFullScreen === true ? undefined : true,
+                        }),
+                        replace: true,
                       });
+                      setIsMapFullScreen(isFullScreen => !isFullScreen);
                     }}
                     soft
                     title={isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
@@ -280,7 +271,6 @@ export const MapCard = ({
       mapMode,
       selectedAirportId,
       setIsMapFullScreen,
-      setSearchParams,
       setSelectedAirportId,
     ],
   );
