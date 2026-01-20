@@ -45,7 +45,7 @@ export const FlightRow = ({
             (event.target as HTMLElement).parentElement?.tagName !== 'A'
           ) {
             void navigate({
-              to: `/flight/${flight.id}`,
+              to: '/flight/$flightId',
               params: { flightId: flight.id },
             });
           }
@@ -100,7 +100,10 @@ export const FlightRow = ({
               <Link
                 hover
                 onClick={() =>
-                  navigate({ to: `/user/${flight.user?.username}` })
+                  navigate({
+                    to: '/user/$username',
+                    params: { username: flight.user?.username ?? '' },
+                  })
                 }
                 className="truncate text-sm font-semibold opacity-90 sm:text-base"
               >
@@ -195,7 +198,11 @@ export const FlightRow = ({
                 className="link link-hover pt-[1px] font-mono font-semibold"
                 onClick={
                   shouldUseAircraftLink
-                    ? () => navigate({ to: `/aircraft/${flight.airframeId}` })
+                    ? () =>
+                        navigate({
+                          to: '/aircraft/$icao24',
+                          params: { icao24: flight.airframeId ?? '' },
+                        })
                     : undefined
                 }
                 href={

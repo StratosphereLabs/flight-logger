@@ -39,7 +39,7 @@ export const FlightHistoryRow = ({
               (event.target as HTMLElement).parentElement?.tagName !== 'A'
             ) {
               void navigate({
-                to: `/flight/${flight.id}`,
+                to: '/flight/$flightId',
                 params: { flightId: flight.id },
               });
             }
@@ -107,7 +107,10 @@ export const FlightHistoryRow = ({
                 <Link
                   hover
                   onClick={() =>
-                    navigate({ to: `/user/${flight.user?.username}` })
+                    navigate({
+                      to: '/user/$username',
+                      params: { username: flight.user?.username ?? '' },
+                    })
                   }
                   className="truncate text-sm font-semibold opacity-90"
                 >

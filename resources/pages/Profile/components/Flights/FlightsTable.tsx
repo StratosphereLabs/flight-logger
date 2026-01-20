@@ -156,7 +156,7 @@ export const FlightsTable = ({
         isLoading={isLoading}
         onRowClick={row =>
           navigate({
-            to: `/flight/${row.original.id}`,
+            to: '/flight/$flightId',
             params: { flightId: row.id },
           })
         }
