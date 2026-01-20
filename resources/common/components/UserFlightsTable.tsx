@@ -245,7 +245,7 @@ export const UserFlightsTable = ({
               onView={() =>
                 navigate({
                   to: '/flight/$flightId',
-                  params: { flightId: row.id },
+                  params: { flightId: row.original.id },
                 })
               }
             />
@@ -273,7 +273,7 @@ export const UserFlightsTable = ({
         if (window.innerWidth < 1280)
           void navigate({
             to: '/flight/$flightId',
-            params: { flightId: row.id },
+            params: { flightId: row.original.id },
           });
       }}
       onRowSelectionChange={setRowSelection}

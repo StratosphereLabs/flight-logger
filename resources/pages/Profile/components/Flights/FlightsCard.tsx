@@ -48,7 +48,7 @@ export const FlightsCard = ({
   setIsMapFullScreen,
 }: FlightCardProps): JSX.Element => {
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight, setIsAddingFlight, setFlightSearchFormData } =

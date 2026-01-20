@@ -21,7 +21,7 @@ export const useLoggedInUserQuery = (
 } => {
   const enabled = useAuthStore(getIsLoggedIn);
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const onError = useTRPCErrorHandler();
   const result = trpc.users.getUser.useQuery(

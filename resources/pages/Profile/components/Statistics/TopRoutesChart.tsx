@@ -28,7 +28,7 @@ export const TopRoutesChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const cityPairs = useWatch<StatisticsFiltersData, 'routesCityPairs'>({
     name: 'routesCityPairs',

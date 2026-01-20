@@ -20,7 +20,7 @@ export const MainLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const { theme } = useThemeStore();
   const christmasThemeEnabled = useGateValue('christmas_theme');

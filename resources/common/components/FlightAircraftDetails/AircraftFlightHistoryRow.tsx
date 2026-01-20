@@ -38,12 +38,6 @@ export const AircraftFlightHistoryRow = ({
               (event.target as HTMLElement).tagName !== 'A' &&
               (event.target as HTMLElement).parentElement?.tagName !== 'A'
             ) {
-              // navigate(`/flight/${flight.id}`, {
-              //   state: {
-              //     previousPageName: previousPageName ?? 'Home',
-              //   } as const as FlightPageNavigationState,
-              // });
-
               void navigate({
                 to: '/flight/$flightId',
                 params: { flightId: flight.id },

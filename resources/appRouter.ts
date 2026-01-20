@@ -11,6 +11,7 @@ import {
   Data,
   Flight,
   ForgotPassword,
+  Home,
   Login,
   Profile,
   Register,
@@ -21,10 +22,16 @@ import { flightPageSearchSchema, profilePageSearchSchema } from './schemas';
 
 export const rootRoute = createRootRoute();
 
-const indexRoute = createRoute({
+const pathlessIndexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  id: 'pathlessMainLayout',
   component: MainLayout,
+});
+
+const indexRoute = createRoute({
+  getParentRoute: () => pathlessIndexRoute,
+  path: '/',
+  component: Home,
 });
 
 const authRoute = createRoute({
@@ -34,19 +41,19 @@ const authRoute = createRoute({
 });
 
 const dataRoute = createRoute({
-  getParentRoute: () => indexRoute,
+  getParentRoute: () => pathlessIndexRoute,
   path: 'data',
   component: Data,
 });
 
 const usersRoute = createRoute({
-  getParentRoute: () => indexRoute,
+  getParentRoute: () => pathlessIndexRoute,
   path: 'users',
   component: Users,
 });
 
 const pathlessProfileRoute = createRoute({
-  getParentRoute: () => indexRoute,
+  getParentRoute: () => pathlessIndexRoute,
   id: 'pathlessProfileLayout',
   component: ProfileLayout,
 });
@@ -72,14 +79,14 @@ const accountRoute = createRoute({
 });
 
 const flightRoute = createRoute({
-  getParentRoute: () => indexRoute,
+  getParentRoute: () => pathlessIndexRoute,
   path: 'flight/$flightId',
   component: Flight,
   validateSearch: flightPageSearchSchema,
 });
 
 const aircraftRoute = createRoute({
-  getParentRoute: () => indexRoute,
+  getParentRoute: () => pathlessIndexRoute,
   path: 'aircraft/$icao24',
   component: Aircraft,
   validateSearch: flightPageSearchSchema,
@@ -112,10 +119,8 @@ export const resetPasswordRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute.addChildren([
     dataRoute,
-    userRoute,
     usersRoute,
-    profileRoute,
-    pathlessProfileRoute.addChildren([accountRoute]),
+    pathlessProfileRoute.addChildren([accountRoute, profileRoute, userRoute]),
     flightRoute,
     aircraftRoute,
   ]),

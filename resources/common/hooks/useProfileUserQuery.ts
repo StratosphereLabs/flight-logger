@@ -16,7 +16,7 @@ export const useProfileUserQuery = (): UseTRPCQueryResult<
 > => {
   const enabled = useProfilePage();
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
   });
   const onError = useTRPCErrorHandler();
   return trpc.users.getUser.useQuery(
