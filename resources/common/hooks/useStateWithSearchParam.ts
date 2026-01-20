@@ -14,8 +14,8 @@ export const useStateWithSearchParam = <DataType>(
   from: Parameters<typeof useSearch<AppRouter>>[0]['from'] &
     Parameters<typeof useNavigate<AppRouter>>[0],
 ): [DataType, Dispatch<SetStateAction<DataType>>] => {
-  const search = useSearch<AppRouter>({ from });
-  const navigate = useNavigate<AppRouter>(from);
+  const search = useSearch({ from });
+  const navigate = useNavigate(from);
   const [state, setState] = useState<DataType>(
     search[paramName] ?? defaultValue,
   );
@@ -31,9 +31,7 @@ export const useStateWithSearchParam = <DataType>(
           search: ((prev: Record<string, unknown>) => ({
             ...prev,
             [paramName]: newValue,
-          })) as Parameters<
-            ReturnType<typeof useNavigate<AppRouter>>
-          >[0]['search'],
+          })) as Parameters<ReturnType<typeof useNavigate>>[0]['search'],
         });
         return newValue;
       });

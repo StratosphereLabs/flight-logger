@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLocation } from '@tanstack/react-router';
 import { format, sub } from 'date-fns';
 import { type UseFormReturn } from 'react-hook-form';
-import { useFormWithQueryParams } from 'stratosphere-ui';
 
 import { DATE_FORMAT_ISO } from '../../../../app/constants';
 import { profileFiltersSchema } from '../../../../app/schemas';
-import { useCurrentDate } from '../../../common/hooks';
-import { useProfilePage } from './useProfilePage';
+import { useCurrentDate, useFormWithSearchParams } from '../../../common/hooks';
 
 export interface ProfileFilterFormData {
   status: 'completed' | 'upcoming' | 'all';
@@ -39,62 +38,25 @@ export interface ProfileFilterFormData {
 export const useProfileFilterForm =
   (): UseFormReturn<ProfileFilterFormData> => {
     const currentDate = useCurrentDate();
-    const { isAuthorized } = useProfilePage();
-    return useFormWithQueryParams<
+    const { pathname } = useLocation();
+    const navigateFrom = pathname.includes('/profile')
+      ? '/pathlessProfileLayout/profile'
+      : '/pathlessProfileLayout/user/$username';
+    return useFormWithSearchParams<
       ProfileFilterFormData,
       ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
     >({
-      getDefaultValues: ({
-        status,
-        range,
-        year,
-        month,
-        fromDate,
-        toDate,
-        searchQuery,
-      }) => ({
-        status: (status as ProfileFilterFormData['status']) ?? 'completed',
-        range: (range as ProfileFilterFormData['range']) ?? 'all',
-        year: year ?? currentDate.getFullYear().toString(),
-        month:
-          (month as ProfileFilterFormData['month']) ??
-          (currentDate.getMonth() + 1).toString(),
-        fromDate:
-          fromDate ?? format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
-        toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
-        searchQuery: searchQuery ?? '',
-      }),
-      getSearchParams: ([
-        status,
-        range,
-        year,
-        month,
-        fromDate,
-        toDate,
-        searchQuery,
-      ]) => {
-        const { pathname } = window.location;
-        const isProfilePage =
-          pathname.includes('/profile') || pathname.includes('/user/');
-        if (!isProfilePage || !isAuthorized)
-          return {
-            status: '',
-            range: '',
-            month: '',
-            year: '',
-            fromDate: '',
-            toDate: '',
-            searchQuery: '',
-          };
-        return {
-          status: status !== 'completed' ? status : '',
-          range: range !== 'all' ? range : '',
-          month: range === 'customMonth' ? month : '',
-          year: range === 'customMonth' || range === 'customYear' ? year : '',
-          fromDate: range === 'customRange' ? fromDate : '',
-          toDate: range === 'customRange' ? toDate : '',
-          searchQuery,
-        };
+      from: navigateFrom,
+      defaultValues: {
+        status: 'completed',
+        range: 'all',
+        year: currentDate.getFullYear().toString(),
+        month: (
+          currentDate.getMonth() + 1
+        ).toString() as ProfileFilterFormData['month'],
+        fromDate: format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
+        toDate: format(new Date(), DATE_FORMAT_ISO),
+        searchQuery: '',
       },
       includeKeys: [
         'status',
@@ -105,9 +67,6 @@ export const useProfileFilterForm =
         'toDate',
         'searchQuery',
       ],
-      navigateOptions: {
-        replace: true,
-      },
       mode: 'onChange',
       resolver: zodResolver(profileFiltersSchema),
     });

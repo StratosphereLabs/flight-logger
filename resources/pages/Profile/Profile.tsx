@@ -3,7 +3,10 @@ import { useLocation } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 
-import { useStateWithSearchParam } from '../../common/hooks';
+import {
+  useFormWithSearchParams,
+  useStateWithSearchParam,
+} from '../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,
@@ -26,21 +29,16 @@ export const Profile = (): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { pathname } = useLocation();
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
-  const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
-    getDefaultValues: ({ mapMode }) => ({
-      mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
-    }),
-    getSearchParams: ([mapMode]) => ({
-      mapMode: mapMode !== 'routes' ? mapMode : '',
-    }),
-    includeKeys: ['mapMode'],
-    navigateOptions: {
-      replace: true,
-    },
-  });
   const navigateFrom = pathname.includes('/profile')
     ? '/pathlessProfileLayout/profile'
     : '/pathlessProfileLayout/user/$username';
+  const methods = useFormWithSearchParams<MapCardFormData, ['mapMode']>({
+    from: navigateFrom,
+    defaultValues: {
+      mapMode: 'routes',
+    },
+    includeKeys: ['mapMode'],
+  });
   const [selectedAirportId, setSelectedAirportId] = useStateWithSearchParam<
     string | null
   >(null, 'selectedAirportId', navigateFrom);

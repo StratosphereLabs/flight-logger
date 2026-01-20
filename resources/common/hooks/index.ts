@@ -7,6 +7,7 @@ export * from './useErrorResponseHandler';
 export * from './useFlightDiaryUploadMutation';
 export * from './useFlightMapBounds';
 export * from './useFlightPageScrollContainer';
+export * from './useFormWithSearchParams';
 export * from './useGoogleLoginMutation';
 export * from './useGoogleMapInitialization';
 export * from './useLoggedInUserQuery';
