@@ -88,7 +88,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
             className="flex flex-col gap-1 hover:cursor-pointer"
             onClick={() =>
               navigate({
-                to: `/flight/${data.id}`,
+                to: '/flight/$flightId',
                 params: { flightId: data.id },
               })
             }
