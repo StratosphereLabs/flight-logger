@@ -58,10 +58,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { username } = useParams({
-    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
+    from: '/pathlessProfileLayout/user/$username',
   });
   const { flightId } = useParams({
-    from: '/pathlessMainLayout/flight/$flightId',
+    from: '/flight/$flightId',
   });
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
   const { data, isFetching } = useLoggedInUserQuery(userData => {

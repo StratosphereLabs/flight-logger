@@ -72,7 +72,7 @@ export const MapCard = ({
     ],
   });
   const { username } = useParams({
-    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
+    from: '/pathlessProfileLayout/user/$username',
   });
   const onError = useTRPCErrorHandler();
   const { data: currentFlightData } = trpc.flights.getUserActiveFlight.useQuery(

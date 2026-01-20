@@ -20,7 +20,7 @@ export const FlightsTableBasic = ({
   selectedAirportId,
 }: CompletedFlightsProps): JSX.Element | null => {
   const { username } = useParams({
-    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
+    from: '/pathlessProfileLayout/user/$username',
   });
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();

@@ -40,8 +40,8 @@ export const useProfileFilterForm =
     const currentDate = useCurrentDate();
     const { pathname } = useLocation();
     const navigateFrom = pathname.includes('/profile')
-      ? '/pathlessMainLayout/pathlessProfileLayout/profile'
-      : '/pathlessMainLayout/pathlessProfileLayout/user/$username';
+      ? '/pathlessProfileLayout/profile'
+      : '/pathlessProfileLayout/user/$username';
     return useFormWithSearchParams<
       ProfileFilterFormData,
       ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']

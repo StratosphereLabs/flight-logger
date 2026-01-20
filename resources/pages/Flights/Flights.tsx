@@ -45,7 +45,7 @@ export const Flights = ({
   const copyToClipboard = useCopyToClipboard();
   // const { state } = useLocation();
   const { username } = useParams({
-    from: '/pathlessMainLayout/pathlessProfileLayout/user/$username',
+    from: '/pathlessProfileLayout/user/$username',
   });
   const { setIsAddingFlight } = useAddFlightStore();
   const { onOwnProfile } = useLoggedInUserQuery();
