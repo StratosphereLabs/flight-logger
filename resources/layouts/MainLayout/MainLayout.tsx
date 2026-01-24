@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import Snowfall from 'react-snowfall';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 
+import { StatsigInitializationProvider } from '../../providers';
 import { AppTheme, useThemeStore } from '../../stores';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
@@ -43,7 +44,7 @@ export const MainLayout = (): JSX.Element => {
     scrollContainerRef.current?.scrollTo(0, 0);
   }, [username]);
   return (
-    <>
+    <StatsigInitializationProvider>
       <div className="relative flex h-[100dvh] flex-col justify-between">
         {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
           <Snowfall style={{ zIndex: 50 }} />
@@ -100,6 +101,6 @@ export const MainLayout = (): JSX.Element => {
         ) : null}
       </div>
       <TanStackRouterDevtools />
-    </>
+    </StatsigInitializationProvider>
   );
 };
