@@ -3,18 +3,13 @@ import {
   type RenderResult,
   render,
 } from '@testing-library/react';
-import { type InitialEntry } from 'history';
 import { type ReactElement } from 'react';
 
 import { AppWrapper } from '../AppWrapper';
 
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  initialEntries?: InitialEntry[];
-}
-
 const customRender = (
   ui: ReactElement,
-  options?: CustomRenderOptions,
+  options?: Omit<RenderOptions, 'wrapper'>,
 ): RenderResult =>
   render(ui, {
     wrapper: ({ children }) => <AppWrapper>{children}</AppWrapper>,

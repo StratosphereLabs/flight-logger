@@ -32,6 +32,7 @@ export const useStateWithSearchParam = <DataType>(
             ...prev,
             [paramName]: newValue,
           })) as Parameters<ReturnType<typeof useNavigate>>[0]['search'],
+          replace: true,
         });
         return newValue;
       });

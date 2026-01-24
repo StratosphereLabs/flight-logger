@@ -65,11 +65,13 @@ export const Profile = (): JSX.Element => {
       setIsAddingFlight(true);
       void navigate({
         to: '/pathlessProfileLayout/profile',
-        search: ((_: Record<string, unknown>) => ({
+        search: ((prev: Record<string, unknown>) => ({
+          ...prev,
           addFlight: undefined,
         })) as Parameters<
           ReturnType<typeof useNavigate<AppRouter>>
         >[0]['search'],
+        replace: true,
       });
     }
   }, [addFlight, navigate, setIsAddingFlight]);

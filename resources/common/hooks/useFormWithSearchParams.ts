@@ -80,6 +80,7 @@ export const useFormWithSearchParams = <
         ...prev,
         ...formValues,
       })) as Parameters<ReturnType<typeof useNavigate<AppRouter>>>[0]['search'],
+      replace: true,
     });
   }, [formValues, from, navigate]);
   return methods;
