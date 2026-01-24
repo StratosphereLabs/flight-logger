@@ -8,7 +8,7 @@ export const ProfileLayout = (): JSX.Element => {
   const isAuthorized = useProfilePage();
   useEffect(() => {
     if (!isAuthorized) {
-      setTimeout(() => navigate({ to: '/auth/login' }), 0);
+      void navigate({ to: '/auth/login' });
     }
   }, [isAuthorized, navigate]);
   return <Outlet />;

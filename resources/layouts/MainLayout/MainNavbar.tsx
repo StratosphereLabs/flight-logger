@@ -319,7 +319,10 @@ export const MainNavbar = (): JSX.Element => {
                     </>
                   ),
                   onClick: () =>
-                    navigate({ to: '/profile', search: { addFlight: true } }),
+                    navigate({
+                      to: '/profile',
+                      search: prev => ({ ...prev, addFlight: true }),
+                    }),
                 },
                 {
                   id: 'settings',

@@ -108,7 +108,7 @@ const forgotPasswordRoute = createRoute({
   component: ForgotPassword,
 });
 
-export const resetPasswordRoute = createRoute({
+const resetPasswordRoute = createRoute({
   getParentRoute: () => authRoute,
   path: 'reset-password/$token',
   component: ResetPassword,
