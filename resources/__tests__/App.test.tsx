@@ -1,8 +1,8 @@
 import { RouterProvider } from '@tanstack/react-router';
 import { describe, expect, it, vi } from 'vitest';
 
-import { appRouter } from '../appRouter';
 import { render } from '../common/test-utils';
+import { appRouter } from '../router';
 
 vi.mock('@nivo/bar', () => ({
   ResponsiveBar: () => <div data-testid="mock-bar-chart" />,

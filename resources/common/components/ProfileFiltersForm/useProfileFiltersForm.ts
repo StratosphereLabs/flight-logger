@@ -1,13 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from '@tanstack/react-router';
-import { format, sub } from 'date-fns';
+import { useEffect } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 
-import { DATE_FORMAT_ISO } from '../../../../app/constants';
 import { profileFiltersSchema } from '../../../../app/schemas';
-import { useCurrentDate, useFormWithSearchParams } from '../../../common/hooks';
+import { useProfileLayoutStore } from '../../../layouts/ProfileLayout';
+import { useFormWithSearchParams } from '../../hooks';
+import { PROFILE_FILTERS_FORM_DEFAULT_VALUES } from './constants';
 
-export interface ProfileFilterFormData {
+export interface ProfileFiltersFormData {
   status: 'completed' | 'upcoming' | 'all';
   range:
     | 'all'
@@ -35,29 +36,18 @@ export interface ProfileFilterFormData {
   searchQuery: string;
 }
 
-export const useProfileFilterForm =
-  (): UseFormReturn<ProfileFilterFormData> => {
-    const currentDate = useCurrentDate();
+export const useProfileFiltersForm =
+  (): UseFormReturn<ProfileFiltersFormData> => {
     const { pathname } = useLocation();
     const navigateFrom = pathname.includes('/profile')
       ? '/pathlessProfileLayout/profile'
       : '/pathlessProfileLayout/user/$username';
-    return useFormWithSearchParams<
-      ProfileFilterFormData,
+    const methods = useFormWithSearchParams<
+      ProfileFiltersFormData,
       ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
     >({
       from: navigateFrom,
-      defaultValues: {
-        status: 'completed',
-        range: 'all',
-        year: currentDate.getFullYear().toString(),
-        month: (
-          currentDate.getMonth() + 1
-        ).toString() as ProfileFilterFormData['month'],
-        fromDate: format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
-        toDate: format(new Date(), DATE_FORMAT_ISO),
-        searchQuery: '',
-      },
+      defaultValues: PROFILE_FILTERS_FORM_DEFAULT_VALUES,
       includeKeys: [
         'status',
         'range',
@@ -70,4 +60,10 @@ export const useProfileFilterForm =
       mode: 'onChange',
       resolver: zodResolver(profileFiltersSchema),
     });
+    const { setProfileFiltersFormData } = useProfileLayoutStore();
+    const values = methods.watch();
+    useEffect(() => {
+      setProfileFiltersFormData(values);
+    }, [setProfileFiltersFormData, values]);
+    return methods;
   };

@@ -3,19 +3,13 @@ import { Outlet, useParams } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
-import { type UseFormReturn } from 'react-hook-form';
 import Snowfall from 'react-snowfall';
 import { AlertMessages, useAlertMessages } from 'stratosphere-ui';
 
-import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import { AppTheme, useThemeStore } from '../../stores';
 import { MainFooter } from './MainFooter';
 import { MainNavbar } from './MainNavbar';
 import { useMainLayoutStore } from './mainLayoutStore';
-
-export interface MainLayoutProps {
-  methods: UseFormReturn<ProfileFilterFormData>;
-}
 
 export const MainLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
@@ -54,7 +48,7 @@ export const MainLayout = (): JSX.Element => {
         {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
           <Snowfall style={{ zIndex: 50 }} />
         ) : null}
-        <MainNavbar methods={methods} />
+        <MainNavbar />
         <div
           className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
           ref={scrollContainerRef}

@@ -4,7 +4,7 @@ import {
   createRouter,
 } from '@tanstack/react-router';
 
-import { AuthenticationLayout, MainLayout, ProfileLayout } from './layouts';
+import { AuthenticationLayout, MainLayout, ProfileLayout } from '../layouts';
 import {
   Account,
   Aircraft,
@@ -17,8 +17,12 @@ import {
   Register,
   ResetPassword,
   Users,
-} from './pages';
-import { flightPageSearchSchema, profilePageSearchSchema } from './schemas';
+} from '../pages';
+import {
+  flightPageSearchSchema,
+  profilePageSearchSchema,
+  userPageSearchSchema,
+} from './searchSchemas';
 
 export const rootRoute = createRootRoute({ component: MainLayout });
 
@@ -56,7 +60,7 @@ const userRoute = createRoute({
   getParentRoute: () => pathlessProfileRoute,
   path: 'user/$username',
   component: Profile,
-  validateSearch: profilePageSearchSchema,
+  validateSearch: userPageSearchSchema,
 });
 
 const profileRoute = createRoute({

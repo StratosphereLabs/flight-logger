@@ -6,11 +6,12 @@ import { TypeaheadSelect, type TypeaheadSelectProps } from 'stratosphere-ui';
 import { trpc } from '../../utils/trpc';
 import { useTRPCErrorHandler } from '../hooks';
 
-export interface AircraftTypeInputProps<Values extends FieldValues>
-  extends Omit<
-    TypeaheadSelectProps<AircraftType, Values>,
-    'dropdownInputClassName' | 'getItemText' | 'onDebouncedChange' | 'options'
-  > {}
+export interface AircraftTypeInputProps<
+  Values extends FieldValues,
+> extends Omit<
+  TypeaheadSelectProps<AircraftType, Values>,
+  'dropdownInputClassName' | 'getItemText' | 'onDebouncedChange' | 'options'
+> {}
 
 export const AircraftTypeInput = <Values extends FieldValues>(
   props: AircraftTypeInputProps<Values>,

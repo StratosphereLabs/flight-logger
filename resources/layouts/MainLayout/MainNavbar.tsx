@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
-import { type UseFormReturn } from 'react-hook-form';
 import {
   Avatar,
   Button,
@@ -23,11 +22,11 @@ import {
   LogoutIcon,
   MenuIcon,
   PlusAirplaneIcon,
+  ProfileFiltersForm,
   ThemeButton,
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
 import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
-import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import {
   AppTheme,
   getIsLoggedIn,
@@ -37,14 +36,9 @@ import {
 } from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
-import { ProfileFiltersForm } from './ProfileFiltersForm';
 import { useMainLayoutStore } from './mainLayoutStore';
 
-export interface MainNavbarProps {
-  methods: UseFormReturn<ProfileFilterFormData>;
-}
-
-export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
+export const MainNavbar = (): JSX.Element => {
   const { updateUserSync } = useStatsigUser();
   const christmasThemeEnabled = useGateValue('christmas_theme');
   const utils = trpc.useUtils();
@@ -358,9 +352,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             />
           </div>
         </div>
-        {isUserPage && !isAddingFlight ? (
-          <ProfileFiltersForm methods={methods} />
-        ) : null}
+        {isUserPage && !isAddingFlight ? <ProfileFiltersForm /> : null}
         {isFlightPage ? (
           <div className="flex p-1">
             <Button

@@ -8,11 +8,10 @@ import { useTRPCErrorHandler } from '../../common/hooks';
 import { useIsDarkMode } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
-export interface AirlineInputProps<Values extends FieldValues>
-  extends Omit<
-    TypeaheadSelectProps<Airline, Values>,
-    'getItemText' | 'onDebouncedChange' | 'options'
-  > {}
+export interface AirlineInputProps<Values extends FieldValues> extends Omit<
+  TypeaheadSelectProps<Airline, Values>,
+  'getItemText' | 'onDebouncedChange' | 'options'
+> {}
 
 export const AirlineInput = <Values extends FieldValues>({
   dropdownInputClassName,

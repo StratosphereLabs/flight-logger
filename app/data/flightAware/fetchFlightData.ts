@@ -8,8 +8,7 @@ import { createNewDate } from '../utils';
 import { processData } from './processData';
 import type { FlightAwareDataResult } from './types';
 
-export interface FetchFlightAwareFlightDataParams
-  extends FetchFlightDataParams {
+export interface FetchFlightAwareFlightDataParams extends FetchFlightDataParams {
   fetchTrackingData?: boolean;
 }
 

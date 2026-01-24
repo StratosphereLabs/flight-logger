@@ -1,7 +1,5 @@
 import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { type Dispatch, type SetStateAction } from 'react';
-import { type Control, useWatch } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import { Button, Loading, useDebouncedValue } from 'stratosphere-ui';
 
@@ -13,9 +11,9 @@ import {
   useProfilePage,
   useTRPCErrorHandler,
 } from '../../common/hooks';
+import { useProfileFiltersFormData } from '../../layouts/ProfileLayout';
 import { trpc } from '../../utils/trpc';
 import { useAddFlightStore } from '../Profile/components/Flights/addFlightStore';
-import { type ProfileFilterFormData } from '../Profile/hooks';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';
@@ -29,18 +27,10 @@ export interface FlightsFormData {
 }
 
 export interface FlightsProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
-  isRowSelectEnabled: boolean;
   selectedAirportId: string | null;
-  setIsRowSelectEnabled: Dispatch<SetStateAction<boolean>>;
 }
 
-export const Flights = ({
-  filtersFormControl,
-  isRowSelectEnabled,
-  selectedAirportId,
-  setIsRowSelectEnabled,
-}: FlightsProps): JSX.Element => {
+export const Flights = ({ selectedAirportId }: FlightsProps): JSX.Element => {
   const enabled = useProfilePage();
   const copyToClipboard = useCopyToClipboard();
   // const { state } = useLocation();
@@ -51,21 +41,8 @@ export const Flights = ({
   const { onOwnProfile } = useLoggedInUserQuery();
 
   const onError = useTRPCErrorHandler();
-  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
-    ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
-  >({
-    control: filtersFormControl,
-    name: [
-      'status',
-      'range',
-      'year',
-      'month',
-      'fromDate',
-      'toDate',
-      'searchQuery',
-    ],
-  });
+  const { status, range, year, month, fromDate, toDate, searchQuery } =
+    useProfileFiltersFormData();
   const { debouncedValue } = useDebouncedValue(searchQuery, 400);
   const {
     data,
@@ -124,7 +101,6 @@ export const Flights = ({
                 ? 'info'
                 : 'secondary'
             }
-            enableRowSelection={isRowSelectEnabled}
             onCopyLink={({ link }) => {
               copyToClipboard(`${APP_URL}${link}`, 'Link copied to clipboard!');
             }}

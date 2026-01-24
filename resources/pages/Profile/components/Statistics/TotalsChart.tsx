@@ -1,6 +1,5 @@
 import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { useWatch } from 'react-hook-form';
 import { Loading, Stat, StatDesc, StatTitle, StatValue } from 'stratosphere-ui';
 
 import {
@@ -14,8 +13,8 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { getLongDurationString } from '../../../../common/utils';
+import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
 import { trpc } from '../../../../utils/trpc';
-import { type ProfileFilterFormData } from '../../hooks';
 import type { StatisticsChartProps } from './types';
 
 export interface TotalsChartProps extends StatisticsChartProps {
@@ -23,7 +22,6 @@ export interface TotalsChartProps extends StatisticsChartProps {
 }
 
 export const TotalsChart = ({
-  filtersFormControl,
   isStatsFullScreen,
   selectedAirportId,
 }: TotalsChartProps): JSX.Element => {
@@ -32,21 +30,8 @@ export const TotalsChart = ({
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
-  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
-    ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
-  >({
-    control: filtersFormControl,
-    name: [
-      'status',
-      'range',
-      'year',
-      'month',
-      'fromDate',
-      'toDate',
-      'searchQuery',
-    ],
-  });
+  const { status, range, year, month, fromDate, toDate, searchQuery } =
+    useProfileFiltersFormData();
   const { data, isFetching } = trpc.statistics.getBasicStatistics.useQuery(
     {
       username,

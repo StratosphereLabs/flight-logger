@@ -1,26 +1,24 @@
 import { useMemo, useState } from 'react';
-import { type UseFormReturn, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { Button, Form, FormControl, Select } from 'stratosphere-ui';
 
-import { FilterIcon, SearchIcon } from '../../common/components';
-import { MONTH_NAMES } from '../../common/constants';
-import { useCurrentDate } from '../../common/hooks';
-import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
-import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { getIsLoggedIn, useAuthStore } from '../../../stores';
+import { MONTH_NAMES } from '../../constants';
+import { useCurrentDate } from '../../hooks';
+import { FilterIcon, SearchIcon } from '../Icons';
 import { ProfileFiltersModal } from './ProfileFiltersModal';
+import {
+  type ProfileFiltersFormData,
+  useProfileFiltersForm,
+} from './useProfileFiltersForm';
 
-export interface ProfileFiltersFormProps {
-  methods: UseFormReturn<ProfileFilterFormData>;
-}
-
-export const ProfileFiltersForm = ({
-  methods,
-}: ProfileFiltersFormProps): JSX.Element => {
+export const ProfileFiltersForm = (): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
   const currentDate = useCurrentDate();
+  const methods = useProfileFiltersForm();
   const [status, range, fromDate, toDate, year, month] = useWatch<
-    ProfileFilterFormData,
+    ProfileFiltersFormData,
     ['status', 'range', 'fromDate', 'toDate', 'year', 'month']
   >({
     control: methods.control,

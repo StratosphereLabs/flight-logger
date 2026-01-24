@@ -17,6 +17,7 @@ export * from './Icons';
 export * from './LogoHorizontal';
 export * from './MapOverlays';
 export * from './OnTimePerformanceChart';
+export * from './ProfileFiltersForm';
 export * from './StickyFlightHeader';
 export * from './ThemeButton';
 export * from './UserFlightsTable';

@@ -5,8 +5,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { AppWrapper } from './AppWrapper';
-import { type AppRouter, appRouter } from './appRouter';
 import { StatsigInitializationProvider } from './providers';
+import { type AppRouter, appRouter } from './router';
 
 Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_TOKEN as string;
 

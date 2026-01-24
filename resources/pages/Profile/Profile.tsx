@@ -1,5 +1,5 @@
 import { useStatsigClient } from '@statsig/react-bindings';
-import { useLocation } from '@tanstack/react-router';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 
@@ -7,6 +7,7 @@ import {
   useFormWithSearchParams,
   useStateWithSearchParam,
 } from '../../common/hooks';
+import { type AppRouter } from '../../router';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,
@@ -27,8 +28,10 @@ export interface MapCardFormData {
 export const Profile = (): JSX.Element => {
   const { client } = useStatsigClient();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
+  const { addFlight } = useSearch({ from: '/pathlessProfileLayout/profile' });
   const navigateFrom = pathname.includes('/profile')
     ? '/pathlessProfileLayout/profile'
     : '/pathlessProfileLayout/user/$username';
@@ -57,18 +60,25 @@ export const Profile = (): JSX.Element => {
     'isStatsFullScreen',
     navigateFrom,
   );
-  // useEffect(() => {
-  //   if (state?.addFlight === true) {
-  //     setIsAddingFlight(true);
-  //   }
-  // }, [setIsAddingFlight, state?.addFlight]);
+  useEffect(() => {
+    if (addFlight === true) {
+      setIsAddingFlight(true);
+      void navigate({
+        to: '/pathlessProfileLayout/profile',
+        search: ((_: Record<string, unknown>) => ({
+          addFlight: undefined,
+        })) as Parameters<
+          ReturnType<typeof useNavigate<AppRouter>>
+        >[0]['search'],
+      });
+    }
+  }, [addFlight, navigate, setIsAddingFlight]);
   useEffect(() => {
     client.logEvent('profile_page_viewed');
   }, [client]);
   return (
     <div className="flex flex-1 flex-col">
       <MapCard
-        filtersFormControl={filtersFormControl}
         isMapFullScreen={isMapFullScreen}
         mapFormMethods={methods}
         selectedAirportId={selectedAirportId}
@@ -90,7 +100,6 @@ export const Profile = (): JSX.Element => {
         >
           {isLoggedIn && !isStatsFullScreen ? (
             <FlightsCard
-              filtersFormControl={filtersFormControl}
               isFlightsFullScreen={isFlightsFullScreen}
               mapFormMethods={methods}
               selectedAirportId={selectedAirportId}
@@ -100,7 +109,6 @@ export const Profile = (): JSX.Element => {
           ) : null}
           {!isFlightsFullScreen && !isAddingFlight ? (
             <StatisticsCard
-              filtersFormControl={filtersFormControl}
               isStatsFullScreen={isStatsFullScreen}
               selectedAirportId={selectedAirportId}
               setIsStatsFullScreen={setIsStatsFullScreen}

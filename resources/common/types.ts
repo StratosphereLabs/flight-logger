@@ -19,8 +19,10 @@ export interface DefaultErrorData {
   zodError?: typeToFlattenedError<Record<string, unknown>, string> | null;
 }
 
-export interface DefaultErrorShape
-  extends TRPCErrorShape<TRPC_ERROR_CODE_NUMBER, DefaultErrorData> {
+export interface DefaultErrorShape extends TRPCErrorShape<
+  TRPC_ERROR_CODE_NUMBER,
+  DefaultErrorData
+> {
   message: string;
   code: TRPC_ERROR_CODE_NUMBER;
 }

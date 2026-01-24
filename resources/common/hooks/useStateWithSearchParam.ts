@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { type AppRouter } from '../../appRouter';
+import { type AppRouter } from '../../router';
 
 export const useStateWithSearchParam = <DataType>(
   defaultValue: DataType | (() => DataType),

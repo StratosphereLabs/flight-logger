@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
-import { type Control, type UseFormReturn, useForm } from 'react-hook-form';
+import { type Dispatch, type SetStateAction, useEffect } from 'react';
+import { type UseFormReturn, useForm } from 'react-hook-form';
 import { Button, Card, CardBody, CardTitle, CloseIcon } from 'stratosphere-ui';
 
 import {
@@ -20,14 +20,12 @@ import {
 } from '../../../../common/hooks';
 import { Flights } from '../../../Flights';
 import { type MapCardFormData } from '../../Profile';
-import { type ProfileFilterFormData } from '../../hooks';
 import { AddFlightForm } from './AddFlightForm';
 import { FlightsTableBasic } from './FlightsTableBasic';
 import { useAddFlightStore } from './addFlightStore';
 import { addFlightFormDefaultValues } from './constants';
 
 export interface FlightCardProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
   isFlightsFullScreen: boolean;
   mapFormMethods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
@@ -40,7 +38,6 @@ export interface FlightFiltersFormData {
 }
 
 export const FlightsCard = ({
-  filtersFormControl,
   isFlightsFullScreen,
   mapFormMethods,
   selectedAirportId,
@@ -53,7 +50,6 @@ export const FlightsCard = ({
   const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight, setIsAddingFlight, setFlightSearchFormData } =
     useAddFlightStore();
-  const [isRowSelectEnabled, setIsRowSelectEnabled] = useState(false);
   const { onOwnProfile } = useLoggedInUserQuery();
   const methods = useForm<AddFlightRequest>({
     defaultValues: addFlightFormDefaultValues,
@@ -156,19 +152,11 @@ export const FlightsCard = ({
         {isAddingFlight ? <AddFlightForm methods={methods} /> : null}
         {!isFlightsFullScreen && !isAddingFlight ? (
           <div className="min-h-[70px]">
-            <FlightsTableBasic
-              filtersFormControl={filtersFormControl}
-              selectedAirportId={selectedAirportId}
-            />
+            <FlightsTableBasic selectedAirportId={selectedAirportId} />
           </div>
         ) : null}
         {isFlightsFullScreen && !isAddingFlight ? (
-          <Flights
-            filtersFormControl={filtersFormControl}
-            isRowSelectEnabled={isRowSelectEnabled}
-            selectedAirportId={selectedAirportId}
-            setIsRowSelectEnabled={setIsRowSelectEnabled}
-          />
+          <Flights selectedAirportId={selectedAirportId} />
         ) : null}
       </CardBody>
     </Card>

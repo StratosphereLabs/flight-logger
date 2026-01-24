@@ -8,7 +8,7 @@ import {
 } from 'react';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { type AppRouter } from '../../appRouter';
+import { type AppRouter } from '../../router';
 import { extendBounds } from '../utils';
 import { useStateWithSearchParam } from './useStateWithSearchParam';
 

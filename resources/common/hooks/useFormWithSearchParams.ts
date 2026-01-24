@@ -11,7 +11,7 @@ import {
   useWatch,
 } from 'react-hook-form';
 
-import { type AppRouter } from '../../appRouter';
+import { type AppRouter } from '../../router';
 
 export type SearchParamValues<FormValues extends FieldValues> = Partial<
   Record<keyof FormValues, string | null>

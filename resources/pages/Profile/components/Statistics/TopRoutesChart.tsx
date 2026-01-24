@@ -18,13 +18,12 @@ import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
+import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
 import { trpc } from '../../../../utils/trpc';
-import { type ProfileFilterFormData } from '../../hooks';
 import { type StatisticsFiltersData } from './StatisticsCard';
 import type { StatisticsChartProps } from './types';
 
 export const TopRoutesChart = ({
-  filtersFormControl,
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
   const { username } = useParams({
@@ -35,21 +34,8 @@ export const TopRoutesChart = ({
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
-  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
-    ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
-  >({
-    control: filtersFormControl,
-    name: [
-      'status',
-      'range',
-      'year',
-      'month',
-      'fromDate',
-      'toDate',
-      'searchQuery',
-    ],
-  });
+  const { status, range, year, month, fromDate, toDate, searchQuery } =
+    useProfileFiltersFormData();
   const { data, isFetching } = trpc.statistics.getAllStatistics.useQuery(
     {
       username,

@@ -13,8 +13,7 @@ import type {
   FlightStatsOnTimePerformanceResponse,
 } from './types';
 
-export interface OnTimePerformanceData
-  extends FlightStatsOnTimePerformanceRating {
+export interface OnTimePerformanceData extends FlightStatsOnTimePerformanceRating {
   validFrom: string;
   validTo: string;
 }

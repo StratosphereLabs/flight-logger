@@ -1,11 +1,10 @@
 import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { type Dispatch, type SetStateAction } from 'react';
-import { type Control, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Button, Card, CardBody, CardTitle, Form } from 'stratosphere-ui';
 
 import { CollapseIcon, ExpandIcon } from '../../../../common/components';
-import { type ProfileFilterFormData } from '../../hooks';
 import { FlightClassRadarChart } from './FlightClassRadarChart';
 import { FlightLengthRadarChart } from './FlightLengthRadarChart';
 import { FlightTypePieChart } from './FlightTypePieChart';
@@ -35,14 +34,12 @@ export interface StatisticsFiltersData {
 }
 
 export interface StatisticsProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
   isStatsFullScreen: boolean;
   selectedAirportId: string | null;
   setIsStatsFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const StatisticsCard = ({
-  filtersFormControl,
   isStatsFullScreen,
   selectedAirportId,
   setIsStatsFullScreen,
@@ -93,7 +90,6 @@ export const StatisticsCard = ({
             </Button>
           </div>
           <TotalsChart
-            filtersFormControl={filtersFormControl}
             isStatsFullScreen={isStatsFullScreen}
             selectedAirportId={selectedAirportId}
           />
@@ -105,56 +101,23 @@ export const StatisticsCard = ({
                 : 'sm:grid-cols-2 2xl:grid-cols-4',
             )}
           >
-            <TopAirlinesChart
-              filtersFormControl={filtersFormControl}
-              selectedAirportId={selectedAirportId}
-            />
-            <TopAirportsChart
-              filtersFormControl={filtersFormControl}
-              selectedAirportId={selectedAirportId}
-            />
-            <TopAircraftTypesChart
-              filtersFormControl={filtersFormControl}
-              selectedAirportId={selectedAirportId}
-            />
+            <TopAirlinesChart selectedAirportId={selectedAirportId} />
+            <TopAirportsChart selectedAirportId={selectedAirportId} />
+            <TopAircraftTypesChart selectedAirportId={selectedAirportId} />
             {isStatsFullScreen ? (
-              <TopRoutesChart
-                filtersFormControl={filtersFormControl}
-                selectedAirportId={selectedAirportId}
-              />
+              <TopRoutesChart selectedAirportId={selectedAirportId} />
             ) : null}
-            <TopCountriesChart
-              filtersFormControl={filtersFormControl}
-              selectedAirportId={selectedAirportId}
-            />
+            <TopCountriesChart selectedAirportId={selectedAirportId} />
             {isStatsFullScreen ? (
-              <TopRegionsChart
-                filtersFormControl={filtersFormControl}
-                selectedAirportId={selectedAirportId}
-              />
+              <TopRegionsChart selectedAirportId={selectedAirportId} />
             ) : null}
             {isStatsFullScreen ? (
               <>
-                <FlightTypePieChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
-                <FlightLengthRadarChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
-                <FlightClassRadarChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
-                <ReasonRadarChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
-                <SeatPositionRadarChart
-                  filtersFormControl={filtersFormControl}
-                  selectedAirportId={selectedAirportId}
-                />
+                <FlightTypePieChart selectedAirportId={selectedAirportId} />
+                <FlightLengthRadarChart selectedAirportId={selectedAirportId} />
+                <FlightClassRadarChart selectedAirportId={selectedAirportId} />
+                <ReasonRadarChart selectedAirportId={selectedAirportId} />
+                <SeatPositionRadarChart selectedAirportId={selectedAirportId} />
               </>
             ) : null}
           </div>

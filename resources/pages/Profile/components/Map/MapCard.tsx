@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { type Control, type UseFormReturn, useWatch } from 'react-hook-form';
+import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { Button, Form, LoadingCard, Select } from 'stratosphere-ui';
 
 import {
@@ -18,10 +18,10 @@ import {
   MapIcon,
 } from '../../../../common/components';
 import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
+import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
 import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type MapCardFormData } from '../../Profile';
-import { type ProfileFilterFormData } from '../../hooks';
 import { useAddFlightStore } from '../Flights/addFlightStore';
 import { CesiumMap } from './CesiumMap';
 import { GoogleMap } from './GoogleMap';
@@ -30,7 +30,6 @@ import { DEFAULT_COORDINATES } from './constants';
 import { getAirportsData } from './utils';
 
 export interface MapCardProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
   isMapFullScreen: boolean;
   mapFormMethods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
@@ -39,7 +38,6 @@ export interface MapCardProps {
 }
 
 export const MapCard = ({
-  filtersFormControl,
   isMapFullScreen,
   mapFormMethods,
   selectedAirportId,
@@ -56,21 +54,8 @@ export const MapCard = ({
     control: mapFormMethods.control,
     name: ['mapMode'],
   });
-  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
-    ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
-  >({
-    control: filtersFormControl,
-    name: [
-      'status',
-      'range',
-      'year',
-      'month',
-      'fromDate',
-      'toDate',
-      'searchQuery',
-    ],
-  });
+  const { status, range, year, month, fromDate, toDate, searchQuery } =
+    useProfileFiltersFormData();
   const { username } = useParams({
     from: '/pathlessProfileLayout/user/$username',
   });
@@ -269,6 +254,7 @@ export const MapCard = ({
       isProfilePage,
       mapFormMethods,
       mapMode,
+      navigate,
       selectedAirportId,
       setIsMapFullScreen,
       setSelectedAirportId,
