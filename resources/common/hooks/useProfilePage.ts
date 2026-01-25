@@ -4,8 +4,6 @@ import { getIsLoggedIn, useAuthStore } from '../../stores';
 
 export const useProfilePage = (): boolean => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   return username !== undefined || isLoggedIn;
 };

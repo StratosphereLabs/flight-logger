@@ -41,7 +41,7 @@ export interface AddFlightFormProps {
 export const AddFlightForm = ({ methods }: AddFlightFormProps): JSX.Element => {
   const utils = trpc.useUtils();
   const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
+    strict: false,
   });
   const { onOwnProfile } = useLoggedInUserQuery();
   const { scrollContainerRef } = useMainLayoutStore();

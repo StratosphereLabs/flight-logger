@@ -56,9 +56,7 @@ export const MapCard = ({
   });
   const { status, range, year, month, fromDate, toDate, searchQuery } =
     useProfileFiltersFormData();
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   const onError = useTRPCErrorHandler();
   const { data: currentFlightData } = trpc.flights.getUserActiveFlight.useQuery(
     {

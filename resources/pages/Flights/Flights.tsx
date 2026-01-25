@@ -34,9 +34,7 @@ export const Flights = ({ selectedAirportId }: FlightsProps): JSX.Element => {
   const enabled = useProfilePage();
   const copyToClipboard = useCopyToClipboard();
   // const { state } = useLocation();
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   const { setIsAddingFlight } = useAddFlightStore();
   const { onOwnProfile } = useLoggedInUserQuery();
 

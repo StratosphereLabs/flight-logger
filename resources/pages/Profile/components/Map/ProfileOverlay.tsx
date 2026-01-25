@@ -22,9 +22,7 @@ import { trpc } from '../../../../utils/trpc';
 export const ProfileOverlay = (): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
   const onSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();

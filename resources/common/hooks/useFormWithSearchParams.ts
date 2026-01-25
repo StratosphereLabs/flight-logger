@@ -54,7 +54,7 @@ export const useFormWithSearchParams = <
   FormContext,
   TransformedValues
 >): UseFormReturn<FormValues, FormContext, TransformedValues> => {
-  const search = useSearch({ from });
+  const search = useSearch({ strict: false });
   const navigate = useNavigate(from);
   const methods = useForm<FormValues, FormContext, TransformedValues>({
     ...useFormOptions,
@@ -75,7 +75,6 @@ export const useFormWithSearchParams = <
     }
     prevFormValuesRef.current = formValues;
     void navigate({
-      to: from,
       search: ((prev: Record<string, unknown>) => ({
         ...prev,
         ...formValues,

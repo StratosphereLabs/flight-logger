@@ -18,9 +18,7 @@ import type { StatisticsChartProps } from './types';
 export const ReasonRadarChart = ({
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   const mode = useWatch<StatisticsFiltersData, 'flightReasonMode'>({
     name: 'flightReasonMode',
   });

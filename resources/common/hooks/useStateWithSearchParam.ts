@@ -6,38 +6,37 @@ import {
   useState,
 } from 'react';
 
-import { type AppRouter } from '../../router';
+import { type AppRouter, type SearchParams } from '../../router';
 
-export const useStateWithSearchParam = <DataType>(
-  defaultValue: DataType | (() => DataType),
-  paramName: string,
+export const useStateWithSearchParam = <S>(
+  defaultValue: S | (() => S),
+  paramName: keyof SearchParams,
   from: Parameters<typeof useSearch<AppRouter>>[0]['from'] &
     Parameters<typeof useNavigate<AppRouter>>[0],
-): [DataType, Dispatch<SetStateAction<DataType>>] => {
-  const search = useSearch({ from });
+): [S, Dispatch<SetStateAction<S>>] => {
+  const search = useSearch({ strict: false });
   const navigate = useNavigate(from);
-  const [state, setState] = useState<DataType>(
-    search[paramName] ?? defaultValue,
-  );
+  const searchValue = search[paramName] as S;
+  const [state, setState] = useState<S>(searchValue ?? defaultValue);
   const setStateWithSearchParam = useCallback(
-    (value: SetStateAction<DataType>) => {
+    (value: SetStateAction<S>) => {
       setState(oldValue => {
         const newValue =
           typeof value === 'function'
-            ? (value as (prevState: DataType) => DataType)(oldValue)
+            ? (value as (prevState: S) => S)(oldValue)
             : value;
         void navigate({
-          to: from,
           search: ((prev: Record<string, unknown>) => ({
             ...prev,
-            [paramName]: newValue,
+            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+            [paramName]: !newValue ? undefined : newValue,
           })) as Parameters<ReturnType<typeof useNavigate>>[0]['search'],
           replace: true,
         });
         return newValue;
       });
     },
-    [from, navigate, paramName],
+    [navigate, paramName],
   );
   return [state, setStateWithSearchParam];
 };

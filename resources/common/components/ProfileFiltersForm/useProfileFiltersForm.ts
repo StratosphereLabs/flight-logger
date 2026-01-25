@@ -61,9 +61,13 @@ export const useProfileFiltersForm =
       resolver: zodResolver(profileFiltersSchema),
     });
     const { setProfileFiltersFormData } = useProfileLayoutStore();
-    const values = methods.watch();
     useEffect(() => {
-      setProfileFiltersFormData(values);
-    }, [setProfileFiltersFormData, values]);
+      const subscription = methods.watch(() => {
+        setProfileFiltersFormData(methods.getValues());
+      });
+      return () => {
+        subscription.unsubscribe();
+      };
+    }, [methods, setProfileFiltersFormData]);
     return methods;
   };

@@ -1,8 +1,13 @@
 import { useGateValue, useStatsigUser } from '@statsig/react-bindings';
-import { useLocation, useNavigate, useParams } from '@tanstack/react-router';
+import {
+  useCanGoBack,
+  useLocation,
+  useNavigate,
+  useParams,
+  useRouter,
+} from '@tanstack/react-router';
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
-import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import {
   Avatar,
@@ -46,17 +51,14 @@ export const MainNavbar = (): JSX.Element => {
   const { logout } = useAuthStore();
   const { previousPageName } = useMainLayoutStore();
   const { isAddingFlight } = useAddFlightStore();
+  const canGoBack = useCanGoBack();
+  const router = useRouter();
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
-  const { flightId } = useParams({
-    from: '/flight/$flightId',
-  });
+  const { username } = useParams({ strict: false });
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
   const { data, isFetching } = useLoggedInUserQuery(userData => {
     if (userData.pushNotifications && messaging !== undefined) {
@@ -356,13 +358,15 @@ export const MainNavbar = (): JSX.Element => {
           </div>
         </div>
         {isUserPage && !isAddingFlight ? <ProfileFiltersForm /> : null}
-        {isFlightPage ? (
+        {isFlightPage && canGoBack ? (
           <div className="flex p-1">
             <Button
               className="text-sm"
               color="ghost"
               size="xs"
-              onClick={() => navigate({ to: '..' })}
+              onClick={() => {
+                router.history.back();
+              }}
             >
               <LeftArrowIcon className="h-3 w-3" /> Back to{' '}
               {previousPageName ?? 'Home'}
@@ -389,16 +393,6 @@ export const MainNavbar = (): JSX.Element => {
               await utils.users.getUser.cancel();
               await utils.users.getUser.invalidate({ username: undefined });
               updateUserSync({});
-              if (flightId !== undefined) {
-                utils.flights.getFlight.setData(
-                  { id: flightId },
-                  previousData => ({
-                    ..._.omit(previousData, 'id'),
-                    id: flightId,
-                    otherTravelers: [],
-                  }),
-                );
-              }
             },
             soft: true,
           },

@@ -15,9 +15,7 @@ import { useMainLayoutStore } from './mainLayoutStore';
 export const MainLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   const { theme } = useThemeStore();
   const christmasThemeEnabled = useGateValue('christmas_theme');
   const { setScrollContainerRef } = useMainLayoutStore();

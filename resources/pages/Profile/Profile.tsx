@@ -30,10 +30,10 @@ export const Profile = (): JSX.Element => {
   const navigate = useNavigate({ from: '/profile' });
   const { pathname } = useLocation();
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
-  const { addFlight } = useSearch({ from: '/pathlessProfileLayout/profile' });
   const navigateFrom = pathname.includes('/profile')
     ? '/pathlessProfileLayout/profile'
     : '/pathlessProfileLayout/user/$username';
+  const { addFlight } = useSearch({ strict: false });
   const methods = useFormWithSearchParams<MapCardFormData, ['mapMode']>({
     from: navigateFrom,
     defaultValues: {
@@ -62,13 +62,17 @@ export const Profile = (): JSX.Element => {
   useEffect(() => {
     if (addFlight === true) {
       setIsAddingFlight(true);
-      void navigate({
-        to: '/profile',
-        search: prev => ({ ...prev, addFlight: undefined }),
-        replace: true,
-      });
     }
   }, [addFlight, navigate, setIsAddingFlight]);
+  useEffect(() => {
+    void navigate({
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        addFlight: isAddingFlight || undefined,
+      }),
+      replace: true,
+    });
+  }, [isAddingFlight, navigate]);
   useEffect(() => {
     client.logEvent('profile_page_viewed');
   }, [client]);

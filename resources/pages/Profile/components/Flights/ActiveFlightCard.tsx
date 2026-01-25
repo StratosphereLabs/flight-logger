@@ -27,9 +27,7 @@ export const ActiveFlightCard = (): JSX.Element | null => {
   const navigate = useNavigate();
   const { data: userData } = useLoggedInUserQuery();
   const enabled = useProfilePage();
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   const { theme } = useThemeStore();
   const handleSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();

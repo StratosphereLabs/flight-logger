@@ -2,6 +2,7 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  type useSearch,
 } from '@tanstack/react-router';
 
 import { AuthenticationLayout, MainLayout, ProfileLayout } from '../layouts';
@@ -134,3 +135,7 @@ export const appRouter = createRouter({
 });
 
 export type AppRouter = typeof appRouter;
+
+export type SearchParams = ReturnType<
+  typeof useSearch<AppRouter, undefined, false>
+>;

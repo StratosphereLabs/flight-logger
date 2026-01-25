@@ -16,9 +16,7 @@ export interface CompletedFlightsProps {
 export const FlightsTableBasic = ({
   selectedAirportId,
 }: CompletedFlightsProps): JSX.Element | null => {
-  const { username } = useParams({
-    from: '/pathlessProfileLayout/user/$username',
-  });
+  const { username } = useParams({ strict: false });
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
   const { status, range, year, month, fromDate, toDate, searchQuery } =
