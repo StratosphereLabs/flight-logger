@@ -21,10 +21,13 @@ export const FlightsTable = ({
     <div className="flex max-w-fit flex-1 flex-col">
       <Table
         cellClassNames={{
-          year: 'w-[65px]',
-          date: 'w-[45px] lg:w-[50px]',
-          airline: 'w-[80px] py-[2px] lg:py-1',
-          departureAirport: 'w-[40px] lg:w-[50px]',
+          year: 'w-[65px] border-none',
+          date: 'w-[45px] lg:w-[50px] border-none',
+          airline: 'w-[80px] py-[2px] lg:py-1 border-none',
+          flightNumber: 'border-none',
+          departureAirport: 'w-[40px] lg:w-[50px] border-none',
+          arrivalAirport: 'border-none',
+          aircraftType: 'border-none',
         }}
         className="table-xs lg:table-sm w-full max-w-[750px] min-w-[375px] table-fixed border-separate lg:min-w-[465px]"
         columns={[

@@ -116,11 +116,11 @@ export const MainNavbar = (): JSX.Element => {
         id: 'home',
         children: 'Home',
         className: classNames(
-          '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+          '[--tab-bg:var(--color-primary)]',
           currentTab === 'home' &&
             (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
               ? 'lg:text-white lg:hover:text-white'
-              : 'lg:hover:text-primary-content'),
+              : 'lg:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'home') {
@@ -134,11 +134,11 @@ export const MainNavbar = (): JSX.Element => {
               id: 'profile',
               children: 'Profile',
               className: classNames(
-                '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+                '[--tab-bg:var(--color-primary)]',
                 currentTab === 'profile' &&
                   (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
                     ? 'lg:text-white lg:hover:text-white'
-                    : 'lg:hover:text-primary-content'),
+                    : 'lg:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'profile') {
@@ -150,11 +150,11 @@ export const MainNavbar = (): JSX.Element => {
               id: 'users',
               children: 'Users',
               className: classNames(
-                '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+                '[--tab-bg:var(--color-primary)]',
                 currentTab === 'users' &&
                   (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
                     ? 'lg:text-white lg:hover:text-white'
-                    : 'lg:hover:text-primary-content'),
+                    : 'lg:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'users') {
@@ -168,11 +168,11 @@ export const MainNavbar = (): JSX.Element => {
         id: 'data',
         children: 'Data',
         className: classNames(
-          '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+          '[--tab-bg:var(--color-primary)]',
           currentTab === 'data' &&
             (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
               ? 'lg:text-white lg:hover:text-white'
-              : 'lg:hover:text-primary-content'),
+              : 'lg:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'data') {
