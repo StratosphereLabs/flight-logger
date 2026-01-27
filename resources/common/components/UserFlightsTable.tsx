@@ -250,8 +250,8 @@ export const UserFlightsTable = ({
                   state: {
                     previousPageName:
                       username !== undefined
-                        ? `${username}'s Profile`
-                        : 'Profile',
+                        ? `${username}'s Flights`
+                        : 'Flights',
                   },
                 })
               }
