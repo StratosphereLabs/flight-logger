@@ -1,11 +1,10 @@
 import type { AircraftType, Airline, Airport } from '@prisma/client';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, Table } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../../../app/routes/flights';
-import { type FlightPageNavigationState } from '../../../Flight';
 
 export interface FlightsTableProps {
   data: Array<FlightsRouterOutput['getUserFlightsBasic']['results'][number]>;
@@ -16,18 +15,18 @@ export const FlightsTable = ({
   data,
   isLoading,
 }: FlightsTableProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({ strict: false });
   const navigate = useNavigate();
   return (
     <div className="flex max-w-fit flex-1 flex-col">
       <Table
         cellClassNames={{
-          year: 'w-[65px]',
+          year: 'w-[70px]',
           date: 'w-[45px] lg:w-[50px]',
           airline: 'w-[80px] py-[2px] lg:py-1',
           departureAirport: 'w-[40px] lg:w-[50px]',
         }}
-        className="table-xs lg:table-sm w-full max-w-[750px] min-w-[375px] table-fixed border-separate lg:min-w-[465px]"
+        className="table-xs lg:table-sm w-full max-w-[750px] min-w-[375px] table-fixed lg:min-w-[465px] [&_td]:border-none [&_th]:border-none"
         columns={[
           {
             id: 'year',
@@ -156,14 +155,16 @@ export const FlightsTable = ({
         enableSorting={false}
         getCoreRowModel={getCoreRowModel()}
         isLoading={isLoading}
-        onRowClick={row => {
-          navigate(`/flight/${row.original.id}`, {
+        onRowClick={row =>
+          navigate({
+            to: '/flight/$flightId',
+            params: { flightId: row.original.id },
             state: {
               previousPageName:
                 username !== undefined ? `${username}'s Profile` : 'Profile',
-            } as const as FlightPageNavigationState,
-          });
-        }}
+            },
+          })
+        }
         rowClassName="hover:opacity-75 transition-opacity hover:cursor-pointer"
       />
     </div>

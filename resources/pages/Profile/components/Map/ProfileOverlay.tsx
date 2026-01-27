@@ -1,6 +1,6 @@
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { Avatar, Button, Loading, Modal } from 'stratosphere-ui';
 
 import {
@@ -22,7 +22,7 @@ import { trpc } from '../../../../utils/trpc';
 export const ProfileOverlay = (): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
-  const { username } = useParams();
+  const { username } = useParams({ strict: false });
   const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
   const onSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();

@@ -106,8 +106,9 @@ export interface RouteResult {
   midpoint: Coordinates;
 }
 
-export interface FlightsResult
-  extends Array<Omit<FlightWithAirports, 'tracklog' | 'waypoints'>> {}
+export interface FlightsResult extends Array<
+  Omit<FlightWithAirports, 'tracklog' | 'waypoints'>
+> {}
 
 export interface FlightTrackingDataResult {
   tracklog: TracklogItem[] | undefined;
@@ -115,7 +116,8 @@ export interface FlightTrackingDataResult {
 }
 
 export interface TransformFlightDataResult
-  extends Omit<
+  extends
+    Omit<
       FlightData,
       | 'tracklog'
       | 'user'

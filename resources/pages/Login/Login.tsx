@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useLinkClickHandler } from 'react-router-dom';
 import {
   Button,
   CardTitle,
@@ -20,6 +20,7 @@ export const Login = (): JSX.Element => {
   useAuthPage();
   const { client } = useStatsigClient();
   const { setToken } = useAuthStore();
+  const navigate = useNavigate();
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -39,8 +40,7 @@ export const Login = (): JSX.Element => {
   useEffect(() => {
     client.logEvent('login_page_viewed');
   }, [client]);
-  const handleForgotPassword = useLinkClickHandler('/auth/forgot-password');
-  const handleRegister = useLinkClickHandler('/auth/register');
+
   return (
     <>
       <CardTitle>Sign In</CardTitle>
@@ -68,7 +68,7 @@ export const Login = (): JSX.Element => {
           />
           <div className="flex w-full justify-between">
             <a
-              onClick={handleForgotPassword}
+              onClick={() => navigate({ to: '/auth/forgot-password' })}
               href="#"
               className="link-hover link label-text-alt"
               tabIndex={0}
@@ -76,7 +76,7 @@ export const Login = (): JSX.Element => {
               Forgot password?
             </a>
             <a
-              onClick={handleRegister}
+              onClick={() => navigate({ to: '/auth/register' })}
               href="#"
               className="link-hover link label-text-alt"
               tabIndex={0}

@@ -1,8 +1,8 @@
 import { GoogleMap } from '@react-google-maps/api';
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useLocation, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 
 import {
@@ -37,7 +37,9 @@ export interface FlightPageNavigationState {
 
 export const Flight = (): JSX.Element | null => {
   const { client } = useStatsigClient();
-  const { flightId } = useParams();
+  const { flightId } = useParams({
+    from: '/flight/$flightId',
+  });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getFlight.useQuery(
     { id: flightId ?? '' },
@@ -50,19 +52,17 @@ export const Flight = (): JSX.Element | null => {
     },
   );
   const { setPreviousPageName } = useMainLayoutStore();
-  const { state } = useLocation() as {
-    state: FlightPageNavigationState | null;
-  };
+  const { state } = useLocation();
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
   const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
-    if (state !== null) {
+    if (state.previousPageName !== undefined) {
       setPreviousPageName(state.previousPageName);
     }
-  }, [setPreviousPageName, state]);
+  }, [setPreviousPageName, state.previousPageName]);
   useEffect(() => {
     client.logEvent('flight_page_viewed', flightId);
   }, [client, flightId]);
@@ -75,6 +75,7 @@ export const Flight = (): JSX.Element | null => {
     data,
     map,
     isMapCollapsed,
+    from: '/flight/$flightId',
   });
   const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
     setIsMapCollapsed,

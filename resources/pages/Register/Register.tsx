@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useLinkClickHandler } from 'react-router-dom';
 import {
   Button,
   CardTitle,
@@ -33,6 +33,7 @@ export const Register = (): JSX.Element => {
     },
     resolver: zodResolver(registerSchema),
   });
+  const navigate = useNavigate();
   const onError = useTRPCErrorHandler();
   const { isLoading, mutate } = trpc.auth.register.useMutation({
     onSuccess: ({ token }) => {
@@ -43,7 +44,7 @@ export const Register = (): JSX.Element => {
   useEffect(() => {
     client.logEvent('register_page_viewed');
   }, [client]);
-  const handleClick = useLinkClickHandler('/auth/login');
+
   return (
     <>
       <CardTitle>Register</CardTitle>
@@ -97,7 +98,7 @@ export const Register = (): JSX.Element => {
           />
           <label className="label">
             <a
-              onClick={handleClick}
+              onClick={() => navigate({ to: '/auth/login' })}
               className="link-hover link label-text-alt"
               href="#"
               tabIndex={0}

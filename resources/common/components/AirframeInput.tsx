@@ -6,14 +6,13 @@ import { type AirframesRouterOutput } from '../../../app/routes/airframes';
 import { useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
-export interface AirframeInputProps<Values extends FieldValues>
-  extends Omit<
-    TypeaheadSelectProps<
-      AirframesRouterOutput['searchAirframes'][number],
-      Values
-    >,
-    'dropdownInputClassName' | 'getItemText' | 'onDebouncedChange' | 'options'
-  > {}
+export interface AirframeInputProps<Values extends FieldValues> extends Omit<
+  TypeaheadSelectProps<
+    AirframesRouterOutput['searchAirframes'][number],
+    Values
+  >,
+  'dropdownInputClassName' | 'getItemText' | 'onDebouncedChange' | 'options'
+> {}
 
 export const AirframeInput = <Values extends FieldValues>(
   props: AirframeInputProps<Values>,

@@ -3,14 +3,14 @@ import { type Dispatch, type SetStateAction } from 'react';
 import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { FormControl, Modal, Select } from 'stratosphere-ui';
 
-import { DATE_FORMAT_ISO } from '../../../app/constants';
-import { MONTH_NAMES } from '../../common/constants';
-import { useCurrentDate } from '../../common/hooks';
-import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
-import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { DATE_FORMAT_ISO } from '../../../../app/constants';
+import { getIsLoggedIn, useAuthStore } from '../../../stores';
+import { MONTH_NAMES } from '../../constants';
+import { useCurrentDate } from '../../hooks';
+import { type ProfileFiltersFormData } from './useProfileFiltersForm';
 
 export interface ProfileFiltersModalProps {
-  methods: UseFormReturn<ProfileFilterFormData>;
+  methods: UseFormReturn<ProfileFiltersFormData>;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
@@ -23,7 +23,7 @@ export const ProfileFiltersModal = ({
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const currentDate = useCurrentDate();
   const [range, fromDate, toDate] = useWatch<
-    ProfileFilterFormData,
+    ProfileFiltersFormData,
     ['range', 'fromDate', 'toDate']
   >({
     control: methods.control,
@@ -42,7 +42,7 @@ export const ProfileFiltersModal = ({
               year: currentDate.getFullYear().toString(),
               month: (
                 currentDate.getMonth() + 1
-              ).toString() as ProfileFilterFormData['month'],
+              ).toString() as ProfileFiltersFormData['month'],
               fromDate: format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
               toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
               searchQuery: '',

@@ -1,5 +1,5 @@
+import { useLocation } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
 
 export const MainFooter = (): JSX.Element => {
   const { pathname } = useLocation();

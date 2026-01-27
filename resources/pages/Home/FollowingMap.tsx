@@ -6,10 +6,10 @@ import {
   PolylineF,
 } from '@react-google-maps/api';
 import { useGateValue } from '@statsig/react-bindings';
+import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Button,
@@ -38,7 +38,6 @@ import {
 import { AppTheme, useIsDarkMode, useThemeStore } from '../../stores';
 import { getAltitudeColor } from '../../utils/colors';
 import { trpc } from '../../utils/trpc';
-import { type ProfilePageNavigationState } from '../Profile';
 import { getAirportsData } from '../Profile/components/Map/utils';
 import { FlightRow } from './FlightRow';
 import {
@@ -514,13 +513,19 @@ export const FollowingMap = (): JSX.Element => {
           {!isLoading && data !== undefined ? (
             <div className="flex flex-col gap-2 p-2">
               {data?.groupedFlights.CURRENT?.sort(sortByDepartureTimeAsc).map(
-                flight => <FlightRow key={flight.id} flight={flight} />,
+                flight => (
+                  <FlightRow key={flight.id} flight={flight} />
+                ),
               )}
               {data?.groupedFlights.UPCOMING?.sort(sortByDepartureTimeAsc).map(
-                flight => <FlightRow key={flight.id} flight={flight} />,
+                flight => (
+                  <FlightRow key={flight.id} flight={flight} />
+                ),
               )}
               {data?.groupedFlights.COMPLETED?.sort(sortByArrivalTimeDesc).map(
-                flight => <FlightRow key={flight.id} flight={flight} />,
+                flight => (
+                  <FlightRow key={flight.id} flight={flight} />
+                ),
               )}
               <div className="flex flex-1 flex-col items-center justify-center gap-4">
                 {data.flights.length === 0 ? (
@@ -532,24 +537,18 @@ export const FollowingMap = (): JSX.Element => {
                 <div className="my-3 flex flex-wrap justify-center gap-4">
                   <Button
                     color="primary"
-                    onClick={() => {
-                      navigate('/profile', {
-                        state: {
-                          addFlight: true,
-                        } as const as ProfilePageNavigationState,
-                      });
-                    }}
+                    onClick={() =>
+                      navigate({
+                        to: '/profile',
+                        state: { addFlight: true },
+                      })
+                    }
                     soft
                   >
                     <PlusAirplaneIcon className="h-4 w-4" />
                     Add Flight
                   </Button>
-                  <Button
-                    onClick={() => {
-                      navigate('/users');
-                    }}
-                    soft
-                  >
+                  <Button onClick={() => navigate({ to: '/users' })} soft>
                     Find Users <RightArrowIcon className="h-4 w-4" />
                   </Button>
                 </div>

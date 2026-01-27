@@ -36,14 +36,6 @@ export const validateUserFlights = async (
       message: 'One or more flights could not be found!',
     });
   }
-  flights.forEach(flight => {
-    if (flight.tripId !== null) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'One or more flights already belongs to a trip.',
-      });
-    }
-  });
   return flights;
 };
 

@@ -1,8 +1,8 @@
 import { ResponsiveBar } from '@nivo/bar';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 import {
   Loading,
   Select,
@@ -18,37 +18,23 @@ import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
+import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
 import { trpc } from '../../../../utils/trpc';
-import { type ProfileFilterFormData } from '../../hooks';
 import { type StatisticsFiltersData } from './StatisticsCard';
 import { STATS_TOTALS_MODE_UNITS } from './constants';
 import type { StatisticsChartProps } from './types';
 
 export const TopAircraftTypesChart = ({
-  filtersFormControl,
   selectedAirportId,
 }: StatisticsChartProps): JSX.Element => {
-  const { username } = useParams();
+  const { username } = useParams({ strict: false });
   const mode = useWatch<StatisticsFiltersData, 'aircraftTypesMode'>({
     name: 'aircraftTypesMode',
   });
   const onError = useTRPCErrorHandler();
   const { data: userData } = useProfileUserQuery();
-  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
-    ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
-  >({
-    control: filtersFormControl,
-    name: [
-      'status',
-      'range',
-      'year',
-      'month',
-      'fromDate',
-      'toDate',
-      'searchQuery',
-    ],
-  });
+  const { status, range, year, month, fromDate, toDate, searchQuery } =
+    useProfileFiltersFormData();
   const { data, isFetching } = trpc.statistics.getBasicStatistics.useQuery(
     {
       username,

@@ -3,26 +3,16 @@ import {
   type RenderResult,
   render,
 } from '@testing-library/react';
-import { type InitialEntry } from 'history';
-import React, { type ReactElement } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { type ReactElement } from 'react';
 
 import { AppWrapper } from '../AppWrapper';
 
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  initialEntries?: InitialEntry[];
-}
-
 const customRender = (
   ui: ReactElement,
-  options?: CustomRenderOptions,
+  options?: Omit<RenderOptions, 'wrapper'>,
 ): RenderResult =>
   render(ui, {
-    wrapper: ({ children }) => (
-      <MemoryRouter initialEntries={options?.initialEntries}>
-        <AppWrapper>{children}</AppWrapper>
-      </MemoryRouter>
-    ),
+    wrapper: ({ children }) => <AppWrapper>{children}</AppWrapper>,
     ...options,
   });
 

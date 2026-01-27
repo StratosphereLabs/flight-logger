@@ -1,42 +1,26 @@
+import { useParams } from '@tanstack/react-router';
 import { useMemo } from 'react';
-import { type Control, useWatch } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
 
 import {
   useProfileUserQuery,
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
+import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
 import { trpc } from '../../../../utils/trpc';
-import { type ProfileFilterFormData } from '../../hooks';
 import { FlightsTable } from './FlightsTable';
 
 export interface CompletedFlightsProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
   selectedAirportId: string | null;
 }
 
 export const FlightsTableBasic = ({
-  filtersFormControl,
   selectedAirportId,
 }: CompletedFlightsProps): JSX.Element | null => {
-  const { username } = useParams();
+  const { username } = useParams({ strict: false });
   const { data: userData } = useProfileUserQuery();
   const onError = useTRPCErrorHandler();
-  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
-    ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
-  >({
-    control: filtersFormControl,
-    name: [
-      'status',
-      'range',
-      'year',
-      'month',
-      'fromDate',
-      'toDate',
-      'searchQuery',
-    ],
-  });
+  const { status, range, year, month, fromDate, toDate, searchQuery } =
+    useProfileFiltersFormData();
   const { data, isFetching } =
     trpc.flights.getUserFlightsBasic.useInfiniteQuery(
       {

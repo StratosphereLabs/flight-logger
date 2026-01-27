@@ -1,6 +1,6 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, CardBody, Link, Modal } from 'stratosphere-ui';
 
 import {
@@ -21,14 +21,13 @@ import {
 } from '../../../../common/hooks';
 import { AppTheme, useThemeStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
-import { type FlightPageNavigationState } from '../../../Flight';
 
 export const ActiveFlightCard = (): JSX.Element | null => {
   const utils = trpc.useUtils();
   const navigate = useNavigate();
   const { data: userData } = useLoggedInUserQuery();
   const enabled = useProfilePage();
-  const { username } = useParams();
+  const { username } = useParams({ strict: false });
   const { theme } = useThemeStore();
   const handleSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
@@ -85,16 +84,18 @@ export const ActiveFlightCard = (): JSX.Element | null => {
         <CardBody className="gap-0 px-[0.5rem] py-[0.5rem] sm:px-[1rem] sm:pt-[0.75rem]">
           <div
             className="flex flex-col gap-1 hover:cursor-pointer"
-            onClick={() => {
-              navigate(`/flight/${data.id}`, {
+            onClick={() =>
+              navigate({
+                to: '/flight/$flightId',
+                params: { flightId: data.id },
                 state: {
                   previousPageName:
                     username !== undefined
                       ? `${username}'s Profile`
                       : 'Profile',
-                } as const as FlightPageNavigationState,
-              });
-            }}
+                },
+              })
+            }
           >
             <div className="flex w-full items-center justify-between gap-3">
               <div className="flex flex-1 flex-col">

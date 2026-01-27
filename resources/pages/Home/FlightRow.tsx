@@ -1,7 +1,7 @@
+import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { isAfter, sub } from 'date-fns';
 import { type HTMLProps, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Avatar, Link } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
@@ -12,7 +12,6 @@ import {
   TEXT_COLORS,
 } from '../../common/constants';
 import { AppTheme, useThemeStore } from '../../stores';
-import { type FlightPageNavigationState } from '../Flight';
 
 export interface FlightRowProps extends HTMLProps<HTMLDivElement> {
   flight: FlightsRouterOutput['getFollowingFlights']['flights'][number];
@@ -45,10 +44,10 @@ export const FlightRow = ({
             (event.target as HTMLElement).tagName !== 'A' &&
             (event.target as HTMLElement).parentElement?.tagName !== 'A'
           ) {
-            navigate(`/flight/${flight.id}`, {
-              state: {
-                previousPageName: 'Home',
-              } as const as FlightPageNavigationState,
+            void navigate({
+              to: '/flight/$flightId',
+              params: { flightId: flight.id },
+              state: { previousPageName: 'Home' },
             });
           }
         }}
@@ -101,9 +100,13 @@ export const FlightRow = ({
               />
               <Link
                 hover
-                onClick={() => {
-                  navigate(`/user/${flight.user?.username}`);
-                }}
+                onClick={() =>
+                  navigate({
+                    to: '/user/$username',
+                    params: { username: flight.user?.username ?? '' },
+                    state: { previousPageName: 'Home' },
+                  })
+                }
                 className="truncate text-sm font-semibold opacity-90 sm:text-base"
               >
                 {flight.user.username}
@@ -197,9 +200,12 @@ export const FlightRow = ({
                 className="link link-hover pt-[1px] font-mono font-semibold"
                 onClick={
                   shouldUseAircraftLink
-                    ? () => {
-                        navigate(`/aircraft/${flight.airframeId}`);
-                      }
+                    ? () =>
+                        navigate({
+                          to: '/aircraft/$icao24',
+                          params: { icao24: flight.airframeId ?? '' },
+                          state: { previousPageName: 'Home' },
+                        })
                     : undefined
                 }
                 href={

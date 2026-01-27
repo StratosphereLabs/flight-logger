@@ -1,10 +1,14 @@
 import { useGateValue, useStatsigUser } from '@statsig/react-bindings';
+import {
+  useCanGoBack,
+  useLocation,
+  useNavigate,
+  useParams,
+  useRouter,
+} from '@tanstack/react-router';
 import classNames from 'classnames';
 import { getToken } from 'firebase/messaging';
-import _ from 'lodash';
 import { useMemo, useState } from 'react';
-import { type UseFormReturn } from 'react-hook-form';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Avatar,
   Button,
@@ -23,12 +27,11 @@ import {
   LogoutIcon,
   MenuIcon,
   PlusAirplaneIcon,
+  ProfileFiltersForm,
   ThemeButton,
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
-import { type ProfilePageNavigationState } from '../../pages';
 import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
-import { type ProfileFilterFormData } from '../../pages/Profile/hooks';
 import {
   AppTheme,
   getIsLoggedIn,
@@ -38,14 +41,9 @@ import {
 } from '../../stores';
 import { messaging } from '../../utils/firebase';
 import { trpc } from '../../utils/trpc';
-import { ProfileFiltersForm } from './ProfileFiltersForm';
 import { useMainLayoutStore } from './mainLayoutStore';
 
-export interface MainNavbarProps {
-  methods: UseFormReturn<ProfileFilterFormData>;
-}
-
-export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
+export const MainNavbar = (): JSX.Element => {
   const { updateUserSync } = useStatsigUser();
   const christmasThemeEnabled = useGateValue('christmas_theme');
   const utils = trpc.useUtils();
@@ -53,12 +51,14 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
   const { logout } = useAuthStore();
   const { previousPageName } = useMainLayoutStore();
   const { isAddingFlight } = useAddFlightStore();
+  const canGoBack = useCanGoBack();
+  const router = useRouter();
   const isDarkMode = useIsDarkMode();
   const { theme } = useThemeStore();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { username, flightId } = useParams();
+  const { username } = useParams({ strict: false });
   const { mutate: mutateAddFCMToken } = trpc.users.addFCMToken.useMutation();
   const { data, isFetching } = useLoggedInUserQuery(userData => {
     if (userData.pushNotifications && messaging !== undefined) {
@@ -74,9 +74,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
     }
   });
   const isUserPage = useMemo(
-    () =>
-      (pathname.includes('/profile') || pathname.includes('/user/')) &&
-      !pathname.includes('/trips'),
+    () => pathname.includes('/profile') || pathname.includes('/user/'),
     [pathname],
   );
   const isFlightPage = useMemo(
@@ -90,12 +88,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         ? {
             [`/user/${username}`]: 'users',
             [`/user/${username}/flights`]: 'users',
-            [`/user/${username}/trips`]: 'users',
           }
         : {
             '/profile': 'profile',
             '/flights': 'profile',
-            '/trips': 'profile',
             '/add-flight': 'profile',
           }),
       '/users': 'users',
@@ -120,15 +116,15 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         id: 'home',
         children: 'Home',
         className: classNames(
-          '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+          '[--tab-bg:var(--color-primary)]',
           currentTab === 'home' &&
             (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
               ? 'lg:text-white lg:hover:text-white'
-              : 'lg:hover:text-primary-content'),
+              : 'lg:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'home') {
-            navigate(tabsToPathsMap.home);
+            void navigate({ to: tabsToPathsMap.home });
           }
         },
       },
@@ -138,15 +134,15 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               id: 'profile',
               children: 'Profile',
               className: classNames(
-                '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+                '[--tab-bg:var(--color-primary)]',
                 currentTab === 'profile' &&
                   (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
                     ? 'lg:text-white lg:hover:text-white'
-                    : 'lg:hover:text-primary-content'),
+                    : 'lg:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'profile') {
-                  navigate(tabsToPathsMap.profile);
+                  void navigate({ to: tabsToPathsMap.profile });
                 }
               },
             },
@@ -154,15 +150,15 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               id: 'users',
               children: 'Users',
               className: classNames(
-                '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+                '[--tab-bg:var(--color-primary)]',
                 currentTab === 'users' &&
                   (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
                     ? 'lg:text-white lg:hover:text-white'
-                    : 'lg:hover:text-primary-content'),
+                    : 'lg:text-primary-content'),
               ),
               onClick: () => {
                 if (currentTab !== 'users') {
-                  navigate(tabsToPathsMap.users);
+                  void navigate({ to: tabsToPathsMap.users });
                 }
               },
             },
@@ -172,15 +168,15 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
         id: 'data',
         children: 'Data',
         className: classNames(
-          '[--tab-bg:var(--color-primary)] lg:text-primary-content',
+          '[--tab-bg:var(--color-primary)]',
           currentTab === 'data' &&
             (theme === AppTheme.CHRISTMAS && christmasThemeEnabled
               ? 'lg:text-white lg:hover:text-white'
-              : 'lg:hover:text-primary-content'),
+              : 'lg:text-primary-content'),
         ),
         onClick: () => {
           if (currentTab !== 'data') {
-            navigate(tabsToPathsMap.data);
+            void navigate({ to: tabsToPathsMap.data });
           }
         },
       },
@@ -225,7 +221,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className="inline-flex gap-0 px-1 normal-case sm:px-4"
               color="ghost"
               onClick={() => {
-                navigate('/');
+                void navigate({ to: '/' });
               }}
               title="Home"
             >
@@ -262,14 +258,10 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                 className="hidden gap-1 sm:inline-flex"
                 color="ghost"
                 onClick={() => {
-                  navigate(
-                    pathname === '/profile' ? `/profile${search}` : '/profile',
-                    {
-                      state: {
-                        addFlight: true,
-                      } as const as ProfilePageNavigationState,
-                    },
-                  );
+                  void navigate({
+                    to: '/profile',
+                    state: { addFlight: true },
+                  });
                 }}
                 shape="circle"
                 title="Add Flight"
@@ -282,7 +274,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               className={classNames(isLoggedIn && 'hidden')}
               color="neutral"
               onClick={() => {
-                navigate('/auth/login');
+                void navigate({ to: '/auth/login' });
               }}
             >
               Login
@@ -316,7 +308,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     </>
                   ),
                   onClick: () => {
-                    navigate('/profile');
+                    void navigate({ to: '/profile' });
                   },
                 },
                 {
@@ -328,13 +320,11 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                       Add Flight
                     </>
                   ),
-                  onClick: () => {
-                    navigate('/profile', {
-                      state: {
-                        addFlight: true,
-                      } as const as ProfilePageNavigationState,
-                    });
-                  },
+                  onClick: () =>
+                    navigate({
+                      to: '/profile',
+                      state: { addFlight: true },
+                    }),
                 },
                 {
                   id: 'settings',
@@ -346,7 +336,7 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
                     </>
                   ),
                   onClick: () => {
-                    navigate('/account');
+                    void navigate({ to: '/account' });
                   },
                 },
                 {
@@ -367,17 +357,15 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
             />
           </div>
         </div>
-        {isUserPage && !isAddingFlight ? (
-          <ProfileFiltersForm methods={methods} />
-        ) : null}
-        {isFlightPage ? (
+        {isUserPage && !isAddingFlight ? <ProfileFiltersForm /> : null}
+        {isFlightPage && canGoBack ? (
           <div className="flex p-1">
             <Button
               className="text-sm"
               color="ghost"
               size="xs"
               onClick={() => {
-                navigate(-1);
+                router.history.back();
               }}
             >
               <LeftArrowIcon className="h-3 w-3" /> Back to{' '}
@@ -405,16 +393,6 @@ export const MainNavbar = ({ methods }: MainNavbarProps): JSX.Element => {
               await utils.users.getUser.cancel();
               await utils.users.getUser.invalidate({ username: undefined });
               updateUserSync({});
-              if (flightId !== undefined) {
-                utils.flights.getFlight.setData(
-                  { id: flightId },
-                  previousData => ({
-                    ..._.omit(previousData, 'id'),
-                    id: flightId,
-                    otherTravelers: [],
-                  }),
-                );
-              }
             },
             soft: true,
           },

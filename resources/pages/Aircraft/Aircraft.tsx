@@ -1,9 +1,9 @@
 import { GoogleMap } from '@react-google-maps/api';
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useLocation, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
 import { Button } from 'stratosphere-ui';
 
 import {
@@ -30,13 +30,11 @@ import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
-export interface AircraftPageNavigationState {
-  previousPageName: string;
-}
-
 export const Aircraft = (): JSX.Element | null => {
   const { client } = useStatsigClient();
-  const { icao24 } = useParams();
+  const { icao24 } = useParams({
+    from: '/aircraft/$icao24',
+  });
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { data } = trpc.flights.getAircraftFlight.useQuery(
     { icao24: icao24 ?? '' },
@@ -59,9 +57,7 @@ export const Aircraft = (): JSX.Element | null => {
       },
     );
   const { setPreviousPageName } = useMainLayoutStore();
-  const { state } = useLocation() as {
-    state: AircraftPageNavigationState | null;
-  };
+  const { state } = useLocation();
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const allFlights = useMemo(
     () => [
@@ -84,10 +80,10 @@ export const Aircraft = (): JSX.Element | null => {
   const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
   useEffect(() => {
-    if (state !== null) {
+    if (state.previousPageName !== undefined) {
       setPreviousPageName(state.previousPageName);
     }
-  }, [setPreviousPageName, state]);
+  }, [setPreviousPageName, state.previousPageName]);
   useEffect(() => {
     client.logEvent('aircraft_page_viewed', icao24);
   }, [client, icao24]);
@@ -100,6 +96,7 @@ export const Aircraft = (): JSX.Element | null => {
     data,
     map,
     isMapCollapsed,
+    from: '/aircraft/$icao24',
   });
   const { isScrolled, scrollContainerRef } = useFlightPageScrollContainer({
     setIsMapCollapsed,

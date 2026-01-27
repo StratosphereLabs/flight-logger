@@ -1,11 +1,10 @@
+import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { type HTMLProps } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Avatar, Badge, Link } from 'stratosphere-ui';
 
 import { FlightTimesDisplay } from '..';
 import { type FlightsRouterOutput } from '../../../../app/routes/flights';
-import { type FlightPageNavigationState } from '../../../pages';
 import { AppTheme, useThemeStore } from '../../../stores';
 import { CARD_BORDER_COLORS, CARD_COLORS, TEXT_COLORS } from '../../constants';
 
@@ -39,10 +38,12 @@ export const AircraftFlightHistoryRow = ({
               (event.target as HTMLElement).tagName !== 'A' &&
               (event.target as HTMLElement).parentElement?.tagName !== 'A'
             ) {
-              navigate(`/flight/${flight.id}`, {
+              void navigate({
+                to: '/flight/$flightId',
+                params: { flightId: flight.id },
                 state: {
                   previousPageName: previousPageName ?? 'Home',
-                } as const as FlightPageNavigationState,
+                },
               });
             }
           }}
@@ -108,9 +109,15 @@ export const AircraftFlightHistoryRow = ({
                 />
                 <Link
                   hover
-                  onClick={() => {
-                    navigate(`/user/${flight.user?.username}`);
-                  }}
+                  onClick={() =>
+                    navigate({
+                      to: '/user/$username',
+                      params: { username: flight.user?.username ?? '' },
+                      state: {
+                        previousPageName: previousPageName ?? 'Home',
+                      },
+                    })
+                  }
                   className="truncate text-sm font-semibold opacity-90"
                 >
                   {flight.user.username}

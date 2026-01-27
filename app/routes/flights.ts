@@ -619,10 +619,7 @@ export const flightsRouter = router({
         ctx.user?.username,
       );
       const results = await prisma.flight.findMany({
-        where: {
-          ...profileFlightsWhere,
-          tripId: input?.withTrip === false ? null : undefined,
-        },
+        where: profileFlightsWhere,
         include: flightIncludeObj,
         orderBy: {
           outTime: input.status === 'completed' ? 'desc' : 'asc',

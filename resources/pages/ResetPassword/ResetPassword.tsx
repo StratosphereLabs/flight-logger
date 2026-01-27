@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Button, CardTitle, Form, PasswordInput } from 'stratosphere-ui';
 
 import { resetPasswordSchema } from '../../../app/schemas';
@@ -14,7 +14,9 @@ import { trpc } from '../../utils/trpc';
 export const ResetPassword = (): JSX.Element => {
   useAuthPage();
   const navigate = useNavigate();
-  const { token } = useParams();
+  const { token } = useParams({
+    from: '/auth/reset-password/$token',
+  });
   const methods = useForm({
     mode: 'onBlur',
     shouldUseNativeValidation: false,
@@ -30,7 +32,7 @@ export const ResetPassword = (): JSX.Element => {
   const { isLoading, mutate } = trpc.passwordReset.resetPassword.useMutation({
     onSuccess: () => {
       handleSuccess('Password Reset. Please log in again.');
-      navigate('/auth/login');
+      void navigate({ to: '/auth/login' });
     },
     onError,
   });

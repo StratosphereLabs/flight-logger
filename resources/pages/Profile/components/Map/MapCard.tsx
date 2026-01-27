@@ -1,3 +1,4 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import {
   type Dispatch,
@@ -6,8 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { type Control, type UseFormReturn, useWatch } from 'react-hook-form';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { Button, Form, LoadingCard, Select } from 'stratosphere-ui';
 
 import {
@@ -18,10 +18,10 @@ import {
   MapIcon,
 } from '../../../../common/components';
 import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
+import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
 import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type MapCardFormData } from '../../Profile';
-import { type ProfileFilterFormData } from '../../hooks';
 import { useAddFlightStore } from '../Flights/addFlightStore';
 import { CesiumMap } from './CesiumMap';
 import { GoogleMap } from './GoogleMap';
@@ -30,7 +30,6 @@ import { DEFAULT_COORDINATES } from './constants';
 import { getAirportsData } from './utils';
 
 export interface MapCardProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
   isMapFullScreen: boolean;
   mapFormMethods: UseFormReturn<MapCardFormData>;
   selectedAirportId: string | null;
@@ -39,7 +38,6 @@ export interface MapCardProps {
 }
 
 export const MapCard = ({
-  filtersFormControl,
   isMapFullScreen,
   mapFormMethods,
   selectedAirportId,
@@ -48,7 +46,7 @@ export const MapCard = ({
 }: MapCardProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useProfilePage();
-  const [, setSearchParams] = useSearchParams();
+  const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight } = useAddFlightStore();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
@@ -56,22 +54,9 @@ export const MapCard = ({
     control: mapFormMethods.control,
     name: ['mapMode'],
   });
-  const [status, range, year, month, fromDate, toDate, searchQuery] = useWatch<
-    ProfileFilterFormData,
-    ['status', 'range', 'year', 'month', 'fromDate', 'toDate', 'searchQuery']
-  >({
-    control: filtersFormControl,
-    name: [
-      'status',
-      'range',
-      'year',
-      'month',
-      'fromDate',
-      'toDate',
-      'searchQuery',
-    ],
-  });
-  const { username } = useParams();
+  const { status, range, year, month, fromDate, toDate, searchQuery } =
+    useProfileFiltersFormData();
+  const { username } = useParams({ strict: false });
   const onError = useTRPCErrorHandler();
   const { data: currentFlightData } = trpc.flights.getUserActiveFlight.useQuery(
     {
@@ -228,24 +213,15 @@ export const MapCard = ({
                   <Button
                     className="btn-sm sm:btn-md pointer-events-auto px-1"
                     onClick={() => {
-                      setIsMapFullScreen(isFullScreen => {
-                        const newValue = !isFullScreen;
-                        setSearchParams(
-                          oldSearchParams => {
-                            if (newValue) {
-                              return new URLSearchParams({
-                                ...Object.fromEntries(oldSearchParams),
-                                isMapFullScreen: 'true',
-                              });
-                            } else {
-                              oldSearchParams.delete('isMapFullScreen');
-                              return oldSearchParams;
-                            }
-                          },
-                          { replace: true },
-                        );
-                        return newValue;
+                      void navigate({
+                        search: prev => ({
+                          ...prev,
+                          isMapFullScreen:
+                            prev.isMapFullScreen === true ? undefined : true,
+                        }),
+                        replace: true,
                       });
+                      setIsMapFullScreen(isFullScreen => !isFullScreen);
                     }}
                     soft
                     title={isMapFullScreen ? 'Collapse Map' : 'Expand Map'}
@@ -276,9 +252,9 @@ export const MapCard = ({
       isProfilePage,
       mapFormMethods,
       mapMode,
+      navigate,
       selectedAirportId,
       setIsMapFullScreen,
-      setSearchParams,
       setSelectedAirportId,
     ],
   );

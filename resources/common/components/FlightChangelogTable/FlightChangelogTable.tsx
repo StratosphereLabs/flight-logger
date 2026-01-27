@@ -1,9 +1,9 @@
+import { useNavigate } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useNavigate } from 'react-router-dom';
 import { Avatar, Link, Loading, Table } from 'stratosphere-ui';
 
 import { TimeIcon } from '..';
@@ -130,9 +130,12 @@ export const FlightChangelogTable = ({
                         {user !== null ? (
                           <Link
                             hover
-                            onClick={() => {
-                              navigate(`/user/${user.username}`);
-                            }}
+                            onClick={() =>
+                              navigate({
+                                to: '/user/$username',
+                                params: { username: user.username },
+                              })
+                            }
                             className={classNames(
                               'hidden truncate font-semibold opacity-80 lg:text-sm',
                             )}

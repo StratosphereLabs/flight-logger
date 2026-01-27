@@ -1,10 +1,12 @@
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useLocation } from '@tanstack/react-router';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
-import { type Control } from 'react-hook-form';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import { useFormWithQueryParams } from 'stratosphere-ui';
+import { useEffect } from 'react';
 
+import {
+  useFormWithSearchParams,
+  useStateWithSearchParam,
+} from '../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,
@@ -13,11 +15,6 @@ import {
   StatisticsCard,
 } from './components';
 import { useAddFlightStore } from './components/Flights/addFlightStore';
-import { type ProfileFilterFormData } from './hooks';
-
-export interface ProfileProps {
-  filtersFormControl: Control<ProfileFilterFormData>;
-}
 
 export interface ProfilePageNavigationState {
   addFlight: boolean;
@@ -27,71 +24,50 @@ export interface MapCardFormData {
   mapMode: 'routes' | 'heatmap' | '3d';
 }
 
-export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
+export const Profile = (): JSX.Element => {
   const { client } = useStatsigClient();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { state } = useLocation() as {
-    state: ProfilePageNavigationState | null;
-  };
-  const [initialParams] = useState(searchParams);
+  const { pathname, state } = useLocation();
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
-  const [selectedAirportId, setSelectedAirportIdFn] = useState<string | null>(
-    initialParams.get('selectedAirportId') ?? null,
-  );
-  const methods = useFormWithQueryParams<MapCardFormData, ['mapMode']>({
-    getDefaultValues: ({ mapMode }) => ({
-      mapMode: (mapMode as MapCardFormData['mapMode']) ?? 'routes',
-    }),
-    getSearchParams: ([mapMode]) => ({
-      mapMode: mapMode !== 'routes' ? mapMode : '',
-    }),
+  const navigateFrom = pathname.includes('/profile')
+    ? '/pathlessProfileLayout/profile'
+    : '/pathlessProfileLayout/user/$username';
+  const methods = useFormWithSearchParams<MapCardFormData, ['mapMode']>({
+    from: navigateFrom,
+    defaultValues: {
+      mapMode: 'routes',
+    },
     includeKeys: ['mapMode'],
-    navigateOptions: {
-      replace: true,
-    },
   });
-  const setSelectedAirportId = useCallback(
-    (newId: string | null): void => {
-      setSelectedAirportIdFn(newId);
-      setSearchParams(
-        oldSearchParams => {
-          if (newId === null) {
-            oldSearchParams.delete('selectedAirportId');
-            return oldSearchParams;
-          } else {
-            return new URLSearchParams({
-              ...Object.fromEntries(oldSearchParams),
-              selectedAirportId: newId,
-            });
-          }
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams],
+  const [selectedAirportId, setSelectedAirportId] = useStateWithSearchParam<
+    string | null
+  >(null, 'selectedAirportId', navigateFrom);
+  const [isFlightsFullScreen, setIsFlightsFullScreen] = useStateWithSearchParam(
+    false,
+    'isFlightsFullScreen',
+    navigateFrom,
   );
-  const [isFlightsFullScreen, setIsFlightsFullScreen] = useState(
-    initialParams.get('isFlightsFullScreen') === 'true',
+  const [isMapFullScreen, setIsMapFullScreen] = useStateWithSearchParam(
+    false,
+    'isMapFullScreen',
+    navigateFrom,
   );
-  const [isMapFullScreen, setIsMapFullScreen] = useState(
-    initialParams.get('isMapFullScreen') === 'true',
-  );
-  const [isStatsFullScreen, setIsStatsFullScreen] = useState(
-    initialParams.get('isStatsFullScreen') === 'true',
+  const [isStatsFullScreen, setIsStatsFullScreen] = useStateWithSearchParam(
+    false,
+    'isStatsFullScreen',
+    navigateFrom,
   );
   useEffect(() => {
-    if (state?.addFlight === true) {
+    if (state.addFlight === true) {
       setIsAddingFlight(true);
     }
-  }, [setIsAddingFlight, state?.addFlight]);
+  }, [setIsAddingFlight, state.addFlight]);
   useEffect(() => {
     client.logEvent('profile_page_viewed');
   }, [client]);
   return (
     <div className="flex flex-1 flex-col">
       <MapCard
-        filtersFormControl={filtersFormControl}
         isMapFullScreen={isMapFullScreen}
         mapFormMethods={methods}
         selectedAirportId={selectedAirportId}
@@ -113,7 +89,6 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
         >
           {isLoggedIn && !isStatsFullScreen ? (
             <FlightsCard
-              filtersFormControl={filtersFormControl}
               isFlightsFullScreen={isFlightsFullScreen}
               mapFormMethods={methods}
               selectedAirportId={selectedAirportId}
@@ -123,7 +98,6 @@ export const Profile = ({ filtersFormControl }: ProfileProps): JSX.Element => {
           ) : null}
           {!isFlightsFullScreen && !isAddingFlight ? (
             <StatisticsCard
-              filtersFormControl={filtersFormControl}
               isStatsFullScreen={isStatsFullScreen}
               selectedAirportId={selectedAirportId}
               setIsStatsFullScreen={setIsStatsFullScreen}

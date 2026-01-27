@@ -1,15 +1,14 @@
 import { type AircraftType } from '@prisma/client';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   type Row,
   type RowSelectionOptions,
   getCoreRowModel,
 } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, type BadgeColor, Table, type TableSize } from 'stratosphere-ui';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
-import { type FlightPageNavigationState } from '../../pages';
 import { useFlightsPageStore } from '../../pages/Flights/flightsPageStore';
 import { CARD_COLORS, CARD_COLORS_HOVER } from '../constants';
 import { ActionsCell } from './ActionsCell';
@@ -45,7 +44,7 @@ export const UserFlightsTable = ({
   size,
 }: UserFlightsTableProps): JSX.Element => {
   const navigate = useNavigate();
-  const { username } = useParams();
+  const { username } = useParams({ strict: false });
   const {
     rowSelection,
     setActiveFlight,
@@ -244,16 +243,18 @@ export const UserFlightsTable = ({
                 setActiveFlight(row.original);
                 setIsEditDialogOpen(true);
               }}
-              onView={() => {
-                navigate(`/flight/${row.original.id}`, {
+              onView={() =>
+                navigate({
+                  to: '/flight/$flightId',
+                  params: { flightId: row.original.id },
                   state: {
                     previousPageName:
                       username !== undefined
                         ? `${username}'s Profile`
                         : 'Profile',
-                  } as const as FlightPageNavigationState,
-                });
-              }}
+                  },
+                })
+              }
             />
           ),
           footer: () => null,
@@ -277,11 +278,13 @@ export const UserFlightsTable = ({
       highlightWhenSelected
       onRowClick={row => {
         if (window.innerWidth < 1280)
-          navigate(`/flight/${row.original.id}`, {
+          void navigate({
+            to: '/flight/$flightId',
+            params: { flightId: row.original.id },
             state: {
               previousPageName:
-                username !== undefined ? `${username}'s Flights` : 'Flights',
-            } as const as FlightPageNavigationState,
+                username !== undefined ? `${username}'s Profile` : 'Profile',
+            },
           });
       }}
       onRowSelectionChange={setRowSelection}

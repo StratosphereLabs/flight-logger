@@ -34,7 +34,7 @@ export const AircraftTypesCard = (): JSX.Element => {
             iata: 'w-[120px] hidden sm:table-cell',
             icao: 'w-[120px]',
           }}
-          className="table-fixed border-separate"
+          className="table-fixed [&_td]:border-none [&_th]:border-none"
           columns={[
             {
               id: 'iata',

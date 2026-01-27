@@ -1,20 +1,23 @@
+import { type useNavigate, type useSearch } from '@tanstack/react-router';
 import {
   type Dispatch,
   type SetStateAction,
   useCallback,
   useEffect,
   useMemo,
-  useState,
 } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import { type FlightsRouterOutput } from '../../../app/routes/flights';
+import { type AppRouter } from '../../router';
 import { extendBounds } from '../utils';
+import { useStateWithSearchParam } from './useStateWithSearchParam';
 
 export interface UseFlightMapBoundsOptions {
   data: FlightsRouterOutput['getFlight'] | undefined;
-  map: google.maps.Map | null;
+  from: Parameters<typeof useSearch<AppRouter>>[0]['from'] &
+    Parameters<typeof useNavigate<AppRouter>>[0];
   isMapCollapsed: boolean;
+  map: google.maps.Map | null;
 }
 
 export interface UseFlightMapBoundsResult {
@@ -26,36 +29,14 @@ export interface UseFlightMapBoundsResult {
 
 export const useFlightMapBounds = ({
   data,
-  map,
+  from,
   isMapCollapsed,
+  map,
 }: UseFlightMapBoundsOptions): UseFlightMapBoundsResult => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [initialParams] = useState(searchParams);
-  const [isFlightFocused, setIsFlightFocusedValue] = useState(
-    initialParams.get('isFlightFocused') === 'true',
-  );
-  const setIsFlightFocused = useCallback(
-    (value: SetStateAction<boolean>) => {
-      setIsFlightFocusedValue(oldValue => {
-        const newValue = typeof value === 'function' ? value(oldValue) : value;
-        setSearchParams(
-          oldSearchParams => {
-            if (newValue) {
-              return new URLSearchParams({
-                ...Object.fromEntries(oldSearchParams),
-                isFlightFocused: 'true',
-              });
-            } else {
-              oldSearchParams.delete('isFlightFocused');
-              return oldSearchParams;
-            }
-          },
-          { replace: true },
-        );
-        return newValue;
-      });
-    },
-    [setSearchParams],
+  const [isFlightFocused, setIsFlightFocused] = useStateWithSearchParam(
+    false,
+    'isFlightFocused',
+    from,
   );
   const isEnRouteFlight = data?.flightStatus === 'EN_ROUTE';
   const getFullRouteBounds = useCallback(() => {

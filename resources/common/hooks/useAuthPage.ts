@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 
@@ -9,7 +9,7 @@ export const useAuthPage = (redirectPath?: string): void => {
   useEffect(() => {
     if (isLoggedIn) {
       setTimeout(() => {
-        navigate(redirectPath ?? '/profile');
+        void navigate({ to: redirectPath ?? '/profile' });
       }, 0);
     }
   }, [isLoggedIn, navigate, redirectPath]);

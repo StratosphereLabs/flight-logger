@@ -12,11 +12,10 @@ import { useIsDarkMode } from '../../stores';
 import { trpc } from '../../utils/trpc';
 import { useTRPCErrorHandler } from '../hooks';
 
-export interface UserSelectProps<Values extends FieldValues>
-  extends Omit<
-    TypeaheadSelectProps<UsersRouterOutput['getUsers'][number], Values>,
-    'getItemText' | 'onDebouncedChange' | 'options'
-  > {
+export interface UserSelectProps<Values extends FieldValues> extends Omit<
+  TypeaheadSelectProps<UsersRouterOutput['getUsers'][number], Values>,
+  'getItemText' | 'onDebouncedChange' | 'options'
+> {
   followingUsersOnly?: boolean;
   max?: number;
   withoutFlightId?: string;

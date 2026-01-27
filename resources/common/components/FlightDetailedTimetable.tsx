@@ -62,22 +62,23 @@ export const FlightDetailedTimetable = ({
       )}
     >
       <div className="text-base font-semibold">Detailed Timetable</div>
-      <table className="table-xs mx-[-3px] table w-[calc(100%+6px)] table-fixed overflow-visible text-nowrap">
+      <table className="table-xs mx-[-3px] table w-[calc(100%+6px)] table-fixed overflow-visible text-nowrap [&_td]:border-none">
         <thead>
-          <tr className="border-b-0">
+          <tr>
             <th
               className={classNames(
+                'border-none',
                 showEstimatedColumn && showActualColumn && 'w-[105px]',
               )}
             ></th>
-            <th className="text-right">Scheduled</th>
+            <th className="border-none text-right">Scheduled</th>
             {showEstimatedColumn ? (
-              <th className="text-right">Estimated</th>
+              <th className="border-none text-right">Estimated</th>
             ) : null}
             {showActualColumn ? (
               <th
                 className={classNames(
-                  'text-right',
+                  'border-none text-right',
                   showEstimatedColumn && 'w-[75px]',
                 )}
               >
@@ -87,6 +88,9 @@ export const FlightDetailedTimetable = ({
           </tr>
           <tr>
             <th>Flight Times</th>
+            <th />
+            {showEstimatedColumn ? <th /> : null}
+            {showActualColumn ? <th /> : null}
           </tr>
         </thead>
         <tbody>
@@ -309,7 +313,7 @@ export const FlightDetailedTimetable = ({
           </tr>
         </tbody>
       </table>
-      <table className="table-xs mx-[-4px] table w-[calc(100%+8px)] table-fixed">
+      <table className="table-xs mx-[-4px] table w-[calc(100%+8px)] table-fixed [&_td]:border-none">
         <thead>
           <tr>
             <th
@@ -327,7 +331,7 @@ export const FlightDetailedTimetable = ({
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b-0">
+          <tr>
             <td className="text-[0.8125rem] opacity-80">Flight Time</td>
             <td className="text-right text-sm font-semibold opacity-90">
               {data.flightDurationString}
@@ -361,7 +365,7 @@ export const FlightDetailedTimetable = ({
               </td>
             ) : null}
           </tr>
-          <tr className="border-b-0">
+          <tr>
             <td className="text-[0.8125rem] opacity-80">Taxi Time</td>
             <td className="text-right text-sm font-semibold opacity-90">
               {data.taxiDurationString}

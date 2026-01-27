@@ -1,12 +1,11 @@
+import { useNavigate, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { isAfter, isBefore, sub } from 'date-fns';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Loading } from 'stratosphere-ui';
 
 import { CollapseIcon, ExpandIcon, TrackAircraftIcon } from '..';
 import { type FlightsRouterOutput } from '../../../../app/routes/flights';
-import { type AircraftPageNavigationState } from '../../../pages';
 import {
   sortByArrivalTimeDesc,
   sortByDepartureTimeAsc,
@@ -33,7 +32,9 @@ export const FlightAircraftDetails = ({
   const cardClassNames = useCardClassNames();
   const navigate = useNavigate();
   const [isAircraftImageExpanded, setIsAircraftImageExpanded] = useState(false);
-  const { icao24 } = useParams();
+  const { icao24 } = useParams({
+    strict: false,
+  });
   const { data: userData } = useLoggedInUserQuery();
   const { data: photoData, isFetching } = useAircraftPhotoQuery(
     data?.airframeId ?? null,
@@ -164,13 +165,13 @@ export const FlightAircraftDetails = ({
         <Button
           className="mt-1"
           color="neutral"
-          onClick={() => {
-            navigate(`/aircraft/${data.airframeId}`, {
-              state: {
-                previousPageName,
-              } as const as AircraftPageNavigationState,
-            });
-          }}
+          onClick={() =>
+            navigate({
+              to: '/aircraft/$icao24',
+              params: { icao24: data.airframeId ?? '' },
+              state: { previousPageName },
+            })
+          }
         >
           <TrackAircraftIcon className="h-6 w-6" />
           Track{' '}

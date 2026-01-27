@@ -1,8 +1,8 @@
 import { useStatsigClient } from '@statsig/react-bindings';
+import { useNavigate } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
 import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Card,
@@ -95,9 +95,12 @@ export const Users = (): JSX.Element => {
                       <Link
                         className="font-bold"
                         hover
-                        onClick={() => {
-                          navigate(`/user/${username}`);
-                        }}
+                        onClick={() =>
+                          navigate({
+                            to: '/user/$username',
+                            params: { username },
+                          })
+                        }
                       >
                         {username}
                       </Link>

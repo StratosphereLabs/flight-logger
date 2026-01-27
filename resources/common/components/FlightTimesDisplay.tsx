@@ -5,8 +5,10 @@ import { AppTheme, useThemeStore } from '../../stores';
 import { TEXT_COLORS } from '../constants';
 import type { FlightDelayStatus } from '../types';
 
-export interface FlightTimesDisplayProps
-  extends Omit<HTMLProps<HTMLDivElement>, 'data'> {
+export interface FlightTimesDisplayProps extends Omit<
+  HTMLProps<HTMLDivElement>,
+  'data'
+> {
   className?: string;
   data: {
     delayStatus: FlightDelayStatus;
