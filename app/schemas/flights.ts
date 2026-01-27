@@ -38,8 +38,10 @@ export const profileFiltersSchema = z.object({
   year: z
     .number()
     .int()
-    .min(new Date().getFullYear() - 75)
-    .max(new Date().getFullYear() + 1),
+    .refine(year => {
+      const currentYear = new Date().getFullYear();
+      return year >= currentYear - 75 && year <= currentYear + 1;
+    }),
   month: z.number().int().min(1).max(12),
   fromDate: z
     .string()
