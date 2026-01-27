@@ -34,6 +34,7 @@ export const useProfileFiltersForm =
       ],
       mode: 'onChange',
       resolver: zodResolver(profileFiltersSchema),
+      resetScroll: true,
     });
     const { setProfileFiltersFormData } = useProfileLayoutStore();
     useEffect(() => {

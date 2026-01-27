@@ -1,4 +1,3 @@
-import { useNavigate } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { type Dispatch, type SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
@@ -44,7 +43,6 @@ export const StatisticsCard = ({
   selectedAirportId,
   setIsStatsFullScreen,
 }: StatisticsProps): JSX.Element => {
-  const navigate = useNavigate({ from: '/profile' });
   const methods = useForm<StatisticsFiltersData>({
     defaultValues: {
       airlinesMode: 'flights',
@@ -68,14 +66,6 @@ export const StatisticsCard = ({
             <CardTitle>Statistics</CardTitle>
             <Button
               onClick={() => {
-                void navigate({
-                  search: prev => ({
-                    ...prev,
-                    isStatsFullScreen:
-                      prev.isStatsFullScreen === true ? undefined : true,
-                  }),
-                  replace: true,
-                });
                 setIsStatsFullScreen(isFullScreen => !isFullScreen);
               }}
               size="sm"
