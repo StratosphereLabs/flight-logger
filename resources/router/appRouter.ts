@@ -132,6 +132,8 @@ const routeTree = rootRoute.addChildren([
 
 export const appRouter = createRouter({
   routeTree,
+  scrollRestoration: true,
+  scrollToTopSelectors: ['#main-layout-scroll-container'],
 });
 
 export type AppRouter = typeof appRouter;

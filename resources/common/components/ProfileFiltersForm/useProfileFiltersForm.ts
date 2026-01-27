@@ -3,38 +3,13 @@ import { useLocation } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 
-import { profileFiltersSchema } from '../../../../app/schemas';
+import {
+  type ProfileFiltersFormData,
+  profileFiltersSchema,
+} from '../../../../app/schemas';
 import { useProfileLayoutStore } from '../../../layouts/ProfileLayout';
 import { useFormWithSearchParams } from '../../hooks';
 import { PROFILE_FILTERS_FORM_DEFAULT_VALUES } from './constants';
-
-export interface ProfileFiltersFormData {
-  status: 'completed' | 'upcoming' | 'all';
-  range:
-    | 'all'
-    | 'pastYear'
-    | 'pastMonth'
-    | 'customYear'
-    | 'customMonth'
-    | 'customRange';
-  year: string;
-  month:
-    | '1'
-    | '2'
-    | '3'
-    | '4'
-    | '5'
-    | '6'
-    | '7'
-    | '8'
-    | '9'
-    | '10'
-    | '11'
-    | '12';
-  fromDate: string;
-  toDate: string;
-  searchQuery: string;
-}
 
 export const useProfileFiltersForm =
   (): UseFormReturn<ProfileFiltersFormData> => {

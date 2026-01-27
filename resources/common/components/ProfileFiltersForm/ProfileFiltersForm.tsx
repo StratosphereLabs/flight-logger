@@ -2,15 +2,13 @@ import { useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { Button, Form, FormControl, Select } from 'stratosphere-ui';
 
+import { type ProfileFiltersFormData } from '../../../../app/schemas';
 import { getIsLoggedIn, useAuthStore } from '../../../stores';
 import { MONTH_NAMES } from '../../constants';
 import { useCurrentDate } from '../../hooks';
 import { FilterIcon, SearchIcon } from '../Icons';
 import { ProfileFiltersModal } from './ProfileFiltersModal';
-import {
-  type ProfileFiltersFormData,
-  useProfileFiltersForm,
-} from './useProfileFiltersForm';
+import { useProfileFiltersForm } from './useProfileFiltersForm';
 
 export const ProfileFiltersForm = (): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
@@ -111,7 +109,7 @@ export const ProfileFiltersForm = (): JSX.Element => {
             getItemText={({ label }) => label}
             name="month"
             options={[...Array(12).keys()].map(key => ({
-              id: (key + 1).toString(),
+              id: key + 1,
               label: MONTH_NAMES[key],
             }))}
             menuClassName="w-[150px] max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
@@ -129,7 +127,7 @@ export const ProfileFiltersForm = (): JSX.Element => {
             getItemText={({ label }) => label}
             name="year"
             options={[...Array(75).keys()].map((_, index) => ({
-              id: `${currentDate.getFullYear() - index + 1}`,
+              id: currentDate.getFullYear() - index + 1,
               label: `${currentDate.getFullYear() - index + 1}`,
             }))}
             menuClassName="w-[150px] max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
