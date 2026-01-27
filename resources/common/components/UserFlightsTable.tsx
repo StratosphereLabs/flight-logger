@@ -283,7 +283,7 @@ export const UserFlightsTable = ({
             params: { flightId: row.original.id },
             state: {
               previousPageName:
-                username !== undefined ? `${username}'s Profile` : 'Profile',
+                username !== undefined ? `${username}'s Flights` : 'Flights',
             },
           });
       }}
