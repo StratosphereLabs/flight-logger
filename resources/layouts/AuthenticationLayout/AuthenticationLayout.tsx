@@ -1,11 +1,5 @@
 import { Outlet, useLocation, useNavigate } from '@tanstack/react-router';
-import {
-  AlertMessages,
-  Button,
-  Card,
-  CardBody,
-  useAlertMessages,
-} from 'stratosphere-ui';
+import { Button, Card, CardBody } from 'stratosphere-ui';
 
 import {
   LogoHorizontal,
@@ -16,7 +10,6 @@ import {
 export const AuthenticationLayout = (): JSX.Element => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { alertMessages } = useAlertMessages();
   return (
     <div className="hero bg-base-200 min-h-[100dvh]">
       <div className="hero-content flex w-full flex-col md:flex-row">
@@ -39,11 +32,6 @@ export const AuthenticationLayout = (): JSX.Element => {
           </CardBody>
         </Card>
       </div>
-      {alertMessages.length > 0 ? (
-        <div className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]">
-          <AlertMessages maxMessages={4} />
-        </div>
-      ) : null}
       <div className="absolute top-0 right-0 p-1">
         <ThemeButton />
       </div>

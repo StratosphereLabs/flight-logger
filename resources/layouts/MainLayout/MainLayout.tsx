@@ -1,5 +1,5 @@
 import { useGateValue } from '@statsig/react-bindings';
-import { Outlet, useParams } from '@tanstack/react-router';
+import { Outlet, useLocation, useParams } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
@@ -17,6 +17,7 @@ export const MainLayout = (): JSX.Element => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { username } = useParams({ strict: false });
   const { theme } = useThemeStore();
+  const { pathname } = useLocation();
   const christmasThemeEnabled = useGateValue('christmas_theme');
   const { setScrollContainerRef } = useMainLayoutStore();
   const [showSnowbank, setShowSnowbank] = useState(false);
@@ -47,13 +48,13 @@ export const MainLayout = (): JSX.Element => {
         {theme === AppTheme.CHRISTMAS && christmasThemeEnabled ? (
           <Snowfall style={{ zIndex: 50 }} />
         ) : null}
-        <MainNavbar />
+        {!pathname.includes('/auth/') ? <MainNavbar /> : null}
         <div
           className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
           ref={scrollContainerRef}
         >
           <Outlet />
-          <MainFooter />
+          {!pathname.includes('/auth/') ? <MainFooter /> : null}
         </div>
         {alertMessages.length > 0 ? (
           <div className="toast toast-end toast-top z-50 w-1/2 min-w-[400px]">
