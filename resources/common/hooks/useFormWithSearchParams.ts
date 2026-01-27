@@ -74,13 +74,18 @@ export const useFormWithSearchParams = <
       return;
     }
     prevFormValuesRef.current = formValues;
+    const values: Record<string, unknown> = {};
+    includeKeys.forEach((key, index) => {
+      const value = formValues[index];
+      values[key] = value;
+    });
     void navigate({
       search: ((prev: Record<string, unknown>) => ({
         ...prev,
-        ...formValues,
+        ...values,
       })) as Parameters<ReturnType<typeof useNavigate<AppRouter>>>[0]['search'],
       replace: true,
     });
-  }, [formValues, from, navigate]);
+  }, [formValues, includeKeys, navigate]);
   return methods;
 };
