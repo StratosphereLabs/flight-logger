@@ -51,6 +51,7 @@ export const MainLayout = (): JSX.Element => {
         {!pathname.includes('/auth/') ? <MainNavbar /> : null}
         <div
           className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
+          id="main-layout-scroll-container"
           ref={scrollContainerRef}
         >
           <Outlet />

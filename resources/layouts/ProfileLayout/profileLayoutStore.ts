@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { type ProfileFiltersFormData } from '../../common/components';
+import { type ProfileFiltersFormData } from '../../../app/schemas';
 import { PROFILE_FILTERS_FORM_DEFAULT_VALUES } from '../../common/components/ProfileFiltersForm/constants';
 
 interface ProfileLayoutState {

@@ -35,27 +35,14 @@ export const profileFiltersSchema = z.object({
     'customMonth',
     'customRange',
   ]),
-  year: z.string().refine(yearString => {
-    const number = parseInt(yearString, 10);
-    if (isNaN(number)) return false;
-    const currentYear = new Date().getFullYear();
-    if (number < currentYear - 75 || number > currentYear + 1) return false;
-    return true;
-  }, 'Invalid Year'),
-  month: z.enum([
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-  ]),
+  year: z
+    .number()
+    .int()
+    .refine(year => {
+      const currentYear = new Date().getFullYear();
+      return year >= currentYear - 75 && year <= currentYear + 1;
+    }),
+  month: z.number().int().min(1).max(12),
   fromDate: z
     .string()
     .refine(date => isValid(parseISO(date)), 'Invalid From Date'),
@@ -189,3 +176,5 @@ export type EditFlightRequest = z.infer<typeof editFlightSchema>;
 export type AddTravelersFormData = z.infer<typeof addTravelersFormSchema>;
 
 export type AddUserToFlightFormData = z.infer<typeof addUserToFlightFormSchema>;
+
+export type ProfileFiltersFormData = z.infer<typeof profileFiltersSchema>;

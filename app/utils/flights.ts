@@ -915,16 +915,13 @@ export const getFromDate = (
   if (input.range === 'pastMonth') return sub(new Date(), { months: 1 });
   if (input.range === 'pastYear') return sub(new Date(), { years: 1 });
   if (input.range === 'customMonth') {
-    const year = parseInt(input.year, 10);
-    const month = parseInt(input.month, 10);
     const monthStart = new Date(
-      `${year}-${month < 10 ? '0' : ''}${month}-01T00:00:00.000Z`,
+      `${input.year}-${input.month < 10 ? '0' : ''}${input.month}-01T00:00:00.000Z`,
     );
     return sub(monthStart, { days: 1 });
   }
   if (input.range === 'customYear') {
-    const year = parseInt(input.year, 10);
-    const yearStart = new Date(`${year}-01-01T00:00:00.000Z`);
+    const yearStart = new Date(`${input.year}-01-01T00:00:00.000Z`);
     return sub(yearStart, { days: 1 });
   }
   if (input.range === 'customRange') {
@@ -938,18 +935,15 @@ export const getToDate = (
 ): Date | undefined => {
   if (input.range === 'all') return undefined;
   if (input.range === 'customMonth') {
-    const year = parseInt(input.year, 10);
-    const month = parseInt(input.month, 10);
-    const monthEnd = endOfMonth(new Date(year, month - 1));
+    const monthEnd = endOfMonth(new Date(input.year, input.month - 1));
     const date = monthEnd.getDate();
     const monthEndDate = new Date(
-      `${year}-${month < 10 ? '0' : ''}${month}-${date < 10 ? '0' : ''}${date}T23:59:59.999Z`,
+      `${input.year}-${input.month < 10 ? '0' : ''}${input.month}-${date < 10 ? '0' : ''}${date}T23:59:59.999Z`,
     );
     return add(monthEndDate, { days: 1 });
   }
   if (input.range === 'customYear') {
-    const year = parseInt(input.year, 10);
-    const yearEnd = new Date(`${year}-12-31T23:59:59.999Z`);
+    const yearEnd = new Date(`${input.year}-12-31T23:59:59.999Z`);
     return add(yearEnd, { days: 1 });
   }
   if (input.range === 'customRange') {
@@ -997,12 +991,10 @@ export const filterCustomDates =
     const year = departureTimeLocal.getFullYear();
     switch (input.range) {
       case 'customMonth': {
-        return (
-          month.toString() === input.month && year.toString() === input.year
-        );
+        return month === input.month && year === input.year;
       }
       case 'customYear': {
-        return year.toString() === input.year;
+        return year === input.year;
       }
       case 'customRange': {
         const flightDate = new Date(year, month - 1, day);
