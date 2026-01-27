@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { type UseFormReturn, useForm } from 'react-hook-form';
@@ -45,7 +45,6 @@ export const FlightsCard = ({
   setIsMapFullScreen,
 }: FlightCardProps): JSX.Element => {
   const { username } = useParams({ strict: false });
-  const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight, setIsAddingFlight, setFlightSearchFormData } =
     useAddFlightStore();
   const { onOwnProfile } = useLoggedInUserQuery();
@@ -120,16 +119,6 @@ export const FlightsCard = ({
                   ) : null}
                   <Button
                     onClick={() => {
-                      void navigate({
-                        search: prev => ({
-                          ...prev,
-                          isFlightsFullScreen:
-                            prev.isFlightsFullScreen === true
-                              ? undefined
-                              : true,
-                        }),
-                        replace: true,
-                      });
                       setIsFlightsFullScreen(isFullScreen => !isFullScreen);
                     }}
                     size="sm"

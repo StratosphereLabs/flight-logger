@@ -166,7 +166,7 @@ export const ProfileFiltersModal = ({
                 getItemText={({ label }) => label}
                 name="month"
                 options={[...Array(12).keys()].map(key => ({
-                  id: (key + 1).toString(),
+                  id: key + 1,
                   label: MONTH_NAMES[key],
                 }))}
                 menuClassName="absolute w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
@@ -182,7 +182,7 @@ export const ProfileFiltersModal = ({
                 getItemText={({ label }) => label}
                 name="year"
                 options={[...Array(75).keys()].map((_, index) => ({
-                  id: `${currentDate.getFullYear() - index + 1}`,
+                  id: currentDate.getFullYear() - index + 1,
                   label: `${currentDate.getFullYear() - index + 1}`,
                 }))}
                 menuClassName="absolute w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"

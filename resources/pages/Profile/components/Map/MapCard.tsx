@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import {
   type Dispatch,
@@ -46,7 +46,6 @@ export const MapCard = ({
 }: MapCardProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useProfilePage();
-  const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight } = useAddFlightStore();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
@@ -213,14 +212,6 @@ export const MapCard = ({
                   <Button
                     className="btn-sm sm:btn-md pointer-events-auto px-1"
                     onClick={() => {
-                      void navigate({
-                        search: prev => ({
-                          ...prev,
-                          isMapFullScreen:
-                            prev.isMapFullScreen === true ? undefined : true,
-                        }),
-                        replace: true,
-                      });
                       setIsMapFullScreen(isFullScreen => !isFullScreen);
                     }}
                     soft
@@ -252,7 +243,6 @@ export const MapCard = ({
       isProfilePage,
       mapFormMethods,
       mapMode,
-      navigate,
       selectedAirportId,
       setIsMapFullScreen,
       setSelectedAirportId,

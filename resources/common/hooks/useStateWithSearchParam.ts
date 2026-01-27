@@ -13,6 +13,7 @@ export const useStateWithSearchParam = <S>(
   paramName: keyof SearchParams,
   from: Parameters<typeof useSearch<AppRouter>>[0]['from'] &
     Parameters<typeof useNavigate<AppRouter>>[0],
+  resetScroll: boolean = false,
 ): [S, Dispatch<SetStateAction<S>>] => {
   const search = useSearch({ strict: false });
   const navigate = useNavigate(from);
@@ -32,11 +33,12 @@ export const useStateWithSearchParam = <S>(
             [paramName]: !newValue ? undefined : newValue,
           })) as Parameters<ReturnType<typeof useNavigate>>[0]['search'],
           replace: true,
+          resetScroll,
         });
         return newValue;
       });
     },
-    [navigate, paramName],
+    [navigate, paramName, resetScroll],
   );
   return [state, setStateWithSearchParam];
 };
