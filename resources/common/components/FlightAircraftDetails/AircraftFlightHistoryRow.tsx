@@ -41,6 +41,9 @@ export const AircraftFlightHistoryRow = ({
               void navigate({
                 to: '/flight/$flightId',
                 params: { flightId: flight.id },
+                state: {
+                  previousPageName: previousPageName ?? 'Home',
+                },
               });
             }
           }}
@@ -110,6 +113,9 @@ export const AircraftFlightHistoryRow = ({
                     navigate({
                       to: '/user/$username',
                       params: { username: flight.user?.username ?? '' },
+                      state: {
+                        previousPageName: previousPageName ?? 'Home',
+                      },
                     })
                   }
                   className="truncate text-sm font-semibold opacity-90"

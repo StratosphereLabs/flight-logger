@@ -1,6 +1,6 @@
 import { GoogleMap } from '@react-google-maps/api';
 import { useStatsigClient } from '@statsig/react-bindings';
-import { useParams } from '@tanstack/react-router';
+import { useLocation, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import groupBy from 'lodash.groupby';
 import { useEffect, useMemo, useState } from 'react';
@@ -26,13 +26,9 @@ import {
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
-// import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
+import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
-
-export interface AircraftPageNavigationState {
-  previousPageName: string;
-}
 
 export const Aircraft = (): JSX.Element | null => {
   const { client } = useStatsigClient();
@@ -60,8 +56,8 @@ export const Aircraft = (): JSX.Element | null => {
         refetchInterval: 60000,
       },
     );
-  // const { setPreviousPageName } = useMainLayoutStore();
-  // const { state } = useLocation();
+  const { setPreviousPageName } = useMainLayoutStore();
+  const { state } = useLocation();
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const allFlights = useMemo(
     () => [
@@ -83,11 +79,11 @@ export const Aircraft = (): JSX.Element | null => {
   }, [allFlights]);
   const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
-  // useEffect(() => {
-  //   if (state !== null) {
-  //     setPreviousPageName(state.previousPageName as string);
-  //   }
-  // }, [setPreviousPageName, state]);
+  useEffect(() => {
+    if (state.previousPageName !== undefined) {
+      setPreviousPageName(state.previousPageName);
+    }
+  }, [setPreviousPageName, state.previousPageName]);
   useEffect(() => {
     client.logEvent('aircraft_page_viewed', icao24);
   }, [client, icao24]);

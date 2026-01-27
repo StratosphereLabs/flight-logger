@@ -169,6 +169,7 @@ export const FlightAircraftDetails = ({
             navigate({
               to: '/aircraft/$icao24',
               params: { icao24: data.airframeId ?? '' },
+              state: { previousPageName },
             })
           }
         >

@@ -260,7 +260,7 @@ export const MainNavbar = (): JSX.Element => {
                 onClick={() => {
                   void navigate({
                     to: '/profile',
-                    search: prev => ({ ...prev, addFlight: true }),
+                    state: { addFlight: true },
                   });
                 }}
                 shape="circle"
@@ -323,7 +323,7 @@ export const MainNavbar = (): JSX.Element => {
                   onClick: () =>
                     navigate({
                       to: '/profile',
-                      search: prev => ({ ...prev, addFlight: true }),
+                      state: { addFlight: true },
                     }),
                 },
                 {

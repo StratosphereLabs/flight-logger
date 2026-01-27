@@ -540,7 +540,7 @@ export const FollowingMap = (): JSX.Element => {
                     onClick={() =>
                       navigate({
                         to: '/profile',
-                        search: prev => ({ ...prev, addFlight: true }),
+                        state: { addFlight: true },
                       })
                     }
                     soft

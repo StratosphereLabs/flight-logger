@@ -1,5 +1,5 @@
 import { type AircraftType } from '@prisma/client';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   type Row,
   type RowSelectionOptions,
@@ -44,6 +44,7 @@ export const UserFlightsTable = ({
   size,
 }: UserFlightsTableProps): JSX.Element => {
   const navigate = useNavigate();
+  const { username } = useParams({ strict: false });
   const {
     rowSelection,
     setActiveFlight,
@@ -246,6 +247,12 @@ export const UserFlightsTable = ({
                 navigate({
                   to: '/flight/$flightId',
                   params: { flightId: row.original.id },
+                  state: {
+                    previousPageName:
+                      username !== undefined
+                        ? `${username}'s Profile`
+                        : 'Profile',
+                  },
                 })
               }
             />
@@ -274,6 +281,10 @@ export const UserFlightsTable = ({
           void navigate({
             to: '/flight/$flightId',
             params: { flightId: row.original.id },
+            state: {
+              previousPageName:
+                username !== undefined ? `${username}'s Profile` : 'Profile',
+            },
           });
       }}
       onRowSelectionChange={setRowSelection}

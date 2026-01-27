@@ -1,6 +1,6 @@
 import { GoogleMap } from '@react-google-maps/api';
 import { useStatsigClient } from '@statsig/react-bindings';
-import { useParams } from '@tanstack/react-router';
+import { useLocation, useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { Button } from 'stratosphere-ui';
@@ -27,7 +27,7 @@ import {
   useGoogleMapInitialization,
   useWeatherRadarLayer,
 } from '../../common/hooks';
-// import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
+import { useMainLayoutStore } from '../../layouts/MainLayout/mainLayoutStore';
 import { getIsLoggedIn, useAuthStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
 
@@ -51,18 +51,18 @@ export const Flight = (): JSX.Element | null => {
       },
     },
   );
-  // const { setPreviousPageName } = useMainLayoutStore();
-  // const { state } = useLocation();
+  const { setPreviousPageName } = useMainLayoutStore();
+  const { state } = useLocation();
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
   const [isAddTravelerDialogOpen, setIsAddTravelerDialogOpen] = useState(false);
   const [isAddFlightDialogOpen, setIsAddFlightDialogOpen] = useState(false);
   const { isLoaded, map, setMap } = useGoogleMapInitialization();
   useWeatherRadarLayer(map, data?.timestamp ?? null);
-  // useEffect(() => {
-  //   if (state !== null) {
-  //     setPreviousPageName(state.previousPageName);
-  //   }
-  // }, [setPreviousPageName, state]);
+  useEffect(() => {
+    if (state.previousPageName !== undefined) {
+      setPreviousPageName(state.previousPageName);
+    }
+  }, [setPreviousPageName, state.previousPageName]);
   useEffect(() => {
     client.logEvent('flight_page_viewed', flightId);
   }, [client, flightId]);

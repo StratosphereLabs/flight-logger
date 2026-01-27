@@ -1,5 +1,5 @@
 import { useStatsigClient } from '@statsig/react-bindings';
-import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+import { useLocation } from '@tanstack/react-router';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 
@@ -27,13 +27,11 @@ export interface MapCardFormData {
 export const Profile = (): JSX.Element => {
   const { client } = useStatsigClient();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
-  const navigate = useNavigate({ from: '/profile' });
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const { isAddingFlight, setIsAddingFlight } = useAddFlightStore();
   const navigateFrom = pathname.includes('/profile')
     ? '/pathlessProfileLayout/profile'
     : '/pathlessProfileLayout/user/$username';
-  const { addFlight } = useSearch({ strict: false });
   const methods = useFormWithSearchParams<MapCardFormData, ['mapMode']>({
     from: navigateFrom,
     defaultValues: {
@@ -60,19 +58,10 @@ export const Profile = (): JSX.Element => {
     navigateFrom,
   );
   useEffect(() => {
-    if (addFlight === true) {
+    if (state.addFlight === true) {
       setIsAddingFlight(true);
     }
-  }, [addFlight, navigate, setIsAddingFlight]);
-  useEffect(() => {
-    void navigate({
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
-        addFlight: isAddingFlight || undefined,
-      }),
-      replace: true,
-    });
-  }, [isAddingFlight, navigate]);
+  }, [setIsAddingFlight, state.addFlight]);
   useEffect(() => {
     client.logEvent('profile_page_viewed');
   }, [client]);

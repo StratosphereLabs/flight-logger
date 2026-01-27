@@ -88,6 +88,12 @@ export const ActiveFlightCard = (): JSX.Element | null => {
               navigate({
                 to: '/flight/$flightId',
                 params: { flightId: data.id },
+                state: {
+                  previousPageName:
+                    username !== undefined
+                      ? `${username}'s Profile`
+                      : 'Profile',
+                },
               })
             }
           >

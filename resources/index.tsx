@@ -13,6 +13,10 @@ declare module '@tanstack/react-router' {
   interface Register {
     router: AppRouter;
   }
+  interface HistoryState {
+    previousPageName?: string;
+    addFlight?: boolean;
+  }
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
