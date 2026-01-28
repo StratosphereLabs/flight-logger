@@ -21,7 +21,7 @@ import {
   UserSelect,
 } from '../../../../common/components';
 import { useLoggedInUserQuery } from '../../../../common/hooks';
-import { useAddFlightStore } from './addFlightStore';
+import { useAddFlightStore } from '../../../../stores';
 
 export interface UserSelectModalProps {
   flight:

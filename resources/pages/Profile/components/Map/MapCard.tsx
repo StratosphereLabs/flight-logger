@@ -19,10 +19,13 @@ import {
 } from '../../../../common/components';
 import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
 import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
-import { getIsLoggedIn, useAuthStore } from '../../../../stores';
+import {
+  getIsLoggedIn,
+  useAddFlightStore,
+  useAuthStore,
+} from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type MapCardFormData } from '../../Profile';
-import { useAddFlightStore } from '../Flights/addFlightStore';
 import { CesiumMap } from './CesiumMap';
 import { GoogleMap } from './GoogleMap';
 import { ProfileOverlay } from './ProfileOverlay';

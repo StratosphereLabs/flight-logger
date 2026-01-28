@@ -12,8 +12,8 @@ import {
   useTRPCErrorHandler,
 } from '../../common/hooks';
 import { useProfileFiltersFormData } from '../../layouts/ProfileLayout';
+import { useAddFlightStore } from '../../stores';
 import { trpc } from '../../utils/trpc';
-import { useAddFlightStore } from '../Profile/components/Flights/addFlightStore';
 import { DeleteFlightModal } from './DeleteFlightModal';
 import { EditFlightModal } from './EditFlightModal';
 import { FETCH_FLIGHTS_PAGE_SIZE } from './constants';

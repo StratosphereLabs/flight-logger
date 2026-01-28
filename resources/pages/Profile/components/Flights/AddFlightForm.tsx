@@ -28,10 +28,10 @@ import {
   useTRPCErrorHandler,
 } from '../../../../common/hooks';
 import { useMainLayoutStore } from '../../../../layouts/MainLayout/mainLayoutStore';
+import { useAddFlightStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { ManualAddFormFields } from './ManualAddFormFields';
 import { UserSelectModal } from './UserSelectModal';
-import { useAddFlightStore } from './addFlightStore';
 import { addFlightFormDefaultValues } from './constants';
 
 export interface AddFlightFormProps {
