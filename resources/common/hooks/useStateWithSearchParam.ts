@@ -13,7 +13,7 @@ export const useStateWithSearchParam = <S>(
   paramName: keyof SearchParams,
   from: Parameters<typeof useSearch<AppRouter>>[0]['from'] &
     Parameters<typeof useNavigate<AppRouter>>[0],
-  resetScroll: boolean = false,
+  resetScroll?: boolean,
 ): [S, Dispatch<SetStateAction<S>>] => {
   const search = useSearch({ strict: false });
   const navigate = useNavigate(from);

@@ -46,16 +46,19 @@ export const Profile = (): JSX.Element => {
     false,
     'isFlightsFullScreen',
     navigateFrom,
+    false,
   );
   const [isMapFullScreen, setIsMapFullScreen] = useStateWithSearchParam(
     false,
     'isMapFullScreen',
     navigateFrom,
+    false,
   );
   const [isStatsFullScreen, setIsStatsFullScreen] = useStateWithSearchParam(
     false,
     'isStatsFullScreen',
     navigateFrom,
+    false,
   );
   useEffect(() => {
     if (state.addFlight === true) {
