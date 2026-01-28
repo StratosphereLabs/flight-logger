@@ -1,20 +1,31 @@
+import { useLocation } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { Button, Form, FormControl, Select } from 'stratosphere-ui';
 
 import { type ProfileFiltersFormData } from '../../../../app/schemas';
-import { getIsLoggedIn, useAuthStore } from '../../../stores';
+import {
+  getIsLoggedIn,
+  useAddFlightStore,
+  useAuthStore,
+} from '../../../stores';
 import { MONTH_NAMES } from '../../constants';
 import { useCurrentDate } from '../../hooks';
 import { FilterIcon, SearchIcon } from '../Icons';
 import { ProfileFiltersModal } from './ProfileFiltersModal';
 import { useProfileFiltersForm } from './useProfileFiltersForm';
 
-export const ProfileFiltersForm = (): JSX.Element => {
+export const ProfileFiltersForm = (): JSX.Element | null => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const [isFiltersDialogOpen, setIsFiltersDialogOpen] = useState(false);
   const currentDate = useCurrentDate();
   const methods = useProfileFiltersForm();
+  const { pathname } = useLocation();
+  const isUserPage = useMemo(
+    () => pathname.includes('/profile') || pathname.includes('/user/'),
+    [pathname],
+  );
+  const { isAddingFlight } = useAddFlightStore();
   const [status, range, fromDate, toDate, year, month] = useWatch<
     ProfileFiltersFormData,
     ['status', 'range', 'fromDate', 'toDate', 'year', 'month']
@@ -41,6 +52,7 @@ export const ProfileFiltersForm = (): JSX.Element => {
         return '';
     }
   }, [fromDate, month, range, status, toDate, year]);
+  if (!isUserPage || isAddingFlight) return null;
   return (
     <Form
       methods={methods}

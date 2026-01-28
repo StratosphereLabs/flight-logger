@@ -7,14 +7,13 @@ import {
   useFormWithSearchParams,
   useStateWithSearchParam,
 } from '../../common/hooks';
-import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { getIsLoggedIn, useAddFlightStore, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,
   FlightsCard,
   MapCard,
   StatisticsCard,
 } from './components';
-import { useAddFlightStore } from './components/Flights/addFlightStore';
 
 export interface ProfilePageNavigationState {
   addFlight: boolean;

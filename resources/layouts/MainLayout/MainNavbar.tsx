@@ -31,7 +31,6 @@ import {
   ThemeButton,
 } from '../../common/components';
 import { useLoggedInUserQuery } from '../../common/hooks';
-import { useAddFlightStore } from '../../pages/Profile/components/Flights/addFlightStore';
 import {
   AppTheme,
   getIsLoggedIn,
@@ -50,7 +49,6 @@ export const MainNavbar = (): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { logout } = useAuthStore();
   const { previousPageName } = useMainLayoutStore();
-  const { isAddingFlight } = useAddFlightStore();
   const canGoBack = useCanGoBack();
   const router = useRouter();
   const isDarkMode = useIsDarkMode();
@@ -73,10 +71,6 @@ export const MainNavbar = (): JSX.Element => {
         .catch(() => {});
     }
   });
-  const isUserPage = useMemo(
-    () => pathname.includes('/profile') || pathname.includes('/user/'),
-    [pathname],
-  );
   const isFlightPage = useMemo(
     () => pathname.includes('/flight/') || pathname.includes('/aircraft/'),
     [pathname],
@@ -357,7 +351,7 @@ export const MainNavbar = (): JSX.Element => {
             />
           </div>
         </div>
-        {isUserPage && !isAddingFlight ? <ProfileFiltersForm /> : null}
+        <ProfileFiltersForm />
         {isFlightPage && canGoBack ? (
           <div className="flex p-1">
             <Button

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
-import { type FlightDataRouterOutput } from '../../../../../app/routes/flightData';
-import { type FlightSearchFormData } from '../../../../../app/schemas';
+import { type FlightDataRouterOutput } from '../../app/routes/flightData';
+import { type FlightSearchFormData } from '../../app/schemas';
 
 interface AddFlightState {
   flightSearchFormData: FlightSearchFormData | null;

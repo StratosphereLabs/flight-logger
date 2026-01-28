@@ -18,11 +18,11 @@ import {
   useLoggedInUserQuery,
   useProfileUserQuery,
 } from '../../../../common/hooks';
+import { useAddFlightStore } from '../../../../stores';
 import { Flights } from '../../../Flights';
 import { type MapCardFormData } from '../../Profile';
 import { AddFlightForm } from './AddFlightForm';
 import { FlightsTableBasic } from './FlightsTableBasic';
-import { useAddFlightStore } from './addFlightStore';
 import { addFlightFormDefaultValues } from './constants';
 
 export interface FlightCardProps {

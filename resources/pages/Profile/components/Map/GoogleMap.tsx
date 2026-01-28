@@ -15,9 +15,8 @@ import { type UseFormReturn, useWatch } from 'react-hook-form';
 
 import { AirportLabelOverlay } from '../../../../common/components';
 import { useGoogleMapInitialization } from '../../../../common/hooks';
-import { useIsDarkMode } from '../../../../stores';
+import { useAddFlightStore, useIsDarkMode } from '../../../../stores';
 import { type MapCardFormData } from '../../Profile';
-import { useAddFlightStore } from '../Flights/addFlightStore';
 import { AddFlightOverlays } from './AddFlightOverlays';
 import type { FilteredMapData, MapFlight } from './types';
 
