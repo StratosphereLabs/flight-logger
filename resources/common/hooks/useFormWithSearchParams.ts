@@ -48,7 +48,7 @@ export const useFormWithSearchParams = <
   defaultValues,
   includeKeys,
   from,
-  resetScroll = false,
+  resetScroll,
   ...useFormOptions
 }: UseFormWithSearchParamsOptions<
   FormValues,
