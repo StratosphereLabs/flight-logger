@@ -42,7 +42,7 @@ export const FollowersModal = ({
 
   return (
     <Modal
-      className="max-h-[600px] text-center"
+      className="text-center"
       open={open}
       actionButtons={[]}
       onClose={onClose}
@@ -50,72 +50,74 @@ export const FollowersModal = ({
     >
       {data?.pages !== undefined ? (
         <>
-          <Table
-            className="h-30"
-            cellClassNames={{
-              avatar: 'w-[60px]',
-              numFlights: 'w-[100px]',
-            }}
-            columns={[
-              {
-                id: 'avatar',
-                accessorKey: 'avatar',
-                header: () => '',
-                cell: ({ row }) => {
-                  const data = row.original;
-                  console.log(data);
-                  return (
-                    <div className="flex flex-1 items-center justify-center">
-                      <Avatar
-                        alt={data?.username}
-                        src={data?.avatar}
-                        shapeClassName="w-9 h-9 rounded-full"
-                      />
-                    </div>
-                  );
+          <div className="max-h-[75vh] overflow-y-scroll">
+            <Table
+              className="h-30"
+              cellClassNames={{
+                avatar: 'w-[60px]',
+                numFlights: 'w-[100px]',
+              }}
+              columns={[
+                {
+                  id: 'avatar',
+                  accessorKey: 'avatar',
+                  header: () => '',
+                  cell: ({ row }) => {
+                    const data = row.original;
+                    console.log(data);
+                    return (
+                      <div className="flex flex-1 items-center justify-center">
+                        <Avatar
+                          alt={data?.username}
+                          src={data?.avatar}
+                          shapeClassName="w-9 h-9 rounded-full"
+                        />
+                      </div>
+                    );
+                  },
                 },
-              },
-              {
-                id: 'username',
-                accessorKey: 'username',
-                header: () => 'Username',
-                cell: ({ getValue }) => {
-                  const username = getValue<string>();
-                  return (
-                    <Link
-                      className="font-bold"
-                      hover
-                      onClick={() => {
-                        onClose();
-                        void navigate({
-                          to: '/user/$username',
-                          params: { username },
-                        });
-                      }}
-                    >
-                      {username}
-                    </Link>
-                  );
+                {
+                  id: 'username',
+                  accessorKey: 'username',
+                  header: () => 'Username',
+                  cell: ({ getValue }) => {
+                    const username = getValue<string>();
+                    return (
+                      <Link
+                        className="font-bold"
+                        hover
+                        onClick={() => {
+                          onClose();
+                          void navigate({
+                            to: '/user/$username',
+                            params: { username },
+                          });
+                        }}
+                      >
+                        {username}
+                      </Link>
+                    );
+                  },
                 },
-              },
-              {
-                id: 'numFlights',
-                accessorKey: 'numFlights',
-                header: () => 'Flights',
-              },
-            ]}
-            data={
-              data.pages.flatMap(page =>
-                page.results.map(item => ({
-                  ...item,
-                  id: item.username,
-                })),
-              ) ?? []
-            }
-            enableSorting={false}
-            getCoreRowModel={getCoreRowModel()}
-            size="sm"
-          />
+                {
+                  id: 'numFlights',
+                  accessorKey: 'numFlights',
+                  header: () => 'Flights',
+                },
+              ]}
+              data={
+                data.pages.flatMap(page =>
+                  page.results.map(item => ({
+                    ...item,
+                    id: item.username,
+                  })),
+                ) ?? []
+              }
+              enableSorting={false}
+              getCoreRowModel={getCoreRowModel()}
+              size="sm"
+            />
+          </div>
           <div
             ref={ref}
             className={classNames(

@@ -39,7 +39,7 @@ export const FollowingModal = ({
   });
   return (
     <Modal
-      className="max-h-[75vh] text-center"
+      className="text-center"
       open={open}
       actionButtons={[]}
       onClose={onClose}
@@ -47,7 +47,7 @@ export const FollowingModal = ({
     >
       {data !== undefined ? (
         <>
-          <div className="flex-1 overflow-y-scroll">
+          <div className="max-h-[75vh] overflow-y-scroll">
             <Table
               cellClassNames={{
                 avatar: 'w-[60px]',
