@@ -1,5 +1,5 @@
 import { useGateValue } from '@statsig/react-bindings';
-import { Outlet, useLocation, useParams } from '@tanstack/react-router';
+import { Outlet, useLocation } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
@@ -15,7 +15,6 @@ import { useMainLayoutStore } from './mainLayoutStore';
 export const MainLayout = (): JSX.Element => {
   const { alertMessages } = useAlertMessages();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { username } = useParams({ strict: false });
   const { theme } = useThemeStore();
   const { pathname } = useLocation();
   const christmasThemeEnabled = useGateValue('christmas_theme');
@@ -39,9 +38,6 @@ export const MainLayout = (): JSX.Element => {
   useEffect(() => {
     setScrollContainerRef(scrollContainerRef);
   }, [setScrollContainerRef]);
-  useEffect(() => {
-    scrollContainerRef.current?.scrollTo(0, 0);
-  }, [username]);
   return (
     <StatsigInitializationProvider>
       <div className="relative flex h-[100dvh] flex-col justify-between">
@@ -51,6 +47,7 @@ export const MainLayout = (): JSX.Element => {
         {!pathname.includes('/auth/') ? <MainNavbar /> : null}
         <div
           className="bg-base-200 flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-scroll"
+          id="main-layout-scroll-container"
           ref={scrollContainerRef}
         >
           <Outlet />

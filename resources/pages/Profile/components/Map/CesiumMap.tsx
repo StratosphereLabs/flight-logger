@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { type CesiumComponentRef, Entity, Viewer } from 'resium';
 
 import planeIconUrl from '../../../../assets/plane.svg';
-import { useAddFlightStore } from '../Flights/addFlightStore';
+import { useAddFlightStore } from '../../../../stores';
 import type { FilteredMapData, MapFlight } from './types';
 
 export interface CesiumMapProps {

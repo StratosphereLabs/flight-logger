@@ -27,6 +27,7 @@ export const FlightDetailsPanel = ({
       'pointer-events-none absolute bottom-0 left-1 h-[calc(50vh+80px)] w-[calc(100%-8px)] overflow-y-scroll pb-1 md:top-1 md:mt-24 md:h-[calc(100%-104px)] md:w-[390px] md:pb-0',
       HIDE_SCROLLBAR_CLASSNAME,
     )}
+    id="flight-details-panel"
     ref={scrollContainerRef}
   >
     <div className="relative">
@@ -40,6 +41,7 @@ export const FlightDetailsPanel = ({
             data !== undefined &&
               `border-2 ${CARD_BORDER_COLORS[data.delayStatus]}`,
           )}
+          id="flight-details-panel-content"
         >
           {children}
         </div>

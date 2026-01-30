@@ -4,10 +4,10 @@ import { type UseFormReturn, useWatch } from 'react-hook-form';
 import { FormControl, Modal, Select } from 'stratosphere-ui';
 
 import { DATE_FORMAT_ISO } from '../../../../app/constants';
+import { type ProfileFiltersFormData } from '../../../../app/schemas';
 import { getIsLoggedIn, useAuthStore } from '../../../stores';
 import { MONTH_NAMES } from '../../constants';
 import { useCurrentDate } from '../../hooks';
-import { type ProfileFiltersFormData } from './useProfileFiltersForm';
 
 export interface ProfileFiltersModalProps {
   methods: UseFormReturn<ProfileFiltersFormData>;
@@ -39,10 +39,8 @@ export const ProfileFiltersModal = ({
             methods.reset({
               status: 'completed',
               range: 'all',
-              year: currentDate.getFullYear().toString(),
-              month: (
-                currentDate.getMonth() + 1
-              ).toString() as ProfileFiltersFormData['month'],
+              year: currentDate.getFullYear(),
+              month: currentDate.getMonth() + 1,
               fromDate: format(sub(new Date(), { months: 3 }), DATE_FORMAT_ISO),
               toDate: toDate ?? format(new Date(), DATE_FORMAT_ISO),
               searchQuery: '',
@@ -168,7 +166,7 @@ export const ProfileFiltersModal = ({
                 getItemText={({ label }) => label}
                 name="month"
                 options={[...Array(12).keys()].map(key => ({
-                  id: (key + 1).toString(),
+                  id: key + 1,
                   label: MONTH_NAMES[key],
                 }))}
                 menuClassName="absolute w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"
@@ -184,7 +182,7 @@ export const ProfileFiltersModal = ({
                 getItemText={({ label }) => label}
                 name="year"
                 options={[...Array(75).keys()].map((_, index) => ({
-                  id: `${currentDate.getFullYear() - index + 1}`,
+                  id: currentDate.getFullYear() - index + 1,
                   label: `${currentDate.getFullYear() - index + 1}`,
                 }))}
                 menuClassName="absolute w-[150px] right-0 max-h-[200px] overflow-y-scroll flex-nowrap bg-base-200 z-50"

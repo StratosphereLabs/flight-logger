@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import classNames from 'classnames';
 import {
   type Dispatch,
@@ -19,10 +19,13 @@ import {
 } from '../../../../common/components';
 import { useProfilePage, useTRPCErrorHandler } from '../../../../common/hooks';
 import { useProfileFiltersFormData } from '../../../../layouts/ProfileLayout';
-import { getIsLoggedIn, useAuthStore } from '../../../../stores';
+import {
+  getIsLoggedIn,
+  useAddFlightStore,
+  useAuthStore,
+} from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
 import { type MapCardFormData } from '../../Profile';
-import { useAddFlightStore } from '../Flights/addFlightStore';
 import { CesiumMap } from './CesiumMap';
 import { GoogleMap } from './GoogleMap';
 import { ProfileOverlay } from './ProfileOverlay';
@@ -46,7 +49,6 @@ export const MapCard = ({
 }: MapCardProps): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const isProfilePage = useProfilePage();
-  const navigate = useNavigate({ from: '/profile' });
   const { isAddingFlight } = useAddFlightStore();
   const [center, setCenter] = useState(DEFAULT_COORDINATES);
   const [hoverAirportId, setHoverAirportId] = useState<string | null>(null);
@@ -213,14 +215,6 @@ export const MapCard = ({
                   <Button
                     className="btn-sm sm:btn-md pointer-events-auto px-1"
                     onClick={() => {
-                      void navigate({
-                        search: prev => ({
-                          ...prev,
-                          isMapFullScreen:
-                            prev.isMapFullScreen === true ? undefined : true,
-                        }),
-                        replace: true,
-                      });
                       setIsMapFullScreen(isFullScreen => !isFullScreen);
                     }}
                     soft
@@ -252,7 +246,6 @@ export const MapCard = ({
       isProfilePage,
       mapFormMethods,
       mapMode,
-      navigate,
       selectedAirportId,
       setIsMapFullScreen,
       setSelectedAirportId,

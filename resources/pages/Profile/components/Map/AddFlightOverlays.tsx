@@ -3,9 +3,8 @@ import { useEffect } from 'react';
 
 import { AirportMarkersOverlay } from '../../../../common/components';
 import { useTRPCErrorHandler } from '../../../../common/hooks';
-import { useIsDarkMode } from '../../../../stores';
+import { useAddFlightStore, useIsDarkMode } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
-import { useAddFlightStore } from '../Flights/addFlightStore';
 import { addFlightFormDefaultValues } from '../Flights/constants';
 
 export interface AddFlightOverlaysProps {

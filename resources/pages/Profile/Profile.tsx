@@ -7,14 +7,13 @@ import {
   useFormWithSearchParams,
   useStateWithSearchParam,
 } from '../../common/hooks';
-import { getIsLoggedIn, useAuthStore } from '../../stores';
+import { getIsLoggedIn, useAddFlightStore, useAuthStore } from '../../stores';
 import {
   ActiveFlightCard,
   FlightsCard,
   MapCard,
   StatisticsCard,
 } from './components';
-import { useAddFlightStore } from './components/Flights/addFlightStore';
 
 export interface ProfilePageNavigationState {
   addFlight: boolean;
@@ -46,16 +45,19 @@ export const Profile = (): JSX.Element => {
     false,
     'isFlightsFullScreen',
     navigateFrom,
+    false,
   );
   const [isMapFullScreen, setIsMapFullScreen] = useStateWithSearchParam(
     false,
     'isMapFullScreen',
     navigateFrom,
+    false,
   );
   const [isStatsFullScreen, setIsStatsFullScreen] = useStateWithSearchParam(
     false,
     'isStatsFullScreen',
     navigateFrom,
+    false,
   );
   useEffect(() => {
     if (state.addFlight === true) {

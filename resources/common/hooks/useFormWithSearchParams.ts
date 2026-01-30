@@ -33,6 +33,7 @@ export interface UseFormWithSearchParamsOptions<
   from: Parameters<typeof useSearch<AppRouter>>[0]['from'] &
     Parameters<typeof useNavigate<AppRouter>>[0];
   includeKeys: readonly [...FieldNames];
+  resetScroll?: boolean;
 }
 
 export const useFormWithSearchParams = <
@@ -47,6 +48,7 @@ export const useFormWithSearchParams = <
   defaultValues,
   includeKeys,
   from,
+  resetScroll,
   ...useFormOptions
 }: UseFormWithSearchParamsOptions<
   FormValues,
@@ -74,13 +76,19 @@ export const useFormWithSearchParams = <
       return;
     }
     prevFormValuesRef.current = formValues;
+    const values: Record<string, unknown> = {};
+    includeKeys.forEach((key, index) => {
+      const value = formValues[index];
+      values[key] = value;
+    });
     void navigate({
       search: ((prev: Record<string, unknown>) => ({
         ...prev,
-        ...formValues,
+        ...values,
       })) as Parameters<ReturnType<typeof useNavigate<AppRouter>>>[0]['search'],
       replace: true,
+      resetScroll,
     });
-  }, [formValues, from, navigate]);
+  }, [formValues, includeKeys, navigate, resetScroll]);
   return methods;
 };
