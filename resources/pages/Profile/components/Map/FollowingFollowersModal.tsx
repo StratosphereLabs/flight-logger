@@ -7,25 +7,26 @@ import { Avatar, Link, Loading, Modal, Table } from 'stratosphere-ui';
 import { HIDE_SCROLLBAR_CLASSNAME } from '../../../../common/constants';
 import { trpc } from '../../../../utils/trpc';
 
-export interface FollowersModalProps {
-  open: boolean;
+export interface FollowingFollowersModalProps {
   onClose: () => void;
+  type: 'following' | 'followers' | null;
 }
 
-export const FollowersModal = ({
-  open,
+export const FollowingFollowersModal = ({
   onClose,
-}: FollowersModalProps): JSX.Element => {
+  type,
+}: FollowingFollowersModalProps): JSX.Element => {
   const { username } = useParams({ strict: false });
   const navigate = useNavigate();
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
-    trpc.users.getUserFollowers.useInfiniteQuery(
+    trpc.users.getUserFollowingFollowers.useInfiniteQuery(
       {
         username,
         limit: 15,
+        type,
       },
       {
-        enabled: open,
+        enabled: type !== null,
         getNextPageParam: ({ metadata }) =>
           metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
       },
@@ -39,13 +40,14 @@ export const FollowersModal = ({
       }
     },
   });
+  const title = type === 'followers' ? 'Followers' : 'Following';
   return (
     <Modal
       className="max-h-[90vh] overflow-y-hidden text-center"
-      open={open}
+      open={type !== null}
       actionButtons={[]}
       onClose={onClose}
-      title={`${username !== undefined ? `${username}'s Followers` : 'Followers'}${data?.pages[0] !== undefined ? ` (${data.pages[0].metadata.itemCount})` : ''}`}
+      title={`${username !== undefined ? `${username}'s ${title}` : title}${data?.pages[0] !== undefined ? ` (${data.pages[0].metadata.itemCount})` : ''}`}
     >
       <div
         className={classNames(

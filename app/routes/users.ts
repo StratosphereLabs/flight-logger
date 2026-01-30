@@ -240,7 +240,7 @@ export const usersRouter = router({
         id: user.username,
       }));
     }),
-  getUserFollowing: procedure
+  getUserFollowingFollowers: procedure
     .use(verifyAuthenticated)
     .input(getFollowingAndFollowersSchema)
     .query(async ({ ctx, input }) => {
@@ -253,11 +253,22 @@ export const usersRouter = router({
           skip,
           take,
           where: {
-            followedBy: {
-              some: {
-                username: input.username ?? ctx.user?.username,
-              },
-            },
+            followedBy:
+              input.type === 'following'
+                ? {
+                    some: {
+                      username: input.username ?? ctx.user?.username,
+                    },
+                  }
+                : undefined,
+            following:
+              input.type === 'followers'
+                ? {
+                    some: {
+                      username: input.username ?? ctx.user?.username,
+                    },
+                  }
+                : undefined,
           },
           include: {
             _count: {
@@ -289,80 +300,22 @@ export const usersRouter = router({
         }),
         prisma.user.count({
           where: {
-            followedBy: {
-              some: {
-                username: input.username ?? ctx.user?.username,
-              },
-            },
-          },
-        }),
-      ]);
-      return getPaginatedResponse({
-        results: results.map(user => ({
-          avatar: fetchGravatarUrl(user.email),
-          numFlights: user._count.flights,
-          ...excludeKeys(user, '_count'),
-          id: user.username,
-        })),
-        itemCount: count,
-        limit,
-        page,
-      });
-    }),
-  getUserFollowers: procedure
-    .use(verifyAuthenticated)
-    .input(getFollowingAndFollowersSchema)
-    .query(async ({ ctx, input }) => {
-      if (input.username === undefined && ctx.user === null) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
-      const { limit, page, skip, take } = parsePaginationRequest(input);
-      const [results, count] = await prisma.$transaction([
-        prisma.user.findMany({
-          skip,
-          take,
-          where: {
-            following: {
-              some: {
-                username: input.username ?? ctx.user?.username,
-              },
-            },
-          },
-          include: {
-            _count: {
-              select: {
-                flights: {
-                  where: {
-                    OR: [
-                      {
-                        inTimeActual: {
-                          lte: new Date(),
-                        },
-                      },
-                      {
-                        inTime: {
-                          lte: new Date(),
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          },
-          orderBy: {
-            flights: {
-              _count: 'desc',
-            },
-          },
-        }),
-        prisma.user.count({
-          where: {
-            following: {
-              some: {
-                username: input.username ?? ctx.user?.username,
-              },
-            },
+            followedBy:
+              input.type === 'following'
+                ? {
+                    some: {
+                      username: input.username ?? ctx.user?.username,
+                    },
+                  }
+                : undefined,
+            following:
+              input.type === 'followers'
+                ? {
+                    some: {
+                      username: input.username ?? ctx.user?.username,
+                    },
+                  }
+                : undefined,
           },
         }),
       ]);

@@ -18,16 +18,18 @@ import {
 } from '../../../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
-import { FollowersModal } from '../Following/FollowersModal';
-import { FollowingModal } from '../Following/FollowingModal';
+import {
+  FollowingFollowersModal,
+  type FollowingFollowersModalProps,
+} from './FollowingFollowersModal';
 
 export const ProfileOverlay = (): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { username } = useParams({ strict: false });
   const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
-  const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
-  const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
+  const [followingFollowersModalType, setFollowingFollowersModalType] =
+    useState<FollowingFollowersModalProps['type']>(null);
   const onSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
   const { onOwnProfile } = useLoggedInUserQuery();
@@ -158,7 +160,7 @@ export const ProfileOverlay = (): JSX.Element => {
                 color="ghost"
                 size="xs"
                 onClick={() => {
-                  setIsFollowingModalOpen(true);
+                  setFollowingFollowersModalType('following');
                 }}
               >
                 <UserOutlineIcon className="text-info h-3 w-3" />
@@ -172,7 +174,7 @@ export const ProfileOverlay = (): JSX.Element => {
                 color="ghost"
                 size="xs"
                 onClick={() => {
-                  setIsFollowersModalOpen(true);
+                  setFollowingFollowersModalType('followers');
                 }}
               >
                 <UserSolidIcon className="text-info h-3 w-3" />
@@ -237,17 +239,11 @@ export const ProfileOverlay = (): JSX.Element => {
           </div>
         </Modal>
       ) : null}
-      <FollowersModal
-        open={isFollowersModalOpen}
+      <FollowingFollowersModal
         onClose={() => {
-          setIsFollowersModalOpen(false);
+          setFollowingFollowersModalType(null);
         }}
-      />
-      <FollowingModal
-        open={isFollowingModalOpen}
-        onClose={() => {
-          setIsFollowingModalOpen(false);
-        }}
+        type={followingFollowersModalType}
       />
     </>
   );

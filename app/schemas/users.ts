@@ -43,9 +43,11 @@ export const addFollowerSchema = z.object({
   username: z.string().trim(),
 });
 
-export const getFollowingAndFollowersSchema = paginationSchema.extend(
-  getUserSchema.shape,
-);
+export const getFollowingAndFollowersSchema = paginationSchema
+  .extend(getUserSchema.shape)
+  .extend({
+    type: z.enum(['following', 'followers']).nullable(),
+  });
 
 export type GetUserRequest = z.infer<typeof getUserSchema>;
 
