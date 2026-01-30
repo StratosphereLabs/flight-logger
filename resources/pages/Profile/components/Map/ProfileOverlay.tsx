@@ -28,7 +28,7 @@ export const ProfileOverlay = (): JSX.Element => {
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { username } = useParams({ strict: false });
   const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
-  const [followingFollowersModalType, setIsFollowingFollowersModalType] =
+  const [followingFollowersModalType, setFollowingFollowersModalType] =
     useState<FollowingFollowersModalProps['type']>(null);
   const onSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
@@ -160,7 +160,7 @@ export const ProfileOverlay = (): JSX.Element => {
                 color="ghost"
                 size="xs"
                 onClick={() => {
-                  setIsFollowingFollowersModalType('following');
+                  setFollowingFollowersModalType('following');
                 }}
               >
                 <UserOutlineIcon className="text-info h-3 w-3" />
@@ -174,7 +174,7 @@ export const ProfileOverlay = (): JSX.Element => {
                 color="ghost"
                 size="xs"
                 onClick={() => {
-                  setIsFollowingFollowersModalType('followers');
+                  setFollowingFollowersModalType('followers');
                 }}
               >
                 <UserSolidIcon className="text-info h-3 w-3" />
@@ -241,7 +241,7 @@ export const ProfileOverlay = (): JSX.Element => {
       ) : null}
       <FollowingFollowersModal
         onClose={() => {
-          setIsFollowingFollowersModalType(null);
+          setFollowingFollowersModalType(null);
         }}
         type={followingFollowersModalType}
       />
