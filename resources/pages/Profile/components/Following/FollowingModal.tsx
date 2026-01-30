@@ -21,9 +21,10 @@ export const FollowingModal = ({
     trpc.users.getUserFollowing.useInfiniteQuery(
       {
         username,
-        limit: 25,
+        limit: 15,
       },
       {
+        enabled: open,
         getNextPageParam: ({ metadata }) =>
           metadata.page < metadata.pageCount ? metadata.page + 1 : undefined,
       },
@@ -39,96 +40,99 @@ export const FollowingModal = ({
   });
   return (
     <Modal
-      className="text-center"
+      className="max-h-[90vh] overflow-y-hidden text-center"
       open={open}
       actionButtons={[]}
       onClose={onClose}
-      title="Following"
+      title={`${username !== undefined ? `${username}'s Following` : 'Following'}${data?.pages[0] !== undefined ? ` (${data.pages[0].metadata.itemCount})` : ''}`}
     >
-      {data !== undefined ? (
-        <>
-          <div className="max-h-[75vh] overflow-y-scroll">
-            <Table
-              cellClassNames={{
-                avatar: 'w-[60px]',
-                numFlights: 'w-[100px]',
-              }}
-              columns={[
-                {
-                  id: 'avatar',
-                  accessorKey: 'avatar',
-                  header: () => '',
-                  cell: ({ row }) => {
-                    const data = row.original;
-                    return (
-                      <div className="flex flex-1 items-center justify-center">
-                        <Avatar
-                          alt={data?.username}
-                          src={data?.avatar}
-                          shapeClassName="w-9 h-9 rounded-full"
-                        />
-                      </div>
-                    );
-                  },
-                },
-                {
-                  id: 'username',
-                  accessorKey: 'username',
-                  header: () => 'Username',
-                  cell: ({ getValue }) => {
-                    const username = getValue<string>();
-                    return (
-                      <Link
-                        className="font-bold"
-                        hover
-                        onClick={() => {
-                          onClose();
-                          void navigate({
-                            to: '/user/$username',
-                            params: { username },
-                          });
-                        }}
-                      >
-                        {username}
-                      </Link>
-                    );
-                  },
-                },
-                {
-                  id: 'numFlights',
-                  accessorKey: 'numFlights',
-                  header: () => 'Flights',
-                },
-              ]}
-              data={
-                data.pages.flatMap(page =>
-                  page.results.map(item => ({
-                    ...item,
-                    id: item.username,
-                  })),
-                ) ?? []
-              }
-              enableSorting={false}
-              getCoreRowModel={getCoreRowModel()}
-              size="sm"
-            />
-          </div>
-          <div
-            ref={ref}
-            className={classNames(
-              'h-[20px] w-full justify-center',
-              hasNextPage === true ? 'flex' : 'hidden',
-            )}
-          >
-            {isFetchingNextPage ? (
-              <div className="flex gap-2 text-sm opacity-90">
-                <Loading size="xs" />
-                <span>Loading</span>
-              </div>
-            ) : null}
-          </div>
-        </>
-      ) : null}
+      <div className="flex max-h-[80vh] flex-col overflow-y-scroll">
+        <Table
+          cellClassNames={{
+            avatar: 'w-[60px]',
+            numFlights: 'w-[100px] text-right',
+          }}
+          className="[&_td]:border-none [&_th]:border-none"
+          columns={[
+            {
+              id: 'avatar',
+              accessorKey: 'avatar',
+              header: () => '',
+              cell: ({ row }) => {
+                const data = row.original;
+                return (
+                  <div className="flex flex-1 items-center justify-center">
+                    <Avatar
+                      alt={data?.username}
+                      src={data?.avatar}
+                      shapeClassName="w-9 h-9 rounded-full"
+                    />
+                  </div>
+                );
+              },
+            },
+            {
+              id: 'username',
+              accessorKey: 'username',
+              header: () => 'Username',
+              cell: ({ getValue }) => {
+                const username = getValue<string>();
+                return (
+                  <Link
+                    className="font-bold"
+                    hover
+                    onClick={() => {
+                      onClose();
+                      void navigate({
+                        to: '/user/$username',
+                        params: { username },
+                      });
+                    }}
+                  >
+                    {username}
+                  </Link>
+                );
+              },
+            },
+            {
+              id: 'numFlights',
+              accessorKey: 'numFlights',
+              header: () => <span className="w-full text-right">Flights</span>,
+              cell: ({ getValue }) => {
+                const numFlights = getValue<number>();
+                return <>{numFlights.toLocaleString()}</>;
+              },
+            },
+          ]}
+          data={
+            data?.pages.flatMap(page =>
+              page.results.map(item => ({
+                ...item,
+                id: item.username,
+              })),
+            ) ?? []
+          }
+          enableSorting={false}
+          getCoreRowModel={getCoreRowModel()}
+          headerClassName="sticky top-0 bg-base-100 z-[10]"
+          isLoading={isFetching && !isFetchingNextPage}
+          size="sm"
+        />
+        <div
+          ref={ref}
+          className={classNames(
+            'min-h-[20px] w-full justify-center',
+            hasNextPage === true ? 'flex' : 'hidden',
+          )}
+        >
+          {isFetchingNextPage ? (
+            <div className="flex gap-2 text-sm opacity-90">
+              <Loading size="xs" />
+              <span>Loading</span>
+            </div>
+          ) : null}
+        </div>
+      </div>
     </Modal>
   );
 };
