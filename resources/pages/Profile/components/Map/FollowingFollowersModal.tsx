@@ -1,11 +1,23 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { getCoreRowModel } from '@tanstack/react-table';
 import classNames from 'classnames';
+import { useForm, useWatch } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
-import { Avatar, Link, Loading, Modal, Table } from 'stratosphere-ui';
+import {
+  Avatar,
+  Form,
+  FormControl,
+  Link,
+  Loading,
+  Modal,
+  Table,
+  useDebouncedValue,
+} from 'stratosphere-ui';
 
+import { SearchIcon } from '../../../../common/components';
 import { HIDE_SCROLLBAR_CLASSNAME } from '../../../../common/constants';
 import { trpc } from '../../../../utils/trpc';
+import { type SearchUsersFormData } from '../../../Users';
 
 export interface FollowingFollowersModalProps {
   onClose: () => void;
@@ -18,12 +30,23 @@ export const FollowingFollowersModal = ({
 }: FollowingFollowersModalProps): JSX.Element => {
   const { username } = useParams({ strict: false });
   const navigate = useNavigate();
+  const methods = useForm<SearchUsersFormData, ['searchQuery']>({
+    defaultValues: {
+      searchQuery: '',
+    },
+  });
+  const query = useWatch<SearchUsersFormData, 'searchQuery'>({
+    control: methods.control,
+    name: 'searchQuery',
+  });
+  const { debouncedValue } = useDebouncedValue(query, 400);
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
     trpc.users.getUserFollowingFollowers.useInfiniteQuery(
       {
         username,
         limit: 15,
         type,
+        query: debouncedValue,
       },
       {
         enabled: type !== null,
@@ -40,15 +63,27 @@ export const FollowingFollowersModal = ({
       }
     },
   });
+  const handleClose = (): void => {
+    methods.reset();
+    onClose();
+  };
   const title = type === 'followers' ? 'Followers' : 'Following';
   return (
     <Modal
       className="max-h-[90vh] overflow-y-hidden text-center"
       open={type !== null}
       actionButtons={[]}
-      onClose={onClose}
+      onClose={handleClose}
       title={`${username !== undefined ? `${username}'s ${title}` : title}${data?.pages[0] !== undefined ? ` (${data.pages[0].metadata.itemCount})` : ''}`}
     >
+      <Form className="mt-2" methods={methods}>
+        <FormControl
+          elementLeft={<SearchIcon className="ml-1 h-5 w-5" />}
+          elementRight={isFetching ? <Loading /> : null}
+          inputClassName="bg-base-200 pl-10"
+          name="searchQuery"
+        />
+      </Form>
       <div
         className={classNames(
           'flex max-h-[80vh] flex-col overflow-y-scroll',
