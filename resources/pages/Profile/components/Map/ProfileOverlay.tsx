@@ -18,12 +18,16 @@ import {
 } from '../../../../common/hooks';
 import { getIsLoggedIn, useAuthStore } from '../../../../stores';
 import { trpc } from '../../../../utils/trpc';
+import { FollowersModal } from '../Following/FollowersModal';
+import { FollowingModal } from '../Following/FollowingModal';
 
 export const ProfileOverlay = (): JSX.Element => {
   const utils = trpc.useUtils();
   const isLoggedIn = useAuthStore(getIsLoggedIn);
   const { username } = useParams({ strict: false });
   const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
+  const [isFollowersModalOpen, setIsFollowersModalOpen] = useState(false);
+  const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
   const onSuccess = useSuccessResponseHandler();
   const onError = useTRPCErrorHandler();
   const { onOwnProfile } = useLoggedInUserQuery();
@@ -71,6 +75,7 @@ export const ProfileOverlay = (): JSX.Element => {
       },
       onError,
     });
+
   return (
     <>
       <div className="bg-base-100/50 rounded-box pointer-events-auto flex w-full flex-col gap-1 p-2 backdrop-blur-xs">
@@ -148,14 +153,28 @@ export const ProfileOverlay = (): JSX.Element => {
               ) : null}
             </div>
             <div className="flex flex-wrap">
-              <Button className="gap-1" color="ghost" size="xs">
+              <Button
+                className="gap-1"
+                color="ghost"
+                size="xs"
+                onClick={() => {
+                  setIsFollowingModalOpen(true);
+                }}
+              >
                 <UserOutlineIcon className="text-info h-3 w-3" />
                 <span>
                   {userData._count.following}
                   <span className="ml-1 opacity-60">Following</span>
                 </span>
               </Button>
-              <Button className="gap-1" color="ghost" size="xs">
+              <Button
+                className="gap-1"
+                color="ghost"
+                size="xs"
+                onClick={() => {
+                  setIsFollowersModalOpen(true);
+                }}
+              >
                 <UserSolidIcon className="text-info h-3 w-3" />
                 <span>
                   {userData._count.followedBy}
@@ -218,6 +237,18 @@ export const ProfileOverlay = (): JSX.Element => {
           </div>
         </Modal>
       ) : null}
+      <FollowersModal
+        open={isFollowersModalOpen}
+        onClose={() => {
+          setIsFollowersModalOpen(false);
+        }}
+      />
+      <FollowingModal
+        open={isFollowingModalOpen}
+        onClose={() => {
+          setIsFollowingModalOpen(false);
+        }}
+      />
     </>
   );
 };

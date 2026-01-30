@@ -43,7 +43,7 @@ export const Users = (): JSX.Element => {
     {
       query: query !== '' ? debouncedValue : query,
     },
-    { enabled: isLoggedIn, onError },
+    { enabled: isLoggedIn && query.length >= 3, onError },
   );
   useEffect(() => {
     client.logEvent('users_page_viewed');
