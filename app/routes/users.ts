@@ -6,13 +6,19 @@ import { prisma } from '../db';
 import { verifyAuthenticated } from '../middleware';
 import {
   addFollowerSchema,
+  getFollowingAndFollowersSchema,
   getUserSchema,
   getUsersSchema,
   setFCMTokenSchema,
   togglePushNotificationsSchema,
 } from '../schemas';
 import { procedure, router } from '../trpc';
-import { excludeKeys, fetchGravatarUrl } from '../utils';
+import {
+  excludeKeys,
+  fetchGravatarUrl,
+  getPaginatedResponse,
+  parsePaginationRequest,
+} from '../utils';
 
 export const usersRouter = router({
   getUser: procedure.input(getUserSchema).query(async ({ ctx, input }) => {
@@ -164,6 +170,9 @@ export const usersRouter = router({
     .use(verifyAuthenticated)
     .input(getUsersSchema)
     .query(async ({ ctx, input }) => {
+      if (input.query.length < 3 && input.query.length > 0) {
+        return [];
+      }
       const results = await prisma.user.findMany({
         take: 10,
         where: {
@@ -230,6 +239,144 @@ export const usersRouter = router({
         ...excludeKeys(user, '_count'),
         id: user.username,
       }));
+    }),
+  getUserFollowing: procedure
+    .use(verifyAuthenticated)
+    .input(getFollowingAndFollowersSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      const [results, count] = await prisma.$transaction([
+        prisma.user.findMany({
+          skip,
+          take,
+          where: {
+            followedBy: {
+              some: {
+                username: input.username ?? ctx.user?.username,
+              },
+            },
+          },
+          include: {
+            _count: {
+              select: {
+                flights: {
+                  where: {
+                    OR: [
+                      {
+                        inTimeActual: {
+                          lte: new Date(),
+                        },
+                      },
+                      {
+                        inTime: {
+                          lte: new Date(),
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          orderBy: {
+            flights: {
+              _count: 'desc',
+            },
+          },
+        }),
+        prisma.user.count({
+          where: {
+            followedBy: {
+              some: {
+                username: input.username ?? ctx.user?.username,
+              },
+            },
+          },
+        }),
+      ]);
+      return getPaginatedResponse({
+        results: results.map(user => ({
+          avatar: fetchGravatarUrl(user.email),
+          numFlights: user._count.flights,
+          ...excludeKeys(user, '_count'),
+          id: user.username,
+        })),
+        itemCount: count,
+        limit,
+        page,
+      });
+    }),
+  getUserFollowers: procedure
+    .use(verifyAuthenticated)
+    .input(getFollowingAndFollowersSchema)
+    .query(async ({ ctx, input }) => {
+      if (input.username === undefined && ctx.user === null) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+      const { limit, page, skip, take } = parsePaginationRequest(input);
+      const [results, count] = await prisma.$transaction([
+        prisma.user.findMany({
+          skip,
+          take,
+          where: {
+            following: {
+              some: {
+                username: input.username ?? ctx.user?.username,
+              },
+            },
+          },
+          include: {
+            _count: {
+              select: {
+                flights: {
+                  where: {
+                    OR: [
+                      {
+                        inTimeActual: {
+                          lte: new Date(),
+                        },
+                      },
+                      {
+                        inTime: {
+                          lte: new Date(),
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          orderBy: {
+            flights: {
+              _count: 'desc',
+            },
+          },
+        }),
+        prisma.user.count({
+          where: {
+            following: {
+              some: {
+                username: input.username ?? ctx.user?.username,
+              },
+            },
+          },
+        }),
+      ]);
+      return getPaginatedResponse({
+        results: results.map(user => ({
+          avatar: fetchGravatarUrl(user.email),
+          numFlights: user._count.flights,
+          ...excludeKeys(user, '_count'),
+          id: user.username,
+        })),
+        itemCount: count,
+        limit,
+        page,
+      });
     }),
   addFCMToken: procedure
     .use(verifyAuthenticated)

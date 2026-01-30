@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { paginationSchema } from './pagination';
+
 export const getUserSchema = z.object({
   username: z.string().trim().optional(),
 });
@@ -40,6 +42,10 @@ export const togglePushNotificationsSchema = z.object({
 export const addFollowerSchema = z.object({
   username: z.string().trim(),
 });
+
+export const getFollowingAndFollowersSchema = paginationSchema.extend(
+  getUserSchema.shape,
+);
 
 export type GetUserRequest = z.infer<typeof getUserSchema>;
 
