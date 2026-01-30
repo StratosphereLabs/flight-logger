@@ -16,17 +16,14 @@ export const FollowingFollowersModal = ({
   onClose,
   type,
 }: FollowingFollowersModalProps): JSX.Element => {
-  const query =
-    type === 'following'
-      ? trpc.users.getUserFollowing.useInfiniteQuery
-      : trpc.users.getUserFollowers.useInfiniteQuery;
   const { username } = useParams({ strict: false });
   const navigate = useNavigate();
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
-    query(
+    trpc.users.getUserFollowingFollowers.useInfiniteQuery(
       {
         username,
         limit: 15,
+        type,
       },
       {
         enabled: type !== null,
@@ -43,7 +40,6 @@ export const FollowingFollowersModal = ({
       }
     },
   });
-
   const title = type === 'followers' ? 'Followers' : 'Following';
   return (
     <Modal

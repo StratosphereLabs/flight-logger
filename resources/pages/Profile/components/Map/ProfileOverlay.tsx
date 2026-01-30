@@ -21,7 +21,7 @@ import { trpc } from '../../../../utils/trpc';
 import {
   FollowingFollowersModal,
   type FollowingFollowersModalProps,
-} from '../Following/FollowingFollowersModal';
+} from './FollowingFollowersModal';
 
 export const ProfileOverlay = (): JSX.Element => {
   const utils = trpc.useUtils();
