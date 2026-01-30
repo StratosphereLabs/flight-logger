@@ -41,9 +41,12 @@ export const Users = (): JSX.Element => {
   const { debouncedValue } = useDebouncedValue(query, 400);
   const { data, isFetching } = trpc.users.searchUsers.useQuery(
     {
-      query: query !== '' ? debouncedValue : query,
+      query: query.length >= 3 ? debouncedValue : '',
     },
-    { enabled: isLoggedIn && query.length >= 3, onError },
+    {
+      enabled: isLoggedIn && (query.length >= 3 || query.length === 0),
+      onError,
+    },
   );
   useEffect(() => {
     client.logEvent('users_page_viewed');
