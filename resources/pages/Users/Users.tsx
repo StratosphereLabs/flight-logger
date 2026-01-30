@@ -68,7 +68,7 @@ export const Users = (): JSX.Element => {
             <Table
               cellClassNames={{
                 avatar: 'w-[60px]',
-                numFlights: 'w-[100px]',
+                numFlights: 'w-[100px] text-right',
               }}
               columns={[
                 {
@@ -113,7 +113,13 @@ export const Users = (): JSX.Element => {
                 {
                   id: 'numFlights',
                   accessorKey: 'numFlights',
-                  header: () => 'Flights',
+                  header: () => (
+                    <span className="w-full text-right">Flights</span>
+                  ),
+                  cell: ({ getValue }) => {
+                    const numFlights = getValue<number>();
+                    return <>{numFlights.toLocaleString()}</>;
+                  },
                 },
               ]}
               data={data ?? []}

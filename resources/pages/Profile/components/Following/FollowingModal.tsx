@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
 import { Avatar, Link, Loading, Modal, Table } from 'stratosphere-ui';
 
+import { HIDE_SCROLLBAR_CLASSNAME } from '../../../../common/constants';
 import { trpc } from '../../../../utils/trpc';
 
 export interface FollowingModalProps {
@@ -46,7 +47,12 @@ export const FollowingModal = ({
       onClose={onClose}
       title={`${username !== undefined ? `${username}'s Following` : 'Following'}${data?.pages[0] !== undefined ? ` (${data.pages[0].metadata.itemCount})` : ''}`}
     >
-      <div className="flex max-h-[80vh] flex-col overflow-y-scroll">
+      <div
+        className={classNames(
+          'flex max-h-[80vh] flex-col overflow-y-scroll',
+          HIDE_SCROLLBAR_CLASSNAME,
+        )}
+      >
         <Table
           cellClassNames={{
             avatar: 'w-[60px]',
