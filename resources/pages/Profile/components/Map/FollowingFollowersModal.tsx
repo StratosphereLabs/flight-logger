@@ -64,29 +64,28 @@ export const FollowingFollowersModal = ({
     },
   });
   const handleClose = (): void => {
-    methods.reset();
     onClose();
+    methods.reset();
   };
   const title = type === 'followers' ? 'Followers' : 'Following';
   return (
     <Modal
-      className="max-h-[90vh] overflow-y-hidden text-center"
+      className="overflow-y-hidden text-center"
       open={type !== null}
       actionButtons={[]}
       onClose={handleClose}
       title={`${username !== undefined ? `${username}'s ${title}` : title}${data?.pages[0] !== undefined ? ` (${data.pages[0].metadata.itemCount})` : ''}`}
     >
-      <Form className="mt-2" methods={methods}>
+      <Form className="mt-4 mb-2" methods={methods}>
         <FormControl
           elementLeft={<SearchIcon className="ml-1 h-5 w-5" />}
-          elementRight={isFetching ? <Loading /> : null}
           inputClassName="bg-base-200 pl-10"
           name="searchQuery"
         />
       </Form>
       <div
         className={classNames(
-          'flex max-h-[80vh] flex-col overflow-y-scroll',
+          'flex h-[min(80vh,600px)] flex-col overflow-y-scroll',
           HIDE_SCROLLBAR_CLASSNAME,
         )}
       >
@@ -95,7 +94,7 @@ export const FollowingFollowersModal = ({
             avatar: 'w-[60px]',
             numFlights: 'w-[100px] text-right',
           }}
-          className="[&_td]:border-none [&_th]:border-none"
+          className="flex-1 [&_td]:border-none [&_th]:border-none"
           columns={[
             {
               id: 'avatar',
