@@ -248,28 +248,62 @@ export const usersRouter = router({
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
       const { limit, page, skip, take } = parsePaginationRequest(input);
+
+      const followingFollower = {
+        followedBy:
+          input.type === 'following'
+            ? {
+                some: {
+                  username: input.username ?? ctx.user?.username,
+                },
+              }
+            : undefined,
+        following:
+          input.type === 'followers'
+            ? {
+                some: {
+                  username: input.username ?? ctx.user?.username,
+                },
+              }
+            : undefined,
+      };
+
+      const searchFollowingFollower =
+        input.query !== undefined && input.query.length >= 3
+          ? {
+              ...followingFollower,
+              AND: [
+                {
+                  OR: [
+                    {
+                      username: {
+                        contains: input.query,
+                        mode: 'insensitive' as const,
+                      },
+                    },
+                    {
+                      firstName: {
+                        contains: input.query,
+                        mode: 'insensitive' as const,
+                      },
+                    },
+                    {
+                      lastName: {
+                        contains: input.query,
+                        mode: 'insensitive' as const,
+                      },
+                    },
+                  ],
+                },
+              ],
+            }
+          : followingFollower;
+
       const [results, count] = await prisma.$transaction([
         prisma.user.findMany({
           skip,
           take,
-          where: {
-            followedBy:
-              input.type === 'following'
-                ? {
-                    some: {
-                      username: input.username ?? ctx.user?.username,
-                    },
-                  }
-                : undefined,
-            following:
-              input.type === 'followers'
-                ? {
-                    some: {
-                      username: input.username ?? ctx.user?.username,
-                    },
-                  }
-                : undefined,
-          },
+          where: searchFollowingFollower,
           include: {
             _count: {
               select: {
@@ -299,24 +333,7 @@ export const usersRouter = router({
           },
         }),
         prisma.user.count({
-          where: {
-            followedBy:
-              input.type === 'following'
-                ? {
-                    some: {
-                      username: input.username ?? ctx.user?.username,
-                    },
-                  }
-                : undefined,
-            following:
-              input.type === 'followers'
-                ? {
-                    some: {
-                      username: input.username ?? ctx.user?.username,
-                    },
-                  }
-                : undefined,
-          },
+          where: searchFollowingFollower,
         }),
       ]);
       return getPaginatedResponse({
