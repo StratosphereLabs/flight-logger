@@ -15,7 +15,10 @@ import {
 } from 'stratosphere-ui';
 
 import { SearchIcon } from '../../../../common/components';
-import { HIDE_SCROLLBAR_CLASSNAME } from '../../../../common/constants';
+import {
+  DEBOUNCE_DEFAULT_DELAY,
+  HIDE_SCROLLBAR_CLASSNAME,
+} from '../../../../common/constants';
 import { trpc } from '../../../../utils/trpc';
 import { type SearchUsersFormData } from '../../../Users';
 
@@ -39,7 +42,7 @@ export const FollowingFollowersModal = ({
     control: methods.control,
     name: 'searchQuery',
   });
-  const { debouncedValue } = useDebouncedValue(query, 400);
+  const { debouncedValue } = useDebouncedValue(query, DEBOUNCE_DEFAULT_DELAY);
   const { data, fetchNextPage, isFetching, isFetchingNextPage, hasNextPage } =
     trpc.users.getUserFollowingFollowers.useInfiniteQuery(
       {

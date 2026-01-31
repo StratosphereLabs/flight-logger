@@ -17,6 +17,7 @@ import {
 } from 'stratosphere-ui';
 
 import { SearchIcon } from '../../common/components';
+import { DEBOUNCE_DEFAULT_DELAY } from '../../common/constants';
 import { useProtectedPage, useTRPCErrorHandler } from '../../common/hooks';
 import { trpc } from '../../utils/trpc';
 
@@ -38,7 +39,7 @@ export const Users = (): JSX.Element => {
     control: methods.control,
     name: 'searchQuery',
   });
-  const { debouncedValue } = useDebouncedValue(query, 400);
+  const { debouncedValue } = useDebouncedValue(query, DEBOUNCE_DEFAULT_DELAY);
   const { data, isFetching } = trpc.users.searchUsers.useQuery(
     {
       query: query.length >= 3 ? debouncedValue : '',
